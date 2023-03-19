@@ -1062,6 +1062,8 @@
                         (set! (-> dc shadow-ctrl settings shadow-dir w) shadow-dir-w)
                         )
                       )
+
+                    (#when PC_PORT (add-debug-lights *display-lights* (bucket-id debug2) (-> lg lights) (-> dc origin)))
                     )
                   )
                 )
@@ -1784,7 +1786,7 @@
       (debug-reset-buffers)
       (clear! *simple-sprite-system*)
       )
-    (set! (-> s5-1 bucket-group) (dma-buffer-add-buckets (-> s5-1 calc-buf) 327))
+    (set! (-> s5-1 bucket-group) (dma-buffer-add-buckets (-> s5-1 calc-buf) (enum-length bucket-id)))
     )
 
   (service-cpads)
@@ -2067,7 +2069,7 @@
 
       ;; end each normal bucket with the standard GS state reset
       (let ((s3-3 6)
-            (s2-2 324)
+            (s2-2 (bucket-id debug2))
             )
         (while (>= s2-2 s3-3)
           (default-end-buffer
@@ -2108,7 +2110,7 @@
         )
 
       ;; link all buckets to build the final massive dma list.
-      (dma-buffer-patch-buckets (-> s4-0 bucket-group) 327)
+      (dma-buffer-patch-buckets (-> s4-0 bucket-group) (enum-length bucket-id))
 
       ;; append the final END
       (let* ((v1-71 s5-0)
