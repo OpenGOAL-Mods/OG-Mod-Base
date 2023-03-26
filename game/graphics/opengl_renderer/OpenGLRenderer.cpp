@@ -205,7 +205,7 @@ void OpenGLRenderer::init_bucket_renderers_jak2() {
   init_bucket_renderer<TextureUploadHandler>("tex-all-sprite", BucketCategory::TEX,
                                              BucketId::TEX_ALL_SPRITE);
   init_bucket_renderer<Sprite3>("particles", BucketCategory::SPRITE, BucketId::PARTICLES);
-  init_bucket_renderer<LightningRenderer>("lightning", BucketCategory::OTHER, BucketId::EFFECTS);
+  init_bucket_renderer<LightningRenderer>("effects", BucketCategory::OTHER, BucketId::EFFECTS);
   init_bucket_renderer<TextureUploadHandler>("tex-all-warp", BucketCategory::TEX,
                                              BucketId::TEX_ALL_WARP);
   init_bucket_renderer<DirectRenderer>("debug-no-zbuf1", BucketCategory::OTHER,
@@ -217,7 +217,7 @@ void OpenGLRenderer::init_bucket_renderers_jak2() {
                                          0x8000);
   init_bucket_renderer<DirectRenderer>("screen-filter", BucketCategory::OTHER,
                                        BucketId::SCREEN_FILTER, 256);
-  init_bucket_renderer<DirectRenderer>("bucket-322", BucketCategory::OTHER, BucketId::BUCKET_322,
+  init_bucket_renderer<DirectRenderer>("subtitle", BucketCategory::OTHER, BucketId::SUBTITLE,
                                        0x8000);
   init_bucket_renderer<DirectRenderer>("debug2", BucketCategory::OTHER, BucketId::DEBUG2, 0x8000);
   init_bucket_renderer<DirectRenderer>("debug-no-zbuf2", BucketCategory::OTHER,
@@ -283,7 +283,8 @@ void OpenGLRenderer::init_bucket_renderers_jak1() {
   // 7 : TFRAG_NEAR_LEVEL0
   // 8 : TIE_NEAR_LEVEL0
   // 9 : TIE_LEVEL0
-  init_bucket_renderer<Tie3>("l0-tfrag-tie", BucketCategory::TIE, BucketId::TIE_LEVEL0, 0);
+  init_bucket_renderer<Tie3WithEnvmapJak1>("l0-tfrag-tie", BucketCategory::TIE,
+                                           BucketId::TIE_LEVEL0, 0);
   // 10 : MERC_TFRAG_TEX_LEVEL0
   init_bucket_renderer<Merc2>("l0-tfrag-merc", BucketCategory::MERC,
                               BucketId::MERC_TFRAG_TEX_LEVEL0);
@@ -303,7 +304,8 @@ void OpenGLRenderer::init_bucket_renderers_jak1() {
   // 14 : TFRAG_NEAR_LEVEL1
   // 15 : TIE_NEAR_LEVEL1
   // 16 : TIE_LEVEL1
-  init_bucket_renderer<Tie3>("l1-tfrag-tie", BucketCategory::TIE, BucketId::TIE_LEVEL1, 1);
+  init_bucket_renderer<Tie3WithEnvmapJak1>("l1-tfrag-tie", BucketCategory::TIE,
+                                           BucketId::TIE_LEVEL1, 1);
   // 17 : MERC_TFRAG_TEX_LEVEL1
   init_bucket_renderer<Merc2>("l1-tfrag-merc", BucketCategory::MERC,
                               BucketId::MERC_TFRAG_TEX_LEVEL1);
@@ -467,8 +469,8 @@ void OpenGLRenderer::init_bucket_renderers_jak1() {
     m_bucket_renderers[i]->init_shaders(m_render_state.shaders);
     m_bucket_renderers[i]->init_textures(*m_render_state.texture_pool, GameVersion::Jak1);
   }
-  sky_cpu_blender->init_textures(*m_render_state.texture_pool);
-  sky_gpu_blender->init_textures(*m_render_state.texture_pool);
+  sky_cpu_blender->init_textures(*m_render_state.texture_pool, m_version);
+  sky_gpu_blender->init_textures(*m_render_state.texture_pool, m_version);
   m_render_state.loader->load_common(*m_render_state.texture_pool, "GAME");
 }
 

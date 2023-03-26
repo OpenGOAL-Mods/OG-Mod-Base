@@ -43,6 +43,13 @@
   // write out a json file containing the art info mapping, run this with all objects allowed
   "dump_art_group_info": false,
 
+  // set to false to skip adding .STR files to the decompiler database
+  "read_spools": false,
+  // write out spool subtitle text, implies read_spools
+  "process_subtitle_text": false,
+  // write out spool subtitle images, implies read_spools
+  "process_subtitle_images": false,
+
   ///////////////////////////
   // WEIRD OPTIONS
   ///////////////////////////
@@ -94,7 +101,7 @@
 
   // optional: a predetermined object file name map from a file.
   // this will make decompilation naming consistent even if you only run on some objects.
-  "obj_file_name_map_file": "goal_src/jak2/build/all_objs.json",
+  // "obj_file_name_map_file": "goal_src/jak2/build/all_objs.json",
 
   ////////////////////////////
   // LEVEL EXTRACTION
