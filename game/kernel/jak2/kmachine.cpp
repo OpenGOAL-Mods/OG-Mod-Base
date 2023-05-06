@@ -31,7 +31,6 @@
 #include "game/kernel/jak2/kmalloc.h"
 #include "game/kernel/jak2/kscheme.h"
 #include "game/kernel/jak2/ksound.h"
-#include "game/kernel/svnrev.h"
 #include "game/sce/libdma.h"
 #include "game/sce/libgraph.h"
 #include "game/sce/sif_ee.h"
@@ -356,6 +355,7 @@ void InitIOP() {
   }
   printf("InitIOP OK\n");
 }
+AutoSplitterBlock gAutoSplitterBlock;
 
 int InitMachine() {
   // heap_start = malloc(0x10);
@@ -616,6 +616,11 @@ void set_fullscreen(u32 symptr, s64 screen) {
   }
 }
 
+void init_autosplit_struct() {
+  gAutoSplitterBlock.pointer_to_symbol =
+      (u64)g_ee_main_mem + (u64)intern_from_c("*autosplit-info-jak2*")->value();
+}
+
 void InitMachine_PCPort() {
   // PC Port added functions
 
@@ -627,6 +632,8 @@ void InitMachine_PCPort() {
   make_function_symbol_from_c("__pc-get-mips2c", (void*)pc_get_mips2c);
   make_function_symbol_from_c("__pc-set-levels", (void*)pc_set_levels);
   make_function_symbol_from_c("__pc-get-tex-remap", (void*)lookup_jak2_texture_dest_offset);
+  make_function_symbol_from_c("pc-get-unix-timestamp", (void*)get_unix_timestamp);
+  make_function_symbol_from_c("pc-init-autosplitter-struct", (void*)init_autosplit_struct);
 
   // pad stuff
   make_function_symbol_from_c("pc-pad-get-mapped-button", (void*)Gfx::get_mapped_button);
@@ -678,6 +685,9 @@ void InitMachine_PCPort() {
   // debugging tools
   make_function_symbol_from_c("pc-filter-debug-string?", (void*)pc_filter_debug_string);
 
+  // other
+  make_function_symbol_from_c("pc-rand", (void*)pc_rand);
+
   // init ps2 VM
   if (VM::use) {
     make_function_symbol_from_c("vm-ptr", (void*)VM::get_vm_ptr);
@@ -691,7 +701,7 @@ void InitMachine_PCPort() {
   auto settings_path = file_util::get_user_settings_dir(g_game_version);
   intern_from_c("*pc-settings-folder*")->value() =
       make_string_from_c(settings_path.string().c_str());
-  intern_from_c("*pc-settings-built-sha*")->value() = make_string_from_c(GIT_VERSION);
+  intern_from_c("*pc-settings-built-sha*")->value() = make_string_from_c(build_revision().c_str());
 }
 
 /*!

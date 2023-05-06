@@ -91,6 +91,8 @@ set(RUNTIME_SOURCE
         mips2c/jak2_functions/debug.cpp
         mips2c/jak2_functions/font.cpp
         mips2c/jak2_functions/foreground.cpp
+        mips2c/jak2_functions/generic_merc.cpp
+        mips2c/jak2_functions/generic_effect.cpp
         mips2c/jak2_functions/joint.cpp
         mips2c/jak2_functions/lights.cpp
         mips2c/jak2_functions/nav_control.cpp
@@ -106,20 +108,42 @@ set(RUNTIME_SOURCE
         mips2c/jak2_functions/merc_blend_shape.cpp
         mips2c/jak2_functions/ripple.cpp
         mips2c/jak2_functions/squid.cpp
-        overlord/dma.cpp
-        overlord/fake_iso.cpp
-        overlord/iso.cpp
-        overlord/iso_api.cpp
-        overlord/iso_cd.cpp
-        overlord/iso_queue.cpp
-        overlord/isocommon.cpp
-        overlord/overlord.cpp
-        overlord/ramdisk.cpp
-        overlord/sbank.cpp
-        overlord/soundcommon.cpp
-        overlord/srpc.cpp
-        overlord/ssound.cpp
-        overlord/stream.cpp
+        overlord/common/dma.cpp
+        overlord/common/iso.cpp
+        overlord/common/iso_api.cpp
+        overlord/common/isocommon.cpp
+        overlord/common/overlord.cpp
+        overlord/common/sbank.cpp
+        overlord/common/soundcommon.cpp
+        overlord/common/srpc.cpp
+        overlord/common/fake_iso.cpp
+        overlord/common/ssound.cpp
+        overlord/jak1/dma.cpp
+        overlord/jak1/fake_iso.cpp
+        overlord/jak1/iso.cpp
+        overlord/jak1/iso_api.cpp
+        overlord/jak1/iso_queue.cpp
+        overlord/jak1/isocommon.cpp
+        overlord/jak1/overlord.cpp
+        overlord/jak1/ramdisk.cpp
+        overlord/jak1/srpc.cpp
+        overlord/jak1/ssound.cpp
+        overlord/jak1/stream.cpp
+        overlord/jak2/dma.cpp
+        overlord/jak2/iso.cpp
+        overlord/jak2/iso_cd.cpp
+        overlord/jak2/iso_api.cpp
+        overlord/jak2/iso_queue.cpp
+        overlord/jak2/overlord.cpp
+        overlord/jak2/pages.cpp
+        overlord/jak2/list.cpp
+        overlord/jak2/streamlist.cpp
+        overlord/jak2/streamlfo.cpp
+        overlord/jak2/ssound.cpp
+        overlord/jak2/srpc.cpp
+        overlord/jak2/stream.cpp
+        overlord/jak2/vag.cpp
+        overlord/jak2/spustreams.cpp
         graphics/gfx.cpp
         graphics/jak2_texture_remap.cpp
         graphics/display.cpp
@@ -151,6 +175,7 @@ set(RUNTIME_SOURCE
         graphics/opengl_renderer/BucketRenderer.cpp
         graphics/opengl_renderer/CollideMeshRenderer.cpp
         graphics/opengl_renderer/debug_gui.cpp
+        graphics/opengl_renderer/DepthCue.cpp
         graphics/opengl_renderer/DirectRenderer.cpp
         graphics/opengl_renderer/DirectRenderer2.cpp
         graphics/opengl_renderer/EyeRenderer.cpp
@@ -168,7 +193,8 @@ set(RUNTIME_SOURCE
         graphics/opengl_renderer/SkyRenderer.cpp
         graphics/opengl_renderer/TextureUploadHandler.cpp
         graphics/opengl_renderer/VisDataHandler.cpp
-        graphics/opengl_renderer/DepthCue.cpp
+        graphics/opengl_renderer/Warp.cpp
+        graphics/opengl_renderer/BlitDisplays.cpp
         graphics/texture/jak1_tpage_dir.cpp
         graphics/texture/jak2_tpage_dir.cpp
         graphics/texture/TextureConverter.cpp
@@ -178,37 +204,6 @@ set(RUNTIME_SOURCE
         system/vm/vm.cpp
         tools/subtitles/subtitle_editor.cpp
         tools/filter_menu/filter_menu.cpp)
-
-find_package(Git)
-
-function(write_svnrev_h)
-    set(GIT_VERSION "")
-    set(GIT_SHORT_SHA "")
-    set(GIT_TAG "")
-    if (GIT_FOUND AND EXISTS ${CMAKE_SOURCE_DIR}/.git)
-        EXECUTE_PROCESS(WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
-                OUTPUT_VARIABLE GIT_SHORT_SHA
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-        EXECUTE_PROCESS(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} COMMAND ${GIT_EXECUTABLE} tag --points-at HEAD
-                OUTPUT_VARIABLE GIT_TAG
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-                ERROR_QUIET)
-    else()
-        set(GIT_VERSION "unk. rev.")
-    endif()
-    if(GIT_TAG)
-        set(GIT_VERSION ${GIT_TAG})
-    elseif(GIT_SHORT_SHA)
-        string(SUBSTRING ${GIT_SHORT_SHA} 0 6 GIT_SHORT_SHA)
-        set(GIT_VERSION "rev. ${GIT_SHORT_SHA}")
-    else()
-        set(GIT_VERSION "unk. rev.")
-    endif()
-
-    file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/kernel/svnrev.h "#define GIT_VERSION \"${GIT_VERSION}\"\n")
-endfunction()
-
-write_svnrev_h()
 
 add_subdirectory(sound)
 
