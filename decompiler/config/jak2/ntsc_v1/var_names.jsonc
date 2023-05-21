@@ -4222,5 +4222,21 @@
   },
   "(method 55 nav-enemy)": {
     "args": ["self"]
+  },
+  "foreground-shadow": {
+    "args": ["draw-ctrl", "arg1"],
+    "vars": {
+      "v1-3": "shadow-settings",
+      "a3-0": "shadow-geo",
+      "t0-0": "dist"
+    }
+  },
+  "progress-selected": {
+    "vars": {
+      "gp-0": ["color", "font-color"]
+    }
+  },
+  "set-font-color": {
+    "args": ["color", "vert", "rgba-red", "rgba-green", "rgba-blue"]
   }
 }
