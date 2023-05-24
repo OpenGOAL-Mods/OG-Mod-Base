@@ -113,7 +113,7 @@ std::string get_current_executable_path() {
 
 std::optional<std::string> try_get_project_path_from_path(const std::string& path) {
   std::string::size_type pos =
-      std::string(path).rfind("jak-project");  // Strip file path down to /jak-project/ directory
+      std::string(path).rfind("OG-Mod-Base");  // Strip file path down to /OG-Mod-Base/ directory
   if (pos == std::string::npos) {
     return {};
   }

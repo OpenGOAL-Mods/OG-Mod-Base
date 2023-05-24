@@ -11,7 +11,7 @@ USER $user
 
 WORKDIR /home/$user
 
-RUN mkdir /home/$user/jak-project/
+RUN mkdir /home/$user/OG-Mod-Base/
 COPY --chown=jak:jak . /home/$user/jak-project
 
 WORKDIR /home/$user/jak-project

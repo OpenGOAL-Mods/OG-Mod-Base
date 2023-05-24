@@ -536,7 +536,7 @@ TEST_F(FormRegressionTestJak1, RemoveMethod3ProcessTree) {
       "    jr ra\n"
       "    daddiu sp, sp, 32";
   std::string type = "(function process-tree process-tree)";
-  // gross, but expected. see https://github.com/water111/jak-project/issues/254
+  // gross, but expected. see https://github.com/water111/OG-Mod-Base/issues/254
   std::string expected =
       "(begin\n"
       "  (format #t \"[~8x] ~A~%\" arg0 (-> arg0 type))\n"
