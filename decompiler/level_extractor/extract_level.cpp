@@ -280,6 +280,18 @@ void extract_from_level(const ObjectFileDB& db,
       extract_bsp_from_level(db, tex_db, dgo_name, hacks, extract_collision, level_data);
   extract_art_groups_from_level(db, tex_db, tex_remap, dgo_name, level_data);
 
+  //If the dgo is not snowy, then add snowy assets for flutflut
+  if (dgo_name != "SNO.DGO") {
+    const std::string local_dgo_name = "SNO.DGO"; 
+  extract_art_groups_from_level(db, tex_db, extract_bsp_from_level(db, tex_db, local_dgo_name, hacks, extract_collision, level_data), local_dgo_name, level_data);
+  }
+  
+  //If the dgo is not misty, then add misty assets for racer
+  if (dgo_name != "MIS.DGO") {
+    const std::string local_dgo_name = "MIS.DGO"; 
+  extract_art_groups_from_level(db, tex_db, extract_bsp_from_level(db, tex_db, local_dgo_name, hacks, extract_collision, level_data), local_dgo_name, level_data);
+  }
+
   Serializer ser;
   level_data.serialize(ser);
   auto compressed =
