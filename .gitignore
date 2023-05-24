@@ -1,0 +1,74 @@
+# logs
+/log
+
+# for CMake
+/Testing
+
+# for clion
+cmake-build-debug/*
+cmake-build-debug--o0/*
+.idea/*
+build/*
+/decompiler_out*
+logs/*
+profile_data/*
+
+# for vscode/clangd
+.cache/*
+.DS_Store
+
+# wsl apparently builds to here?
+linux-default/
+
+# for Nix
+/result*
+
+\#*#
+.#*#
+*.pyc
+
+# output from our tools
+*.bin
+*.log
+*.p2s
+savestate-out/
+savestate_out/
+failures/
+ee-results*.json
+search-results.json
+.env
+/search-results.json
+
+# graphics debug
+debug_out/
+glb_out/
+gfx_dumps/
+screenshots/
+
+# game stuff
+game_config/*
+imgui.ini
+
+# website stuff
+node_modules/
+
+# texture replacements
+texture_replacements/*
+
+# generated cmake files
+svnrev.h
+common/versions/revision.h
+ci-artifacts/
+out/build/
+__pycache__/
+
+# sqlite stuff
+*.db
+*.db-journal
+
+# backup files from OpenMaya
+*.bak
+
+# docs
+/jak1-*.json
+/jak2-*.json

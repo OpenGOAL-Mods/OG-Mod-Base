@@ -1,0 +1,34 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: transform-h.gc
+;; name in dgo: transform-h
+;; dgos: GAME, ENGINE
+
+;; Transformation. w components of vectors should be 1.0
+;; This can represent any rotation, translation, and scaling.
+;; Note that the scaling is applied before rotation (meaning it scales along the axes of the pre-transformed frame).
+(deftype transform (structure)
+  ((trans vector :inline :offset-assert 0)  ;; translation
+   (rot   vector :inline :offset-assert 16) ;; rotation (rotation vector)
+   (scale vector :inline :offset-assert 32) ;; scale (xyz components)
+   )
+  :method-count-assert 9
+  :size-assert         #x30
+  :flag-assert         #x900000030
+  )
+
+;; Like transform, but it's a basic.
+;; some in-game objects have trs as their parent type to represent their location in the game world.
+(deftype trs (basic)
+  ((trans vector :inline :offset-assert 16)
+   (rot   vector :inline :offset-assert 32)
+   (scale vector :inline :offset-assert 48)
+   )
+  (:methods
+   (new (symbol type) _type_ 0)
+   )
+  :method-count-assert 9
+  :size-assert         #x40
+  :flag-assert         #x900000040
+  )

@@ -1,0 +1,12 @@
+{
+  "[opengoal]": {
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": true,
+      "strings": true
+    },
+    "editor.wordBasedSuggestions": true,
+    "editor.snippetSuggestions": "top"
+  },
+  "python.formatting.provider": "black"
+}

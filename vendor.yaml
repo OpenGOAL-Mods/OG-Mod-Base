@@ -1,0 +1,30 @@
+third-party/glfw:
+  sha: df8d7bc892937a8b0f7c604c92a9f64f383cf48c
+third-party/googletest:
+  sha: 14aa11db02d9851d957f93ef9fddb110c1aafdc6
+third-party/zydis:
+  sha: 562a7c1e5f2c5017ea882ad0aa3360c465a3eb8f
+third-party/discord-rpc:
+  sha: 963aa9f3e5ce81a4682c6ca3d136cddda614db33
+third-party/fpng:
+  sha: bfe5f9c69e93b99b31268c10db8e645c9125a07f
+  modifications:
+    - "PR #1632 - Fixes Unicode path saving on windows"
+third-party/CLI11.hpp:
+  git: https://github.com/CLIUtils/CLI11/tree/v2.2.0
+third-party/xxhash.hpp:
+  git: https://github.com/RedSpah/xxhash_cpp/tree/0.7.3
+third-party/xdelta3:
+  sha: 7508fd2a823443b1f0173ca361620f21d62a7d37
+third-party/stb_image:
+  modifications:
+    - "PR #1632 - Uses UTF-8 on windows"
+third-party/tiny_gltf:
+  modifications:
+    - "PR #1632 - Ensure stb_image is using UTF-8 on windows"
+third-party/SQLiteCpp:
+  sha: c68f651a10a335fe3c24c31baa64f1d9b97d68be
+third-party/fmt:
+  git: bce8d4ed087a0560492426f9f5be2713804daded
+third-party/tree-sitter:
+  git: https://github.com/tree-sitter/tree-sitter/tree/v0.20.8

@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: quaternion-h.gc
+;; name in dgo: quaternion-h
+;; dgos: GAME, ENGINE
+
+;; general quaternion type used to represent an orientation in a way that's compact (4 floats),
+;; avoids singularities of euler angles, and reasonably efficient to transform.
+;; the w component is stored last.
+(deftype quaternion (structure)
+  ((x    float           :offset-assert 0)
+   (y    float           :offset-assert 4)
+   (z    float           :offset-assert 8)
+   (w    float           :offset-assert 12)
+   (data float 4 :score -9999 :offset 0)
+   (vec  vector  :inline :offset 0)
+   (quad uint128         :offset 0)
+   )
+  :method-count-assert 9
+  :size-assert         #x10
+  :flag-assert         #x900000010
+  )
+
+(define *unity-quaternion* (new 'static 'quaternion :x 0.0 :y 0.0 :z 0.0 :w 1.0))
+
+(define-extern matrix->quaternion (function quaternion matrix quaternion))
+(define-extern vector-y-angle (function vector float))
+
+(defmacro new-stack-quaternion0 ()
+  "Get a stack quaternion that's set to 0.
+   This is more efficient than (new 'stack 'quaternion) because
+   this doesn't call the constructor."
+  `(let ((q (new 'stack-no-clear 'quaternion)))
+     (set! (-> q quad) (the-as uint128 0))
+     q
+     )
+  )

@@ -1,0 +1,120 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; definition of type drawable-ambient
+(deftype drawable-ambient (drawable)
+  ((ambient entity-ambient  :offset   8)
+   )
+  :method-count-assert 19
+  :size-assert         #x20
+  :flag-assert         #x1300000020
+  (:methods
+    (execute-ambient (_type_ vector) none 18)
+    )
+  )
+
+;; definition for method 3 of type drawable-ambient
+(defmethod inspect drawable-ambient ((obj drawable-ambient))
+  (format #t "[~8x] ~A~%" obj (-> obj type))
+  (format #t "~Tid: ~D~%" (-> obj id))
+  (format #t "~Tbsphere: ~`vector`P~%" (-> obj bsphere))
+  (format #t "~Tambient: ~A~%" (-> obj ambient))
+  obj
+  )
+
+;; definition of type drawable-tree-ambient
+(deftype drawable-tree-ambient (drawable-tree)
+  ()
+  :method-count-assert 18
+  :size-assert         #x24
+  :flag-assert         #x1200000024
+  )
+
+;; definition of type drawable-inline-array-ambient
+(deftype drawable-inline-array-ambient (drawable-inline-array)
+  ((data drawable-ambient 1 :inline :offset-assert  32)
+   (pad  uint32                     :offset-assert  64)
+   )
+  :method-count-assert 18
+  :size-assert         #x44
+  :flag-assert         #x1200000044
+  )
+
+;; definition for method 10 of type drawable-tree-ambient
+;; INFO: Return type mismatch int vs none.
+(defmethod draw drawable-tree-ambient ((obj drawable-tree-ambient) (arg0 drawable-tree-ambient) (arg1 display-frame))
+  0
+  (none)
+  )
+
+;; definition for method 16 of type drawable-tree-ambient
+(defmethod unpack-vis drawable-tree-ambient ((obj drawable-tree-ambient) (arg0 (pointer int8)) (arg1 (pointer int8)))
+  arg1
+  )
+
+;; definition of type level-hint
+(deftype level-hint (process)
+  ((text-id-to-display text-id     :offset-assert 112)
+   (sound-to-play      string      :offset-assert 116)
+   (trans              vector      :offset-assert 120)
+   (sound-id           sound-id    :offset-assert 124)
+   (mode               symbol      :offset-assert 128)
+   (total-time         time-frame  :offset-assert 136)
+   (total-off-time     time-frame  :offset-assert 144)
+   (last-time          time-frame  :offset-assert 152)
+   (voicebox           handle      :offset-assert 160)
+   )
+  :heap-base #x40
+  :method-count-assert 16
+  :size-assert         #xa8
+  :flag-assert         #x10004000a8
+  (:methods
+    (print-text (_type_) none 14)
+    (appeared-for-long-enough? (_type_) symbol 15)
+    )
+  (:states
+    (level-hint-ambient-sound string)
+    (level-hint-error string string)
+    level-hint-exit
+    level-hint-normal
+    (level-hint-sidekick string)
+    )
+  )
+
+;; definition for method 3 of type level-hint
+(defmethod inspect level-hint ((obj level-hint))
+  (let ((t9-0 (method-of-type process inspect)))
+    (t9-0 obj)
+    )
+  (format #t "~T~Ttext-id-to-display: ~D~%" (-> obj text-id-to-display))
+  (format #t "~T~Tsound-to-play: ~A~%" (-> obj sound-to-play))
+  (format #t "~T~Ttrans: #<vector @ #x~X>~%" (-> obj trans))
+  (format #t "~T~Tsound-id: ~D~%" (-> obj sound-id))
+  (format #t "~T~Tmode: ~A~%" (-> obj mode))
+  (format #t "~T~Ttotal-time: ~D~%" (-> obj total-time))
+  (format #t "~T~Ttotal-off-time: ~D~%" (-> obj total-off-time))
+  (format #t "~T~Tlast-time: ~D~%" (-> obj last-time))
+  (format #t "~T~Tvoicebox: ~D~%" (-> obj voicebox))
+  obj
+  )
+
+;; definition of type ambient-list
+(deftype ambient-list (structure)
+  ((num-items int32                 :offset-assert   0)
+   (items     drawable-ambient 2048 :offset-assert   4)
+   )
+  :method-count-assert 9
+  :size-assert         #x2004
+  :flag-assert         #x900002004
+  )
+
+;; definition for method 3 of type ambient-list
+(defmethod inspect ambient-list ((obj ambient-list))
+  (format #t "[~8x] ~A~%" obj 'ambient-list)
+  (format #t "~Tnum-items: ~D~%" (-> obj num-items))
+  (format #t "~Titems[2048] @ #x~X~%" (-> obj items))
+  obj
+  )
+
+;; failed to figure out what this is:
+0

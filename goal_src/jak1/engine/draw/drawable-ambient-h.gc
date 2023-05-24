@@ -1,0 +1,98 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: drawable-ambient-h.gc
+;; name in dgo: drawable-ambient-h
+;; dgos: GAME, ENGINE
+
+
+(declare-type entity-ambient basic)
+
+(define-extern vector-for-ambient (function process-drawable vector vector))
+
+;; the "ambient" system has a bunch of triggers for background sounds, hints, and similar events.
+
+;; each ambient also has a simple drawable that just contains a reference to the entity.
+;; this is basically only used to collect the currently active ambients.
+(deftype drawable-ambient (drawable)
+  ((ambient entity-ambient :offset 8)
+   )
+  :method-count-assert 19
+  :size-assert         #x20
+  :flag-assert         #x1300000020
+  (:methods
+    (execute-ambient (_type_ vector) none 18)
+    )
+  )
+
+;; a drawable-tree of all the ambients in a level.
+(deftype drawable-tree-ambient (drawable-tree)
+  ()
+  :method-count-assert 18
+  :size-assert         #x24
+  :flag-assert         #x1200000024
+  )
+
+(deftype drawable-inline-array-ambient (drawable-inline-array)
+  ((data drawable-ambient 1 :inline)
+   (pad uint32))
+  :flag-assert #x1200000044
+  )
+
+(defmethod draw drawable-tree-ambient ((obj drawable-tree-ambient) (arg0 drawable-tree-ambient) (arg1 display-frame))
+  "Do nothing - ambients are not drawn."
+  (none)
+  )
+
+(defmethod unpack-vis drawable-tree-ambient ((obj drawable-tree-ambient) (arg0 (pointer int8)) (arg1 (pointer int8)))
+  "Do nothing - ambients do not use vis."
+  arg1
+  )
+
+
+;; one of the more common ambients is a "level hint". This can be a few things:
+;; - on screen text (level names)
+;; - daxter audio (sidekick)
+;; - voicebox audio (also called sidekick in some places...)
+(deftype level-hint (process)
+  ((text-id-to-display text-id  :offset-assert 112)
+   (sound-to-play      string        :offset-assert 116)
+   (trans              vector        :offset-assert 120)
+   (sound-id           sound-id      :offset-assert 124)
+   (mode               symbol        :offset-assert 128)
+   (total-time         time-frame    :offset-assert 136)
+   (total-off-time     time-frame    :offset-assert 144)
+   (last-time          time-frame    :offset-assert 152)
+   (voicebox           handle        :offset-assert 160)
+   )
+  :heap-base #x40
+  :method-count-assert 16
+  :size-assert         #xa8
+  :flag-assert         #x10004000a8
+  (:methods
+    (print-text (_type_) none 14)
+    (appeared-for-long-enough? (_type_) symbol 15)
+    )
+  (:states
+    (level-hint-ambient-sound string)
+    (level-hint-error string string)
+    level-hint-exit
+    level-hint-normal
+    (level-hint-sidekick string)
+    )
+  )
+
+;; a list of ambients that are currently active.
+(deftype ambient-list (structure)
+  ((num-items int32                 :offset-assert   0)
+   (items     drawable-ambient 2048 :offset-assert   4)
+   )
+  :method-count-assert 9
+  :size-assert         #x2004
+  :flag-assert         #x900002004
+  )
+
+
+(define-extern *hint-semaphore* (pointer level-hint))
+
+(define-extern ambient-hint-spawn (function string vector process-tree symbol object))

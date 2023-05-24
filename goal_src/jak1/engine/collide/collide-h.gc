@@ -1,0 +1,8 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: collide-h.gc
+;; name in dgo: collide-h
+;; dgos: GAME, ENGINE
+
+(define *collide-test-flag* #f)
