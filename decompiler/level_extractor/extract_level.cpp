@@ -282,16 +282,22 @@ void extract_from_level(const ObjectFileDB& db,
 
   //If the dgo is not snowy, then add snowy assets for flutflut
   if (dgo_name != "SNO.DGO") {
+   if (db.obj_files_by_dgo.count(dgo_name) == 0) {
+    lg::warn("Skipping adding {} because we are in Jak 2 mode", dgo_name);
     const std::string local_dgo_name = "SNO.DGO"; 
-  extract_art_groups_from_level(db, tex_db, extract_bsp_from_level(db, tex_db, local_dgo_name, hacks, extract_collision, level_data), local_dgo_name, level_data);
+    extract_art_groups_from_level(db, tex_db, extract_bsp_from_level(db, tex_db, local_dgo_name, hacks, extract_collision, level_data), local_dgo_name, level_data);
+    return;
   }
-  
+  }
   //If the dgo is not misty, then add misty assets for racer
   if (dgo_name != "MIS.DGO") {
+    if (db.obj_files_by_dgo.count(dgo_name) == 0) {
+    lg::warn("Skipping adding {} because we are in Jak 2 mode", dgo_name);
     const std::string local_dgo_name = "MIS.DGO"; 
-  extract_art_groups_from_level(db, tex_db, extract_bsp_from_level(db, tex_db, local_dgo_name, hacks, extract_collision, level_data), local_dgo_name, level_data);
+    extract_art_groups_from_level(db, tex_db, extract_bsp_from_level(db, tex_db, local_dgo_name, hacks, extract_collision, level_data), local_dgo_name, level_data);
+    return;
   }
-
+  }
   Serializer ser;
   level_data.serialize(ser);
   auto compressed =
