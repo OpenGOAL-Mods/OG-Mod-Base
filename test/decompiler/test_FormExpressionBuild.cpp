@@ -2872,7 +2872,7 @@ TEST_F(FormRegressionTestJak1, AbsAsSideEffect) {
   test_with_expr(func, type, expected);
 }
 
-// for github https://github.com/water111/OG-Mod-Base/issues/332
+// for github https://github.com/water111/jak-project/issues/332
 // method 11 bit-array
 TEST_F(FormRegressionTestJak1, AshPropagation) {
   // (ash a2-0 a3-0)
@@ -2908,7 +2908,7 @@ TEST_F(FormRegressionTestJak1, AshPropagation) {
   test_with_expr(func, type, expected);
 }
 
-// for github https://github.com/water111/OG-Mod-Base/issues/332
+// for github https://github.com/water111/jak-project/issues/332
 // method 9 bit-array
 // also checks output prop.
 TEST_F(FormRegressionTestJak1, AshPropagation2) {
