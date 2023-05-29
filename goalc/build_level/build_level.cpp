@@ -1,3 +1,4 @@
+
 #include "common/custom_data/Tfrag3Data.h"
 #include "common/log/log.h"
 #include "common/util/FileUtil.h"
@@ -11,6 +12,7 @@
 #include "goalc/build_level/collide_bvh.h"
 #include "goalc/build_level/collide_pack.h"
 #include "goalc/build_level/gltf_mesh_extract.h"
+
 
 #include "third-party/fmt/core.h"
 
@@ -37,7 +39,12 @@ std::vector<std::string> get_build_level_deps(const std::string& input_file) {
 
 bool run_build_level(const std::string& input_file,
                      const std::string& bsp_output_file,
-                     const std::string& output_prefix) {
+                     const std::string& output_prefix,
+                     const decompiler::ObjectFileDB& db,
+                     const decompiler::TextureDB& tex_db,
+                     const std::string& dgo_name,
+                     const decompiler::DecompileHacks& hacks,
+                     bool extract_collision) {
   auto level_json = parse_commented_json(
       file_util::read_text_file(file_util::get_file_path({input_file})), input_file);
   LevelFile file;          // GOAL level file

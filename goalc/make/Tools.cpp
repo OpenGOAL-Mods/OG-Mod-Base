@@ -1,5 +1,5 @@
 #include "Tools.h"
-
+#include "decompiler/config.h"
 #include "common/goos/ParseHelpers.h"
 #include "common/util/DgoWriter.h"
 #include "common/util/FileUtil.h"
@@ -224,9 +224,64 @@ bool BuildLevelTool::needs_run(const ToolInput& task, const PathMap& path_map) {
   return Tool::needs_run({task.input, deps, task.output, task.arg}, path_map);
 }
 
+
 bool BuildLevelTool::run(const ToolInput& task, const PathMap& path_map) {
   if (task.input.size() != 1) {
     throw std::runtime_error(fmt::format("Invalid amount of inputs to {} tool", name()));
   }
-  return run_build_level(task.input.at(0), task.output.at(0), path_map.output_prefix);
+
+ 
+  std::string iso_data_path = path_map.output_prefix + "/iso_data";
+  std::vector<fs::path> dgos, objs;
+   Config config = read_config_file(file_util::get_jak_project_dir() / "decompiler" / "config" /
+                                       version_info.game_name /
+                                       fmt::format("{}_config.jsonc", version_info.game_name),
+                                   version_info.decomp_config_version);
+
+  
+
+  // grab all DGOS we need (level + common)
+  // TODO - Jak 2 - jak 1 specific code?
+  for (const auto& dgo_name : config.dgo_names) {
+    std::string common_name = "GAME.CGO";
+    if (dgo_name.length() > 3 && dgo_name.substr(dgo_name.length() - 3) == "DGO") {
+      // ends in DGO, it's a level
+      dgos.push_back(iso_data_path / dgo_name);
+    } else if (dgo_name.length() >= common_name.length() &&
+               dgo_name.substr(dgo_name.length() - common_name.length()) == common_name) {
+      // it's COMMON.CGO, we need that too.
+      dgos.push_back(iso_data_path / dgo_name);
+    }
+  }
+
+  // grab all the object files we need (just text)
+  for (const auto& obj_name : config.object_file_names) {
+    if (obj_name.length() > 3 && obj_name.substr(obj_name.length() - 3) == "TXT") {
+      // ends in TXT
+      objs.push_back(iso_data_path / obj_name);
+    }
+  }
+
+  // set up objects
+  ObjectFileDB db(dgos, fs::path(config.obj_file_name_map_file), objs, {}, config);
+
+return run_build_level(std::forward<const std::string&>(task.input.at(0)),
+                       std::forward<const std::string&>(task.output.at(0)),
+                       std::forward<const std::string&>(path_map.output_prefix),
+                       std::forward<const decompiler::ObjectFileDB&>(decompiler::ObjectFileDB()),
+                       std::forward<const decompiler::TextureDB&>(tex_db),
+                       std::forward<const std::string&>(dgoNAME),
+                       std::forward<const decompiler::DecompileHacks&>(decompHACKS),
+                       std::forward<bool>(extractCollision));
+
 }
+
+
+bool run_build_level(const std::string& input_file,
+                     const std::string& bsp_output_file,
+                     const std::string& output_prefix,
+                     const decompiler::ObjectFileDB& db,
+                     const decompiler::TextureDB& tex_db,
+                     const std::string& dgo_name,
+                     const decompiler::DecompileHacks& hacks,
+                     bool extract_collision) {
