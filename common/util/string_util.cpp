@@ -1,5 +1,6 @@
 #include "string_util.h"
 
+#include <random>
 #include <regex>
 
 #include "common/util/diff.h"
@@ -100,5 +101,42 @@ bool replace(std::string& str, const std::string& from, const std::string& to) {
     return false;
   str.replace(start_pos, from.length(), to);
   return true;
+}
+
+std::string uuid() {
+  static std::random_device dev;
+  static std::mt19937 rng(dev());
+
+  std::uniform_int_distribution<int> dist(0, 15);
+
+  const char* v = "0123456789abcdef";
+  const bool dash[] = {0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0};
+
+  std::string res;
+  for (int i = 0; i < 16; i++) {
+    if (dash[i])
+      res += "-";
+    res += v[dist(rng)];
+    res += v[dist(rng)];
+  }
+  return res;
+}
+
+std::string repeat(size_t n, const std::string& str) {
+  if (n == 0 || str.empty())
+    return {};
+  if (n == 1)
+    return str;
+  const auto period = str.size();
+  if (period == 1)
+    return std::string(n, str.front());
+
+  std::string ret(str);
+  ret.reserve(period * n);
+  std::size_t m{2};
+  for (; m < n; m *= 2)
+    ret += ret;
+  ret.append(ret.c_str(), (n - (m / 2)) * period);
+  return ret;
 }
 }  // namespace str_util
