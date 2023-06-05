@@ -16,6 +16,7 @@
 
 #include "common/common_types.h"
 #include "common/util/BinaryReader.h"
+#include "common/util/string_util.h"
 #include "common/util/unicode_util.h"
 
 // This disables the use of PCLMULQDQ which is probably ok, but let's just be safe and disable it
@@ -111,63 +112,16 @@ std::string get_current_executable_path() {
 #endif
 }
 
-std::string get_parent_directory(const std::string& path) {
-  // Find the last occurrence of ".github" in the path.
-  size_t github_index = path.rfind(".github");
-
-  // If ".github" is not found in the path, return an empty string.
-  if (github_index == std::string::npos) {
-    return "";
-  }
-
-  // Extract the part of the path up to the ".github" directory.
-  std::string parent_directory = path.substr(0, github_index);
-
-  // Remove the last character from the path, which will be the slash.
-  parent_directory.pop_back();
-
-  // Return the parent directory.
-  return parent_directory;
-}
-
-// std::optional<std::string> try_get_project_path_from_path(const std::string& path) {
-//   std::string::size_type pos =
-//       std::string(path).rfind("OG-Mod-Base");  // Strip file path down to /OG-Mod-Base/ directory
-//   if (pos == std::string::npos) {
-//     return {};
-//   }
-//   return std::string(path).substr(
-//       0, pos + 11);  // + 12 to include "/jak-project" in the returned filepath
-// }
-
-
 std::optional<std::string> try_get_project_path_from_path(const std::string& path) {
-  std::string current_path = path;
-  lg::info("Current path in loop - {}", current_path);
-  while (!current_path.empty()) {
-    if (current_path == ".github") {
-      lg::info("No parent folder found");
-      return {};  // No parent folder found
-    }
-
-    std::size_t last_slash_pos = current_path.rfind('\\');
-    if (last_slash_pos == std::string::npos) {
-      lg::info("No parent folder found");
-      return {};  // No parent folder found
-    }
-
-    current_path = current_path.substr(0, last_slash_pos);
-    lg::info("Current path in loop - {}", current_path);
-    if (fs::exists(current_path + "/.github")) {
-      lg::info("Project path found - {}", current_path);
-      return current_path;
-    }
+  std::string::size_type pos =
+      std::string(path).rfind("jak-project");  // Strip file path down to /jak-project/ directory
+  if (pos == std::string::npos) {
+    return {};
   }
-
-  lg::info("No project path found");
-  return {};  // No project path found
-
+  return std::string(path).substr(
+      0, pos + 11);  // + 12 to include "/jak-project" in the returned filepath
 }
+
 /*!
  * See if the current executable is somewhere in jak-project/. If so, return the path to jak-project
  */
@@ -248,10 +202,12 @@ bool create_dir_if_needed(const fs::path& path) {
   return false;
 }
 
+// TODO - explodes if the file path is invalid
 bool create_dir_if_needed_for_file(const std::string& path) {
   return create_dir_if_needed_for_file(fs::path(path));
 }
 
+// TODO - explodes if the file path is invalid
 bool create_dir_if_needed_for_file(const fs::path& path) {
   return fs::create_directories(path.parent_path());
 }
@@ -681,6 +637,20 @@ void copy_file(const fs::path& src, const fs::path& dst) {
         "Cannot copy '{}', couldn't make directory to copy into '{}'", src.string(), dst.string()));
   }
   fs::copy_file(src, dst, fs::copy_options::overwrite_existing);
+}
+
+std::string make_screenshot_filepath(const GameVersion game_version, const std::string& name) {
+  std::string file_name;
+  if (name.empty()) {
+    file_name = fmt::format("{}_{}.png", version_to_game_name(game_version),
+                            str_util::current_local_timestamp_no_colons());
+  } else {
+    file_name = fmt::format("{}_{}_{}.png", version_to_game_name(game_version), name,
+                            str_util::current_local_timestamp_no_colons());
+  }
+  const auto file_path = file_util::get_file_path({"screenshots", file_name});
+  file_util::create_dir_if_needed_for_file(file_path);
+  return file_path;
 }
 
 }  // namespace file_util

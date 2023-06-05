@@ -19,7 +19,7 @@ RUN git clone https://aur.archlinux.org/yay.git \
 
 RUN yay --noconfirm -S go-task
 
-RUN mkdir /home/$user/OG-Mod-Base/
+RUN mkdir /home/$user/jak-project/
 COPY --chown=jak:jak . /home/$user/jak-project
 RUN git config --global --add safe.directory /home/jak/jak-project
 
