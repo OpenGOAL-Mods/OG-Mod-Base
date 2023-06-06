@@ -84,4 +84,6 @@ __pycache__/
 # docs
 /jak1-*.json
 /jak2-*.json
+
+multiplayer_hns_settings.json
 /TODO.md
