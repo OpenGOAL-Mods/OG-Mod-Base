@@ -572,13 +572,11 @@
   ;; increase our stack size.
   (stack-size-set! (-> self main-thread) 1024)
 
-  
-  
   (let ((disp *display*))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Pre loop initialization
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
     ;; the size is 0, so this doesn't actually do anything.
     ;; (dma-send-to-spr (the-as uint #x70000000) (the-as uint *terrain-context*) (the-as uint 0) #t)
     (set! *teleport* #t)
@@ -595,7 +593,7 @@
     (while *run*
    
       (runs-every-frame) ;; trigger hook for mod base
-    
+      
       ;; start immediately after all process updates finish.
       (profiler-instant-event "display-loop-top")
 

@@ -8,9 +8,9 @@
 
 ;; To use this config, you can add something like this to your emacs config:
 ;; the path to the compiler:
-;; (defconst opengoal-compiler-path "~/OG-Mod-Base/build/goalc/goalc")
+;; (defconst opengoal-compiler-path "~/jak-project/build/goalc/goalc")
 ;; the path to this file (or you can copy this file to your emacs config)
-;; (add-to-list 'load-path "~/OG-Mod-Base/scripts/emacs")
+;; (add-to-list 'load-path "~/jak-project/scripts/emacs")
 ;; load this file!
 ;; (load "goal-config")
 

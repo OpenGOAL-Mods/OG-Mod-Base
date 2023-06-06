@@ -7,6 +7,7 @@
 
 ;; DECOMP BEGINS
 (defun-extern runs-every-frame (none))
+
 (defun set-letterbox-frames ((arg0 time-frame))
   "Set the remaining time until letterboxing is removed.
    This uses the current clock ratio of the process and the game-clock.
@@ -1481,6 +1482,7 @@
         (load-continue (-> *level* loading-level))
         )
     (runs-every-frame)
+
     ; ;; Run blerc to modify foreground models
     (with-profiler 'merc *profile-merc-color*
       (blerc-execute)
@@ -1730,7 +1732,9 @@
         (suspend)
         )
       (#when PC_PORT
-        (update *pc-settings*))
+        (update *pc-settings*)
+        (if (and *display-sha* *debug-segment*)
+            (draw-build-revision)))
       )
     )
   (set! *dproc* #f)

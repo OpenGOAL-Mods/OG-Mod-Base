@@ -4,7 +4,7 @@ import argparse
 
 
 ### Script to track decompilation progress.
-### Example usage: python3 scripts/decomp_progress.py ~/OG-Mod-Base/goal_src/jak2
+### Example usage: python3 scripts/decomp_progress.py ~/jak-project/goal_src/jak2
 
 def get_goal_files(root_dir, ext = "*.gc"):
     """Get all GOAL source files under root_dir."""

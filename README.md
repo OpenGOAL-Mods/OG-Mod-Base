@@ -1,6 +1,8 @@
 # OpenGoal-Mod-Base
 Serves as a base template for openGOAL mods that will be supported via [opengoal-mod-launcher](https://github.com/OpenGOAL-Unofficial-Mods/opengoal-mod-launcher).
 
+*OUTDATED*
+
 - Please ensure you are not committing copyrighted material to your repo (the `.gitignore` should help prevent this). 
 - Generally speaking you should only be updating certain directories/files:
   - the executable binaries (`goalc.exe`, `gk.exe`, `extractor.exe`)
