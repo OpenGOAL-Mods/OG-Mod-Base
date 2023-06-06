@@ -60,7 +60,10 @@ texture_replacements/*
 svnrev.h
 common/versions/revision.h
 ci-artifacts/
-out/**/*
+out/*
+out/build/*
+out/build/Release/*
+out/build/Release/bin/*
 !out/build/Release/bin/extractor.exe
 !out/build/Release/bin/gk.exe
 !out/build/Release/bin/goalc.exe
