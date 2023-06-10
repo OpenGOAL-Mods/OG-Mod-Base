@@ -202,6 +202,17 @@ add_subdirectory(third-party/libco)
 
 add_subdirectory(third-party/zstd EXCLUDE_FROM_ALL)
 
+
+# MOD BASE
+
+include_directories("third-party/SFML/include")
+include_directories("third-party/SFML/lib")
+
+
+
+
+
+
 # build SDL
 include(SDLOptions)
 add_subdirectory(third-party/SDL EXCLUDE_FROM_ALL)

@@ -1,6 +1,7 @@
 #include "kmachine.h"
 
 #include <random>
+#include "third-party/SFML/include/SFML/Audio.hpp"
 
 #include "common/global_profiler/GlobalProfiler.h"
 #include "common/log/log.h"
@@ -102,6 +103,34 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
   }
   return cpad_info;
 }
+
+
+
+
+void playMP3(const std::string& filePath, int volume)
+{
+    sf::Music music;
+
+    // Load the MP3 file
+    if (!music.openFromFile(filePath))
+    {
+        printf("Failed to load MP3 file: %s\n", filePath.c_str());
+        return;
+    }
+
+    // Set the volume
+    music.setVolume(volume);
+
+    // Play the music
+    music.play();
+
+    // Wait until playback is complete
+    while (music.getStatus() == sf::Music::Playing)
+    {
+        sf::sleep(sf::milliseconds(100));
+    }
+}
+
 
 /*!
  * Not checked super carefully for jak 2, but looks the same
@@ -903,6 +932,8 @@ void init_common_pc_port_functions(
   make_func_symbol_func("pc-filepath-exists?", (void*)pc_filepath_exists);
   make_func_symbol_func("pc-mkdir-file-path", (void*)pc_mkdir_filepath);
 
+  //Play sound file
+  make_func_symbol_func("play-rand-sound", (void*)playMP3);  
   // discord rich presence
   make_func_symbol_func("pc-discord-rpc-set", (void*)set_discord_rpc);
 

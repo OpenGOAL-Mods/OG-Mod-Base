@@ -611,6 +611,7 @@ void InitMachineScheme() {
   make_function_symbol_from_c("kernel-shutdown", (void*)jak1::KernelShutdown);  // used TODO jak1
   make_function_symbol_from_c("aybabtu", (void*)sceCdMmode);                    // used
 
+
   InitMachine_PCPort();
   InitSoundScheme();
   intern_from_c("*stack-top*")->value = 0x07ffc000;

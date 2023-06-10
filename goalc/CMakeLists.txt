@@ -56,11 +56,13 @@ add_library(compiler
         regalloc/Allocator_v2.cpp
         compiler/docs/DocTypes.cpp)
 
-target_link_libraries(compiler common Zydis tiny_gltf)
+target_link_libraries(compiler common Zydis tiny_gltf )
 
 if (WIN32)
     target_link_libraries(compiler mman)
 endif ()
+
+
 
 add_executable(goalc main.cpp)
 add_executable(goalc-simple simple_main.cpp)

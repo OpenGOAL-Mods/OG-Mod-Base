@@ -218,10 +218,19 @@ set(RUNTIME_SOURCE
 
 add_subdirectory(sound)
 
+
+
 # we build the runtime as a static library.
 add_library(runtime STATIC ${RUNTIME_SOURCE} "../third-party/glad/src/glad.c")
 
+
+
+
+
+
+
 target_link_libraries(runtime common fmt SDL2::SDL2 imgui discord-rpc sound stb_image libco SQLiteCpp)
+
 if(WIN32)
     target_link_libraries(runtime mman)
 else()
@@ -229,4 +238,5 @@ else()
 endif()
 
 add_executable(gk main.cpp)
-target_link_libraries(gk runtime)
+target_link_libraries(gk runtime "C:/Users/NinjaPC/Documents/Github/OG-Super-Jak2/third-party/SFML/lib/sfml-audio.lib")
+
