@@ -1,7 +1,8 @@
 #include "kmachine.h"
 
 #include <random>
-#include "third-party/SFML/include/SFML/Audio.hpp"
+#include <SFML/Audio.hpp>
+
 
 #include "common/global_profiler/GlobalProfiler.h"
 #include "common/log/log.h"
@@ -111,20 +112,14 @@ void playMP3(const std::string& filePath, int volume)
 {
     sf::Music music;
 
-    // Load the MP3 file
     if (!music.openFromFile(filePath))
     {
-        printf("Failed to load MP3 file: %s\n", filePath.c_str());
+        printf("Failed to load: %s\n", filePath.c_str());
         return;
     }
-
-    // Set the volume
     music.setVolume(volume);
-
-    // Play the music
     music.play();
 
-    // Wait until playback is complete
     while (music.getStatus() == sf::Music::Playing)
     {
         sf::sleep(sf::milliseconds(100));

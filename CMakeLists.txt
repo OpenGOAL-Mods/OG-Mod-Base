@@ -204,9 +204,11 @@ add_subdirectory(third-party/zstd EXCLUDE_FROM_ALL)
 
 
 # MOD BASE
+#add_subdirectory(third-party/freetype EXCLUDE_FROM_ALL)
+#set (FREETYPE_INCLUDE_DIRS= "third-party/freetype/")
+#set (FREETYPE_LIBRARY= "third-party/freetype/lib/")
+add_subdirectory(third-party/SFML EXCLUDE_FROM_ALL)
 
-include_directories("third-party/SFML/include")
-include_directories("third-party/SFML/lib")
 
 
 
