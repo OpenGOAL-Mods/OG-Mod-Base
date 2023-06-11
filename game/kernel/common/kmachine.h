@@ -85,7 +85,7 @@ struct CommonPCPortFunctionWrappers {
 
 extern CommonPCPortFunctionWrappers g_pc_port_funcs;
 
-void playMP3(const std::string& filePath, int volume);
+void playMP3(u32 filePath, u32 volume);
 
 /// Initializes all common PC Port functions for all Jak games
 void init_common_pc_port_functions(

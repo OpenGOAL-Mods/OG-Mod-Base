@@ -380,6 +380,8 @@
 (define-extern pc-set-collision-mode (function pc-collision-mode none))
 (define-extern pc-discord-rpc-update (function discord-info none))
 (define-extern pc-discord-rpc-set (function int none))
+
+(define-extern play-rand-sound (function string int none))
 (define-extern pc-filepath-exists? (function string symbol))
 (define-extern pc-mkdir-file-path (function string none))
 (define-extern pc-sound-set-flava-hack (function int none))
