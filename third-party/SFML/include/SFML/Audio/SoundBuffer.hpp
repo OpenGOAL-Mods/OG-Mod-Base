@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,18 +22,21 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOUNDBUFFER_HPP
-#define SFML_SOUNDBUFFER_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+
 #include <SFML/Audio/AlResource.hpp>
+
 #include <SFML/System/Time.hpp>
+
+#include <filesystem>
 #include <string>
+#include <unordered_set>
 #include <vector>
-#include <set>
 
 
 namespace sf
@@ -49,7 +52,6 @@ class InputStream;
 class SFML_AUDIO_API SoundBuffer : AlResource
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -83,7 +85,7 @@ public:
     /// \see loadFromMemory, loadFromStream, loadFromSamples, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromFile(const std::string& filename);
+    [[nodiscard]] bool loadFromFile(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a file in memory
@@ -99,7 +101,7 @@ public:
     /// \see loadFromFile, loadFromStream, loadFromSamples
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromMemory(const void* data, std::size_t sizeInBytes);
+    [[nodiscard]] bool loadFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a custom stream
@@ -114,13 +116,12 @@ public:
     /// \see loadFromFile, loadFromMemory, loadFromSamples
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromStream(InputStream& stream);
+    [[nodiscard]] bool loadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from an array of audio samples
     ///
-    /// The assumed format of the audio samples is 16 bits signed integer
-    /// (sf::Int16).
+    /// The assumed format of the audio samples is 16 bits signed integer.
     ///
     /// \param samples      Pointer to the array of samples in memory
     /// \param sampleCount  Number of samples in the array
@@ -132,7 +133,10 @@ public:
     /// \see loadFromFile, loadFromMemory, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromSamples(const Int16* samples, Uint64 sampleCount, unsigned int channelCount, unsigned int sampleRate);
+    [[nodiscard]] bool loadFromSamples(const std::int16_t* samples,
+                                       std::uint64_t       sampleCount,
+                                       unsigned int        channelCount,
+                                       unsigned int        sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the sound buffer to an audio file
@@ -147,21 +151,21 @@ public:
     /// \see loadFromFile, loadFromMemory, loadFromSamples
     ///
     ////////////////////////////////////////////////////////////
-    bool saveToFile(const std::string& filename) const;
+    [[nodiscard]] bool saveToFile(const std::filesystem::path& filename) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the array of audio samples stored in the buffer
     ///
-    /// The format of the returned samples is 16 bits signed integer
-    /// (sf::Int16). The total number of samples in this array
-    /// is given by the getSampleCount() function.
+    /// The format of the returned samples is 16 bits signed integer.
+    /// The total number of samples in this array is given by the
+    /// getSampleCount() function.
     ///
     /// \return Read-only pointer to the array of sound samples
     ///
     /// \see getSampleCount
     ///
     ////////////////////////////////////////////////////////////
-    const Int16* getSamples() const;
+    const std::int16_t* getSamples() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of samples stored in the buffer
@@ -174,7 +178,7 @@ public:
     /// \see getSamples
     ///
     ////////////////////////////////////////////////////////////
-    Uint64 getSampleCount() const;
+    std::uint64_t getSampleCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sample rate of the sound
@@ -221,10 +225,9 @@ public:
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    SoundBuffer& operator =(const SoundBuffer& right);
+    SoundBuffer& operator=(const SoundBuffer& right);
 
 private:
-
     friend class Sound;
 
     ////////////////////////////////////////////////////////////
@@ -235,7 +238,7 @@ private:
     /// \return True on successful initialization, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool initialize(InputSoundFile& file);
+    [[nodiscard]] bool initialize(InputSoundFile& file);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the internal buffer with the cached audio samples
@@ -246,7 +249,7 @@ private:
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    bool update(unsigned int channelCount, unsigned int sampleRate);
+    [[nodiscard]] bool update(unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Add a sound to the list of sounds that use this buffer
@@ -267,21 +270,18 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::set<Sound*> SoundList; ///< Set of unique sound instances
+    using SoundList = std::unordered_set<Sound*>; //!< Set of unique sound instances
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int       m_buffer;   ///< OpenAL buffer identifier
-    std::vector<Int16> m_samples;  ///< Samples buffer
-    Time               m_duration; ///< Sound duration
-    mutable SoundList  m_sounds;   ///< List of sounds that are using this buffer
+    unsigned int              m_buffer{}; //!< OpenAL buffer identifier
+    std::vector<std::int16_t> m_samples;  //!< Samples buffer
+    Time                      m_duration; //!< Sound duration
+    mutable SoundList         m_sounds;   //!< List of sounds that are using this buffer
 };
 
 } // namespace sf
-
-
-#endif // SFML_SOUNDBUFFER_HPP
 
 
 ////////////////////////////////////////////////////////////

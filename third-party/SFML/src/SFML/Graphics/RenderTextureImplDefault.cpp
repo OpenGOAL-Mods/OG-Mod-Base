@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,33 +25,24 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderTextureImplDefault.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/RenderTextureImplDefault.hpp>
 #include <SFML/Graphics/TextureSaver.hpp>
+
 #include <SFML/Window/Context.hpp>
-#include <SFML/System/Err.hpp>
+#include <SFML/Window/ContextSettings.hpp>
+
+#include <memory>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::RenderTextureImplDefault() :
-m_context(0),
-m_width  (0),
-m_height (0)
-{
-
-}
+RenderTextureImplDefault::RenderTextureImplDefault() = default;
 
 
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::~RenderTextureImplDefault()
-{
-    // Destroy the context
-    delete m_context;
-}
+RenderTextureImplDefault::~RenderTextureImplDefault() = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -65,14 +56,13 @@ unsigned int RenderTextureImplDefault::getMaximumAntialiasingLevel()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::create(unsigned int width, unsigned int height, unsigned int, const ContextSettings& settings)
+bool RenderTextureImplDefault::create(const Vector2u& size, unsigned int, const ContextSettings& settings)
 {
     // Store the dimensions
-    m_width = width;
-    m_height = height;
+    m_size = size;
 
     // Create the in-memory OpenGL context
-    m_context = new Context(settings, width, height);
+    m_context = std::make_unique<Context>(settings, size);
 
     return true;
 }
@@ -86,16 +76,22 @@ bool RenderTextureImplDefault::activate(bool active)
 
 
 ////////////////////////////////////////////////////////////
+bool RenderTextureImplDefault::isSrgb() const
+{
+    return m_context->getSettings().sRgbCapable;
+}
+
+
+////////////////////////////////////////////////////////////
 void RenderTextureImplDefault::updateTexture(unsigned int textureId)
 {
     // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
+    const priv::TextureSaver save;
 
     // Copy the rendered pixels to the texture
     glCheck(glBindTexture(GL_TEXTURE_2D, textureId));
-    glCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_width, m_height));
+    glCheck(
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, static_cast<GLsizei>(m_size.x), static_cast<GLsizei>(m_size.y)));
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

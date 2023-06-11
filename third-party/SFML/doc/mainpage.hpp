@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////
-/// \mainpage
+/// \mainpage SFML Documentation
 ///
 /// \section welcome Welcome
 /// Welcome to the official SFML documentation. Here you will find a detailed
-/// view of all the SFML <a href="./annotated.php">classes</a> and functions. <br/>
+/// view of all the SFML classes and functions. <br/>
 /// If you are looking for tutorials, you can visit the official website
 /// at <a href="https://www.sfml-dev.org/">www.sfml-dev.org</a>.
 ///
@@ -18,7 +18,7 @@
 /// int main()
 /// {
 ///     // Create the main window
-///     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
+///     sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
 ///
 ///     // Load a sprite to display
 ///     sf::Texture texture;
@@ -30,7 +30,7 @@
 ///     sf::Font font;
 ///     if (!font.loadFromFile("arial.ttf"))
 ///         return EXIT_FAILURE;
-///     sf::Text text("Hello SFML", font, 50);
+///     sf::Text text(font, "Hello SFML", 50);
 ///
 ///     // Load a music to play
 ///     sf::Music music;
@@ -44,8 +44,7 @@
 ///     while (window.isOpen())
 ///     {
 ///         // Process events
-///         sf::Event event;
-///         while (window.pollEvent(event))
+///         for (sf::Event event; window.pollEvent(event);)
 ///         {
 ///             // Close window: exit
 ///             if (event.type == sf::Event::Closed)
@@ -64,8 +63,6 @@
 ///         // Update the window
 ///         window.display();
 ///     }
-///
-///     return EXIT_SUCCESS;
 /// }
 /// \endcode
 ////////////////////////////////////////////////////////////

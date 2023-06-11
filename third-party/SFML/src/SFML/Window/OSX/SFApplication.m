@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -28,13 +28,15 @@
 ////////////////////////////////////////////////////////////
 #import <SFML/Window/OSX/SFApplication.h>
 
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 
 ////////////////////////////////////////////////////////////
 @implementation SFApplication
 
 
 ////////////////////////////////////////////////////////////
-+(void)processEvent
++ (void)processEvent
 {
     [SFApplication sharedApplication]; // Make sure NSApp exists
     NSEvent* event = nil;
@@ -50,8 +52,10 @@
 
 
 ////////////////////////////////////////////////////////
-+(void)setUpMenuBar
++ (void)setUpMenuBar
 {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+
     [SFApplication sharedApplication]; // Make sure NSApp exists
 
     // Set the main menu bar
@@ -63,24 +67,26 @@
 
     // Application Menu (aka Apple Menu)
     NSMenuItem* appleItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* appleMenu = [[SFApplication newAppleMenu] autorelease];
+    NSMenu*     appleMenu = [[SFApplication newAppleMenu] autorelease];
     [appleItem setSubmenu:appleMenu];
 
     // File Menu
     NSMenuItem* fileItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* fileMenu = [[SFApplication newFileMenu] autorelease];
+    NSMenu*     fileMenu = [[SFApplication newFileMenu] autorelease];
     [fileItem setSubmenu:fileMenu];
 
     // Window menu
     NSMenuItem* windowItem = [mainMenu addItemWithTitle:@"" action:nil keyEquivalent:@""];
-    NSMenu* windowMenu = [[SFApplication newWindowMenu] autorelease];
+    NSMenu*     windowMenu = [[SFApplication newWindowMenu] autorelease];
     [windowItem setSubmenu:windowMenu];
     [NSApp setWindowsMenu:windowMenu];
+
+    [pool drain];
 }
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu*)newAppleMenu
++ (NSMenu*)newAppleMenu
 {
     // Apple menu is as follow:
     //
@@ -98,6 +104,8 @@
     //    --------------------
     //    Quit AppName      Command+Q
 
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+
     NSString* appName = [SFApplication applicationName];
 
     // APPLE MENU
@@ -112,18 +120,14 @@
     [appleMenu addItem:[NSMenuItem separatorItem]];
 
     // PREFERENCES
-    [appleMenu addItemWithTitle:@"Preferences..."
-                         action:nil
-                  keyEquivalent:@""];
+    [appleMenu addItemWithTitle:@"Preferences..." action:nil keyEquivalent:@""];
 
     // SEPARATOR
     [appleMenu addItem:[NSMenuItem separatorItem]];
 
     // SERVICES
-    NSMenu* serviceMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
-    NSMenuItem* serviceItem = [appleMenu addItemWithTitle:@"Services"
-                                                  action:nil
-                                           keyEquivalent:@""];
+    NSMenu*     serviceMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
+    NSMenuItem* serviceItem = [appleMenu addItemWithTitle:@"Services" action:nil keyEquivalent:@""];
     [serviceItem setSubmenu:serviceMenu];
     [NSApp setServicesMenu:serviceMenu];
 
@@ -131,20 +135,17 @@
     [appleMenu addItem:[NSMenuItem separatorItem]];
 
     // HIDE
-    [appleMenu addItemWithTitle:[@"Hide " stringByAppendingString:appName]
-                         action:@selector(hide:)
-                  keyEquivalent:@"h"];
+    [appleMenu addItemWithTitle:[@"Hide " stringByAppendingString:appName] action:@selector(hide:) keyEquivalent:@"h"];
 
     // HIDE OTHER
-    NSMenuItem* hideOtherItem = [appleMenu addItemWithTitle:@"Hide Others"
-                                                     action:@selector(hideOtherApplications:)
-                                              keyEquivalent:@"h"];
+    NSMenuItem* hideOtherItem = [appleMenu
+        addItemWithTitle:@"Hide Others"
+                  action:@selector(hideOtherApplications:)
+           keyEquivalent:@"h"];
     [hideOtherItem setKeyEquivalentModifierMask:(NSAlternateKeyMask | NSCommandKeyMask)];
 
     // SHOW ALL
-    [appleMenu addItemWithTitle:@"Show All"
-                         action:@selector(unhideAllApplications:)
-                  keyEquivalent:@""];
+    [appleMenu addItemWithTitle:@"Show All" action:@selector(unhideAllApplications:) keyEquivalent:@""];
 
     // SEPARATOR
     [appleMenu addItem:[NSMenuItem separatorItem]];
@@ -154,12 +155,14 @@
                          action:@selector(terminate:)
                   keyEquivalent:@"q"];
 
+    [pool drain];
+
     return appleMenu;
 }
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu*)newFileMenu
++ (NSMenu*)newFileMenu
 {
     // The File menu is as follow:
     //
@@ -170,9 +173,10 @@
     NSMenu* fileMenu = [[NSMenu alloc] initWithTitle:@"File"];
 
     // CLOSE WINDOW
-    NSMenuItem* closeItem = [[NSMenuItem alloc] initWithTitle:@"Close Window"
-                                                       action:@selector(performClose:)
-                                                keyEquivalent:@"w"];
+    NSMenuItem* closeItem = [[NSMenuItem alloc]
+        initWithTitle:@"Close Window"
+               action:@selector(performClose:)
+        keyEquivalent:@"w"];
     [fileMenu addItem:closeItem];
     [closeItem release];
 
@@ -181,7 +185,7 @@
 
 
 ////////////////////////////////////////////////////////
-+(NSMenu*)newWindowMenu
++ (NSMenu*)newWindowMenu
 {
     // The Window menu is as follow:
     //
@@ -195,31 +199,28 @@
     NSMenu* windowMenu = [[NSMenu alloc] initWithTitle:@"Window"];
 
     // MINIMIZE
-    NSMenuItem* minimizeItem = [[NSMenuItem alloc] initWithTitle:@"Minimize"
-                                                          action:@selector(performMiniaturize:)
-                                                   keyEquivalent:@"m"];
+    NSMenuItem* minimizeItem = [[NSMenuItem alloc]
+        initWithTitle:@"Minimize"
+               action:@selector(performMiniaturize:)
+        keyEquivalent:@"m"];
     [windowMenu addItem:minimizeItem];
     [minimizeItem release];
 
     // ZOOM
-    [windowMenu addItemWithTitle:@"Zoom"
-                          action:@selector(performZoom:)
-                   keyEquivalent:@""];
+    [windowMenu addItemWithTitle:@"Zoom" action:@selector(performZoom:) keyEquivalent:@""];
 
     // SEPARATOR
     [windowMenu addItem:[NSMenuItem separatorItem]];
 
     // BRING ALL TO FRONT
-    [windowMenu addItemWithTitle:@"Bring All to Front"
-                          action:@selector(bringAllToFront:)
-                   keyEquivalent:@""];
+    [windowMenu addItemWithTitle:@"Bring All to Front" action:@selector(bringAllToFront:) keyEquivalent:@""];
 
     return windowMenu;
 }
 
 
 ////////////////////////////////////////////////////////
-+(NSString*)applicationName
++ (NSString*)applicationName
 {
     // First, try localized name
     NSString* appName = [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey:@"CFBundleDisplayName"];
@@ -237,7 +238,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)bringAllToFront:(id)sender
+- (void)bringAllToFront:(id)sender
 {
     (void)sender;
     [[NSApp windows] makeObjectsPerformSelector:@selector(orderFrontRegardless)];
@@ -245,7 +246,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)sendEvent:(NSEvent *)anEvent
+- (void)sendEvent:(NSEvent*)anEvent
 {
     // Fullscreen windows have a strange behaviour with key up. To make
     // sure the user gets an event we call (if possible) sfKeyUp on our
@@ -262,5 +263,3 @@
 
 
 @end
-
-

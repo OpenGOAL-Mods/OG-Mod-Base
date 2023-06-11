@@ -2,9 +2,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iomanip>
 #include <iostream>
-#include <cstdlib>
 
 
 ////////////////////////////////////////////////////////////
@@ -29,7 +27,7 @@ int main()
     // Client or server ?
     char who;
     std::cout << "Do you want to be a server ('s') or a client ('c')? ";
-    std::cin  >> who;
+    std::cin >> who;
 
     if (who == 's')
     {
@@ -45,6 +43,4 @@ int main()
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;
     std::cin.ignore(10000, '\n');
-
-    return EXIT_SUCCESS;
 }

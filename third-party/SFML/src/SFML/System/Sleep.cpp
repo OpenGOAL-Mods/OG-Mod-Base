@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,11 +26,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Sleep.hpp>
+#include <SFML/System/Time.hpp>
 
 #if defined(SFML_SYSTEM_WINDOWS)
-    #include <SFML/System/Win32/SleepImpl.hpp>
+#include <SFML/System/Win32/SleepImpl.hpp>
 #else
-    #include <SFML/System/Unix/SleepImpl.hpp>
+#include <SFML/System/Unix/SleepImpl.hpp>
 #endif
 
 
@@ -39,6 +40,9 @@ namespace sf
 ////////////////////////////////////////////////////////////
 void sleep(Time duration)
 {
+    // Note that 'std::this_thread::sleep_for' is intentionally not used here
+    // as it results in inconsistent sleeping times under MinGW-w64.
+
     if (duration >= Time::Zero)
         priv::sleepImpl(duration);
 }

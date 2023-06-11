@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -23,8 +23,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SFCONTEXT_HPP
-#define SFML_SFCONTEXT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -37,26 +36,24 @@
 #ifdef __OBJC__
 
 @class NSOpenGLContext;
-typedef NSOpenGLContext* NSOpenGLContextRef;
+using NSOpenGLContextRef = NSOpenGLContext*;
 
 @class NSOpenGLView;
-typedef NSOpenGLView* NSOpenGLViewRef;
+using NSOpenGLViewRef = NSOpenGLView*;
 
 @class NSWindow;
-typedef NSWindow* NSWindowRef;
+using NSWindowRef = NSWindow*;
 
 #else // If C++
 
-typedef void* NSOpenGLContextRef;
-typedef void* NSOpenGLViewRef;
-typedef void* NSWindowRef;
+using NSOpenGLContextRef = void*;
+using NSOpenGLViewRef    = void*;
+using NSWindowRef        = void*;
 
 #endif
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief OSX (Cocoa) implementation of OpenGL contexts
@@ -68,7 +65,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context, not associated to a window
     ///
-    /// \param shared Context to share the new one with (can be NULL)
+    /// \param shared Context to share the new one with (can be a null pointer)
     ///
     ////////////////////////////////////////////////////////////
     SFContext(SFContext* shared);
@@ -82,26 +79,23 @@ public:
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    SFContext(SFContext* shared, const ContextSettings& settings,
-              const WindowImpl* owner, unsigned int bitsPerPixel);
+    SFContext(SFContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
     ///
     /// \param shared   Context to share the new one with
     /// \param settings Creation parameters
-    /// \param width    Back buffer width, in pixels
-    /// \param height   Back buffer height, in pixels
+    /// \param size     Back buffer width and height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    SFContext(SFContext* shared, const ContextSettings& settings,
-              unsigned int width, unsigned int height);
+    SFContext(SFContext* shared, const ContextSettings& settings, const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~SFContext();
+    ~SFContext() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of an OpenGL function
@@ -117,7 +111,7 @@ public:
     /// \brief Display what has been rendered to the context so far
     ///
     ////////////////////////////////////////////////////////////
-    virtual void display();
+    void display() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
@@ -130,7 +124,7 @@ public:
     /// \param enabled True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setVerticalSyncEnabled(bool enabled);
+    void setVerticalSyncEnabled(bool enabled) override;
 
 protected:
     ////////////////////////////////////////////////////////////
@@ -142,32 +136,26 @@ protected:
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool makeCurrent(bool current);
+    bool makeCurrent(bool current) override;
 
 private:
     ////////////////////////////////////////////////////////////
     /// \brief Create the context
     /// \note Must only be called from Ctor.
     ///
-    /// \param shared       Context to share the new one with (can be NULL)
+    /// \param shared       Context to share the new one with (can be a null pointer)
     /// \param bitsPerPixel bpp
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    void createContext(SFContext* shared,
-                       unsigned int bitsPerPixel,
-                       const ContextSettings& settings);
+    void createContext(SFContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    NSOpenGLContextRef    m_context;       ///< OpenGL context.
-    NSOpenGLViewRef       m_view;          ///< Only for offscreen context.
-    NSWindowRef           m_window;        ///< Only for offscreen context.
+    NSOpenGLContextRef m_context{}; ///< OpenGL context.
+    NSOpenGLViewRef    m_view{};    ///< Only for offscreen context.
+    NSWindowRef        m_window{};  ///< Only for offscreen context.
 };
 
-} // namespace priv
-
-} // namespace sf
-
-#endif // SFML_SFCONTEXT_HPP
+} // namespace sf::priv

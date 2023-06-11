@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,25 +22,25 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOCKETIMPL_HPP
-#define SFML_SOCKETIMPL_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Socket.hpp>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
+
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 #include <unistd.h>
 
+#include <cstdint>
 
-namespace sf
-{
-namespace priv
+
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Helper class implementing all the non-portable
@@ -50,11 +50,11 @@ namespace priv
 class SocketImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef socklen_t AddrLength;
+    using AddrLength = socklen_t;
+    using Size       = std::size_t;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create an internal sockaddr_in address
@@ -65,7 +65,7 @@ public:
     /// \return sockaddr_in ready to be used by socket functions
     ///
     ////////////////////////////////////////////////////////////
-    static sockaddr_in createAddress(Uint32 address, unsigned short port);
+    static sockaddr_in createAddress(std::uint32_t address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the value of the invalid socket
@@ -101,9 +101,4 @@ public:
     static Socket::Status getErrorStatus();
 };
 
-} // namespace priv
-
-} // namespace sf
-
-
-#endif // SFML_SOCKETIMPL_HPP
+} // namespace sf::priv

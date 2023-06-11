@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,20 +22,23 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SHADER_HPP
-#define SFML_SHADER_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/Glsl.hpp>
+
 #include <SFML/Window/GlResource.hpp>
-#include <SFML/System/NonCopyable.hpp>
+
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
-#include <map>
+
+#include <filesystem>
 #include <string>
+#include <unordered_map>
 
 
 namespace sf
@@ -49,19 +52,18 @@ class Transform;
 /// \brief Shader class (vertex, geometry and fragment)
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Shader : GlResource, NonCopyable
+class SFML_GRAPHICS_API Shader : GlResource
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Types of shaders
     ///
     ////////////////////////////////////////////////////////////
     enum Type
     {
-        Vertex,   ///< %Vertex shader
-        Geometry, ///< Geometry shader
-        Fragment  ///< Fragment (pixel) shader
+        Vertex,   //!< %Vertex shader
+        Geometry, //!< Geometry shader
+        Fragment  //!< Fragment (pixel) shader
     };
 
     ////////////////////////////////////////////////////////////
@@ -71,7 +73,9 @@ public:
     /// \see setUniform(const std::string&, CurrentTextureType)
     ///
     ////////////////////////////////////////////////////////////
-    struct CurrentTextureType {};
+    struct CurrentTextureType
+    {
+    };
 
     ////////////////////////////////////////////////////////////
     /// \brief Represents the texture of the object being drawn
@@ -79,9 +83,8 @@ public:
     /// \see setUniform(const std::string&, CurrentTextureType)
     ///
     ////////////////////////////////////////////////////////////
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static CurrentTextureType CurrentTexture;
-
-public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -96,6 +99,31 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~Shader();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(const Shader&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader& operator=(const Shader&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(Shader&& source) noexcept;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader& operator=(Shader&& right) noexcept;
+
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a file
@@ -116,7 +144,7 @@ public:
     /// \see loadFromMemory, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromFile(const std::string& filename, Type type);
+    [[nodiscard]] bool loadFromFile(const std::filesystem::path& filename, Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load both the vertex and fragment shaders from files
@@ -137,7 +165,8 @@ public:
     /// \see loadFromMemory, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromFile(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
+    [[nodiscard]] bool loadFromFile(const std::filesystem::path& vertexShaderFilename,
+                                    const std::filesystem::path& fragmentShaderFilename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry and fragment shaders from files
@@ -159,7 +188,9 @@ public:
     /// \see loadFromMemory, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromFile(const std::string& vertexShaderFilename, const std::string& geometryShaderFilename, const std::string& fragmentShaderFilename);
+    [[nodiscard]] bool loadFromFile(const std::filesystem::path& vertexShaderFilename,
+                                    const std::filesystem::path& geometryShaderFilename,
+                                    const std::filesystem::path& fragmentShaderFilename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a source code in memory
@@ -179,7 +210,7 @@ public:
     /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromMemory(const std::string& shader, Type type);
+    [[nodiscard]] bool loadFromMemory(const std::string& shader, Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load both the vertex and fragment shaders from source codes in memory
@@ -200,7 +231,7 @@ public:
     /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromMemory(const std::string& vertexShader, const std::string& fragmentShader);
+    [[nodiscard]] bool loadFromMemory(const std::string& vertexShader, const std::string& fragmentShader);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry and fragment shaders from source codes in memory
@@ -222,7 +253,9 @@ public:
     /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromMemory(const std::string& vertexShader, const std::string& geometryShader, const std::string& fragmentShader);
+    [[nodiscard]] bool loadFromMemory(const std::string& vertexShader,
+                                      const std::string& geometryShader,
+                                      const std::string& fragmentShader);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a custom stream
@@ -242,7 +275,7 @@ public:
     /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromStream(InputStream& stream, Type type);
+    [[nodiscard]] bool loadFromStream(InputStream& stream, Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load both the vertex and fragment shaders from custom streams
@@ -263,7 +296,7 @@ public:
     /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream);
+    [[nodiscard]] bool loadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry and fragment shaders from custom streams
@@ -285,7 +318,9 @@ public:
     /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromStream(InputStream& vertexShaderStream, InputStream& geometryShaderStream, InputStream& fragmentShaderStream);
+    [[nodiscard]] bool loadFromStream(InputStream& vertexShaderStream,
+                                      InputStream& geometryShaderStream,
+                                      InputStream& fragmentShaderStream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Specify value for \p float uniform
@@ -463,6 +498,12 @@ public:
     void setUniform(const std::string& name, const Texture& texture);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Disallow setting from a temporary texture
+    ///
+    ////////////////////////////////////////////////////////////
+    void setUniform(const std::string& name, Texture&& texture) = delete;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Specify current texture as \p sampler2D uniform
     ///
     /// This overload maps a shader texture variable to the
@@ -546,86 +587,6 @@ public:
     void setUniformArray(const std::string& name, const Glsl::Mat4* matrixArray, std::size_t length);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Change a float parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, float) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, float x);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a 2-components vector parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Vec2&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, float x, float y);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a 3-components vector parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Vec3&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, float x, float y, float z);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a 4-components vector parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Vec4&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, float x, float y, float z, float w);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a 2-components vector parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Vec2&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, const Vector2f& vector);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a 3-components vector parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Vec3&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, const Vector3f& vector);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a color parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Vec4&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, const Color& color);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a matrix parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Mat4&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, const Transform& transform);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a texture parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Texture&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, const Texture& texture);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a texture parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, CurrentTextureType) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, CurrentTextureType);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Get the underlying OpenGL handle of the shader.
     ///
     /// You shouldn't need to use this function, unless you have
@@ -651,7 +612,7 @@ public:
     /// // draw OpenGL stuff that use s1...
     /// sf::Shader::bind(&s2);
     /// // draw OpenGL stuff that use s2...
-    /// sf::Shader::bind(NULL);
+    /// sf::Shader::bind(nullptr);
     /// // draw OpenGL stuff that use no shader...
     /// \endcode
     ///
@@ -692,11 +653,10 @@ public:
     static bool isGeometryAvailable();
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Compile the shader(s) and create the program
     ///
-    /// If one of the arguments is NULL, the corresponding shader
+    /// If one of the arguments is a null pointer, the corresponding shader
     /// is not created.
     ///
     /// \param vertexShaderCode   Source code of the vertex shader
@@ -706,7 +666,7 @@ private:
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    bool compile(const char* vertexShaderCode, const char* geometryShaderCode, const char* fragmentShaderCode);
+    [[nodiscard]] bool compile(const char* vertexShaderCode, const char* geometryShaderCode, const char* fragmentShaderCode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind all the textures used by the shader
@@ -739,22 +699,19 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::map<int, const Texture*> TextureTable;
-    typedef std::map<std::string, int> UniformTable;
+    using TextureTable = std::unordered_map<int, const Texture*>;
+    using UniformTable = std::unordered_map<std::string, int>;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_shaderProgram;  ///< OpenGL identifier for the program
-    int          m_currentTexture; ///< Location of the current texture in the shader
-    TextureTable m_textures;       ///< Texture variables in the shader, mapped to their location
-    UniformTable m_uniforms;       ///< Parameters location cache
+    unsigned int m_shaderProgram{};    //!< OpenGL identifier for the program
+    int          m_currentTexture{-1}; //!< Location of the current texture in the shader
+    TextureTable m_textures;           //!< Texture variables in the shader, mapped to their location
+    UniformTable m_uniforms;           //!< Parameters location cache
 };
 
 } // namespace sf
-
-
-#endif // SFML_SHADER_HPP
 
 
 ////////////////////////////////////////////////////////////
@@ -814,9 +771,6 @@ private:
 /// shader.setUniform("current", sf::Shader::CurrentTexture);
 /// \endcode
 ///
-/// The old setParameter() overloads are deprecated and will be removed in a
-/// future version. You should use their setUniform() equivalents instead.
-///
 /// The special Shader::CurrentTexture argument maps the
 /// given \p sampler2D uniform to the current texture of the
 /// object being drawn (which cannot be known in advance).
@@ -867,7 +821,7 @@ private:
 /// \code
 /// sf::Shader::bind(&shader);
 /// ... render OpenGL geometry ...
-/// sf::Shader::bind(NULL);
+/// sf::Shader::bind(nullptr);
 /// \endcode
 ///
 /// \see sf::Glsl

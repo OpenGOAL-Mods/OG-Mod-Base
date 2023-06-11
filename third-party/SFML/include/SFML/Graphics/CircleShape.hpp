@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,13 +22,13 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CIRCLESHAPE_HPP
-#define SFML_CIRCLESHAPE_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/Shape.hpp>
 
 
@@ -41,7 +41,6 @@ namespace sf
 class SFML_GRAPHICS_API CircleShape : public Shape
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -89,7 +88,7 @@ public:
     /// \see setPointCount
     ///
     ////////////////////////////////////////////////////////////
-    virtual std::size_t getPointCount() const;
+    std::size_t getPointCount() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the circle
@@ -104,21 +103,29 @@ public:
     /// \return index-th point of the shape
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2f getPoint(std::size_t index) const;
+    Vector2f getPoint(std::size_t index) const override;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the geometric center of the circle
+    ///
+    /// The returned point is in local coordinates, that is,
+    /// the shape's transforms (position, rotation, scale) are
+    /// not taken into account.
+    ///
+    /// \return The geometric center of the shape
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2f getGeometricCenter() const override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    float       m_radius;     ///< Radius of the circle
-    std::size_t m_pointCount; ///< Number of points composing the circle
+    float       m_radius;     //!< Radius of the circle
+    std::size_t m_pointCount; //!< Number of points composing the circle
 };
 
 } // namespace sf
-
-
-#endif // SFML_CIRCLESHAPE_HPP
 
 
 ////////////////////////////////////////////////////////////

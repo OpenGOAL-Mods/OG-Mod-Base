@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,17 +22,20 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOUNDSTREAM_HPP
-#define SFML_SOUNDSTREAM_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+
 #include <SFML/Audio/SoundSource.hpp>
-#include <SFML/System/Thread.hpp>
+
 #include <SFML/System/Time.hpp>
-#include <SFML/System/Mutex.hpp>
+
+#include <mutex>
+#include <thread>
+
 #include <cstdlib>
 
 
@@ -45,22 +48,21 @@ namespace sf
 class SFML_AUDIO_API SoundStream : public SoundSource
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a chunk of audio data to stream
     ///
     ////////////////////////////////////////////////////////////
     struct Chunk
     {
-        const Int16* samples;     ///< Pointer to the audio samples
-        std::size_t  sampleCount; ///< Number of samples pointed by Samples
+        const std::int16_t* samples;     //!< Pointer to the audio samples
+        std::size_t         sampleCount; //!< Number of samples pointed by Samples
     };
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~SoundStream();
+    ~SoundStream() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Start or resume playing the audio stream
@@ -74,7 +76,7 @@ public:
     /// \see pause, stop
     ///
     ////////////////////////////////////////////////////////////
-    void play();
+    void play() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Pause the audio stream
@@ -85,7 +87,7 @@ public:
     /// \see play, stop
     ///
     ////////////////////////////////////////////////////////////
-    void pause();
+    void pause() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop playing the audio stream
@@ -97,7 +99,7 @@ public:
     /// \see play, pause
     ///
     ////////////////////////////////////////////////////////////
-    void stop();
+    void stop() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the number of channels of the stream
@@ -126,7 +128,7 @@ public:
     /// \return Current status
     ///
     ////////////////////////////////////////////////////////////
-    Status getStatus() const;
+    Status getStatus() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position of the stream
@@ -179,10 +181,9 @@ public:
     bool getLoop() const;
 
 protected:
-
     enum
     {
-        NoLoop = -1 ///< "Invalid" endSeeks value, telling us to continue uninterrupted
+        NoLoop = -1 //!< "Invalid" endSeeks value, telling us to continue uninterrupted
     };
 
     ////////////////////////////////////////////////////////////
@@ -226,7 +227,7 @@ protected:
     /// \return True to continue playback, false to stop
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool onGetData(Chunk& data) = 0;
+    [[nodiscard]] virtual bool onGetData(Chunk& data) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source
@@ -249,10 +250,23 @@ protected:
     /// \return The seek position after looping (or -1 if there's no loop)
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 onLoop();
+    virtual std::int64_t onLoop();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the processing interval
+    ///
+    /// The processing interval controls the period at which the
+    /// audio buffers are filled by calls to onGetData. A smaller
+    /// interval may be useful for low-latency streams. Note that
+    /// the given period is only a hint and the actual period may
+    /// vary. The default processing interval is 10 ms.
+    ///
+    /// \param interval Processing interval
+    ///
+    ////////////////////////////////////////////////////////////
+    void setProcessingInterval(Time interval);
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Function called as the entry point of the thread
     ///
@@ -276,7 +290,7 @@ private:
     /// \return True if the stream source has requested to stop, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop = false);
+    [[nodiscard]] bool fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Fill the audio buffers and put them all into the playing queue
@@ -287,7 +301,7 @@ private:
     /// \return True if the derived class has requested to stop, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool fillQueue();
+    [[nodiscard]] bool fillQueue();
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear all the audio buffers and empty the playing queue
@@ -297,32 +311,47 @@ private:
     ////////////////////////////////////////////////////////////
     void clearQueue();
 
-    enum
-    {
-        BufferCount = 3,    ///< Number of audio buffers used by the streaming loop
-        BufferRetries = 2   ///< Number of retries (excluding initial try) for onGetData()
-    };
+    ////////////////////////////////////////////////////////////
+    /// \brief Launch a new stream thread running 'streamData'
+    ///
+    /// This function is called when the stream is played or
+    /// when the playing offset is changed.
+    ///
+    ////////////////////////////////////////////////////////////
+    void launchStreamingThread(Status threadStartState);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Stop streaming and wait for 'm_thread' to join
+    ///
+    /// This function is called when the playback is stopped or
+    /// when the sound stream is destroyed.
+    ///
+    ////////////////////////////////////////////////////////////
+    void awaitStreamingThread();
+
+    // NOLINTBEGIN(readability-identifier-naming)
+    static constexpr unsigned int BufferCount{3};   //!< Number of audio buffers used by the streaming loop
+    static constexpr unsigned int BufferRetries{2}; //!< Number of retries (excluding initial try) for onGetData()
+    // NOLINTEND(readability-identifier-naming)
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Thread        m_thread;                   ///< Thread running the background tasks
-    mutable Mutex m_threadMutex;              ///< Thread mutex
-    Status        m_threadStartState;         ///< State the thread starts in (Playing, Paused, Stopped)
-    bool          m_isStreaming;              ///< Streaming state (true = playing, false = stopped)
-    unsigned int  m_buffers[BufferCount];     ///< Sound buffers used to store temporary audio data
-    unsigned int  m_channelCount;             ///< Number of channels (1 = mono, 2 = stereo, ...)
-    unsigned int  m_sampleRate;               ///< Frequency (samples / second)
-    Uint32        m_format;                   ///< Format of the internal sound buffers
-    bool          m_loop;                     ///< Loop flag (true to loop, false to play once)
-    Uint64        m_samplesProcessed;         ///< Number of buffers processed since beginning of the stream
-    Int64         m_bufferSeeks[BufferCount]; ///< If buffer is an "end buffer", holds next seek position, else NoLoop. For play offset calculation.
+    std::thread                  m_thread;                    //!< Thread running the background tasks
+    mutable std::recursive_mutex m_threadMutex;               //!< Thread mutex
+    Status                       m_threadStartState{Stopped}; //!< State the thread starts in (Playing, Paused, Stopped)
+    bool                         m_isStreaming{};             //!< Streaming state (true = playing, false = stopped)
+    unsigned int                 m_buffers[BufferCount]{};    //!< Sound buffers used to store temporary audio data
+    unsigned int                 m_channelCount{};            //!< Number of channels (1 = mono, 2 = stereo, ...)
+    unsigned int                 m_sampleRate{};              //!< Frequency (samples / second)
+    std::int32_t                 m_format{};                  //!< Format of the internal sound buffers
+    bool                         m_loop{};                    //!< Loop flag (true to loop, false to play once)
+    std::uint64_t                m_samplesProcessed{}; //!< Number of samples processed since beginning of the stream
+    std::int64_t                 m_bufferSeeks[BufferCount]{}; //!< If buffer is an "end buffer", holds next seek position, else NoLoop. For play offset calculation.
+    Time m_processingInterval{milliseconds(10)}; //!< Interval for checking and filling the internal sound buffers.
 };
 
 } // namespace sf
-
-
-#endif // SFML_SOUNDSTREAM_HPP
 
 
 ////////////////////////////////////////////////////////////
@@ -363,7 +392,7 @@ private:
 /// {
 /// public:
 ///
-///     bool open(const std::string& location)
+///     [[nodiscard]] bool open(const std::string& location)
 ///     {
 ///         // Open the source and get audio settings
 ///         ...
@@ -372,27 +401,28 @@ private:
 ///
 ///         // Initialize the stream -- important!
 ///         initialize(channelCount, sampleRate);
+///         return true;
 ///     }
 ///
 /// private:
 ///
-///     virtual bool onGetData(Chunk& data)
+///     bool onGetData(Chunk& data) override
 ///     {
 ///         // Fill the chunk with audio data from the stream source
 ///         // (note: must not be empty if you want to continue playing)
 ///         data.samples = ...;
-///         data.sampleCount = ...;
 ///
 ///         // Return true to continue playing
+///         data.sampleCount = ...;
 ///         return true;
 ///     }
 ///
-///     virtual void onSeek(Uint32 timeOffset)
+///     void onSeek(sf::Time timeOffset) override
 ///     {
 ///         // Change the current position in the stream source
 ///         ...
 ///     }
-/// }
+/// };
 ///
 /// // Usage
 /// CustomStream stream;

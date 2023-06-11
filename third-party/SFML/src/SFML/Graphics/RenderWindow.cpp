@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,26 +25,26 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/RenderTextureImplFBO.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
-#include <SFML/Graphics/RenderTextureImplFBO.hpp>
+
+#include <SFML/Window/VideoMode.hpp>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-RenderWindow::RenderWindow()
-{
-    // Nothing to do
-}
+RenderWindow::RenderWindow() = default;
 
 
 ////////////////////////////////////////////////////////////
-RenderWindow::RenderWindow(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings)
+RenderWindow::RenderWindow(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& settings)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    create(mode, title, style, settings);
+    Window::create(mode, title, style, settings);
 }
 
 
@@ -52,15 +52,12 @@ RenderWindow::RenderWindow(VideoMode mode, const String& title, Uint32 style, co
 RenderWindow::RenderWindow(WindowHandle handle, const ContextSettings& settings)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    create(handle, settings);
+    Window::create(handle, settings);
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderWindow::~RenderWindow()
-{
-    // Nothing to do
-}
+RenderWindow::~RenderWindow() = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -71,19 +68,33 @@ Vector2u RenderWindow::getSize() const
 
 
 ////////////////////////////////////////////////////////////
+void RenderWindow::setIcon(const Image& icon)
+{
+    setIcon(icon.getSize(), icon.getPixelsPtr());
+}
+
+
+////////////////////////////////////////////////////////////
+bool RenderWindow::isSrgb() const
+{
+    return getSettings().sRgbCapable;
+}
+
+
+////////////////////////////////////////////////////////////
 bool RenderWindow::setActive(bool active)
 {
     bool result = Window::setActive(active);
 
     // Update RenderTarget tracking
     if (result)
-        RenderTarget::setActive(active);
+        result = RenderTarget::setActive(active);
 
     // If FBOs are available, make sure none are bound when we
     // try to draw to the default framebuffer of the RenderWindow
     if (active && result && priv::RenderTextureImplFBO::isAvailable())
     {
-        priv::RenderTextureImplFBO::unbind();
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, m_defaultFrameBuffer));
 
         return true;
     }
@@ -93,21 +104,15 @@ bool RenderWindow::setActive(bool active)
 
 
 ////////////////////////////////////////////////////////////
-Image RenderWindow::capture() const
-{
-    Vector2u windowSize = getSize();
-
-    Texture texture;
-    texture.create(windowSize.x, windowSize.y);
-    texture.update(*this);
-
-    return texture.copyToImage();
-}
-
-
-////////////////////////////////////////////////////////////
 void RenderWindow::onCreate()
 {
+    if (priv::RenderTextureImplFBO::isAvailable())
+    {
+        // Retrieve the framebuffer ID we have to bind when targeting the window for rendering
+        // We assume that this window's context is still active at this point
+        glCheck(glGetIntegerv(GLEXT_GL_FRAMEBUFFER_BINDING, reinterpret_cast<GLint*>(&m_defaultFrameBuffer)));
+    }
+
     // Just initialize the render target part
     RenderTarget::initialize();
 }

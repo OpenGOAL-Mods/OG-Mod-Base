@@ -225,10 +225,7 @@ add_library(runtime STATIC ${RUNTIME_SOURCE} "../third-party/glad/src/glad.c")
 
 
 
-
-
-
-target_link_libraries(runtime common fmt SDL2::SDL2 imgui discord-rpc sound stb_image libco SQLiteCpp sfml-system smfl-audio)
+target_link_libraries(runtime common fmt SDL2::SDL2 imgui discord-rpc sound stb_image libco SQLiteCpp SFML::Audio)
 
 if(WIN32)
 target_link_libraries(runtime mman )
@@ -237,5 +234,8 @@ else()
 endif()
 
 add_executable(gk main.cpp)
-target_link_libraries(gk runtime )
+target_link_libraries(gk runtime)
 
+if(CMAKE_IMPORT_LIBRARY_SUFFIX)
+  add_custom_command(TARGET gk POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:gk> $<TARGET_FILE_DIR:gk> COMMAND_EXPAND_LISTS)
+endif()

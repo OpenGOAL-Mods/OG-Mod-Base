@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,7 +27,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/SocketImpl.hpp>
+
 #include <SFML/System/String.hpp>
+#include <SFML/System/Utils.hpp>
+
 #include <cstring>
 #include <cwchar>
 
@@ -35,20 +38,27 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Packet::Packet() :
-m_readPos(0),
-m_sendPos(0),
-m_isValid(true)
-{
-
-}
+Packet::Packet() = default;
 
 
 ////////////////////////////////////////////////////////////
-Packet::~Packet()
-{
+Packet::~Packet() = default;
 
-}
+
+////////////////////////////////////////////////////////////
+Packet::Packet(const Packet&) = default;
+
+
+////////////////////////////////////////////////////////////
+Packet& Packet::operator=(const Packet&) = default;
+
+
+////////////////////////////////////////////////////////////
+Packet::Packet(Packet&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
+Packet& Packet::operator=(Packet&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -56,10 +66,17 @@ void Packet::append(const void* data, std::size_t sizeInBytes)
 {
     if (data && (sizeInBytes > 0))
     {
-        std::size_t start = m_data.size();
+        const std::size_t start = m_data.size();
         m_data.resize(start + sizeInBytes);
         std::memcpy(&m_data[start], data, sizeInBytes);
     }
+}
+
+
+////////////////////////////////////////////////////////////
+std::size_t Packet::getReadPosition() const
+{
+    return m_readPos;
 }
 
 
@@ -75,7 +92,7 @@ void Packet::clear()
 ////////////////////////////////////////////////////////////
 const void* Packet::getData() const
 {
-    return !m_data.empty() ? &m_data[0] : NULL;
+    return !m_data.empty() ? m_data.data() : nullptr;
 }
 
 
@@ -94,16 +111,16 @@ bool Packet::endOfPacket() const
 
 
 ////////////////////////////////////////////////////////////
-Packet::operator BoolType() const
+Packet::operator bool() const
 {
-    return m_isValid ? &Packet::checkSize : NULL;
+    return m_isValid;
 }
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(bool& data)
+Packet& Packet::operator>>(bool& data)
 {
-    Uint8 value;
+    std::uint8_t value;
     if (*this >> value)
         data = (value != 0);
 
@@ -112,11 +129,11 @@ Packet& Packet::operator >>(bool& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(Int8& data)
+Packet& Packet::operator>>(std::int8_t& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const Int8*>(&m_data[m_readPos]);
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
         m_readPos += sizeof(data);
     }
 
@@ -125,11 +142,11 @@ Packet& Packet::operator >>(Int8& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(Uint8& data)
+Packet& Packet::operator>>(std::uint8_t& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const Uint8*>(&m_data[m_readPos]);
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
         m_readPos += sizeof(data);
     }
 
@@ -138,11 +155,12 @@ Packet& Packet::operator >>(Uint8& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(Int16& data)
+Packet& Packet::operator>>(std::int16_t& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = ntohs(*reinterpret_cast<const Int16*>(&m_data[m_readPos]));
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
+        data = static_cast<std::int16_t>(ntohs(static_cast<std::uint16_t>(data)));
         m_readPos += sizeof(data);
     }
 
@@ -151,11 +169,12 @@ Packet& Packet::operator >>(Int16& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(Uint16& data)
+Packet& Packet::operator>>(std::uint16_t& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = ntohs(*reinterpret_cast<const Uint16*>(&m_data[m_readPos]));
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
+        data = ntohs(data);
         m_readPos += sizeof(data);
     }
 
@@ -164,11 +183,12 @@ Packet& Packet::operator >>(Uint16& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(Int32& data)
+Packet& Packet::operator>>(std::int32_t& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = ntohl(*reinterpret_cast<const Int32*>(&m_data[m_readPos]));
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
+        data = static_cast<std::int32_t>(ntohl(static_cast<std::uint32_t>(data)));
         m_readPos += sizeof(data);
     }
 
@@ -177,11 +197,12 @@ Packet& Packet::operator >>(Int32& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(Uint32& data)
+Packet& Packet::operator>>(std::uint32_t& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = ntohl(*reinterpret_cast<const Uint32*>(&m_data[m_readPos]));
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
+        data = ntohl(data);
         m_readPos += sizeof(data);
     }
 
@@ -190,44 +211,17 @@ Packet& Packet::operator >>(Uint32& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(Int64& data)
-{
-    if (checkSize(sizeof(data)))
-    {
-        // Since ntohll is not available everywhere, we have to convert
-        // to network byte order (big endian) manually
-        const Uint8* bytes = reinterpret_cast<const Uint8*>(&m_data[m_readPos]);
-        data = (static_cast<Int64>(bytes[0]) << 56) |
-               (static_cast<Int64>(bytes[1]) << 48) |
-               (static_cast<Int64>(bytes[2]) << 40) |
-               (static_cast<Int64>(bytes[3]) << 32) |
-               (static_cast<Int64>(bytes[4]) << 24) |
-               (static_cast<Int64>(bytes[5]) << 16) |
-               (static_cast<Int64>(bytes[6]) <<  8) |
-               (static_cast<Int64>(bytes[7])      );
-        m_readPos += sizeof(data);
-    }
-
-    return *this;
-}
-
-
-////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(Uint64& data)
+Packet& Packet::operator>>(std::int64_t& data)
 {
     if (checkSize(sizeof(data)))
     {
         // Since ntohll is not available everywhere, we have to convert
         // to network byte order (big endian) manually
-        const Uint8* bytes = reinterpret_cast<const Uint8*>(&m_data[m_readPos]);
-        data = (static_cast<Uint64>(bytes[0]) << 56) |
-               (static_cast<Uint64>(bytes[1]) << 48) |
-               (static_cast<Uint64>(bytes[2]) << 40) |
-               (static_cast<Uint64>(bytes[3]) << 32) |
-               (static_cast<Uint64>(bytes[4]) << 24) |
-               (static_cast<Uint64>(bytes[5]) << 16) |
-               (static_cast<Uint64>(bytes[6]) <<  8) |
-               (static_cast<Uint64>(bytes[7])      );
+        std::byte bytes[sizeof(data)];
+        std::memcpy(bytes, &m_data[m_readPos], sizeof(data));
+
+        data = toInteger<std::int64_t>(bytes[7], bytes[6], bytes[5], bytes[4], bytes[3], bytes[2], bytes[1], bytes[0]);
+
         m_readPos += sizeof(data);
     }
 
@@ -236,11 +230,17 @@ Packet& Packet::operator >>(Uint64& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(float& data)
+Packet& Packet::operator>>(std::uint64_t& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const float*>(&m_data[m_readPos]);
+        // Since ntohll is not available everywhere, we have to convert
+        // to network byte order (big endian) manually
+        std::byte bytes[sizeof(data)];
+        std::memcpy(bytes, &m_data[m_readPos], sizeof(data));
+
+        data = toInteger<std::uint64_t>(bytes[7], bytes[6], bytes[5], bytes[4], bytes[3], bytes[2], bytes[1], bytes[0]);
+
         m_readPos += sizeof(data);
     }
 
@@ -249,11 +249,11 @@ Packet& Packet::operator >>(float& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(double& data)
+Packet& Packet::operator>>(float& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const double*>(&m_data[m_readPos]);
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
         m_readPos += sizeof(data);
     }
 
@@ -262,10 +262,23 @@ Packet& Packet::operator >>(double& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(char* data)
+Packet& Packet::operator>>(double& data)
+{
+    if (checkSize(sizeof(data)))
+    {
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
+        m_readPos += sizeof(data);
+    }
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Packet& Packet::operator>>(char* data)
 {
     // First extract string length
-    Uint32 length = 0;
+    std::uint32_t length = 0;
     *this >> length;
 
     if ((length > 0) && checkSize(length))
@@ -283,17 +296,17 @@ Packet& Packet::operator >>(char* data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(std::string& data)
+Packet& Packet::operator>>(std::string& data)
 {
     // First extract string length
-    Uint32 length = 0;
+    std::uint32_t length = 0;
     *this >> length;
 
     data.clear();
     if ((length > 0) && checkSize(length))
     {
         // Then extract characters
-        data.assign(&m_data[m_readPos], length);
+        data.assign(reinterpret_cast<char*>(&m_data[m_readPos]), length);
 
         // Update reading position
         m_readPos += length;
@@ -304,18 +317,18 @@ Packet& Packet::operator >>(std::string& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(wchar_t* data)
+Packet& Packet::operator>>(wchar_t* data)
 {
     // First extract string length
-    Uint32 length = 0;
+    std::uint32_t length = 0;
     *this >> length;
 
-    if ((length > 0) && checkSize(length * sizeof(Uint32)))
+    if ((length > 0) && checkSize(length * sizeof(std::uint32_t)))
     {
         // Then extract characters
-        for (Uint32 i = 0; i < length; ++i)
+        for (std::uint32_t i = 0; i < length; ++i)
         {
-            Uint32 character = 0;
+            std::uint32_t character = 0;
             *this >> character;
             data[i] = static_cast<wchar_t>(character);
         }
@@ -327,19 +340,19 @@ Packet& Packet::operator >>(wchar_t* data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(std::wstring& data)
+Packet& Packet::operator>>(std::wstring& data)
 {
     // First extract string length
-    Uint32 length = 0;
+    std::uint32_t length = 0;
     *this >> length;
 
     data.clear();
-    if ((length > 0) && checkSize(length * sizeof(Uint32)))
+    if ((length > 0) && checkSize(length * sizeof(std::uint32_t)))
     {
         // Then extract characters
-        for (Uint32 i = 0; i < length; ++i)
+        for (std::uint32_t i = 0; i < length; ++i)
         {
-            Uint32 character = 0;
+            std::uint32_t character = 0;
             *this >> character;
             data += static_cast<wchar_t>(character);
         }
@@ -350,21 +363,21 @@ Packet& Packet::operator >>(std::wstring& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator >>(String& data)
+Packet& Packet::operator>>(String& data)
 {
     // First extract the string length
-    Uint32 length = 0;
+    std::uint32_t length = 0;
     *this >> length;
 
     data.clear();
-    if ((length > 0) && checkSize(length * sizeof(Uint32)))
+    if ((length > 0) && checkSize(length * sizeof(std::uint32_t)))
     {
         // Then extract characters
-        for (Uint32 i = 0; i < length; ++i)
+        for (std::uint32_t i = 0; i < length; ++i)
         {
-            Uint32 character = 0;
+            std::uint32_t character = 0;
             *this >> character;
-            data += character;
+            data += static_cast<char32_t>(character);
         }
     }
 
@@ -373,23 +386,15 @@ Packet& Packet::operator >>(String& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(bool data)
+Packet& Packet::operator<<(bool data)
 {
-    *this << static_cast<Uint8>(data);
+    *this << static_cast<std::uint8_t>(data);
     return *this;
 }
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(Int8 data)
-{
-    append(&data, sizeof(data));
-    return *this;
-}
-
-
-////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(Uint8 data)
+Packet& Packet::operator<<(std::int8_t data)
 {
     append(&data, sizeof(data));
     return *this;
@@ -397,85 +402,91 @@ Packet& Packet::operator <<(Uint8 data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(Int16 data)
+Packet& Packet::operator<<(std::uint8_t data)
 {
-    Int16 toWrite = htons(data);
+    append(&data, sizeof(data));
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Packet& Packet::operator<<(std::int16_t data)
+{
+    auto toWrite = static_cast<std::int16_t>(htons(static_cast<std::uint16_t>(data)));
     append(&toWrite, sizeof(toWrite));
     return *this;
 }
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(Uint16 data)
+Packet& Packet::operator<<(std::uint16_t data)
 {
-    Uint16 toWrite = htons(data);
+    std::uint16_t toWrite = htons(data);
     append(&toWrite, sizeof(toWrite));
     return *this;
 }
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(Int32 data)
+Packet& Packet::operator<<(std::int32_t data)
 {
-    Int32 toWrite = htonl(data);
+    auto toWrite = static_cast<std::int32_t>(htonl(static_cast<std::uint32_t>(data)));
     append(&toWrite, sizeof(toWrite));
     return *this;
 }
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(Uint32 data)
+Packet& Packet::operator<<(std::uint32_t data)
 {
-    Uint32 toWrite = htonl(data);
+    std::uint32_t toWrite = htonl(data);
     append(&toWrite, sizeof(toWrite));
     return *this;
 }
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(Int64 data)
+Packet& Packet::operator<<(std::int64_t data)
 {
     // Since htonll is not available everywhere, we have to convert
     // to network byte order (big endian) manually
-    Uint8 toWrite[] =
-    {
-        static_cast<Uint8>((data >> 56) & 0xFF),
-        static_cast<Uint8>((data >> 48) & 0xFF),
-        static_cast<Uint8>((data >> 40) & 0xFF),
-        static_cast<Uint8>((data >> 32) & 0xFF),
-        static_cast<Uint8>((data >> 24) & 0xFF),
-        static_cast<Uint8>((data >> 16) & 0xFF),
-        static_cast<Uint8>((data >>  8) & 0xFF),
-        static_cast<Uint8>((data      ) & 0xFF)
-    };
+
+    std::uint8_t toWrite[] = {static_cast<std::uint8_t>((data >> 56) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 48) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 40) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 32) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 24) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 16) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 8) & 0xFF),
+                              static_cast<std::uint8_t>((data)&0xFF)};
+
     append(&toWrite, sizeof(toWrite));
     return *this;
 }
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(Uint64 data)
+Packet& Packet::operator<<(std::uint64_t data)
 {
     // Since htonll is not available everywhere, we have to convert
     // to network byte order (big endian) manually
-    Uint8 toWrite[] =
-    {
-        static_cast<Uint8>((data >> 56) & 0xFF),
-        static_cast<Uint8>((data >> 48) & 0xFF),
-        static_cast<Uint8>((data >> 40) & 0xFF),
-        static_cast<Uint8>((data >> 32) & 0xFF),
-        static_cast<Uint8>((data >> 24) & 0xFF),
-        static_cast<Uint8>((data >> 16) & 0xFF),
-        static_cast<Uint8>((data >>  8) & 0xFF),
-        static_cast<Uint8>((data      ) & 0xFF)
-    };
+
+    std::uint8_t toWrite[] = {static_cast<std::uint8_t>((data >> 56) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 48) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 40) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 32) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 24) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 16) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 8) & 0xFF),
+                              static_cast<std::uint8_t>((data)&0xFF)};
+
     append(&toWrite, sizeof(toWrite));
     return *this;
 }
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(float data)
+Packet& Packet::operator<<(float data)
 {
     append(&data, sizeof(data));
     return *this;
@@ -483,7 +494,7 @@ Packet& Packet::operator <<(float data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(double data)
+Packet& Packet::operator<<(double data)
 {
     append(&data, sizeof(data));
     return *this;
@@ -491,10 +502,10 @@ Packet& Packet::operator <<(double data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(const char* data)
+Packet& Packet::operator<<(const char* data)
 {
     // First insert string length
-    Uint32 length = static_cast<Uint32>(std::strlen(data));
+    const auto length = static_cast<std::uint32_t>(std::strlen(data));
     *this << length;
 
     // Then insert characters
@@ -505,10 +516,10 @@ Packet& Packet::operator <<(const char* data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(const std::string& data)
+Packet& Packet::operator<<(const std::string& data)
 {
     // First insert string length
-    Uint32 length = static_cast<Uint32>(data.size());
+    const auto length = static_cast<std::uint32_t>(data.size());
     *this << length;
 
     // Then insert characters
@@ -520,32 +531,32 @@ Packet& Packet::operator <<(const std::string& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(const wchar_t* data)
+Packet& Packet::operator<<(const wchar_t* data)
 {
     // First insert string length
-    Uint32 length = static_cast<Uint32>(std::wcslen(data));
+    const auto length = static_cast<std::uint32_t>(std::wcslen(data));
     *this << length;
 
     // Then insert characters
     for (const wchar_t* c = data; *c != L'\0'; ++c)
-        *this << static_cast<Uint32>(*c);
+        *this << static_cast<std::uint32_t>(*c);
 
     return *this;
 }
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(const std::wstring& data)
+Packet& Packet::operator<<(const std::wstring& data)
 {
     // First insert string length
-    Uint32 length = static_cast<Uint32>(data.size());
+    const auto length = static_cast<std::uint32_t>(data.size());
     *this << length;
 
     // Then insert characters
     if (length > 0)
     {
-        for (std::wstring::const_iterator c = data.begin(); c != data.end(); ++c)
-            *this << static_cast<Uint32>(*c);
+        for (const wchar_t c : data)
+            *this << static_cast<std::uint32_t>(c);
     }
 
     return *this;
@@ -553,17 +564,17 @@ Packet& Packet::operator <<(const std::wstring& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator <<(const String& data)
+Packet& Packet::operator<<(const String& data)
 {
     // First insert the string length
-    Uint32 length = static_cast<Uint32>(data.getSize());
+    const auto length = static_cast<std::uint32_t>(data.getSize());
     *this << length;
 
     // Then insert characters
     if (length > 0)
     {
-        for (String::ConstIterator c = data.begin(); c != data.end(); ++c)
-            *this << *c;
+        for (const unsigned int datum : data)
+            *this << datum;
     }
 
     return *this;

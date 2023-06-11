@@ -5,7 +5,7 @@
 //
 // This code will work only if you selected window, graphics and audio.
 //
-// In order to load the resources like cute_image.png, you have to set up
+// In order to load the resources like background.png, you have to set up
 // your target scheme:
 //
 // - Select "Edit Scheme…" in the "Product" menu;
@@ -15,39 +15,44 @@
 // - Click OK.
 //
 
-#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
-int main(int argc, char const** argv)
+#include <SFML/Audio.hpp>
+
+int main()
 {
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
+    sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
 
     // Set the Icon
     sf::Image icon;
-    if (!icon.loadFromFile("icon.png")) {
+    if (!icon.loadFromFile("icon.png"))
+    {
         return EXIT_FAILURE;
     }
-    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    window.setIcon(icon);
 
     // Load a sprite to display
     sf::Texture texture;
-    if (!texture.loadFromFile("cute_image.jpg")) {
+    if (!texture.loadFromFile("background.jpg"))
+    {
         return EXIT_FAILURE;
     }
     sf::Sprite sprite(texture);
 
     // Create a graphical text to display
     sf::Font font;
-    if (!font.loadFromFile("sansation.ttf")) {
+    if (!font.loadFromFile("tuffy.ttf"))
+    {
         return EXIT_FAILURE;
     }
-    sf::Text text("Hello SFML", font, 50);
+    sf::Text text(font, "Hello SFML", 50);
     text.setFillColor(sf::Color::Black);
 
     // Load a music to play
     sf::Music music;
-    if (!music.openFromFile("nice_music.ogg")) {
+    if (!music.openFromFile("doodle_pop.ogg"))
+    {
         return EXIT_FAILURE;
     }
 
@@ -58,16 +63,17 @@ int main(int argc, char const** argv)
     while (window.isOpen())
     {
         // Process events
-        sf::Event event;
-        while (window.pollEvent(event))
+        for (sf::Event event; window.pollEvent(event);)
         {
             // Close window: exit
-            if (event.type == sf::Event::Closed) {
+            if (event.type == sf::Event::Closed)
+            {
                 window.close();
             }
 
             // Escape pressed: exit
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+            {
                 window.close();
             }
         }
@@ -84,6 +90,4 @@ int main(int argc, char const** argv)
         // Update the window
         window.display();
     }
-
-    return EXIT_SUCCESS;
 }

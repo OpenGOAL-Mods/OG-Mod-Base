@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,42 +22,54 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RENDERTARGET_HPP
-#define SFML_RENDERTARGET_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/View.hpp>
-#include <SFML/Graphics/Transform.hpp>
+
 #include <SFML/Graphics/BlendMode.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Vertex.hpp>
-#include <SFML/System/NonCopyable.hpp>
+#include <SFML/Graphics/View.hpp>
+
+#include <cstddef>
 
 
 namespace sf
 {
 class Drawable;
 class VertexBuffer;
+class Transform;
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class for all render targets (window, texture, ...)
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API RenderTarget : NonCopyable
+class SFML_GRAPHICS_API RenderTarget
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
     virtual ~RenderTarget();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderTarget(const RenderTarget&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderTarget& operator=(const RenderTarget&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the entire target with a single color
@@ -68,7 +80,7 @@ public:
     /// \param color Fill color to use to clear the render target
     ///
     ////////////////////////////////////////////////////////////
-    void clear(const Color& color = Color(0, 0, 0, 255));
+    void clear(const Color& color = Color::Black);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current active view
@@ -245,8 +257,10 @@ public:
     /// \param states      Render states to use for drawing
     ///
     ////////////////////////////////////////////////////////////
-    void draw(const Vertex* vertices, std::size_t vertexCount,
-              PrimitiveType type, const RenderStates& states = RenderStates::Default);
+    void draw(const Vertex*       vertices,
+              std::size_t         vertexCount,
+              PrimitiveType       type,
+              const RenderStates& states = RenderStates::Default);
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw primitives defined by a vertex buffer
@@ -266,7 +280,10 @@ public:
     /// \param states       Render states to use for drawing
     ///
     ////////////////////////////////////////////////////////////
-    void draw(const VertexBuffer& vertexBuffer, std::size_t firstVertex, std::size_t vertexCount, const RenderStates& states = RenderStates::Default);
+    void draw(const VertexBuffer& vertexBuffer,
+              std::size_t         firstVertex,
+              std::size_t         vertexCount,
+              const RenderStates& states = RenderStates::Default);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the rendering region of the target
@@ -275,6 +292,14 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual Vector2u getSize() const = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell if the render target will use sRGB encoding when drawing on it
+    ///
+    /// \return True if the render target use sRGB encoding, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool isSrgb() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render target for rendering
@@ -296,7 +321,7 @@ public:
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool setActive(bool active = true);
+    [[nodiscard]] virtual bool setActive(bool active = true);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the current OpenGL render states and matrices
@@ -367,7 +392,6 @@ public:
     void resetGLStates();
 
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -384,7 +408,6 @@ protected:
     void initialize();
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Apply the current view
     ///
@@ -456,31 +479,28 @@ private:
     ////////////////////////////////////////////////////////////
     struct StatesCache
     {
-        enum {VertexCacheSize = 4};
+        static constexpr std::size_t VertexCacheSize{4}; // NOLINT(readability-identifier-naming)
 
-        bool      enable;         ///< Is the cache enabled?
-        bool      glStatesSet;    ///< Are our internal GL states set yet?
-        bool      viewChanged;    ///< Has the current view changed since last draw?
-        BlendMode lastBlendMode;  ///< Cached blending mode
-        Uint64    lastTextureId;  ///< Cached texture
-        bool      texCoordsArrayEnabled; ///< Is GL_TEXTURE_COORD_ARRAY client state enabled?
-        bool      useVertexCache; ///< Did we previously use the vertex cache?
-        Vertex    vertexCache[VertexCacheSize]; ///< Pre-transformed vertices cache
+        bool          enable;                       //!< Is the cache enabled?
+        bool          glStatesSet{};                //!< Are our internal GL states set yet?
+        bool          viewChanged;                  //!< Has the current view changed since last draw?
+        BlendMode     lastBlendMode;                //!< Cached blending mode
+        std::uint64_t lastTextureId;                //!< Cached texture
+        bool          texCoordsArrayEnabled;        //!< Is GL_TEXTURE_COORD_ARRAY client state enabled?
+        bool          useVertexCache;               //!< Did we previously use the vertex cache?
+        Vertex        vertexCache[VertexCacheSize]; //!< Pre-transformed vertices cache
     };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    View        m_defaultView; ///< Default view
-    View        m_view;        ///< Current view
-    StatesCache m_cache;       ///< Render states cache
-    Uint64      m_id;          ///< Unique number that identifies the RenderTarget
+    View          m_defaultView; //!< Default view
+    View          m_view;        //!< Current view
+    StatesCache   m_cache;       //!< Render states cache
+    std::uint64_t m_id{};        //!< Unique number that identifies the RenderTarget
 };
 
 } // namespace sf
-
-
-#endif // SFML_RENDERTARGET_HPP
 
 
 ////////////////////////////////////////////////////////////

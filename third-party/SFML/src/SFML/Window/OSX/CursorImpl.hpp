@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -23,14 +23,13 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CURSORIMPLOSX_HPP
-#define SFML_CURSORIMPLOSX_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Cursor.hpp>
-#include <SFML/System/NonCopyable.hpp>
+
 #include <SFML/System/Vector2.hpp>
 
 ////////////////////////////////////////////////////////////
@@ -39,27 +38,23 @@
 #ifdef __OBJC__
 
 @class NSCursor;
-typedef NSCursor* NSCursorRef;
+using NSCursorRef = NSCursor*;
 
 #else // If C++
 
-typedef void* NSCursorRef;
+using NSCursorRef = void*;
 
 #endif
 
-namespace sf
-{
-
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Mac OS X implementation of Cursor
 ///
 ////////////////////////////////////////////////////////////
-class CursorImpl : NonCopyable
+class CursorImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -77,12 +72,24 @@ public:
     ~CursorImpl();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    CursorImpl(const CursorImpl&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    CursorImpl& operator=(const CursorImpl&) = delete;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Create a cursor with the provided image
     ///
     /// Refer to sf::Cursor::loadFromPixels().
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot);
+    bool loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a native system cursor
@@ -93,17 +100,12 @@ public:
     bool loadFromSystem(Cursor::Type type);
 
 private:
-
     friend class WindowImplCocoa;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    NSCursorRef m_cursor; ///< System cursor handle
+    NSCursorRef m_cursor{}; ///< System cursor handle
 };
 
-} // namespace priv
-
-} // namespace sf
-
-#endif // SFML_CURSORIMPLOSX_HPP
+} // namespace sf::priv

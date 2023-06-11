@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -45,7 +45,7 @@
 /// \return YES
 ///
 ////////////////////////////////////////////////////////////
--(BOOL)acceptsFirstResponder;
+- (BOOL)acceptsFirstResponder;
 
 ////////////////////////////////////////////////////////////
 /// \brief Allow to grab fullscreen events
@@ -55,7 +55,19 @@
 /// \return YES
 ///
 ////////////////////////////////////////////////////////////
--(BOOL)canBecomeKeyWindow;
+- (BOOL)canBecomeKeyWindow;
+
+////////////////////////////////////////////////////////////
+/// \brief Allow fullscreen windows to become the main window
+///
+/// By default, fullscreen windows (using NSBorderlessWindowMask)
+/// cannot become the main window, so this method is changed to
+/// always return YES.
+///
+/// \return YES
+///
+////////////////////////////////////////////////////////////
+- (BOOL)canBecomeMainWindow;
 
 ////////////////////////////////////////////////////////////
 /// \brief Prevent system alert
@@ -63,7 +75,7 @@
 /// \param theEvent a Cocoa event
 ///
 ////////////////////////////////////////////////////////////
--(void)keyDown:(NSEvent*)theEvent;
+- (void)keyDown:(NSEvent*)theEvent;
 
 ////////////////////////////////////////////////////////////
 /// \brief This action method simulates the user clicking the close button
@@ -73,7 +85,7 @@
 /// \param sender The message's sender
 ///
 ////////////////////////////////////////////////////////////
--(void)performClose:(id)sender;
+- (void)performClose:(id)sender;
 
 ////////////////////////////////////////////////////////////
 /// \brief Enabling or disabling a specific menu item
@@ -83,7 +95,7 @@
 /// \return YES to enable menuItem, NO to disable it.
 ///
 ////////////////////////////////////////////////////////////
--(BOOL)validateMenuItem:(NSMenuItem*)menuItem;
+- (BOOL)validateMenuItem:(NSMenuItem*)menuItem;
 
 @end
 
@@ -102,6 +114,6 @@
 /// \return nil
 ///
 ////////////////////////////////////////////////////////////
--(id)sfClose;
+- (id)sfClose;
 
 @end

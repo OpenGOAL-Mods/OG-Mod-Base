@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,38 +25,30 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
+
+#include <cassert>
 #include <cstdlib>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Sprite::Sprite() :
-m_texture    (NULL),
-m_textureRect()
+Sprite::Sprite(const Texture& texture)
 {
+    setTexture(texture, true);
 }
 
 
 ////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture) :
-m_texture    (NULL),
-m_textureRect()
+Sprite::Sprite(const Texture& texture, const IntRect& rectangle)
 {
-    setTexture(texture);
-}
-
-
-////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture, const IntRect& rectangle) :
-m_texture    (NULL),
-m_textureRect()
-{
-    setTexture(texture);
+    // Compute the texture area
     setTextureRect(rectangle);
+    // Assign texture
+    setTexture(texture, false);
 }
 
 
@@ -65,7 +57,9 @@ void Sprite::setTexture(const Texture& texture, bool resetRect)
 {
     // Recompute the texture area if requested, or if there was no valid texture & rect before
     if (resetRect || (!m_texture && (m_textureRect == sf::IntRect())))
-        setTextureRect(IntRect(0, 0, texture.getSize().x, texture.getSize().y));
+    {
+        setTextureRect(IntRect({0, 0}, Vector2i(texture.getSize())));
+    }
 
     // Assign the new texture
     m_texture = &texture;
@@ -119,10 +113,10 @@ const Color& Sprite::getColor() const
 ////////////////////////////////////////////////////////////
 FloatRect Sprite::getLocalBounds() const
 {
-    float width = static_cast<float>(std::abs(m_textureRect.width));
-    float height = static_cast<float>(std::abs(m_textureRect.height));
+    const auto width  = static_cast<float>(std::abs(m_textureRect.width));
+    const auto height = static_cast<float>(std::abs(m_textureRect.height));
 
-    return FloatRect(0.f, 0.f, width, height);
+    return FloatRect({0.f, 0.f}, {width, height});
 }
 
 
@@ -134,21 +128,22 @@ FloatRect Sprite::getGlobalBounds() const
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::draw(RenderTarget& target, RenderStates states) const
+void Sprite::draw(RenderTarget& target, const RenderStates& states) const
 {
-    if (m_texture)
-    {
-        states.transform *= getTransform();
-        states.texture = m_texture;
-        target.draw(m_vertices, 4, TriangleStrip, states);
-    }
+    assert(m_texture);
+
+    RenderStates statesCopy(states);
+
+    statesCopy.transform *= getTransform();
+    statesCopy.texture = m_texture;
+    target.draw(m_vertices, 4, PrimitiveType::TriangleStrip, statesCopy);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Sprite::updatePositions()
 {
-    FloatRect bounds = getLocalBounds();
+    const FloatRect bounds = getLocalBounds();
 
     m_vertices[0].position = Vector2f(0, 0);
     m_vertices[1].position = Vector2f(0, bounds.height);
@@ -160,10 +155,12 @@ void Sprite::updatePositions()
 ////////////////////////////////////////////////////////////
 void Sprite::updateTexCoords()
 {
-    float left   = static_cast<float>(m_textureRect.left);
-    float right  = left + m_textureRect.width;
-    float top    = static_cast<float>(m_textureRect.top);
-    float bottom = top + m_textureRect.height;
+    const FloatRect convertedTextureRect(m_textureRect);
+
+    const float left   = convertedTextureRect.left;
+    const float right  = left + convertedTextureRect.width;
+    const float top    = convertedTextureRect.top;
+    const float bottom = top + convertedTextureRect.height;
 
     m_vertices[0].texCoords = Vector2f(left, top);
     m_vertices[1].texCoords = Vector2f(left, bottom);

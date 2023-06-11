@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,26 +22,26 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_FILEINPUTSTREAM_HPP
-#define SFML_FILEINPUTSTREAM_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+
 #include <SFML/System/Export.hpp>
+
 #include <SFML/System/InputStream.hpp>
-#include <SFML/System/NonCopyable.hpp>
+
+#include <filesystem>
+#include <memory>
+
 #include <cstdio>
-#include <string>
 
 #ifdef SFML_SYSTEM_ANDROID
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 class SFML_SYSTEM_API ResourceStream;
-}
 }
 #endif
 
@@ -52,7 +52,7 @@ namespace sf
 /// \brief Implementation of input stream based on a file
 ///
 ////////////////////////////////////////////////////////////
-class SFML_SYSTEM_API FileInputStream : public InputStream, NonCopyable
+class SFML_SYSTEM_API FileInputStream : public InputStream
 {
 public:
     ////////////////////////////////////////////////////////////
@@ -65,7 +65,31 @@ public:
     /// \brief Default destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~FileInputStream();
+    ~FileInputStream() override;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    FileInputStream(const FileInputStream&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    FileInputStream& operator=(const FileInputStream&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    FileInputStream(FileInputStream&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    FileInputStream& operator=(FileInputStream&&) noexcept;
 
     ////////////////////////////////////////////////////////////
     /// \brief Open the stream from a file path
@@ -75,7 +99,7 @@ public:
     /// \return True on success, false on error
     ///
     ////////////////////////////////////////////////////////////
-    bool open(const std::string& filename);
+    [[nodiscard]] bool open(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Read data from the stream
@@ -89,7 +113,7 @@ public:
     /// \return The number of bytes actually read, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 read(void* data, Int64 size);
+    [[nodiscard]] std::int64_t read(void* data, std::int64_t size) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position
@@ -99,7 +123,7 @@ public:
     /// \return The position actually sought to, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 seek(Int64 position);
+    [[nodiscard]] std::int64_t seek(std::int64_t position) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current reading position in the stream
@@ -107,7 +131,7 @@ public:
     /// \return The current position, or -1 on error.
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 tell();
+    [[nodiscard]] std::int64_t tell() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the stream
@@ -115,24 +139,29 @@ public:
     /// \return The total number of bytes available in the stream, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 getSize();
+    std::int64_t getSize() override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
 #ifdef SFML_SYSTEM_ANDROID
-    priv::ResourceStream* m_file;
+    std::unique_ptr<priv::ResourceStream> m_file;
 #else
-    std::FILE* m_file; ///< stdio file stream
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleter for stdio file stream that closes the file stream
+    ///
+    ////////////////////////////////////////////////////////////
+    struct FileCloser
+    {
+        void operator()(std::FILE* file);
+    };
+
+    std::unique_ptr<std::FILE, FileCloser> m_file; //!< stdio file stream
 #endif
 };
 
 } // namespace sf
-
-
-#endif // SFML_FILEINPUTSTREAM_HPP
 
 
 ////////////////////////////////////////////////////////////

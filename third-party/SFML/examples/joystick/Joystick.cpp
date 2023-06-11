@@ -3,80 +3,83 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
+
 #include <algorithm>
+#include <array>
 #include <sstream>
-#include <iomanip>
 #include <string>
-#include <map>
+#include <unordered_map>
 
 
 namespace
 {
-    struct JoystickObject
+struct JoystickObject
+{
+    sf::Text label;
+    sf::Text value;
+};
+
+using Texts = std::unordered_map<std::string, JoystickObject>;
+Texts              texts;
+std::ostringstream sstr;
+float              threshold = 0.1f;
+
+// Axes labels in as strings
+const std::array<std::string, 8> axislabels = {"X", "Y", "Z", "R", "U", "V", "PovX", "PovY"};
+
+// Helper to set text entries to a specified value
+template <typename T>
+void set(const std::string& label, const T& value)
+{
+    sstr.str("");
+    sstr << value;
+    texts.at(label).value.setString(sstr.str());
+}
+
+// Update joystick identification
+void updateIdentification(unsigned int index)
+{
+    sstr.str("");
+    sstr << "Joystick " << index << ":";
+    auto& [label, value] = texts.at("ID");
+    label.setString(sstr.str());
+    value.setString(sf::Joystick::getIdentification(index).name);
+}
+
+// Update joystick axes
+void updateAxes(unsigned int index)
+{
+    for (unsigned int j = 0; j < sf::Joystick::AxisCount; ++j)
     {
-        sf::Text label;
-        sf::Text value;
-    };
-
-    typedef std::map<std::string, JoystickObject> Texts;
-    Texts texts;
-    std::ostringstream sstr;
-    float threshold = 0.1f;
-
-    // Axes labels in as C strings
-    const char* axislabels[] = {"X", "Y", "Z", "R", "U", "V", "PovX", "PovY"};
-
-    // Helper to set text entries to a specified value
-    template<typename T>
-    void set(const char* label, const T& value)
-    {
-        sstr.str("");
-        sstr << value;
-        texts[label].value.setString(sstr.str());
-    }
-
-    // Update joystick identification
-    void updateIdentification(unsigned int index)
-    {
-        sstr.str("");
-        sstr << "Joystick " << index << ":";
-        texts["ID"].label.setString(sstr.str());
-        texts["ID"].value.setString(sf::Joystick::getIdentification(index).name);
-    }
-
-    // Update joystick axes
-    void updateAxes(unsigned int index)
-    {
-        for (unsigned int j = 0; j < sf::Joystick::AxisCount; ++j)
-        {
-            if (sf::Joystick::hasAxis(index, static_cast<sf::Joystick::Axis>(j)))
-                set(axislabels[j], sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(j)));
-        }
-    }
-
-    // Update joystick buttons
-    void updateButtons(unsigned int index)
-    {
-        for (unsigned int j = 0; j < sf::Joystick::getButtonCount(index); ++j)
-        {
-            sstr.str("");
-            sstr << "Button " << j;
-
-            set(sstr.str().c_str(), sf::Joystick::isButtonPressed(index, j));
-        }
-    }
-
-    // Helper to update displayed joystick values
-    void updateValues(unsigned int index)
-    {
-        if (sf::Joystick::isConnected(index)) {
-            // Update the label-value sf::Text objects based on the current joystick state
-            updateIdentification(index);
-            updateAxes(index);
-            updateButtons(index);
-        }
+        if (sf::Joystick::hasAxis(index, static_cast<sf::Joystick::Axis>(j)))
+            set(axislabels[j], sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(j)));
     }
 }
+
+// Update joystick buttons
+void updateButtons(unsigned int index)
+{
+    for (unsigned int j = 0; j < sf::Joystick::getButtonCount(index); ++j)
+    {
+        sstr.str("");
+        sstr << "Button " << j;
+
+        set(sstr.str(), sf::Joystick::isButtonPressed(index, j));
+    }
+}
+
+// Helper to update displayed joystick values
+void updateValues(unsigned int index)
+{
+    if (sf::Joystick::isConnected(index))
+    {
+        // Update the label-value sf::Text objects based on the current joystick state
+        updateIdentification(index);
+        updateAxes(index);
+        updateButtons(index);
+    }
+}
+} // namespace
 
 
 ////////////////////////////////////////////////////////////
@@ -88,12 +91,12 @@ namespace
 int main()
 {
     // Create the window of the application
-    sf::RenderWindow window(sf::VideoMode(400, 680), "Joystick", sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode({400, 775}), "Joystick", sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
     // Load the text font
     sf::Font font;
-    if (!font.loadFromFile("resources/sansation.ttf"))
+    if (!font.loadFromFile("resources/tuffy.ttf"))
         return EXIT_FAILURE;
 
     // Set up our string conversion parameters
@@ -101,56 +104,46 @@ int main()
     sstr.setf(std::ios::fixed | std::ios::boolalpha);
 
     // Set up our joystick identification sf::Text objects
-    texts["ID"].label.setPosition(5.f, 5.f);
-    texts["ID"].value.setPosition(80.f, 5.f);
-
-    texts["ID"].label.setString("<Not Connected>");
-    texts["ID"].value.setString("");
+    {
+        auto [it, success]   = texts.emplace("ID", JoystickObject{{font, "<Not Connected>"}, {font}});
+        auto& [label, value] = it->second;
+        label.setPosition({5.f, 5.f});
+        value.setPosition({80.f, 5.f});
+    }
 
     // Set up our threshold sf::Text objects
     sstr.str("");
     sstr << threshold << "  (Change with up/down arrow keys)";
-
-    texts["Threshold"].label.setPosition(5.f, 5.f + 2 * font.getLineSpacing(14));
-    texts["Threshold"].value.setPosition(80.f, 5.f + 2 * font.getLineSpacing(14));
-
-    texts["Threshold"].label.setString("Threshold:");
-    texts["Threshold"].value.setString(sstr.str());
+    {
+        auto [it, success]   = texts.emplace("Threshold", JoystickObject{{font, "Threshold:"}, {font, sstr.str()}});
+        auto& [label, value] = it->second;
+        label.setPosition({5.f, 5.f + 2 * font.getLineSpacing(14)});
+        value.setPosition({80.f, 5.f + 2 * font.getLineSpacing(14)});
+    }
 
     // Set up our label-value sf::Text objects
     for (unsigned int i = 0; i < sf::Joystick::AxisCount; ++i)
     {
-        JoystickObject& object = texts[axislabels[i]];
-
-        object.label.setPosition(5.f, 5.f + ((i + 4) * font.getLineSpacing(14)));
-        object.label.setString(std::string(axislabels[i]) + ":");
-
-        object.value.setPosition(80.f, 5.f + ((i + 4) * font.getLineSpacing(14)));
-        object.value.setString("N/A");
+        auto [it, success]   = texts.emplace(axislabels[i], JoystickObject{{font, axislabels[i] + ":"}, {font, "N/A"}});
+        auto& [label, value] = it->second;
+        label.setPosition({5.f, 5.f + (static_cast<float>(i + 4) * font.getLineSpacing(14))});
+        value.setPosition({80.f, 5.f + (static_cast<float>(i + 4) * font.getLineSpacing(14))});
     }
 
     for (unsigned int i = 0; i < sf::Joystick::ButtonCount; ++i)
     {
         sstr.str("");
         sstr << "Button " << i;
-        JoystickObject& object = texts[sstr.str()];
-
-        object.label.setPosition(5.f, 5.f + ((sf::Joystick::AxisCount + i + 4) * font.getLineSpacing(14)));
-        object.label.setString(sstr.str() + ":");
-
-        object.value.setPosition(80.f, 5.f + ((sf::Joystick::AxisCount + i + 4) * font.getLineSpacing(14)));
-        object.value.setString("N/A");
+        auto [it, success]   = texts.emplace(sstr.str(), JoystickObject{{font, sstr.str() + ":"}, {font, "N/A"}});
+        auto& [label, value] = it->second;
+        label.setPosition({5.f, 5.f + (static_cast<float>(sf::Joystick::AxisCount + i + 4) * font.getLineSpacing(14))});
+        value.setPosition({80.f, 5.f + (static_cast<float>(sf::Joystick::AxisCount + i + 4) * font.getLineSpacing(14))});
     }
 
-    for (Texts::iterator it = texts.begin(); it != texts.end(); ++it)
+    for (auto& [label, joystickObject] : texts)
     {
-        it->second.label.setFont(font);
-        it->second.label.setCharacterSize(14);
-        it->second.label.setFillColor(sf::Color::White);
-
-        it->second.value.setFont(font);
-        it->second.value.setCharacterSize(14);
-        it->second.value.setFillColor(sf::Color::White);
+        joystickObject.label.setCharacterSize(14);
+        joystickObject.value.setCharacterSize(14);
     }
 
     // Update initially displayed joystick values if a joystick is already connected on startup
@@ -166,20 +159,17 @@ int main()
     while (window.isOpen())
     {
         // Handle events
-        sf::Event event;
-        while (window.pollEvent(event))
+        for (sf::Event event; window.pollEvent(event);)
         {
             // Window closed or escape key pressed: exit
             if ((event.type == sf::Event::Closed) ||
-               ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)))
+                ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)))
             {
                 window.close();
                 break;
             }
-            else if ((event.type == sf::Event::JoystickButtonPressed) ||
-                     (event.type == sf::Event::JoystickButtonReleased) ||
-                     (event.type == sf::Event::JoystickMoved) ||
-                     (event.type == sf::Event::JoystickConnected))
+            else if ((event.type == sf::Event::JoystickButtonPressed) || (event.type == sf::Event::JoystickButtonReleased) ||
+                     (event.type == sf::Event::JoystickMoved) || (event.type == sf::Event::JoystickConnected))
             {
                 // Update displayed joystick values
                 updateValues(event.joystickConnect.joystickId);
@@ -187,16 +177,17 @@ int main()
             else if (event.type == sf::Event::JoystickDisconnected)
             {
                 // Reset displayed joystick values to empty
-                for (Texts::iterator it = texts.begin(); it != texts.end(); ++it)
-                    it->second.value.setString("N/A");
+                for (auto& [label, joystickObject] : texts)
+                    joystickObject.value.setString("N/A");
 
-                texts["ID"].label.setString("<Not Connected>");
-                texts["ID"].value.setString("");
+                auto& [label, value] = texts.at("ID");
+                label.setString("<Not Connected>");
+                value.setString("");
 
                 sstr.str("");
                 sstr << threshold << "  (Change with up/down arrow keys)";
 
-                texts["Threshold"].value.setString(sstr.str());
+                texts.at("Threshold").value.setString(sstr.str());
             }
         }
 
@@ -209,7 +200,7 @@ int main()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             newThreshold -= 0.1f;
 
-        newThreshold = std::min(std::max(newThreshold, 0.1f), 100.0f);
+        newThreshold = std::clamp(newThreshold, 0.1f, 100.0f);
 
         if (newThreshold != threshold)
         {
@@ -219,17 +210,17 @@ int main()
             sstr.str("");
             sstr << threshold << "  (Change with up/down arrow keys)";
 
-            texts["Threshold"].value.setString(sstr.str());
+            texts.at("Threshold").value.setString(sstr.str());
         }
 
         // Clear the window
         window.clear();
 
         // Draw the label-value sf::Text objects
-        for (Texts::const_iterator it = texts.begin(); it != texts.end(); ++it)
+        for (const auto& [label, joystickObject] : texts)
         {
-            window.draw(it->second.label);
-            window.draw(it->second.value);
+            window.draw(joystickObject.label);
+            window.draw(joystickObject.value);
         }
 
         // Display things on screen

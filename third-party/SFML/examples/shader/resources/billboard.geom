@@ -18,14 +18,14 @@ out vec2 tex_coord;
 // Main entry point
 void main()
 {
-    // Caculate the half width/height of the billboards
+    // Calculate the half width/height of the billboards
     vec2 half_size = size / 2.f;
 
     // Scale the size based on resolution (1 would be full width/height)
     half_size /= resolution;
 
     // Iterate over all vertices
-    for (int i = 0; i < gl_in.length(); i++)
+    for (int i = 0; i < gl_in.length(); ++i)
     {
         // Retrieve the passed vertex position
         vec2 pos = gl_in[i].gl_Position.xy;

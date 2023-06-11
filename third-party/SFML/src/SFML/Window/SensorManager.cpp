@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,12 +26,13 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/SensorManager.hpp>
+
 #include <SFML/System/Err.hpp>
 
+#include <ostream>
 
-namespace sf
-{
-namespace priv
+
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 SensorManager& SensorManager::getInstance()
@@ -58,7 +59,8 @@ void SensorManager::setEnabled(Sensor::Type sensor, bool enabled)
     }
     else
     {
-        err() << "Warning: trying to enable a sensor that is not available (call Sensor::isAvailable to check it)" << std::endl;
+        err() << "Warning: trying to enable a sensor that is not available (call Sensor::isAvailable to check it)"
+              << std::endl;
     }
 }
 
@@ -80,11 +82,11 @@ Vector3f SensorManager::getValue(Sensor::Type sensor) const
 ////////////////////////////////////////////////////////////
 void SensorManager::update()
 {
-    for (int i = 0; i < Sensor::Count; ++i)
+    for (Item& item : m_sensors)
     {
         // Only process available sensors
-        if (m_sensors[i].available)
-            m_sensors[i].value = m_sensors[i].sensor.update();
+        if (item.available)
+            item.value = item.sensor.update();
     }
 }
 
@@ -104,8 +106,15 @@ SensorManager::SensorManager()
         // Open the available sensors
         if (m_sensors[i].available)
         {
-            m_sensors[i].sensor.open(static_cast<Sensor::Type>(i));
-            m_sensors[i].sensor.setEnabled(false);
+            if (m_sensors[i].sensor.open(static_cast<Sensor::Type>(i)))
+            {
+                m_sensors[i].sensor.setEnabled(false);
+            }
+            else
+            {
+                m_sensors[i].available = false;
+                err() << "Warning: sensor " << i << " failed to open, will not be available" << std::endl;
+            }
         }
     }
 }
@@ -114,16 +123,14 @@ SensorManager::SensorManager()
 SensorManager::~SensorManager()
 {
     // Per sensor cleanup
-    for (int i = 0; i < Sensor::Count; ++i)
+    for (Item& item : m_sensors)
     {
-        if (m_sensors[i].available)
-            m_sensors[i].sensor.close();
+        if (item.available)
+            item.sensor.close();
     }
 
     // Global sensor cleanup
     SensorImpl::cleanup();
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

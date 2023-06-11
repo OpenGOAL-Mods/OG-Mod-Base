@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -26,12 +26,14 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#import <SFML/Window/OSX/SFOpenGLView+mouse_priv.h>
+#import <SFML/Window/OSX/SFOpenGLView.h>
+#import <SFML/Window/OSX/SFSilentResponder.h>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
+
 #include <SFML/System/Err.hpp>
 
-#import <SFML/Window/OSX/SFOpenGLView.h>
-#import <SFML/Window/OSX/SFOpenGLView+mouse_priv.h>
-#import <SFML/Window/OSX/SFSilentResponder.h>
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 
 ////////////////////////////////////////////////////////////
@@ -44,37 +46,37 @@
 /// \brief Handle screen changed event
 ///
 ////////////////////////////////////////////////////////////
--(void)updateScaleFactor;
+- (void)updateScaleFactor;
 
 ////////////////////////////////////////////////////////////
 /// \brief Handle view resized event
 ///
 ////////////////////////////////////////////////////////////
--(void)viewDidEndLiveResize;
+- (void)viewDidEndLiveResize;
 
 ////////////////////////////////////////////////////////////
 /// \brief Callback for focus event
 ///
 ////////////////////////////////////////////////////////////
--(void)windowDidBecomeKey:(NSNotification*)notification;
+- (void)windowDidBecomeKey:(NSNotification*)notification;
 
 ////////////////////////////////////////////////////////////
 /// \brief Callback for unfocus event
 ///
 ////////////////////////////////////////////////////////////
--(void)windowDidResignKey:(NSNotification*)notification;
+- (void)windowDidResignKey:(NSNotification*)notification;
 
 ////////////////////////////////////////////////////////////
 /// \brief Handle going in fullscreen mode
 ///
 ////////////////////////////////////////////////////////////
--(void)enterFullscreen;
+- (void)enterFullscreen;
 
 ////////////////////////////////////////////////////////////
 /// \brief Handle exiting fullscreen mode
 ///
 ////////////////////////////////////////////////////////////
--(void)exitFullscreen;
+- (void)exitFullscreen;
 
 @end
 
@@ -84,42 +86,50 @@
 #pragma mark SFOpenGLView's methods
 
 ////////////////////////////////////////////////////////
--(id)initWithFrame:(NSRect)frameRect
+- (id)initWithFrame:(NSRect)frameRect
 {
-    return [self initWithFrame:frameRect fullscreen:NO];
+    return [self initWithFrame:frameRect fullscreen:NO highDpi:NO];
 }
 
 ////////////////////////////////////////////////////////
--(id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen
+- (id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen
+{
+    return [self initWithFrame:frameRect fullscreen:isFullscreen highDpi:NO];
+}
+
+////////////////////////////////////////////////////////
+- (id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen highDpi:(BOOL)isHighDpi
 {
     if ((self = [super initWithFrame:frameRect]))
     {
-        [self setRequesterTo:0];
+        [self setRequesterTo:nullptr];
         [self enableKeyRepeat];
 
         // Register for mouse move event
-        m_mouseIsIn = [self isMouseInside];
-        NSUInteger opts = (NSTrackingActiveAlways | NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingEnabledDuringMouseDrag);
-        m_trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
-                                                      options:opts
-                                                        owner:self
-                                                     userInfo:nil];
+        m_mouseIsIn     = [self isMouseInside];
+        NSUInteger opts = (NSTrackingActiveAlways | NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved |
+                           NSTrackingEnabledDuringMouseDrag);
+        m_trackingArea  = [[NSTrackingArea alloc] initWithRect:[self bounds] options:opts owner:self userInfo:nil];
         [self addTrackingArea:m_trackingArea];
 
-        m_fullscreen = isFullscreen;
-        m_scaleFactor = 1.0; // Default value; it will be updated in finishInit
+        m_fullscreen    = isFullscreen;
+        m_scaleFactor   = 1.0; // Default value; it will be updated in finishInit
         m_cursorGrabbed = NO;
-        m_deltaXBuffer = 0;
-        m_deltaYBuffer = 0;
-        m_cursor = [NSCursor arrowCursor];
+        m_deltaXBuffer  = 0;
+        m_deltaYBuffer  = 0;
+        m_cursor        = [NSCursor arrowCursor];
 
         // Create a hidden text view for parsing key down event properly
         m_silentResponder = [[SFSilentResponder alloc] init];
-        m_hiddenTextView = [[NSTextView alloc] initWithFrame:NSZeroRect];
+        m_hiddenTextView  = [[NSTextView alloc] initWithFrame:NSZeroRect];
         [m_hiddenTextView setNextResponder:m_silentResponder];
 
-        // Request high resolution on high DPI displays
-        [self setWantsBestResolutionOpenGLSurface:YES];
+        // If high DPI is requested, then use high resolution for the OpenGL view.
+        // Currently, isHighDpi is always expected to be NO, and so the OpenGL view will render scaled.
+        // Note: setWantsBestResolutionOpenGLSurface requires YES to work properly, rather than simply non-zero value.
+        // isHighDpi is an Objective-C BOOL, which can have non-zero values other than YES.
+        m_highDpi = isHighDpi ? YES : NO;
+        [self setWantsBestResolutionOpenGLSurface:m_highDpi];
 
         // At that point, the view isn't attached to a window. We defer the rest of
         // the initialization process to later.
@@ -130,42 +140,48 @@
 
 
 ////////////////////////////////////////////////////////
--(void)update
+- (void)update
 {
     // In order to prevent an infinite recursion when the window/view is
     // resized to zero-height/width, we ignore update event when resizing.
-    if (![self inLiveResize]) {
+    if (![self inLiveResize])
+    {
         [super update];
     }
 }
 
 
 ////////////////////////////////////////////////////////
--(void)finishInit
+- (void)finishInit
 {
     // Register for window focus events
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(windowDidBecomeKey:)
-                                                 name:NSWindowDidBecomeKeyNotification
-                                               object:[self window]];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(windowDidResignKey:)
-                                                 name:NSWindowDidResignKeyNotification
-                                               object:[self window]];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(windowDidResignKey:)
-                                                 name:NSWindowWillCloseNotification
-                                               object:[self window]];
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+           selector:@selector(windowDidBecomeKey:)
+               name:NSWindowDidBecomeKeyNotification
+             object:[self window]];
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+           selector:@selector(windowDidResignKey:)
+               name:NSWindowDidResignKeyNotification
+             object:[self window]];
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+           selector:@selector(windowDidResignKey:)
+               name:NSWindowWillCloseNotification
+             object:[self window]];
 
     // Register for changed screen and changed screen's profile events
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateScaleFactor)
-                                                 name:NSWindowDidChangeScreenNotification
-                                               object:[self window]];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateScaleFactor)
-                                                 name:NSWindowDidChangeScreenProfileNotification
-                                               object:[self window]];
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+           selector:@selector(updateScaleFactor)
+               name:NSWindowDidChangeScreenNotification
+             object:[self window]];
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+           selector:@selector(updateScaleFactor)
+               name:NSWindowDidChangeScreenProfileNotification
+             object:[self window]];
 
     // Now that we have a window, set up correctly the scale factor and cursor grabbing
     [self updateScaleFactor];
@@ -174,24 +190,24 @@
 
 
 ////////////////////////////////////////////////////////
--(void)setRequesterTo:(sf::priv::WindowImplCocoa*)requester
+- (void)setRequesterTo:(sf::priv::WindowImplCocoa*)requester
 {
     m_requester = requester;
 }
 
 
 ////////////////////////////////////////////////////////
--(NSPoint)convertPointToScreen:(NSPoint)point
+- (NSPoint)convertPointToScreen:(NSPoint)point
 {
     NSRect rect = NSZeroRect;
     rect.origin = point;
-    rect = [[self window] convertRectToScreen:rect];
+    rect        = [[self window] convertRectToScreen:rect];
     return rect.origin;
 }
 
 
 ////////////////////////////////////////////////////////
--(NSPoint)computeGlobalPositionOfRelativePoint:(NSPoint)point
+- (NSPoint)computeGlobalPositionOfRelativePoint:(NSPoint)point
 {
     // Flip SFML coordinates to match window coordinates
     point.y = [self frame].size.height - point.y;
@@ -204,38 +220,39 @@
     point = [self convertPointToScreen:point];
 
     // Flip screen coordinates to match CGDisplayMoveCursorToPoint referential.
-    const float screenHeight = [[[self window] screen] frame].size.height;
-    point.y = screenHeight - point.y;
+    const double screenHeight = [[[self window] screen] frame].size.height;
+    point.y                   = screenHeight - point.y;
 
     return point;
 }
 
 
 ////////////////////////////////////////////////////////
--(CGFloat)displayScaleFactor
+- (CGFloat)displayScaleFactor
 {
     return m_scaleFactor;
 }
 
 
 ////////////////////////////////////////////////////////
--(void)updateScaleFactor
+- (void)updateScaleFactor
 {
-    NSWindow* window = [self window];
-    NSScreen* screen = window ? [window screen] : [NSScreen mainScreen];
-    CGFloat oldScaleFactor = m_scaleFactor;
-    m_scaleFactor = [screen backingScaleFactor];
+    NSWindow* window         = [self window];
+    NSScreen* screen         = window ? [window screen] : [NSScreen mainScreen];
+    CGFloat   oldScaleFactor = m_scaleFactor;
+    m_scaleFactor            = m_highDpi ? [screen backingScaleFactor] : 1.0;
 
     // Send a resize event if the scaling factor changed
-    if ((m_scaleFactor != oldScaleFactor) && (m_requester != 0)) {
+    if ((m_scaleFactor != oldScaleFactor) && (m_requester != nullptr))
+    {
         NSSize newSize = [self frame].size;
-        m_requester->windowResized(newSize.width, newSize.height);
+        m_requester->windowResized({static_cast<unsigned int>(newSize.width), static_cast<unsigned int>(newSize.height)});
     }
 }
 
 
 ////////////////////////////////////////////////////////
--(void)viewDidEndLiveResize
+- (void)viewDidEndLiveResize
 {
     // We use viewDidEndLiveResize to notify the user ONCE
     // only, when the resizing is finished.
@@ -256,16 +273,16 @@
     [self update];
 
     // Send an event
-    if (m_requester == 0)
+    if (m_requester == nullptr)
         return;
 
     // The new size
     NSSize newSize = [self frame].size;
-    m_requester->windowResized(newSize.width, newSize.height);
+    m_requester->windowResized({static_cast<unsigned int>(newSize.width), static_cast<unsigned int>(newSize.height)});
 }
 
 ////////////////////////////////////////////////////////
--(void)windowDidBecomeKey:(NSNotification*)notification
+- (void)windowDidBecomeKey:(NSNotification*)notification
 {
     (void)notification;
 
@@ -280,7 +297,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)windowDidResignKey:(NSNotification*)notification
+- (void)windowDidResignKey:(NSNotification*)notification
 {
     (void)notification;
 
@@ -295,7 +312,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)enterFullscreen
+- (void)enterFullscreen
 {
     // Remove the tracking area first,
     // just to be sure we don't add it twice!
@@ -303,7 +320,7 @@
     [self addTrackingArea:m_trackingArea];
 
     // Fire an mouse entered event if needed
-    if (!m_mouseIsIn && (m_requester != 0))
+    if (!m_mouseIsIn && (m_requester != nullptr))
         m_requester->mouseMovedIn();
 
     // Update status
@@ -312,12 +329,12 @@
 
 
 ////////////////////////////////////////////////////////
--(void)exitFullscreen
+- (void)exitFullscreen
 {
     [self removeTrackingArea:m_trackingArea];
 
     // Fire an mouse left event if needed
-    if (m_mouseIsIn && (m_requester != 0))
+    if (m_mouseIsIn && (m_requester != nullptr))
         m_requester->mouseMovedOut();
 
     // Update status
@@ -330,7 +347,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)dealloc
+- (void)dealloc
 {
     // Unregister for window focus events
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -343,7 +360,7 @@
     [m_silentResponder release];
     [m_trackingArea release];
 
-    [self setRequesterTo:0];
+    [self setRequesterTo:nullptr];
 
     [super dealloc];
 }

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,17 +22,13 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CLIPBOARDIMPLWIN32_HPP
-#define SFML_CLIPBOARDIMPLWIN32_HPP
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/System/String.hpp>
+#pragma once
 
 
 namespace sf
 {
+class String;
+
 namespace priv
 {
 ////////////////////////////////////////////////////////////
@@ -42,7 +38,6 @@ namespace priv
 class ClipboardImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Get the content of the clipboard as string data
     ///
@@ -71,6 +66,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_CLIPBOARDIMPLWIN32_HPP

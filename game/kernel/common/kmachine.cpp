@@ -1,7 +1,10 @@
 #include "kmachine.h"
 
 #include <random>
+#include <iostream>
+#include <fstream>
 #include <SFML/Audio.hpp>
+#include <SFML/Audio/Music.hpp>
 
 
 #include "common/global_profiler/GlobalProfiler.h"
@@ -107,22 +110,29 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
 
 
 
-
 void playMP3(const std::string& filePath, int volume)
 {
     sf::Music music;
 
-    if (!music.openFromFile(filePath))
+    std::ifstream file(filePath);
+    if (!file)
     {
-        printf("Failed to load: %s\n", filePath.c_str());
+        std::cout << "Invalid file path: " << filePath << std::endl;
         return;
     }
+
+    if (!music.openFromFile(filePath))
+    {
+        std::cout << "Failed to load: " << filePath << std::endl;
+        return;
+    }
+
     music.setVolume(volume);
     music.play();
 
     while (music.getStatus() == sf::Music::Playing)
     {
-        sf::sleep(sf::milliseconds(100));
+       sf::sleep(sf::milliseconds(100));
     }
 }
 

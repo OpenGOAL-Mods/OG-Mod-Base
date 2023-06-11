@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,30 +22,30 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SHAREDDISPLAY_HPP
-#define SFML_SHAREDDISPLAY_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
+
 #include <X11/Xlib.h>
+
 #include <string>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Get the shared Display
 ///
 /// This function increments the reference count of the display,
-/// it must be matched with a call to CloseDisplay.
+/// it must be matched with a call to closeDisplay.
 ///
 /// \return Pointer to the shared display
 ///
 ////////////////////////////////////////////////////////////
-Display* OpenDisplay();
+Display* openDisplay();
 
 ////////////////////////////////////////////////////////////
 /// \brief Release a reference to the shared display
@@ -53,7 +53,28 @@ Display* OpenDisplay();
 /// \param display Display to release
 ///
 ////////////////////////////////////////////////////////////
-void CloseDisplay(Display* display);
+void closeDisplay(Display* display);
+
+////////////////////////////////////////////////////////////
+/// \brief Get the shared XIM context for the Display
+///
+/// This function increments the reference count of the XIM context,
+/// it must be matched with a call to CloseXIM.
+///
+/// It must be called with a display already opened.
+///
+/// \return XIM handle (a pointer) of the context
+///
+////////////////////////////////////////////////////////////
+XIM openXim();
+
+////////////////////////////////////////////////////////////
+/// \brief Release a reference to the shared XIM context
+///
+/// \param xim XIM context to release
+///
+////////////////////////////////////////////////////////////
+void closeXim(XIM xim);
 
 ////////////////////////////////////////////////////////////
 /// \brief Get the atom with the specified name
@@ -66,9 +87,4 @@ void CloseDisplay(Display* display);
 ////////////////////////////////////////////////////////////
 Atom getAtom(const std::string& name, bool onlyIfExists = false);
 
-} // namespace priv
-
-} // namespace sf
-
-
-#endif // SFML_SHAREDDISPLAY_HPP
+} // namespace sf::priv

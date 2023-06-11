@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,14 +22,14 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOUNDFILEREADER_HPP
-#define SFML_SOUNDFILEREADER_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
-#include <string>
+
+#include <cstdint>
 
 
 namespace sf
@@ -43,23 +43,22 @@ class InputStream;
 class SFML_AUDIO_API SoundFileReader
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Structure holding the audio properties of a sound file
     ///
     ////////////////////////////////////////////////////////////
     struct Info
     {
-        Uint64       sampleCount;  ///< Total number of samples in the file
-        unsigned int channelCount; ///< Number of channels of the sound
-        unsigned int sampleRate;   ///< Samples rate of the sound, in samples per second
+        std::uint64_t sampleCount{};  //!< Total number of samples in the file
+        unsigned int  channelCount{}; //!< Number of channels of the sound
+        unsigned int  sampleRate{};   //!< Samples rate of the sound, in samples per second
     };
 
     ////////////////////////////////////////////////////////////
     /// \brief Virtual destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~SoundFileReader() {}
+    virtual ~SoundFileReader() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file for reading
@@ -74,7 +73,7 @@ public:
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool open(InputStream& stream, Info& info) = 0;
+    [[nodiscard]] virtual bool open(InputStream& stream, Info& info) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset
@@ -89,7 +88,7 @@ public:
     /// \param sampleOffset Index of the sample to jump to, relative to the beginning
     ///
     ////////////////////////////////////////////////////////////
-    virtual void seek(Uint64 sampleOffset) = 0;
+    virtual void seek(std::uint64_t sampleOffset) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the open file
@@ -100,13 +99,10 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    virtual Uint64 read(Int16* samples, Uint64 maxCount) = 0;
+    [[nodiscard]] virtual std::uint64_t read(std::int16_t* samples, std::uint64_t maxCount) = 0;
 };
 
 } // namespace sf
-
-
-#endif // SFML_SOUNDFILEREADER_HPP
 
 
 ////////////////////////////////////////////////////////////
@@ -130,25 +126,26 @@ public:
 /// {
 /// public:
 ///
-///     static bool check(sf::InputStream& stream)
+///     [[nodiscard]] static bool check(sf::InputStream& stream)
 ///     {
 ///         // typically, read the first few header bytes and check fields that identify the format
 ///         // return true if the reader can handle the format
 ///     }
 ///
-///     virtual bool open(sf::InputStream& stream, Info& info)
+///     [[nodiscard]] bool open(sf::InputStream& stream, Info& info) override
 ///     {
 ///         // read the sound file header and fill the sound attributes
 ///         // (channel count, sample count and sample rate)
 ///         // return true on success
 ///     }
 ///
-///     virtual void seek(sf::Uint64 sampleOffset)
+///     void seek(std::uint64_t sampleOffset) override
 ///     {
-///         // advance to the sampleOffset-th sample from the beginning of the sound
+///         // advance to the sampleOffset-th sample from the beginning of the
+///         sound
 ///     }
 ///
-///     virtual sf::Uint64 read(sf::Int16* samples, sf::Uint64 maxCount)
+///     std::uint64_t read(std::int16_t* samples, std::uint64_t maxCount) override
 ///     {
 ///         // read up to 'maxCount' samples into the 'samples' array,
 ///         // convert them (for example from normalized float) if they are not stored

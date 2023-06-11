@@ -10,7 +10,7 @@ if(SFML_OS_MACOSX)
         $ENV{HOME}/Applications/Developer/Doxygen.app/Contents/Resources
         $ENV{HOME}/Applications/Developer/Doxygen.app/Contents/MacOS)
 
-    set(CMAKE_PROGRAM_PATH ${CMAKE_PROGRAM_PATH} ${ADDITIONAL_PATHS})
+    list(APPEND CMAKE_PROGRAM_PATH ${ADDITIONAL_PATHS})
 endif()
 
 find_package(Doxygen REQUIRED)
@@ -43,20 +43,24 @@ configure_file(${DOXYGEN_INPUT_DIR}/doc/header.html.in ${DOXYGEN_OUTPUT_DIR}/hea
 
 # copy the files needed by the documentation
 configure_file(${DOXYGEN_INPUT_DIR}/doc/doxygen.css ${DOXYGEN_OUTPUT_DIR}/html/doxygen.css COPYONLY)
+configure_file(${DOXYGEN_INPUT_DIR}/doc/searchOverrides.css ${DOXYGEN_OUTPUT_DIR}/html/searchOverrides.css COPYONLY)
 
 # target setup
-add_custom_target(doc ALL
+add_custom_target(doc
                   COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
                   COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_CONFIGURED_INPUT}
                   COMMAND ${CMAKE_COMMAND} -E echo "Done."
                   WORKING_DIRECTORY ${DOXYGEN_INPUT_DIR})
 
 # setup install rules
+install(FILES ${DOXYGEN_OUTPUT_DIR}/SFML.tag
+        DESTINATION ${CMAKE_INSTALL_DOCDIR}
+        COMPONENT doc)
 install(DIRECTORY ${DOXYGEN_OUTPUT_DIR}/html
-        DESTINATION ${SFML_MISC_INSTALL_PREFIX}/doc
+        DESTINATION ${CMAKE_INSTALL_DOCDIR}
         COMPONENT doc)
 if(DOXYGEN_HHC_PROGRAM)
     install(FILES ${DOXYGEN_OUTPUT_DIR}/sfml.chm
-            DESTINATION ${SFML_MISC_INSTALL_PREFIX}/doc
+            DESTINATION ${CMAKE_INSTALL_DOCDIR}
             COMPONENT doc)
 endif()

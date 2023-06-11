@@ -22,21 +22,22 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RESOURCESTREAM_HPP
-#define SFML_RESOURCESTREAM_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
+
 #include <SFML/System/InputStream.hpp>
+
 #include <android/asset_manager.h>
+
+#include <filesystem>
 #include <string>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Read from Android asset files
@@ -45,20 +46,13 @@ namespace priv
 class SFML_SYSTEM_API ResourceStream : public InputStream
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     /// \param filename Filename of the asset
     ///
     ////////////////////////////////////////////////////////////
-    ResourceStream(const std::string& filename);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    ~ResourceStream();
+    ResourceStream(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Read data from the asset
@@ -69,7 +63,7 @@ public:
     /// \return The number of bytes actually read, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    Int64 read(void *data, Int64 size);
+    std::int64_t read(void* data, std::int64_t size) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position in the asset file
@@ -79,7 +73,7 @@ public:
     /// \return The position actually sought to, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    Int64 seek(Int64 position);
+    std::int64_t seek(std::int64_t position) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current reading position in the asset file
@@ -87,7 +81,7 @@ public:
     /// \return The current position, or -1 on error.
     ///
     ////////////////////////////////////////////////////////////
-    Int64 tell();
+    std::int64_t tell() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the asset file
@@ -95,19 +89,21 @@ public:
     /// \return The total number of bytes available in the asset, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    Int64 getSize();
+    std::int64_t getSize() override;
 
 private:
+    ////////////////////////////////////////////////////////////
+    // Types
+    ////////////////////////////////////////////////////////////
+    struct AAssetDeleter
+    {
+        void operator()(AAsset*);
+    };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    AAsset* m_file; ///< The asset file to read
+    std::unique_ptr<AAsset, AAssetDeleter> m_file; ///< The asset file to read
 };
 
-} // namespace priv
-
-} // namespace sf
-
-
-#endif // SFML_RESOURCESTREAM_HPP
+} // namespace sf::priv

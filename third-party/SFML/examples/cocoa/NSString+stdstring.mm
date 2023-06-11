@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -24,50 +24,50 @@
 ////////////////////////////////////////////////////////////
 
 #import "NSString+stdstring.h"
+
 #include <SFML/System/Utf.hpp>
 
 @implementation NSString (NSString_stdstring)
 
-+(id)stringWithstdstring:(const std::string&)string
++ (id)stringWithstdstring:(const std::string&)string
 {
     std::string utf8;
     utf8.reserve(string.size() + 1);
 
     sf::Utf8::fromAnsi(string.begin(), string.end(), std::back_inserter(utf8));
 
-    NSString* str = [NSString stringWithCString:utf8.c_str()
-                                       encoding:NSUTF8StringEncoding];
+    NSString* str = [NSString stringWithCString:utf8.c_str() encoding:NSUTF8StringEncoding];
     return str;
 }
 
-+(id)stringWithstdwstring:(const std::wstring&)string
++ (id)stringWithstdwstring:(const std::wstring&)string
 {
-    char* data = (char*)string.data();
-    unsigned size = string.size() * sizeof(wchar_t);
+    const void* data = static_cast<const void*>(string.data());
+    unsigned    size = static_cast<unsigned>(string.size() * sizeof(wchar_t));
 
     NSString* str = [[[NSString alloc] initWithBytes:data length:size
                                             encoding:NSUTF32LittleEndianStringEncoding] autorelease];
     return str;
 }
 
--(std::string)tostdstring
+- (std::string)tostdstring
 {
     // Not sure about the encoding to use. Using [self UTF8String] doesn't
     // work for characters like é or à.
-    const char *cstr = [self cStringUsingEncoding:NSISOLatin1StringEncoding];
+    const char* cstr = [self cStringUsingEncoding:NSISOLatin1StringEncoding];
 
-    if (cstr != NULL)
+    if (cstr != nullptr)
         return std::string(cstr);
     else
         return "";
 }
 
--(std::wstring)tostdwstring
+- (std::wstring)tostdwstring
 {
     // According to Wikipedia, Mac OS X is Little Endian on x86 and x86-64
     // https://en.wikipedia.org/wiki/Endianness
     NSData* asData = [self dataUsingEncoding:NSUTF32LittleEndianStringEncoding];
-    return std::wstring((wchar_t*)[asData bytes], [asData length] / sizeof(wchar_t));
+    return std::wstring(static_cast<const wchar_t*>([asData bytes]), [asData length] / sizeof(wchar_t));
 }
 
 @end

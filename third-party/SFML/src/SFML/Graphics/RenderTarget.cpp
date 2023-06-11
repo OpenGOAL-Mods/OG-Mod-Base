@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,129 +25,149 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/VertexBuffer.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
+
 #include <SFML/Window/Context.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
+
 #include <SFML/System/Err.hpp>
-#include <cassert>
-#include <iostream>
+
 #include <algorithm>
-#include <map>
+#include <iostream>
+#include <mutex>
+#include <ostream>
+#include <unordered_map>
 
-
-// GL_QUADS is unavailable on OpenGL ES, thus we need to define GL_QUADS ourselves
-#ifdef SFML_OPENGL_ES
-
-    #define GL_QUADS 0
-
-#endif // SFML_OPENGL_ES
+#include <cassert>
+#include <cmath>
+#include <cstddef>
 
 
 namespace
 {
-    // Mutex to protect ID generation and our context-RenderTarget-map
-    sf::Mutex mutex;
-
-    // Unique identifier, used for identifying RenderTargets when
-    // tracking the currently active RenderTarget within a given context
-    sf::Uint64 getUniqueId()
-    {
-        sf::Lock lock(mutex);
-
-        static sf::Uint64 id = 1; // start at 1, zero is "no RenderTarget"
-
-        return id++;
-    }
-
-    // Map to help us detect whether a different RenderTarget
-    // has been activated within a single context
-    typedef std::map<sf::Uint64, sf::Uint64> ContextRenderTargetMap;
-    ContextRenderTargetMap contextRenderTargetMap;
-
-    // Check if a RenderTarget with the given ID is active in the current context
-    bool isActive(sf::Uint64 id)
-    {
-        ContextRenderTargetMap::iterator iter = contextRenderTargetMap.find(sf::Context::getActiveContextId());
-
-        if ((iter == contextRenderTargetMap.end()) || (iter->second != id))
-            return false;
-
-        return true;
-    }
-
-    // Convert an sf::BlendMode::Factor constant to the corresponding OpenGL constant.
-    sf::Uint32 factorToGlConstant(sf::BlendMode::Factor blendFactor)
-    {
-        switch (blendFactor)
-        {
-            case sf::BlendMode::Zero:             return GL_ZERO;
-            case sf::BlendMode::One:              return GL_ONE;
-            case sf::BlendMode::SrcColor:         return GL_SRC_COLOR;
-            case sf::BlendMode::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
-            case sf::BlendMode::DstColor:         return GL_DST_COLOR;
-            case sf::BlendMode::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
-            case sf::BlendMode::SrcAlpha:         return GL_SRC_ALPHA;
-            case sf::BlendMode::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
-            case sf::BlendMode::DstAlpha:         return GL_DST_ALPHA;
-            case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
-        }
-
-        sf::err() << "Invalid value for sf::BlendMode::Factor! Fallback to sf::BlendMode::Zero." << std::endl;
-        assert(false);
-        return GL_ZERO;
-    }
-
-
-    // Convert an sf::BlendMode::BlendEquation constant to the corresponding OpenGL constant.
-    sf::Uint32 equationToGlConstant(sf::BlendMode::Equation blendEquation)
-    {
-        switch (blendEquation)
-        {
-            case sf::BlendMode::Add:             return GLEXT_GL_FUNC_ADD;
-            case sf::BlendMode::Subtract:        return GLEXT_GL_FUNC_SUBTRACT;
-            case sf::BlendMode::ReverseSubtract: return GLEXT_GL_FUNC_REVERSE_SUBTRACT;
-        }
-
-        sf::err() << "Invalid value for sf::BlendMode::Equation! Fallback to sf::BlendMode::Add." << std::endl;
-        assert(false);
-        return GLEXT_GL_FUNC_ADD;
-    }
+// A nested named namespace is used here to allow unity builds of SFML.
+namespace RenderTargetImpl
+{
+// Mutex to protect ID generation and our context-RenderTarget-map
+std::recursive_mutex& getMutex()
+{
+    static std::recursive_mutex mutex;
+    return mutex;
 }
+
+// Unique identifier, used for identifying RenderTargets when
+// tracking the currently active RenderTarget within a given context
+std::uint64_t getUniqueId()
+{
+    const std::lock_guard lock(getMutex());
+    static std::uint64_t  id = 1; // start at 1, zero is "no RenderTarget"
+    return id++;
+}
+
+// Map to help us detect whether a different RenderTarget
+// has been activated within a single context
+using ContextRenderTargetMap = std::unordered_map<std::uint64_t, std::uint64_t>;
+ContextRenderTargetMap& getContextRenderTargetMap()
+{
+    static ContextRenderTargetMap contextRenderTargetMap;
+    return contextRenderTargetMap;
+}
+
+// Check if a RenderTarget with the given ID is active in the current context
+bool isActive(std::uint64_t id)
+{
+    const auto it = getContextRenderTargetMap().find(sf::Context::getActiveContextId());
+    return (it != getContextRenderTargetMap().end()) && (it->second == id);
+}
+
+// Convert an sf::BlendMode::Factor constant to the corresponding OpenGL constant.
+std::uint32_t factorToGlConstant(sf::BlendMode::Factor blendFactor)
+{
+    // clang-format off
+    switch (blendFactor)
+    {
+        case sf::BlendMode::Zero:             return GL_ZERO;
+        case sf::BlendMode::One:              return GL_ONE;
+        case sf::BlendMode::SrcColor:         return GL_SRC_COLOR;
+        case sf::BlendMode::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
+        case sf::BlendMode::DstColor:         return GL_DST_COLOR;
+        case sf::BlendMode::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
+        case sf::BlendMode::SrcAlpha:         return GL_SRC_ALPHA;
+        case sf::BlendMode::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
+        case sf::BlendMode::DstAlpha:         return GL_DST_ALPHA;
+        case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
+    }
+    // clang-format on
+
+    sf::err() << "Invalid value for sf::BlendMode::Factor! Fallback to sf::BlendMode::Zero." << std::endl;
+    assert(false);
+    return GL_ZERO;
+}
+
+
+// Convert an sf::BlendMode::BlendEquation constant to the corresponding OpenGL constant.
+std::uint32_t equationToGlConstant(sf::BlendMode::Equation blendEquation)
+{
+    switch (blendEquation)
+    {
+        case sf::BlendMode::Add:
+            return GLEXT_GL_FUNC_ADD;
+        case sf::BlendMode::Subtract:
+            if (GLEXT_blend_subtract)
+                return GLEXT_GL_FUNC_SUBTRACT;
+            break;
+        case sf::BlendMode::ReverseSubtract:
+            if (GLEXT_blend_subtract)
+                return GLEXT_GL_FUNC_REVERSE_SUBTRACT;
+            break;
+        case sf::BlendMode::Min:
+            if (GLEXT_blend_minmax)
+                return GLEXT_GL_MIN;
+            break;
+        case sf::BlendMode::Max:
+            if (GLEXT_blend_minmax)
+                return GLEXT_GL_MAX;
+            break;
+    }
+
+    static bool warned = false;
+    if (!warned)
+    {
+        sf::err() << "OpenGL extension EXT_blend_minmax or EXT_blend_subtract unavailable" << '\n'
+                  << "Some blending equations will fallback to sf::BlendMode::Add" << '\n'
+                  << "Ensure that hardware acceleration is enabled if available" << std::endl;
+
+        warned = true;
+    }
+
+    return GLEXT_GL_FUNC_ADD;
+}
+} // namespace RenderTargetImpl
+} // namespace
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-RenderTarget::RenderTarget() :
-m_defaultView(),
-m_view       (),
-m_cache      (),
-m_id         (0)
-{
-    m_cache.glStatesSet = false;
-}
+RenderTarget::RenderTarget() = default;
 
 
 ////////////////////////////////////////////////////////////
-RenderTarget::~RenderTarget()
-{
-}
+RenderTarget::~RenderTarget() = default;
 
 
 ////////////////////////////////////////////////////////////
 void RenderTarget::clear(const Color& color)
 {
-    if (isActive(m_id) || setActive(true))
+    if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         // Unbind texture to fix RenderTexture preventing clear
-        applyTexture(NULL);
+        applyTexture(nullptr);
 
         glCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
         glCheck(glClear(GL_COLOR_BUFFER_BIT));
@@ -158,7 +178,7 @@ void RenderTarget::clear(const Color& color)
 ////////////////////////////////////////////////////////////
 void RenderTarget::setView(const View& view)
 {
-    m_view = view;
+    m_view              = view;
     m_cache.viewChanged = true;
 }
 
@@ -180,14 +200,11 @@ const View& RenderTarget::getDefaultView() const
 ////////////////////////////////////////////////////////////
 IntRect RenderTarget::getViewport(const View& view) const
 {
-    float width  = static_cast<float>(getSize().x);
-    float height = static_cast<float>(getSize().y);
-    const FloatRect& viewport = view.getViewport();
+    const auto [width, height] = Vector2f(getSize());
+    const FloatRect& viewport  = view.getViewport();
 
-    return IntRect(static_cast<int>(0.5f + width  * viewport.left),
-                   static_cast<int>(0.5f + height * viewport.top),
-                   static_cast<int>(0.5f + width  * viewport.width),
-                   static_cast<int>(0.5f + height * viewport.height));
+    return IntRect(Rect<long>({std::lround(width * viewport.left), std::lround(height * viewport.top)},
+                              {std::lround(width * viewport.width), std::lround(height * viewport.height)}));
 }
 
 
@@ -202,10 +219,10 @@ Vector2f RenderTarget::mapPixelToCoords(const Vector2i& point) const
 Vector2f RenderTarget::mapPixelToCoords(const Vector2i& point, const View& view) const
 {
     // First, convert from viewport coordinates to homogeneous coordinates
-    Vector2f normalized;
-    IntRect viewport = getViewport(view);
-    normalized.x = -1.f + 2.f * (point.x - viewport.left) / viewport.width;
-    normalized.y =  1.f - 2.f * (point.y - viewport.top)  / viewport.height;
+    Vector2f        normalized;
+    const FloatRect viewport = FloatRect(getViewport(view));
+    normalized.x             = -1.f + 2.f * (static_cast<float>(point.x) - viewport.left) / viewport.width;
+    normalized.y             = 1.f - 2.f * (static_cast<float>(point.y) - viewport.top) / viewport.height;
 
     // Then transform by the inverse of the view matrix
     return view.getInverseTransform().transformPoint(normalized);
@@ -223,13 +240,13 @@ Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point) const
 Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point, const View& view) const
 {
     // First, transform the point by the view matrix
-    Vector2f normalized = view.getTransform().transformPoint(point);
+    const Vector2f normalized = view.getTransform().transformPoint(point);
 
     // Then convert to viewport coordinates
-    Vector2i pixel;
-    IntRect viewport = getViewport(view);
-    pixel.x = static_cast<int>(( normalized.x + 1.f) / 2.f * viewport.width  + viewport.left);
-    pixel.y = static_cast<int>((-normalized.y + 1.f) / 2.f * viewport.height + viewport.top);
+    Vector2i        pixel;
+    const FloatRect viewport = FloatRect(getViewport(view));
+    pixel.x                  = static_cast<int>((normalized.x + 1.f) / 2.f * viewport.width + viewport.left);
+    pixel.y                  = static_cast<int>((-normalized.y + 1.f) / 2.f * viewport.height + viewport.top);
 
     return pixel;
 }
@@ -243,35 +260,25 @@ void RenderTarget::draw(const Drawable& drawable, const RenderStates& states)
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
-                        PrimitiveType type, const RenderStates& states)
+void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount, PrimitiveType type, const RenderStates& states)
 {
     // Nothing to draw?
     if (!vertices || (vertexCount == 0))
         return;
 
-    // GL_QUADS is unavailable on OpenGL ES
-    #ifdef SFML_OPENGL_ES
-        if (type == Quads)
-        {
-            err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << std::endl;
-            return;
-        }
-    #endif
-
-    if (isActive(m_id) || setActive(true))
+    if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         // Check if the vertex count is low enough so that we can pre-transform them
-        bool useVertexCache = (vertexCount <= StatesCache::VertexCacheSize);
+        const bool useVertexCache = (vertexCount <= StatesCache::VertexCacheSize);
 
         if (useVertexCache)
         {
             // Pre-transform the vertices and store them into the vertex cache
             for (std::size_t i = 0; i < vertexCount; ++i)
             {
-                Vertex& vertex = m_cache.vertexCache[i];
-                vertex.position = states.transform * vertices[i].position;
-                vertex.color = vertices[i].color;
+                Vertex& vertex   = m_cache.vertexCache[i];
+                vertex.position  = states.transform * vertices[i].position;
+                vertex.color     = vertices[i].color;
                 vertex.texCoords = vertices[i].texCoords;
             }
         }
@@ -279,7 +286,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         setupDraw(useVertexCache, states);
 
         // Check if texture coordinates array is needed, and update client state accordingly
-        bool enableTexCoordsArray = (states.texture || states.shader);
+        const bool enableTexCoordsArray = (states.texture || states.shader);
         if (!m_cache.enable || (enableTexCoordsArray != m_cache.texCoordsArrayEnabled))
         {
             if (enableTexCoordsArray)
@@ -292,11 +299,11 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         // coordinates we need to set up the pointers to the vertices' components
         if (!m_cache.enable || !useVertexCache || !m_cache.useVertexCache)
         {
-            const char* data = reinterpret_cast<const char*>(vertices);
+            const auto* data = reinterpret_cast<const std::byte*>(vertices);
 
             // If we pre-transform the vertices, we must use our internal vertex cache
             if (useVertexCache)
-                data = reinterpret_cast<const char*>(m_cache.vertexCache);
+                data = reinterpret_cast<const std::byte*>(m_cache.vertexCache);
 
             glCheck(glVertexPointer(2, GL_FLOAT, sizeof(Vertex), data + 0));
             glCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), data + 8));
@@ -306,7 +313,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         else if (enableTexCoordsArray && !m_cache.texCoordsArrayEnabled)
         {
             // If we enter this block, we are already using our internal vertex cache
-            const char* data = reinterpret_cast<const char*>(m_cache.vertexCache);
+            const auto* data = reinterpret_cast<const std::byte*>(m_cache.vertexCache);
 
             glCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), data + 12));
         }
@@ -315,7 +322,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         cleanupDraw(states);
 
         // Update the cache
-        m_cache.useVertexCache = useVertexCache;
+        m_cache.useVertexCache        = useVertexCache;
         m_cache.texCoordsArrayEnabled = enableTexCoordsArray;
     }
 }
@@ -329,8 +336,7 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, const RenderStates& st
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVertex,
-                        std::size_t vertexCount, const RenderStates& states)
+void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVertex, std::size_t vertexCount, const RenderStates& states)
 {
     // VertexBuffer not supported?
     if (!VertexBuffer::isAvailable())
@@ -350,16 +356,7 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
     if (!vertexCount || !vertexBuffer.getNativeHandle())
         return;
 
-    // GL_QUADS is unavailable on OpenGL ES
-    #ifdef SFML_OPENGL_ES
-        if (vertexBuffer.getPrimitiveType() == Quads)
-        {
-            err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << std::endl;
-            return;
-        }
-    #endif
-
-    if (isActive(m_id) || setActive(true))
+    if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         setupDraw(false, states);
 
@@ -377,14 +374,22 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
         drawPrimitives(vertexBuffer.getPrimitiveType(), firstVertex, vertexCount);
 
         // Unbind vertex buffer
-        VertexBuffer::bind(NULL);
+        VertexBuffer::bind(nullptr);
 
         cleanupDraw(states);
 
         // Update the cache
-        m_cache.useVertexCache = false;
+        m_cache.useVertexCache        = false;
         m_cache.texCoordsArrayEnabled = true;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+bool RenderTarget::isSrgb() const
+{
+    // By default sRGB encoding is not enabled for an arbitrary RenderTarget
+    return false;
 }
 
 
@@ -393,31 +398,34 @@ bool RenderTarget::setActive(bool active)
 {
     // Mark this RenderTarget as active or no longer active in the tracking map
     {
-        sf::Lock lock(mutex);
+        const std::lock_guard lock(RenderTargetImpl::getMutex());
 
-        Uint64 contextId = Context::getActiveContextId();
+        const std::uint64_t contextId = Context::getActiveContextId();
 
-        ContextRenderTargetMap::iterator iter = contextRenderTargetMap.find(contextId);
+        using RenderTargetImpl::getContextRenderTargetMap;
+        auto& contextRenderTargetMap = getContextRenderTargetMap();
+        auto  it                     = contextRenderTargetMap.find(contextId);
 
         if (active)
         {
-            if (iter == contextRenderTargetMap.end())
+            if (it == contextRenderTargetMap.end())
             {
                 contextRenderTargetMap[contextId] = m_id;
 
-                m_cache.enable = false;
+                m_cache.glStatesSet = false;
+                m_cache.enable      = false;
             }
-            else if (iter->second != m_id)
+            else if (it->second != m_id)
             {
-                iter->second = m_id;
+                it->second = m_id;
 
                 m_cache.enable = false;
             }
         }
         else
         {
-            if (iter != contextRenderTargetMap.end())
-                contextRenderTargetMap.erase(iter);
+            if (it != contextRenderTargetMap.end())
+                contextRenderTargetMap.erase(it);
 
             m_cache.enable = false;
         }
@@ -430,23 +438,22 @@ bool RenderTarget::setActive(bool active)
 ////////////////////////////////////////////////////////////
 void RenderTarget::pushGLStates()
 {
-    if (isActive(m_id) || setActive(true))
+    if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
-        #ifdef SFML_DEBUG
-            // make sure that the user didn't leave an unchecked OpenGL error
-            GLenum error = glGetError();
-            if (error != GL_NO_ERROR)
-            {
-                err() << "OpenGL error (" << error << ") detected in user code, "
-                      << "you should check for errors with glGetError()"
-                      << std::endl;
-            }
-        #endif
+#ifdef SFML_DEBUG
+        // make sure that the user didn't leave an unchecked OpenGL error
+        const GLenum error = glGetError();
+        if (error != GL_NO_ERROR)
+        {
+            err() << "OpenGL error (" << error << ") detected in user code, "
+                  << "you should check for errors with glGetError()" << std::endl;
+        }
+#endif
 
-        #ifndef SFML_OPENGL_ES
-            glCheck(glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS));
-            glCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
-        #endif
+#ifndef SFML_OPENGL_ES
+        glCheck(glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS));
+        glCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
+#endif
         glCheck(glMatrixMode(GL_MODELVIEW));
         glCheck(glPushMatrix());
         glCheck(glMatrixMode(GL_PROJECTION));
@@ -462,7 +469,7 @@ void RenderTarget::pushGLStates()
 ////////////////////////////////////////////////////////////
 void RenderTarget::popGLStates()
 {
-    if (isActive(m_id) || setActive(true))
+    if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         glCheck(glMatrixMode(GL_PROJECTION));
         glCheck(glPopMatrix());
@@ -470,10 +477,10 @@ void RenderTarget::popGLStates()
         glCheck(glPopMatrix());
         glCheck(glMatrixMode(GL_TEXTURE));
         glCheck(glPopMatrix());
-        #ifndef SFML_OPENGL_ES
-            glCheck(glPopClientAttrib());
-            glCheck(glPopAttrib());
-        #endif
+#ifndef SFML_OPENGL_ES
+        glCheck(glPopClientAttrib());
+        glCheck(glPopAttrib());
+#endif
     }
 }
 
@@ -482,16 +489,19 @@ void RenderTarget::popGLStates()
 void RenderTarget::resetGLStates()
 {
     // Check here to make sure a context change does not happen after activate(true)
-    bool shaderAvailable = Shader::isAvailable();
-    bool vertexBufferAvailable = VertexBuffer::isAvailable();
+    const bool shaderAvailable       = Shader::isAvailable();
+    const bool vertexBufferAvailable = VertexBuffer::isAvailable();
 
-    // Workaround for states not being properly reset on
-    // macOS unless a context switch really takes place
-    #if defined(SFML_SYSTEM_MACOS)
-        setActive(false);
-    #endif
+// Workaround for states not being properly reset on
+// macOS unless a context switch really takes place
+#if defined(SFML_SYSTEM_MACOS)
+    if (!setActive(false))
+    {
+        err() << "Failed to set render target inactive" << std::endl;
+    }
+#endif
 
-    if (isActive(m_id) || setActive(true))
+    if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         // Make sure that extensions are initialized
         priv::ensureExtensionsInit();
@@ -519,12 +529,12 @@ void RenderTarget::resetGLStates()
 
         // Apply the default SFML states
         applyBlendMode(BlendAlpha);
-        applyTexture(NULL);
+        applyTexture(nullptr);
         if (shaderAvailable)
-            applyShader(NULL);
+            applyShader(nullptr);
 
         if (vertexBufferAvailable)
-            glCheck(VertexBuffer::bind(NULL));
+            glCheck(VertexBuffer::bind(nullptr));
 
         m_cache.texCoordsArrayEnabled = true;
 
@@ -542,7 +552,7 @@ void RenderTarget::resetGLStates()
 void RenderTarget::initialize()
 {
     // Setup the default and current views
-    m_defaultView.reset(FloatRect(0, 0, static_cast<float>(getSize().x), static_cast<float>(getSize().y)));
+    m_defaultView.reset(FloatRect({0, 0}, Vector2f(getSize())));
     m_view = m_defaultView;
 
     // Set GL states only on first draw, so that we don't pollute user's states
@@ -550,7 +560,7 @@ void RenderTarget::initialize()
 
     // Generate a unique ID for this RenderTarget to track
     // whether it is active within a specific context
-    m_id = getUniqueId();
+    m_id = RenderTargetImpl::getUniqueId();
 }
 
 
@@ -558,8 +568,8 @@ void RenderTarget::initialize()
 void RenderTarget::applyCurrentView()
 {
     // Set the viewport
-    IntRect viewport = getViewport(m_view);
-    int top = getSize().y - (viewport.top + viewport.height);
+    const IntRect viewport = getViewport(m_view);
+    const int     top      = static_cast<int>(getSize().y) - (viewport.top + viewport.height);
     glCheck(glViewport(viewport.left, top, viewport.width, viewport.height));
 
     // Set the projection matrix
@@ -576,27 +586,28 @@ void RenderTarget::applyCurrentView()
 ////////////////////////////////////////////////////////////
 void RenderTarget::applyBlendMode(const BlendMode& mode)
 {
+    using RenderTargetImpl::equationToGlConstant;
+    using RenderTargetImpl::factorToGlConstant;
+
     // Apply the blend mode, falling back to the non-separate versions if necessary
     if (GLEXT_blend_func_separate)
     {
-        glCheck(GLEXT_glBlendFuncSeparate(
-            factorToGlConstant(mode.colorSrcFactor), factorToGlConstant(mode.colorDstFactor),
-            factorToGlConstant(mode.alphaSrcFactor), factorToGlConstant(mode.alphaDstFactor)));
+        glCheck(GLEXT_glBlendFuncSeparate(factorToGlConstant(mode.colorSrcFactor),
+                                          factorToGlConstant(mode.colorDstFactor),
+                                          factorToGlConstant(mode.alphaSrcFactor),
+                                          factorToGlConstant(mode.alphaDstFactor)));
     }
     else
     {
-        glCheck(glBlendFunc(
-            factorToGlConstant(mode.colorSrcFactor),
-            factorToGlConstant(mode.colorDstFactor)));
+        glCheck(glBlendFunc(factorToGlConstant(mode.colorSrcFactor), factorToGlConstant(mode.colorDstFactor)));
     }
 
-    if (GLEXT_blend_minmax && GLEXT_blend_subtract)
+    if (GLEXT_blend_minmax || GLEXT_blend_subtract)
     {
         if (GLEXT_blend_equation_separate)
         {
-            glCheck(GLEXT_glBlendEquationSeparate(
-                equationToGlConstant(mode.colorEquation),
-                equationToGlConstant(mode.alphaEquation)));
+            glCheck(GLEXT_glBlendEquationSeparate(equationToGlConstant(mode.colorEquation),
+                                                  equationToGlConstant(mode.alphaEquation)));
         }
         else
         {
@@ -609,9 +620,13 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
 
         if (!warned)
         {
-            err() << "OpenGL extension EXT_blend_minmax and/or EXT_blend_subtract unavailable" << std::endl;
-            err() << "Selecting a blend equation not possible" << std::endl;
-            err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+#ifdef SFML_OPENGL_ES
+            err() << "OpenGL ES extension OES_blend_subtract unavailable" << std::endl;
+#else
+            err() << "OpenGL extension EXT_blend_minmax and EXT_blend_subtract unavailable" << std::endl;
+#endif
+            err() << "Selecting a blend equation not possible" << '\n'
+                  << "Ensure that hardware acceleration is enabled if available" << std::endl;
 
             warned = true;
         }
@@ -652,6 +667,16 @@ void RenderTarget::applyShader(const Shader* shader)
 ////////////////////////////////////////////////////////////
 void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
 {
+    // Enable or disable sRGB encoding
+    // This is needed for drivers that do not check the format of the surface drawn to before applying sRGB conversion
+    if (!m_cache.enable)
+    {
+        if (isSrgb())
+            glCheck(glEnable(GL_FRAMEBUFFER_SRGB));
+        else
+            glCheck(glDisable(GL_FRAMEBUFFER_SRGB));
+    }
+
     // First set the persistent OpenGL states if it's the very first call
     if (!m_cache.glStatesSet)
         resetGLStates();
@@ -688,7 +713,7 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
     }
     else
     {
-        Uint64 textureId = states.texture ? states.texture->m_cacheId : 0;
+        const std::uint64_t textureId = states.texture ? states.texture->m_cacheId : 0;
         if (textureId != m_cache.lastTextureId)
             applyTexture(states.texture);
     }
@@ -703,9 +728,8 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
 void RenderTarget::drawPrimitives(PrimitiveType type, std::size_t firstVertex, std::size_t vertexCount)
 {
     // Find the OpenGL primitive type
-    static const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
-                                   GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
-    GLenum mode = modes[type];
+    static constexpr GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN};
+    const GLenum            mode = modes[static_cast<std::size_t>(type)];
 
     // Draw the primitives
     glCheck(glDrawArrays(mode, static_cast<GLint>(firstVertex), static_cast<GLsizei>(vertexCount)));
@@ -717,12 +741,12 @@ void RenderTarget::cleanupDraw(const RenderStates& states)
 {
     // Unbind the shader, if any
     if (states.shader)
-        applyShader(NULL);
+        applyShader(nullptr);
 
     // If the texture we used to draw belonged to a RenderTexture, then forcibly unbind that texture.
     // This prevents a bug where some drivers do not clear RenderTextures properly.
     if (states.texture && states.texture->m_fboAttachment)
-        applyTexture(NULL);
+        applyTexture(nullptr);
 
     // Re-enable the cache at the end of the draw if it was disabled
     m_cache.enable = true;

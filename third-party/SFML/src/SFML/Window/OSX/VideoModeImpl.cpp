@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -26,14 +26,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoModeImpl.hpp>
 #include <SFML/Window/OSX/cg_sf_conversion.hpp>
-#include <SFML/System/Err.hpp>
-#include <algorithm>
+#include <SFML/Window/VideoModeImpl.hpp>
 
-namespace sf
-{
-namespace priv
+#include <SFML/System/Err.hpp>
+
+#include <algorithm>
+#include <ostream>
+
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -42,26 +43,26 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     std::vector<VideoMode> modes;
 
     // Retrieve all modes available for main screen only.
-    CFArrayRef cgmodes = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), NULL);
+    CFArrayRef cgmodes = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), nullptr);
 
-    if (cgmodes == NULL)
+    if (cgmodes == nullptr)
     {
         sf::err() << "Couldn't get VideoMode for main display." << std::endl;
         return modes;
     }
 
-    VideoMode desktop = getDesktopMode();
+    const VideoMode desktop = getDesktopMode();
 
     // Loop on each mode and convert it into a sf::VideoMode object.
     const CFIndex modesCount = CFArrayGetCount(cgmodes);
-    for (CFIndex i = 0; i < modesCount; i++)
+    for (CFIndex i = 0; i < modesCount; ++i)
     {
-        CGDisplayModeRef cgmode = (CGDisplayModeRef)CFArrayGetValueAtIndex(cgmodes, i);
+        auto* cgmode = static_cast<CGDisplayModeRef>(const_cast<void*>(CFArrayGetValueAtIndex(cgmodes, i)));
 
-        VideoMode mode = convertCGModeToSFMode(cgmode);
+        const VideoMode mode = convertCGModeToSFMode(cgmode);
 
         // Skip if bigger than desktop as we currently don't perform hard resolution switch
-        if ((mode.width > desktop.width) || (mode.height > desktop.height))
+        if ((mode.size.x > desktop.size.x) || (mode.size.y > desktop.size.y))
             continue;
 
         // If not yet listed we add it to our modes array.
@@ -84,8 +85,8 @@ VideoMode VideoModeImpl::getDesktopMode()
     // Rely exclusively on mode and convertCGModeToSFMode
     // instead of display id and CGDisplayPixelsHigh/Wide.
 
-    CGDirectDisplayID display = CGMainDisplayID();
-    CGDisplayModeRef cgmode = CGDisplayCopyDisplayMode(display);
+    const CGDirectDisplayID display = CGMainDisplayID();
+    CGDisplayModeRef        cgmode  = CGDisplayCopyDisplayMode(display);
 
     mode = convertCGModeToSFMode(cgmode);
 
@@ -94,6 +95,4 @@ VideoMode VideoModeImpl::getDesktopMode()
     return mode;
 }
 
-} // namespace priv
-} // namespace sf
-
+} // namespace sf::priv

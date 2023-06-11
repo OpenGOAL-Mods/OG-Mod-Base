@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,32 +25,29 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/ALCheck.hpp>
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
-#include <SFML/Audio/ALCheck.hpp>
 
+#if defined(__APPLE__)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Sound::Sound() :
-m_buffer(NULL)
-{
-}
+Sound::Sound() = default;
 
 
 ////////////////////////////////////////////////////////////
-Sound::Sound(const SoundBuffer& buffer) :
-m_buffer(NULL)
+Sound::Sound(const SoundBuffer& buffer)
 {
     setBuffer(buffer);
 }
 
 
 ////////////////////////////////////////////////////////////
-Sound::Sound(const Sound& copy) :
-SoundSource(copy),
-m_buffer   (NULL)
+Sound::Sound(const Sound& copy) : SoundSource(copy)
 {
     if (copy.m_buffer)
         setBuffer(*copy.m_buffer);
@@ -101,7 +98,7 @@ void Sound::setBuffer(const SoundBuffer& buffer)
     // Assign and use the new buffer
     m_buffer = &buffer;
     m_buffer->attachSound(this);
-    alCheck(alSourcei(m_source, AL_BUFFER, m_buffer->m_buffer));
+    alCheck(alSourcei(m_source, AL_BUFFER, static_cast<ALint>(m_buffer->m_buffer)));
 }
 
 
@@ -154,11 +151,15 @@ Sound::Status Sound::getStatus() const
 
 
 ////////////////////////////////////////////////////////////
-Sound& Sound::operator =(const Sound& right)
+Sound& Sound::operator=(const Sound& right)
 {
     // Here we don't use the copy-and-swap idiom, because it would mess up
     // the list of sound instances contained in the buffers and unnecessarily
     // destroy/create OpenAL sound sources
+
+    // Handle self-assignment here, as no copy-and-swap idiom is being used
+    if (this == &right)
+        return *this;
 
     // Delegate to base class, which copies all the sound attributes
     SoundSource::operator=(right);
@@ -168,7 +169,7 @@ Sound& Sound::operator =(const Sound& right)
     {
         stop();
         m_buffer->detachSound(this);
-        m_buffer = NULL;
+        m_buffer = nullptr;
     }
 
     // Copy the remaining sound attributes
@@ -191,7 +192,7 @@ void Sound::resetBuffer()
     {
         alCheck(alSourcei(m_source, AL_BUFFER, 0));
         m_buffer->detachSound(this);
-        m_buffer = NULL;
+        m_buffer = nullptr;
     }
 }
 

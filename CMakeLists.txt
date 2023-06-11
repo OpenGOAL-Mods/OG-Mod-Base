@@ -1,5 +1,5 @@
 # Top Level CMakeLists.txt
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 
 set(CMAKE_CXX_STANDARD 17)
 project(jak)
@@ -207,8 +207,14 @@ add_subdirectory(third-party/zstd EXCLUDE_FROM_ALL)
 #add_subdirectory(third-party/freetype EXCLUDE_FROM_ALL)
 #set (FREETYPE_INCLUDE_DIRS= "third-party/freetype/")
 #set (FREETYPE_LIBRARY= "third-party/freetype/lib/")
-add_subdirectory(third-party/SFML EXCLUDE_FROM_ALL)
 
+
+set(SFML_BUILD_WINDOW OFF)
+set(SFML_BUILD_GRAPHICS OFF)
+set(SFML_BUILD_NETWORK OFF)
+add_subdirectory(third-party/SFML EXCLUDE_FROM_ALL)
+#include_directories(third-party/SFML/include)
+#include_directories(third-party/SFML/lib)
 
 
 
@@ -282,3 +288,4 @@ if(WIN32)
     add_subdirectory(third-party/mman)
 endif()
 string(REPLACE " ${THIRDPARTY_IGNORED_WARNINGS} " "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+

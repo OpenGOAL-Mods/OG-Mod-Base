@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -26,28 +26,28 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#import <SFML/Window/OSX/Scaling.h>
 #include <SFML/Window/OSX/cg_sf_conversion.hpp>
+
 #include <SFML/System/Err.hpp>
 
-#import <SFML/Window/OSX/Scaling.h>
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
-size_t modeBitsPerPixel(CGDisplayModeRef mode)
+std::size_t modeBitsPerPixel(CGDisplayModeRef mode)
 {
-    size_t bpp = 0; // no match
+    std::size_t bpp = 0; // no match
 
     // Compare encoding.
     CFStringRef pixEnc = CGDisplayModeCopyPixelEncoding(mode);
-    if(CFStringCompare(pixEnc, CFSTR(IO32BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if (CFStringCompare(pixEnc, CFSTR(IO32BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
         bpp = 32;
-    else if(CFStringCompare(pixEnc, CFSTR(IO16BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    else if (CFStringCompare(pixEnc, CFSTR(IO16BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
         bpp = 16;
-    else if(CFStringCompare(pixEnc, CFSTR(IO8BitIndexedPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    else if (CFStringCompare(pixEnc, CFSTR(IO8BitIndexedPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
         bpp = 8;
 
     // Clean up memory.
@@ -58,13 +58,13 @@ size_t modeBitsPerPixel(CGDisplayModeRef mode)
 
 
 ////////////////////////////////////////////////////////////
-size_t displayBitsPerPixel(CGDirectDisplayID displayId)
+std::size_t displayBitsPerPixel(CGDirectDisplayID displayId)
 {
     // Get the display mode.
     CGDisplayModeRef mode = CGDisplayCopyDisplayMode(displayId);
 
     // Get bpp for the mode.
-    const size_t bpp = modeBitsPerPixel(mode);
+    const std::size_t bpp = modeBitsPerPixel(mode);
 
     // Clean up Memory.
     CGDisplayModeRelease(mode);
@@ -87,11 +87,11 @@ VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
     //
     // [1]: "APIs for Supporting High Resolution" > "Additions and Changes for OS X v10.8"
     // https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/APIs/APIs.html#//apple_ref/doc/uid/TP40012302-CH5-SW27
-    VideoMode mode(CGDisplayModeGetWidth(cgmode), CGDisplayModeGetHeight(cgmode), modeBitsPerPixel(cgmode));
-    scaleOutWidthHeight(mode, nil);
+    VideoMode mode({static_cast<unsigned int>(CGDisplayModeGetWidth(cgmode)),
+                    static_cast<unsigned int>(CGDisplayModeGetHeight(cgmode))},
+                   static_cast<unsigned int>(modeBitsPerPixel(cgmode)));
+    scaleOutWidthHeight(mode.size.x, mode.size.y, nil);
     return mode;
 }
 
-} // namespace priv
-} // namespace sf
-
+} // namespace sf::priv

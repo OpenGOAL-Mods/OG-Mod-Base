@@ -22,33 +22,37 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_EGLCHECK_HPP
-#define SFML_EGLCHECK_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <EGL/egl.h>
-#include <string>
+
+#include <filesystem>
+#include <string_view>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// Let's define a macro to quickly check every EGL API call
 ////////////////////////////////////////////////////////////
 #ifdef SFML_DEBUG
 
-    //// In debug mode, perform a test on every EGL call
-    #define eglCheck(x) x; sf::priv::eglCheckError(__FILE__, __LINE__);
+// In debug mode, perform a test on every EGL call
+// The do-while loop is needed so that glCheck can be used as a single statement in if/else branches
+#define eglCheck(expr)                                      \
+    do                                                      \
+    {                                                       \
+        expr;                                               \
+        sf::priv::eglCheckError(__FILE__, __LINE__, #expr); \
+    } while (false)
 
 #else
 
-    // Else, we don't add any overhead
-    #define eglCheck(x) (x)
+// Else, we don't add any overhead
+#define eglCheck(x) (x)
 
 #endif
 
@@ -57,12 +61,9 @@ namespace priv
 ///
 /// \param file Source file where the call is located
 /// \param line Line number of the source file where the call is located
+/// \param expression The evaluated expression as a string
 ///
 ////////////////////////////////////////////////////////////
-void eglCheckError(const char* file, unsigned int line);
+void eglCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression);
 
-} // namespace priv
-} // namespace sf
-
-
-#endif // SFML_EGLCHECK_HPP
+} // namespace sf::priv
