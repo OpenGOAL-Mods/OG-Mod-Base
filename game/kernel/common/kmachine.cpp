@@ -112,64 +112,65 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
 
 
 
+void playMP3(u32 filePathu32, u32 volume)
+{
+ 
+
+    // Spawn a new thread to play the music.
+    std::thread thread([=]() {
+    std::string filePath = Ptr<String>(filePathu32).c()->data();
+    std::cout << "Playing MP3: " << filePath << std::endl;
+
+    sf::Music music;
+    if (!music.openFromFile(filePath))
+    {
+        std::cout << "Failed to load: " << filePath << std::endl;
+        return;
+    }
+        music.setVolume(volume);
+        music.play();
+        while (music.getStatus() == sf::Music::Playing)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+
+        music.stop();
+    });
+
+    // Detach the thread so it can run independently.
+    thread.detach();
+}
+
 // void playMP3(u32 filePathu32, u32 volume)
 // {
+
 //     std::string filePath = Ptr<String>(filePathu32).c()->data();
 //     std::cout << "Playing MP3: " << filePath << std::endl;
-
 //     sf::Music music;
+
+//     std::ifstream file(filePath);
+//     if (!file)
+//     {
+//         std::cout << "Invalid file path: " << filePath << std::endl;
+//         return;
+//     }
+
 //     if (!music.openFromFile(filePath))
 //     {
+//         printf("Failed to load: %s\n", filePath.c_str());
 //         std::cout << "Failed to load: " << filePath << std::endl;
 //         return;
 //     }
 
-//     // Spawn a new thread to play the music.
-//     std::thread thread([&]() {
-//         music.setVolume(volume);
-//         music.play();
-//         while (music.getStatus() == sf::Music::Playing)
-//         {
-//             std::this_thread::sleep_for(std::chrono::milliseconds(100));
-//         }
+//     music.setVolume(volume);
+//     music.play();
 
-//         music.stop();
-//     });
-
-//     // Detach the thread so it can run independently.
-//     thread.detach();
+//     while (music.getStatus() == sf::Music::Playing)
+//     {
+//         sf::sleep(sf::milliseconds(100));
+//        sf::sleep(sf::milliseconds(100));
+//     }
 // }
-
-void playMP3(u32 filePathu32, u32 volume)
-{
-
-    std::string filePath = Ptr<String>(filePathu32).c()->data();
-    std::cout << "Playing MP3: " << filePath << std::endl;
-    sf::Music music;
-
-    std::ifstream file(filePath);
-    if (!file)
-    {
-        std::cout << "Invalid file path: " << filePath << std::endl;
-        return;
-    }
-
-    if (!music.openFromFile(filePath))
-    {
-        printf("Failed to load: %s\n", filePath.c_str());
-        std::cout << "Failed to load: " << filePath << std::endl;
-        return;
-    }
-
-    music.setVolume(volume);
-    music.play();
-
-    while (music.getStatus() == sf::Music::Playing)
-    {
-        sf::sleep(sf::milliseconds(100));
-       sf::sleep(sf::milliseconds(100));
-    }
-}
 
 
 /*!

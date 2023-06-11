@@ -118,7 +118,7 @@
               (pickup-dist (+ 12288.0 (-> vec w)))
               )
           (when (>= (* pickup-dist pickup-dist) dist-from-target)
-            ;;(sound-play "skill-pickup")
+            (sound-play "skill-pickup")
             (set! (-> *game-info* counter) (+ -1.0 (-> *game-info* counter)))
             (go-virtual die)
             )

@@ -614,6 +614,7 @@
         )
        ;; play sound.
        (if (>= (- (-> *display* base-frame-counter) (-> obj money-pickup-time)) (seconds 0.05))
+           ;;(play-rand-sound "C:\\Users\\NinjaPC\\AppData\\Roaming\\OpenGOAL\\jak1\\settings\\ding.mp3" 100)
            (sound-play "money-pickup")
            )
        (set! (-> obj money-pickup-time) (-> *display* base-frame-counter))
