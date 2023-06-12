@@ -1832,6 +1832,7 @@
              (ja :num! (loop!))
              )
             ((< 40960.0 (target-height-above-ground))
+             (+! *target-board-hold-tricks* 1)
              (add-to-trick-list (-> self board) (board-tricks board-nosegrab) 500.0)
              (set! (-> self board unknown-sound-id01) (sound-play "board-nosegrab"))
              (ja-channel-push! 1 (seconds 0.08))
@@ -1845,7 +1846,7 @@
                )
              (ja :group! (-> self draw art-group data 185) :num! min)
              )
-            (else
+            (else            
               (+! *target-board-hold-tricks* 1)
               (add-to-trick-list (-> self board) (board-tricks board-noseflip) 500.0)
               (set! (-> self board unknown-sound-id01) (sound-play "board-noseflip"))
