@@ -1846,8 +1846,7 @@
                )
              (ja :group! (-> self draw art-group data 185) :num! min)
              )
-            (else            
-              (+! *target-board-hold-tricks* 1)
+            (else
               (add-to-trick-list (-> self board) (board-tricks board-noseflip) 500.0)
               (set! (-> self board unknown-sound-id01) (sound-play "board-noseflip"))
               (ja-channel-push! 1 (seconds 0.08))

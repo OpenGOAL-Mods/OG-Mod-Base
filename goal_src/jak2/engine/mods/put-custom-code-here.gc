@@ -22,8 +22,15 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     (defun runs-every-frame ()
-    ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in define-custom-functions-here.gc
-      
+      ;; (increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in define-custom-functions-here.gc
+
+      ;; Sample code to turn jak pink whenever he's doing the jetboard hover glitch
+      ;; (when *target* 
+      ;;   (if (board-hovering?)
+      ;;     (draw-pink *target*)
+      ;;     (draw-normal *target*)
+      ;;     )
+      ;;   )
       
       (none)
       )
