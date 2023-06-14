@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "config.h"
+#include "common/decompiler/util.h"
 
 #include "common/log/log.h"
 #include "common/util/FileUtil.h"
@@ -50,6 +51,8 @@ int main(int argc, char** argv) {
   fs::path config_path;
   fs::path in_folder;
   fs::path out_folder;
+
+
 
   std::string config_game_version = "";
   std::string config_override = "{}";
@@ -99,6 +102,9 @@ int main(int argc, char** argv) {
   }
 
   in_folder = in_folder / config.game_name;
+
+    // Load the user's REPL config
+  in_folder = Decompiler::load_Decompiler_config(config.game_name);
   // Verify the in_folder is correct
   if (!exists(in_folder)) {
     lg::error("Aborting - 'in_folder' does not exist '{}'", in_folder.string());
