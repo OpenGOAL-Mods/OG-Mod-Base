@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
   in_folder = in_folder / config.game_name;
 
     // Load the user's REPL config
-  in_folder = Decompiler::load_Decompiler_config(config.game_name);
+  in_folder = decompiler::load_Decompiler_config(config.game_name);
   // Verify the in_folder is correct
   if (!exists(in_folder)) {
     lg::error("Aborting - 'in_folder' does not exist '{}'", in_folder.string());

@@ -30,7 +30,7 @@ Wrapper(GameVersion version) : Decompiler_config(version) {}
 
 std::string find_Decompiler_username();
 StartupFile load_user_startup_file(const std::string& username, const GameVersion game_version);
-Decompiler::Config load_Decompiler_config(const GameVersion game_version);
+decompiler::Config load_Decompiler_config(const GameVersion game_version);
 };  // namespace decompiler
 
 }
