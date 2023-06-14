@@ -11,7 +11,7 @@
 
 using json = nlohmann::json;
 
-namespace Decompiler {
+namespace decompiler {
 struct Config {
   GameVersion game_version;
   Config(GameVersion _game_version) : game_version(_game_version){};

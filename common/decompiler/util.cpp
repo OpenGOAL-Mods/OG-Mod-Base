@@ -8,7 +8,7 @@
 // TODO - expand a list of hints (ie. a hint for defun to show at a glance how to write a function,
 // or perhaps, show the docstring for the current function being used?)
 
-namespace Decompiler {
+namespace decompiler {
 Decompiler::Config load_Decompiler_config( const GameVersion game_version) {
   auto Decompiler_config_path =
       file_util::get_user_home_dir() / "OpenGOAL" / "Decompiler-config.json";
@@ -25,4 +25,4 @@ Decompiler::Config load_Decompiler_config( const GameVersion game_version) {
   }
   return Decompiler::Config(game_version);
 }
-}  // namespace Decompiler
+}  // namespace decompiler

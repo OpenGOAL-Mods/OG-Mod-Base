@@ -4,7 +4,7 @@
 
 #include "third-party/fmt/core.h"
 
-namespace Decompiler {
+namespace decompiler {
 void to_json(json& j, const Config& obj) {
   j = json{
       {"gameVersionFolder", obj.game_version_folder},
