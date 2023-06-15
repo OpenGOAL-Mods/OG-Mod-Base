@@ -124,19 +124,12 @@ int main(int argc, char** argv) {
   }
 
   in_folder = in_folder / config.game_name;
-  std::cout << "in_folder: " << in_folder.string() << std::endl;
 
+  fs::path user_ISO_OVERRIDE_dir = file_util::get_user_ISO_OVERRIDE_dir();
 
-    // Load the user's REPL config
-  //in_folder = decompiler::load_Decompiler_config(config.game_name);
-  auto decompiler_config = decompiler::load_Decompiler_config(username, game_version);
-
-  
-  
-
-
-
-  std::cout << "in_folder: " << in_folder.string() << std::endl;
+    if (!user_ISO_OVERRIDE_dir.empty()) {
+    in_folder = user_ISO_OVERRIDE_dir.string() + "/" + config.game_name;
+  }
 
   // Verify the in_folder is correct
   if (!exists(in_folder)) {
@@ -159,6 +152,7 @@ int main(int argc, char** argv) {
 
   // -- Begin the Decompilation!
 
+
   Timer decomp_timer;
 
   mem_log("Top of main: {} MB\n", get_peak_rss() / (1024 * 1024));
@@ -166,6 +160,7 @@ int main(int argc, char** argv) {
   init_opcode_info();
 
   mem_log("After init: {} MB\n", get_peak_rss() / (1024 * 1024));
+
 
   std::vector<fs::path> dgos, objs, strs;
   for (const auto& dgo_name : config.dgo_names) {
@@ -183,7 +178,7 @@ int main(int argc, char** argv) {
   mem_log("After config read: {} MB", get_peak_rss() / (1024 * 1024));
 
   // build file database
-  lg::info("Setting up object file DB...");
+
   ObjectFileDB db(dgos, fs::path(config.obj_file_name_map_file), objs, strs, config);
 
   // Explicitly fail if a file in the 'allowed_objects' list wasn't found in the DB

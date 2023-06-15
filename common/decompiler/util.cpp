@@ -10,7 +10,7 @@
 
 namespace decompiler {
 
-decompiler::Configjson load_decompiler_config(const std::string& username, const GameVersion game_version) {
+decompiler::Configjson load_Decompiler_config(const std::string& username, const GameVersion game_version) {
   auto decompiler_config_path =
       file_util::get_user_home_dir() / "openGOAL" / "decompiler-config.json";
   if (file_util::file_exists(decompiler_config_path.string())) {

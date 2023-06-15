@@ -4,6 +4,9 @@
 
 #include "extractor_util.hpp"
 
+#include "common/decompiler/config.h"
+#include "common/decompiler/util.h"
+
 #include "common/log/log.h"
 #include "common/util/FileUtil.h"
 #include "common/util/json_util.h"
@@ -257,6 +260,10 @@ int main(int argc, char** argv) {
   app.validate_positionals();
   CLI11_PARSE(app, argc, argv);
 
+  fs::path user_ISO_OVERRIDE_dir = file_util::get_user_ISO_OVERRIDE_dir();
+          if (!user_ISO_OVERRIDE_dir.empty()) {
+    input_file_path = user_ISO_OVERRIDE_dir;
+  }
   lg::info("Working Directory - {}", fs::current_path().string());
 
   // If no flag is set, we default to running everything
@@ -272,6 +279,7 @@ int main(int argc, char** argv) {
   }
 
   // - SETUP
+
   decompiler::init_opcode_info();
   if (!project_path_override.empty()) {
     if (!fs::exists(project_path_override)) {
@@ -299,6 +307,22 @@ int main(int argc, char** argv) {
   }
 
   fs::path iso_data_path;
+
+  std::string game = "jak1";
+  std::string username = "#f";
+  GameVersion game_version = game_name_to_version(game);
+  if (-1 == -1) {
+    switch (game_version) {
+      default:
+      case GameVersion::Jak1:
+      
+        break;
+      case GameVersion::Jak2:
+      
+        break;
+    }
+  }
+
 
   // - INPUT VALIDATION
   if (!fs::exists(input_file_path)) {
@@ -347,6 +371,9 @@ int main(int argc, char** argv) {
         // explicitly
         data_subfolder = data_subfolders[version_info->game_name];
         iso_data_path = file_util::get_jak_project_dir() / "iso_data" / data_subfolder;
+          if (!user_ISO_OVERRIDE_dir.empty()) {
+    iso_data_path = user_ISO_OVERRIDE_dir;
+  }
         if (fs::exists(iso_data_path)) {
           fs::remove_all(iso_data_path);
         }
@@ -362,6 +389,9 @@ int main(int argc, char** argv) {
         return static_cast<int>(ExtractorErrorCode::INVALID_CLI_INPUT);
       }
       iso_data_path = input_file_path;
+        if (!user_ISO_OVERRIDE_dir.empty()) {
+    iso_data_path = user_ISO_OVERRIDE_dir;
+  }
       // Get hash and file count
       const auto [hash, file_count] = calculate_extraction_hash(iso_data_path);
       // Validate
@@ -385,9 +415,14 @@ int main(int argc, char** argv) {
   } else {
     // If we did not extract, we have no clue what game the user is trying to decompile / compile
     // this is why the user has to specify this!
+    
     iso_data_path = file_util::get_jak_project_dir() / "iso_data" / data_subfolder;
   }
 
+
+  if (!user_ISO_OVERRIDE_dir.empty()) {
+    iso_data_path = user_ISO_OVERRIDE_dir;
+  }
   if (flag_decompile) {
     try {
       decompile(iso_data_path, data_subfolder);

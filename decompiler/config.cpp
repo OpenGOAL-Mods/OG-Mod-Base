@@ -320,8 +320,8 @@ Config read_config_file(const fs::path& path_to_config_file,
   }
 
   // debugging, dump the JSON config to a file
-  // fs::path debug_path = path_to_config_file.parent_path() / "config-debug.jsonc";
-  // file_util::write_text_file(debug_path, json.dump(2));
+   fs::path debug_path = path_to_config_file.parent_path() / "config-debug.jsonc";
+   file_util::write_text_file(debug_path, json.dump(2));
 
   // Lastly, update the struct via the JSON
   return make_config_via_json(json);
