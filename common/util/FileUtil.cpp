@@ -37,6 +37,8 @@
 #endif
 #include "common/log/log.h"
 #include "common/util/Assert.h"
+#include <third-party/json.hpp>
+
 
 namespace file_util {
 fs::path get_user_home_dir() {
@@ -81,6 +83,38 @@ fs::path get_user_memcard_dir(GameVersion game_version) {
 fs::path get_user_misc_dir(GameVersion game_version) {
   auto game_version_name = game_version_names[game_version];
   return get_user_config_dir() / game_version_name / "misc";
+}
+
+fs::path get_user_ISO_OVERRIDE_dir() {
+  auto game_ISO_OVERRIDE = get_user_home_dir() / "appdata" / "roaming" / "OpenGOAL" / "decompiler-config.json";
+  lg::info("Searching for JSON file at path: {}", game_ISO_OVERRIDE.string());
+
+  if (!fs::exists(game_ISO_OVERRIDE)) {
+    // Return an empty path if the file is not found
+   lg::info("OVERRIDEJSON NOT FOUND - {}", (get_user_config_dir() ).string());
+
+    return {};
+  }
+
+
+  std::ifstream file(game_ISO_OVERRIDE);
+  if (!file.is_open()) {
+    throw std::runtime_error("Failed to open decompiler-config.json");
+  }
+
+  nlohmann::json config;
+  file >> config;
+
+  std::string iso_file_dirs;
+  if (config.contains("iso_file_dirs")) {
+    iso_file_dirs = config["iso_file_dirs"].get<std::string>();
+  } else {
+    lg::info("KEY MISSING", (get_user_config_dir() ).string());
+    return {};
+  }
+
+  lg::info("Current path in loop - {}", (get_user_config_dir() / iso_file_dirs  ).string());
+  return fs::path(iso_file_dirs);
 }
 
 struct {

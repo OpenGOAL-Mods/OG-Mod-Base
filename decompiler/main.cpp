@@ -99,6 +99,11 @@ int main(int argc, char** argv) {
   }
 
   in_folder = in_folder / config.game_name;
+
+   fs::path user_ISO_OVERRIDE_dir = file_util::get_user_ISO_OVERRIDE_dir();
+          if (!user_ISO_OVERRIDE_dir.empty()) {
+    in_folder = user_ISO_OVERRIDE_dir.string() + "/" + config.game_name;
+  }
   // Verify the in_folder is correct
   if (!exists(in_folder)) {
     lg::error("Aborting - 'in_folder' does not exist '{}'", in_folder.string());
