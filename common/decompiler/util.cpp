@@ -9,20 +9,23 @@
 // or perhaps, show the docstring for the current function being used?)
 
 namespace decompiler {
-decompiler::Config load_Decompiler_config( const GameVersion game_version) {
-  auto Decompiler_config_path =
-      file_util::get_user_home_dir() / "OpenGOAL" / "Decompiler-config.json";
-  if (file_util::file_exists(Decompiler_config_path.string())) {
+
+decompiler::Configjson load_decompiler_config(const std::string& username, const GameVersion game_version) {
+  auto decompiler_config_path =
+      file_util::get_user_home_dir() / "openGOAL" / "decompiler-config.json";
+  if (file_util::file_exists(decompiler_config_path.string())) {
     try {
-      decompiler::Config config(game_version);
-      auto Decompiler_config_data =
-          parse_commented_json(file_util::read_text_file(Decompiler_config_path), "Decompiler-config.json");
-      from_json(Decompiler_config_data, config);
+      decompiler::Configjson config(game_version);
+      auto decompiler_config_data =
+          parse_commented_json(file_util::read_text_file(decompiler_config_path), "decompiler-config.json");
+      from_json(decompiler_config_data, config);
       return config;
     } catch (std::exception& e) {
-      decompiler::Config config(game_version);
+      decompiler::Configjson config(game_version);
     }
   }
-  return decompiler::Config(game_version);
+  return decompiler::Configjson(game_version);
 }
-}  // namespace decompiler
+
+} // namespace decompiler
+

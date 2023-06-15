@@ -3,7 +3,14 @@
 #include <vector>
 
 #include "config.h"
+
+#include "common/decompiler/config.h"
 #include "common/decompiler/util.h"
+
+
+
+// #include "common/decompiler/config.cpp"
+
 
 #include "common/log/log.h"
 #include "common/util/FileUtil.h"
@@ -101,10 +108,36 @@ int main(int argc, char** argv) {
     return 1;
   }
 
+  std::string game = "jak1";
+  std::string username = "#f";
+  GameVersion game_version = game_name_to_version(game);
+  if (-1 == -1) {
+    switch (game_version) {
+      default:
+      case GameVersion::Jak1:
+      
+        break;
+      case GameVersion::Jak2:
+      
+        break;
+    }
+  }
+
   in_folder = in_folder / config.game_name;
+  std::cout << "in_folder: " << in_folder.string() << std::endl;
+
 
     // Load the user's REPL config
-  in_folder = decompiler::load_Decompiler_config(config.game_name);
+  //in_folder = decompiler::load_Decompiler_config(config.game_name);
+  auto decompiler_config = decompiler::load_Decompiler_config(username, game_version);
+
+  
+  
+
+
+
+  std::cout << "in_folder: " << in_folder.string() << std::endl;
+
   // Verify the in_folder is correct
   if (!exists(in_folder)) {
     lg::error("Aborting - 'in_folder' does not exist '{}'", in_folder.string());
