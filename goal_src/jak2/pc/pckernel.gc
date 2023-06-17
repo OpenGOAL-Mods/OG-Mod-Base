@@ -9,6 +9,7 @@
  |#
 
 (define-extern get-active-mission-description (function discord-info string))
+(define-extern get-active-mission-description (function discord-info string))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; methods
