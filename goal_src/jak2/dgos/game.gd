@@ -451,7 +451,7 @@
   "elec-gate.o"
   "cty-guard-turret-button.o"
   "entity-debug.o" ;; added
-  "put-custom-code-here.o" ;; added
   "mods-settings.o" ;; added
   "define-custom-functions-here.o" ;; added
+  "put-custom-code-here.o" ;; added
  ))

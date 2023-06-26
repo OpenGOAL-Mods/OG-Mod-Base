@@ -37,6 +37,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 ;; Define Custom Variables to use in mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define *target-board-hold-tricks* 0) ;; used to detect if player is doing a jetboard hover (see board-states.gc)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Custom Functions to call in mods
@@ -58,6 +59,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   ;; with the two macros defined above, this is equivalent to
   ;; (set! (-> *game-info* fuel) (+ (-> *game-info* fuel) 1))
   (none)
+  )
+
+(defmacro board-hovering? ()
+  `(and (logtest? (focus-status board) (-> *target* focus-status)) (> *target-board-hold-tricks* 1))
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
