@@ -1,0 +1,212 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+#|
+An input display written in GOAL
+
+Controller joystick locations have text coordinates and a grid display
+2nd joystick display is toggleable with  second-stick?
+
+Face buttons were added to game_custom_text so they could be displayed with lookup-text!
+Other buttons are displayed using text: "R3" "Select"
+
+Sections of the input display are anchored by an -origin vector
+Individual buttons have an -offset vector relative to the origin
+  (ie: the face buttons center is (90, 208) on-screen, and the Triangle button is 12 units to the left, and 18 units above)
+
+|#
+
+
+(defun button-on ()
+  ;process-spawn-function, spawns a process that runs the function you give it
+  (process-spawn-function process :name 'button-proc
+    ;This lambda is our function
+    (lambda :behavior process ()
+    ;Code before the loop runs once on process spawn
+    
+    ;Stick center coordinates
+    (define stick-origin (new 'static 'vector4w :x 30 :y 210 :z 0 :w 0))
+    (define stick-text-offset (new 'static 'vector4w :x -20 :y -20 :z 0 :w 0))
+
+    ;Button center coordinates
+    (define button-origin (new 'static 'vector4w :x 90 :y 208 :z 0 :w 0))
+    ;Face buttons
+    (define triangle-offset (new 'static 'vector4w :x -12 :y -18 :z 0 :w 0))
+    (define x-offset        (new 'static 'vector4w :x -12 :y 2 :z 0 :w 0))
+    (define circle-offset   (new 'static 'vector4w :x 6   :y -8 :z 0 :w 0))
+    (define square-offset   (new 'static 'vector4w :x -30 :y -8 :z 0 :w 0))
+
+    ;RL buttons
+    (define R-x-offset 13)
+    (define L-x-offset (- 28)) ;use a minus for negative numbers
+
+    (define RL1-y-offset (- 16))
+    (define RL2-y-offset (- 23))
+    (define RL3-y-offset 8)
+
+    ;Dpad
+    (define dpad-origin (new 'static 'vector4w :x 90 :y 208 :z 0 :w 0))
+    (define up-offset (new 'static 'vector4w :x -12 :y -18 :z 0 :w 0))
+    (define down-offset (new 'static 'vector4w :x -12 :y 2 :z 0 :w 0))
+    (define left-offset (new 'static 'vector4w :x -30   :y -8 :z 0 :w 0))
+    (define right-offset (new 'static 'vector4w :x 6 :y -8 :z 0 :w 0))
+
+    ;Second stick
+    (define second-stick? #t)
+    (define stick2-origin (new 'static 'vector4w :x 150 :y 210 :z 0 :w 0))
+    (define stick2-text-offset (new 'static 'vector4w :x -20 :y -20 :z 0 :w 0))
+
+
+    ;no idea how the draw scaling works, this seems good enough
+    ;length of axes lines, started with 128 and adjusted until it looked good
+    (define height-idk (/ 128 5))
+    (define width-idk (/ 128 3))
+    
+      ;Loop runs once per frame while process is active
+      (loop
+        ;Start a bucket thing block so we can use draw functions
+        (with-dma-buffer-add-bucket ((testbuf (-> (current-frame) debug-buf)) (bucket-id debug-no-zbuf))
+          ;
+          ;Face buttons
+          ;
+          (when (cpad-hold? 0 triangle)
+              (draw-string-xy (lookup-text! *common-text* (text-id pad-triangle) #f) testbuf (+ (-> button-origin x) (-> triangle-offset x)) (+ (-> button-origin y) (-> triangle-offset y)) (font-color green) (font-flags shadow kerning large)) )
+
+          (when (cpad-hold? 0 circle)
+              (draw-string-xy (lookup-text! *common-text* (text-id pad-circle) #f) testbuf (+ (-> button-origin x) (-> circle-offset x)) (+ (-> button-origin y) (-> circle-offset y)) (font-color green) (font-flags shadow kerning large)) )
+
+          (when (cpad-hold? 0 x)
+              (draw-string-xy (lookup-text! *common-text* (text-id pad-x) #f) testbuf (+ (-> button-origin x) (-> x-offset x)) (+ (-> button-origin y) (-> x-offset y)) (font-color green) (font-flags shadow kerning large)) )
+        
+          (when (cpad-hold? 0 square)
+              (draw-string-xy (lookup-text! *common-text* (text-id pad-square) #f) testbuf (+ (-> button-origin x) (-> square-offset x)) (+ (-> button-origin y) (-> square-offset y)) (font-color green) (font-flags shadow kerning large)) )
+
+          ;LR/Shoulder buttons
+          (when (cpad-hold? 0 r1)
+              (draw-string-xy "R1" testbuf (+ (-> button-origin x) R-x-offset) (+ (-> button-origin y) RL1-y-offset) (the font-color 13) (font-flags shadow kerning)) )
+          
+          (when (cpad-hold? 0 r2)
+              (draw-string-xy "R2" testbuf (+ (-> button-origin x) R-x-offset) (+ (-> button-origin y) RL2-y-offset) (the font-color 13) (font-flags shadow kerning)) )
+
+          (when (cpad-hold? 0 r3)
+              (draw-string-xy "R3" testbuf (+ (-> button-origin x) R-x-offset) (+ (-> button-origin y) RL3-y-offset) (the font-color 13) (font-flags shadow kerning)) )
+              
+          (when (cpad-hold? 0 l1)
+              (draw-string-xy "L1" testbuf (+ (-> button-origin x) L-x-offset) (+ (-> button-origin y) RL1-y-offset) (the font-color 13) (font-flags shadow kerning)) )
+          
+          (when (cpad-hold? 0 l2)
+              (draw-string-xy "L2" testbuf (+ (-> button-origin x) L-x-offset) (+ (-> button-origin y) RL2-y-offset) (the font-color 13) (font-flags shadow kerning)) )
+
+          (when (cpad-hold? 0 l3)
+              (draw-string-xy "L3" testbuf (+ (-> button-origin x) L-x-offset) (+ (-> button-origin y) RL3-y-offset) (the font-color 13) (font-flags shadow kerning)) )
+
+          ;Select/Start, aligned with L3/R3
+          (when (cpad-hold? 0 start)
+              (draw-string-xy "Start" testbuf (+ (-> button-origin x) R-x-offset) (+ (-> button-origin y) RL3-y-offset) (the font-color 13) (font-flags shadow kerning)) )
+          
+          (when (cpad-hold? 0 select)
+              (draw-string-xy "Select" testbuf (+ (-> button-origin x) L-x-offset) (+ (-> button-origin y) RL3-y-offset) (the font-color 13) (font-flags shadow kerning)) )
+
+          ;D-Pad inputs, can probably improve
+          (when (cpad-hold? 0 up)
+              (draw-string-xy "up" testbuf (+ (-> dpad-origin x) (-> up-offset x)) (+ (-> dpad-origin y) (-> up-offset y)) (the font-color 13) (font-flags shadow kerning)) )
+
+          (when (cpad-hold? 0 down)
+              (draw-string-xy "down" testbuf (+ (-> dpad-origin x) (-> down-offset x)) (+ (-> dpad-origin y) (-> down-offset y)) (the font-color 13) (font-flags shadow kerning)) )
+
+          (when (cpad-hold? 0 left)
+              (draw-string-xy "left" testbuf (+ (-> dpad-origin x) (-> left-offset x)) (+ (-> dpad-origin y) (-> left-offset y)) (the font-color 13) (font-flags shadow kerning)) )
+
+          (when (cpad-hold? 0 right)
+              (draw-string-xy "right" testbuf (+ (-> dpad-origin x) (-> right-offset x)) (+ (-> dpad-origin y) (-> right-offset y)) (the font-color 13) (font-flags shadow kerning)) )
+
+          ;
+          ;Lines for stick display
+          ;up/down axis
+          (draw-sprite2d-xy testbuf 
+            (-> stick-origin x)       ;the vertical line's x coordinate = stick center x coordinate
+            (- (-> stick-origin y) (/ height-idk 2))  ;we shift the line up, by half its height, so that the line midpoint = center y coordinate
+            2
+            height-idk
+            *color-black*)
+          ;left/right axis
+          (draw-sprite2d-xy testbuf 
+            (- (-> stick-origin x) (/ width-idk 2))
+            (-> stick-origin y)
+            width-idk 
+            1 
+            *color-gray*)
+
+          ;Text for stick values
+          (draw-string-xy-scaled (string-format "~d  ~d" (-> *cpad-list* cpads 0 leftx) (-> *cpad-list* cpads 0 lefty)) testbuf 
+            (+ (-> stick-origin x) (-> stick-text-offset x))
+            (+ (-> stick-origin y) (-> stick-text-offset y))
+            (font-color green) (font-flags shadow kerning ) 0.75)
+          
+          ;raw stick location, nice for locating screen coordinates
+          ;(draw-sprite2d-xy testbuf (the int (-> *cpad-list* cpads 0 leftx)) (the int(-> *cpad-list* cpads 0 lefty)) 5 3 *color-red*)
+
+          ;stick location scaled to picture
+          (draw-sprite2d-xy testbuf 
+            ;analog-input takes left stick x int value and maps its min/max to negative/positive of the last argument 
+            ;in our case we scale to half of the picture's width, so the stick can go full + (right) or full - (left)
+            (+ (-> stick-origin x)
+              (analog-input (the int (-> *cpad-list* cpads 0 leftx)) 128.0 0.0 128.0 (the float (/ width-idk 2))))
+            ;repeat for y coordinate
+            (+ (-> stick-origin y)
+              (analog-input (the int (-> *cpad-list* cpads 0 lefty)) 128.0 0.0 128.0 (the float (/ height-idk 2))))
+            3 
+            2 
+            *color-cyan*)
+          
+          ;
+          ;Second stick
+          ;
+          (when second-stick? 
+            ;up/down axis
+            (draw-sprite2d-xy testbuf 
+              (-> stick2-origin x)       
+              (- (-> stick2-origin y) (/ height-idk 2))  
+              2
+              height-idk
+              *color-black*)
+            ;left/right axis
+            (draw-sprite2d-xy testbuf 
+              (- (-> stick2-origin x) (/ width-idk 2))
+              (-> stick2-origin y)
+              width-idk 
+              1 
+              *color-gray*)
+            ;Text for stick values
+            (draw-string-xy-scaled (string-format "~d  ~d" (-> *cpad-list* cpads 0 rightx) (-> *cpad-list* cpads 0 righty)) testbuf 
+              (+ (-> stick2-origin x) (-> stick2-text-offset x))
+              (+ (-> stick2-origin y) (-> stick2-text-offset y))
+              (font-color cyan) (font-flags shadow kerning ) 0.75)
+
+            ;stick location scaled to picture
+            (draw-sprite2d-xy testbuf 
+              (+ (-> stick2-origin x)
+                (analog-input (the int (-> *cpad-list* cpads 0 rightx)) 128.0 0.0 128.0 (the float (/ width-idk 2))))
+              (+ (-> stick2-origin y)
+                (analog-input (the int (-> *cpad-list* cpads 0 righty)) 128.0 0.0 128.0 (the float (/ height-idk 2))))
+              3 
+              2 
+              *color-green*))
+
+
+        )
+      ;;Processes should suspend themselves, the loop will resume next frame
+      (suspend)
+      )
+    )
+  )
+    
+;Lisp returns the last form as the function return
+(none)
+)
+
+
+(defun button-off ()
+  "Kill the button process"
+  (kill-by-name 'button-proc *active-pool*)
+  )
