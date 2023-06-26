@@ -12,9 +12,14 @@ Other buttons are displayed using text: "R3" "Select"
 
 Sections of the input display are anchored by an -origin vector
 Individual buttons have an -offset vector relative to the origin
-  (ie: the face buttons center is (90, 208) on-screen, and the Triangle button is 12 units to the left, and 18 units above)
+  ie: the face buttons center is (90, 208) on-screen, and the Triangle button is 12 units to the left, and 18 units above
+  try (set-vector! stick-origin 60 20 0 0)
+  
 
 |#
+
+
+(define buttons #f) ;mod base code turns this #t
 
 
 (defun button-on ()
@@ -65,7 +70,7 @@ Individual buttons have an -offset vector relative to the origin
       ;Loop runs once per frame while process is active
       (loop
         ;Start a bucket thing block so we can use draw functions
-        (with-dma-buffer-add-bucket ((testbuf (-> (current-frame) debug-buf)) (bucket-id debug-no-zbuf))
+        (with-dma-buffer-add-bucket ((testbuf (-> (current-frame) global-buf)) (bucket-id debug))  ;;debug-buf ;;debug-no-zbuf
           ;
           ;Face buttons
           ;
