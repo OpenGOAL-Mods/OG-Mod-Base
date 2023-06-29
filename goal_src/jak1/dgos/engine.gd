@@ -206,6 +206,7 @@
   "speedruns.o" ;; added
   "pckernel-common.o" ;; added
   "pckernel.o" ;; added
+  "buttontext2.o" ;;added
   "mood-tables.o"
   "mood.o"
   "weather-part.o"

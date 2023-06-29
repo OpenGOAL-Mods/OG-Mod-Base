@@ -825,6 +825,11 @@
   (input-opts-binds-unknown #x1615)
   (progress-no-other-resolution-options #x1616)
   (input-opts-controller-led-reflect-heat #x1617)
+
+  (pad-triangle #x1618)
+  (pad-circle #x1619)
+  (pad-x #x161a)
+  (pad-square #x161b)
 ;; GAME-TEXT-ID ENUM ENDS
   )
 
