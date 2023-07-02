@@ -113,7 +113,7 @@ int win_write( HANDLE out_, bool autoEscape_, char const* str_, int size_ ) {
 						int toWrite( static_cast<int>( str_ - s ) );
 						WriteConsoleA( out_, s, static_cast<DWORD>( toWrite ), &nWritten, nullptr );
 						count += nWritten;
-						if ( static_cast<int>( nWritten ) != toWrite ) {
+						if ( nWritten != toWrite ) {
 							s = str_ = nullptr;
 							break;
 						}

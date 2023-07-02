@@ -584,8 +584,7 @@ class IR_Int128Math3Asm : public IR_Asm {
     POR,
     PXOR,
     PAND,
-    PACKUSWB,
-    PADDB,
+    PACKUSWB
   };
   IR_Int128Math3Asm(bool use_color,
                     const RegVal* dst,

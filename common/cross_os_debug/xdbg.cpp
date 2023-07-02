@@ -689,16 +689,9 @@ std::string ThreadID::to_string() const {
   return "invalid";
 }
 
-ThreadID get_current_thread_id() {
-  return ThreadID("not implemented on macOS");
-}
-
+ThreadID get_current_thread_id();
 bool attach_and_break(const ThreadID& tid);
-
-void allow_debugging() {
-  printf("allow_debugging not implemented on macOS\n");
-}
-
+void allow_debugging();
 bool detach_and_resume(const ThreadID& tid) {
   return false;
 }

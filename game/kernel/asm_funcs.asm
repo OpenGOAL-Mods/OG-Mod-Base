@@ -6,9 +6,9 @@
 
 SECTION .text
 
-;; Call C++ code on unix systems, from GOAL, using System V calling convention.
-global _arg_call_systemv
-_arg_call_systemv:
+;; Call C++ code on linux, from GOAL, using Linux calling convention.
+global _arg_call_linux
+_arg_call_linux:
   pop rax
   push r10
   push r11
@@ -43,12 +43,12 @@ _arg_call_systemv:
   ret
 
 
-;; Call C++ code on unix systems, from GOAL. Pug arguments on the stack and put a pointer to this array in the first arg.
+;; Call C++ code on linux, from GOAL. Pug arguments on the stack and put a pointer to this array in the first arg.
 ;; this function pushes all 8 OpenGOAL registers into a stack array.
 ;; then it calls the function pointed to by rax with a pointer to this array.
 ;; it returns the return value of the called function.
-global _stack_call_systemv
-_stack_call_systemv:
+global _stack_call_linux
+_stack_call_linux:
   pop rax
   ; align stack
   sub rsp, 8
@@ -105,8 +105,8 @@ _stack_call_systemv:
 ;; Call c++ code through mips2c.
 ;; GOAL will call a dynamically generated trampoline.
 ;; The trampoline will have pushed the exec function and stack offset onto the stack
-global _mips2c_call_systemv
-_mips2c_call_systemv:
+global _mips2c_call_linux
+_mips2c_call_linux:
   ;; grab the address to call and put it in xmm0
   sub rsp, 8
   movaps xmm0, [rsp + 16]
@@ -323,9 +323,9 @@ _stack_call_win32:
 ;; - address of the symbol table
 ;; - GOAL memory space offset
 
-global _call_goal_asm_systemv
+global _call_goal_asm_linux
 
-_call_goal_asm_systemv:
+_call_goal_asm_linux:
   ;; x86 saved registers we need to modify for GOAL should be saved
   push r13
   push r14
@@ -353,9 +353,9 @@ _call_goal_asm_systemv:
   pop r13
   ret
 
-global _call_goal8_asm_systemv
+global _call_goal8_asm_linux
 
-_call_goal8_asm_systemv:
+_call_goal8_asm_linux:
   ;; x86 saved registers we need to modify for GOAL should be saved
   push r13
   push r14
@@ -395,9 +395,9 @@ _call_goal8_asm_systemv:
   ret
 
 ;; Call goal, but switch stacks.
-global _call_goal_on_stack_asm_systemv
+global _call_goal_on_stack_asm_linux
 
-_call_goal_on_stack_asm_systemv:
+_call_goal_on_stack_asm_linux:
   ;; RDI - stack pointer
   ;; RSI - unused
   ;; RDX - unused
@@ -435,6 +435,7 @@ _call_goal_on_stack_asm_systemv:
   pop r14
   pop r13
   ret
+
 
 ;; The _call_goal_asm function is used to call a GOAL function from C.
 ;; It supports up to 3 arguments and a return value.

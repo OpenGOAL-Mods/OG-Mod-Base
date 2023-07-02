@@ -112,14 +112,6 @@ void iso_cd_init_globals() {
   iso_cd.sync_read = FS_SyncRead;
 }
 
-static FILE* open_fr(FileRecord* fr, s32 thread_to_wake) {
-  const char* path = get_file_path(fr);
-  FILE* fp = file_util::open_file(path, "rb");
-  iop::iWakeupThread(thread_to_wake);
-
-  return fp;
-}
-
 ///////////////////////////
 // Sony Fake CD Functions
 ///////////////////////////
@@ -139,25 +131,17 @@ auto sceCdCallback(void (*callback)(int)) {
 
 int sceCdRead(int lsn, int num_sectors, void* dest, void* mode) {
   (void)mode;
-  auto do_read = [lsn, num_sectors, dest, mode](s32 thid) {
-    // printf("sceCdRead %d, %d -> %p\n", lsn, num_sectors, dest);
-    ASSERT(gFakeCd.fp);
-    if (fseek(gFakeCd.fp, lsn * SECTOR_SIZE, SEEK_SET)) {
-      ASSERT_MSG(false, "Failed to fseek");
-    }
-    if (fread(dest, num_sectors * SECTOR_SIZE, 1, gFakeCd.fp) < 0) {
-      printf("dest is %p, num_sectors %d, lsn %d\n", dest, num_sectors, lsn);
-      printf("err: %s\n", strerror(errno));
-      ASSERT_MSG(false, "Failed to fread");
-    }
-    ASSERT(gFakeCd.callback);
-
-    iWakeupThread(thid);
-  };
-
-  auto future = thpool.submit(do_read, GetThreadId());
-  SleepThread();
-  future.get();
+  // printf("sceCdRead %d, %d -> %p\n", lsn, num_sectors, dest);
+  ASSERT(gFakeCd.fp);
+  if (fseek(gFakeCd.fp, lsn * SECTOR_SIZE, SEEK_SET)) {
+    ASSERT_MSG(false, "Failed to fseek");
+  }
+  if (fread(dest, num_sectors * SECTOR_SIZE, 1, gFakeCd.fp) < 0) {
+    printf("dest is %p, num_sectors %d, lsn %d\n", dest, num_sectors, lsn);
+    printf("err: %s\n", strerror(errno));
+    ASSERT_MSG(false, "Failed to fread");
+  }
+  ASSERT(gFakeCd.callback);
 
   return 1;
 }
@@ -610,15 +594,13 @@ int FS_PageBeginRead(LoadStackEntry* lse, Buffer* buffer) {
 
     // start a read!
     if (gFakeCd.last_fr != lse->fr) {
-      auto future = thpool.submit(open_fr, lse->fr, GetThreadId());
-      SleepThread();
-      FILE* fp = future.get();
+      const char* path = get_file_path(lse->fr);
+      FILE* fp = file_util::open_file(path, "rb");
       if (!fp) {
-        lg::error("[OVERLORD] fake iso could not open the file \"{}\"", get_file_path(lse->fr));
+        lg::error("[OVERLORD] fake iso could not open the file \"{}\"", path);
       } else {
         // printf("PAGE READING %s\n", path);
       }
-
       ASSERT(fp);
 
       if (gFakeCd.fp) {

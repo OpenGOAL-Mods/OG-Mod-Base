@@ -1061,7 +1061,7 @@
   )
 
 ;; WARN: Return type mismatch symbol vs none.
-(defun shuttle-cleanup ((arg0 task-manager) (arg1 (array city-shuttle-info)))
+(defun shuttle-cleanup ((arg0 task-manager))
   (send-event *traffic-manager* 'restore-default-settings)
   (dotimes (s5-0 (-> arg0 count))
     (let ((a0-4 (handle->process (-> arg0 slave s5-0))))
@@ -1539,7 +1539,12 @@
   TASK_MANAGER_CLEANUP_HOOK
   (lambda :behavior task-manager
     ()
-    (shuttle-cleanup self *city-shuttle-info*)
+    (let ((t9-0 shuttle-cleanup)
+          (a0-0 self)
+          )
+      *city-shuttle-info*
+      (t9-0 a0-0)
+      )
     (send-event *traffic-manager* 'restore-default-settings)
     (none)
     )
@@ -1707,7 +1712,12 @@
   TASK_MANAGER_CLEANUP_HOOK
   (lambda :behavior task-manager
     ()
-    (shuttle-cleanup self *city-burning-bush-shuttle-1-info*)
+    (let ((t9-0 shuttle-cleanup)
+          (a0-0 self)
+          )
+      *city-burning-bush-shuttle-1-info*
+      (t9-0 a0-0)
+      )
     (send-event *traffic-manager* 'restore-default-settings)
     (none)
     )
@@ -1780,7 +1790,6 @@
       )
     #f
     (label cfg-20)
-    ;; unnecessary - the task manager can take care of this
     (task-node-close! (game-task-node city-burning-bush-shuttle-1-resolution))
     (none)
     )

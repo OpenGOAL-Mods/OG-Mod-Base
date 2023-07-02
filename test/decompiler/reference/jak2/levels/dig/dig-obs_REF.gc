@@ -265,7 +265,7 @@
        (set! (-> self last-ridden-time) (current-time))
        )
       )
-    (rigid-body-object-event-handler proc arg1 event-type event)
+    (the-as object (rigid-body-object-event-handler proc arg1 event-type event))
     )
   )
 

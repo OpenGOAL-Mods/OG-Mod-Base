@@ -52,11 +52,7 @@ Val* Compiler::compile_goos_macro(const goos::Object& o,
       bool good_info = false;
       auto info = m_goos.reader.db.get_info_for(o, &good_info);
       lg::print(fg(fmt::color::yellow) | fmt::emphasis::bold, "Code:\n");
-      auto code_str = pretty_print::to_string(goos_result, 120);
-      if (code_str.size() > 120 * 30) {
-        code_str = code_str.substr(0, 120 * 30) + "...";
-      }
-      lg::print("{}\n", code_str);
+      lg::print("{}\n", pretty_print::to_string(goos_result, 120));
       lg::print(fg(fmt::color::yellow) | fmt::emphasis::bold, "From macro: ");
       lg::print(fg(fmt::color::orange), "{}\n", name.print());
       if (good_info) {
@@ -74,11 +70,7 @@ Val* Compiler::compile_goos_macro(const goos::Object& o,
     bool good_info = false;
     auto info = m_goos.reader.db.get_info_for(o, &good_info);
     lg::print(fg(fmt::color::yellow) | fmt::emphasis::bold, "Code:\n");
-    auto code_str = pretty_print::to_string(goos_result, 120);
-    if (code_str.size() > 120 * 30) {
-      code_str = code_str.substr(0, 120 * 30) + "...";
-    }
-    lg::print("{}\n", code_str);
+    lg::print("{}\n", pretty_print::to_string(goos_result, 120));
     lg::print(fg(fmt::color::yellow) | fmt::emphasis::bold, "From macro: ");
     lg::print(fg(fmt::color::orange), "{}\n", name.print());
     if (good_info) {

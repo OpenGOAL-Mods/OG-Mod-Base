@@ -1608,9 +1608,6 @@ std::string IR_Int128Math3Asm::print() {
     case Kind::PACKUSWB:
       function = ".packuswb";
       break;
-    case Kind::PADDB:
-      function = ".paddb";
-      break;
     default:
       ASSERT(false);
   }
@@ -1700,9 +1697,6 @@ void IR_Int128Math3Asm::do_codegen(emitter::ObjectGenerator* gen,
       break;
     case Kind::PACKUSWB:
       gen->add_instr(IGen::vpackuswb(dst, src1, src2), irec);
-      break;
-    case Kind::PADDB:
-      gen->add_instr(IGen::parallel_add_byte(dst, src1, src2), irec);
       break;
     default:
       ASSERT(false);

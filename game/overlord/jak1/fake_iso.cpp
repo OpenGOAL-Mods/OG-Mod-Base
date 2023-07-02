@@ -42,18 +42,6 @@ void fake_iso_init_globals() {
   sReadInfo = nullptr;
 }
 
-static FILE* open_fr(FileRecord* fr, s32 thread_to_wake) {
-  const char* path = get_file_path(fr);
-  FILE* fp = file_util::open_file(path, "rb");
-  if (!fp) {
-    lg::error("[OVERLORD] fake iso could not open the file \"{}\"", path);
-  }
-
-  iop::iWakeupThread(thread_to_wake);
-
-  return fp;
-}
-
 /*!
  * Open a file by putting it on the load stack.
  * Set the offset to 0 or -1 if you do not want to have an offset.
@@ -72,11 +60,6 @@ LoadStackEntry* FS_Open(FileRecord* fr, int32_t offset) {
       if (offset != -1) {
         selected->location += offset;
       }
-
-      auto future = thpool.submit(open_fr, fr, iop::GetThreadId());
-      iop::SleepThread();
-      selected->fp = future.get();
-
       return selected;
     }
   }
@@ -98,11 +81,6 @@ LoadStackEntry* FS_OpenWad(FileRecord* fr, int32_t offset) {
       selected = sLoadStack + i;
       selected->fr = fr;
       selected->location = offset;
-
-      auto future = thpool.submit(open_fr, fr, iop::GetThreadId());
-      iop::SleepThread();
-      selected->fp = future.get();
-
       return selected;
     }
   }
@@ -120,50 +98,9 @@ void FS_Close(LoadStackEntry* fd) {
 
   // close the FD
   fd->fr = nullptr;
-  fclose(fd->fp);
   if (fd == sReadInfo) {
     sReadInfo = nullptr;
   }
-}
-
-void fs_read(LoadStackEntry* fd, void* buffer, int32_t len, s32 thread_to_wake) {
-  int32_t real_size = len;
-  if (len < 0) {
-    // not sure what this is about...
-    lg::warn("[OVERLORD ISO CD] Negative length warning!");
-    real_size = len + 0x7ff;
-  }
-  u32 sectors = real_size / SECTOR_SIZE;
-  real_size = sectors * SECTOR_SIZE;
-  u32 offset_into_file = SECTOR_SIZE * fd->location;
-
-  ASSERT(fd->fp);
-  fseek(fd->fp, 0, SEEK_END);
-  uint32_t file_len = ftell(fd->fp);
-  rewind(fd->fp);
-
-  if (offset_into_file < file_len) {
-    if (offset_into_file) {
-      fseek(fd->fp, offset_into_file, SEEK_SET);
-    }
-
-    if (offset_into_file + real_size > file_len) {
-      real_size = (file_len - offset_into_file);
-    }
-
-    if (fread(buffer, real_size, 1, fd->fp) != 1) {
-      ASSERT(false);
-    }
-  }
-
-  if (len < 0) {
-    len = len + 0x7ff;
-  }
-
-  fd->location += (len / SECTOR_SIZE);
-  sReadInfo = fd;
-
-  iop::iWakeupThread(thread_to_wake);
 }
 
 /*!
@@ -175,9 +112,49 @@ void fs_read(LoadStackEntry* fd, void* buffer, int32_t len, s32 thread_to_wake) 
 uint32_t FS_BeginRead(LoadStackEntry* fd, void* buffer, int32_t len) {
   ASSERT(fd->fr->location < fake_iso_entry_count);
 
-  auto future = thpool.submit(fs_read, fd, buffer, len, iop::GetThreadId());
-  iop::SleepThread();
-  future.get();
+  int32_t real_size = len;
+  if (len < 0) {
+    // not sure what this is about...
+    lg::warn("[OVERLORD ISO CD] Negative length warning!");
+    real_size = len + 0x7ff;
+  }
+
+  u32 sectors = real_size / SECTOR_SIZE;
+  real_size = sectors * SECTOR_SIZE;
+  u32 offset_into_file = SECTOR_SIZE * fd->location;
+
+  const char* path = get_file_path(fd->fr);
+  FILE* fp = file_util::open_file(path, "rb");
+  if (!fp) {
+    lg::error("[OVERLORD] fake iso could not open the file \"{}\"", path);
+  }
+  ASSERT(fp);
+  fseek(fp, 0, SEEK_END);
+  uint32_t file_len = ftell(fp);
+  rewind(fp);
+
+  if (offset_into_file < file_len) {
+    if (offset_into_file) {
+      fseek(fp, offset_into_file, SEEK_SET);
+    }
+
+    if (offset_into_file + real_size > file_len) {
+      real_size = (file_len - offset_into_file);
+    }
+
+    if (fread(buffer, real_size, 1, fp) != 1) {
+      ASSERT(false);
+    }
+  }
+
+  if (len < 0) {
+    len = len + 0x7ff;
+  }
+
+  fd->location += (len / SECTOR_SIZE);
+  sReadInfo = fd;
+
+  fclose(fp);
 
   return CMD_STATUS_IN_PROGRESS;
 }

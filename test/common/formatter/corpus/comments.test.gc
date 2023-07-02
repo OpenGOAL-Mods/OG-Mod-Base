@@ -1,5 +1,5 @@
 ===
-Comment - Top-Level
+Top-Level Comment
 ===
 
 ;; test
@@ -11,22 +11,7 @@ Comment - Top-Level
 (println "test")
 
 ===
-Comment - Within Form
-===
-
-(println
-    ;; test
-  "test")
-
----
-
-(println
-  ;; test
-  "test")
-
-
-===
-Comment - Inline
+Inline Comment
 ===
 
 (println "test") ;; test
@@ -36,16 +21,8 @@ Comment - Inline
 (println "test") ;; test
 
 ===
-Block Comment
+TODO - Block Comment
 ===
-
-#|
-  block comment
-  test|#
-
-(println "test")
-
----
 
 #|
   block comment
@@ -54,71 +31,12 @@ Block Comment
 
 (println "test")
 
-===
-Block Comment - Single Line
-===
-
-#|block comment|#
-
 ---
 
 #|
-block comment
-|#
 
-===
-Block Comment - Don't Allow Content on Opening Brace
-===
-
-#| block comment
- test
-|#
+ |#
 
 (println "test")
 
----
 
-#|
- block comment
- test
-|#
-
-(println "test")
-
-===
-Block Comment - Allow Annotations
-===
-
-#|@file block comment
- test
-|#
-
-(println "test")
-
----
-
-#|@file
- block comment
- test
-|#
-
-(println "test")
-
-===
-Block Comment - In Form
-===
-
-(println
-  #| block comment
- test
-|#
-"test")
-
----
-
-(println
-  #|
- block comment
- test
-|#
-  "test")

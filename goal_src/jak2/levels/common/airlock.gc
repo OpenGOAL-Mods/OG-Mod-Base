@@ -559,8 +559,7 @@
             )
         (rotate-gear! self 65536.0)
         (suspend)
-        ;; pc port note: added speed modifier
-        (ja :num! (seek! 0.0 (get-airlock-close-speed *pc-settings*)))
+        (ja :num! (seek! 0.0))
         (transform-post)
         )
       (when (nonzero? (-> self sound-id))
