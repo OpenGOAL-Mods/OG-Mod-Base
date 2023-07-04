@@ -1,8 +1,8 @@
     ;;-*-Lisp-*-
     (in-package goal)
 
-    ;; name: put-custom-code-here.gc
-    ;; name in dgo: put-custom-code-here
+    ;; name: mod-custom-code.gc
+    ;; name in dgo: mod-custom-code
     ;; dgos: TODO
 
 
@@ -22,52 +22,38 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     (defun runs-every-frame ()
-      ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in define-custom-functions-here.gc
+      ;; (increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
 
-      (none)
-      )
+      ;; Sample code to turn jak pink whenever he's doing the jetboard hover glitch
+      ;; (when *target* 
+      ;;   (if (board-hovering?)
+      ;;     (draw-pink *target*)
+      ;;     (draw-normal *target*)
+      ;;     )
+      ;;   )
 
-    (defun runs-on-orb-pickup ((parent process-tree))
-      (let* ((from-cache? (and parent (type-type? (-> parent type) orb-cache-top))))
-        ;; Code here runs on ANY orb pickup
-
-
-        (when from-cache?
-          ;; Code here runs only if the orb was from an orb cache
-
-          )
-
-        (when (not from-cache?)
-          ;; Code here runs only if the orb was NOT from an orb cache
-
-          )
+      (if *show-input-display* 
+        (input-display-on)
+        (input-display-off)
         )
+      
       (none)
       )
 
-    (defun runs-on-fly-pickup ()
+    (defun runs-on-gem-pickup ()
       ;; Code here runs on any scout fly pickup
 
       (none)
       )
 
-    (defun runs-on-cell-pickup ((cell-event symbol))
-      (case cell-event
-        (('pickup)      
-          ;; Code here runs as soon as you pickup a powercell
-
-          )
-        (('cutscene-end)      
-          ;; Code here runs at the end of any powercell cutscene
-
-          )
-        )
+    (defun runs-on-task-close ()
+    
 
       (none)
       )
 
     (defun runs-on-eco-pickup ((eco-type pickup-type) (parent process-tree))
-      (let* ((from-vent? (and parent (type-type? (-> parent type) vent))))
+      (let* ((from-vent? #f))
         ;; Code here runs as soon as you pickup ANY eco
 
         (case eco-type
@@ -83,10 +69,7 @@
             ;; Code here runs as soon as you pickup blue eco
 
             )
-          (((pickup-type eco-pill))      
-            ;; Code here runs as soon as you pickup small green eco
 
-            )
           (((pickup-type eco-green))      
             ;; Code here runs as soon as you pickup big green eco 
 
@@ -104,10 +87,7 @@
 
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
-      (when (= buttons #f)
-        (button-on)
-        (set! buttons #t)
-        )
+
       (none)
       )
 

@@ -336,6 +336,7 @@
   "pckernel.o" ;; added
   "subtitle2-h.o" ;; added
   "subtitle2.o" ;; added
+  "input-display.o" ;;added
   "main.o"
   "collide-cache.o"
   "collide-debug.o"
@@ -451,7 +452,7 @@
   "elec-gate.o"
   "cty-guard-turret-button.o"
   "entity-debug.o" ;; added
-  "mods-settings.o" ;; added
-  "define-custom-functions-here.o" ;; added
-  "put-custom-code-here.o" ;; added
+  "mod-settings.o" ;; added
+  "mod-common-functions.o" ;; added
+  "mod-custom-code.o" ;; added
  ))

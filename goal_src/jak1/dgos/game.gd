@@ -34,7 +34,6 @@
   "pckernel-impl.o" ;; added
   "pc-debug-common.o" ;; added
   "pc-debug-methods.o" ;; added
-  "buttontext2.o" ;; added
   "pad.o"
   "gs.o"
   "display-h.o"
@@ -203,6 +202,7 @@
   "speedruns.o" ;; added
   "pckernel-common.o" ;; added
   "pckernel.o" ;; added
+  "input-display.o" ;;added
   "mood-tables.o"
   "mood.o"
   "weather-part.o"
@@ -346,9 +346,9 @@
   "ropebridge.o"
   "ticky.o"
   "hud-classes-pc.o" ;; added
-  "mods-settings.o" ;; added
-  "define-custom-functions-here.o" ;; added
-  "put-custom-code-here.o" ;; added
+  "mod-settings.o" ;; added
+  "mod-common-functions.o" ;; added
+  "mod-custom-code.o" ;; added
   ;; keep zoomer stuff loaded
   "target-racer-h.o"
   "racer-part.o"

@@ -7,8 +7,7 @@
 
 ;; DECOMP BEGINS
 
-;; Change #f to #t here to remove flutflut's invisible walls and prevent deload crashes
-(define *allow-flutflut-anywhere* #f)
+(define-extern *allow-flutflut-anywhere* symbol)
 
 (import "goal_src/jak1/import/flut-saddle-ag.gc")
 
