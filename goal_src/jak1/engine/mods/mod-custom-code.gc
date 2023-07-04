@@ -26,12 +26,8 @@
       
 
       (if *show-input-display* 
-        (if (not (process-by-name 'button-proc *active-pool*))
-          (input-display-on)
-          )
-        (if (process-by-name 'button-proc *active-pool*)
-          (input-display-off)
-          )
+        (input-display-on)
+        (input-display-off)
         )
 
       (none)
