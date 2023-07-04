@@ -569,6 +569,12 @@
   (board-name #x30f)
   (progress-unknown-continue #x310)
 
+  ;; mod text
+  (pad-triangle #x2000)
+  (pad-circle #x2001)
+  (pad-x #x2002)
+  (pad-square #x2003)
+
   ;; PC port IDs START
   (discord-rpc-not-in-mission #x1100)
   (discord-rpc-in-side-mission #x1101)
