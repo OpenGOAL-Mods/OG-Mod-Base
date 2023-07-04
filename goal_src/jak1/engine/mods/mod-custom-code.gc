@@ -1,8 +1,8 @@
     ;;-*-Lisp-*-
     (in-package goal)
 
-    ;; name: put-custom-code-here.gc
-    ;; name in dgo: put-custom-code-here
+    ;; name: mod-custom-code.gc
+    ;; name in dgo: mod-custom-code
     ;; dgos: TODO
 
 
@@ -22,7 +22,17 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     (defun runs-every-frame ()
-      ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in define-custom-functions-here.gc
+      ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-utils.gc
+      
+
+      (if *show-input-display* 
+        (if (not (process-by-name 'button-proc *active-pool*))
+          (input-display-on)
+          )
+        (if (process-by-name 'button-proc *active-pool*)
+          (input-display-off)
+          )
+        )
 
       (none)
       )
@@ -104,10 +114,6 @@
 
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
-      (when (= buttons #f)
-        (button-on)
-        (set! buttons #t)
-        )
       (none)
       )
 
