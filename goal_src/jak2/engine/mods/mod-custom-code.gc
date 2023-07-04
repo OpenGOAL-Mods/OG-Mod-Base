@@ -22,7 +22,7 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     (defun runs-every-frame ()
-      ;; (increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-utils.gc
+      ;; (increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
 
       ;; Sample code to turn jak pink whenever he's doing the jetboard hover glitch
       ;; (when *target* 
@@ -31,6 +31,11 @@
       ;;     (draw-normal *target*)
       ;;     )
       ;;   )
+
+      (if *show-input-display* 
+        (input-display-on)
+        (input-display-off)
+        )
       
       (none)
       )

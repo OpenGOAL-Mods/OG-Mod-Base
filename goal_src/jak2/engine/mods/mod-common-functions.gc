@@ -1,8 +1,8 @@
 ;;-*-Lisp-*-
 (in-package goal)
 
-;; name: mod-utils.gc
-;; name in dgo: mod-utils
+;; name: mod-common-functions.gc
+;; name in dgo: mod-common-functions
 ;; dgos: TODO
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;

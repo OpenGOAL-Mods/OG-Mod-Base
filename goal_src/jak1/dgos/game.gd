@@ -346,9 +346,9 @@
   "ropebridge.o"
   "ticky.o"
   "hud-classes-pc.o" ;; added
-  "mods-settings.o" ;; added
-  "define-custom-functions-here.o" ;; added
-  "put-custom-code-here.o" ;; added
+  "mod-settings.o" ;; added
+  "mod-common-functions.o" ;; added
+  "mod-custom-code.o" ;; added
   ;; keep zoomer stuff loaded
   "target-racer-h.o"
   "racer-part.o"

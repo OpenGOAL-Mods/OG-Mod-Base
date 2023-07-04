@@ -569,15 +569,11 @@
   (board-name #x30f)
   (progress-unknown-continue #x310)
 
-  ;; PC port IDs START
-  (discord-rpc-not-in-mission #x1100)
-  (discord-rpc-in-side-mission #x1101)
-  (discord-rpc-red-gun-training #x1102)
-  (discord-rpc-yellow-gun-training #x1103)
-  (discord-rpc-blue-gun-training #x1104)
-  (discord-rpc-dark-gun-training #x1105)
-  (discord-rpc-onin-game #x1106)
-  (discord-rpc-whack #x1107)
+  ;; mod text
+  (pad-triangle #x2000)
+  (pad-circle #x2001)
+  (pad-x #x2002)
+  (pad-square #x2003)
 )
 ;; ---text-id
 
