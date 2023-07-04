@@ -826,10 +826,11 @@
   (progress-no-other-resolution-options #x1616)
   (input-opts-controller-led-reflect-heat #x1617)
 
-  (pad-triangle #x1618)
-  (pad-circle #x1619)
-  (pad-x #x161a)
-  (pad-square #x161b)
+  ;; mod text
+  (pad-triangle #x2000)
+  (pad-circle #x2001)
+  (pad-x #x2002)
+  (pad-square #x2003)
 ;; GAME-TEXT-ID ENUM ENDS
   )
 

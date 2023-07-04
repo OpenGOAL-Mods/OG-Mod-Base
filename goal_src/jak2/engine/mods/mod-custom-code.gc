@@ -1,8 +1,8 @@
     ;;-*-Lisp-*-
     (in-package goal)
 
-    ;; name: put-custom-code-here.gc
-    ;; name in dgo: put-custom-code-here
+    ;; name: mod-custom-code.gc
+    ;; name in dgo: mod-custom-code
     ;; dgos: TODO
 
 
@@ -22,7 +22,7 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     (defun runs-every-frame ()
-      ;; (increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in define-custom-functions-here.gc
+      ;; (increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-utils.gc
 
       ;; Sample code to turn jak pink whenever he's doing the jetboard hover glitch
       ;; (when *target* 

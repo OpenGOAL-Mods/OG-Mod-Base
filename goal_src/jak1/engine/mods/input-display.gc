@@ -19,7 +19,7 @@ The dpad press displays text and changes the edit mode
 Down lets you edit buttons, left lets you edit the sticks, right for dpad, up to stop editing
 |#
 
-(define buttons #f) ;this is the on/off switch used in the custom code file
+;; *show-input-display* is the on/off switch controlling whether this is displayed
 
 ;
 ;Button stuff
@@ -321,13 +321,13 @@ Down lets you edit buttons, left lets you edit the sticks, right for dpad, up to
 ;
 ;
 
-(defun button-on ()
+(defun input-display-on ()
   ;process-spawn-function, spawns a process that runs the function you give it
   (process-spawn-function process :name 'button-proc
     ;This lambda is our function
     (lambda :behavior process ()
-    ;Code before the loop runs once on process spawn
-    ;
+      ;Code before the loop runs once on process spawn
+      ;
       ;Loop runs once per frame while process is active
       (loop
         
@@ -364,7 +364,7 @@ Down lets you edit buttons, left lets you edit the sticks, right for dpad, up to
 )
 
 
-(defun button-off ()
+(defun input-display-off ()
   "Kill the button process"
   (kill-by-name 'button-proc *active-pool*)
   )
