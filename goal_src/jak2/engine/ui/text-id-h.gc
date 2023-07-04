@@ -578,6 +578,12 @@
   (discord-rpc-dark-gun-training #x1105)
   (discord-rpc-onin-game #x1106)
   (discord-rpc-whack #x1107)
+
+  ;; mod text
+  (pad-triangle #x2000)
+  (pad-circle #x2001)
+  (pad-x #x2002)
+  (pad-square #x2003)
 )
 ;; ---text-id
 
