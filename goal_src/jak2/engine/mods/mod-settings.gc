@@ -1,8 +1,8 @@
 ;;-*-Lisp-*-
 (in-package goal)
 
-;; name: define-custom-functions-here.gc
-;; name in dgo: define-custom-functions-here
+;; name: mod-utils.gc
+;; name in dgo: mod-utils
 ;; dgos: TODO
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10,7 +10,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #| This file is a place where you can define custom functions and GOAL code
- to call inside of put-custom-code-here.gc for example I have defined a function that increases
+ to call inside of mod-custom-code.gc for example I have defined a function that increases
  the powercell count by one when it is called
  |#
 
@@ -42,6 +42,3 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Custom Settings Variables to use in mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
