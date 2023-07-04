@@ -34,7 +34,6 @@
   "pckernel-impl.o" ;; added
   "pc-debug-common.o" ;; added
   "pc-debug-methods.o" ;; added
-  "input-display.o" ;; added
   "pad.o"
   "gs.o"
   "display-h.o"
