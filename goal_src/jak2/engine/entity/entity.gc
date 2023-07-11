@@ -645,7 +645,17 @@
   0
   (none)
   )
+(defun entity-actor-equal? ((obj entity-actor) (ename string))
+(if (= obj (the-as entity-actor (entity-by-name ename)))
+#t
+#f
+)
 
+)
+
+(define-extern sig-bot type)
+(define-extern torn-npc type)
+(define-extern talker type)
 ;; WARN: Return type mismatch entity-actor vs none.
 (defmethod add-to-level! entity-actor ((obj entity-actor) (arg0 level-group) (arg1 level) (arg2 actor-id))
   (let ((v1-4 (-> arg1 entity data (-> arg1 entity length))))
@@ -699,10 +709,41 @@
                   (task-mask movie0 movie1 movie2 tm19 tm20 tm21 tm22 tm23 tm24 tm25 tm26 tm27 tm28 tm29 tm30 tm31)
                   (-> obj kill-mask)
                   )
+                  
                 )
         )
-  (if (not (= (-> obj extra kill-mask) (the-as task-mask 0.0)))
-      (set! (-> obj extra kill-mask) (the-as task-mask 0.0))
+  (if (and (not (= (-> obj extra kill-mask) (the-as task-mask 0.0))) 
+          ;;  (or (not (= (-> obj etype) sig-bot))
+          ;;  (not (= (-> obj etype) torn-npc))
+          ;;  (not (= (-> obj etype) talker))
+          ;;  )
+  
+           )
+;;            (logclear! (-> obj extra kill-mask) (task-mask        
+;;                           task0
+;;                           never
+;; ))
+
+           (logclear! (-> obj extra kill-mask) (task-mask        
+                        task0
+                          task1
+                          task2
+                          task3
+                          task4
+                          task5
+                          task6
+                          task7
+                          done
+                          dummy0
+                          dummy1
+                          dummy2
+                          ;; special
+                          ;; primary0
+                  
+                          never
+))
+
+            (none)
       )
   (if (not (-> arg1 vis-info 0))
       (set! (-> obj extra vis-dist) (res-lump-float obj 'vis-dist :default 40960000.0))
@@ -1591,8 +1632,21 @@
   (none)
   )
 
+(define-extern com-airlock type)
+(define-extern com-airlock-outer type)
+(define-extern com-airlock-inner type)
+
 (defmethod birth! entity-actor ((obj entity-actor))
-  (let* ((s5-0 (-> obj etype))
+;; (if (or (= (-> obj etype) com-airlock)
+;; (= (-> obj etype) com-airlock-outer)
+;; (= (-> obj etype) com-airlock-inner)
+
+;; )
+;; (return obj)
+;; )
+
+
+ (let* ((s5-0 (-> obj etype))
          (v1-0 (entity-info-lookup s5-0))
          (s4-0 (get-process *default-dead-pool* s5-0 (if v1-0
                                                          (-> v1-0 heap-size)
