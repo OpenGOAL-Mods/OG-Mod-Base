@@ -1057,7 +1057,7 @@
   )
 
 (defmethod init-from-entity! boatpaddle ((obj boatpaddle) (arg0 entity-actor))
-  (set! (-> obj mask) (logior (process-mask ambient) (-> obj mask)))
+  (logior! (-> obj mask) (process-mask ambient))
   (set! (-> obj root) (new 'process 'trsqv))
   (process-drawable-from-entity! obj arg0)
   (initialize-skeleton obj *boatpaddle-sg* '())
@@ -1116,7 +1116,7 @@
   )
 
 (defmethod init-from-entity! windturbine ((obj windturbine) (arg0 entity-actor))
-  (set! (-> obj mask) (logior (process-mask ambient) (-> obj mask)))
+  (logior! (-> obj mask) (process-mask ambient))
   (set! (-> obj root) (new 'process 'trsqv))
   (process-drawable-from-entity! obj arg0)
   (logclear! (-> obj mask) (process-mask actor-pause))
@@ -1277,7 +1277,7 @@
   )
 
 (defmethod init-from-entity! mis-bone-bridge ((obj mis-bone-bridge) (arg0 entity-actor))
-  (set! (-> obj mask) (logior (process-mask platform) (-> obj mask)))
+  (logior! (-> obj mask) (process-mask platform))
   (let ((s4-0 (new 'process 'collide-shape-moving obj (collide-list-enum hit-by-others))))
     (set! (-> s4-0 dynam) (copy *standard-dynamics* 'process))
     (set! (-> s4-0 reaction) default-collision-reaction)
@@ -1288,7 +1288,7 @@
     (let ((s3-0 (new 'process 'collide-shape-prim-group s4-0 (the-as uint 2) 0)))
       (set! (-> s3-0 prim-core collide-as) (collide-kind ground-object))
       (set! (-> s3-0 collide-with) (collide-kind target))
-      (set! (-> s3-0 prim-core action) (collide-action solid ca-10 ca-11))
+      (set! (-> s3-0 prim-core action) (collide-action solid attackable attackable-unused))
       (set! (-> s3-0 prim-core offense) (collide-offense indestructible))
       (set! (-> s3-0 transform-index) 0)
       (set-vector! (-> s3-0 local-sphere) 0.0 0.0 0.0 98304.0)
@@ -1440,7 +1440,7 @@
   )
 
 (defmethod init! breakaway ((obj breakaway) (arg0 res-lump) (arg1 int))
-  (set! (-> obj mask) (logior (process-mask platform) (-> obj mask)))
+  (logior! (-> obj mask) (process-mask platform))
   (let ((s4-0 (new 'process 'collide-shape-moving obj (collide-list-enum hit-by-player))))
     (set! (-> s4-0 dynam) (copy *standard-dynamics* 'process))
     (set! (-> s4-0 reaction) default-collision-reaction)
@@ -1667,7 +1667,7 @@
     (let ((s4-0 (new 'process 'collide-shape-prim-mesh s5-0 (the-as uint 0) (the-as uint 0))))
       (set! (-> s4-0 prim-core collide-as) (collide-kind ground-object))
       (set! (-> s4-0 collide-with) (collide-kind target))
-      (set! (-> s4-0 prim-core action) (collide-action solid ca-1))
+      (set! (-> s4-0 prim-core action) (collide-action solid rider-plat-sticky))
       (set! (-> s4-0 prim-core offense) (collide-offense indestructible))
       (set! (-> s4-0 transform-index) 3)
       (set-vector! (-> s4-0 local-sphere) 0.0 0.0 0.0 20480.0)

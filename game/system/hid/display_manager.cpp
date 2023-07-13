@@ -7,8 +7,10 @@
 
 DisplayManager::DisplayManager(SDL_Window* window)
     : m_window(window), m_selected_fullscreen_display_id(0) {
-  // SDL hint to disable OS level forced scaling and allow native resolution at non 100% scales
-  SDL_SetHint("SDL_WINDOWS_DPI_SCALING", "true");
+#ifdef _WIN32
+  // Windows hint to disable OS level forced scaling and allow native resolution at non 100% scales
+  SetProcessDPIAware();
+#endif
   update_curr_display_info();
   update_video_modes();
   // Load display settings from a file
@@ -24,6 +26,37 @@ DisplayManager::~DisplayManager() {
     m_display_settings.window_ypos = m_window_ypos;
   }
   m_display_settings.save_settings();
+}
+
+void DisplayManager::initialize_window_position_from_settings() {
+  // Check that the display id is still valid
+  if (m_current_display_modes.find(m_display_settings.display_id) ==
+      m_current_display_modes.end()) {
+    m_display_settings.display_id = 0;
+    m_display_settings.window_xpos = 50;
+    m_display_settings.window_ypos = 50;
+  }
+
+  SDL_Rect rect;
+  const auto ok = SDL_GetDisplayBounds(m_display_settings.display_id, &rect);
+  if (ok < 0) {
+    sdl_util::log_error(fmt::format("unable to get display bounds for display id {}",
+                                    m_display_settings.display_id));
+  } else {
+    // Adjust the settings if they are out of bounds
+    if (m_display_settings.window_xpos <= rect.x ||
+        m_display_settings.window_xpos + 50 >= rect.x + rect.w) {
+      m_display_settings.window_xpos = rect.x + 50;
+      m_display_settings.save_settings();
+    }
+    if (m_display_settings.window_ypos <= rect.y ||
+        m_display_settings.window_ypos + 50 > rect.y + rect.h) {
+      m_display_settings.window_ypos = rect.y + 50;
+      m_display_settings.save_settings();
+    }
+  }
+
+  SDL_SetWindowPosition(m_window, m_display_settings.window_xpos, m_display_settings.window_ypos);
 }
 
 void DisplayManager::process_sdl_event(const SDL_Event& event) {
@@ -55,6 +88,14 @@ void DisplayManager::process_sdl_event(const SDL_Event& event) {
         // framerate we don't handle that
         update_curr_display_info();
         break;
+      case SDL_WINDOWEVENT_ENTER:
+        if (m_input_manager && m_input_manager.value()->auto_hiding_cursor()) {
+          m_input_manager.value()->hide_cursor(true);
+        }
+        break;
+      case SDL_WINDOWEVENT_LEAVE:
+        m_input_manager.value()->hide_cursor(false);
+        break;
     }
   } else if (event_type == SDL_DISPLAYEVENT) {
     // https://wiki.libsdl.org/SDL2/SDL_DisplayEventID
@@ -69,6 +110,33 @@ void DisplayManager::process_sdl_event(const SDL_Event& event) {
         break;
     }
   }
+}
+
+void DisplayManager::process_ee_events() {
+  const std::lock_guard<std::mutex> lock(event_queue_mtx);
+  // Fully process any events from the EE
+  while (!ee_event_queue.empty()) {
+    const auto& evt = ee_event_queue.front();
+    switch (evt.type) {
+      case EEDisplayEventType::SET_WINDOW_SIZE:
+        set_window_size(std::get<int>(evt.param1), std::get<int>(evt.param2));
+        break;
+      case EEDisplayEventType::SET_WINDOW_DISPLAY_MODE:
+        set_window_display_mode(std::get<WindowDisplayMode>(evt.param1));
+        break;
+      case EEDisplayEventType::SET_FULLSCREEN_DISPLAY_ID:
+        set_fullscreen_display_id(std::get<int>(evt.param1));
+        break;
+    }
+    ee_event_queue.pop();
+  }
+}
+
+std::string DisplayManager::get_connected_display_name(int id) {
+  if (m_current_display_modes.find(id) != m_current_display_modes.end()) {
+    return m_current_display_modes.at(id).display_name;
+  }
+  return "";
 }
 
 int DisplayManager::get_active_display_refresh_rate() {
@@ -102,45 +170,18 @@ Resolution DisplayManager::get_resolution(int id) {
   return {0, 0, 0.0};
 }
 
-void DisplayManager::set_window_resizable(bool resizable) {
-  if (m_window) {
-    SDL_SetWindowResizable(m_window, resizable ? SDL_TRUE : SDL_FALSE);
-  }
+void DisplayManager::enqueue_set_window_size(int width, int height) {
+  const std::lock_guard<std::mutex> lock(event_queue_mtx);
+  ee_event_queue.push({EEDisplayEventType::SET_WINDOW_SIZE, width, height});
 }
 
 void DisplayManager::set_window_size(int width, int height) {
   SDL_SetWindowSize(m_window, width, height);
 }
 
-void DisplayManager::initialize_window_position_from_settings() {
-  // Check that the display id is still valid
-  if (m_current_display_modes.find(m_display_settings.display_id) ==
-      m_current_display_modes.end()) {
-    m_display_settings.display_id = 0;
-    m_display_settings.window_xpos = 50;
-    m_display_settings.window_ypos = 50;
-  }
-
-  SDL_Rect rect;
-  const auto ok = SDL_GetDisplayBounds(m_display_settings.display_id, &rect);
-  if (ok < 0) {
-    sdl_util::log_error(fmt::format("unable to get display bounds for display id {}",
-                                    m_display_settings.display_id));
-  } else {
-    // Adjust the settings if they are out of bounds
-    if (m_display_settings.window_xpos <= rect.x ||
-        m_display_settings.window_xpos + 50 >= rect.x + rect.w) {
-      m_display_settings.window_xpos = rect.x + 50;
-      m_display_settings.save_settings();
-    }
-    if (m_display_settings.window_ypos <= rect.y ||
-        m_display_settings.window_ypos + 50 > rect.y + rect.h) {
-      m_display_settings.window_ypos = rect.y + 50;
-      m_display_settings.save_settings();
-    }
-  }
-
-  SDL_SetWindowPosition(m_window, m_display_settings.window_xpos, m_display_settings.window_ypos);
+void DisplayManager::enqueue_set_window_display_mode(WindowDisplayMode mode) {
+  const std::lock_guard<std::mutex> lock(event_queue_mtx);
+  ee_event_queue.push({EEDisplayEventType::SET_WINDOW_DISPLAY_MODE, mode, {}});
 }
 
 void DisplayManager::set_window_display_mode(WindowDisplayMode mode) {
@@ -198,6 +239,11 @@ void DisplayManager::set_window_display_mode(WindowDisplayMode mode) {
     // Set the mode, now that we've been successful
     m_window_display_mode = mode;
   }
+}
+
+void DisplayManager::enqueue_set_fullscreen_display_id(int display_id) {
+  const std::lock_guard<std::mutex> lock(event_queue_mtx);
+  ee_event_queue.push({EEDisplayEventType::SET_FULLSCREEN_DISPLAY_ID, display_id, {}});
 }
 
 void DisplayManager::set_fullscreen_display_id(int display_id) {
@@ -262,8 +308,16 @@ void DisplayManager::update_video_modes() {
         orient = Orientation::Unknown;
     }
 
-    DisplayMode new_mode = {curr_mode.format, curr_mode.w, curr_mode.h, curr_mode.refresh_rate,
-                            orient};
+    std::string display_name_str = "";
+    const auto display_name = SDL_GetDisplayName(display_id);
+    if (display_name == NULL) {
+      sdl_util::log_error(fmt::format("couldn't retrieve display name with id {}", display_id));
+    } else {
+      display_name_str = display_name;
+    }
+
+    DisplayMode new_mode = {display_name_str, curr_mode.format,       curr_mode.w,
+                            curr_mode.h,      curr_mode.refresh_rate, orient};
     m_current_display_modes[display_id] = new_mode;
   }
   update_resolutions();
@@ -300,13 +354,4 @@ void DisplayManager::update_resolutions() {
                             return (a.width == b.width && a.height == b.height);
                           });
   m_available_resolutions.erase(last, m_available_resolutions.end());
-}
-
-std::string DisplayManager::get_connected_display_name(int id) {
-  const auto name = SDL_GetDisplayName(id);
-  if (name == NULL) {
-    sdl_util::log_error(fmt::format("couldn't retrieve display name with id {}", id));
-    return "";
-  }
-  return std::string(name);
 }

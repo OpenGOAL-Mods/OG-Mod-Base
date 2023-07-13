@@ -685,7 +685,7 @@
         ((and (logtest? (water-flags wt21) (-> obj flags))
               (logtest? (-> obj process state-flags) (state-flags grabbed))
               )
-         (set! (-> obj flags) (logior (water-flags wt16) (-> obj flags)))
+         (logior! (-> obj flags) (water-flags wt16))
          )
         ((begin
            (set! (-> obj top 1 quad) (-> obj top 0 quad))
@@ -698,7 +698,7 @@
            (cond
              ((and (logtest? (-> obj flags) (water-flags wt08))
                    (not (logtest? (-> (the-as collide-shape-moving (-> obj process root)) root-prim prim-core action)
-                                  (collide-action ca-9)
+                                  (collide-action racer)
                                   )
                         )
                    )
@@ -729,7 +729,7 @@
                )
              )
            (if (logtest? (-> (the-as collide-shape-moving (-> obj process root)) root-prim prim-core action)
-                         (collide-action ca-9)
+                         (collide-action racer)
                          )
                (set! (-> obj bob-offset) 0.0)
                )
@@ -904,7 +904,7 @@
                      (let ((s4-4 (-> obj process root)))
                        (when (and (not (logtest? (-> (the-as collide-shape-moving s4-4) status) (cshape-moving-flags csmf12)))
                                   (logtest? (-> obj flags) (water-flags wt11))
-                                  (not (logtest? (-> (the-as collide-shape-moving s4-4) root-prim prim-core action) (collide-action ca-9)))
+                                  (not (logtest? (-> (the-as collide-shape-moving s4-4) root-prim prim-core action) (collide-action racer)))
                                   )
                          (let ((a1-27 (vector-! (new 'stack-no-clear 'vector) v1-200 (-> s4-4 trans))))
                            (vector-float*! a1-27 a1-27 (-> *display* frames-per-second))
@@ -945,7 +945,7 @@
                (set! (-> a1-30 quad) (-> obj bottom 0 quad))
                (let ((s5-1 (-> obj process root)))
                  (set! (-> a1-30 y) f30-3)
-                 (when (not (logtest? (-> (the-as collide-shape-moving s5-1) root-prim prim-core action) (collide-action ca-9)))
+                 (when (not (logtest? (-> (the-as collide-shape-moving s5-1) root-prim prim-core action) (collide-action racer)))
                    (let ((f30-4 (-> (the-as collide-shape-moving s5-1) ground-impact-vel)))
                      (move-to-ground-point! (the-as collide-shape-moving s5-1) a1-30 (-> s5-1 transv) *up-vector*)
                      (logior! (-> (the-as collide-shape-moving s5-1) status) (cshape-moving-flags on-water))
@@ -961,14 +961,14 @@
                                 (cshape-moving-flags onsurf on-water)
                                 )
                       (not (logtest? (-> (the-as collide-shape-moving (-> obj process root)) root-prim prim-core action)
-                                     (collide-action ca-9)
+                                     (collide-action racer)
                                      )
                            )
                       )
              (when (< (-> obj process root trans y) -409.6)
                (send-event (-> obj process) 'no-look-around (seconds 1.5))
                (when (not (logtest? (-> (the-as collide-shape-moving (-> obj process root)) root-prim prim-core action)
-                                    (collide-action ca-14)
+                                    (collide-action flut)
                                     )
                           )
                  (cond
@@ -1441,7 +1441,7 @@
           )
       )
     )
-  (set! (-> obj flags) (logior (water-flags wt23) (-> obj flags)))
+  (logior! (-> obj flags) (water-flags wt23))
   (cond
     ((zero? (-> obj flags))
      (if (< 0.0 (-> obj wade-height))
@@ -1488,7 +1488,3 @@
   (go (method-of-object obj water-vol-startup))
   (none)
   )
-
-
-
-

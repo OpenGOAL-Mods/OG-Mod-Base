@@ -6,8 +6,11 @@ set(CMAKE_ASM_NASM_SOURCE_FILE_EXTENSIONS ${CMAKE_ASM_NASM_SOURCE_FILE_EXTENSION
 set(CMAKE_ASM_NASM_COMPILE_OBJECT "<CMAKE_ASM_NASM_COMPILER> <INCLUDES> -f ${CMAKE_ASM_NASM_OBJECT_FORMAT} -o <OBJECT> <SOURCE>")
 set_source_files_properties(kernel/asm_funcs.asm PROPERTIES COMPILE_FLAGS "-g")
 set(RUNTIME_SOURCE
+        external/discord_jak1.cpp
+        external/discord_jak2.cpp
         external/discord.cpp
         graphics/display.cpp
+        graphics/gfx_test.cpp
         graphics/gfx.cpp
         graphics/jak2_texture_remap.cpp
         graphics/opengl_renderer/background/background_common.cpp
@@ -28,9 +31,10 @@ set(RUNTIME_SOURCE
         graphics/opengl_renderer/foreground/Generic2_DMA.cpp
         graphics/opengl_renderer/foreground/Generic2_OpenGL.cpp
         graphics/opengl_renderer/foreground/Generic2.cpp
+        graphics/opengl_renderer/foreground/Generic2BucketRenderer.cpp
         graphics/opengl_renderer/foreground/Merc2.cpp
+        graphics/opengl_renderer/foreground/Merc2BucketRenderer.cpp
         graphics/opengl_renderer/foreground/Shadow2.cpp
-        graphics/opengl_renderer/LightningRenderer.cpp
         graphics/opengl_renderer/loader/Loader.cpp
         graphics/opengl_renderer/loader/LoaderStages.cpp
         graphics/opengl_renderer/ocean/CommonOceanRenderer.cpp
@@ -55,6 +59,7 @@ set(RUNTIME_SOURCE
         graphics/opengl_renderer/sprite/Sprite3_Distort.cpp
         graphics/opengl_renderer/sprite/Sprite3_Glow.cpp
         graphics/opengl_renderer/sprite/Sprite3.cpp
+        graphics/opengl_renderer/TextureAnimator.cpp
         graphics/opengl_renderer/TextureUploadHandler.cpp
         graphics/opengl_renderer/VisDataHandler.cpp
         graphics/opengl_renderer/Warp.cpp
@@ -212,8 +217,9 @@ set(RUNTIME_SOURCE
         system/vm/dmac.cpp
         system/vm/vm.cpp
         tools/filter_menu/filter_menu.cpp
-        tools/subtitles/subtitle_editor.cpp
-        tools/subtitles2/subtitle2_editor.cpp
+        tools/subtitle_editor/subtitle_editor_db.cpp
+        tools/subtitle_editor/subtitle_editor_repl_client.cpp
+        tools/subtitle_editor/subtitle_editor.cpp
         )
 
 add_subdirectory(sound)
@@ -225,7 +231,7 @@ add_library(runtime STATIC ${RUNTIME_SOURCE} "../third-party/glad/src/glad.c")
 
 
 
-target_link_libraries(runtime common fmt SDL2::SDL2 imgui discord-rpc sound stb_image libco SQLiteCpp SFML::Audio)
+target_link_libraries(runtime common fmt SDL2::SDL2 imgui discord-rpc sound stb_image libco SFML::Audio)
 
 if(WIN32)
 target_link_libraries(runtime mman )

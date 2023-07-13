@@ -243,7 +243,7 @@
         )
       (else
         (if (-> arg0 entity)
-            (logior! (-> arg0 entity extra perm status) (entity-perm-status bit-1))
+            (logior! (-> arg0 entity extra perm status) (entity-perm-status error))
             )
         #f
         )
@@ -518,7 +518,7 @@
   (let ((gp-0 (new 'stack-no-clear 'inline-array 'vector 3)))
     (set! (-> gp-0 0 quad) (-> obj bounds quad))
     (if (logtest? (-> arg0 pat) 7)
-        (set! (-> gp-0 0 y) (+ 409.6 (-> gp-0 0 y)))
+        (+! (-> gp-0 0 y) 409.6)
         )
     (let ((v1-7 (the-as int (+ (-> arg0 vertex-count) -1))))
       (dotimes (s2-0 (the-as int (-> arg0 vertex-count)))

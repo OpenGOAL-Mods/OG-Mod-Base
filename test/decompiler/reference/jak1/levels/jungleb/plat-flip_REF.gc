@@ -123,7 +123,7 @@
 ;; INFO: Return type mismatch object vs none.
 (defmethod init-from-entity! plat-flip ((obj plat-flip) (arg0 entity-actor))
   (local-vars (sv-16 res-tag) (sv-32 res-tag) (sv-48 res-tag))
-  (set! (-> obj mask) (logior (process-mask platform) (-> obj mask)))
+  (logior! (-> obj mask) (process-mask platform))
   (let ((s4-0 (new 'process 'collide-shape-moving obj (collide-list-enum hit-by-player))))
     (set! (-> s4-0 dynam) (copy *standard-dynamics* 'process))
     (set! (-> s4-0 reaction) default-collision-reaction)
@@ -134,7 +134,7 @@
     (let ((s3-0 (new 'process 'collide-shape-prim-mesh s4-0 (the-as uint 0) (the-as uint 0))))
       (set! (-> s3-0 prim-core collide-as) (collide-kind ground-object))
       (set! (-> s3-0 collide-with) (collide-kind target))
-      (set! (-> s3-0 prim-core action) (collide-action solid ca-1))
+      (set! (-> s3-0 prim-core action) (collide-action solid rider-plat-sticky))
       (set! (-> s3-0 prim-core offense) (collide-offense indestructible))
       (set! (-> s3-0 transform-index) 3)
       (set-vector! (-> s3-0 local-sphere) 0.0 0.0 0.0 11468.8)

@@ -998,11 +998,11 @@
                                           :neck-joint 5
                                           :player-look-at-joint 5
                                           :run-travel-speed (meters 30)
-                                          :run-rotate-speed (degrees 3000.0)
+                                          :run-rotate-speed (degrees 3000)
                                           :run-acceleration (meters 1)
                                           :run-turn-time (seconds 0.1)
                                           :walk-travel-speed (meters 30)
-                                          :walk-rotate-speed (degrees 3000.0)
+                                          :walk-rotate-speed (degrees 3000)
                                           :walk-acceleration (meters 1)
                                           :walk-turn-time (seconds 0.1)
                                           :attack-shove-back (meters 3)
@@ -1049,7 +1049,7 @@
     (let ((s3-0 (new 'process 'collide-shape-prim-sphere s4-0 (the-as uint 0))))
       (set! (-> s3-0 prim-core collide-as) (collide-kind enemy))
       (set! (-> s3-0 collide-with) (collide-kind target))
-      (set! (-> s3-0 prim-core action) (collide-action solid ca-10 ca-11))
+      (set! (-> s3-0 prim-core action) (collide-action solid attackable attackable-unused))
       (set! (-> s3-0 prim-core offense) (collide-offense indestructible))
       (set-vector! (-> s3-0 local-sphere) 0.0 10240.0 0.0 10240.0)
       (set-root-prim! s4-0 s3-0)

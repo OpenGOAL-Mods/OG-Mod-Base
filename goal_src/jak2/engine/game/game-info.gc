@@ -628,7 +628,7 @@
            (set! (-> obj task-deaths) 0)
            (set! (-> obj task-pickup-time) (-> *display* game-clock frame-counter))
            (set! (-> obj unknown-array1 task) (-> *display* game-clock frame-counter))
-           (set! (-> obj fuel) (+ 1.0 (-> obj fuel)))
+           (+! (-> obj fuel) 1.0)
            (logior! (-> obj task-perm-list data task status) (entity-perm-status complete))
            (task-resolution-close! (the-as game-task task))
            )
@@ -1167,7 +1167,7 @@
              )
         (when actor-perm
           (set! (-> entity-perm quad) (-> actor-perm quad))
-          (update entity-perm 'try (entity-perm-status bit-0 bit-1 dead no-kill bit-5 subtask-complete bit-9 bit-12))
+          (update entity-perm 'try (entity-perm-status bit-0 error dead no-kill bit-5 subtask-complete bit-9 bit-12))
           )
         )
       )

@@ -7,6 +7,7 @@ namespace str_util {
 bool contains(const std::string& s, const std::string& substr);
 bool starts_with(const std::string& s, const std::string& prefix);
 bool ends_with(const std::string& s, const std::string& suffix);
+std::string ltrim_newlines(const std::string& s);
 std::string ltrim(const std::string& s);
 std::string rtrim(const std::string& s);
 std::string trim(const std::string& s);
@@ -29,4 +30,6 @@ std::string current_local_timestamp_no_colons();
 std::string current_isotimestamp();
 std::string to_upper(const std::string& str);
 std::string to_lower(const std::string& str);
+/// Is this a valid character for a hex number?
+bool hex_char(char c);
 }  // namespace str_util
