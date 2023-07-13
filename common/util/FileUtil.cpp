@@ -131,13 +131,31 @@ std::string get_current_executable_path() {
 }
 
 std::optional<std::string> try_get_project_path_from_path(const std::string& path) {
-  std::string::size_type pos =
-      std::string(path).rfind("jak-project");  // Strip file path down to /jak-project/ directory
-  if (pos == std::string::npos) {
-    return {};
+  std::string current_path = path;
+  lg::info("Current path in loop - {}", current_path);
+  while (!current_path.empty()) {
+    if (current_path == ".github") {
+      lg::info("No parent folder found");
+      return {};  // No parent folder found
+    }
+
+    std::size_t last_slash_pos = current_path.rfind('\\');
+    if (last_slash_pos == std::string::npos) {
+      lg::info("No parent folder found");
+      return {};  // No parent folder found
+    }
+
+    current_path = current_path.substr(0, last_slash_pos);
+    lg::info("Current path in loop - {}", current_path);
+    if (fs::exists(current_path + "/.github")) {
+      lg::info("Project path found - {}", current_path);
+      return current_path;
+    }
   }
-  return std::string(path).substr(
-      0, pos + 11);  // + 12 to include "/jak-project" in the returned filepath
+
+  lg::info("No project path found");
+  return {};  // No project path found
+
 }
 
 /*!

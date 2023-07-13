@@ -1,6 +1,13 @@
 #include "kmachine.h"
 
 #include <random>
+#include <iostream>
+#include <fstream>
+#include <thread>
+#include <chrono>
+#include <SFML/Audio.hpp>
+#include <SFML/Audio/Music.hpp>
+
 
 #include "common/global_profiler/GlobalProfiler.h"
 #include "common/log/log.h"
@@ -102,6 +109,69 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
   }
   return cpad_info;
 }
+
+
+
+void playMP3(u32 filePathu32, u32 volume)
+{
+ 
+
+    // Spawn a new thread to play the music.
+    std::thread thread([=]() {
+    std::string filePath = Ptr<String>(filePathu32).c()->data();
+    std::cout << "Playing MP3: " << filePath << std::endl;
+
+    sf::Music music;
+    if (!music.openFromFile(filePath))
+    {
+        std::cout << "Failed to load: " << filePath << std::endl;
+        return;
+    }
+        music.setVolume(volume);
+        music.play();
+        while (music.getStatus() == sf::Music::Playing)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+
+        music.stop();
+    });
+
+    // Detach the thread so it can run independently.
+    thread.detach();
+}
+
+// void playMP3(u32 filePathu32, u32 volume)
+// {
+
+//     std::string filePath = Ptr<String>(filePathu32).c()->data();
+//     std::cout << "Playing MP3: " << filePath << std::endl;
+//     sf::Music music;
+
+//     std::ifstream file(filePath);
+//     if (!file)
+//     {
+//         std::cout << "Invalid file path: " << filePath << std::endl;
+//         return;
+//     }
+
+//     if (!music.openFromFile(filePath))
+//     {
+//         printf("Failed to load: %s\n", filePath.c_str());
+//         std::cout << "Failed to load: " << filePath << std::endl;
+//         return;
+//     }
+
+//     music.setVolume(volume);
+//     music.play();
+
+//     while (music.getStatus() == sf::Music::Playing)
+//     {
+//         sf::sleep(sf::milliseconds(100));
+//        sf::sleep(sf::milliseconds(100));
+//     }
+// }
+
 
 /*!
  * Not checked super carefully for jak 2, but looks the same
@@ -914,6 +984,8 @@ void init_common_pc_port_functions(
   make_func_symbol_func("pc-filepath-exists?", (void*)pc_filepath_exists);
   make_func_symbol_func("pc-mkdir-file-path", (void*)pc_mkdir_filepath);
 
+  //Play sound file
+  make_func_symbol_func("play-rand-sound", (void*)playMP3);  
   // discord rich presence
   make_func_symbol_func("pc-discord-rpc-set", (void*)set_discord_rpc);
 

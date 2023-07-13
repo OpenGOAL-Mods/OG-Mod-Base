@@ -10,7 +10,6 @@
 // TODO:
 // - Considering _eventually_ adding line-length heuristics
 namespace formatter {
-
 struct TreeSitterParserDeleter {
   void operator()(TSParser* ptr) const { ts_parser_delete(ptr); }
 };

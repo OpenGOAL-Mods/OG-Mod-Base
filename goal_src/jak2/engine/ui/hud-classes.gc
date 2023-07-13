@@ -542,7 +542,8 @@
 
 (defmethod update-value-callback hud-skill ((obj hud-skill) (arg0 int) (arg1 int))
   (if (> arg1 0)
-      (sound-play "skill-pickup" :pitch 0.5)
+     (sound-play "skill-pickup" :pitch 0.5)
+     ;;(none)
       )
   0
   (none)

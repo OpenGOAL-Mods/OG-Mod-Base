@@ -202,6 +202,7 @@
   "speedruns.o" ;; added
   "pckernel-common.o" ;; added
   "pckernel.o" ;; added
+  "input-display.o" ;;added
   "mood-tables.o"
   "mood.o"
   "weather-part.o"
@@ -345,4 +346,23 @@
   "ropebridge.o"
   "ticky.o"
   "hud-classes-pc.o" ;; added
+  "mod-settings.o" ;; added
+  "mod-common-functions.o" ;; added
+  "mod-custom-code.o" ;; added
+  ;; keep zoomer stuff loaded
+  "target-racer-h.o"
+  "racer-part.o"
+  "racer.o"
+  "target-racer.o"
+  "racer-states.o"
+  "collide-reaction-racer.o"
+  "racer-ag.go"
+  "eichar-racer+0-ag.go"
+  "tpage-1119.go"
+  ;; keep flutflut stuff loaded
+  "flut-part.o"
+  "flutflut.o"
+  "target-flut.o"
+  "flut-saddle-ag.go"
+  "eichar-flut+0-ag.go"
  ))
