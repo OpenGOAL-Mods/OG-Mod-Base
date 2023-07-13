@@ -13,6 +13,6 @@
 
   (file-json 0 jak2 "common" '("game/assets/jak2/text/game_custom_text_en-US.json"))
   (file-json 7 jak2 "common" '("game/assets/jak2/text/game_custom_text_en-GB.json"))
-
+  (file "game/assets/jak2/text/game_custom_text_en.gs")
   )
 

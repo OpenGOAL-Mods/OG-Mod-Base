@@ -584,12 +584,6 @@
   (pad-circle #x2001)
   (pad-x #x2002)
   (pad-square #x2003)
-
-  ;; mod text
-  (pad-triangle #x2000)
-  (pad-circle #x2001)
-  (pad-x #x2002)
-  (pad-square #x2003)
 )
 ;; ---text-id
 
