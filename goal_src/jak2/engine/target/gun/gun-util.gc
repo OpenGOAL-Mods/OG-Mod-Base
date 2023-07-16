@@ -96,12 +96,11 @@
   :flag-assert         #x2a017001f0
   )
 
-
 (defmethod init-proj-settings! gun-mag-blue ((obj gun-mag-blue))
   "Init relevant settings for the [[projectile]] such as gravity, speed, timeout, etc"
   (initialize-skeleton
     obj
-    (the-as skeleton-group (art-group-get-by-name *level* "skel-ammo-blue" (the-as (pointer uint32) #f)))
+    (the-as skeleton-group (art-group-get-by-name *level* "skel-ammo-dark" (the-as (pointer uint32) #f)))
     (the-as pair 0)
     )
   (let ((t9-2 (method-of-type projectile-bounce init-proj-settings!)))
@@ -363,13 +362,13 @@
              (t9-7
                (cond
                  ((zero? v1-100)
-                  gun-mag-yellow
+                  gun-mag-dark
                   )
                  ((= v1-100 1)
-                  gun-mag-red
+                  gun-mag-dark
                   )
                  ((= v1-100 2)
-                  gun-mag-blue
+                  gun-mag-dark
                   )
                  (else
                    gun-mag-dark
