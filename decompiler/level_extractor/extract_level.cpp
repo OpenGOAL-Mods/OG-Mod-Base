@@ -314,7 +314,7 @@ void extract_from_level(const ObjectFileDB& db,
   if (dgo_name != "SNO.DGO" && db.obj_files_by_dgo.count(dgo_name) == 0) {
     lg::warn("Skipping adding {} because we are in Jak 2 mode", dgo_name);
     const std::string local_dgo_name = "SNO.DGO"; 
-    extract_art_groups_from_level(db, tex_db, extract_bsp_from_level(db, tex_db, local_dgo_name, hacks, extract_collision, level_data), local_dgo_name, level_data);
+    extract_art_groups_from_level(db, tex_db, extract_bsp_from_level(db, tex_db, local_dgo_name, config.hacks, extract_collision, level_data), local_dgo_name, level_data);
     return;
   }
   
@@ -322,7 +322,7 @@ void extract_from_level(const ObjectFileDB& db,
   if (dgo_name != "MIS.DGO" && db.obj_files_by_dgo.count(dgo_name) == 0) {
     lg::warn("Skipping adding {} because we are in Jak 2 mode", dgo_name);
     const std::string local_dgo_name = "MIS.DGO"; 
-    extract_art_groups_from_level(db, tex_db, extract_bsp_from_level(db, tex_db, local_dgo_name, hacks, extract_collision, level_data), local_dgo_name, level_data);
+    extract_art_groups_from_level(db, tex_db, extract_bsp_from_level(db, tex_db, local_dgo_name, config.hacks, extract_collision, level_data), local_dgo_name, level_data);
     return;
   }
   
