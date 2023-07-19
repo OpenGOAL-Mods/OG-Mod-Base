@@ -3,7 +3,11 @@
 #include <algorithm>
 #include <functional>
 
+#ifndef __aarch64__
 #include "xmmintrin.h"
+#else
+#include "third-party/sse2neon/sse2neon.h"
+#endif
 
 #include "common/util/Assert.h"
 
@@ -714,6 +718,9 @@ void IndexTexture::memory_usage(MemoryUsageTracker* tracker) const {
 
 void Level::memory_usage(MemoryUsageTracker* tracker) const {
   for (const auto& texture : textures) {
+    texture.memory_usage(tracker);
+  }
+  for (const auto& texture : index_textures) {
     texture.memory_usage(tracker);
   }
   for (const auto& tftk : tfrag_trees) {

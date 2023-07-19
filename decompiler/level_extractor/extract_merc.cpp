@@ -796,12 +796,8 @@ s32 find_or_add_texture_to_level(tfrag3::Level& out,
   const auto& level_tex = out.textures.at(idx_in_level_texture);
   const auto& it = tex_db.animated_tex_output_to_anim_slot.find(level_tex.debug_name);
   if (it != tex_db.animated_tex_output_to_anim_slot.end()) {
-    lg::error("Animated slot {} -> {}", level_tex.debug_name, it->second);
     return -int(it->second) - 1;
-  } else {
-    // lg::warn("no anim: {}", level_tex.debug_name);
   }
-
   return idx_in_level_texture;
 }
 
@@ -1083,7 +1079,10 @@ ConvertedMercEffect convert_merc_effect(const MercEffect& input_effect,
 
     size_t original_size = result.blerc_vertices_i.size();
     result.blerc_vertices_i.resize(original_size + bc.blend_vtx_count);
-    auto* out_vertices = &result.blerc_vertices_i[original_size];
+    BlercVtxInt* out_vertices = nullptr;
+    if (bc.blend_vtx_count) {
+      out_vertices = &result.blerc_vertices_i[original_size];
+    }
 
     // the base position of this vertex.
     for (int vi = 0; vi < bc.blend_vtx_count; vi++) {
