@@ -170,12 +170,11 @@ nav-enemy-default-event-handler
     nav-enemy-default-event-handler
     )
   :code (behavior ()
+    (sound-play "head-butt")
     (go-virtual nav-enemy-victory)
     (none)
     )
   )
-
-(defun-extern play-what-the-dog-doin none)
 
 (defstate nav-enemy-victory (lurkerpuppy)
   :virtual #t
@@ -189,7 +188,6 @@ nav-enemy-default-event-handler
     )
   :code (behavior ()
     (logclear! (-> self nav-enemy-flags) (nav-enemy-flags enable-travel))
-    (play-what-the-dog-doin)
     (ja-channel-push! 1 (seconds 0.075))
     (dotimes (gp-0 4)
       (ja-no-eval :group! lurkerpuppy-celebrate-ja :num! (seek!) :frame-num 0.0)
