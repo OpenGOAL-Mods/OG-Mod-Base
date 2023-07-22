@@ -21,11 +21,6 @@
     ;; Begin function defintions.
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun play-what-the-dog-doin ()
-      (play-rand-sound "SND/dog.mp3" 100)
-      (none)
-    )
-
     (defun runs-every-frame ()
       ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
       
