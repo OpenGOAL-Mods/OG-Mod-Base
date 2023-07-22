@@ -172,6 +172,25 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none)
   )
 
+(defun spawn-actor-by-name ((name string))
+  ;; Takes in the string of name of a actor, and spawns a new process based on the entity.
+    (let* ((entity-actor (the entity-actor (entity-by-name name)))
+          (type (-> entity-actor etype))
+          (e-info (entity-info-lookup type))
+      )
+      (when (entity-by-name name)
+        (init-entity 
+          (get-process *default-dead-pool* type (if e-info (-> e-info heap-size) #x4000)) 
+          entity-actor)
+          (sound-play "buzzer-pickup")
+      )
+      (if (not (entity-by-name name))
+          (sound-play "oof")
+      )
+    )
+    (none)
+)
+
 ;;Draws a debug sphere on the actor, takes in a string actor name and a radius for the sphere in meters
 (defun draw-debug-sphere-on-actor ((actorName string)(radius float))
   (when *debug-segment*
