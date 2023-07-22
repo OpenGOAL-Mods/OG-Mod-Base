@@ -21,7 +21,7 @@
     (new 'static 'boxed-array :type entity-info :length 19 :allocated-length 19
          (new 'static 'entity-info
               :ptype
-              (type-ref sage-finalboss :method-count 53)
+              (type-ref sage-finalboss :method-count 54)
               :package "l1"
               :art-group '()
               :pool '*16k-dead-pool*
@@ -36,7 +36,7 @@
               )
          (new 'static 'entity-info
               :ptype
-              (type-ref assistant-levitator :method-count 53)
+              (type-ref assistant-levitator :method-count 54)
               :package "l1"
               :art-group '()
               :pool '*16k-dead-pool*

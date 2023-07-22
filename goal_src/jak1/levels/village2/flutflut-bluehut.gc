@@ -12,9 +12,7 @@
 (deftype flutflut-bluehut (process-taskable)
   ()
   :heap-base #x110
-  :method-count-assert 53
-  :size-assert         #x17c
-  :flag-assert         #x350110017c
+
   )
 
 

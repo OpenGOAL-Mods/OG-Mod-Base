@@ -188,9 +188,7 @@
    (credits-played    symbol                             :offset-assert 620)
    )
   :heap-base #x200
-  :method-count-assert 53
-  :size-assert         #x270
-  :flag-assert         #x3502000270
+
   (:states
     sage-finalboss-credits
     )

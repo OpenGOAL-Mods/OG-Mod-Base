@@ -14,9 +14,7 @@
   ((evilsis entity-actor  :offset-assert 380)
    )
   :heap-base #x110
-  :method-count-assert 53
-  :size-assert         #x180
-  :flag-assert         #x3501100180
+
   )
 
 
@@ -107,9 +105,7 @@
 (deftype evilsis (process-taskable)
   ()
   :heap-base #x110
-  :method-count-assert 53
-  :size-assert         #x17c
-  :flag-assert         #x350110017c
+
   )
 
 

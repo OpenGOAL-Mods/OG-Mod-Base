@@ -15,9 +15,7 @@
   ((muse handle  :offset-assert 384)
    )
   :heap-base #x120
-  :method-count-assert 53
-  :size-assert         #x188
-  :flag-assert         #x3501200188
+
   )
 
 

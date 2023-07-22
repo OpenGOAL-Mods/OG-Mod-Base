@@ -746,9 +746,7 @@
    (params          fisher-params :inline   :offset-assert 552)
    )
   :heap-base #x1f0
-  :method-count-assert 53
-  :size-assert         #x260
-  :flag-assert         #x3501f00260
+
   (:states
     fisher-done
     fisher-playing

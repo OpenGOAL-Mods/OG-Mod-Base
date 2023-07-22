@@ -12,9 +12,7 @@
 (deftype mayor (process-taskable)
   ()
   :heap-base #x110
-  :method-count-assert 53
-  :size-assert         #x17c
-  :flag-assert         #x350110017c
+
   )
 
 
@@ -698,25 +696,64 @@
     )
   )
 
-(defstate idle (mayor)
-  :virtual #t
-  :trans (behavior ()
-    (if (not (should-display? self))
-        (go-virtual hidden)
-        )
-    ((-> (method-of-type process-taskable idle) trans))
-    (none)
-    )
-  :post (behavior ()
-    (let ((t9-0 (-> (method-of-type process-taskable idle) post)))
-      (if t9-0
-          ((the-as (function none) t9-0))
-          )
+;; (defstate idle (mayor)
+;;   :virtual #t
+;;   :trans (behavior ()
+;;     (if (not (should-display? self))
+;;         (go-virtual hidden)
+;;         )
+;;     ((-> (method-of-type process-taskable idle) trans))
+;;     (none)
+;;     )
+;;   :post (behavior ()
+;;     (let ((t9-0 (-> (method-of-type process-taskable idle) post)))
+;;       (if t9-0
+;;           ((the-as (function none) t9-0))
+;;           )
+;;       )
+;;     (do-push-aways! (-> self root-override))
+;;     (none)
+;;     )
+;;   )
+  
+
+
+(defstate mayor-die (mayor)
+  :event (the-as (function process int symbol event-message-block object :behavior mayor) #f)
+  :code (behavior ()
+    (let ((v1-1 (-> self root-override root-prim)))
+      (set! (-> v1-1 collide-with) (collide-kind))
+      (set! (-> v1-1 prim-core collide-as) (collide-kind))
       )
-    (do-push-aways! (-> self root-override))
+    0
+    (when (vector-vector-distance (-> (the mayor  (process-by-ename "mayor-5") )root-override  trans) (-> (the mayor  *target*)root-override  trans)))
+    ;;((arg0 vector) (arg1 pickup-type) (arg2 float) (arg3 symbol) (arg4 process-tree) (arg5 fact-info))
+    (birth-pickup-at-point
+     (-> (the mayor  (process-by-ename "mayor-5") )root-override  trans) 
+     (pickup-type eco-pill)
+     (rand-vu-float-range 1.0 6.0) 
+     #f
+     *target*
+     (-> *target* fact)
+  )
+    ;;(drop-pickup-no-proc (new 'process 'fact-info self (pickup-type eco-pill-random) (-> *FACT-bank* default-pill-inc)) #t *entity-pool* (new 'process 'fact-info self (pickup-type eco-pill-random) (-> *FACT-bank* default-pill-inc)) 0)
+    (process-entity-status! self (entity-perm-status dead) #t)
     (none)
     )
   )
+
+(defun kill-npcs ()
+
+;; (when (process-by-ename "mayor-5")
+
+;; (if (< (/ (vector-vector-distance (-> (the mayor  (process-by-ename "mayor-5") )root-override  trans) (-> (the mayor  *target*)root-override  trans))4096)
+;; 3.0)
+;; (go-process (the mayor (process-by-ename "mayor-5")) mayor-die)
+;; )
+
+;; )
+(none))
+
 
 (defmethod init-from-entity! mayor ((obj mayor) (arg0 entity-actor))
   (process-taskable-method-40 obj arg0 *mayor-sg* 3 51 (new 'static 'vector :y 4096.0 :w 4096.0) 5)

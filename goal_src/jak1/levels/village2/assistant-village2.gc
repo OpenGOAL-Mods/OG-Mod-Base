@@ -14,10 +14,8 @@
   ((boulder  entity-actor               :offset-assert 380)
    (particle sparticle-launch-control 4 :offset-assert 384)
    )
-  :heap-base #x120
-  :method-count-assert 53
-  :size-assert         #x190
-  :flag-assert         #x3501200190
+  
+
   (:states
     just-particles
     )

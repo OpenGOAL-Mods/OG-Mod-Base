@@ -13,9 +13,7 @@
   ((sound-id sound-id  :offset-assert 380)
    )
   :heap-base #x110
-  :method-count-assert 53
-  :size-assert         #x180
-  :flag-assert         #x3501100180
+
   )
 
 

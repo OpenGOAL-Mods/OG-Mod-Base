@@ -13,10 +13,8 @@
   ((flutflut handle  :offset-assert 384)
    (egg      handle  :offset-assert 392)
    )
-  :heap-base #x120
-  :method-count-assert 53
-  :size-assert         #x190
-  :flag-assert         #x3501200190
+  
+
   )
 
 

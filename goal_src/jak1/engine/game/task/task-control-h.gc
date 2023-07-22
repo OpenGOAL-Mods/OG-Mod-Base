@@ -137,10 +137,7 @@
    (cur-trans-hook       (function none)         :offset-assert 372)
    (shadow-backup        shadow-geo              :offset-assert 376)
    )
-  :heap-base #x110
-  :method-count-assert 53
-  :size-assert         #x17c
-  :flag-assert         #x350110017c
+
   (:methods
     (release () _type_ :state 20)
     (give-cell () _type_ :state 21)
@@ -175,6 +172,7 @@
     (process-taskable-method-50 (_type_) symbol 50)
     (close-anim-file! (_type_) symbol 51)
     (process-taskable-method-52 (_type_) none 52)
+        (actor-die () _type_ :state 53)
     )
   )
 

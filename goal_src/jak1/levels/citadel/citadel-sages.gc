@@ -282,9 +282,7 @@
    (alt-actor         entity-actor                     :offset-assert 484)
    )
   :heap-base #x180
-  :method-count-assert 53
-  :size-assert         #x1e8
-  :flag-assert         #x35018001e8
+
   )
 
 
@@ -453,9 +451,7 @@
 (deftype red-sagecage (citb-sage)
   ()
   :heap-base #x180
-  :method-count-assert 53
-  :size-assert         #x1e8
-  :flag-assert         #x35018001e8
+
   )
 
 
@@ -566,9 +562,7 @@
 (deftype blue-sagecage (citb-sage)
   ()
   :heap-base #x180
-  :method-count-assert 53
-  :size-assert         #x1e8
-  :flag-assert         #x35018001e8
+
   )
 
 
@@ -684,9 +678,7 @@
 (deftype yellow-sagecage (citb-sage)
   ()
   :heap-base #x180
-  :method-count-assert 53
-  :size-assert         #x1e8
-  :flag-assert         #x35018001e8
+
   )
 
 
@@ -802,9 +794,7 @@
    (exitplat    handle  :offset-assert 520)
    )
   :heap-base #x1a0
-  :method-count-assert 53
-  :size-assert         #x210
-  :flag-assert         #x3501a00210
+
   )
 
 

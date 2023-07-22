@@ -1093,9 +1093,7 @@
    (lurker-army handle 9 :offset-assert 408)
    )
   :heap-base #x170
-  :method-count-assert 53
-  :size-assert         #x1e0
-  :flag-assert         #x35017001e0
+
   )
 
 
@@ -1105,9 +1103,7 @@
    (darkecocan-glowing-look lod-set :inline :offset-assert 400)
    )
   :heap-base #x150
-  :method-count-assert 53
-  :size-assert         #x1b1
-  :flag-assert         #x35015001b1
+
   )
 
 

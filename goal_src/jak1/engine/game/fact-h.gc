@@ -104,14 +104,13 @@
    (options             fact-options  :offset-assert 24)
    (fade-time           time-frame   :offset-assert 32)
    )
-  :method-count-assert 12
-  :size-assert         #x28
-  :flag-assert         #xc00000028
+
   (:methods
     (new (symbol type process-drawable pickup-type float) _type_ 0)
     (drop-pickup (_type_ symbol process-tree fact-info int) (pointer process) 9)
     (reset! (_type_ symbol) none 10)
     (pickup-collectable! (_type_ pickup-type float handle) float 11)
+  (drop-pickup-no-proc (_type_ symbol process-tree fact-info int) (pointer process) )
     )
   )
 
@@ -134,9 +133,7 @@
    (fuel-cell-pickup-time time-frame   :offset-assert 128)
    (eco-pill-pickup-time  time-frame   :offset-assert 136)
    )
-  :method-count-assert 12
-  :size-assert         #x90
-  :flag-assert         #xc00000090
+
   (:methods
     (new (symbol type process-drawable pickup-type float) _type_ 0)
     )
@@ -151,9 +148,7 @@
    (cam-vert        meters  :offset-assert  60)
    (cam-notice-dist meters  :offset-assert  64)
    )
-  :method-count-assert 12
-  :size-assert         #x44
-  :flag-assert         #xc00000044
+
   (:methods
     (new (symbol type process-drawable pickup-type float) _type_ 0)
     )

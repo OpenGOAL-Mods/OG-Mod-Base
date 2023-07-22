@@ -31,9 +31,7 @@
    (offending-rat     handle                  :offset-assert 440)
    )
   :heap-base #x150
-  :method-count-assert 53
-  :size-assert         #x1c0
-  :flag-assert         #x35015001c0
+
   (:states
     billy-done
     billy-playing

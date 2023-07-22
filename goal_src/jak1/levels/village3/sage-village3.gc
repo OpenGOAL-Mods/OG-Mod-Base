@@ -17,9 +17,7 @@
    (assistant entity-actor  :offset-assert 400)
    )
   :heap-base #x130
-  :method-count-assert 53
-  :size-assert         #x194
-  :flag-assert         #x3501300194
+
   )
 
 
