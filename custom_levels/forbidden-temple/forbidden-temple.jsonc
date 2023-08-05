@@ -1,0 +1,120 @@
+{
+    "long_name": "forbidden-temple",
+    "iso_name": "FORTEMP",
+    "nickname": "FTP",
+    "gltf_file": "custom_levels/forbidden-temple/forbidden-temple.glb",
+
+    "automatic_wall_detection": true,
+    "automatic_wall_angle": 45.0,
+    "double_sided_collide": false,
+
+    "base_id": 102,
+
+    "ambients":[],
+
+    "actors":[
+        //powercells
+        {
+            "trans": [350.87,-50.09,-248.04],
+            "etype": "fuel-cell",
+            "game_task": 49,
+            "quat":[0,0,0,1],
+            "bsphere": [-21.6238,19.3496,17.1191,10],
+            "lump":{
+                "name":"test-fuel-cell"
+            }
+        },
+        //orbs
+        {
+            "trans": [406.52,-44.992,-246.45],
+            "etype": "money",
+            "game_task": 0,
+            "quat":[0,0,0,1],
+            "bsphere":[-510.0,6.5,390.0,10.0],
+            "lump":{
+                "name":"FTP-money-01"
+            }
+        },
+        {
+            "trans": [406.52,-42.9,-246.45],
+            "etype": "money",
+            "game_task": 0,
+            "quat":[0,0,0,1],
+            "bsphere":[-510.0,6.5,390.0,10.0],
+            "lump":{
+                "name":"FTP-money-02"
+            }
+        },
+        {
+            "trans": [405.52,-40.46,-246.45],
+            "etype": "money",
+            "game_task": 0,
+            "quat":[0,0,0,1],
+            "bsphere":[-510.0,6.5,390.0,10.0],
+            "lump":{
+                "name":"FTP-money-03"
+            }
+        },
+        {
+            "trans": [422.54,-40.461,-239.9],
+            "etype": "money",
+            "game_task": 0,
+            "quat":[0,0,0,1],
+            "bsphere":[-510.0,6.5,390.0,10.0],
+            "lump":{
+                "name":"FTP-money-04"
+            }
+        },
+        {
+            "trans": [422.54,-42.9,-239.9],
+            "etype": "money",
+            "game_task": 0,
+            "quat":[0,0,0,1],
+            "bsphere":[-510.0,6.5,390.0,10.0],
+            "lump":{
+                "name":"FTP-money-05"
+            }
+        },
+        {
+            "trans": [422.54,-44.99,-239.9],
+            "etype": "money",
+            "game_task": 0,
+            "quat":[0,0,0,1],
+            "bsphere":[-510.0,6.5,390.0,10.0],
+            "lump":{
+                "name":"FTP-money-06"
+            }
+        },
+        //Platforms
+        {
+            "trans": [406.27,-47.745,-246.26],
+            "etype": "plat-jungleb",
+            "game_task": 0,
+            "quat":[0,0,0,1],
+            "bsphere":[-510.0,6.5,390.0,10.0],
+            "lump":{
+                "name":"FTP-platform-01"
+            }
+        },
+        {
+            "trans": [421.44,-47.745,-239.22],
+            "etype": "plat-jungleb",
+            "game_task": 0,
+            "quat":[0,0,0,1],
+            "bsphere":[-510.0,6.5,390.0,10.0],
+            "lump":{
+                "name":"FTP-platform-02"
+            }
+        },
+        {
+            "trans": [364.77,-45.60,-247.79],
+            "etype": "plat-flip",
+            "game_task": 0,
+            "quat":[0,0,0,1],
+            "bsphere":[-510.0,6.5,390.0,10.0],
+            "lump":{
+                "name":"FTP-platform-00-test"
+            }
+        }
+    ]
+}

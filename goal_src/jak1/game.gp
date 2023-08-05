@@ -1642,6 +1642,9 @@
 ;; the DGO file
 (custom-level-cgo "TSZ.DGO" "test-zone/testzone.gd")
 
+(build-custom-level "forbidden-temple")
+(custom-level-cgo "FTP.DGO" "forbidden-temple/forbidden-temple.gd")
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Game Engine Code
 ;;;;;;;;;;;;;;;;;;;;;

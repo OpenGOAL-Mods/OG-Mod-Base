@@ -548,8 +548,8 @@
 (static-load-boundary :flags (closed player )
   :top 126432.8281  :bot -524288.0000
   :points (  1453916.1250 -987016.1875   1461937.5000 -967184.7500   1482761.0000 -957298.8125   1505932.0000 -966185.3750   1514189.1250 -989654.3750   1503102.1250 -1010133.6875   1481864.2500 -1017569.1875   1464112.7500 -1010652.7500 )
-  :fwd (display jungleb display)
-  :bwd (display jungleb #f)
+  :fwd (display forbidden-temple display)
+  :bwd (display forbidden-temple #f)
   )
 
 (static-load-boundary :flags ()
@@ -661,7 +661,7 @@
 (static-load-boundary :flags (closed player )
   :top 375701.1562  :bot -524288.0000
   :points (  1453916.1250 -987016.1875   1461937.5000 -967184.7500   1482761.0000 -957298.8125   1505932.0000 -966185.3750   1514189.1250 -989654.3750   1503102.1250 -1010133.6875   1481864.2500 -1017569.1875   1464112.7500 -1010652.7500 )
-  :fwd (load jungle jungleb)
+  :fwd (load jungle forbidden-temple)
   )
 
 (static-load-boundary :flags ()
