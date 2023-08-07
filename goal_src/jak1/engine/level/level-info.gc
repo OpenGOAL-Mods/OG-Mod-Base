@@ -2027,7 +2027,7 @@
                            :continues '((new 'static 'continue-point
                                              :name "forbidden-temple-start"
                                              :level 'forbidden-temple
-                                             :trans (new 'static 'vector :x (meters 362.59) :y (meters -49.07) :z (meters -240.88) :w 1.0)
+                                             :trans (new 'static 'vector :x (meters 354.04) :y (meters -40.15) :z (meters -239.83) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x 0.0 :y 4096.0 :z 0.0 :w 1.0)
                                              :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)

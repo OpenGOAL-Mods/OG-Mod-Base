@@ -312,7 +312,7 @@ void extract_from_level(const ObjectFileDB& db,
 
   lg::info("===========test1==========");
   //If the dgo is not snowy, then add snowy assets for flutflut
-  if (dgo_name != "JUB.DGO" && db.obj_files_by_dgo.count(dgo_name) != 0) {
+  if (dgo_name == "JUN.DGO" && db.obj_files_by_dgo.count(dgo_name) != 0) {
     lg::warn("Skipping adding {} because we are in Jak 2 mode", dgo_name);
     lg::info("--------test2------");
     const std::string local_dgo_name = "JUB.DGO"; 
