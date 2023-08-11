@@ -192,8 +192,7 @@
    (death-pos             vector-array                  :offset-assert 312)
    (dummy                 basic                         :offset-assert 316)
    (auto-save-count       int32                         :offset-assert 320)
-   (chicks-per-level       uint8     32                )
-   (fuel-per-level       uint8         32         )
+
    )
    
   :method-count-assert 29
