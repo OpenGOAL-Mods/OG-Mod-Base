@@ -1,9 +1,4 @@
-;; DGO definition file for Awful Village level
-;; We use the convention of having a longer DGO name for levels without precomputed visibility.
-
-;; the actual file name still needs to be 8.3
 "VIL.DGO"
-  "static-screen.o" "static-screen"
-  "villa-cube.go" "villa-cube"
-  "villa-cube-code.o" "villa-cube-code"
-  
+"static-screen.o"
+"villa-cube.go"
+"villa-cube-code.o"

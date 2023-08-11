@@ -1,9 +1,4 @@
-;; DGO definition file for Awful Village level
-;; We use the convention of having a longer DGO name for levels without precomputed visibility.
-
-;; the actual file name still needs to be 8.3
 "CHI.DGO"
-  "static-screen.o" "static-screen"
-  "chicks.go" "chicks"
-  "chicks-code.o" "chicks-code"
-  
+"static-screen.o"
+"chicks.go"
+"chicks-code.o"
