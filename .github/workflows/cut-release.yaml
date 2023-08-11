@@ -26,7 +26,7 @@ jobs:
       metadataDescription: "This is a test mod bundle. 2"
       metadataSupportedGames: "jak1"
       metadataAuthors: "barg,vaser"
-      metadataTags: "rng,gameplay"
+      metadataTags: "rng,gameplay-mod"
       metadataWebsiteUrl: "https://www.example.com/this/is/optional"
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
