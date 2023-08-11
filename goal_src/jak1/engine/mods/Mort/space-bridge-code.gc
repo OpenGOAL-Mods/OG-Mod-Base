@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: space-bridge-code.gc
+;; name in dgo: space-bridge-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define space-bridge-load-level-id 35)
+(define space-bridge-per-level-id 29)
+(define space-bridge-num-chicks 3)
+(define space-bridge-num-fuel 0)
+(define space-bridge-spawn-point 0)
+
+(define nextCheckpoint "chicks-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  space-bridge-load-level-id -1))fuel-count) space-bridge-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  space-bridge-load-level-id -1))chicks-count) space-bridge-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun space-bridge-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'space-bridge )
+    (= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  space-bridge-load-level-id -1))money-count)
+        (-> *game-info* money-per-level space-bridge-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level space-bridge-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  space-bridge-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* nextCheckpoint))  
+)
+(none)
+)

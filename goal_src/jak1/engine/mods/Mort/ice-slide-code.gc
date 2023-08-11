@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: ice-slide-code.gc
+;; name in dgo: ice-slide-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define ice-slide-load-level-id 31)
+(define ice-slide-per-level-id 25)
+(define ice-slide-num-chicks 3)
+(define ice-slide-num-fuel 0)
+(define ice-slide-spawn-point 0)
+
+(define nextCheckpoint "islands-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  ice-slide-load-level-id -1))fuel-count) ice-slide-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  ice-slide-load-level-id -1))chicks-count) ice-slide-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun ice-slide-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'ice-slide )
+    (= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  ice-slide-load-level-id -1))money-count)
+        (-> *game-info* money-per-level ice-slide-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level ice-slide-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  ice-slide-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* nextCheckpoint))  
+)
+(none)
+)

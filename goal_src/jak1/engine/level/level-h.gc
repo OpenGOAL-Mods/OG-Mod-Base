@@ -120,10 +120,12 @@
    (prev-level        basic      :offset-assert 104) ;; unused
    (next-level        basic      :offset-assert 108) ;; unused
    (wait-for-load     symbol     :offset-assert 112)
+   (customname string)
+   (custom-orb-count int)
+   (custom-buzzer-count int)
    )
   :method-count-assert 9
-  :size-assert         #x74
-  :flag-assert         #x900000074
+
   )
 
 ;; The levels are initialized (called "login") over multiple frames.

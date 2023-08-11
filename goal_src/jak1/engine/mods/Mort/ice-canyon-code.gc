@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: ice-canyon-code.gc
+;; name in dgo: ice-canyon-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define ice-canyon-load-level-id 28)
+(define ice-canyon-per-level-id 22)
+(define ice-canyon-num-chicks 3)
+(define ice-canyon-num-fuel 0)
+(define ice-canyon-spawn-point 0)
+
+(define nextCheckpoint "coins-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  ice-canyon-load-level-id -1))fuel-count) ice-canyon-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  ice-canyon-load-level-id -1))chicks-count) ice-canyon-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun ice-canyon-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'ice-canyon )
+    (= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  ice-canyon-load-level-id -1))money-count)
+        (-> *game-info* money-per-level ice-canyon-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level ice-canyon-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  ice-canyon-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* nextCheckpoint))  
+)
+(none)
+)

@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: cube-face-code.gc
+;; name in dgo: cube-face-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define cube-face-load-level-id 39)
+(define cube-face-per-level-id 33)
+(define cube-face-num-chicks 3)
+(define cube-face-num-fuel 0)
+(define cube-face-spawn-point 0)
+
+(define nextCheckpoint "training-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  cube-face-load-level-id -1))fuel-count) cube-face-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  cube-face-load-level-id -1))chicks-count) cube-face-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun cube-face-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'cube-face )
+    (= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  cube-face-load-level-id -1))money-count)
+        (-> *game-info* money-per-level cube-face-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level cube-face-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  cube-face-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* nextCheckpoint))  
+)
+(none)
+)

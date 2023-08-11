@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: block-world-code.gc
+;; name in dgo: block-world-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define block-world-load-level-id 22)
+(define block-world-per-level-id 16)
+(define block-world-num-chicks 3)
+(define block-world-num-fuel 6)
+(define block-world-spawn-point 0)
+
+(define nextCheckpoint "factory-cross-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  block-world-load-level-id -1))fuel-count) block-world-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  block-world-load-level-id -1))chicks-count) block-world-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun block-world-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'block-world )
+    (<= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  block-world-load-level-id -1))money-count)
+        (-> *game-info* money-per-level block-world-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level block-world-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  block-world-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* nextCheckpoint))  
+)
+(none)
+)

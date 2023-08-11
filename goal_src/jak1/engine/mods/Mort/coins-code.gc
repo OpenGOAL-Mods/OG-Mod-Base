@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: coins-code.gc
+;; name in dgo: coins-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define coins-load-level-id 29)
+(define coins-per-level-id 23)
+(define coins-num-chicks 3)
+(define coins-num-fuel 0)
+(define coins-spawn-point 0)
+
+(define nextCheckpoint "ice-slide-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  coins-load-level-id -1))fuel-count) coins-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  coins-load-level-id -1))chicks-count) coins-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun coins-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'coins )
+    (= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  coins-load-level-id -1))money-count)
+        (-> *game-info* money-per-level coins-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level coins-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  coins-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* nextCheckpoint))  
+)
+(none)
+)

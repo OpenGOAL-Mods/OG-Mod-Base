@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: pyramid-code.gc
+;; name in dgo: pyramid-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define pyramid-load-level-id 27)
+(define pyramid-per-level-id 21)
+(define pyramid-num-chicks 3)
+(define pyramid-num-fuel 0)
+(define pyramid-spawn-point 0)
+
+(define pyramid-nextCheckpoint "ice-canyon-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  pyramid-load-level-id -1))fuel-count) pyramid-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  pyramid-load-level-id -1))chicks-count) pyramid-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun pyramid-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'pyramid )
+    (<= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  pyramid-load-level-id -1))money-count)
+        (-> *game-info* money-per-level pyramid-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level pyramid-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  pyramid-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* pyramid-nextCheckpoint))  
+)
+(none)
+)

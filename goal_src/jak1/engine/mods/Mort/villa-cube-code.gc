@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: villa-cube-code.gc
+;; name in dgo: villa-cube-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define villa-cube-load-level-id 39)
+(define villa-cube-per-level-id 33)
+(define villa-cube-num-chicks 3)
+(define villa-cube-num-fuel 0)
+(define villa-cube-spawn-point 0)
+
+(define nextCheckpoint "villa-cube-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  villa-cube-load-level-id -1))fuel-count) villa-cube-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  villa-cube-load-level-id -1))chicks-count) villa-cube-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun villa-cube-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'villa-cube )
+    (= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  villa-cube-load-level-id -1))money-count)
+        (-> *game-info* money-per-level villa-cube-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level villa-cube-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  villa-cube-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* nextCheckpoint))  
+)
+(none)
+)

@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: block-man-code.gc
+;; name in dgo: block-man-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define block-man-load-level-id 39)
+(define block-man-per-level-id 33)
+(define block-man-num-chicks 3)
+(define block-man-num-fuel 0)
+(define block-man-spawn-point 0)
+
+(define nextCheckpoint "cube-face-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  block-man-load-level-id -1))fuel-count) block-man-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  block-man-load-level-id -1))chicks-count) block-man-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun block-man-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'block-man )
+    (= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  block-man-load-level-id -1))money-count)
+        (-> *game-info* money-per-level block-man-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level block-man-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  block-man-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* nextCheckpoint))  
+)
+(none)
+)

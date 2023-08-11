@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: holly-wood-code.gc
+;; name in dgo: holly-wood-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define holly-wood-load-level-id 24)
+(define holly-wood-per-level-id 18)
+(define holly-wood-num-chicks 3)
+(define holly-wood-num-fuel 0)
+(define holly-wood-spawn-point 0)
+
+(define holly-wood-nextCheckpoint "monument-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  holly-wood-load-level-id -1))fuel-count) holly-wood-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  holly-wood-load-level-id -1))chicks-count) holly-wood-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun holly-wood-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'holly-wood )
+    (<= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  holly-wood-load-level-id -1))money-count)
+        (-> *game-info* money-per-level holly-wood-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level holly-wood-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  holly-wood-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* holly-wood-nextCheckpoint))  
+)
+(none)
+)

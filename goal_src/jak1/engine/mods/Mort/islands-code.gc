@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: islands-code.gc
+;; name in dgo: islands-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define islands-load-level-id 32)
+(define islands-per-level-id 21)
+(define islands-num-chicks 3)
+(define islands-num-fuel 0)
+(define islands-spawn-point 0)
+
+(define nextCheckpoint "glass-towers-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  islands-load-level-id -1))fuel-count) islands-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  islands-load-level-id -1))chicks-count) islands-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun islands-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'islands )
+    (= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  islands-load-level-id -1))money-count)
+        (-> *game-info* money-per-level islands-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level islands-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  islands-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* nextCheckpoint))  
+)
+(none)
+)

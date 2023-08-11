@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: monument-code.gc
+;; name in dgo: monument-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define monument-load-level-id 25)
+(define monument-per-level-id 19)
+(define monument-num-chicks 3)
+(define monument-num-fuel 0)
+(define monument-spawn-point 0)
+
+(define monument-nextCheckpoint "cathederal-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  monument-load-level-id -1))fuel-count) monument-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  monument-load-level-id -1))chicks-count) monument-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun monument-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'monument )
+    (= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  monument-load-level-id -1))money-count)
+        (-> *game-info* money-per-level monument-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level monument-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  monument-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* monument-nextCheckpoint))  
+)
+(none)
+)

@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: chemical-factory-code.gc
+;; name in dgo: chemical-factory-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define chemical-factory-load-level-id 34)
+(define chemical-factory-per-level-id 28)
+(define chemical-factory-num-chicks 3)
+(define chemical-factory-num-fuel 0)
+(define chemical-factory-spawn-point 0)
+
+(define nextCheckpoint "chicks-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  chemical-factory-load-level-id -1))fuel-count) chemical-factory-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  chemical-factory-load-level-id -1))chicks-count) chemical-factory-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun chemical-factory-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'chemical-factory )
+    (= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  chemical-factory-load-level-id -1))money-count)
+        (-> *game-info* money-per-level chemical-factory-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level chemical-factory-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  chemical-factory-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* nextCheckpoint))  
+)
+(none)
+)

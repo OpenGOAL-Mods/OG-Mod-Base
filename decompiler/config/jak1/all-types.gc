@@ -5627,10 +5627,11 @@
    (prev-level        basic     :offset-assert 104)
    (next-level        basic     :offset-assert 108)
    (wait-for-load     symbol    :offset-assert 112)
+   (customname string)
+   (custom-orb-count int)
+   (custom-buzzer-count int)
    )
   :method-count-assert 9
-  :size-assert         #x74
-  :flag-assert         #x900000074
   )
 
 (declare-type drawable basic)

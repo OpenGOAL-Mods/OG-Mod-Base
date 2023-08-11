@@ -195,11 +195,12 @@
 (deftype count-info (structure)
   ((money-count  int32  :offset-assert   0)
    (buzzer-count int32  :offset-assert   4)
+   (fuel-count int32)
+   (chicks-count int32)
+   
    )
   :pack-me
   :method-count-assert 9
-  :size-assert         #x8
-  :flag-assert         #x900000008
   )
 
 

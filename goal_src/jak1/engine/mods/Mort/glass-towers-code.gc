@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: glass-towers-code.gc
+;; name in dgo: glass-towers-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define glass-towers-load-level-id 33)
+(define glass-towers-per-level-id 27)
+(define glass-towers-num-chicks 3)
+(define glass-towers-num-fuel 0)
+(define glass-towers-spawn-point 0)
+
+(define nextCheckpoint "chemical-factory-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  glass-towers-load-level-id -1))fuel-count) glass-towers-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  glass-towers-load-level-id -1))chicks-count) glass-towers-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun glass-towers-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'glass-towers )
+    (= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  glass-towers-load-level-id -1))money-count)
+        (-> *game-info* money-per-level glass-towers-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level glass-towers-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  glass-towers-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* nextCheckpoint))  
+)
+(none)
+)

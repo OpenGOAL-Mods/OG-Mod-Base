@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: garden-code.gc
+;; name in dgo: garden-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define garden-load-level-id 37)
+(define garden-per-level-id 31)
+(define garden-num-chicks 3)
+(define garden-num-fuel 0)
+(define garden-spawn-point 0)
+
+(define nextCheckpoint "cold-pipe-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  garden-load-level-id -1))fuel-count) garden-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  garden-load-level-id -1))chicks-count) garden-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun garden-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'garden )
+    (= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  garden-load-level-id -1))money-count)
+        (-> *game-info* money-per-level garden-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level garden-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  garden-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* nextCheckpoint))  
+)
+(none)
+)

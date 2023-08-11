@@ -1642,6 +1642,121 @@
 ;; the DGO file
 (custom-level-cgo "TSZ.DGO" "test-zone/testzone.gd")
 
+;; TAGMORT
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "block-world")
+;; the DGO file
+(custom-level-cgo "BWD.DGO" "block-world/block-world.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "islands")
+;; the DGO file
+(custom-level-cgo "ISL.DGO" "islands/islands.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "monument")
+;; the DGO file
+(custom-level-cgo "MON.DGO" "monument/monument.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "pyramid")
+;; the DGO file
+(custom-level-cgo "PYR.DGO" "pyramid/pyramid.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "garden")
+;; the DGO file
+(custom-level-cgo "GAR.DGO" "garden/garden.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "space-bridge")
+;; the DGO file
+(custom-level-cgo "SPA.DGO" "space-bridge/space-bridge.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "holly-wood")
+;; the DGO file
+(custom-level-cgo "HOL.DGO" "holly-wood/holly-wood.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "ice-canyon")
+;; the DGO file
+(custom-level-cgo "CAN.DGO" "ice-canyon/ice-canyon.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "cathederal")
+;; the DGO file
+(custom-level-cgo "CAT.DGO" "cathederal/cathederal.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "ice-slide")
+;; the DGO file
+(custom-level-cgo "SLI.DGO" "ice-slide/ice-slide.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "block-man")
+;; the DGO file
+(custom-level-cgo "MAN.DGO" "block-man/block-man.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "cold-pipe")
+;; the DGO file
+(custom-level-cgo "COL.DGO" "cold-pipe/cold-pipe.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "chemical-factory")
+;; the DGO file
+(custom-level-cgo "CHE.DGO" "chemical-factory/chemical-factory.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "glass-towers")
+;; the DGO file
+(custom-level-cgo "GLA.DGO" "glass-towers/glass-towers.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "villa-cube")
+;; the DGO file
+(custom-level-cgo "VIL.DGO" "villa-cube/villa-cube.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "cube-face")
+;; the DGO file
+(custom-level-cgo "FAC.DGO" "cube-face/cube-face.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "factory-cross")
+;; the DGO file
+(custom-level-cgo "CRO.DGO" "factory-cross/factory-cross.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "coins")
+;; the DGO file
+(custom-level-cgo "COI.DGO" "coins/coins.gd")
+
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "chicks")
+;; the DGO file
+(custom-level-cgo "CHI.DGO" "chicks/chicks.gd")
+
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Game Engine Code
 ;;;;;;;;;;;;;;;;;;;;;
@@ -2087,6 +2202,26 @@
  "engine/"
  :deps ("$OUT/obj/battlecontroller.o" "$OUT/obj/snow-bunny.o" "$OUT/obj/baby-spider.o" "$OUT/obj/sage-village3.o" "$OUT/obj/sage-finalboss.o" "$OUT/obj/assistant-citadel.o" "$OUT/obj/assistant-lavatube.o" "$OUT/obj/robocave-part.o" "$OUT/obj/driller-lurker.o" "$OUT/obj/training-part.o" "$OUT/obj/rolling-race-ring.o" "$OUT/obj/beach-part.o" "$OUT/obj/sculptor.o" "$OUT/obj/sunken-fish.o" "$OUT/obj/billy.o" "$OUT/obj/sidekick-human.o" "$OUT/obj/flying-lurker.o" "$OUT/obj/target-racer-h.o" "$OUT/obj/firecanyon-obs.o" "$OUT/obj/target-flut.o" "$OUT/obj/hud-classes-pc.o" "$OUT/obj/collide-reaction-racer.o" "$OUT/obj/plant-boss.o" "$OUT/obj/beach-obs.o" "$OUT/obj/sunken-elevator.o" "$OUT/obj/jungle-part.o" "$OUT/obj/sequence-a-village1.o" "$OUT/obj/ticky.o")
  "mods/mod-settings.gc"
+ "mods/Mort/.mort-library.gc"
+ "mods/Mort/block-world-code.gc"
+ "mods/Mort/pyramid-code.gc"
+ "mods/Mort/block-man-code.gc"
+ "mods/Mort/cathederal-code.gc"
+ "mods/Mort/chemical-factory-code.gc"
+ "mods/Mort/chicks-code.gc"
+ "mods/Mort/coins-code.gc"
+ "mods/Mort/cold-pipe-code.gc"
+ "mods/Mort/factory-cross-code.gc"
+ "mods/Mort/garden-code.gc"
+ "mods/Mort/glass-towers-code.gc"
+ "mods/Mort/holly-wood-code.gc"
+ "mods/Mort/ice-canyon-code.gc"
+ "mods/Mort/islands-code.gc"
+ "mods/Mort/ice-slide-code.gc"
+ "mods/Mort/monument-code.gc"
+ "mods/Mort/space-bridge-code.gc"
+ "mods/Mort/villa-cube-code.gc"
+ "mods/Mort/cube-face-code.gc"
  "mods/mod-common-functions.gc"
  "mods/mod-custom-code.gc"
 )

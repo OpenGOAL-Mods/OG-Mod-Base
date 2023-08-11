@@ -1,0 +1,38 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: cold-pipe-code.gc
+;; name in dgo: cold-pipe-code
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define cold-pipe-load-level-id 38)
+(define cold-pipe-per-level-id 21)
+(define cold-pipe-num-chicks 3)
+(define cold-pipe-num-fuel 0)
+(define cold-pipe-spawn-point 0)
+
+(define nextCheckpoint "block-man-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  cold-pipe-load-level-id -1))fuel-count) cold-pipe-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  cold-pipe-load-level-id -1))chicks-count) cold-pipe-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun cold-pipe-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'cold-pipe )
+    (= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  cold-pipe-load-level-id -1))money-count)
+        (-> *game-info* money-per-level cold-pipe-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level cold-pipe-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  cold-pipe-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* nextCheckpoint))  
+)
+(none)
+)
