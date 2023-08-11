@@ -2,8 +2,8 @@
 ;; We use the convention of having a longer DGO name for levels without precomputed visibility.
 
 ;; the actual file name still needs to be 8.3
-("MAN.DGO"
-  ("static-screen.o" "static-screen")
-  ("block-man.go" "block-man")
-  ("block-man-code.o" "block-man-code")
-  )
+"MAN.DGO"
+  "static-screen.o" "static-screen"
+  "block-man.go" "block-man"
+  "block-man-code.o" "block-man-code"
+  

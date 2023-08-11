@@ -2,8 +2,8 @@
 ;; We use the convention of having a longer DGO name for levels without precomputed visibility.
 
 ;; the actual file name still needs to be 8.3
-("VIL.DGO"
-  ("static-screen.o" "static-screen")
-  ("villa-cube.go" "villa-cube")
-  ("villa-cube-code.o" "villa-cube-code")
-  )
+"VIL.DGO"
+  "static-screen.o" "static-screen"
+  "villa-cube.go" "villa-cube"
+  "villa-cube-code.o" "villa-cube-code"
+  

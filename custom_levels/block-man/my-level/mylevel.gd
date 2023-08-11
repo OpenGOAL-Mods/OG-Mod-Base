@@ -1,4 +1,4 @@
 ("LVL.DGO"
-  ("static-screen.o"
+  "static-screen.o"
   "my-level.go"
-  ))
+  
