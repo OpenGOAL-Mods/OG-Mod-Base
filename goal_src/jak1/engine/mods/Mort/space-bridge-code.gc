@@ -4,7 +4,7 @@
 ;; name: space-bridge-code.gc
 ;; name in dgo: space-bridge-code
 ;; dgos: TODO
-
+#|
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Level Variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,3 +36,4 @@
 )
 (none)
 )
+|#

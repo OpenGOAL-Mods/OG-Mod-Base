@@ -4,7 +4,7 @@
 ;; name: monument-code.gc
 ;; name in dgo: monument-code
 ;; dgos: TODO
-
+#|
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Level Variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,3 +36,4 @@
 )
 (none)
 )
+|#

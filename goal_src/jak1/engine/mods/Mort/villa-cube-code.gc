@@ -4,7 +4,7 @@
 ;; name: villa-cube-code.gc
 ;; name in dgo: villa-cube-code
 ;; dgos: TODO
-
+#|
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Level Variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,3 +36,4 @@
 )
 (none)
 )
+|#

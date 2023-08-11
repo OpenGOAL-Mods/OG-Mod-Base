@@ -4,7 +4,7 @@
 ;; name: block-man-code.gc
 ;; name in dgo: block-man-code
 ;; dgos: TODO
-
+#|
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Level Variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,3 +36,4 @@
 )
 (none)
 )
+|#

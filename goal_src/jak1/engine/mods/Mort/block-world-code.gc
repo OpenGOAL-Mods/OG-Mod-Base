@@ -4,7 +4,7 @@
 ;; name: block-world-code.gc
 ;; name in dgo: block-world-code
 ;; dgos: TODO
-
+#|
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Level Variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,3 +36,4 @@
 )
 (none)
 )
+|#

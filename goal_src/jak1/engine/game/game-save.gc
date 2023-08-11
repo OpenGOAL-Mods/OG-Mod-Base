@@ -601,7 +601,7 @@
                                                                     (let ((v1-95 (&+ v1-94 16)))
                                                                       (let ((a0-63 (the-as game-save-tag (&+ v1-95 0))))
                                                                         (set! (-> a0-63 elt-type) (game-save-elt fuel-cell-time))
-                                                                        (set! (-> a0-63 elt-count) 116)
+                                                                        (set! (-> a0-63 elt-count) (the int(game-task max)))
                                                                         (set! (-> a0-63 elt-size) (the-as uint 8))
                                                                         )
                                                                       (let ((v1-96 (&+ v1-95 16)))

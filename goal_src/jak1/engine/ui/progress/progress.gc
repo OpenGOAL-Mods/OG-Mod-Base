@@ -685,6 +685,35 @@
   obj
   )
 
+
+;; manually set up game-counts
+#|(define *game-counts-custom* (the game-count-info (malloc 'global 10000000)))
+(set! (-> *game-counts-custom* type) game-count-info)
+(set! (-> *game-counts-custom* length) 40)
+(dotimes (i 16)
+;;(set! (-> *game-counts-custom* data i money-count) 12)
+(set! (-> *game-counts-custom* data i buzzer-count) 7)
+)
+(set! (-> *game-counts-custom* data 0 money-count) 50)
+(set! (-> *game-counts-custom* data 1 money-count) 50)
+(set! (-> *game-counts-custom* data 2 money-count) 150)
+(set! (-> *game-counts-custom* data 3 money-count) 150)
+(set! (-> *game-counts-custom* data 4 money-count) 150)
+(set! (-> *game-counts-custom* data 5 money-count) 50)
+(set! (-> *game-counts-custom* data 6 money-count) 50)
+(set! (-> *game-counts-custom* data 7 money-count) 200)
+(set! (-> *game-counts-custom* data 8 money-count) 200)
+(set! (-> *game-counts-custom* data 9 money-count) 200)
+(set! (-> *game-counts-custom* data 10 money-count) 50)
+(set! (-> *game-counts-custom* data 11 money-count) 50)
+(set! (-> *game-counts-custom* data 12 money-count) 200)
+(set! (-> *game-counts-custom* data 13 money-count) 200)
+(set! (-> *game-counts-custom* data 14 money-count) 50)
+(set! (-> *game-counts-custom* data 15 money-count) 200)
+
+|#
+
+  
 (defmethod relocate progress ((obj progress) (arg0 int))
   (dotimes (v1-0 (-> obj nb-of-particles))
     (when (-> obj particles v1-0 part)

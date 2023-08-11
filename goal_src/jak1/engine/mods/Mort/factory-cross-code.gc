@@ -4,7 +4,7 @@
 ;; name: factory-cross-code.gc
 ;; name in dgo: factory-cross-code
 ;; dgos: TODO
-
+#|
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Level Variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,3 +36,5 @@
 )
 (none)
 )
+
+|#

@@ -1,6 +1,6 @@
 ;;-*-Lisp-*-
 (in-package goal)
-
+#|
 ;; name: chicks-code.gc
 ;; name in dgo: chicks-code
 ;; dgos: TODO
@@ -36,3 +36,4 @@
 )
 (none)
 )
+|#

@@ -226,5 +226,26 @@
   "2000": "<PAD_TRIANGLE>",
   "2001": "<PAD_CIRCLE>",
   "2002": "<PAD_X>",
-  "2003": "<PAD_SQUARE>"
+  "2003": "<PAD_SQUARE>",
+
+  
+
+  "2502": "FACTORY CROSS",
+  "20e3": "HOLLY WOOD",
+  "20e4": "MONUMENT",
+  "20e5": "CATHEDRAL",
+  "20e6": "PYRAMID",
+  "20e7": "ICE CANYON",
+  "20e8": "COINS",
+  "20e9": "VILLA CUBA",
+  "20ea": "ICE SLIDE",
+  "20eb": "ISLANDS",
+  "20ec": "GLASS TOWERS",
+  "20ed": "CHEMICAL FACTORY",
+  "20ee": "SPACE BRIDGE",
+  "20ef": "CHICKS",
+  "20f0": "GARDEN",
+  "20f1": "COLD PIPE",
+  "20f2": "BLOCK MAN",
+  "20f3": "CUBE FACE"
 }
