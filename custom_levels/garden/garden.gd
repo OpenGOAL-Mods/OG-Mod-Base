@@ -1,4 +1,4 @@
-"GAR.DGO"
+("GAR.DGO"(
 "static-screen.o"
 "garden.go"
-"garden-code.o"
+"garden-code.o"))

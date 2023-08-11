@@ -1,4 +1,4 @@
-"CAT.DGO"
+("CAT.DGO"(
 "static-screen.o"
 "cathederal.go"
-"cathederal-code.o"
+"cathederal-code.o"))

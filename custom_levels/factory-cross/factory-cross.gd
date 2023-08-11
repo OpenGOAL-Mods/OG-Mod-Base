@@ -1,4 +1,4 @@
-"CRO.DGO"
+("CRO.DGO"(
 "static-screen.o"
 "factory-cross.go"
-"factory-cross-code.o"
+"factory-cross-code.o"))

@@ -1,4 +1,4 @@
-"BWD.DGO"
+("BWD.DGO"(
 "static-screen.o"
 "block-world.go"
-"block-world-code.o"
+"block-world-code.o"))

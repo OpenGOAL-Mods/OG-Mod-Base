@@ -1,4 +1,4 @@
-"PYR.DGO"
+("PYR.DGO"(
 "static-screen.o"
 "pyramid.go"
-"pyramid-code.o"
+"pyramid-code.o"))

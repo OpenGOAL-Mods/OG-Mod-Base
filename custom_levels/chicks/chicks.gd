@@ -1,4 +1,4 @@
-"CHI.DGO"
+("CHI.DGO"(
 "static-screen.o"
 "chicks.go"
-"chicks-code.o"
+"chicks-code.o"))

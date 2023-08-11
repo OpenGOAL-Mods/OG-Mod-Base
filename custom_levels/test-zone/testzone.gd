@@ -1,3 +1,3 @@
-"TSZ.DGO"
+("TSZ.DGO"(
 "static-screen.o"
-"test-zone.go"
+"test-zone.go"))

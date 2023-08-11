@@ -1,4 +1,4 @@
-"VIL.DGO"
+("VIL.DGO"(
 "static-screen.o"
 "villa-cube.go"
-"villa-cube-code.o"
+"villa-cube-code.o"))
