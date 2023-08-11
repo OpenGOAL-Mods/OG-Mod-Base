@@ -18,7 +18,8 @@
   // if your mesh has triangles with incorrect orientation, set this to make all collision mesh triangles double sided
   // this makes collision 2x slower and bigger, so only use if really needed
   "double_sided_collide": false,
-  "base_id": 30000000,
+  "base_id": 30000000,"ambients": [],
+
   "actors" : [
     {
       "trans":  [136.5000, 316.0000, 68.0000],// translation
