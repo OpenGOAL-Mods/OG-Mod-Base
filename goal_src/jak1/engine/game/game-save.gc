@@ -606,7 +606,7 @@
                                                                         )
                                                                       (let ((v1-96 (&+ v1-95 16)))
                                                                         (let ((a0-64 (the-as object 0)))
-                                                                          (while (< (the-as int a0-64) 116)
+                                                                          (while (< (the-as int a0-64) (the int (game-task max)))
                                                                             (set! (-> (the-as (pointer int64) (&+ v1-96 (* (the-as int a0-64) 8))))
                                                                                   (-> obj fuel-cell-time (the-as int a0-64))
                                                                                   )
@@ -1061,9 +1061,9 @@
     )
   ;; update tasks
   (let ((s5-1 2) ;; jungle eggtop
-        (s4-2 115) ;; max - 1
+        (s4-2 (the int (game-task max))) ;; max - 1
         )
-    (while (>= (the-as uint s4-2) (the-as uint s5-1))
+    (while (> (the-as uint s4-2) (the-as uint s5-1))
       ;; calling this will run the function to see if the task is done or not
       (get-task-status (the-as game-task s5-1))
       (+! s5-1 1)

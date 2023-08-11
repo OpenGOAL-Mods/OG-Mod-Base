@@ -5654,6 +5654,8 @@
    (custom-buzzer-count int)
    )
   :method-count-assert 9
+    :size-assert         #x74
+  :flag-assert         #x900000074
   )
 
 (declare-type drawable basic)

@@ -679,9 +679,18 @@
   (none)
   )
 
+(define *game-counts* (the game-count-info (malloc 'global 10000)))
 (defmethod relocate game-count-info ((obj game-count-info) (arg0 int))
   "Load in the game-count-info. This is a bit of a hack."
-  (set! *game-counts* obj)
+  ;;(set! *game-counts* obj)
+  
+  (set! (-> *game-counts* type) game-count-info)
+  (set! (-> *game-counts* length) (length *level-load-list*))
+  (dotimes (i (level-task-data-index max))
+  (if (or (< (-> *game-counts* data i money-count) 0) (> (-> *game-counts* data i money-count) 300) (= (-> *game-counts* data i money-count) #f))
+  (set! (-> *game-counts* data i money-count) 0)
+  )
+  )
   obj
   )
 

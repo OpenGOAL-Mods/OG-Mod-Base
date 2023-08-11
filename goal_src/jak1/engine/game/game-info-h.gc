@@ -196,7 +196,8 @@
    )
    
   :method-count-assert 29
-
+    :size-assert         #x144
+  :flag-assert         #x1d00000144
   (:methods
    (initialize! (_type_ symbol game-save string) _type_ 9)
    (adjust (_type_ symbol float handle) float 10)
