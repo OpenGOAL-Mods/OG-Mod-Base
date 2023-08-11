@@ -1,0 +1,399 @@
+{
+  // The "in-game" name of the level. Should be lower case, with dashes (GOAL symbol name)
+  // the name of this file, and the folder this file is in must have the same name.
+  "long_name": "pyramid",
+  // The file name, should be upper case and 8 characters or less.
+  "iso_name": "PYRAMID",
+  // The nickname, should be exactly 3 characters
+  "nickname": "PYR", // 3 char name, all uppercase
+
+  // Background mesh file.
+  // Must have vertex colors. Use the blender cycles renderer, bake, diffuse, uncheck color,
+  // and bake to vertex colors. For now, only the first vertex color group is used, so make sure you
+  // only have 1.
+  "gltf_file": "custom_levels/pyramid/test-zone2.glb",
+  "automatic_wall_detection": true,
+  "automatic_wall_angle": 45.0,
+
+  // if your mesh has triangles with incorrect orientation, set this to make all collision mesh triangles double sided
+  // this makes collision 2x slower and bigger, so only use if really needed
+  "double_sided_collide": false,
+  "base_id": 30000000,
+  "actors" : [
+    {
+      "trans":  [136.5000, 316.0000, 68.0000],// translation
+      "etype": "star",  // star
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-star-1"
+      }
+    },     {
+      "trans":  [151.0000, 321.0000, 81.4000],// translation
+      "etype": "star",  // star
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-star-2"
+      }
+    },   {
+      "trans":  [148.3000, 314.0000, 47.2000],// translation
+      "etype": "star",  // star
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-star-3"
+      }
+    },    {
+      "trans":  [80.0000, 316.0000, 95.8000],// translation
+      "etype": "star",  // star
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-star-4"
+      }
+    },     {
+      "trans":  [107.0999, 326.0000, 82.3000],// translation
+      "etype": "star",  // star
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-star-5"
+      }
+    },    {
+      "trans":  [109.5000, 320.0000, 44.5000],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 2, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-chick-10",
+        "eco-info": ["int32", 6, 2]
+      }
+    },     {
+      "trans":  [81.3000, 311.7999, 43.0999],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 3, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-chick-1",
+        "eco-info": ["int32", 6, 3]
+      }
+    },    {
+      "trans":  [156.8000, 310.0000, 112.3000],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 4, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-chick-2",
+        "eco-info": ["int32", 6, 4]
+      }
+    }, {
+      "trans":  [65.5000, 312.5000, 120.3000],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 5, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-chick-3",
+        "eco-info": ["int32", 6, 5]
+      }
+    }, {
+      "trans":  [140.1999, 315.0000, 91.5999],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 6, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-chick-4",
+        "eco-info": ["int32", 6, 6]
+      }
+    },    {
+      "trans":  [105.5000, 302.5000, 80.9000],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 7, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-chick-5",
+        "eco-info": ["int32", 6, 7]
+      }
+    },  {
+      "trans":  [165.3000, 310.0000, 84.5999],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 8, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-chick-6",
+        "eco-info": ["int32", 6, 8]
+      }
+    },    {
+      "trans":  [65.0000, 311.7999, 50.7000],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 9, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-chick-7",
+        "eco-info": ["int32", 6, 9]
+      }
+    },  {
+      "trans":  [110.3000, 300.0000, 122.5000],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 10, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-chick-8",
+        "eco-info": ["int32", 6, 10]
+      }
+    },   {
+      "trans":  [55.7999, 311.2999, 66.3000],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 11, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-chick-9",
+        "eco-info": ["int32", 6, 11]
+      }
+    },
+    {
+      "trans":  [116.9000, 300.0000, 105.5999],// translation
+      "etype": "crate",  // egg (spring)
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-egg-spring-1"
+      }
+    },   {
+      "trans":  [64.6999, 311.7999, 53.7000],// translation
+      "etype": "crate",  // egg (missle)
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-egg-missile-1"
+      }
+    },     {
+      "trans":  [166.8000, 310.0000, 75.9000],// translation
+      "etype": "crate",  // egg (magnet)
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-egg-magnet-1"
+      }
+    },  
+    {
+      "trans":  [140.3000, 319.0000, 71.0999],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-1"
+      }
+    },    {
+      "trans":  [81.4000, 310.0000, 31.0000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-1"
+      }
+    },    {
+      "trans":  [96.0999, 318.0000, 119.4000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-2"
+      }
+    },    {
+      "trans":  [143.3999, 314.0000, 30.0000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-3"
+      }
+    },     {
+      "trans":  [132.1999, 314.0000, 36.5999],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-4"
+      }
+    },    {
+      "trans":  [118.1999, 320.0000, 17.0000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-5"
+      }
+    },      {
+      "trans":  [84.5999, 314.0000, 99.3000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-6"
+      }
+    },     {
+      "trans":  [98.0000, 320.0000, 17.1000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-7"
+      }
+    },    {
+      "trans":  [96.0999, 312.0000, 119.4000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-8"
+      }
+    },   {
+      "trans":  [137.8000, 310.0000, 47.2000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-9"
+      }
+    },    {
+      "trans":  [145.5000, 322.0000, 75.6999],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-10"
+      }
+    },    {
+      "trans":  [74.0000, 310.0000, 136.1000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-11"
+      }
+    },    {
+      "trans":  [70.0000, 312.0000, 99.0999],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-12"
+      }
+    },     {
+      "trans":  [45.4000, 309.0000, 76.0999],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-13"
+      }
+    },     {
+      "trans":  [133.0000, 318.0000, 106.0000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-14"
+      }
+    },      {
+      "trans":  [96.0999, 315.0000, 119.4000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-15"
+      }
+    },    {
+      "trans":  [133.0000, 319.0000, 106.0000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-16"
+      }
+    },  {
+      "trans":  [85.0999, 310.0000, 65.3000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-17"
+      }
+    },    {
+      "trans":  [136.5000, 312.0000, 68.0000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-18"
+      }
+    },    {
+      "trans":  [173.0000, 319.0000, 106.0000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-19"
+      }
+    },     {
+      "trans":  [88.3000, 312.0000, 103.0000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-20"
+      }
+    },    {
+      "trans":  [136.5000, 314.0000, 68.0000],// translation
+      "etype": "money",  // coin
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"pyramid-money-21"
+      }
+    }  
+  
+   
+  ]
+}

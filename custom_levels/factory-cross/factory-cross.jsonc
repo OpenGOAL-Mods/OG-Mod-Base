@@ -1,0 +1,91 @@
+{
+  // The "in-game" name of the level. Should be lower case, with dashes (GOAL symbol name)
+  // the name of this file, and the folder this file is in must have the same name.
+  "long_name": "factory-cross",
+  // The file name, should be upper case and 8 characters or less.
+  "iso_name": "CROSS",
+  // The nickname, should be exactly 3 characters
+  "nickname": "CRO", // 3 char name, all uppercase
+
+  // Background mesh file.
+  // Must have vertex colors. Use the blender cycles renderer, bake, diffuse, uncheck color,
+  // and bake to vertex colors. For now, only the first vertex color group is used, so make sure you
+  // only have 1.
+  "gltf_file": "custom_levels/factory-cross/test-zone2.glb",
+  "automatic_wall_detection": true,
+  "automatic_wall_angle": 45.0,
+
+  // if your mesh has triangles with incorrect orientation, set this to make all collision mesh triangles double sided
+  // this makes collision 2x slower and bigger, so only use if really needed
+  "double_sided_collide": false,
+  "base_id": 4200,
+  "actors" : [
+    {
+      "trans": [-23.7483, 315.0000, 89.5260],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    },
+ 
+   {
+      "trans": [98.8548, 292.5000, 91.5842],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    },
+ 
+   {
+      "trans": [30.9205, 317.5000, 19.6796],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    },
+ 
+   {
+      "trans": [98.5414, 292.5000, 84.6130],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    },
+ 
+   {
+      "trans": [36.9619, 317.5000, 25.5315],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    },
+ 
+   {
+      "trans": [-19.9585, 315.0000, 85.2462],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    }
+
+
+  ]
+}

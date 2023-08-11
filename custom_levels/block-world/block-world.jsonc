@@ -1,0 +1,510 @@
+{
+  // The "in-game" name of the level. Should be lower case, with dashes (GOAL symbol name)
+  // the name of this file, and the folder this file is in must have the same name.
+  "long_name": "block-world",
+  // The file name, should be upper case and 8 characters or less.
+  "iso_name": "BLOCKWOR",
+  // The nickname, should be exactly 3 characters
+  "nickname": "BWD", // 3 char name, all uppercase
+
+  // Background mesh file.
+  // Must have vertex colors. Use the blender cycles renderer, bake, diffuse, uncheck color,
+  // and bake to vertex colors. For now, only the first vertex color group is used, so make sure you
+  // only have 1.gate
+  "gltf_file": "custom_levels/block-world/test-zone2.glb",
+  "automatic_wall_detection": true,
+  "automatic_wall_angle": 45.0,
+
+  // if your mesh has triangles with incorrect orientation, set this to make all collision mesh triangles double sided
+  // this makes collision 2x slower and bigger, so only use if really needed
+  "double_sided_collide": false,
+  "base_id": 1000000,
+  "actors" : [
+    {
+      "trans": [86.1999, 314.0000, 154.5000], 
+      "etype": "star",  
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1],
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-star-1"
+      }
+    },// star
+
+    {
+      "trans": [79.0000, 317.0000, 180.5000], 
+      "etype": "star",  
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1],
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-star-2"
+      }
+    },// star
+
+    {
+      "trans":  [115.3000, 309.5000, 170.5000],
+      "etype": "star",  
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1],
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-star-3"
+      }
+    },// star
+
+    {
+      "trans": [63.0000, 313.0000, 122.9000],
+      "etype": "star",  
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1],
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-star-4"
+      }
+    },// star
+
+
+    {
+      "trans": [122.0000, 313.0000, 122.9000],
+      "etype": "star",  
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1],
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-star-5"
+      }
+    },// star
+
+
+    {
+      "trans": [92.5999, 315.0000, 122.9000],
+      "etype": "star",  
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1],
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-star-6"
+      }
+    },// star
+
+    {
+      "trans": [ 86.2, 312.0, 154.5], 
+      "etype": "money", 
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-1"
+      }
+    },// coin
+
+    {
+      "trans": [ 80.5000, 309.0000, 170.3999 ], 
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-2"
+      }
+    },// coin
+
+    {
+      "trans": [ 69.4000, 312.6000, 180.5000], 
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-3"
+      }
+    },// coin
+
+    {
+      "trans": [ 72.5000, 314.5000, 180.5000], 
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-4"
+      }
+    },// coin
+
+    {
+      "trans": [ 75.3000, 316.3999, 180.5000], 
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-5"
+      }
+    },// coin
+
+    {
+      "trans": [ 82.3000, 316.3999, 180.5000], 
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-6"
+      }
+    },// coin
+
+    {
+      "trans": [ 85.0, 314.5, 180.5], 
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-7"
+      }
+    },// coin
+
+    {
+      "trans": [  88.0000, 312.6000, 180.5000], 
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-8"
+      }
+    },// coin
+
+    {
+      "trans": [ 131.8999, 303.0000, 190.3999], 
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-9"
+      }
+    },// coin
+
+    {
+      "trans": [137.0000, 303.0000, 166.8999], 
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-10"
+      }
+    },// coin
+
+    {
+      "trans": [137.0000, 303.0000, 175.0000], 
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-11"
+      }
+    },// coin
+
+    {
+      "trans":[125.9000, 312.5000, 176.1000],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-12"
+      }
+    },// coin
+
+    {
+      "trans":[121.8000, 311.5000, 173.6999],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-13"
+      }
+    },// coin
+
+    {
+      "trans":  [85.3000, 309.5000, 135.8999],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-14"
+      }
+    },// coin
+
+    {
+      "trans": [118.6999, 310.5000, 171.6999],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-15"
+      }
+    },// coin
+
+    {
+      "trans":  [100.3000, 309.5000, 135.8999],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-16"
+      }
+    },// coin
+    {
+      "trans":  [52.2000, 312.0000, 122.9000],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-18"
+      }
+    },
+    {
+      "trans": [73.8000, 312.0000, 122.9000],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-17"
+      }
+    },// coin
+
+// coin
+
+    {
+      "trans":  [112.1999, 312.0000, 122.9000],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-19"
+      }
+    },// coin
+
+    {
+      "trans":  [133.8000, 312.0000, 122.9000],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-20"
+      }
+    },// coin
+
+    {
+      "trans":  [86.3000, 311.0000, 122.9000],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-21"
+      }
+    },// coin
+
+    {
+      "trans":  [89.4000, 313.0000, 122.9000],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-22"
+      }
+    },// coin
+
+    {
+      "trans":  [95.6999, 313.0000, 122.9000],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-23"
+      }
+    },// coin
+
+    {
+      "trans": [98.8000, 311.0000, 122.9000],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-24"
+      }
+    },// coin
+
+    {
+      "trans": [40.0999, 309.5000, 130.8000],
+      "etype": "money",  
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-money-25"
+      }
+    },// coin
+
+
+
+    {
+      "trans": [60.0000, 300.0000, 160.3999], 
+      "etype": "fuel-cell", 
+      "game_task": 92, 
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-chick-1",
+        "eco-info": ["int32", 6, 92]
+      }//chick
+    },
+
+
+
+    {
+      "trans": [ 85.4000, 305.0000, 150.6000],
+      "etype": "fuel-cell", 
+      "game_task": 93, 
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-chick-2",
+        "eco-info": ["int32", 6, 93]
+      }
+    },// chick
+
+    {
+      "trans": [ 94.0000, 305.0000, 166.6999 ], 
+      "etype": "fuel-cell",  
+      "game_task": 117,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-chick-3",
+        "eco-info": ["int32", 6, 117]
+      }
+    },// chick
+
+    {
+      "trans": [110.8000, 312.5000, 155.0000 ], 
+      "etype": "fuel-cell",  
+      "game_task": 95,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-chick-4",
+        "eco-info": ["int32", 6, 95]
+      }
+    },// chick
+
+    {
+      "trans": [ 97.4000, 300.0000, 195.3000 ], 
+      "etype": "fuel-cell",  
+      "game_task": 96,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-chick-5",
+        "eco-info": ["int32", 6, 96]
+      }
+    },// chick
+    {
+      "trans": [ 130.3999, 310.0000, 179.1999 ], 
+      "etype": "fuel-cell",  
+      "game_task": 97,
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-chick-6",
+        "eco-info": ["int32", 6, 97]
+      }
+    },// chick
+
+    {
+      "trans": [60.2999, 300.0000, 145.6000], 
+      "etype": "crate", 
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-egg-noclue-1"
+      }
+    },// egg fucking have no clue
+
+    {
+      "trans": [37.0000, 300.0000, 112.9000], 
+      "etype": "crate", 
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-egg-noclue-2"
+      }
+    },// egg fucking have no clue
+
+    {
+      "trans": [ 37.0000, 300.0000, 172.6000], 
+      "etype": "crate", 
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-egg-spring-1"
+      }
+    },// egg spring
+
+    {
+      "trans": [ 65.4000, 300.0000, 184.0000], 
+      "etype": "crate", 
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-egg-magnet-1"
+      }
+    },// egg magnet
+
+    {
+      "trans": [ 124.8000, 300.0000, 174.8000], 
+      "etype": "crate", 
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"block-world-egg-spring-2"
+      }
+    },// egg spring
+
+
+
+
+    {
+      "trans": [-5.4630, 17.4553, 1.6169],
+      "etype": "eco-yellow",  
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-5.4630, 17.4553, 1.6169, 10], 
+      "lump": {
+        "name":"block-world-eco-what-is-this"
+      }
+    }
+  ]
+}

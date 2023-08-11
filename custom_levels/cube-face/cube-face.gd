@@ -2,7 +2,8 @@
 ;; We use the convention of having a longer DGO name for levels without precomputed visibility.
 
 ;; the actual file name still needs to be 8.3
-("TSZ.DGO"
+("FAC.DGO"
   ("static-screen.o" "static-screen")
-  ("test-zone.go" "test-zone")
+  ("cube-face.go" "cube-face")
+  ("cube-face-code.o" "cube-face-code")
   )

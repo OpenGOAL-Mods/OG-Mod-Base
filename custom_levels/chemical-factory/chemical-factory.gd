@@ -2,7 +2,8 @@
 ;; We use the convention of having a longer DGO name for levels without precomputed visibility.
 
 ;; the actual file name still needs to be 8.3
-("TSZ.DGO"
+("CHE.DGO"
   ("static-screen.o" "static-screen")
-  ("test-zone.go" "test-zone")
+  ("chemical-factory.go" "chemical-factory")
+  ("chemical-factory-code.o" "chemical-factory-code")
   )

@@ -1,0 +1,132 @@
+{
+  // The "in-game" name of the level. Should be lower case, with dashes (GOAL symbol name)
+  // the name of this file, and the folder this file is in must have the same name.
+  "long_name": "cathederal",
+  // The file name, should be upper case and 8 characters or less.
+  "iso_name": "CATHEDER",
+  // The nickname, should be exactly 3 characters
+  "nickname": "CAT", // 3 char name, all uppercase
+
+  // Background mesh file.
+  // Must have vertex colors. Use the blender cycles renderer, bake, diffuse, uncheck color,
+  // and bake to vertex colors. For now, only the first vertex color group is used, so make sure you
+  // only have 1.
+  "gltf_file": "custom_levels/cathederal/test-zone2.glb",
+  "automatic_wall_detection": true,
+  "automatic_wall_angle": 45.0,
+
+  // if your mesh has triangles with incorrect orientation, set this to make all collision mesh triangles double sided
+  // this makes collision 2x slower and bigger, so only use if really needed
+  "double_sided_collide": false,
+  "base_id": 2000000,
+  "actors" : [
+    {
+      "trans": [33.0, 310.0496, 154.1191], 
+      "etype": "money",  
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "lump": {
+        "name":"level-building-orb-ig"
+      }
+    },
+    {
+      "trans": [-37.6886, -37.6886, -37.6886],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    },
+ 
+   {
+      "trans": [-9.6014, -9.6014, -9.6014],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    },
+ 
+   {
+      "trans": [-37.3034, -37.3034, -37.3034],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    },
+ 
+   {
+      "trans": [29.4828, 29.4828, 29.4828],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    },
+ 
+   {
+      "trans": [-66.8517, -66.8517, -66.8517],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    },
+ 
+   {
+      "trans": [-24.7681, -24.7681, -24.7681],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    },
+ 
+   {
+      "trans": [45.0569, 45.0569, 45.0569],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    },
+ 
+   {
+      "trans": [16.4883, 16.4883, 16.4883],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    },
+ 
+   {
+      "trans": [-66.7373, -66.7373, -66.7373],// translation
+      "etype": "fuel-cell",  // chick
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name":"test-fuel-cell"
+      }
+    }
+  ]
+}
