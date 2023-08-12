@@ -130,6 +130,25 @@ std::string get_current_executable_path() {
 #endif
 }
 
+std::string get_parent_directory(const std::string& path) {
+  // Find the last occurrence of ".github" in the path.
+  size_t github_index = path.rfind(".github");
+
+  // If ".github" is not found in the path, return an empty string.
+  if (github_index == std::string::npos) {
+    return "";
+  }
+
+  // Extract the part of the path up to the ".github" directory.
+  std::string parent_directory = path.substr(0, github_index);
+
+  // Remove the last character from the path, which will be the slash.
+  parent_directory.pop_back();
+
+  // Return the parent directory.
+  return parent_directory;
+}
+
 std::optional<std::string> try_get_project_path_from_path(const std::string& path) {
   std::string current_path = path;
   lg::info("Current path in loop - {}", current_path);
@@ -640,6 +659,18 @@ FILE* open_file(const fs::path& path, const std::string& mode) {
 #endif
 }
 
+std::vector<fs::path> find_files_in_dir(const fs::path& dir, const std::regex& pattern) {
+  std::vector<fs::path> files = {};
+  for (auto& p : fs::directory_iterator(dir)) {
+    if (p.is_regular_file()) {
+      if (std::regex_match(p.path().filename().string(), pattern)) {
+        files.push_back(p.path());
+      }
+    }
+  }
+  return files;
+}
+
 std::vector<fs::path> find_files_recursively(const fs::path& base_dir, const std::regex& pattern) {
   std::vector<fs::path> files = {};
   for (auto& p : fs::recursive_directory_iterator(base_dir)) {
@@ -660,6 +691,26 @@ std::vector<fs::path> find_directories_in_dir(const fs::path& base_dir) {
     }
   }
   return dirs;
+}
+
+std::vector<fs::path> sort_filepaths(const std::vector<fs::path>& paths, const bool aescending) {
+  std::vector<std::string> paths_as_strings = {};
+  for (const auto& path : paths) {
+    paths_as_strings.push_back(path.string());
+  }
+  std::sort(paths_as_strings.begin(), paths_as_strings.end(),
+            [aescending](const std::string& a, const std::string& b) {
+              if (aescending) {
+                return a < b;
+              } else {
+                return a > b;
+              }
+            });
+  std::vector<fs::path> sorted_paths = {};
+  for (const auto& path : paths_as_strings) {
+    sorted_paths.push_back(fs::path(path));
+  }
+  return sorted_paths;
 }
 
 void copy_file(const fs::path& src, const fs::path& dst) {
