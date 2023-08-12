@@ -253,7 +253,7 @@
      (set! (-> obj continue-time) (-> *display* base-frame-counter))
      (set! (-> obj death-time) (-> *display* base-frame-counter))
      (set! (-> obj hit-time) (-> *display* base-frame-counter))
-     (dotimes (v1-50 (game-task max))
+     (dotimes (v1-50 (the int (game-task max)))
        (set! (-> obj fuel-cell-time 0) 0)
        (nop!)
        )
@@ -382,6 +382,43 @@
      ;; increment our current money count
      (+! (-> obj money) amount)
      )
+    (('star)
+     (if (and (< 0.0 amount) (= (+ (-> obj money) amount) (-> *GAME-bank* money-task-inc)))
+         ;; got enough orbs to trade, display a hint
+         (level-hint-spawn
+           (text-id sidekick-reminder-money)
+           "sksp0014"
+           (the-as entity #f)
+           *entity-pool*
+           (game-task none)
+           )
+         )
+
+     ;; need to update the various orb counters
+     (when (< 0.0 amount)
+       (let ((proc (handle->process source)))
+         (when (and proc (-> proc entity))
+           ;; we have task data for this level!
+           (when (>= (-> *level-task-data-remap* length) (-> proc entity extra level info index))
+             ;; get the level index
+             (let ((level-idx (-> *level-task-data-remap* (+ (-> proc entity extra level info index) -1))))
+               ;; increment the level money count
+               (+! (-> obj money-per-level level-idx) (the int amount))
+               ;; increment our total money in the game (out of the 2000 max orbs)
+               (+! (-> obj money-total) amount)
+               ;; if we have all the money in our level, display the all orbs graphic
+               (if (= (-> obj money-per-level level-idx) (-> (get-game-count level-idx) money-count))
+                   (activate-orb-all level-idx)
+                   )
+               )
+             )
+           )
+         )
+       )
+     ;; increment our current money count
+     (+! (-> obj money) amount)
+     )
+
     (('fuel-cell)
      ;; got a power cell!
      ;; in this case, the amount is actually the index of the power cell's task
@@ -622,6 +659,19 @@
        (set! (-> obj money-pickup-time) (-> *display* base-frame-counter))
        )
      (adjust (-> (the-as target (-> obj process)) game) 'money amount source-handle)
+     )
+    (((pickup-type star))
+     ;; get money.
+     (when (< 0.0 amount)
+       ;; play sound.
+       ;;hack
+       (set! amount 5.0)
+       (if (>= (- (-> *display* base-frame-counter) (-> obj money-pickup-time)) (seconds 0.05))
+           (sound-play "money-pickup")
+           )
+       (set! (-> obj money-pickup-time) (-> *display* base-frame-counter))
+       )
+     (adjust (-> (the-as target (-> obj process)) game) 'star amount source-handle)
      )
     (((pickup-type fuel-cell))
      ;; the amount is actually the index of the task.
@@ -938,7 +988,7 @@
   (inspect obj)
   (when (or (not arg0) (= arg0 'game-task))
     (format #t "~Tgame-task:~%")
-    (dotimes (s4-0 (game-task max))
+    (dotimes (s4-0 (the int (game-task max)))
       (if (task-complete? obj (the-as game-task s4-0))
           (format #t "~T~T~S~%" (game-task->string (the-as game-task s4-0)))
           )

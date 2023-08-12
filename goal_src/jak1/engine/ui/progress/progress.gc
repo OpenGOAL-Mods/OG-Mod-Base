@@ -686,10 +686,56 @@
   
   (set! (-> *game-counts* type) game-count-info)
   (set! (-> *game-counts* length) (length *level-load-list*))
+  (set! (-> *game-counts* data 0 money-count) 50)
+(set! (-> *game-counts* data 1 money-count) 50)
+(set! (-> *game-counts* data 2 money-count) 150)
+(set! (-> *game-counts* data 3 money-count) 150)
+(set! (-> *game-counts* data 4 money-count) 150)
+(set! (-> *game-counts* data 5 money-count) 50)
+(set! (-> *game-counts* data 6 money-count) 50)
+(set! (-> *game-counts* data 7 money-count) 200)
+(set! (-> *game-counts* data 8 money-count) 200)
+(set! (-> *game-counts* data 9 money-count) 200)
+(set! (-> *game-counts* data 10 money-count) 50)
+(set! (-> *game-counts* data 11 money-count) 50)
+(set! (-> *game-counts* data 12 money-count) 200)
+(set! (-> *game-counts* data 13 money-count) 200)
+(set! (-> *game-counts* data 14 money-count) 50)
+(set! (-> *game-counts* data 15 money-count) 200)
+(set! (-> *game-counts* data 16 money-count) 55)
+(set! (-> *game-counts* data 17 money-count) 17)
+(set! (-> *game-counts* data 18 money-count) 18)
+(set! (-> *game-counts* data 19 money-count) 19)
+(set! (-> *game-counts* data 20 money-count) 20)
+(set! (-> *game-counts* data 21 money-count) 21)
+(set! (-> *game-counts* data 22 money-count) 22)
+(set! (-> *game-counts* data 23 money-count) 23)
+(set! (-> *game-counts* data 24 money-count) 24)
+(set! (-> *game-counts* data 25 money-count) 25)
+(set! (-> *game-counts* data 26 money-count) 26)
+(set! (-> *game-counts* data 27 money-count) 27)
+(set! (-> *game-counts* data 28 money-count) 28)
+(set! (-> *game-counts* data 29 money-count) 29)
+(set! (-> *game-counts* data 30 money-count) 30)
+(set! (-> *game-counts* data 31 money-count) 31)
+(set! (-> *game-counts* data 32 money-count) 32)
+(set! (-> *game-counts* data 33 money-count) 33)
+(set! (-> *game-counts* data 34 money-count) 34)
+(set! (-> *game-counts* data 35 money-count) 35)
+
+;; (define block-world-load-level-id 22)
+;; (define block-world-per-level-id 16)
+;; (define block-world-num-chicks 3)
+;; (define block-world-num-fuel 6)
+;; (define block-world-spawn-point 0)
+
+
+
   (dotimes (i (level-task-data-index max))
   (if (or (< (-> *game-counts* data i money-count) 0) (> (-> *game-counts* data i money-count) 300) (= (-> *game-counts* data i money-count) #f))
-  (set! (-> *game-counts* data i money-count) 0)
+  (set! (-> *game-counts* data i money-count) 1)
   )
+  (set! (-> *game-counts* data i buzzer-count) 7)
   )
   obj
   )
@@ -1770,15 +1816,16 @@
                                (let ((gp-1 (-> *setting-control* default auto-save)))
                                  (sound-volume-off)
                                  (set! (-> *game-info* mode) 'play)
-                                 (initialize! *game-info* 'game (the-as game-save #f) "intro-start")
-                                 (cond
-                                  ;; Start a new game differently if speedrunning mode is active
-                                  ((= (-> *pc-settings* speedrunner-mode?) #t)
-                                   (speedrun-start-full-game-run))
-                                 ;; start the game normally
-                                 (else
-                                   (initialize! *game-info* 'game (the-as game-save #f) "intro-start")
-                                   (set! (-> *setting-control* default auto-save) gp-1)))
+                                 (set! *in-mort-menu* #t)
+                                ;;  (initialize! *game-info* 'game (the-as game-save #f) "intro-start")
+                                ;;  (cond
+                                ;;   ;; Start a new game differently if speedrunning mode is active
+                                ;;   ((= (-> *pc-settings* speedrunner-mode?) #t)
+                                ;;    (speedrun-start-full-game-run))
+                                ;;  ;; start the game normally
+                                ;;  (else
+                                ;;    (initialize! *game-info* 'game (the-as game-save #f) "intro-start")
+                                ;;    (set! (-> *setting-control* default auto-save) gp-1)))
                                  )
                                (the-as object (set-master-mode 'game))
                                )

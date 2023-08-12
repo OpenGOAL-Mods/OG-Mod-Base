@@ -1756,6 +1756,12 @@
 ;; the DGO file
 (custom-level-cgo "CHI.DGO" "chicks/chicks.gd")
 
+;;title and loading screens
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "mort-title")
+;; the DGO file
+(custom-level-cgo "MTI.DGO" "mort-title/mort-title.gd")
+
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Game Engine Code

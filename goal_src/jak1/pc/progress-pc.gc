@@ -1934,11 +1934,12 @@
               )
              ;; continue without saving
              ((and (= (-> obj display-state) (progress-screen save-game-title)) (= (-> obj option-index) 4))
-              (sound-play "starts-options")
-              (sound-volume-off)
-              (set! (-> *game-info* mode) 'play)
-              (initialize! *game-info* 'game (the-as game-save #f) "intro-start")
-              (set-master-mode 'game)
+             (none)
+              ;; (sound-play "starts-options")
+              ;; (sound-volume-off)
+              ;; (set! (-> *game-info* mode) 'play)
+              ;; (initialize! *game-info* 'game (the-as game-save #f) "intro-start")
+              ;; (set-master-mode 'game)
               )
              (else
                (sound-play "cursor-options")

@@ -2027,7 +2027,24 @@
                            :ocean '*ocean-map-village1*
                            :sky #t
                            :sun-fade 1.0
-                           :continues '((new 'static 'continue-point
+                           :continues '(
+                            (new 'static 'continue-point
+                                              :name "block-world-warp"
+                                              :level 'training
+                                              :flags (continue-flags warp game-start)
+                                              :trans (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0)
+                                              :quat (new 'static 'quaternion  :w 1.0)
+                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
+                                              :camera-rot (new 'static 'array float 9 -0.0254 0.0000 -0.9996 0.1213 0.9926 -0.0030 0.9922 -0.1213 -0.0252)
+                                              :load-commands '(
+                                                )
+                                              :vis-nick 'none
+                                              :lev0 'block-world
+                                              :disp0 'display
+                                              :lev1 'village1
+                                              :disp1 'display
+                                              )
+                            (new 'static 'continue-point
                                              :name "block-world-start"
                                              :level 'block-world
                                              ;;:flags (continue-flags warp)
@@ -2809,6 +2826,50 @@
                            :wait-for-load #t
                            )
         )
+  
+  ;;Start title/loading screens
+  ;;Title screen
+(define mort-title (new 'static 'level-load-info
+                           :index 41
+                           :name 'mort-title
+                           :visname 'mort-title-vis ;; name + -vis
+                           :nickname 'mti          ;; nickname
+                           
+                           :packages '()
+                           :sound-banks '()
+                           :music-bank #f
+                           :ambient-sounds '()
+                           :mood '*training-mood*
+                           :mood-func 'update-mood-training
+                           :ocean #f
+                           :sky #t
+                           :sun-fade 1.0
+                           :continues '((new 'static 'continue-point
+                                             :name "mort-title-start"
+                                             :level 'mort-title
+                                             ;;:flags (continue-flags warp)
+                                             :trans (new 'static 'vector :x -0.00 :y  2.00 :z -0.62 :w 1.0)
+                                             :quat (new 'static 'quaternion  :w 1.0)
+                                             :camera-trans (new 'static 'vector :x 0.7389 :y 5.4833 :z 9.3438 :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 -0.00 0.0000 0.0000 -0.0 0.0000 -0.000 -0.000 -0.000 -1.0)
+                                             :load-commands '()
+                                             :vis-nick 'none
+                                             :lev0 'mort-title
+                                             :disp0 'display
+                                             :lev1 'village1
+                                             :disp1 '#f
+                                             ))
+                           :tasks '()
+                           :priority 100
+                           :load-commands '()
+                           :alt-load-commands '()
+                           :bsp-mask #xffffffffffffffff
+                           :bsphere (new 'static 'sphere :w 167772160000.0)
+                           :bottom-height (meters -20)
+                           :run-packages '()
+                           :wait-for-load #t
+                           )
+        )
 
 
 (cons! *level-load-list* 'test-zone)
@@ -2831,6 +2892,9 @@
 (cons! *level-load-list* 'holly-wood)
 (cons! *level-load-list* 'factory-cross)
 (cons! *level-load-list* 'block-world)
+
+;;title and loading screens
+(cons! *level-load-list* 'mort-title)
 
                                              #|"block-world-start"
                                              "factory-cross-start"

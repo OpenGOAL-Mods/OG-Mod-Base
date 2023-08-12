@@ -84,7 +84,10 @@
        v0-0
        )
       (('continue)
+      ;;Mod base dont warp if we are currently in a warp.
+      (if (!= (-> *target* state name) 'target-continue)
        (go target-continue (the-as continue-point (-> arg3 param 0)))
+      )
        )
       (('query)
        (case (-> arg3 param 0)

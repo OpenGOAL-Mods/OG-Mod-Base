@@ -1,6 +1,6 @@
 ;;-*-Lisp-*-
 (in-package goal)
-
+(define-extern *in-mort-menu* symbol)
 ;; name: main.gc
 ;; name in dgo: main
 ;; dgos: GAME, ENGINE
@@ -177,6 +177,9 @@
 
 (defun toggle-pause ()
   "Do pause/menu/progress transitions"
+
+
+
   (case *master-mode*
     (('game)
      ;; coming from normal gameplay
@@ -228,6 +231,16 @@
 
                  ;; pushing start.
                  ((cpad-hold? 0 start)
+                 ;;Tagmort This is where the game checks for pause, we can hijack here and have different results based on level etc
+                     (if (= (-> (level-get-target-inside *level*)name) 'mort-title)
+                        (begin
+                        (set! *in-mort-menu* #f)
+                        ;; replace with mort menu eventually
+                        (sound-play "select-menu")
+                        (send-event *target* 'continue (get-continue-by-name *game-info* "block-world-start"))
+                        (return 0)
+                        )
+                        )
                   ;; toggle between progress/game
                   (if *progress-process*
                       'game

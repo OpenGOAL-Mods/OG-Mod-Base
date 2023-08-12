@@ -7,7 +7,7 @@
 #include <chrono>
 #include <SFML/Audio.hpp>
 #include <SFML/Audio/Music.hpp>
-
+#include <vector>
 
 #include "common/global_profiler/GlobalProfiler.h"
 #include "common/log/log.h"
@@ -112,34 +112,67 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
 
 
 
+
+// Define a vector to store references to the active music instances.
+std::vector<std::pair<sf::Music*, std::string>> activeMusics;
+
+// Function to stop all currently playing sounds.
+void stopAllSounds()
+{
+    for (auto& pair : activeMusics)
+    {
+        pair.first->stop();
+    }
+    activeMusics.clear();
+}
+
+// Function to get the names of currently playing files.
+std::vector<std::string> getPlayingFileNames()
+{
+    std::vector<std::string> playingFileNames;
+    for (const auto& pair : activeMusics)
+    {
+        playingFileNames.push_back(pair.second);
+    }
+    return playingFileNames;
+}
+
+// Function to play an MP3 file.
 void playMP3(u32 filePathu32, u32 volume)
 {
- 
-
     // Spawn a new thread to play the music.
     std::thread thread([=]() {
-    std::string filePath = Ptr<String>(filePathu32).c()->data();
-    std::cout << "Playing MP3: " << filePath << std::endl;
+        std::string filePath = Ptr<String>(filePathu32).c()->data();
+        std::cout << "Playing MP3: " << filePath << std::endl;
 
-    sf::Music music;
-    if (!music.openFromFile(filePath))
-    {
-        std::cout << "Failed to load: " << filePath << std::endl;
-        return;
-    }
-        music.setVolume(volume);
-        music.play();
-        while (music.getStatus() == sf::Music::Playing)
+        sf::Music* music = new sf::Music;
+        if (!music->openFromFile(filePath))
+        {
+            std::cout << "Failed to load: " << filePath << std::endl;
+            delete music;
+            return;
+        }
+        music->setVolume(volume);
+        music->play();
+
+        // Add the music instance and its file name to the active list.
+        activeMusics.push_back(std::make_pair(music, filePath));
+
+        while (music->getStatus() == sf::Music::Playing)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 
-        music.stop();
+        // Remove the music instance from the active list and clean up.
+        activeMusics.erase(std::remove_if(activeMusics.begin(), activeMusics.end(),
+            [music](const auto& pair) { return pair.first == music; }), activeMusics.end());
+        delete music;
     });
 
     // Detach the thread so it can run independently.
     thread.detach();
 }
+
 
 // void playMP3(u32 filePathu32, u32 volume)
 // {

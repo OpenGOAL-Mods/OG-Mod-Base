@@ -1305,6 +1305,237 @@
   (none)
   )
 
+;;CUSTOM MONEY
+(deftype star (eco-collectable)
+  ()
+  :heap-base #x130
+  :method-count-assert 31
+  :size-assert         #x194
+  :flag-assert         #x1f01300194
+  )
+
+
+(defmethod run-logic? star ((obj star))
+  (or (zero? (logand (-> obj mask) (process-mask actor-pause)))
+      (or (and (nonzero? (-> obj draw))
+               (logtest? (-> obj draw status) (draw-status was-drawn))
+               (>= (+ (-> *ACTOR-bank* pause-dist) (-> obj root-override pause-adjust-distance))
+                   (vector-vector-distance (-> obj root-override trans) (math-camera-pos))
+                   )
+               )
+          (and (nonzero? (-> obj skel)) (!= (-> obj skel root-channel 0) (-> obj skel channel)))
+          (and (nonzero? (-> obj draw)) (logtest? (-> obj draw status) (draw-status no-skeleton-update)))
+          )
+      )
+  )
+
+(defmethod deactivate star ((obj star))
+  (when (= (-> obj next-state name) 'pickup)
+    (if (not (and (-> obj entity) (logtest? (-> obj entity extra perm status) (entity-perm-status dead))))
+        (format #t "star ~A was killed in pickup~%")
+        )
+    (process-entity-status! obj (entity-perm-status dead) #t)
+    )
+  ((method-of-type eco-collectable deactivate) obj)
+  (none)
+  )
+
+(defstate wait (star)
+  :virtual #t
+  :code (behavior ()
+    (loop
+      (quaternion-rotate-y!
+        (-> self root-override quat)
+        (-> self root-override quat)
+        (* 40049.777 (-> *display* seconds-per-frame))
+        )
+      (let ((f30-0 (-> self bob-amount)))
+        (when (< 0.0 f30-0)
+          (set! (-> self root-override trans y)
+                (+ (-> self base y)
+                   (-> self suck-y-offset)
+                   (* f30-0
+                      (sin
+                        (* 109.22667
+                           (the float (mod (+ (- (-> *display* base-frame-counter) (-> self birth-time)) (-> self bob-offset)) (seconds 2)))
+                           )
+                        )
+                      )
+                   )
+                )
+          (update-transforms! (-> self root-override))
+          )
+        )
+      (ja-post)
+      ;; added! particle
+      (with-pc
+        (if (-> *pc-settings* money-starburst?)
+      (spawn (-> self part) (-> self root-override root-prim world-sphere))))
+      (suspend)
+      )
+    (none)
+    )
+  )
+
+(defstate notice-blue (star)
+  :virtual #t
+  :code (behavior ((arg0 handle))
+    (loop
+      (quaternion-rotate-y!
+        (-> self root-override quat)
+        (-> self root-override quat)
+        (* 91022.22 (-> *display* seconds-per-frame))
+        )
+      (set! (-> self root-override trans quad) (-> self base quad))
+      (add-blue-motion #t #t #t #f)
+      (let ((f30-0 (-> self bob-amount)))
+        (if (< 0.0 f30-0)
+            (set! (-> self root-override trans y)
+                  (+ (-> self base y)
+                     (-> self suck-y-offset)
+                     (* f30-0
+                        (sin
+                          (* 109.22667
+                             (the float (mod (+ (- (-> *display* base-frame-counter) (-> self birth-time)) (-> self bob-offset)) (seconds 2)))
+                             )
+                          )
+                        )
+                     )
+                  )
+            )
+        )
+      (transform-post)
+      ;; added! particle
+      (with-pc
+        (if (-> *pc-settings* money-starburst?)
+      (spawn (-> self part) (-> self root-override root-prim world-sphere))))
+      (suspend)
+      )
+    (none)
+    )
+  )
+
+(defstate pickup (star)
+  :virtual #t
+  :code (behavior ((arg0 object) (arg1 handle))
+    (if (nonzero? (-> self part))
+        (kill-and-free-particles (-> self part))
+        )
+    (logclear! (-> self mask) (process-mask actor-pause))
+    (clear-collide-with-as (-> self root-override))
+    (process-entity-status! self (entity-perm-status dead) #t)
+    ;;(set! (-> *game-info* money) (+ (-> *game-info* money) 5.0))
+
+    (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* money))))
+
+    (none)
+    )
+  )
+
+(defmethod initialize star ((obj star))
+  (stack-size-set! (-> obj main-thread) 192) ;; hack increased from 128
+  (let ((s5-0 (new 'process 'collide-shape-moving obj (collide-list-enum hit-by-player))))
+    (set! (-> s5-0 dynam) (copy *standard-dynamics* 'process))
+    (set! (-> s5-0 reaction) default-collision-reaction)
+    (set! (-> s5-0 no-reaction)
+          (the-as (function collide-shape-moving collide-shape-intersect vector vector none) nothing)
+          )
+    (let ((s4-0 (new 'process 'collide-shape-prim-sphere s5-0 (the-as uint 0))))
+      (set! (-> s4-0 prim-core collide-as) (collide-kind powerup blue-eco-suck))
+      (set! (-> s4-0 collide-with) (collide-kind target))
+      (set-vector! (-> s4-0 local-sphere) 0.0 2048.0 0.0 4915.2)
+      (set-root-prim! s5-0 s4-0)
+      )
+    (set! (-> s5-0 nav-radius) (* 0.75 (-> s5-0 root-prim local-sphere w)))
+    (backup-collide-with-as s5-0)
+    (set! (-> obj root-override) s5-0)
+    )
+  (logior! (-> obj mask) (process-mask actor-pause))
+  (set! (-> obj actor-pause) #t)
+  (set! (-> obj notify-parent) #f)
+  (set! (-> obj fact) (new 'process 'fact-info obj (pickup-type star) (the-as float 1.0)))
+  (let ((a0-10 (-> obj entity)))
+    (if (when a0-10
+          (let ((a0-11 (-> a0-10 extra perm task)))
+            (if a0-11
+                (= a0-11 (game-task none))
+                )
+            )
+          )
+        (set! (-> obj entity extra perm task) (game-task complete))
+        )
+    )
+  (initialize-skeleton obj *money-sg* '())
+  (if (-> obj entity)
+      (nav-mesh-connect obj (-> obj root-override) (the-as nav-control #f))
+      )
+  (set-vector! (-> obj draw color-mult) 0.8 0.8 0.8 1.0)
+  (set-vector! (-> obj draw color-emissive) 0.2 0.2 0.2 1.0)
+  ;; added! money starburst
+  (set! (-> obj part) (create-launch-control (-> *part-group-id-table* 64) obj))
+  (set! (-> obj draw color-mult x) 10.0)
+  (set! (-> obj draw color-mult y) 10.0)
+  (set! (-> obj draw color-mult z) 0.0)
+  (set! (-> obj pickup-amount) 5.0)
+  obj
+  )
+
+(defmethod init-from-entity! star ((obj star) (arg0 entity-actor))
+  (initialize obj)
+  (process-drawable-from-entity! obj (-> obj entity))
+  (initialize-params obj 0 (the-as float 1024.0))
+  (update-transforms! (-> obj root-override))
+  (go (method-of-object obj wait))
+  (none)
+  )
+
+(defbehavior star-init-by-other star ((arg0 vector) (arg1 vector) (arg2 fact-info) (arg3 entity-actor))
+  (let ((s3-0 (-> arg2 pickup-type))
+        (f30-0 (-> arg2 pickup-spawn-amount))
+        )
+    (set! (-> self entity) arg3)
+    (set! (-> self pickup-type) s3-0)
+    (set! (-> self pickup-amount) f30-0)
+    (initialize self)
+    (set! (-> self fact pickup-type) s3-0)
+    (set! (-> self fact pickup-amount) f30-0)
+    )
+  (set! (-> self fact options) (-> arg2 options))
+  (set! (-> self notify-parent) #t)
+  (set! (-> self root-override trans quad) (-> arg0 quad))
+  (quaternion-identity! (-> self root-override quat))
+  (vector-identity! (-> self root-override scale))
+  (set! (-> self root-override transv quad) (-> arg1 quad))
+  (initialize-params self (seconds 15) (the-as float 1024.0))
+  (update-transforms! (-> self root-override))
+  (set! (-> self event-hook) (-> (method-of-object self wait) event))
+  (go-virtual wait)
+  (none)
+  )
+
+(defbehavior star-init-by-other-no-bob star ((arg0 vector) (arg1 vector) (arg2 fact-info) (arg3 float) (arg4 entity-actor))
+  (set! (-> self entity) arg4)
+  (set! (-> self pickup-type) (the-as pickup-type arg2))
+  (set! (-> self pickup-amount) arg3)
+  (initialize self)
+  (set! (-> self fact pickup-type) (the-as pickup-type arg2))
+  (set! (-> self fact pickup-amount) arg3)
+  (set! (-> self notify-parent) #t)
+  (set! (-> self root-override trans quad) (-> arg0 quad))
+  (quaternion-identity! (-> self root-override quat))
+  (vector-identity! (-> self root-override scale))
+  (set! (-> self root-override transv quad) (-> arg1 quad))
+  (initialize-params self (seconds 15) (the-as float 0.0))
+  (logior! (-> self flags) (collectable-flags ignore-blue))
+  (update-transforms! (-> self root-override))
+  (set! (-> self event-hook) (-> (method-of-object self wait) event))
+  (go-virtual wait)
+  (none)
+  )
+
+
+  ;;END CUSTOM MONEY
+
 (define *fuel-cell-tune-pos* (new 'static 'vector :w 1000000000.0))
 
 (deftype fuel-cell (eco-collectable)
@@ -1596,15 +1827,17 @@
       )
     (none)
     )
-  :code (behavior ((arg0 object) (arg1 handle))
+   :code (behavior ((arg0 object) (arg1 handle))
     (local-vars (sv-96 res-tag))
     (sound-play "pu-powercell")
-    (runs-on-cell-pickup 'pickup)
     (clear-collide-with-as (-> self root-override))
     (logclear! (-> self mask) (process-mask actor-pause))
     (logclear! (-> self draw status) (draw-status hidden))
     (process-entity-status! self (entity-perm-status dead) #t)
     (stop! (-> self sound))
+    (if #f
+
+    (begin
     (while (handle->process (-> *game-info* other-camera-handle))
       (format
         #t
@@ -1662,7 +1895,13 @@
         )
       )
     (spool-push *art-control* (-> self victory-anim name) 0 self (the-as float -99.0))
+  )
+)
+    
     (send-event *target* 'get-pickup (-> self fact pickup-type) (-> self fact pickup-amount))
+    (if 
+    #f
+    (begin
     (set! (-> self draw bounds w) 32768.0)
     (logior! (-> self skel status) (janim-status inited))
     (send-event *target* 'blend-shape #t)
@@ -1670,23 +1909,39 @@
     (add-setting! 'sfx-volume 'rel (-> *setting-control* current sfx-volume-movie) 0)
     (add-setting! 'ambient-volume 'rel (-> *setting-control* current ambient-volume-movie) 0)
     (process-spawn othercam self 10 #f #t :to self)
+    ))
+   
     (auto-save-command 'auto-save 0 0 *default-pool*)
-    (ja-play-spooled-anim
-      (-> self victory-anim)
-      (the-as art-joint-anim (-> self draw art-group data 2))
-      (the-as art-joint-anim #f)
-      (the-as (function process-drawable symbol) false-func)
-      )
+
+    ;; play powercell animation if randomizer disabled
+    (if 
+     #f
+      (begin
+          (ja-play-spooled-anim
+        (-> self victory-anim)
+        (the-as art-joint-anim (-> self draw art-group data 2))
+        (the-as art-joint-anim #f)
+        (the-as (function process-drawable symbol) false-func)
+        )))
+
+
+ (begin
+   (send-event *target* 'end-mode)
+ )
+
+ 
+  
+
     (remove-setting! 'music-volume)
     (remove-setting! 'sfx-volume)
     (remove-setting! 'ambient-volume)
     (send-event *target* 'blend-shape #f)
-    (send-event *target* 'end-mode)
     (send-event *camera* 'no-intro)
     (send-event *camera* 'clear-entity)
     (ja-channel-set! 0)
     (suspend)
     (suspend)
+
     (process-spawn-function
       process
       (lambda :behavior collectable

@@ -20,10 +20,82 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Begin function defintions.
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
+    
 
+
+
+(defun-debug cam-restore ()
+ ;;this function is a hack, don't use it as an example
+ (let ((pos (new 'stack 'vector))
+       (rot (new 'stack 'matrix)))
+  (set! (-> pos x)       0.0000)
+  (set! (-> pos y)    13926.0)
+  (set! (-> pos z)      -0.0)
+  (set! (-> pos w) 1.0)
+  (set! (-> rot data  0)      -0.0000)
+  (set! (-> rot data  1)       0.0000)
+  (set! (-> rot data  2)       0.0000)
+  (set! (-> rot data  3)       0.0000)
+  (set! (-> rot data  4)       0.0000)
+  (set! (-> rot data  5)       0.000)
+  (set! (-> rot data  6)      0.000)
+  (set! (-> rot data  7)       0.0000)
+  (set! (-> rot data  8)       0.0000)
+  (set! (-> rot data  9)      0.000)
+  (set! (-> rot data 10)      0.00)
+  (set! (-> rot data 11)       0.0000)
+  (set! (-> rot data 12)       0.0000)
+  (set! (-> rot data 13)       0.0000)
+  (set! (-> rot data 14)       0.0000)
+  (set! (-> rot data 15)       1.0000)
+  ;; euler angles (xyz order degrees) x 171.5126 y -0.0000 z -180.0000
+  ;; MAYA euler angles (xyz order degrees) x 171.5126 y 180.0000 z -180.0000
+  (debug-set-camera-pos-rot! pos rot)
+#f
+  )
+ )
+
+    ;;When this is true, it will apply all the hacks we need to fake a menu/loading screen
+
+    (define *in-mort-menu* #f)
+    
+  
+  (defun mort-main-menu ()
+    (if *in-mort-menu*
+      (begin
+      ;;If we arent in hub 3 warp there.
+        (if (and  (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
+          (send-event *target* 'continue (get-continue-by-name *game-info* "mort-title-start"))
+          )
+
+        (if (and  (= (-> (level-get-target-inside *level*)name ) 'mort-title) (!= (-> *target* root trans y) (meters 1)))
+          (set! (-> *target* root trans y) (meters 1))
+          )
+
+        ;;if we arent in cam-eye switch to cam-eye
+        (if (and (!= (-> (-> (the-as (pointer camera-slave) (-> *camera* child) ))state name) 'cam-eye))
+          (begin
+            (send-event *camera* 'change-state  cam-eye *dm-cam-mode-interpolation*)
+          )
+        )
+        ;;do the invisible hacks
+        (if (!=  (-> *target* draw status) (draw-status hidden))
+          (begin
+            (set! (-> *target* draw status) (draw-status hidden))
+            (send-event *target* 'sidekick #f)
+          )
+        )
+      )
+      (none)
+    )
+  )
     (defun runs-every-frame ()
       ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
       
+
+      (mort-main-menu)
+
+
       (if *show-input-display* 
         (input-display-on)
         (input-display-off)

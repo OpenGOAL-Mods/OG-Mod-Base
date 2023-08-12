@@ -260,7 +260,36 @@
     (none)
     )
   :code (behavior ()
-    (local-vars (sv-112 int) (sv-128 int) (sv-144 int))
+      #|
+    Had to move this here, because if you make all actors always visible (like in a custom level), and you load saved game into such a level, the warp gate is initialized before the task statuses are loaded.
+    So we instead set the "max-slot" when a warp gate's menu is activated by the player. By this time, the task statuses are surely loaded.
+    |#
+    (set! (-> self max-slot) (cond
+    ;;replace training-gimmie with button task
+                            ((or (task-closed? (game-task finalboss-movies) (task-status need-reminder)) (task-closed? (game-task training-gimmie) (task-status need-hint)))
+                            5
+                            )
+                            ((task-closed? (game-task village4-button) (task-status need-hint))
+                            4
+                            )
+                            ((task-closed? (game-task village3-button) (task-status need-hint))
+                            3
+                            )
+                            ((task-closed? (game-task village2-levitator) (task-status need-hint))
+                            2
+                            )
+                            (else
+                              1
+                              )
+                            )
+          )
+    (if (= *cheat-mode* 'debug)
+          (set! (-> self max-slot) (- (-> *warp-info* length) 1)) ;; We still want to have a way to show all options, so we just let it happen if cheat mode is set to debug
+        )
+    (format 0 "SELF MAX-SLOT: ~D~%" (-> self max-slot))
+
+    (local-vars (sv-112 int) (sv-128 int) (sv-144 int))    
+
     (let ((gp-0 (get-next-slot-up self (+ (-> self level-slot) -1))))
       0
       (let ((s5-0 #f)
@@ -427,12 +456,16 @@
                                  ((or (= v1-11 'citadel) (= v1-11 'lavatube))
                                   4
                                   )
+                                  ((= v1-11 'block-world) 
+                                  5
+                                  )
                                  (else
                                    -1
                                    )
                                  )
           )
     )
+  (format 0 "SELF LEVEL-SLOT: ~D~%" (-> self level-slot))
   (set! (-> self max-slot) (cond
                              ((task-closed? (game-task village4-button) (task-status need-hint))
                               4

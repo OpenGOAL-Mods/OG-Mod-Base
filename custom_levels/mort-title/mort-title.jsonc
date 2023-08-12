@@ -1,0 +1,35 @@
+{
+  // The "in-game" name of the level. Should be lower case, with dashes (GOAL symbol name)
+  // the name of this file, and the folder this file is in must have the same name.
+  "long_name": "mort-title",
+  // The file name, should be upper case and 8 characters or less.
+  "iso_name": "MTITLE",
+  // The nickname, should be exactly 3 characters
+  "nickname": "MTI", // 3 char name, all uppercase
+
+  // Background mesh file.
+  // Must have vertex colors. Use the blender cycles renderer, bake, diffuse, uncheck color,
+  // and bake to vertex colors. For now, only the first vertex color group is used, so make sure you
+  // only have 1.gate
+  "gltf_file": "custom_levels/mort-title/test-zone2.glb",
+  "automatic_wall_detection": true,
+  "automatic_wall_angle": 45.0,
+
+  // if your mesh has triangles with incorrect orientation, set this to make all collision mesh triangles double sided
+  // this makes collision 2x slower and bigger, so only use if really needed
+  "double_sided_collide": false,
+  "base_id": 1000324324000,"ambients": [],
+
+  "actors" : [
+    {
+      "trans": [-55435.4630, 175435435.4553, 1543543543.6169],
+      "etype": "eco-yellow",  
+      "game_task": 0, 
+      "quat" : [0, 0, 0, 1], 
+      "bsphere": [-5.4630, 17.4553, 1.6169, 10], 
+      "lump": {
+        "name":"block-world-eco-what-is-this"
+      }
+    }
+  ]
+}
