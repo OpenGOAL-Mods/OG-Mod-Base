@@ -54,12 +54,69 @@
 #f
   )
  )
+(defun mort-debug-text ()
+ ;;mort debugging
+    (if *cheat-mode*
+      (when (and (-> *pc-settings* speedrunner-mode?)
+             (not (paused?))
+            
+             (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
+    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
+                                      (bucket-id subtitle))
+      (draw-string-xy (string-format "Mort Debug info ~%Level inside: ~D ~% Current Chicks is is ~D~%"
+                                     (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))
+                                      3
+                                     )
+                      buf 300 (- 220 (* 8 4)) (font-color flat-yellow) (font-flags shadow kerning))))
+    
+    )
+(none)
+)
+
 
     ;;When this is true, it will apply all the hacks we need to fake a menu/loading screen
 
     (define *in-mort-menu* #f)
+    (define *sphere-color* (new 'static 'rgba :r #xff :g #xff :b #xff :a #x80))
+    (set! *sphere-color* *color-white*)
+
+    (define current-chicks-num 3)
+    (defun draw-chick-location ()
+    (dotimes (i 32)
+ 
+ 
+    (if (> (/ (vector-vector-distance  (-> *camera*  target-spline point i position) (-> *target* root trans))40964) 1.0)
+    (set! *sphere-color* *color-red*)
+    )
+
+    (if (and (= *sphere-color* *color-white*)(< (/ (vector-vector-distance  (-> *camera*  target-spline point i position) (-> *target* root trans))40964) 0.27))
+    (set! *sphere-color* *color-red*)
+    )
+
+    ;;mark all as valid
+    (if (= *sphere-color* *color-white*)
+    (set! *sphere-color* *color-yellow*)
+    )
+    (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.2) *sphere-color*) 
+    (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) (-> *camera*  target-spline point i position)  (font-color red) (the-as vector2h #f) )
+    (set! *sphere-color* *color-white*)
+    )
     
-  
+
+    
+    (none))
+
+
+    (defun cam-eye-no-rot ()
+      (if (or #f (= (-> (level-get-target-inside *level*)name ) 'mort-title))
+        (set! (-> *CAM_EYE-bank* rot-speed) 0.0)
+       (set! (-> *CAM_EYE-bank* rot-speed) 364.0889)
+      )
+    (none)
+    )
+
+  ;;(-> *camera*  target-spline point 3 position)
+
   (defun mort-main-menu ()
     (if *in-mort-menu*
       (begin
@@ -92,10 +149,10 @@
     (defun runs-every-frame ()
       ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
       
-
+      (cam-eye-no-rot)
       (mort-main-menu)
-
-
+      (mort-debug-text)
+      ;;(draw-chick-location)
       (if *show-input-display* 
         (input-display-on)
         (input-display-off)

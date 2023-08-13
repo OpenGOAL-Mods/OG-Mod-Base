@@ -455,4 +455,5 @@
                                      (enum->string speedrun-category (-> *speedrun-info* category))
                                      (-> *pc-settings* skip-movies?))
                       buf 0 (- 220 (* 8 4)) (font-color flat-yellow) (font-flags shadow kerning))))
+
   (none))
