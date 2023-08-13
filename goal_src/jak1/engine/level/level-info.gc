@@ -2833,8 +2833,7 @@
                            :index 41
                            :name 'mort-title
                            :visname 'mort-title-vis ;; name + -vis
-                           :nickname 'mti          ;; nickname
-                           
+                           :nickname 'mti       ;; nickname
                            :packages '()
                            :sound-banks '()
                            :music-bank #f
@@ -2857,7 +2856,7 @@
                                              :lev0 'mort-title
                                              :disp0 'display
                                              :lev1 'village1
-                                             :disp1 '#f
+                                             :disp1 'display
                                              ))
                            :tasks '()
                            :priority 100

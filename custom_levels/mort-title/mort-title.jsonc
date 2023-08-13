@@ -5,7 +5,7 @@
   // The file name, should be upper case and 8 characters or less.
   "iso_name": "MTITLE",
   // The nickname, should be exactly 3 characters
-  "nickname": "MTI", // 3 char name, all uppercase
+  "nickname": "mti", // 3 char name, all uppercase
 
   // Background mesh file.
   // Must have vertex colors. Use the blender cycles renderer, bake, diffuse, uncheck color,
@@ -18,18 +18,10 @@
   // if your mesh has triangles with incorrect orientation, set this to make all collision mesh triangles double sided
   // this makes collision 2x slower and bigger, so only use if really needed
   "double_sided_collide": false,
-  "base_id": 1000324324000,"ambients": [],
+  "base_id": 1000324324000,
+  "ambients": [],
 
   "actors" : [
-    {
-      "trans": [-55435.4630, 175435435.4553, 1543543543.6169],
-      "etype": "eco-yellow",  
-      "game_task": 0, 
-      "quat" : [0, 0, 0, 1], 
-      "bsphere": [-5.4630, 17.4553, 1.6169, 10], 
-      "lump": {
-        "name":"block-world-eco-what-is-this"
-      }
-    }
+
   ]
 }

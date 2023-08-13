@@ -443,6 +443,7 @@
          (close-specific-task! (the-as game-task s5-1) (task-status need-resolution))
          )
        )
+      
      (-> obj fuel)
      )
     (('buzzer)
