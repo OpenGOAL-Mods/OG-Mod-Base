@@ -409,7 +409,7 @@
             (set-continue! *game-info* "village3-start")
             )
             ((string= (-> arg0 name) "block-world-warp")
-             (set! (-> s5-6 quad) (-> (entity-by-name "yos-training-part-1") extra trans quad))
+             (set! (-> s5-6 quad) (-> (entity-by-name "block-world-training-part-1") extra trans quad))
              (set-continue! *game-info* "block-world-start")
             )
            ((string= (-> arg0 name) "citadel-warp")
