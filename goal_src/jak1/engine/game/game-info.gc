@@ -364,7 +364,7 @@
            ;; we have task data for this level!
            (when (>= (-> *level-task-data-remap* length) (-> proc entity extra level info index))
              ;; get the level index
-             (let ((level-idx (-> *level-task-data-remap* (+ (-> proc entity extra level info index) -1))))
+             (let ((level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))))
                ;; increment the level money count
                (+! (-> obj money-per-level level-idx) (the int amount))
                ;; increment our total money in the game (out of the 2000 max orbs)
@@ -378,6 +378,10 @@
            )
          )
        )
+
+
+
+
 
      ;; increment our current money count
      (+! (-> obj money) amount)

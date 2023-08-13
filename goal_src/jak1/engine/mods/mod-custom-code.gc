@@ -54,6 +54,20 @@
 #f
   )
  )
+(define *close-to-portal?* #f)
+
+(defun check-portal-distance ()
+ (cond
+              ((< (vector-vector-distance (-> *target* root trans) (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans)) (meters 12))
+                (set! *close-to-portal?* #t)
+               )
+              (else
+              (set! *close-to-portal?* #f)
+                )
+              )
+
+(none)
+)
 (defun mort-debug-text ()
  ;;mort debugging
     (if *cheat-mode*
@@ -63,9 +77,10 @@
              (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
                                       (bucket-id subtitle))
-      (draw-string-xy (string-format "Mort Debug info ~%Level inside: ~D ~% Current Chicks is is ~D~%"
+      (draw-string-xy (string-format "Mort Debug info ~%Level inside: ~D ~% Current Chicks is is ~D~% Close to portal? ~A~%"
                                      (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))
-                                      3
+                                      25;;(length (-> *game-info* hint-control))
+                                      *close-to-portal?*
                                      )
                       buf 300 (- 220 (* 8 4)) (font-color flat-yellow) (font-flags shadow kerning))))
     
@@ -146,10 +161,49 @@
       (none)
     )
   )
+
+
+  (defun on-foot? ()
+  (not (or 
+        (logtest? (-> *target* control root-prim prim-core action) (collide-action racer)) 
+        (logtest? (-> *target* control root-prim prim-core action) (collide-action flut)))
+  )
+)
+
+(defun on-flut? ()
+(logtest? (-> *target* control root-prim prim-core action) (collide-action flut)) 
+)
+
+(defun on-racer? ()
+(logtest? (-> *target* control root-prim prim-core action) (collide-action racer)) 
+)
+
+  ;; (let (ignore-flags 0) ;; Default the ignore flags to 0
+  ;;   (if (logtest? (-> arg0 flags) (load-boundary-flags ignore-normal)) ;; Check if the boundary has ignore-normal flag
+  ;;     (if (not (logtest? (-> *target* control root-prim prim-core action) (collide-action racer))) ;; Check if you're NOT on the zoomer
+  ;;       (if (not (logtest? (-> *target* control root-prim prim-core action) (collide-action flut))) ;; Check if you're NOT on flutflut
+  ;;       (set! ignore-flags 1) ;; set the ignore flag to 1 if the flag is present and you're on foot
+  ;;       )
+  ;;     )
+  ;;   )
+  ;;   (if (logtest? (-> arg0 flags) (load-boundary-flags ignore-racing)) ;; Check if the boundary has ignore-racing flag
+  ;;     (if (logtest? (-> *target* control root-prim prim-core action) (collide-action racer)) ;; Check if you're on the zoomer
+  ;;       (set! ignore-flags 1) ;; set the ignore flag to 1 if both are true
+  ;;     )
+  ;;   )
+  ;;   (if (logtest? (-> arg0 flags) (load-boundary-flags ignore-flut)) ;; Check if the boundary has ignore-flut flag
+  ;;     (if (logtest? (-> *target* control root-prim prim-core action) (collide-action flut)) ;; Check if you're on flutflut
+  ;;       (set! ignore-flags 1) ;; set the ignore flag to 1 if both are true
+  ;;     )
+  ;;   )
+  ;; )
+
+  
     (defun runs-every-frame ()
       ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
       
       (cam-eye-no-rot)
+      (check-portal-distance)
       (mort-main-menu)
       (mort-debug-text)
       ;;(draw-chick-location)
