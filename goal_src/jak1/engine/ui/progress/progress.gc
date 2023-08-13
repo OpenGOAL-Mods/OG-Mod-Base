@@ -717,8 +717,12 @@
   (if (or (= (-> *game-counts* data i money-count) 0) (> (-> *game-counts* data i money-count) 300) (= (-> *game-counts* data i money-count) #f))
   (set! (-> *game-counts* data i money-count) i)
   )
-  ;;(set! (-> *game-counts* data i buzzer-count) i)
+  (if (or (= (-> *game-counts* data i buzzer-count) 0) (> (-> *game-counts* data i buzzer-count) 300) (= (-> *game-counts* data i buzzer-count) #f))
+  (set! (-> *game-counts* data i buzzer-count) i)
   )
+  )
+
+
   obj
   )
 
