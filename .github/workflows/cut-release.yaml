@@ -1,0 +1,32 @@
+name: 🏭 Cut Mod Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Semver Bump Type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+
+jobs:
+  cut_release:
+    name: "Cut Release"
+    uses: open-goal/mod-bundling-tools/.github/workflows/mod-bundler.yml@v1
+    with:
+      semverBump: ${{ inputs.bump }}
+      metadataName: "Test Mod Bundle"
+      metadataDescription: "This is a test mod bundle. 2"
+      metadataSupportedGames: "jak1"
+      metadataAuthors: "barg,vaser"
+      metadataTags: "rng,gameplay-mod"
+      metadataWebsiteUrl: "https://www.example.com/this/is/optional"
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
