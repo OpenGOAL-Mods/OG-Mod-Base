@@ -12,7 +12,7 @@
   "drill-elevator-ag.go"
   "drill-plat-falling-ag.go"
   "drill-bridge-shot-ag.go"
-  "warp-gate-ag.go"
+  "warpgate-ag.go"
   "drill-elevator-base-ag.go"
   "drill-wall-ag.go"
   "drill-metalhead-eggs-c-ag.go"

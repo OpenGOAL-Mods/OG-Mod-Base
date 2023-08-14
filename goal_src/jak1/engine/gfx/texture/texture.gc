@@ -2493,6 +2493,7 @@
   )
 
 (when (or (not *debug-segment*) PC_PORT)
+
   ;; when not debugging, use the "fast" logins. There's no way we can load a texture over the network anyway.
   (set! adgif-shader-login adgif-shader-login-fast)
   (set! adgif-shader-login-no-remap adgif-shader-login-no-remap-fast)

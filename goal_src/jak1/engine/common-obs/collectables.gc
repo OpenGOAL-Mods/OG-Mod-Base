@@ -1089,23 +1089,13 @@
               :texture-level 2
               )
 
-;; (defskelgroup *fuel-cell-sg* fuel-cell fuel-cell-lod0-jg fuel-cell-idle-ja
-;;               ((fuel-cell-lod0-mg (meters 999999)))
-;;               :bounds (static-spherem 0 1 0 1.6)
-;;               :texture-level 2
-;;               )
-
-;; (defskelgroup *fuel-cell-sg* fuel-cell fuel-cell-lod0-jg fuel-cell-idle-ja
-;;               ((fuel-cell-lod0-mg (meters 999999)))
-;;               :bounds (static-spherem 0 1 0 1.6)
-;;               :texture-level 2
-;;               )
-
-(defskelgroup *fuel-cell-sg* flut-saddle flut-saddle-lod0-jg flut-saddle-lod0-jg
-              ((flut-saddle-lod0-mg (meters 999999)))
+(defskelgroup *fuel-cell-sg* fuel-cell fuel-cell-lod0-jg fuel-cell-idle-ja
+              ((fuel-cell-lod0-mg (meters 999999)))
               :bounds (static-spherem 0 1 0 1.6)
               :texture-level 2
               )
+
+
 
 (deftype money (eco-collectable)
   ()
@@ -1223,6 +1213,8 @@
         (kill-and-free-particles (-> self part))
         )
     (logclear! (-> self mask) (process-mask actor-pause))
+
+
     (clear-collide-with-as (-> self root-override))
     (process-entity-status! self (entity-perm-status dead) #t)
     (runs-on-orb-pickup (ppointer->process (-> self parent)))  ;; trigger hook for mod base

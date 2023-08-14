@@ -37,7 +37,7 @@
   "lgconveyor-ag.go"
   "pitspikes-ag.go"
   "grunt-egg-b-ag.go"
-  "warp-gate-ag.go"
+  "warpgate-ag.go"
   "grunt-egg-a-ag.go"
   "grunt-egg-d-ag.go"
   "crane-ag.go"

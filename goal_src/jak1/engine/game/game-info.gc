@@ -225,7 +225,7 @@
                            "demo-start"
                            )
                           ((and *debug-segment* (not (string= startingDebugContinuePoint "village1-hut")))
-                            startingDebugContinuePoint
+                           " startingDebugContinuePoint"
                             )
                           (*debug-segment*
                             "village1-hut"

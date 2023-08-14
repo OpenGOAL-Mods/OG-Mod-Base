@@ -106,7 +106,7 @@
     (remove-setting! 'allow-progress)
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (loop
-     (when (and (and *target* (or *close-to-portal?* (>= 20480.0 (vector-vector-distance (-> self root trans) (-> *target* control trans)))))
+     (when (or (and (and *target*  (>= 20480.0 (vector-vector-distance (-> self root trans) (-> *target* control trans))))
                  (and (>= (-> self level-slot) 0)
                       (not (movie?))
                       (not (level-hint-displayed?))
@@ -121,6 +121,8 @@
                         (or (!= (-> self level-slot) 3) (and (< f0-1 -9102.223) (< -32768.0 f0-1)))
                         )
                       )
+                 )
+                 (and *close-to-portal?* (=  (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) state name)'idle))
                  )
         (hide-hud)
         (level-hint-surpress!)
@@ -249,7 +251,7 @@
   :virtual #t
   :enter (behavior ()
     (set-setting! 'allow-progress #f 0.0 0)
-      (set! (-> self max-slot) *number-unlock-lvl*)
+   
     (apply-settings *setting-control*)
     (sound-play "start-options")
     (set! (-> self state-time) (-> *display* base-frame-counter))
@@ -274,7 +276,7 @@
                (deg-diff (y-angle gp-1) (vector-y-angle (vector-! (new 'stack-no-clear 'vector) s4-0 (-> gp-1 trans))))
                )
              )
-               (set! (-> self max-slot) *number-unlock-lvl*)
+            
         (if (!= f0-0 0.0)
             (send-event
               *target*
@@ -282,7 +284,7 @@
               (fmax (fmin f0-0 (* 65536.0 (-> *display* seconds-per-frame))) (* -65536.0 (-> *display* seconds-per-frame)))
               )
             )
-              (set! (-> self max-slot) *number-unlock-lvl*)
+            
         )
       )
     (none)
@@ -294,9 +296,9 @@
     |#
     (set! (-> self max-slot) *number-unlock-lvl*)
           
-    ;; (if (= *cheat-mode* 'debug)
-    ;;       (set! (-> self max-slot) (- (-> *warp-info* length) 1)) ;; We still want to have a way to show all options, so we just let it happen if cheat mode is set to debug
-    ;;     )
+    (if (= *cheat-mode* 'debug)
+          (set! (-> self max-slot) (- (-> *warp-info* length) 1)) ;; We still want to have a way to show all options, so we just let it happen if cheat mode is set to debug
+        )
     (format 0 "SELF MAX-SLOT: ~D~%" (-> self max-slot))
 
     (local-vars (sv-112 int) (sv-128 int) (sv-144 int))    

@@ -23,7 +23,9 @@
     
 
 
-
+(dotimes (i 40)
+(set! (-> *custom-level-info* data i total-chicks) 1)
+)
 (set! (-> *custom-level-info* data 16 total-chicks) 6)
 (set! (-> *custom-level-info* data 17 total-chicks) 6)
 (set! (-> *custom-level-info* data 21 total-chicks) 10)
