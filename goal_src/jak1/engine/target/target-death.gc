@@ -410,6 +410,7 @@
             )
             ((string= (-> arg0 name) "block-world-warp")
              (set! (-> s5-6 quad) (-> (entity-by-name "block-world-training-part-1") extra trans quad))
+             (send-event *target* 'sidekick #t)
              (set-continue! *game-info* "block-world-start")
             )
            ((string= (-> arg0 name) "citadel-warp")

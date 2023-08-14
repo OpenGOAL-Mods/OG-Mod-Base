@@ -288,7 +288,7 @@
     
     ;; make sure we have room in the queue
     (when (= (-> v1-0 in-use) SPARTICLE_QUEUE_SIZE)
-      (format 0 "ERROR: sp-launch-particles called during processing, and queue is full~%")
+     (none);; (format 0 "ERROR: sp-launch-particles called during processing, and queue is full~%")
       (return 0)
       )
     

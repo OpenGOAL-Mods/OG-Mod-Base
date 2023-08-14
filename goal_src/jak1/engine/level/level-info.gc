@@ -1961,11 +1961,11 @@
                              lavatube
                              citadel
                              finalboss
-                             intro
-                             demo
-                             title
-                             halfpipe
-                             default-level
+                            ;;  intro
+                            ;;  demo
+                            ;;  title
+                            ;;  halfpipe
+                            ;;  default-level
                              )
         )
 
@@ -2856,7 +2856,7 @@
                                              :lev0 'mort-title
                                              :disp0 'display
                                              :lev1 'village1
-                                             :disp1 'display
+                                             :disp1 '#f
                                              ))
                            :tasks '()
                            :priority 100

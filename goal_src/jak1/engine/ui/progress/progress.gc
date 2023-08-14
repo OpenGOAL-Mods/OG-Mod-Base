@@ -705,6 +705,10 @@
 (set! (-> *game-counts* data 16 money-count) 55)
 
 
+(set! (-> *game-counts* data 21 money-count) 47)
+
+
+
 ;; (define block-world-load-level-id 22)
 ;; (define block-world-per-level-id 16)
 ;; (define block-world-num-chicks 3)

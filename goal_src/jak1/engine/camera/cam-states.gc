@@ -406,7 +406,7 @@
 
 ;; modified to not rotate.
 (define *CAM_EYE-bank*
-  (new 'static 'cam-eye-bank :rot-speed 0.0 :max-degrees 12743.111 :max-fov 11650.845 :min-fov 6189.511)
+  (new 'static 'cam-eye-bank :rot-speed 364.0889 :max-degrees 12743.111 :max-fov 11650.845 :min-fov 6189.511)
   )
 
 ;; main first-person camera

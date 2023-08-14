@@ -517,7 +517,8 @@
     ;; we add "training" to the list here so that the training warp gate waits until it's safe to
     ;; dispose the old code from memory.
     (case (-> self level)
-      (('citadel 'lavatube 'training 'block-world)
+    ;;Tagmort
+      (('citadel 'lavatube 'training 'block-world 'factory-cross)
        (while (and *target* (not (logtest? (-> *target* draw status) (draw-status hidden))))
          (suspend)
          )

@@ -193,7 +193,8 @@
 (coldpipe 32)
 (blockman 33)
 (cubeface 34)
-(max 35)
+(morttitle 35)
+(max 36)
 
   )
 
@@ -241,7 +242,7 @@
      ;; (level-task-data-index blockworld)
      ;; (level-task-data-index blockworld)
      ;; (level-task-data-index blockworld)
-(level-task-data-index factorycross)
+
 (level-task-data-index hollyworld)
 (level-task-data-index monument)
 (level-task-data-index cathederal)
@@ -259,9 +260,10 @@
 (level-task-data-index coldpipe)
 (level-task-data-index blockman)
 (level-task-data-index cubeface)
+ (level-task-data-index morttitle)
+;;     (level-task-data-index misty) ;; demo?
+;;     (level-task-data-index misty) ;; intro?
 
-    (level-task-data-index misty) ;; demo?
-    (level-task-data-index misty) ;; intro?
     )
   )
 

@@ -239,7 +239,8 @@
     ;;     )
     ;;   )
     ;; gp-0
-    (text-id citadel-generator-no-mushroom) ;;hack
+    ;;(text-id citadel-generator-no-mushroom) ;;hack
+    -1
     )
   )
 

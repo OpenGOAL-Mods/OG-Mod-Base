@@ -25,37 +25,13 @@
 
 
 (set! (-> *custom-level-info* data 16 total-chicks) 6)
+(set! (-> *custom-level-info* data 17 total-chicks) 6)
+(set! (-> *custom-level-info* data 21 total-chicks) 10)
 
-(defun-debug cam-restore ()
- ;;this function is a hack, don't use it as an example
- (let ((pos (new 'stack 'vector))
-       (rot (new 'stack 'matrix)))
-  (set! (-> pos x)       0.0000)
-  (set! (-> pos y)    13926.0)
-  (set! (-> pos z)      -0.0)
-  (set! (-> pos w) 1.0)
-  (set! (-> rot data  0)      -0.0000)
-  (set! (-> rot data  1)       0.0000)
-  (set! (-> rot data  2)       0.0000)
-  (set! (-> rot data  3)       0.0000)
-  (set! (-> rot data  4)       0.0000)
-  (set! (-> rot data  5)       0.000)
-  (set! (-> rot data  6)      0.000)
-  (set! (-> rot data  7)       0.0000)
-  (set! (-> rot data  8)       0.0000)
-  (set! (-> rot data  9)      0.000)
-  (set! (-> rot data 10)      0.00)
-  (set! (-> rot data 11)       0.0000)
-  (set! (-> rot data 12)       0.0000)
-  (set! (-> rot data 13)       0.0000)
-  (set! (-> rot data 14)       0.0000)
-  (set! (-> rot data 15)       1.0000)
-  ;; euler angles (xyz order degrees) x 171.5126 y -0.0000 z -180.0000
-  ;; MAYA euler angles (xyz order degrees) x 171.5126 y 180.0000 z -180.0000
-  (debug-set-camera-pos-rot! pos rot)
-#f
-  )
- )
+
+
+
+
 (define *close-to-portal?* #f)
 
 (defun check-portal-distance ()
@@ -67,23 +43,33 @@
               (set! *close-to-portal?* #f)
                 )
               )
-
+;; stupid hack
+;; (if (= (vector-vector-distance (-> *target* root trans) (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans)) (meters 12))
+;; (reset-actors 'play)
+;; )
 (none)
 )
+
+
+  (defun levelidx-inbounds?()
+  (and (>= (+ (-> (level-get-target-inside *level*)info index) -1) 0)
+        (< (+ (-> (level-get-target-inside *level*)info index) -1) (-> *level-task-data-remap* length)))
+  )
+
 (defun mort-debug-text ()
  ;;mort debugging
     (if *cheat-mode*
       (when (and (-> *pc-settings* speedrunner-mode?)
              (not (paused?))
-            
+              (levelidx-inbounds?)
              (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
                                       (bucket-id subtitle))
       (draw-string-xy (string-format "Mort Debug info ~%Level inside: ~D ~%Total Chicks is is ~D~%Current Chicks is is ~D~%saved Chicks is is ~D~%Close to portal? ~A~%"
                                      (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))
-                                      (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks) 
-                                      (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 
-                                      (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) 
+                                     (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks) 
+                                     (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 
+                                     (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) 
                                       *close-to-portal?*
                                      )
                       buf 300 (- 150 (* 8 4)) (font-color flat-yellow) (font-flags shadow kerning))))
@@ -136,14 +122,41 @@
 
   ;;(-> *camera*  target-spline point 3 position)
 
+  (defun save-chicks-func-2 ()
+    ;; (format 0 "save-chx-2 lvl-tgt-inside ~A " (level-get-target-inside *level*))
+    (let ((inside-lvl-idx (+ (-> (level-get-target-inside *level*) info index) -1)))
+      ;; (format 0 " inside-lvl-idx ~D" inside-lvl-idx)
+      (when (and (>= inside-lvl-idx 0) (< inside-lvl-idx (-> *level-task-data-remap* length)))
+        (let* ((prog-lvl-idx (-> *level-task-data-remap* inside-lvl-idx))
+               (lvl-info (-> *custom-level-info* data prog-lvl-idx)))
+          ;; (format 0 " prog-lvl-idx ~D" prog-lvl-idx)
+          (when (and *close-to-portal?* (> (-> lvl-info current-chicks) 0))
+            ;; move a chick
+            (-! (-> lvl-info current-chicks) 1)
+            (+! (-> lvl-info saved-chicks) 1)
+            (when (= (-> lvl-info saved-chicks) (-> lvl-info total-chicks))
+              (play-rand-sound "snd/end-level.wav" 100)
+              (go-virtual-process (the-as warp-gate-switch (process-by-ename "block-world-warp-gate-switch")) basebutton-going-down)
+              )
+            )
+          )
+        )
+      )
+    ;; (format 0 "~%")
+    (none)
+    )
+
   (defun save-chicks-func ()
-  (if (and *close-to-portal?* (> (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 0))
+  (if (and 
+  (levelidx-inbounds?)
+          *close-to-portal?* (> (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 0))
   (begin
   (set!  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) (- (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)  1))
   (set!  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (+ (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks)  1))
   (if (= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks))
   (begin
   (play-rand-sound "snd/end-level.wav" 100)
+  (+! *number-unlock-lvl* 1)
   (go-virtual-process (the-as warp-gate-switch (process-by-ename "block-world-warp-gate-switch")) basebutton-going-down)
   )
   )
@@ -181,18 +194,36 @@
       (none)
     )
   )
-
-
+(define mort-level? #f)
+(define *number-unlock-lvl* 0)
+(defun in-mort-level()
+(if (and (>= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 16)
+         (<= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 34))
+              (set! mort-level? #t)
+              (set! mort-level? #f)
+              )
+)
 
     (defun runs-every-frame ()
       ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
+      ;;sets mort level to true or false so we know what fields are safe to call.
+     
+      ;; (when (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )
       
+      ;; (set! (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) max-slot) *number-unlock-lvl*))
+      (mort-main-menu)
+      ;;hack daxter back for now
+      (if (=(-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))16)
+      (send-event *target* 'sidekick #t)
+      )
+     ;; (while mort-level?
       (cam-eye-no-rot)
       (check-portal-distance)
       (save-chicks-func)
-      (mort-main-menu)
       (mort-debug-text)
-      ;;(draw-chick-location)
+    ;;  )
+      
+     ;;(draw-chick-location)
       (if *show-input-display* 
         (input-display-on)
         (input-display-off)

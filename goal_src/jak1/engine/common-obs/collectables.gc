@@ -21,7 +21,7 @@
  (saved-chicks uint8)
 ))
 (deftype custom-level-info (structure)
-  ((data level-information 34 :inline  :offset-assert 0)
+  ((data level-information 47 :inline  :offset-assert 0)
    )
   )
 (define *custom-level-info*(new 'static 'custom-level-info))
@@ -1089,8 +1089,20 @@
               :texture-level 2
               )
 
-(defskelgroup *fuel-cell-sg* fuel-cell fuel-cell-lod0-jg fuel-cell-idle-ja
-              ((fuel-cell-lod0-mg (meters 999999)))
+;; (defskelgroup *fuel-cell-sg* fuel-cell fuel-cell-lod0-jg fuel-cell-idle-ja
+;;               ((fuel-cell-lod0-mg (meters 999999)))
+;;               :bounds (static-spherem 0 1 0 1.6)
+;;               :texture-level 2
+;;               )
+
+;; (defskelgroup *fuel-cell-sg* fuel-cell fuel-cell-lod0-jg fuel-cell-idle-ja
+;;               ((fuel-cell-lod0-mg (meters 999999)))
+;;               :bounds (static-spherem 0 1 0 1.6)
+;;               :texture-level 2
+;;               )
+
+(defskelgroup *fuel-cell-sg* flut-saddle flut-saddle-lod0-jg flut-saddle-lod0-jg
+              ((flut-saddle-lod0-mg (meters 999999)))
               :bounds (static-spherem 0 1 0 1.6)
               :texture-level 2
               )
