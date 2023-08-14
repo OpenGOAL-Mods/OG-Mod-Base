@@ -759,8 +759,9 @@
        v0-0
        )
       (('continue)
-       (logior! (-> self focus-status) (focus-status teleporting))
+      (if (!= (-> *target* state name) 'target-continue)
        (go target-continue (the-as continue-point (-> arg3 param 0)))
+      )
        )
       (('query)
        (case (-> arg3 param 0)

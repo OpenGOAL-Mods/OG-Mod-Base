@@ -14,6 +14,18 @@
 (declare-type vent process-drawable)
 (declare-type eco eco-collectable)
 
+(deftype level-information (structure)
+((name string)
+ (total-chicks uint8)
+ (current-chicks uint8)
+ (saved-chicks uint8)
+))
+(deftype custom-level-info (structure)
+  ((data level-information 47 :inline  :offset-assert 0)
+   )
+  )
+(define *custom-level-info*(new 'static 'custom-level-info))
+
 (defenum collectable-flags
   :bitfield #t
   :type uint32
@@ -1083,6 +1095,8 @@
               :texture-level 2
               )
 
+
+
 (deftype money (eco-collectable)
   ()
   :heap-base #x130
@@ -1199,6 +1213,8 @@
         (kill-and-free-particles (-> self part))
         )
     (logclear! (-> self mask) (process-mask actor-pause))
+
+
     (clear-collide-with-as (-> self root-override))
     (process-entity-status! self (entity-perm-status dead) #t)
     (runs-on-orb-pickup (ppointer->process (-> self parent)))  ;; trigger hook for mod base
@@ -1835,6 +1851,10 @@
     (logclear! (-> self draw status) (draw-status hidden))
     (process-entity-status! self (entity-perm-status dead) #t)
     (stop! (-> self sound))
+    ;;Saved a chick
+    ;;Tagmort
+    (+! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 1)
+    (play-rand-sound "snd/ChickPickup1.mp3" 100)
     (if #f
 
     (begin

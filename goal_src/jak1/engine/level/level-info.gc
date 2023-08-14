@@ -1961,11 +1961,11 @@
                              lavatube
                              citadel
                              finalboss
-                             intro
-                             demo
-                             title
-                             halfpipe
-                             default-level
+                            ;;  intro
+                            ;;  demo
+                            ;;  title
+                            ;;  halfpipe
+                            ;;  default-level
                              )
         )
 
@@ -2030,7 +2030,7 @@
                            :continues '(
                             (new 'static 'continue-point
                                               :name "block-world-warp"
-                                              :level 'training
+                                              :level 'block-world
                                               :flags (continue-flags warp game-start)
                                               :trans (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0)
                                               :quat (new 'static 'quaternion  :w 1.0)
@@ -2833,8 +2833,7 @@
                            :index 41
                            :name 'mort-title
                            :visname 'mort-title-vis ;; name + -vis
-                           :nickname 'mti          ;; nickname
-                           
+                           :nickname 'mti       ;; nickname
                            :packages '()
                            :sound-banks '()
                            :music-bank #f

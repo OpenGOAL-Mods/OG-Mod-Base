@@ -715,10 +715,10 @@
     (set! (-> self old-spool-name) (-> self spool-name))
 
     (when *debug-segment*
-        (when (and (cpad-hold? 0 l3) (cpad-pressed? 0 start))
-            (cpad-clear! 0 start)
-            (send-event self 'debug)
-            )
+        ;; (when (and (cpad-hold? 0 l3) (cpad-pressed? 0 start))
+        ;;     (cpad-clear! 0 start)
+        ;;     (send-event self 'debug)
+        ;;     )
 
         )
 

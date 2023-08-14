@@ -92,7 +92,8 @@
     )
   :post target-no-move-post
   )
-
+(define-extern *close-to-portal?* symbol)
+(declare-type warp-gate-switch basebutton)
 (defstate idle (warp-gate)
   :virtual #t
   :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
@@ -106,7 +107,7 @@
     (remove-setting! 'allow-progress)
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (loop
-      (when (and (and *target* (>= 20480.0 (vector-vector-distance (-> self root trans) (-> *target* control trans))))
+     (when (or (and (and *target*  (>= 20480.0 (vector-vector-distance (-> self root trans) (-> *target* control trans))))
                  (and (>= (-> self level-slot) 0)
                       (not (movie?))
                       (not (level-hint-displayed?))
@@ -121,6 +122,8 @@
                         (or (!= (-> self level-slot) 3) (and (< f0-1 -9102.223) (< -32768.0 f0-1)))
                         )
                       )
+                 )
+                 (and *close-to-portal?* (=  (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) state name)'idle))
                  )
         (hide-hud)
         (level-hint-surpress!)
@@ -142,7 +145,7 @@
               (go-virtual active)
               )
           (if (and *cheat-mode* (cpad-pressed? 0 l3))
-              (set! (-> self max-slot) 4)
+              (set! (-> self max-slot) (-> *warp-info* length))
               )
           (let ((gp-0
                   (new 'stack 'font-context *font-default-matrix* 32 160 0.0 (font-color default) (font-flags shadow kerning))
@@ -199,7 +202,28 @@
   )
 
 ;;Rework this to use correct level names.
-(defun print-level-name ((arg0 int) (arg1 font-context) (arg2 int) (arg3 int))
+;; (defun print-level-name ((arg0 int) (arg1 font-context) (arg2 int) (arg3 int))
+;;   (let ((s5-0 (if arg3
+;;                   arg2
+;;                   (- arg2)
+;;                   )
+;;               )
+;;         )
+;;     (+! (-> arg1 origin x) (the float s5-0))
+;;     (let ((f30-0 (- 1.0 (* 0.0033333334 (the float arg2)))))
+;;       (print-game-text-scaled
+;;         (lookup-text! *common-text* (the-as text-id (+ arg0 286)) #f)
+;;         f30-0
+;;         arg1
+;;         (the int (* 128.0 f30-0))
+;;         )
+;;       )
+;;     (set! (-> arg1 origin x) (- (-> arg1 origin x) (the float s5-0)))
+;;     )
+;;   (set! (-> arg1 color) (font-color default))
+;;   arg1
+;;   )
+(defun print-level-name ((arg0 string) (arg1 font-context) (arg2 int) (arg3 int))
   (let ((s5-0 (if arg3
                   arg2
                   (- arg2)
@@ -209,7 +233,7 @@
     (+! (-> arg1 origin x) (the float s5-0))
     (let ((f30-0 (- 1.0 (* 0.0033333334 (the float arg2)))))
       (print-game-text-scaled
-        (lookup-text! *common-text* (the-as text-id (+ arg0 286)) #f)
+        (string-upcase (symbol->string (-> (get-continue-by-name *game-info* arg0) level)) *temp-string*)
         f30-0
         arg1
         (the int (* 128.0 f30-0))
@@ -221,10 +245,14 @@
   arg1
   )
 
+
+
+(define-extern *number-unlock-lvl* int)
 (defstate active (warp-gate)
   :virtual #t
   :enter (behavior ()
     (set-setting! 'allow-progress #f 0.0 0)
+   
     (apply-settings *setting-control*)
     (sound-play "start-options")
     (set! (-> self state-time) (-> *display* base-frame-counter))
@@ -249,6 +277,7 @@
                (deg-diff (y-angle gp-1) (vector-y-angle (vector-! (new 'stack-no-clear 'vector) s4-0 (-> gp-1 trans))))
                )
              )
+            
         (if (!= f0-0 0.0)
             (send-event
               *target*
@@ -256,6 +285,7 @@
               (fmax (fmin f0-0 (* 65536.0 (-> *display* seconds-per-frame))) (* -65536.0 (-> *display* seconds-per-frame)))
               )
             )
+            
         )
       )
     (none)
@@ -265,25 +295,8 @@
     Had to move this here, because if you make all actors always visible (like in a custom level), and you load saved game into such a level, the warp gate is initialized before the task statuses are loaded.
     So we instead set the "max-slot" when a warp gate's menu is activated by the player. By this time, the task statuses are surely loaded.
     |#
-    (set! (-> self max-slot) (cond
-    ;;replace training-gimmie with button task
-                            ((or (task-closed? (game-task finalboss-movies) (task-status need-reminder)) (task-closed? (game-task training-gimmie) (task-status need-hint)))
-                            5
-                            )
-                            ((task-closed? (game-task village4-button) (task-status need-hint))
-                            4
-                            )
-                            ((task-closed? (game-task village3-button) (task-status need-hint))
-                            3
-                            )
-                            ((task-closed? (game-task village2-levitator) (task-status need-hint))
-                            2
-                            )
-                            (else
-                              1
-                              )
-                            )
-          )
+    (set! (-> self max-slot) *number-unlock-lvl*)
+          
     (if (= *cheat-mode* 'debug)
           (set! (-> self max-slot) (- (-> *warp-info* length) 1)) ;; We still want to have a way to show all options, so we just let it happen if cheat mode is set to debug
         )
@@ -291,8 +304,9 @@
 
     (local-vars (sv-112 int) (sv-128 int) (sv-144 int))    
 
-    (let ((gp-0 (get-next-slot-up self (+ (-> self level-slot) -1))))
+    (let ((gp-0 (-> self max-slot)))
       0
+      (if (< gp-0 0) (set! gp-0 0))
       (let ((s5-0 #f)
             (s2-0 0)
             (s4-0 #f)
@@ -367,12 +381,12 @@
                         (a1-16 s1-3)
                         (a3-4 #f)
                         )
-                    (t9-20 sv-112 a1-16 a2-6 (the-as int a3-4))
+                    (t9-20 (-> *warp-info* sv-112) a1-16 a2-6 (the-as int a3-4))
                     )
                   (let ((a2-7 (+ s2-0 150)))
                     (cond
                       ((< a2-7 225)
-                       (print-level-name s0-3 s1-3 a2-7 (the-as int #t))
+                       (print-level-name (-> *warp-info* s0-3) s1-3 a2-7 (the-as int #t))
                        )
                       (else
                         (let ((a2-8 (- 300 s2-0))
@@ -380,7 +394,7 @@
                               (a1-18 s1-3)
                               (a3-6 #f)
                               )
-                          (t9-22 sv-128 a1-18 a2-8 (the-as int a3-6))
+                          (t9-22 (-> *warp-info* sv-128) a1-18 a2-8 (the-as int a3-6))
                           )
                         )
                       )
@@ -390,7 +404,7 @@
                   (let ((a2-9 (+ s2-0 150)))
                     (cond
                       ((< a2-9 225)
-                       (print-level-name sv-112 s1-3 a2-9 (the-as int #f))
+                       (print-level-name (-> *warp-info* sv-112) s1-3 a2-9 (the-as int #f))
                        )
                       (else
                         (let ((a2-10 (- 300 s2-0))
@@ -398,13 +412,13 @@
                               (a1-20 s1-3)
                               (a3-8 #t)
                               )
-                          (t9-24 sv-144 a1-20 a2-10 (the-as int a3-8))
+                          (t9-24 (-> *warp-info* sv-144) a1-20 a2-10 (the-as int a3-8))
                           )
                         )
                       )
                     )
                   (let ((a2-11 (- 300 (+ s2-0 150))))
-                    (print-level-name s0-3 s1-3 a2-11 (the-as int #t))
+                    (print-level-name (-> *warp-info* s0-3) s1-3 a2-11 (the-as int #t))
                     )
                   )
                 )
@@ -414,7 +428,7 @@
                 (set! (-> a0-47 color) (font-color progress-yellow))
                 )
               )
-            (print-level-name gp-0 s1-3 s2-0 (the-as int s4-0))
+            (print-level-name (-> *warp-info* gp-0) s1-3 s2-0 (the-as int s4-0))
             (+! (-> s1-3 origin y) 20.0)
             (print-game-text (lookup-text! *common-text* (text-id press-to-warp) #f) s1-3 #f 128 22)
             (+! (-> s1-3 origin y) 15.0)
@@ -467,20 +481,7 @@
           )
     )
   (format 0 "SELF LEVEL-SLOT: ~D~%" (-> self level-slot))
-  (set! (-> self max-slot) (cond
-                             ((task-closed? (game-task village4-button) (task-status need-hint))
-                              4
-                              )
-                             ((task-closed? (game-task village3-button) (task-status need-hint))
-                              3
-                              )
-                             ((task-closed? (game-task village2-levitator) (task-status need-hint))
-                              2
-                              )
-                             (else
-                               1
-                               )
-                             )
+  (set! (-> self max-slot) *number-unlock-lvl*
         )
   (go-virtual idle)
   (none)

@@ -37,7 +37,7 @@
   "tpage-2565.go"
   "tpage-2846.go"
   "mech-ag.go"
-  "warp-gate-ag.go"
+  "warpgate-ag.go"
   "drill-falling-door-ag.go"
   "drillmid-vis.go"
  ))

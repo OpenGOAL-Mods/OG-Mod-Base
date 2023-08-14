@@ -444,6 +444,24 @@
 
 (define *warp-info* (new 'static 'boxed-array :type string
                       "block-world-warp"
+                      "factory-cross-start"
+                      "holly-wood-start"
+                      "monument-start"
+                      "cathederal-start"
+                      "pyramid-start"
+                      "ice-canyon-start"
+                      "coins-start"
+                      "villa-cube-start"
+                      "ice-slide-start"
+                      "islands-start"
+                      "glass-towers-start"
+                      "chemical-factory-start"
+                      "space-bridge-start"
+                      "chicks-start"
+                      "garden-start"
+                      "cold-pipe-start"
+                      "block-man-start"
+                      "cube-face-start"
                       )
         )
 
@@ -499,7 +517,8 @@
     ;; we add "training" to the list here so that the training warp gate waits until it's safe to
     ;; dispose the old code from memory.
     (case (-> self level)
-      (('citadel 'lavatube 'training 'block-world)
+    ;;Tagmort
+      (('citadel 'lavatube 'training 'block-world 'factory-cross)
        (while (and *target* (not (logtest? (-> *target* draw status) (draw-status hidden))))
          (suspend)
          )
