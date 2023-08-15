@@ -272,6 +272,18 @@ Config make_config_via_json(nlohmann::json& json) {
 
   config.levels_to_extract = inputs_json.at("levels_to_extract").get<std::vector<std::string>>();
   config.levels_extract = json.at("levels_extract").get<bool>();
+  if (json.contains("save_texture_pngs")) {
+    config.save_texture_pngs = json.at("save_texture_pngs").get<bool>();
+  }
+
+  if (inputs_json.contains("animated_textures")) {
+    config.animated_textures =
+        inputs_json.at("animated_textures").get<std::unordered_set<std::string>>();
+  }
+
+  if (inputs_json.contains("common_tpages")) {
+    config.common_tpages = inputs_json.at("common_tpages").get<std::unordered_set<int>>();
+  }
 
   if (inputs_json.contains("animated_textures")) {
     config.animated_textures =
