@@ -17,6 +17,7 @@
 #include "tpage.h"
 
 #include "common/log/log.h"
+#include "common/log/log.h"
 #include "common/texture/texture_conversion.h"
 #include "common/util/FileUtil.h"
 #include "common/versions/versions.h"
@@ -433,7 +434,8 @@ TexturePage read_texture_page(ObjectFileData& data,
 TPageResultStats process_tpage(ObjectFileData& data,
                                TextureDB& texture_db,
                                const fs::path& output_path,
-                               const std::unordered_set<std::string>& animated_textures) {
+                               const std::unordered_set<std::string>& animated_textures,
+                               bool save_pngs) {
   TPageResultStats stats;
   auto& words = data.linked_data.words_by_seg.at(0);
   const auto& level_names = data.dgo_names;
@@ -453,6 +455,12 @@ TPageResultStats process_tpage(ObjectFileData& data,
 
   // Read the texture_page struct
   TexturePage texture_page = read_texture_page(data, words, 0, end_of_texture_page);
+  bool ignore_animated = texture_page.name == "sewesc-vis-pris";
+  if (ignore_animated) {
+    lg::warn(
+        "Ignoring animated textures from this tpage ({}) because of weird jakbsmall-finger issue",
+        texture_page.name);
+  }
   bool ignore_animated = texture_page.name == "sewesc-vis-pris";
   if (ignore_animated) {
     lg::warn(
@@ -502,6 +510,19 @@ TPageResultStats process_tpage(ObjectFileData& data,
     stats.total_textures++;
     stats.num_px += tex.w * tex.h;
 
+    if (animated_textures.count(tex.name) && !ignore_animated) {
+      switch (tex.psm) {
+        case int(PSM::PSMCT32):
+          // no need.
+          break;
+        case int(PSM::PSMT4):
+          // currently not needed.
+          break;
+        case int(PSM::PSMT8):
+          ASSERT(tex.clutpsm == int(CPSM::PSMCT32));
+          {
+            // will store output pixels, index (u8)
+            std::vector<u8> index_out;
     if (animated_textures.count(tex.name) && !ignore_animated) {
       switch (tex.psm) {
         case int(PSM::PSMCT32):
@@ -596,8 +617,10 @@ TPageResultStats process_tpage(ObjectFileData& data,
       }
 
       // write texture to a PNG.
-      file_util::write_rgba_png(texture_dump_dir / fmt::format("{}.png", tex.name), out.data(),
-                                tex.w, tex.h);
+      if (save_pngs) {
+        file_util::write_rgba_png(texture_dump_dir / fmt::format("{}.png", tex.name), out.data(),
+                                  tex.w, tex.h);
+      }
       texture_db.add_texture(texture_page.id, tex_id, out, tex.w, tex.h, tex.name,
                              texture_page.name, level_names, tex.num_mips, tex.dest[0]);
       stats.successful_textures++;
@@ -639,8 +662,10 @@ TPageResultStats process_tpage(ObjectFileData& data,
       }
 
       // write texture to a PNG.
-      file_util::write_rgba_png(texture_dump_dir / fmt::format("{}.png", tex.name), out.data(),
-                                tex.w, tex.h);
+      if (save_pngs) {
+        file_util::write_rgba_png(texture_dump_dir / fmt::format("{}.png", tex.name), out.data(),
+                                  tex.w, tex.h);
+      }
       texture_db.add_texture(texture_page.id, tex_id, out, tex.w, tex.h, tex.name,
                              texture_page.name, level_names, tex.num_mips, tex.dest[0]);
       stats.successful_textures++;
@@ -664,8 +689,10 @@ TPageResultStats process_tpage(ObjectFileData& data,
       }
 
       // write texture to a PNG.
-      file_util::write_rgba_png(texture_dump_dir / fmt::format("{}.png", tex.name), out.data(),
-                                tex.w, tex.h);
+      if (save_pngs) {
+        file_util::write_rgba_png(texture_dump_dir / fmt::format("{}.png", tex.name), out.data(),
+                                  tex.w, tex.h);
+      }
       texture_db.add_texture(texture_page.id, tex_id, out, tex.w, tex.h, tex.name,
                              texture_page.name, level_names, tex.num_mips, tex.dest[0]);
       stats.successful_textures++;
@@ -705,8 +732,10 @@ TPageResultStats process_tpage(ObjectFileData& data,
       }
 
       // write texture to a PNG.
-      file_util::write_rgba_png(texture_dump_dir / fmt::format("{}.png", tex.name), out.data(),
-                                tex.w, tex.h);
+      if (save_pngs) {
+        file_util::write_rgba_png(texture_dump_dir / fmt::format("{}.png", tex.name), out.data(),
+                                  tex.w, tex.h);
+      }
       texture_db.add_texture(texture_page.id, tex_id, out, tex.w, tex.h, tex.name,
                              texture_page.name, level_names, tex.num_mips, tex.dest[0]);
       stats.successful_textures++;
@@ -746,8 +775,10 @@ TPageResultStats process_tpage(ObjectFileData& data,
       }
 
       // write texture to a PNG.
-      file_util::write_rgba_png(texture_dump_dir / fmt::format("{}.png", tex.name), out.data(),
-                                tex.w, tex.h);
+      if (save_pngs) {
+        file_util::write_rgba_png(texture_dump_dir / fmt::format("{}.png", tex.name), out.data(),
+                                  tex.w, tex.h);
+      }
       texture_db.add_texture(texture_page.id, tex_id, out, tex.w, tex.h, tex.name,
                              texture_page.name, level_names, tex.num_mips, tex.dest[0]);
       stats.successful_textures++;
@@ -771,8 +802,10 @@ TPageResultStats process_tpage(ObjectFileData& data,
       }
 
       // write texture to a PNG.
-      file_util::write_rgba_png(texture_dump_dir / fmt::format("{}.png", tex.name), out.data(),
-                                tex.w, tex.h);
+      if (save_pngs) {
+        file_util::write_rgba_png(texture_dump_dir / fmt::format("{}.png", tex.name), out.data(),
+                                  tex.w, tex.h);
+      }
       texture_db.add_texture(texture_page.id, tex_id, out, tex.w, tex.h, tex.name,
                              texture_page.name, level_names, tex.num_mips, tex.dest[0]);
       stats.successful_textures++;
