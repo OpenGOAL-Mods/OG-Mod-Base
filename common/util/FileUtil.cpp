@@ -671,18 +671,6 @@ std::vector<fs::path> find_files_in_dir(const fs::path& dir, const std::regex& p
   return files;
 }
 
-std::vector<fs::path> find_files_in_dir(const fs::path& dir, const std::regex& pattern) {
-  std::vector<fs::path> files = {};
-  for (auto& p : fs::directory_iterator(dir)) {
-    if (p.is_regular_file()) {
-      if (std::regex_match(p.path().filename().string(), pattern)) {
-        files.push_back(p.path());
-      }
-    }
-  }
-  return files;
-}
-
 std::vector<fs::path> find_files_recursively(const fs::path& base_dir, const std::regex& pattern) {
   std::vector<fs::path> files = {};
   for (auto& p : fs::recursive_directory_iterator(base_dir)) {
@@ -703,26 +691,6 @@ std::vector<fs::path> find_directories_in_dir(const fs::path& base_dir) {
     }
   }
   return dirs;
-}
-
-std::vector<fs::path> sort_filepaths(const std::vector<fs::path>& paths, const bool aescending) {
-  std::vector<std::string> paths_as_strings = {};
-  for (const auto& path : paths) {
-    paths_as_strings.push_back(path.string());
-  }
-  std::sort(paths_as_strings.begin(), paths_as_strings.end(),
-            [aescending](const std::string& a, const std::string& b) {
-              if (aescending) {
-                return a < b;
-              } else {
-                return a > b;
-              }
-            });
-  std::vector<fs::path> sorted_paths = {};
-  for (const auto& path : paths_as_strings) {
-    sorted_paths.push_back(fs::path(path));
-  }
-  return sorted_paths;
 }
 
 std::vector<fs::path> sort_filepaths(const std::vector<fs::path>& paths, const bool aescending) {

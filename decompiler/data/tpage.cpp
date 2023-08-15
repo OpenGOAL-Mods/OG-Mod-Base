@@ -17,7 +17,6 @@
 #include "tpage.h"
 
 #include "common/log/log.h"
-#include "common/log/log.h"
 #include "common/texture/texture_conversion.h"
 #include "common/util/FileUtil.h"
 #include "common/versions/versions.h"
@@ -461,12 +460,6 @@ TPageResultStats process_tpage(ObjectFileData& data,
         "Ignoring animated textures from this tpage ({}) because of weird jakbsmall-finger issue",
         texture_page.name);
   }
-  bool ignore_animated = texture_page.name == "sewesc-vis-pris";
-  if (ignore_animated) {
-    lg::warn(
-        "Ignoring animated textures from this tpage ({}) because of weird jakbsmall-finger issue",
-        texture_page.name);
-  }
   auto texture_dump_dir = output_path / texture_page.name;
   file_util::create_dir_if_needed(texture_dump_dir);
 
@@ -510,19 +503,6 @@ TPageResultStats process_tpage(ObjectFileData& data,
     stats.total_textures++;
     stats.num_px += tex.w * tex.h;
 
-    if (animated_textures.count(tex.name) && !ignore_animated) {
-      switch (tex.psm) {
-        case int(PSM::PSMCT32):
-          // no need.
-          break;
-        case int(PSM::PSMT4):
-          // currently not needed.
-          break;
-        case int(PSM::PSMT8):
-          ASSERT(tex.clutpsm == int(CPSM::PSMCT32));
-          {
-            // will store output pixels, index (u8)
-            std::vector<u8> index_out;
     if (animated_textures.count(tex.name) && !ignore_animated) {
       switch (tex.psm) {
         case int(PSM::PSMCT32):
