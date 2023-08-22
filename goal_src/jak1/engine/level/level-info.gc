@@ -1961,11 +1961,11 @@
                              lavatube
                              citadel
                              finalboss
-                            ;;  intro
-                            ;;  demo
-                            ;;  title
-                            ;;  halfpipe
-                            ;;  default-level
+                             intro
+                             demo
+                             title
+                             halfpipe
+                             default-level
                              )
         )
 
@@ -2013,7 +2013,7 @@
         )
         
 (define block-world (new 'static 'level-load-info
-                           :index 22
+                           :index 27
                            :name 'block-world
                            :visname 'block-world-vis ;; name + -vis
                            :nickname 'bwd          ;; nickname
@@ -2072,11 +2072,10 @@
         )
 
 (define factory-cross (new 'static 'level-load-info
-                           :index 23
+                           :index 28
                            :name 'factory-cross
                            :visname 'factory-cross-vis ;; name + -vis
                            :nickname 'cro          ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2114,11 +2113,10 @@
         )
 
 (define holly-wood (new 'static 'level-load-info
-                           :index 24
+                           :index 29
                            :name 'holly-wood
                            :visname 'holly-wood-vis ;; name + -vis
                            :nickname 'hol          ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2156,11 +2154,10 @@
         )
 
 (define monument (new 'static 'level-load-info
-                           :index 25
+                           :index 30
                            :name 'monument
                            :visname 'monument-vis ;; name + -vis
                            :nickname 'mon         ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2198,11 +2195,10 @@
         )
 
 (define cathederal (new 'static 'level-load-info
-                           :index 26
+                           :index 31
                            :name 'cathederal
                            :visname 'cathederal-vis ;; name + -vis
                            :nickname 'cat          ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2240,11 +2236,10 @@
         )
 
 (define pyramid (new 'static 'level-load-info
-                           :index 27
+                           :index 32
                            :name 'pyramid
                            :visname 'pyramid-vis ;; name + -vis
                            :nickname 'pyr       ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2282,11 +2277,10 @@
         )
 
 (define ice-canyon (new 'static 'level-load-info
-                           :index 28
+                           :index 33
                            :name 'ice-canyon
                            :visname 'ice-canyon-vis ;; name + -vis
                            :nickname 'can          ;; nickname
-
                            :packages '(snow)
                            :sound-banks '(snow)
                            :music-bank 'snow
@@ -2324,11 +2318,10 @@
         )
 
 (define coins (new 'static 'level-load-info
-                           :index 29
+                           :index 34
                            :name 'coins
                            :visname 'coins-vis ;; name + -vis
                            :nickname 'coi          ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2366,11 +2359,10 @@
         )
 
 (define villa-cube (new 'static 'level-load-info
-                           :index 30
+                           :index 35
                            :name 'villa-cube
                            :visname 'villa-cube-vis ;; name + -vis
                            :nickname 'vil         ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2408,11 +2400,10 @@
         )
 
 (define ice-slide (new 'static 'level-load-info
-                           :index 31
+                           :index 36
                            :name 'ice-slide
                            :visname 'ice-slide-vis ;; name + -vis
                            :nickname 'sli          ;; nickname
-
                            :packages '(snow)
                            :sound-banks '(snow)
                            :music-bank 'snow
@@ -2450,11 +2441,10 @@
         )
   
 (define islands (new 'static 'level-load-info
-                           :index 32
+                           :index 37
                            :name 'islands
                            :visname 'islands-vis ;; name + -vis
                            :nickname 'isl          ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2492,11 +2482,10 @@
         )
 
 (define glass-towers (new 'static 'level-load-info
-                           :index 33
+                           :index 38
                            :name 'glass-towers
                            :visname 'glass-towers-vis ;; name + -vis
                            :nickname 'gla          ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2534,11 +2523,10 @@
         )
 
 (define chemical-factory (new 'static 'level-load-info
-                           :index 34
+                           :index 39
                            :name 'chemical-factory
                            :visname 'chemical-factory-vis ;; name + -vis
                            :nickname 'che          ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2576,11 +2564,10 @@
         )
       
 (define space-bridge (new 'static 'level-load-info
-                           :index 35
+                           :index 40
                            :name 'space-bridge
                            :visname 'space-bridge-vis ;; name + -vis
                            :nickname 'spa          ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2618,11 +2605,10 @@
         )
 
 (define chicks (new 'static 'level-load-info
-                           :index 36
+                           :index 41
                            :name 'chicks
                            :visname 'chicks-vis ;; name + -vis
                            :nickname 'chi          ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2660,11 +2646,10 @@
         )
 
 (define garden (new 'static 'level-load-info
-                           :index 37
+                           :index 42
                            :name 'garden
                            :visname 'garden-vis ;; name + -vis
                            :nickname 'gar          ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2702,11 +2687,10 @@
         )
 
 (define cold-pipe (new 'static 'level-load-info
-                           :index 38
+                           :index 43
                            :name 'cold-pipe
                            :visname 'cold-pipe-vis ;; name + -vis
                            :nickname 'COL          ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2744,11 +2728,10 @@
         )
 
 (define block-man (new 'static 'level-load-info
-                           :index 39
+                           :index 44
                            :name 'block-man
                            :visname 'block-man-vis ;; name + -vis
                            :nickname 'man          ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2786,11 +2769,10 @@
         )
       
 (define cube-face (new 'static 'level-load-info
-                           :index 40
+                           :index 45
                            :name 'cube-face
                            :visname 'cube-face-vis ;; name + -vis
                            :nickname 'FAC          ;; nickname
-
                            :packages '(training)
                            :sound-banks '(training)
                            :music-bank 'village1
@@ -2830,7 +2812,7 @@
   ;;Start title/loading screens
   ;;Title screen
 (define mort-title (new 'static 'level-load-info
-                           :index 41
+                           :index 46
                            :name 'mort-title
                            :visname 'mort-title-vis ;; name + -vis
                            :nickname 'mti       ;; nickname
@@ -2870,7 +2852,7 @@
                            )
         )
 
-
+;;(cons! *level-load-list* 'title)
 (cons! *level-load-list* 'test-zone)
 (cons! *level-load-list* 'cube-face)
 (cons! *level-load-list* 'block-man)

@@ -222,6 +222,12 @@
     (level-task-data-index lavatube)
     (level-task-data-index citadel) ;; citadel?
     (level-task-data-index citadel) ;; finalboss?
+    (level-task-data-index misty) ;; demo?
+    (level-task-data-index misty) ;; intro?
+    (level-task-data-index training);;title
+    (level-task-data-index training);;halfpipe
+    (level-task-data-index training);;halfpipe
+
      (level-task-data-index blockworld) 
      (level-task-data-index factorycross)
      ;; (level-task-data-index blockworld)
@@ -261,8 +267,7 @@
 (level-task-data-index blockman)
 (level-task-data-index cubeface)
  (level-task-data-index morttitle)
-;;     (level-task-data-index misty) ;; demo?
-;;     (level-task-data-index misty) ;; intro?
+
 
     )
   )
