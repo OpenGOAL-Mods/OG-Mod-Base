@@ -10,7 +10,7 @@
 (define-extern runs-on-fly-pickup (function none))
 (define-extern runs-on-cell-pickup (function symbol none))
 (define-extern runs-on-eco-pickup (function pickup-type process-tree none))
-
+(define-extern *chicks-follow?* symbol)
 (declare-type vent process-drawable)
 (declare-type eco eco-collectable)
 (define *MAXCURRENTCHICKS* 11)
@@ -39,7 +39,7 @@
   )
 
 ;; DECOMP BEGINS
-(defun-extern orange-demon-manager-start symbol none)
+(defun-extern demon-chicken-manager-start symbol none)
 (import "goal_src/jak1/import/buzzer-ag.gc")
 (import "goal_src/jak1/import/ecovalve-ag.gc")
 (import "goal_src/jak1/import/money-ag.gc")
@@ -1787,8 +1787,8 @@
           (t9-1)
           )
       )
-        (if (and (-> self entity) (string= (the string (-> self name)) "fuel-cell-55"))
-      (orange-demon-manager-start #t)
+      (if (and (<= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 1) *chicks-follow?*) 
+      (demon-chicken-manager-start #t)
       )
     (none)
     )

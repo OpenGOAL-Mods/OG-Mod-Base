@@ -6,12 +6,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Orange Demon Challenge
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+(define *GOTOSPOT*  (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0))
 (defconstant NOTICE_DIST (meters 10000))
 (defconstant STOP_CHASE_DIST (meters 100000))
 (defconstant ORANGE_DEMON_DEBUG #f)
 
-(defun-extern orange-demon-init-by-other vector none)
+(defun-extern demon-chicken-init-by-other vector none)
 
 (defun scale-traj-time ()
   "Speed up/slow down the trajectory time based on game progress and special states."
@@ -36,7 +36,7 @@
   (let ((vec (new-stack-vector0))
         (offset (new-stack-vector0))
         (negative? (= 1 (rand-vu-int-range 1 10))))
-    (vector-copy! vec (target-pos 0))
+    (vector-copy! vec *GOTOSPOT*)
     ;; add a random offset
     (set-vector! offset (* (if negative? -1.0 1.0) (meters (rand-vu-int-range 20 30)))
                         (meters (rand-vu-int-range 0 10))
@@ -55,11 +55,11 @@
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; orange-demon-manager
+;; demon-chicken-manager
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmethod deactivate orange-demon-manager ((this orange-demon-manager))
-  (set! *orange-demon-manager* (the (pointer orange-demon-manager) #f))
+(defmethod deactivate demon-chicken-manager ((this demon-chicken-manager))
+  (set! *demon-chicken-manager* (the (pointer demon-chicken-manager) #f))
   (if (-> this demon)
     (deactivate (handle->process (-> this demon)))
     )
@@ -67,14 +67,14 @@
   (none)
   )
 
-(defbehavior orange-demon-manager-event-handler orange-demon-manager ((proc process) (arg1 int) (event symbol) (msg event-message-block))
+(defbehavior demon-chicken-manager-event-handler demon-chicken-manager ((proc process) (arg1 int) (event symbol) (msg event-message-block))
   (case event
     (('spawn)
      (when (not (-> self demon))
-       (set! (-> self demon) (ppointer->handle (process-spawn orange-demon
+       (set! (-> self demon) (ppointer->handle (process-spawn demon-chicken
                                                               (target-pos-with-offset)
-                                                              :from *orange-demon-dead-pool*
-                                                              :to *orange-demon-pool*)))
+                                                              :from *demon-chicken-dead-pool*
+                                                              :to *demon-chicken-pool*)))
        #t
        )
      #f
@@ -86,43 +86,43 @@
     )
   )
 
-(defstate orange-demon-manager-idle (orange-demon-manager)
-  :event orange-demon-manager-event-handler
+(defstate demon-chicken-manager-idle (demon-chicken-manager)
+  :event demon-chicken-manager-event-handler
   :code (behavior ()
     (sleep-code)
     (none)
     )
   )
 
-(defbehavior orange-demon-manager-init-by-other orange-demon-manager ((spawn? symbol))
+(defbehavior demon-chicken-manager-init-by-other demon-chicken-manager ((spawn? symbol))
   (if spawn?
-    (set! (-> self demon) (ppointer->handle (process-spawn orange-demon
+    (set! (-> self demon) (ppointer->handle (process-spawn demon-chicken
                                                            (target-pos-with-offset)
-                                                           :from *orange-demon-dead-pool*
-                                                           :to *orange-demon-pool*)))
+                                                           :from *demon-chicken-dead-pool*
+                                                           :to *demon-chicken-pool*)))
     (set! (-> self demon) (the handle #f))
     )
-  (go orange-demon-manager-idle)
+  (go demon-chicken-manager-idle)
   (none)
   )
 
-(defun orange-demon-manager-start ((spawn? symbol))
-  (if (not *orange-demon-manager*)
-    (set! *orange-demon-manager* (process-spawn orange-demon-manager spawn? :from *pc-dead-pool*))
+(defun demon-chicken-manager-start ((spawn? symbol))
+  (if (not *demon-chicken-manager*)
+    (set! *demon-chicken-manager* (process-spawn demon-chicken-manager spawn? :from *pc-dead-pool*))
     )
   (none)
   )
 
 
-(defmethod run-logic? orange-demon-manager ((this orange-demon-manager))
+(defmethod run-logic? demon-chicken-manager ((this demon-chicken-manager))
   #t
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; orange-demon
+;; demon-chicken
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmethod debug-draw-text! orange-demon ((this orange-demon))
+(defmethod debug-draw-text! demon-chicken ((this demon-chicken))
   (let ((bucket (bucket-id debug-no-zbuf))
         (root (-> this cshape trans))
         (yellow (font-color yellow))
@@ -138,25 +138,25 @@
   (none)
   )
 
-(defmethod run-logic? orange-demon ((this orange-demon))
+(defmethod run-logic? demon-chicken ((this demon-chicken))
   #t
   )
 
-(defmethod dist-to-target orange-demon ((this orange-demon))
-  (vector-vector-distance (-> this cshape trans) (target-pos 0))
+(defmethod dist-to-target demon-chicken ((this demon-chicken))
+  (vector-vector-distance (-> this cshape trans) (-> this target-pos))
   )
 
-(defmethod deactivate orange-demon ((this orange-demon))
+(defmethod deactivate demon-chicken ((this demon-chicken))
   (send-event *target* 'sidekick #t)
   ((method-of-type process-drawable deactivate) this)
   (none)
   )
 
-;; (defmethod relocate orange-demon ((this orange-demon) (off int))
-;;   (the orange-demon ((the (function process-drawable int none) (find-parent-method orange-demon 7)) this off))
+;; (defmethod relocate demon-chicken ((this demon-chicken) (off int))
+;;   (the demon-chicken ((the (function process-drawable int none) (find-parent-method demon-chicken 7)) this off))
 ;;   )
 
-(defmethod init-collision! orange-demon ((this orange-demon))
+(defmethod init-collision! demon-chicken ((this demon-chicken))
   (let ((cshape (new 'process 'collide-shape-moving this (collide-list-enum usually-hit-by-player))))
     (set! (-> cshape dynam) (copy *standard-dynamics* 'process))
     (set! (-> cshape reaction) default-collision-reaction)
@@ -185,7 +185,7 @@
   (none)
   )
 
-(defmethod init-skel! orange-demon ((this orange-demon))
+(defmethod init-skel! demon-chicken ((this demon-chicken))
   (initialize-skeleton this *sidekick-sg* '())
   (set! (-> this draw origin-joint-index) (the uint 6))
   (set! (-> this draw shadow-joint-index) (the uint 6))
@@ -194,7 +194,7 @@
   (none)
   )
 
-(defmethod common-init! orange-demon ((this orange-demon))
+(defmethod common-init! demon-chicken ((this demon-chicken))
   (init-collision! this)
   (set! (-> this mask) (logior (process-mask enemy) (-> this mask)))
   (logclear! (-> this mask) (process-mask actor-pause))
@@ -209,21 +209,21 @@
   (none)
   )
 
-(defbehavior orange-demon-init-by-other orange-demon ((vec vector))
+(defbehavior demon-chicken-init-by-other demon-chicken ((vec vector))
   (common-init! self)
   (set! (-> self cshape trans quad) (-> vec quad))
-  (go orange-demon-dormant)
+  (go demon-chicken-dormant)
   (none)
   )
 
-(defmethod init-from-entity! orange-demon ((this orange-demon) (entity entity-actor))
+(defmethod init-from-entity! demon-chicken ((this demon-chicken) (entity entity-actor))
   (common-init! this)
   (process-drawable-from-entity! this entity)
-  (go orange-demon-dormant)
+  (go demon-chicken-dormant)
   (none)
   )
 
-(defbehavior orange-demon-follow-trajectory orange-demon ((time float))
+(defbehavior demon-chicken-follow-trajectory demon-chicken ((time float))
   (let ((traj (-> self trajectory)))
     (eval-position! traj time (-> self cshape trans))
     (eval-velocity! traj time (-> self cshape transv))
@@ -233,20 +233,20 @@
   (none)
   )
 
-(defbehavior send-attack! orange-demon ((proc process) (tshapes touching-shapes-entry))
-  (when (and (logtest? (-> *target* control root-prim prim-core action) (collide-action racer))
-             (send-event proc 'attack tshapes (static-attack-info ((mode 'explode)))))
-    (set-collide-offense (-> self cshape) 1 (collide-offense no-offense))
-    #t
-    )
-  (when (send-event proc 'attack tshapes (static-attack-info ((mode 'death))))
-    (set-collide-offense (-> self cshape) 1 (collide-offense no-offense))
-    #t
-    )
+(defbehavior send-attack! demon-chicken ((proc process) (tshapes touching-shapes-entry))
+  ;; (when (and (logtest? (-> *target* control root-prim prim-core action) (collide-action racer))
+  ;;            (send-event proc 'attack tshapes (static-attack-info ((mode 'explode)))))
+  ;;   (set-collide-offense (-> self cshape) 1 (collide-offense no-offense))
+  ;;   #t
+  ;;   )
+  ;; (when (send-event proc 'attack tshapes (static-attack-info ((mode 'death))))
+  ;;   (set-collide-offense (-> self cshape) 1 (collide-offense no-offense))
+  ;;   #t
+  ;;   )
   #f
   )
 
-(defmethod touch-handler orange-demon ((this orange-demon) (proc process) (msg event-message-block))
+(defmethod touch-handler demon-chicken ((this demon-chicken) (proc process) (msg event-message-block))
   (let ((target-anim (-> *target* skel channel 0 frame-group name))
         (level (aif (level-get-target-inside *level*) (-> it name) #f))
         )
@@ -260,13 +260,13 @@
                          (-> this cshape)
                          (the uint 1))
     (when (send-attack! proc (the touching-shapes-entry (-> msg param 0)))
-      ;; (go orange-demon-victory)
+      ;; (go demon-chicken-victory)
       #t
       )
     )
   )
 
-(defbehavior orange-demon-event-handler orange-demon ((proc process) (arg1 int) (event symbol) (msg event-message-block))
+(defbehavior demon-chicken-event-handler demon-chicken ((proc process) (arg1 int) (event symbol) (msg event-message-block))
   (case event
     (('touch 'attack)
      (when (= (-> proc type) target)
@@ -276,12 +276,12 @@
     )
   )
 
-(defmethod target-in-range? orange-demon ((this orange-demon) (dist float))
+(defmethod target-in-range? demon-chicken ((this demon-chicken) (dist float))
   "Is [[target]] close enough?"
-  (and *target* (< (vector-vector-distance (target-pos 0) (-> this cshape trans)) dist))
+  (and *target* (< (vector-vector-distance (-> this target-pos) (-> this cshape trans)) dist))
   )
 
-(defmethod should-chase? orange-demon ((this orange-demon))
+(defmethod should-chase? demon-chicken ((this demon-chicken))
   "Should we chase after [[target]]?"
   (if *target*
     (let* ((state (-> *target* next-state name))
@@ -301,13 +301,13 @@
     )
   )
 
-(defmethod move! orange-demon ((this orange-demon))
+(defmethod move! demon-chicken ((this demon-chicken))
   "Update our position."
   (collide-shape-moving-method-58 (-> this cshape) (-> this cshape transv))
   (none)
   )
 
-(defbehavior orange-demon-post orange-demon ()
+(defbehavior demon-chicken-post demon-chicken ()
   "Basic post: Update grace period, shadow, joint control and disable sidekick."
   (update-direction-from-time-of-day (-> self draw shadow-ctrl))
   (false! (-> *setting-control* default play-hints))
@@ -326,9 +326,22 @@
   (none)
   )
 
-(defbehavior orange-demon-chase-post orange-demon ()
+(defun move-chicken-x ((a float))
+(set! (-> *GOTOSPOT* x) (+(-> *GOTOSPOT* x)(meters a)))
+(none))
+
+(defun move-chicken-y ((a float))
+(set! (-> *GOTOSPOT* y) (+(-> *GOTOSPOT* y)(meters a)))
+(none))
+
+(defun move-chicken-z ((a float))
+(set! (-> *GOTOSPOT* z) (+(-> *GOTOSPOT* z)(meters a)))
+(none))
+(defbehavior demon-chicken-chase-post demon-chicken ()
   "Chase post: Poll [[target]]'s position and update our own position, direction and trajectory time."
-  (set! (-> self target-pos quad) (-> (target-pos 0) quad))
+  ;;(set! (-> self target-pos quad) (-> (target-pos 0) quad))
+  (set! (-> self target-pos quad) (-> *GOTOSPOT* quad))
+ 
   (set! (-> self traj-time) (scale-traj-time))
   (format *stdcon* "traj-time ~f~%" (-> self traj-time))
   (let ((fnt (new 'stack 'font-context *font-default-matrix* 170 130 0.0 (font-color red) (font-flags shadow kerning middle)))
@@ -340,13 +353,13 @@
     )
   (compute-alignment! (-> self align))
   (move! self)
-  (orange-demon-post)
+  (demon-chicken-post)
   (none)
   )
 
 ;; dormant state: if target is not active, hide
-(defstate orange-demon-dormant (orange-demon)
-  :event orange-demon-event-handler
+(defstate demon-chicken-dormant (demon-chicken)
+  :event demon-chicken-event-handler
   :enter (behavior ()
     (logior! (-> self draw status) (draw-status hidden))
     (clear-collide-with-as (-> self cshape))
@@ -357,7 +370,7 @@
     )
   :trans (behavior ()
     (when *target*
-      (go orange-demon-idle)
+      (go demon-chicken-idle)
       )
     (none)
     )
@@ -369,8 +382,8 @@
   )
 
 ;; idle state: target was hit/grace period is active/etc.
-(defstate orange-demon-idle (orange-demon)
-  :event orange-demon-event-handler
+(defstate demon-chicken-idle (demon-chicken)
+  :event demon-chicken-event-handler
   :enter (behavior ()
     (set! (-> self state-time) (current-time))
     (none)
@@ -387,19 +400,19 @@
     (none)
     )
   :trans (behavior ()
-    (if (and (> (- (current-time) (-> self state-time)) (seconds 0.017)) ;; probably need this so bones have run at least once? crashes otherwise
+    (if (and (>= (- (current-time) (-> self state-time)) (seconds 0.017)) ;; probably need this so bones have run at least once? crashes otherwise
              (should-chase? self)
              (nonzero? (-> self draw))
              )
-        (go orange-demon-chase)
+        (go demon-chicken-chase)
         )
     (none)
     )
-  :post orange-demon-post
+  :post demon-chicken-post
   )
 
-(defstate orange-demon-chase (orange-demon)
-  :event orange-demon-event-handler
+(defstate demon-chicken-chase (demon-chicken)
+  :event demon-chicken-event-handler
   :enter (behavior ()
     (set! (-> self state-time) (current-time))
     (none)
@@ -411,7 +424,7 @@
       (spawn (-> self part) (the vector (-> self cshape root-prim prim-core)))
       ;; set up trajectory to follow target
       (setup-from-to-duration! (-> self trajectory) (-> self cshape trans) (-> self target-pos) (-> self traj-time) 0.0)
-      (orange-demon-follow-trajectory (ja-aframe-num 1))
+      (demon-chicken-follow-trajectory (ja-aframe-num 1))
       (when ORANGE_DEMON_DEBUG
         (debug-draw! (-> self trajectory))
         (debug-draw-text! self)
@@ -425,15 +438,15 @@
     )
   :trans (behavior ()
     (if (not (should-chase? self))
-      (go orange-demon-dormant)
+      (go demon-chicken-dormant)
       )
     (none)
     )
-  :post orange-demon-chase-post
+  :post demon-chicken-chase-post
   )
 
-;; (defstate orange-demon-victory (orange-demon)
-;;   :event orange-demon-event-handler
+;; (defstate demon-chicken-victory (demon-chicken)
+;;   :event demon-chicken-event-handler
 ;;   :enter (behavior ()
 ;;     (set! (-> self cshape transv quad) (-> *null-vector* quad))
 ;;     (none)
@@ -449,8 +462,8 @@
 ;;         (ja :num! (seek!)
 ;;         )
 ;;       )
-;;     (go orange-demon-idle)
+;;     (go demon-chicken-idle)
 ;;     (none)
 ;;   )
-;;   :post orange-demon-post
+;;   :post demon-chicken-post
 ;;   )

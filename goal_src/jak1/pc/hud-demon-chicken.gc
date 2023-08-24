@@ -2,10 +2,10 @@
 (in-package goal)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; hud-orange-demon
+;; hud-demon-chicken
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(deftype hud-orange-demon (hud)
+(deftype hud-demon-chicken (hud)
   ((ready? symbol)
    (kicked? symbol)
    (dist float)
@@ -20,23 +20,23 @@
     )
   )
 
-(deftype hud-orange-demon-parts (structure)
-  ((parts (pointer hud-orange-demon))
+(deftype hud-demon-chicken-parts (structure)
+  ((parts (pointer hud-demon-chicken))
    )
   )
 
-(define *hud-orange-demon* (new 'static 'hud-orange-demon-parts :parts #f))
+(define *hud-demon-chicken* (new 'static 'hud-demon-chicken-parts :parts #f))
 
-(defmethod deactivate hud-orange-demon ((this hud-orange-demon))
-  (if (and (-> *hud-orange-demon* parts) (= (ppointer->process (-> *hud-orange-demon* parts)) this))
-      (set! (-> *hud-orange-demon* parts) (the (pointer hud-orange-demon) #f))
+(defmethod deactivate hud-demon-chicken ((this hud-demon-chicken))
+  (if (and (-> *hud-demon-chicken* parts) (= (ppointer->process (-> *hud-demon-chicken* parts)) this))
+      (set! (-> *hud-demon-chicken* parts) (the (pointer hud-demon-chicken) #f))
       )
   ((method-of-type hud deactivate) this)
   (none)
   )
 
 
-(defmethod kill-icon hud-orange-demon ((this hud-orange-demon) (idx int))
+(defmethod kill-icon hud-demon-chicken ((this hud-demon-chicken) (idx int))
   (when (and (nonzero? (-> this icons idx)) (nonzero? (-> this icons idx icon)) (-> this icons idx icon))
     (deactivate (ppointer->process (-> this icons idx icon)))
     (set! (-> this icons idx icon) #f)
@@ -44,20 +44,20 @@
   (none)
   )
 
-(defmethod kill-all-icons hud-orange-demon ((this hud-orange-demon))
+(defmethod kill-all-icons hud-demon-chicken ((this hud-demon-chicken))
   (dotimes (i (-> this nb-of-icons))
     (kill-icon this i)
     )
   (none)
   )
 
-(defmethod make-icon hud-orange-demon ((this hud-orange-demon) (idx int))
+(defmethod make-icon hud-demon-chicken ((this hud-demon-chicken) (idx int))
   (kill-icon this 0)
   (hud-pc-replace-icon this 0 :skel *sidekick-sg* :z (meters 0.02))
   (none)
   )
 
-(defmethod update-display-status hud-orange-demon ((this hud-orange-demon) (icon-idx int) (trigger-force symbol))
+(defmethod update-display-status hud-demon-chicken ((this hud-demon-chicken) (icon-idx int) (trigger-force symbol))
   (cond
     ((hidden? this)
      (when (-> this ready?)
@@ -72,11 +72,11 @@
        (make-icon this icon-idx)
        (let ((icon0 (the manipy (ppointer->process (-> this icons icon-idx icon)))))
          (case (-> this demon-state)
-           (('orange-demon-chase)
+           (('demon-chicken-chase)
             (send-event icon0 'art-joint-anim "sidekick-free-walk" 0)
             (send-event icon0 'rot-quat (quaternion-axis-angle! (new-stack-quaternion0) 0.0 1.0 0.15 (degrees 210)))
             )
-           (('orange-demon-dormant 'orange-demon-idle)
+           (('demon-chicken-dormant 'demon-chicken-idle)
             (send-event icon0 'art-joint-anim "sidekick-stance-loop" 0)
             (send-event icon0 'rot-quat (quaternion-axis-angle! (new-stack-quaternion0) 0.0 1.0 0.15 (degrees 210)))
             )
@@ -99,11 +99,11 @@
      ;; update icon anims
      (let ((icon0 (the manipy (ppointer->process (-> this icons icon-idx icon)))))
        (case (-> this demon-state)
-         (('orange-demon-chase)
+         (('demon-chicken-chase)
           (send-event icon0 'art-joint-anim "sidekick-free-walk" 0)
           (send-event icon0 'rot-quat (quaternion-axis-angle! (new-stack-quaternion0) 0.0 1.0 0.15 (degrees 210)))
           )
-         (('orange-demon-dormant 'orange-demon-idle)
+         (('demon-chicken-dormant 'demon-chicken-idle)
           (send-event icon0 'art-joint-anim "sidekick-stance-loop" 0)
           (send-event icon0 'rot-quat (quaternion-axis-angle! (new-stack-quaternion0) 0.0 1.0 0.15 (degrees 210)))
           )
@@ -118,11 +118,11 @@
   (none)
   )
 
-(defmethod hud-update hud-orange-demon ((this hud-orange-demon))
+(defmethod hud-update hud-demon-chicken ((this hud-demon-chicken))
   (when (and (not (-> this ready?)) (hidden? this))
     (kill-all-icons this)
     )
-  (let ((demon (aif *orange-demon-manager* (the orange-demon (handle->process (-> it 0 demon))) (the orange-demon #f))))
+  (let ((demon (aif *demon-chicken-manager* (the demon-chicken (handle->process (-> it 0 demon))) (the demon-chicken #f))))
     (cond
       (demon
        (set! (-> this demon-state) (-> demon next-state name))
@@ -150,7 +150,7 @@
   (none)
   )
 
-(defmethod draw-hud hud-orange-demon ((this hud-orange-demon))
+(defmethod draw-hud hud-demon-chicken ((this hud-demon-chicken))
   ((method-of-type hud draw-hud) this)
   (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
                                (bucket-id debug))
@@ -165,15 +165,15 @@
                    ))
           )
       (case (-> this demon-state)
-          (('orange-demon-chase)
+          (('demon-chicken-chase)
            (draw-string-xy (string-format "~D" (the int (/ (-> this dist) (meters 1))))
                            buf str-x str-y color (font-flags shadow kerning large middle))
            )
-          (('orange-demon-idle)
+          (('demon-chicken-idle)
            (draw-string-xy (string-format "IDLE" (-> this grace-period))
                            buf str-x str-y (font-color green) (font-flags shadow kerning large middle))
            )
-          ;; (('orange-demon-dormant)
+          ;; (('demon-chicken-dormant)
           ;;  (draw-string-xy "" buf str-x str-y (font-color white) (font-flags shadow kerning large middle))
           ;; )
         )
@@ -183,7 +183,7 @@
   )
 
 
-(defmethod init-particles! hud-orange-demon ((this hud-orange-demon) (arg0 int))
+(defmethod init-particles! hud-demon-chicken ((this hud-demon-chicken) (arg0 int))
   (hud-pc-make-icon this HUD_ICON_COUNT :skel *sidekick-sg*
                                         :x (the int (* 0.84 512)) :y (the int (* 0.51 448)) :z (meters 0.5)
                                         :scale-x 0.004 :scale-y (* -0.004 (/ 512.0 448.0)))
@@ -196,16 +196,16 @@
   (none)
   )
 
-(defun deactivate-orange-demon-hud ()
-  (if (-> *hud-orange-demon* parts)
-    (deactivate (ppointer->process (-> *hud-orange-demon* parts)))
+(defun deactivate-demon-chicken-hud ()
+  (if (-> *hud-demon-chicken* parts)
+    (deactivate (ppointer->process (-> *hud-demon-chicken* parts)))
     )
   )
 
-(defun activate-orange-demon-hud ((tree process-tree))
-  (deactivate-orange-demon-hud)
-  (set! (-> *hud-orange-demon* parts) (process-spawn hud-orange-demon :init hud-init-by-other 0
+(defun activate-demon-chicken-hud ((tree process-tree))
+  (deactivate-demon-chicken-hud)
+  (set! (-> *hud-demon-chicken* parts) (process-spawn hud-demon-chicken :init hud-init-by-other 0
                                                                       :from *pc-dead-pool* :to tree))
   )
 
-(activate-orange-demon-hud *display-pool*)
+(activate-demon-chicken-hud *display-pool*)

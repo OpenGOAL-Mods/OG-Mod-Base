@@ -1,7 +1,7 @@
 ;;-*-Lisp-*-
 (in-package goal)
 
-(deftype orange-demon (process-drawable)
+(deftype demon-chicken (process-drawable)
   ((cshape collide-shape-moving :offset 112)
    (trajectory trajectory :inline)
    (target-pos vector :inline)
@@ -26,22 +26,22 @@
     (dist-to-target (_type_) float)
     )
   (:states
-    orange-demon-dormant
-    orange-demon-idle
-    orange-demon-chase
-    ;; orange-demon-victory
+    demon-chicken-dormant
+    demon-chicken-idle
+    demon-chicken-chase
+    ;; demon-chicken-victory
     )
   )
 
-(deftype orange-demon-manager (process)
+(deftype demon-chicken-manager (process)
   ((demon handle)
    )
    (:states
-     orange-demon-manager-idle
+     demon-chicken-manager-idle
      )
   )
 
-(define *orange-demon-manager* (the (pointer orange-demon-manager) #f))
+(define *demon-chicken-manager* (the (pointer demon-chicken-manager) #f))
 
 (defpart 3500
   :init-specs ((:texture (new 'static 'texture-id :page 2))
@@ -68,7 +68,7 @@
     )
   )
 
-(defpartgroup group-orange-demon-burn-circle
+(defpartgroup group-demon-chicken-burn-circle
   :id 800
   :duration (seconds 0.5)
   :linger-duration (seconds 2)
