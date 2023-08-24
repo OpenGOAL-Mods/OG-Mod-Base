@@ -30,6 +30,8 @@
       val-special
       )
     )
+    ;; For demon-chicken, we dont need a dynamic speed. Lets just return some standard speed. Smaller number = faster
+    (/ 100.0 7.0)
   )
 
 (defun target-pos-with-offset ()
@@ -342,6 +344,7 @@
 (defun move-chicken-z ((a float))
 (set! (-> *GOTOSPOT* z) (+(-> *GOTOSPOT* z)(meters a)))
 (none))
+
 (defbehavior demon-chicken-chase-post demon-chicken ()
   "Chase post: Poll [[target]]'s position and update our own position, direction and trajectory time."
   ;;(set! (-> self target-pos quad) (-> (target-pos 0) quad))
