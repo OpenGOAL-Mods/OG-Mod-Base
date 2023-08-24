@@ -191,6 +191,11 @@
   (set! (-> this draw shadow-joint-index) (the uint 6))
   (logior! (-> this skel status) (janim-status eye))
   (set! (-> this draw shadow-ctrl) *target-shadow-control*)
+  (let ((scale 0.5))
+  (set! (-> this root scale x) scale)
+  (set! (-> this root scale y) scale)
+  (set! (-> this root scale z) scale)
+  )
   (none)
   )
 
