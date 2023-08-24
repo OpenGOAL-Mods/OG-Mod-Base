@@ -39,7 +39,7 @@
   )
 
 ;; DECOMP BEGINS
-
+(defun-extern orange-demon-manager-start symbol none)
 (import "goal_src/jak1/import/buzzer-ag.gc")
 (import "goal_src/jak1/import/ecovalve-ag.gc")
 (import "goal_src/jak1/import/money-ag.gc")
@@ -1786,6 +1786,9 @@
       (if t9-1
           (t9-1)
           )
+      )
+        (if (and (-> self entity) (string= (the string (-> self name)) "fuel-cell-55"))
+      (orange-demon-manager-start #t)
       )
     (none)
     )

@@ -2554,6 +2554,7 @@
 
 ;; some very important process pools
 (define *target-dead-pool* (new 'global 'dead-pool 1 (* 48 1024) '*target-dead-pool*))
+(define *orange-demon-dead-pool* (new 'global 'dead-pool 1 (* 16 1024) '*orange-demon-dead-pool*))
 (define *camera-dead-pool* (new 'global 'dead-pool 7 (* 4 1024) '*camera-dead-pool*))
 (define *camera-master-dead-pool* (new 'global 'dead-pool 1 (* 8 1024) '*camera-master-dead-pool*))
 
@@ -2570,7 +2571,7 @@
 (define *pickup-dead-pool* (the dead-pool *nk-dead-pool*))
 
 ;; list of all dead pools held by the kernel.
-(define *dead-pool-list* '(*4k-dead-pool* *8k-dead-pool* *16k-dead-pool* *nk-dead-pool* *target-dead-pool* *camera-dead-pool* *camera-master-dead-pool*))
+(define *dead-pool-list* '(*4k-dead-pool* *8k-dead-pool* *16k-dead-pool* *nk-dead-pool* *target-dead-pool* *orange-demon-dead-pool* *camera-dead-pool* *camera-master-dead-pool*))
 
 ;; main active pool. All active processes are under here. This is what the kernel-dispatcher looks at.
 (define *active-pool* (new 'global 'process-tree 'active-pool))
@@ -2589,6 +2590,10 @@
 (change-parent (define *target-pool* (new 'global 'process-tree 'target-pool)) *active-pool*)
 ;; pause in menus
 (set! (-> *target-pool* mask) (process-mask pause menu progress process-tree))
+
+(change-parent (define *orange-demon-pool* (new 'global 'process-tree 'orange-demon-pool)) *active-pool*)
+;; pause in menus
+(set! (-> *orange-demon-pool* mask) (process-mask pause menu progress process-tree))
 
 ;; the *entity-pool* contains all processes spawned from entities.
 (change-parent (define *entity-pool*  (new 'global 'process-tree 'entity-pool)) *active-pool*)

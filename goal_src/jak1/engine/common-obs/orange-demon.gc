@@ -1,0 +1,456 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(import "goal_src/jak1/import/sidekick-ag.gc")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Orange Demon Challenge
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defconstant NOTICE_DIST (meters 10000))
+(defconstant STOP_CHASE_DIST (meters 100000))
+(defconstant ORANGE_DEMON_DEBUG #f)
+
+(defun-extern orange-demon-init-by-other vector none)
+
+(defun scale-traj-time ()
+  "Speed up/slow down the trajectory time based on game progress and special states."
+  (let* ((val (/ (- 100.0 (calculate-completion (the progress #f))) 100.0))
+         (state (-> *target* next-state name))
+         (slow-down-state? (nmember state '(target-swim-down target-swim-up)))
+         (racer? (logtest? (-> *target* control root-prim prim-core action) (collide-action racer)))
+         (flut? (logtest? (-> *target* control root-prim prim-core action) (collide-action flut)))
+         (red-eco? (and (= (-> *target* fact-info-target eco-type) (pickup-type eco-red)) (> (-> *target* fact-info-target eco-level) 0.0)))
+         (clamp (cond (flut? 0.35) (red-eco? 0.5) (racer? 0.25) (else 0.47)))
+         (special? (or slow-down-state? racer? flut? red-eco?))
+         (val-special (cond (slow-down-state? (* val 1.2)) (red-eco? (* val 1.25)) (flut? (/ val 1.2)) (racer? (/ val 1.4)) (else val)))
+         )
+    (if (< val-special clamp)
+      clamp
+      val-special
+      )
+    )
+  )
+
+(defun target-pos-with-offset ()
+  (let ((vec (new-stack-vector0))
+        (offset (new-stack-vector0))
+        (negative? (= 1 (rand-vu-int-range 1 10))))
+    (vector-copy! vec (target-pos 0))
+    ;; add a random offset
+    (set-vector! offset (* (if negative? -1.0 1.0) (meters (rand-vu-int-range 20 30)))
+                        (meters (rand-vu-int-range 0 10))
+                        (* (if negative? -1.0 1.0) (meters (rand-vu-int-range 20 30)))
+                        (meters 0))
+    (vector+! vec vec offset)
+    )
+  )
+
+(defbehavior sleep-code process ()
+  (loop
+    (logior! (-> self mask) (process-mask sleep-code))
+    (suspend)
+    )
+  (none)
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; orange-demon-manager
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmethod deactivate orange-demon-manager ((this orange-demon-manager))
+  (set! *orange-demon-manager* (the (pointer orange-demon-manager) #f))
+  (if (-> this demon)
+    (deactivate (handle->process (-> this demon)))
+    )
+  ((method-of-type process deactivate) this)
+  (none)
+  )
+
+(defbehavior orange-demon-manager-event-handler orange-demon-manager ((proc process) (arg1 int) (event symbol) (msg event-message-block))
+  (case event
+    (('spawn)
+     (when (not (-> self demon))
+       (set! (-> self demon) (ppointer->handle (process-spawn orange-demon
+                                                              (target-pos-with-offset)
+                                                              :from *orange-demon-dead-pool*
+                                                              :to *orange-demon-pool*)))
+       #t
+       )
+     #f
+     )
+    (('die)
+     (deactivate self)
+     #t
+     )
+    )
+  )
+
+(defstate orange-demon-manager-idle (orange-demon-manager)
+  :event orange-demon-manager-event-handler
+  :code (behavior ()
+    (sleep-code)
+    (none)
+    )
+  )
+
+(defbehavior orange-demon-manager-init-by-other orange-demon-manager ((spawn? symbol))
+  (if spawn?
+    (set! (-> self demon) (ppointer->handle (process-spawn orange-demon
+                                                           (target-pos-with-offset)
+                                                           :from *orange-demon-dead-pool*
+                                                           :to *orange-demon-pool*)))
+    (set! (-> self demon) (the handle #f))
+    )
+  (go orange-demon-manager-idle)
+  (none)
+  )
+
+(defun orange-demon-manager-start ((spawn? symbol))
+  (if (not *orange-demon-manager*)
+    (set! *orange-demon-manager* (process-spawn orange-demon-manager spawn? :from *pc-dead-pool*))
+    )
+  (none)
+  )
+
+
+(defmethod run-logic? orange-demon-manager ((this orange-demon-manager))
+  #t
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; orange-demon
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmethod debug-draw-text! orange-demon ((this orange-demon))
+  (let ((bucket (bucket-id debug-no-zbuf))
+        (root (-> this cshape trans))
+        (yellow (font-color yellow))
+        )
+    (add-debug-x #t bucket root (static-rgba #x80 #xff #x80 #x80))
+    (add-debug-text-3d #t
+                      bucket
+                      (symbol->string (-> this next-state name))
+                      root
+                      yellow
+                      (the vector2h #f))
+    )
+  (none)
+  )
+
+(defmethod run-logic? orange-demon ((this orange-demon))
+  #t
+  )
+
+(defmethod dist-to-target orange-demon ((this orange-demon))
+  (vector-vector-distance (-> this cshape trans) (target-pos 0))
+  )
+
+(defmethod deactivate orange-demon ((this orange-demon))
+  (send-event *target* 'sidekick #t)
+  ((method-of-type process-drawable deactivate) this)
+  (none)
+  )
+
+;; (defmethod relocate orange-demon ((this orange-demon) (off int))
+;;   (the orange-demon ((the (function process-drawable int none) (find-parent-method orange-demon 7)) this off))
+;;   )
+
+(defmethod init-collision! orange-demon ((this orange-demon))
+  (let ((cshape (new 'process 'collide-shape-moving this (collide-list-enum usually-hit-by-player))))
+    (set! (-> cshape dynam) (copy *standard-dynamics* 'process))
+    (set! (-> cshape reaction) default-collision-reaction)
+    (set! (-> cshape no-reaction)
+          (the (function collide-shape-moving collide-shape-intersect vector vector none) nothing)
+          )
+    ;; set up a prim group with one sphere
+    (let ((prim-group (new 'process 'collide-shape-prim-group cshape (the uint 1) 0)))
+      (set! (-> prim-group prim-core collide-as) (collide-kind enemy))
+      (set! (-> prim-group collide-with) (collide-kind target))
+      (set! (-> prim-group prim-core offense) (collide-offense touch))
+      (set-vector! (-> prim-group local-sphere) 0.0 (meters 0.5) 0.0 (meters 1.25))
+      (set-root-prim! cshape prim-group)
+      (let ((prim-sphere (new 'process 'collide-shape-prim-sphere cshape (the uint 1))))
+        (set! (-> prim-sphere prim-core collide-as) (collide-kind enemy))
+        (set! (-> prim-sphere collide-with) (collide-kind target))
+        (set! (-> prim-sphere prim-core offense) (collide-offense touch))
+        (set-vector! (-> prim-sphere local-sphere) 0.0 (meters 0.5) 0.0 (meters 0.5))
+        (append-prim prim-group prim-sphere)
+        )
+      )
+    (set! (-> cshape max-iteration-count) (the uint 2))
+    (backup-collide-with-as cshape)
+    (set! (-> this cshape) cshape)
+    )
+  (none)
+  )
+
+(defmethod init-skel! orange-demon ((this orange-demon))
+  (initialize-skeleton this *sidekick-sg* '())
+  (set! (-> this draw origin-joint-index) (the uint 6))
+  (set! (-> this draw shadow-joint-index) (the uint 6))
+  (logior! (-> this skel status) (janim-status eye))
+  (set! (-> this draw shadow-ctrl) *target-shadow-control*)
+  (none)
+  )
+
+(defmethod common-init! orange-demon ((this orange-demon))
+  (init-collision! this)
+  (set! (-> this mask) (logior (process-mask enemy) (-> this mask)))
+  (logclear! (-> this mask) (process-mask actor-pause))
+  (init-skel! this)
+  (set! (-> this align) (new 'process 'align-control this))
+  (set! (-> this notice-dist) NOTICE_DIST)
+  (set! (-> this stop-chase-dist) STOP_CHASE_DIST)
+  (set! (-> this anim-speed) 1.0)
+  (set! (-> this traj-time) 1.0)
+  (set! (-> this grace-period) (seconds 0))
+  (set! (-> this part) (create-launch-control (-> *part-group-id-table* 800) this))
+  (none)
+  )
+
+(defbehavior orange-demon-init-by-other orange-demon ((vec vector))
+  (common-init! self)
+  (set! (-> self cshape trans quad) (-> vec quad))
+  (go orange-demon-dormant)
+  (none)
+  )
+
+(defmethod init-from-entity! orange-demon ((this orange-demon) (entity entity-actor))
+  (common-init! this)
+  (process-drawable-from-entity! this entity)
+  (go orange-demon-dormant)
+  (none)
+  )
+
+(defbehavior orange-demon-follow-trajectory orange-demon ((time float))
+  (let ((traj (-> self trajectory)))
+    (eval-position! traj time (-> self cshape trans))
+    (eval-velocity! traj time (-> self cshape transv))
+    )
+  (vector-normalize-copy! (-> self dir) (-> self cshape transv) 1.0)
+  (forward-up->quaternion (-> self cshape quat) (-> self dir) *up-vector*)
+  (none)
+  )
+
+(defbehavior send-attack! orange-demon ((proc process) (tshapes touching-shapes-entry))
+  (when (and (logtest? (-> *target* control root-prim prim-core action) (collide-action racer))
+             (send-event proc 'attack tshapes (static-attack-info ((mode 'explode)))))
+    (set-collide-offense (-> self cshape) 1 (collide-offense no-offense))
+    #t
+    )
+  (when (send-event proc 'attack tshapes (static-attack-info ((mode 'death))))
+    (set-collide-offense (-> self cshape) 1 (collide-offense no-offense))
+    #t
+    )
+  #f
+  )
+
+(defmethod touch-handler orange-demon ((this orange-demon) (proc process) (msg event-message-block))
+  (let ((target-anim (-> *target* skel channel 0 frame-group name))
+        (level (aif (level-get-target-inside *level*) (-> it name) #f))
+        )
+    (when (or (> (-> this grace-period) (seconds 0))
+              (and (string= target-anim "eichar-launch-jump") ;; hack to prevent dying after launching out of the temple/helix
+                   (or (= level 'jungle) (= level 'jungleb) (= level 'sunken) (= level 'sunkenb))))
+      (return #f)
+      )
+    )
+  (when (prims-touching? (the touching-shapes-entry (-> msg param 0))
+                         (-> this cshape)
+                         (the uint 1))
+    (when (send-attack! proc (the touching-shapes-entry (-> msg param 0)))
+      ;; (go orange-demon-victory)
+      #t
+      )
+    )
+  )
+
+(defbehavior orange-demon-event-handler orange-demon ((proc process) (arg1 int) (event symbol) (msg event-message-block))
+  (case event
+    (('touch 'attack)
+     (when (= (-> proc type) target)
+       (touch-handler self proc msg)
+       )
+     )
+    )
+  )
+
+(defmethod target-in-range? orange-demon ((this orange-demon) (dist float))
+  "Is [[target]] close enough?"
+  (and *target* (< (vector-vector-distance (target-pos 0) (-> this cshape trans)) dist))
+  )
+
+(defmethod should-chase? orange-demon ((this orange-demon))
+  "Should we chase after [[target]]?"
+  (if *target*
+    (let* ((state (-> *target* next-state name))
+           (exclude-state? (nmember state '(target-racing-get-on target-racing-get-off target-racing-get-off-jump
+                                            target-flut-get-on target-flut-get-off target-flut-get-off-jump
+                                            target-warp-in target-warp-out))))
+      (and (not (logtest? (-> *target* state-flags)
+                          (state-flags grabbed being-attacked invulnerable timed-invulnerable invuln-powerup do-not-notice dying)))
+           (target-in-range? this (-> this notice-dist))
+           (not (or exclude-state?
+                    (aif (process-by-ename "billy-2") (= (-> it next-state name) 'billy-playing)) ;; rats
+                    (aif (the level-hint (process-by-name "level-hint" *active-pool*)) (string= (-> it sound-to-play) "gamcam20")))) ;; mole cam
+           (= (-> this grace-period) (seconds 0))
+        )
+      )
+    #f
+    )
+  )
+
+(defmethod move! orange-demon ((this orange-demon))
+  "Update our position."
+  (collide-shape-moving-method-58 (-> this cshape) (-> this cshape transv))
+  (none)
+  )
+
+(defbehavior orange-demon-post orange-demon ()
+  "Basic post: Update grace period, shadow, joint control and disable sidekick."
+  (update-direction-from-time-of-day (-> self draw shadow-ctrl))
+  (false! (-> *setting-control* default play-hints))
+  (send-event *target* 'sidekick #f)
+  ;; joint control debug prints
+  (if ORANGE_DEMON_DEBUG
+    (aif (-> self skel) (debug-print-channels it (the symbol *stdcon*)))
+    )
+  (if (= (-> *target* next-state name) 'target-continue)
+    (set! (-> self grace-period) (current-time))
+    )
+  (if (> (- (current-time) (-> self grace-period)) (seconds 2))
+    (set! (-> self grace-period) (seconds 0))
+    )
+  (ja-post)
+  (none)
+  )
+
+(defbehavior orange-demon-chase-post orange-demon ()
+  "Chase post: Poll [[target]]'s position and update our own position, direction and trajectory time."
+  (set! (-> self target-pos quad) (-> (target-pos 0) quad))
+  (set! (-> self traj-time) (scale-traj-time))
+  (format *stdcon* "traj-time ~f~%" (-> self traj-time))
+  (let ((fnt (new 'stack 'font-context *font-default-matrix* 170 130 0.0 (font-color red) (font-flags shadow kerning middle)))
+        (percent (cond ((<= (-> self traj-time) 0.47) 100.0)
+                       (else (+ 47.0 (calculate-completion (the progress #f))))
+                       ))
+        )
+    (print-game-text (string-format "speed: ~,,2f%~%" percent) fnt #f 128 12)
+    )
+  (compute-alignment! (-> self align))
+  (move! self)
+  (orange-demon-post)
+  (none)
+  )
+
+;; dormant state: if target is not active, hide
+(defstate orange-demon-dormant (orange-demon)
+  :event orange-demon-event-handler
+  :enter (behavior ()
+    (logior! (-> self draw status) (draw-status hidden))
+    (clear-collide-with-as (-> self cshape))
+    (none)
+    )
+  :code (behavior ()
+    (sleep-code)
+    )
+  :trans (behavior ()
+    (when *target*
+      (go orange-demon-idle)
+      )
+    (none)
+    )
+  :exit (behavior ()
+    (logclear! (-> self draw status) (draw-status hidden))
+    (restore-collide-with-as (-> self cshape))
+    (none)
+    )
+  )
+
+;; idle state: target was hit/grace period is active/etc.
+(defstate orange-demon-idle (orange-demon)
+  :event orange-demon-event-handler
+  :enter (behavior ()
+    (set! (-> self state-time) (current-time))
+    (none)
+    )
+  :code (behavior ()
+    (loop
+      (ja-channel-set! 1)
+      (ja-no-eval :group! sidekick-stance-loop-ja :num! min)
+      (until (ja-done? 0)
+        (suspend)
+        (ja :num! (seek!))
+        )
+      )
+    (none)
+    )
+  :trans (behavior ()
+    (if (and (> (- (current-time) (-> self state-time)) (seconds 0.017)) ;; probably need this so bones have run at least once? crashes otherwise
+             (should-chase? self)
+             (nonzero? (-> self draw))
+             )
+        (go orange-demon-chase)
+        )
+    (none)
+    )
+  :post orange-demon-post
+  )
+
+(defstate orange-demon-chase (orange-demon)
+  :event orange-demon-event-handler
+  :enter (behavior ()
+    (set! (-> self state-time) (current-time))
+    (none)
+    )
+  :code (behavior ()
+    (ja-channel-push! 1 (seconds 0.2))
+    (ja :group! sidekick-free-walk-ja :num! min)
+    (loop
+      (spawn (-> self part) (the vector (-> self cshape root-prim prim-core)))
+      ;; set up trajectory to follow target
+      (setup-from-to-duration! (-> self trajectory) (-> self cshape trans) (-> self target-pos) (-> self traj-time) 0.0)
+      (orange-demon-follow-trajectory (ja-aframe-num 1))
+      (when ORANGE_DEMON_DEBUG
+        (debug-draw! (-> self trajectory))
+        (debug-draw-text! self)
+        )
+      (suspend)
+      ;; speed up animation when getting closer to target
+      ;; (+ 1.0 (1/ (vector-vector-xz-distance (-> self target-pos) (-> self cshape trans))))
+      (ja :num! (loop!))
+      )
+    (none)
+    )
+  :trans (behavior ()
+    (if (not (should-chase? self))
+      (go orange-demon-dormant)
+      )
+    (none)
+    )
+  :post orange-demon-chase-post
+  )
+
+;; (defstate orange-demon-victory (orange-demon)
+;;   :event orange-demon-event-handler
+;;   :enter (behavior ()
+;;     (set! (-> self cshape transv quad) (-> *null-vector* quad))
+;;     (none)
+;;     )
+;;   :code (behavior ()
+;;     (ja-channel-push! 1 (seconds 0.075))
+;;     (ja-no-eval :group! sidekick-fuel-cell-victory-9-ja
+;;                 :num! min
+;;                 :frame-num 0.0
+;;                 )
+;;       (until (ja-done? 0)
+;;         (suspend)
+;;         (ja :num! (seek!)
+;;         )
+;;       )
+;;     (go orange-demon-idle)
+;;     (none)
+;;   )
+;;   :post orange-demon-post
+;;   )

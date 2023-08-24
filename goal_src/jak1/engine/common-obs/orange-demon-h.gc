@@ -1,0 +1,77 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(deftype orange-demon (process-drawable)
+  ((cshape collide-shape-moving :offset 112)
+   (trajectory trajectory :inline)
+   (target-pos vector :inline)
+   (dir vector :inline)
+   (notice-dist meters)
+   (stop-chase-dist meters)
+   (touch-time time-frame)
+   (anim-speed float)
+   (traj-time float)
+   (grace-period time-frame)
+   )
+  (:methods
+    (init-collision! (_type_) none)
+    (init-skel! (_type_) none)
+    (common-init! (_type_) none)
+    (target-in-range? (_type_ float) basic)
+    (move! (_type_) none)
+    (send-attack! (_type_ process touching-shapes-entry symbol) object)
+    (touch-handler (_type_ process event-message-block) object)
+    (debug-draw-text! (_type_) none)
+    (should-chase? (_type_) basic)
+    (dist-to-target (_type_) float)
+    )
+  (:states
+    orange-demon-dormant
+    orange-demon-idle
+    orange-demon-chase
+    ;; orange-demon-victory
+    )
+  )
+
+(deftype orange-demon-manager (process)
+  ((demon handle)
+   )
+   (:states
+     orange-demon-manager-idle
+     )
+  )
+
+(define *orange-demon-manager* (the (pointer orange-demon-manager) #f))
+
+(defpart 3500
+  :init-specs ((:texture (new 'static 'texture-id :page 2))
+    (:num 10.0)
+    (:x (meters 1.75) (meters 0))
+    (:y (meters 0) (meters 0.1))
+    (:scale-x (meters 1) (meters 0.25))
+    (:rot-z (degrees 0) (degrees 360))
+    (:scale-y :copy scale-x)
+    (:r 128.0)
+    (:g 0.0 128.0)
+    (:b 0.0)
+    (:a 32.0 32.0)
+    (:vel-y (meters 0.02) (meters 0.02))
+    (:rotvel-z (degrees -0.6) (degrees 1.2))
+    (:scalevel-y :copy scalevel-x)
+    (:fade-a -1.5058824)
+    (:friction 0.98)
+    (:timer (seconds 0.2))
+    (:flags (bit2 bit3 bit14))
+    (:conerot-x (degrees 0) (degrees 30))
+    (:conerot-y (degrees 0) (degrees 360))
+    (:rotate-y (degrees 0) (degrees 360))
+    )
+  )
+
+(defpartgroup group-orange-demon-burn-circle
+  :id 800
+  :duration (seconds 0.5)
+  :linger-duration (seconds 2)
+  :bounds (static-bspherem 0 0 0 2)
+  :parts ((sp-item 3500))
+  )

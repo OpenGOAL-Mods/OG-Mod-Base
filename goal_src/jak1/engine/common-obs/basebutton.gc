@@ -518,7 +518,7 @@
     ;; dispose the old code from memory.
     (case (-> self level)
     ;;Tagmort
-      (('citadel 'lavatube 'training 'block-world 'factory-cross)
+      (('citadel 'lavatube 'training 'block-world 'factory-cross 'blockworld)
        (while (and *target* (not (logtest? (-> *target* draw status) (draw-status hidden))))
          (suspend)
          )
