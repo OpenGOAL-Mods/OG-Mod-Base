@@ -13,7 +13,7 @@
 
 (declare-type vent process-drawable)
 (declare-type eco eco-collectable)
-
+(define *MAXCURRENTCHICKS* 11)
 (deftype level-information (structure)
 ((name string)
  (total-chicks uint8)
@@ -1777,6 +1777,9 @@
 (defstate pickup (fuel-cell)
   :virtual #t
   :enter (behavior ((arg0 object) (arg1 handle))
+  (if (< *MAXCURRENTCHICKS*  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))
+  (return #f)
+  )
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (set! (-> self state-object) #t)
     (let ((t9-1 (-> (the-as (state eco-collectable) (find-parent-method fuel-cell 23)) enter)))
@@ -1787,6 +1790,9 @@
     (none)
     )
   :trans (behavior ()
+    (if (< *MAXCURRENTCHICKS*  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))
+  (return #f)
+  )
     (let ((f30-0 (the-as float (cond
                                  ((string= (-> self victory-anim name) "fuel-cell-victory")
                                   97.0
@@ -1845,6 +1851,9 @@
     )
    :code (behavior ((arg0 object) (arg1 handle))
     (local-vars (sv-96 res-tag))
+      (if (< *MAXCURRENTCHICKS*  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))
+  (return #f)
+  )
     (sound-play "pu-powercell")
     (clear-collide-with-as (-> self root-override))
     (logclear! (-> self mask) (process-mask actor-pause))
@@ -2226,6 +2235,9 @@
     (none)
     )
   :post (behavior ()
+    (if (< *MAXCURRENTCHICKS*  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))
+  (return #f)
+  )
     (transform-post)
     (if (-> self state-object)
         (spawn (-> self part) (the-as vector (-> self root-override root-prim prim-core)))
