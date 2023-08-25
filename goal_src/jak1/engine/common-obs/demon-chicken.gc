@@ -31,7 +31,7 @@
       )
     )
     ;; For demon-chicken, we dont need a dynamic speed. Lets just return some standard speed. Smaller number = faster
-    (/ 100.0 7.0)
+    ;;(/ 100.0 7.0)
   )
 
 (defun target-pos-with-offset ()
@@ -46,6 +46,8 @@
                         (meters 0))
     (vector+! vec vec offset)
     )
+    ;;Where a demon chicken spawns in
+    (adjust-chick-origin (draw-chick-location))
   )
 
 (defbehavior sleep-code process ()
@@ -344,11 +346,38 @@
 (defun move-chicken-z ((a float))
 (set! (-> *GOTOSPOT* z) (+(-> *GOTOSPOT* z)(meters a)))
 (none))
+(defun-extern draw-chick-location vector)
+
+(define *CHICK1SPOT*  (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0))
+
+(defun adjust-chick-origin ((mmark vector))
+"Takes in the closest master mark from (draw-chicks-fund) then adjusts it and returns it to use as origin for chicken demons"
+
+(vector-copy! *GOTOSPOT* mmark)
+(set! (-> *GOTOSPOT* y) (-> *target* root trans y))
+(add-debug-sphere #t (bucket-id debug-no-zbuf) *GOTOSPOT* (meters 0.1) *color-yellow*)
+
+;;Set the spot of CHICK1 to origin
+
+
+(add-debug-sphere #t (bucket-id debug-no-zbuf) *CHICK1SPOT* (meters 0.1) *color-green*)
+
+
+
+
+*GOTOSPOT*
+)
+
+(defun create-a-spot-1 ()
+(vector-copy! *CHICK1SPOT* *GOTOSPOT*)
+(set! (-> *CHICK1SPOT* x) (+ (-> *CHICK1SPOT* x) (meters (rand-vu-float-range 0.0 (/ 8.1 2.0)))))
+(set! (-> *CHICK1SPOT* z) (+ (-> *CHICK1SPOT* z) (meters (rand-vu-float-range 0.0 (/ 8.1 2.0)))))
+(none))
 
 (defbehavior demon-chicken-chase-post demon-chicken ()
   "Chase post: Poll [[target]]'s position and update our own position, direction and trajectory time."
   ;;(set! (-> self target-pos quad) (-> (target-pos 0) quad))
-  (set! (-> self target-pos quad) (-> (draw-chick-location) quad))
+  (set! (-> self target-pos quad) (-> (adjust-chick-origin (draw-chick-location)) quad))
  
   (set! (-> self traj-time) (scale-traj-time))
   (format *stdcon* "traj-time ~f~%" (-> self traj-time))
@@ -357,7 +386,8 @@
                        (else (+ 47.0 (calculate-completion (the progress #f))))
                        ))
         )
-    (print-game-text (string-format "speed: ~,,2f%~%" percent) fnt #f 128 12)
+        (none)
+    ;;(print-game-text (string-format "speed: ~,,2f%~%" percent) fnt #f 128 12)
     )
   (compute-alignment! (-> self align))
   (move! self)
@@ -429,7 +459,7 @@
     (ja-channel-push! 1 (seconds 0.2))
     (ja :group! sidekick-free-walk-ja :num! min)
     (loop
-      (spawn (-> self part) (the vector (-> self cshape root-prim prim-core)))
+      ;;(spawn (-> self part) (the vector (-> self cshape root-prim prim-core))) ;; fire rings
       ;; set up trajectory to follow target
       (setup-from-to-duration! (-> self trajectory) (-> self cshape trans) (-> self target-pos) (-> self traj-time) 0.0)
       (demon-chicken-follow-trajectory (ja-aframe-num 1))

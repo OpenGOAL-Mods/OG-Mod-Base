@@ -1788,7 +1788,7 @@
           )
       )
       (if (and (<= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 1) *chicks-follow?*) 
-      (demon-chicken-manager-start #t)
+      (demon-chicken-manager-start #t )
       )
     (none)
     )

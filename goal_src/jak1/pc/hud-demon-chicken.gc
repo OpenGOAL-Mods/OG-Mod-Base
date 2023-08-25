@@ -128,7 +128,8 @@
        (set! (-> this demon-state) (-> demon next-state name))
        (set! (-> this grace-period) (-> demon grace-period))
        (set! (-> this dist) (dist-to-target demon))
-       (update-display-status this 0 #t)
+       ;; uncomment this to add HUD
+       ;;(update-display-status this 0 #t)
        )
       (else
         ;; we have nothing. kill everything.

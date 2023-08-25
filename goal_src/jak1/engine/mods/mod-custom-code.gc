@@ -95,7 +95,7 @@
   (set! old-point-to-jak (meters 3729817398217391279))
   (dotimes (i 32)
     (let* ((current-ball-pos (-> *camera*  target-spline point i position))
-            (dist-target-meters (/ (vector-vector-distance current-ball-pos (-> *target* root trans)) 40964))
+            (dist-target-meters (/ (vector-vector-xz-distance current-ball-pos (-> *target* root trans)) 40964))
             (valid? (not (or (> dist-target-meters 1.0) (< dist-target-meters 0.27))))
             (less-than-stored-pos (< dist-target-meters old-point-to-jak)))
       ;; Too close to jak red/ignore them
