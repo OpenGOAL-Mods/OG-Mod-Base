@@ -335,7 +335,7 @@
 
 (defun move-chicken-x ((a float))
 (set! (-> *GOTOSPOT* x) (+(-> *GOTOSPOT* x)(meters a)))
-(none))
+(none)) 
 
 (defun move-chicken-y ((a float))
 (set! (-> *GOTOSPOT* y) (+(-> *GOTOSPOT* y)(meters a)))

@@ -89,26 +89,40 @@
     (set! *sphere-color* *color-white*)
 
     (define current-chicks-num 3)
+    (define *closest-pos-index* 0)
+    (define old-point-to-jak (meters 3729817398217391279))
     (defun draw-chick-location ()
     (dotimes (i 32)
- 
- 
-    (if (> (/ (vector-vector-distance  (-> *camera*  target-spline point i position) (-> *target* root trans))40964) 1.0)
-    (set! *sphere-color* *color-red*)
+
+    ;;Too close to jak red/ignore them
+    (if (or (> (/ (vector-vector-distance  (-> *camera*  target-spline point i position) (-> *target* root trans))40964) 1.0)(< (/ (vector-vector-distance  (-> *camera*  target-spline point i position) (-> *target* root trans))40964) 0.27))
+    (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *color-black*) 
+    ;;INVALID WOOO
     )
 
-    (if (and (= *sphere-color* *color-white*)(< (/ (vector-vector-distance  (-> *camera*  target-spline point i position) (-> *target* root trans))40964) 0.27))
-    (set! *sphere-color* *color-red*)
+    (if (not (or (> (/ (vector-vector-distance  (-> *camera*  target-spline point i position) (-> *target* root trans))40964) 1.0)(< (/ (vector-vector-distance  (-> *camera*  target-spline point i position) (-> *target* root trans))40964) 0.27)))
+    (begin ;;THESE are valid, need to somehow store and compare distance to jak to find the closest one
+    (set! *sphere-color* *color-green*)
+    ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *sphere-color*) 
+   (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) (-> *camera*  target-spline point i position)  (font-color red) (the-as vector2h #f) )
+    (if (>= old-point-to-jak (vector-vector-distance (-> *camera*  target-spline point i position) (target-pos 0)))
+    ;;If our current point is closer than our last point, store it
+    (set! *closest-pos-index* i))
+    ;;Store the distance we just checked
+    (set! old-point-to-jak (vector-vector-distance (-> *camera*  target-spline point i position) (target-pos 0))))
+    )
+ 
+    ;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.2) *sphere-color*) 
+  
+    ;; (set! *sphere-color* *color-white*)
+
+
+
+
     )
 
-    ;;mark all as valid
-    (if (= *sphere-color* *color-white*)
-    (set! *sphere-color* *color-yellow*)
-    )
-    (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.2) *sphere-color*) 
-    (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) (-> *camera*  target-spline point i position)  (font-color red) (the-as vector2h #f) )
-    (set! *sphere-color* *color-white*)
-    )
+     (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*) 
+    (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" *closest-pos-index*) (-> *camera*  target-spline point *closest-pos-index* position)  (font-color red) (the-as vector2h #f) )
     
 
     
@@ -224,10 +238,10 @@
       (cam-eye-no-rot)
       (check-portal-distance)
       (save-chicks-func)
-      (mort-debug-text)
+     ;; (mort-debug-text)
     ;;  )
       
-     ;;(draw-chick-location)
+     (draw-chick-location)
       (if *show-input-display* 
         (input-display-on)
         (input-display-off)
