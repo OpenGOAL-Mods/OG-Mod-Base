@@ -348,7 +348,7 @@
 (defbehavior demon-chicken-chase-post demon-chicken ()
   "Chase post: Poll [[target]]'s position and update our own position, direction and trajectory time."
   ;;(set! (-> self target-pos quad) (-> (target-pos 0) quad))
-  (set! (-> self target-pos quad) (-> *GOTOSPOT* quad))
+  (set! (-> self target-pos quad) (-> (draw-chick-location) quad))
  
   (set! (-> self traj-time) (scale-traj-time))
   (format *stdcon* "traj-time ~f~%" (-> self traj-time))

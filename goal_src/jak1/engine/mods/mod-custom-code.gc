@@ -92,44 +92,34 @@
     (define *closest-pos-index* 0)
     (define old-point-to-jak (meters 3729817398217391279))
 (defun draw-chick-location ()
+  (set! old-point-to-jak (meters 3729817398217391279))
   (dotimes (i 32)
     (let* ((current-ball-pos (-> *camera*  target-spline point i position))
-                (dist-target-meters (/ (vector-vector-distance  current-ball-pos (-> *target* root trans))40964))
-                (valid? (not (or (> dist-target-meters 1.0)(< dist-target-meters 0.27))))
-                (less-than-stored-pos (< dist-target-meters old-point-to-jak))
-        )
-        
-            ;;Too close to jak red/ignore them
-        (if (not valid?)
-          (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *color-black*) 
-          (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) current-ball-pos  (font-color red) (the-as vector2h #f) )
-        ;;INVALID WOOO
-        )
-
-        
-        (if (and  valid?  less-than-stored-pos)
-        ;;THESE are valid, and should be less than the distance of the last index we checked
+            (dist-target-meters (/ (vector-vector-distance current-ball-pos (-> *target* root trans)) 40964))
+            (valid? (not (or (> dist-target-meters 1.0) (< dist-target-meters 0.27))))
+            (less-than-stored-pos (< dist-target-meters old-point-to-jak)))
+      ;; Too close to jak red/ignore them
+      (if (not valid?)
+          (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *color-black*)
+         ;; show all possible indexes for debugging
+         ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) current-ball-pos (font-color red) (the-as vector2h #f))
+         )
+      ;; Corrected part to update the closest position and distance
+      (if (and valid? less-than-stored-pos)
           (begin 
-          (set! *sphere-color* *color-green*)
-          ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *sphere-color*) 
+            (set! *sphere-color* *color-green*)
+            ;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *sphere-color*) 
             (if less-than-stored-pos
-            ;;If our current point is closer than our last point, store it and since its also closer, update our closest known distance
-            (begin
-              (set! *closest-pos-index* i)
-              (set! old-point-to-jak dist-target-meters)
-              )
-            )
-          )
-        )  
-      )
-    )
-  ;; Try to draw the "good" sphere
-  ;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.2) *sphere-color*) 
-  ;; (set! *sphere-color* *color-white*)
+                ;; If our current point is closer than our last point, store it and update closest known distance
+                (begin
+                  (set! *closest-pos-index* i)
+                  (set! old-point-to-jak dist-target-meters)))))))
+  ;; Draw the closest position
+  ;;(format #t "WARNING: fuel-cell stall on not cloning. ~F~%" old-point-to-jak)
   (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*) 
-  (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" *closest-pos-index*) (-> *camera*  target-spline point *closest-pos-index* position)  (font-color green) (the-as vector2h #f) )
-  (none) ;;Eventually this doesnt draw and returns the "good" sphere pos when called
-  )
+  (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" *closest-pos-index*) (-> *camera*  target-spline point *closest-pos-index* position)  (font-color green) (the-as vector2h #f))
+  (-> *camera*  target-spline point *closest-pos-index* position))
+
 
 
     (defun cam-eye-no-rot ()
