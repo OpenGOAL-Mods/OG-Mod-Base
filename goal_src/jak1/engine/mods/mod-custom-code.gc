@@ -118,6 +118,9 @@
   ;;(format #t "WARNING: fuel-cell stall on not cloning. ~F~%" old-point-to-jak)
   (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*) 
   (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" *closest-pos-index*) (-> *camera*  target-spline point *closest-pos-index* position)  (font-color green) (the-as vector2h #f))
+  
+
+  
   (-> *camera*  target-spline point *closest-pos-index* position))
 
 
@@ -219,7 +222,12 @@
       ;;sets mort level to true or false so we know what fields are safe to call.
      
       ;; (when (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )
+
+      ;;hack to spawn chimken on x push
+      ;; (if (cpad-pressed? 0 x)
       
+      ;; (chicken-pls))
+
       ;; (set! (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) max-slot) *number-unlock-lvl*))
       (set! *chicks-follow?* #t)
       (mort-main-menu)
@@ -231,6 +239,7 @@
       (cam-eye-no-rot)
       (check-portal-distance)
       (save-chicks-func)
+      (draw-beta-flock-points)
      ;; (mort-debug-text)
     ;;  )
       

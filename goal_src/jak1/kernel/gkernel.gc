@@ -2554,7 +2554,7 @@
 
 ;; some very important process pools
 (define *target-dead-pool* (new 'global 'dead-pool 1 (* 48 1024) '*target-dead-pool*))
-(define *demon-chicken-dead-pool* (new 'global 'dead-pool 1 (* 16 1024) '*demon-chicken-dead-pool*))
+(define *demon-chicken-dead-pool* (new 'global 'dead-pool 32 (* 16 1024) '*demon-chicken-dead-pool*))
 (define *camera-dead-pool* (new 'global 'dead-pool 7 (* 4 1024) '*camera-dead-pool*))
 (define *camera-master-dead-pool* (new 'global 'dead-pool 1 (* 8 1024) '*camera-master-dead-pool*))
 

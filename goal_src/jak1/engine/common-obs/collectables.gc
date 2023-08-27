@@ -5,7 +5,8 @@
 ;; name in dgo: collectables
 ;; dgos: GAME, ENGINE
 
-
+(define-extern *num-chicken-follow* int)
+(defun-extern chicken-pls none)
 (define-extern runs-on-orb-pickup (function process-tree none))
 (define-extern runs-on-fly-pickup (function none))
 (define-extern runs-on-cell-pickup (function symbol none))
@@ -1788,7 +1789,15 @@
           )
       )
       (if (and (<= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 1) *chicks-follow?*) 
-      (demon-chicken-manager-start #t )
+      ;;(demon-chicken-manager-start #t)
+      (begin 
+      (+! *num-chicken-follow* 1)
+        (if (not (= *num-chicken-follow*  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)))
+  (chicken-pls)
+  )
+  (none)
+      
+      )
       )
     (none)
     )
