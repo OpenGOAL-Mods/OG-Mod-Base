@@ -218,15 +218,29 @@
 )
 
     (defun runs-every-frame ()
-      ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
+
       ;;sets mort level to true or false so we know what fields are safe to call.
      
       ;; (when (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )
 
       ;;hack to spawn chimken on x push
       ;; (if (cpad-pressed? 0 x)
-      
       ;; (chicken-pls))
+
+      ;;If are flock points aren't setup, lets set them up.
+      (adjust-chick-origin(draw-chick-location))
+      (if (= (-> *flock-points* points 0 x) 0.0) 
+      (begin 
+      (set-flock-points)
+      (chicken-pls) ;; spawn the chickens offscreen
+      )
+      )
+
+      ;;We should sanity check the flock points here, then assume they are valid.
+
+      ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
+      ;;If a chicken should despawn, set its target pos to 0,0,0.
+      (assign-remove-demon-chicken-target)
 
       ;; (set! (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) max-slot) *number-unlock-lvl*))
       (set! *chicks-follow?* #t)
@@ -243,6 +257,10 @@
      ;; (mort-debug-text)
     ;;  )
       
+
+      (add-debug-sphere #t (bucket-id debug-no-zbuf) *buddy-test-point-1* (meters 0.1) *color-green*)
+(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "Buddy test point") *buddy-test-point-1* (font-color red) (the-as vector2h #f))
+
      (draw-chick-location)
       (if *show-input-display* 
         (input-display-on)

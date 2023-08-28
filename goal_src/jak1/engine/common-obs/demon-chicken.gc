@@ -7,6 +7,7 @@
 ;; Orange Demon Challenge
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define *Origin*  (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0))
+(define *buddy-test-point-1*  (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0))
 (defconstant NOTICE_DIST (meters 10000))
 (defconstant STOP_CHASE_DIST (meters 100000))
 (defconstant ORANGE_DEMON_DEBUG #f)
@@ -53,7 +54,7 @@
     (vector+! vec vec offset)
     )
     ;;Where a demon chicken spawns in
-    (adjust-chick-origin (draw-chick-location))
+   ;; (adjust-chick-origin (draw-chick-location))
   )
 
 (defbehavior sleep-code process ()
@@ -133,67 +134,80 @@
   (none)
   )
 
+
+(deftype flock (structure)
+  ((chicks handle 47   :offset-assert 0)
+   )
+  )
+(define *flock* (new 'static 'flock))
+
+(deftype flock-pos (structure)
+  ((points vector 47   :inline :offset-assert 0)
+   )
+  )
+  (define *flock-points* (new 'static 'flock-pos))
+  
 (defun chicken-pls ()
 (define *chicken-1* (-> (start2) 0))
 (set! (-> *chicken-1* name) "chicken-1")
-
+(set! (-> *flock* chicks 1)  (process->handle *chicken-1*))
 (define *chicken-2* (-> (start2) 0))
 (set! (-> *chicken-2* name) "chicken-2")
-
+(set! (-> *flock* chicks 2)  (process->handle *chicken-2*))
 (define *chicken-3* (-> (start2) 0))
 (set! (-> *chicken-3* name) "chicken-3")
-
+(set! (-> *flock* chicks 3)  (process->handle *chicken-3*))
 (define *chicken-4* (-> (start2) 0))
 (set! (-> *chicken-4* name) "chicken-4")
-
+(set! (-> *flock* chicks 4)  (process->handle *chicken-4*))
 (define *chicken-5* (-> (start2) 0))
 (set! (-> *chicken-5* name) "chicken-5")
-
+(set! (-> *flock* chicks 5)  (process->handle *chicken-5*))
 (define *chicken-6* (-> (start2) 0))
 (set! (-> *chicken-6* name) "chicken-6")
-
+(set! (-> *flock* chicks 6)  (process->handle *chicken-6*))
 (define *chicken-7* (-> (start2) 0))
 (set! (-> *chicken-7* name) "chicken-7")
-
+(set! (-> *flock* chicks 7)  (process->handle *chicken-7*))
 (define *chicken-8* (-> (start2) 0))
 (set! (-> *chicken-8* name) "chicken-8")
-
+(set! (-> *flock* chicks 8)  (process->handle *chicken-8*))
 (define *chicken-9* (-> (start2) 0))
 (set! (-> *chicken-9* name) "chicken-9")
-
+(set! (-> *flock* chicks 9)  (process->handle *chicken-9*))
 (define *chicken-10* (-> (start2) 0))
 (set! (-> *chicken-10* name) "chicken-10")
-
+(set! (-> *flock* chicks 10)  (process->handle *chicken-10*))
 (define *chicken-11* (-> (start2) 0))
 (set! (-> *chicken-11* name) "chicken-11")
-
+(set! (-> *flock* chicks 11)  (process->handle *chicken-11*))
 (define *chicken-12* (-> (start2) 0))
 (set! (-> *chicken-12* name) "chicken-12")
-
+(set! (-> *flock* chicks 12)  (process->handle *chicken-12*))
 (define *chicken-13* (-> (start2) 0))
 (set! (-> *chicken-13* name) "chicken-13")
-
+(set! (-> *flock* chicks 13)  (process->handle *chicken-13*))
 (define *chicken-14* (-> (start2) 0))
 (set! (-> *chicken-14* name) "chicken-14")
-
+(set! (-> *flock* chicks 14)  (process->handle *chicken-14*))
 (define *chicken-15* (-> (start2) 0))
 (set! (-> *chicken-15* name) "chicken-15")
-
+(set! (-> *flock* chicks 15)  (process->handle *chicken-15*))
 (define *chicken-16* (-> (start2) 0))
 (set! (-> *chicken-16* name) "chicken-16")
-
+(set! (-> *flock* chicks 16)  (process->handle *chicken-16*))
 (define *chicken-17* (-> (start2) 0))
 (set! (-> *chicken-17* name) "chicken-17")
-
+(set! (-> *flock* chicks 17)  (process->handle *chicken-17*))
 (define *chicken-18* (-> (start2) 0))
 (set! (-> *chicken-18* name) "chicken-18")
-
+(set! (-> *flock* chicks 18)  (process->handle *chicken-18*))
 (define *chicken-19* (-> (start2) 0))
 (set! (-> *chicken-19* name) "chicken-19")
-
+(set! (-> *flock* chicks 19)  (process->handle *chicken-19*))
 (define *chicken-20* (-> (start2) 0))
 (set! (-> *chicken-20* name) "chicken-20")
-
+(set! (-> *flock* chicks 20)  (process->handle *chicken-20*))
 (none))
 
 (defun vegan ()
@@ -209,17 +223,7 @@
 ;; demon-chicken
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(deftype flock (structure)
-  ((chicks handle 47   :offset-assert 0)
-   )
-  )
-(define *flock* (new 'static 'flock))
 
-(deftype flock-pos (structure)
-  ((points vector 47   :inline :offset-assert 0)
-   )
-  )
-  (define *flock-points* (new 'static 'flock-pos))
 
   (defun set-flock-points-start ()
   (dotimes (i 47)
@@ -239,7 +243,7 @@
 
   (defun point-close-to-another? ((vec vector))
   (dotimes (i 47)
-  (if (> (vector-vector-distance vec  (-> *flock-points* points i)) (meters 1))
+  (if (> (vector-vector-distance vec  (-> *flock-points* points i)) (meters 0.1))
   (return #t)
   )
   )
@@ -272,7 +276,7 @@
   ;; If we are too close to another point, then keep making random spots until we arent
   (when (point-close-to-another? temp-vec)
  
-     (format #t "MAKING NEW POS~%")
+  (format #t "MAKING NEW POS~%")
   (set! (-> temp-vec x) (+ (-> temp-vec x) (rand-vu-float-range 0.0 (meters 2))))
   ;;(set! (-> temp-vec y) (+ (-> temp-vec y) (rand-vu-float-range 0.0 (meters 1))))
   (set! (-> temp-vec z) (+ (-> temp-vec z) (rand-vu-float-range 0.0 (meters 2))))
@@ -285,10 +289,10 @@
   (vector-copy! (-> *flock-points* points i) temp-vec  )
   )
   )
-(defun move-flock-by-xz ()
+(defun move-flock-by-xz ((xchange float)(ychange float))
 (dotimes (i 47)
-(set! (-> *flock-points* points i x) (+ (-> *flock-points* points i x) 2.0))
-(set! (-> *flock-points* points i z) (+ (-> *flock-points* points i z) 2.0))
+(set! (-> *flock-points* points i x) (- (-> *flock-points* points i x) xchange))
+(set! (-> *flock-points* points i z) (- (-> *flock-points* points i z) ychange))
 )
 (none))
 (defun draw-beta-flock-points ()
@@ -309,7 +313,8 @@
   )
 
 (defun get-chick-from-flock ((idx int))
-(the demon-chicken (handle->process (-> *flock* chicks idx)))
+(if (!= idx 0) ;;We dont want zero as I put nothing there
+(the demon-chicken (handle->process (-> *flock* chicks idx))))
 )
 
 (defun add-chick-to-flock ((idx int))
@@ -559,34 +564,40 @@
 
 (define *CHICK1SPOT*  (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0))
 (define xchange 0.0)
-(define ychange 0.0)
+(define zchange 0.0)
 
 (defun adjust-chick-origin ((mmark vector))
-(if (not (= (vector-vector-distance *Origin* mmark) 0.0))
+(if (not (= (vector-vector-xz-distance *Origin* mmark) 0.0))
 (begin
 "Takes in the closest master mark from (draw-chicks-fund) then adjusts it and returns it to use as origin for chicken demons"
  ;;(format #t "UPDATING ORIGIN~%")
 ;;We are updating the origin
-(if #t
+(format #t "Origin is not mmark updating it ")
 ;; If the origin is not at its starting point, figure out how much it moved and store that.
 (begin
 (set! xchange (- (-> *Origin* x) (-> mmark x)))
-(set! ychange (- (-> *Origin* y) (-> mmark y)))
+(set! zchange (- (-> *Origin* z) (-> mmark z)))
+(format #t "Origin moved by ~m ~m ~%" xchange zchange)
+
+(-! (-> *buddy-test-point-1* x)  xchange)
+(-! (-> *buddy-test-point-1* z)  zchange)
+(move-flock-by-xz xchange zchange)
 )
-(dotimes (i 47)
-(set! (-> *flock-points* points i x) (+ (-> *flock-points* points i x) (meters xchange)))
-(set! (-> *flock-points* points i z) (+ (-> *flock-points* points i z) (meters ychange)))
-)
-)
+;; (dotimes (i 47)
+;; (set! (-> *flock-points* points i x) (+ (-> *flock-points* points i x) (meters xchange)))
+;; (set! (-> *flock-points* points i z) (+ (-> *flock-points* points i z) (meters zchange)))
+;; )
 (vector-copy! *Origin* mmark)
 (set! (-> *Origin* y) (-> *target* root trans y))
+
+;;Check if the position of all 47 flock points is valid here, if its not regenerate them.
 ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-yellow*)
 
 ;;Set the spot of CHICK1 to origin
 
 
-(add-debug-sphere #t (bucket-id debug-no-zbuf) *CHICK1SPOT* (meters 0.1) *color-green*)
-
+(add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-green*)
+(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "Origin point") *Origin* (font-color red) (the-as vector2h #f))
 
 
 
@@ -596,6 +607,14 @@
 
 )
 *Origin*
+)
+
+(defun chick-spot-is-valid? ()
+;;This checks a vector and makes sure that the flock is valid, if a point is not valid, then it returns false and we generate a new point and recheck
+(if (and point-at-origin? point-away-from-target point-close-to-another?)
+#t
+#f
+)
 )
 
 (defun create-a-spot-1 ()
@@ -604,13 +623,20 @@
 (set! (-> *CHICK1SPOT* z) (+ (-> *CHICK1SPOT* z) (meters (rand-vu-float-range 0.0 (/ 8.1 2.0)))))
 (none))
 
+(defun assign-remove-demon-chicken-target ()
+(dotimes (i (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))
+(set! (->  (get-chick-from-flock i) target-pos quad)(-> *flock-points* points i quad))
+ )
+  
+)
 (defbehavior demon-chicken-chase-post demon-chicken ()
   "Chase post: Poll [[target]]'s position and update our own position, direction and trajectory time."
   ;;(set! (-> self target-pos quad) (-> (target-pos 0) quad))
-  (set! (-> self target-pos quad) (-> (adjust-chick-origin (draw-chick-location)) quad))
- 
+  ;;(set! (-> self target-pos quad) (-> (adjust-chick-origin (draw-chick-location)) quad))
+  ;;Here we should check the demons distance to its target, if its too far away just teleport it to target
+  
   (set! (-> self traj-time) (scale-traj-time))
-  (format *stdcon* "traj-time ~f~%" (-> self traj-time))
+  ;;(format *stdcon* "traj-time ~f~%" (-> self traj-time))
   (let ((fnt (new 'stack 'font-context *font-default-matrix* 170 130 0.0 (font-color red) (font-flags shadow kerning middle)))
         (percent (cond ((<= (-> self traj-time) 0.47) 100.0)
                        (else (+ 47.0 (calculate-completion (the progress #f))))
