@@ -49,6 +49,21 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   `(-> *game-info* fuel)
   )
 
+(defmacro current-chicks-following ()
+  `(-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)
+  )
+
+;;All the ones under here are placeholder
+
+(defmacro current-chicks-saved ()
+  `(-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)
+  )
+
+(defmacro current-chicks-total ()
+  `(-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)
+  )
+
+
 (defmacro set-current-cell-count (count)
   `(set! (-> *game-info* fuel) ,count)
   )

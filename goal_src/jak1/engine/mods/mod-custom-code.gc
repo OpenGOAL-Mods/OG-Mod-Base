@@ -70,7 +70,7 @@
       (draw-string-xy (string-format "Mort Debug info ~%Level inside: ~D ~%Total Chicks is is ~D~%Current Chicks is is ~D~%saved Chicks is is ~D~%Close to portal? ~A~%"
                                      (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))
                                      (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks) 
-                                     (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 
+                                     (current-chicks-following) 
                                      (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) 
                                       *close-to-portal?*
                                      )
@@ -100,7 +100,8 @@
             (less-than-stored-pos (< dist-target-meters old-point-to-jak)))
       ;; Too close to jak red/ignore them
       (if (not valid?)
-          (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *color-black*)
+          (none)
+          ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *color-black*)
          ;; show all possible indexes for debugging
          ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) current-ball-pos (font-color red) (the-as vector2h #f))
          )
@@ -116,8 +117,8 @@
                   (set! old-point-to-jak dist-target-meters)))))))
   ;; Draw the closest position
   ;;(format #t "WARNING: fuel-cell stall on not cloning. ~F~%" old-point-to-jak)
-  (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*) 
-  (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" *closest-pos-index*) (-> *camera*  target-spline point *closest-pos-index* position)  (font-color green) (the-as vector2h #f))
+  ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*) 
+  ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" *closest-pos-index*) (-> *camera*  target-spline point *closest-pos-index* position)  (font-color green) (the-as vector2h #f))
   
 
   
@@ -166,7 +167,11 @@
   (begin
   (set!  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) (- (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)  1))
   (set!  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (+ (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks)  1))
-  (if (= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks))
+
+  (vector-copy! 
+  (->  (get-chick-from-flock (the int(+ (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1)) current-chicks) 1))) target-pos)
+ (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans)  )
+  (if (= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))saved-chicks) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks))
   (begin
   (play-rand-sound "snd/end-level.wav" 100)
   (+! *number-unlock-lvl* 1)
@@ -254,13 +259,11 @@
       (check-portal-distance)
       (save-chicks-func)
       (draw-beta-flock-points)
-     ;; (mort-debug-text)
+      (mort-debug-text)
     ;;  )
       
 
-      (add-debug-sphere #t (bucket-id debug-no-zbuf) *buddy-test-point-1* (meters 0.1) *color-green*)
-(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "Buddy test point") *buddy-test-point-1* (font-color red) (the-as vector2h #f))
-
+  
      (draw-chick-location)
       (if *show-input-display* 
         (input-display-on)
