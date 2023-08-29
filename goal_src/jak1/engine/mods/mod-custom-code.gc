@@ -228,7 +228,7 @@
       ;; (when (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )
       ;;If are flock points aren't setup, lets set them up.
       (adjust-chick-origin(draw-chick-location))
-      (if (= (-> *flock-points* points 0 x) 0.0) 
+      (if (and (= (-> *flock-points* points 0 x) 0.0) (!= (-> *target* state name) 'target-continue))
       (begin 
       (set-flock-points)
       (set-flock-false);; Set all flock values to #f before chickens are in it
