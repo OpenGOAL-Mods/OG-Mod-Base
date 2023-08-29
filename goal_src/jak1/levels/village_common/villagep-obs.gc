@@ -8,8 +8,8 @@
 
 ;; DECOMP BEGINS
 
-(import "goal_src/jak1/import/warp-gate-switch-ag.gc")
-(import "goal_src/jak1/import/village-cam-ag.gc")
+ (import "goal_src/jak1/import/warp-gate-switch-ag.gc")
+ (import "goal_src/jak1/import/village-cam-ag.gc")
 
 (deftype warpgate (process-hidden)
   ()
@@ -104,7 +104,7 @@
       )
     )
   :code (behavior ()
-    (remove-setting! 'allow-progress)
+   ;; (remove-setting! 'allow-progress)
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (loop
      (when (or (and (and *target*  (>= 20480.0 (vector-vector-distance (-> self root trans) (-> *target* control trans))))
@@ -251,7 +251,7 @@
 (defstate active (warp-gate)
   :virtual #t
   :enter (behavior ()
-    (set-setting! 'allow-progress #f 0.0 0)
+    ;;(set-setting! 'allow-progress #f 0.0 0)
    
     (apply-settings *setting-control*)
     (sound-play "start-options")
@@ -1009,7 +1009,7 @@
                               )
                           )
                       )
-            (set-setting! 'allow-progress #f 0.0 0)
+            ;;(set-setting! 'allow-progress #f 0.0 0)
             (let* ((a0-25 *setting-control*)
                    (t9-14 (method-of-object a0-25 set-setting))
                    (a2-5 'movie)
@@ -1155,7 +1155,7 @@
           (when (zero? (-> self index))
             (let ((a0-70 (-> self entity extra perm)))
               (when (= (-> a0-70 user-uint8 0) 1)
-                (remove-setting! 'allow-progress)
+               ;; (remove-setting! 'allow-progress)
                 (let ((gp-3 (-> *display* base-frame-counter)))
                   (until (>= (- (-> *display* base-frame-counter) gp-3) (seconds 300))
                     (suspend)

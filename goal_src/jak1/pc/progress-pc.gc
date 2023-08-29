@@ -2062,7 +2062,7 @@
           (((progress-screen quit))
            (cond
              ((-> *progress-state* yes-no-choice)
-              (set! *quit-to-title* #t)
+              ;;(set! *quit-to-title* #t)
               (sound-play "start-options")
               (sound-volume-off)
               (set! (-> *game-info* mode) 'play)
