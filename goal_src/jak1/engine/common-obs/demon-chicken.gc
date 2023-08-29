@@ -316,7 +316,7 @@
 
 ;;(defun set-flock-points)
 (defun set-flock-false ()
-  "doc-string"
+  "initalizes the flock to #f to avoid crashes when referencing."
   (dotimes (i 47)
   (set! (-> *flock* chicks i)  (the handle #f))
   )
@@ -326,29 +326,6 @@
 (if (!= idx 0) ;;We dont want zero as I put nothing there
 (the demon-chicken (handle->process (-> *flock* chicks idx))))
 )
-
-(defun add-chick-to-flock ((idx int))
-;; loop the flock
-(dotimes (i 47)
-;; if a spot is #f assume its the first open spot and add a chick there
-(if (= (-> *flock* chicks i)  (the handle #f))
-(when *target3*
-(set! (-> *flock* chicks i)  (process->handle *target3*))))
-)
-)
-
-(defun kill-chick-in-flock ((idx int))
-;; loop the flock
-;; if a spot is #f assume its the first open spot and add a chick there
-(if (not (= (-> *flock* chicks idx)  (the handle #f)))
-(when *target3*
-(kill-by-name 'target-3 *active-pool*)
-(set! (-> *flock* chicks idx) (the handle #f))))
-
-(none)
-)
-
-
 
 (defmethod debug-draw-text! demon-chicken ((this demon-chicken))
   (let ((bucket (bucket-id debug-no-zbuf))
@@ -559,64 +536,37 @@
   (none)
   )
 
-(defun move-chicken-x ((a float))
-(set! (-> *Origin* x) (+(-> *Origin* x)(meters a)))
-(none)) 
-
-(defun move-chicken-y ((a float))
-(set! (-> *Origin* y) (+(-> *Origin* y)(meters a)))
-(none))
-
-(defun move-chicken-z ((a float))
-(set! (-> *Origin* z) (+(-> *Origin* z)(meters a)))
-(none))
-
-
-(define *CHICK1SPOT*  (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0))
-(define xchange 0.0)
-(define zchange 0.0)
+(defun draw-origin ()
+  (add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-orange*)
+  (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "Origin point") *Origin* (font-color red) (the-as vector2h #f))
+  (none)
+)
 
 (defun adjust-chick-origin ((mmark vector))
-(add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-orange*)
-(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "Origin point") *Origin* (font-color red) (the-as vector2h #f))
-(if (not (= (vector-vector-xz-distance *Origin* mmark) 0.0))
-(begin
-"Takes in the closest master mark from (draw-chicks-fund) then adjusts it and returns it to use as origin for chicken demons"
- ;;(format #t "UPDATING ORIGIN~%")
-;;We are updating the origin
-;;(format #t "Origin is not mmark updating it ")
-;; If the origin is not at its starting point, figure out how much it moved and store that.
-(begin
-(set! xchange (- (-> *Origin* x) (-> mmark x)))
-(set! zchange (- (-> *Origin* z) (-> mmark z)))
-;;(format #t "Origin moved by ~m ~m ~%" xchange zchange)
+  (draw-origin)
+  (let ((xchange 0.0)
+        (zchange 0.0))
+        (if (not (= (vector-vector-xz-distance *Origin* mmark) 0.0))
+            (begin
+              "Takes in the closest master mark from (draw-chicks-fund) then adjusts it and returns it to use as origin for chicken demons"
+              ;; If the origin is not at its starting point, figure out how much it moved and store that.
+              (set! xchange (- (-> *Origin* x) (-> mmark x)))
+              (set! zchange (- (-> *Origin* z) (-> mmark z)))
+              ;;(format #t "Origin moved by ~m ~m ~%" xchange zchange)
+              (move-flock-by-xz xchange zchange)
 
-(move-flock-by-xz xchange zchange)
-)
-;; (dotimes (i 47)
-;; (set! (-> *flock-points* points i x) (+ (-> *flock-points* points i x) (meters xchange)))
-;; (set! (-> *flock-points* points i z) (+ (-> *flock-points* points i z) (meters zchange)))
-;; )
-(vector-copy! *Origin* mmark)
-(set! (-> *Origin* y) (-> *target* root trans y))
-
-;;Check if the position of all 47 flock points is valid here, if its not regenerate them.
-;;(add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-yellow*)
-
-;;Set the spot of CHICK1 to origin
-
-
-
-
-
-
-*Origin*
-
+              ;;Update the stored Origin since it moved
+              (vector-copy! *Origin* mmark)
+              (set! (-> *Origin* y) (-> *target* root trans y))
+            )
+        )
+  )
+            ;;Check if the position of all 47 flock points is valid here, if its not regenerate them.
+            ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-yellow*)
+            ;;Set the spot of CHICK1 to origin      
+      *Origin*
 )
 
-)
-*Origin*
-)
 
 (defun chick-spot-is-valid? ()
 ;;This checks a vector and makes sure that the flock is valid, if a point is not valid, then it returns false and we generate a new point and recheck
@@ -626,11 +576,6 @@
 )
 )
 
-(defun create-a-spot-1 ()
-(vector-copy! *CHICK1SPOT* *Origin*)
-(set! (-> *CHICK1SPOT* x) (+ (-> *CHICK1SPOT* x) (meters (rand-vu-float-range 0.0 (/ 8.1 2.0)))))
-(set! (-> *CHICK1SPOT* z) (+ (-> *CHICK1SPOT* z) (meters (rand-vu-float-range 0.0 (/ 8.1 2.0)))))
-(none))
 
 (defun assign-remove-demon-chicken-target ()
 (dotimes (i (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))
@@ -672,10 +617,9 @@
   (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~S" (-> self name))  (-> self target-pos) (font-color red) (the-as vector2h #f))
   ;;(set! (-> self target-pos quad) (-> (adjust-chick-origin (draw-chick-location)) quad))
   ;;Here we should check the demons distance to its target, if its too far away just teleport it to target
-    (if (and (> (vector-vector-xz-distance  (-> self root trans) (-> self target-pos ))(meters 10.0)) (not *close-to-portal?*))
+  (if (and (> (vector-vector-xz-distance  (-> self root trans) (-> self target-pos ))(meters 10.0)) (not *close-to-portal?*))
   (begin
   (vector-copy! (-> self root trans) (-> self target-pos))
-  
   )
   )
   

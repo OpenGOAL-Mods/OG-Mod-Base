@@ -297,9 +297,9 @@
     |#
     (set! (-> self max-slot) *number-unlock-lvl*)
           
-    (if (= *cheat-mode* 'debug)
-          (set! (-> self max-slot) (- (-> *warp-info* length) 1)) ;; We still want to have a way to show all options, so we just let it happen if cheat mode is set to debug
-        )
+    ;; (if (= *cheat-mode* 'debug)
+    ;;       (set! (-> self max-slot) (- (-> *warp-info* length) 1)) ;; We still want to have a way to show all options, so we just let it happen if cheat mode is set to debug
+    ;;     )
     (format 0 "SELF MAX-SLOT: ~D~%" (-> self max-slot))
 
     (local-vars (sv-112 int) (sv-128 int) (sv-144 int))    

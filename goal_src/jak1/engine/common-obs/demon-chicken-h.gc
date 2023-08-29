@@ -77,3 +77,4 @@
   )
 
 (defun-extern get-chick-from-flock int demon-chicken)
+(define-extern *close-to-portal?* symbol)

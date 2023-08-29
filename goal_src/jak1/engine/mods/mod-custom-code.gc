@@ -84,7 +84,6 @@
     ;;When this is true, it will apply all the hacks we need to fake a menu/loading screen
 
     (define *in-mort-menu* #f)
-    (define *chicks-follow?* #f)
     (define *sphere-color* (new 'static 'rgba :r #xff :g #xff :b #xff :a #x80))
     (set! *sphere-color* *color-white*)
 
@@ -224,31 +223,26 @@
 
     (defun runs-every-frame ()
 
-      ;;sets mort level to true or false so we know what fields are safe to call.
+
      
       ;; (when (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )
-
-      ;;hack to spawn chimken on x push
-      ;; (if (cpad-pressed? 0 x)
-      ;; (chicken-pls))
-
       ;;If are flock points aren't setup, lets set them up.
       (adjust-chick-origin(draw-chick-location))
       (if (= (-> *flock-points* points 0 x) 0.0) 
       (begin 
       (set-flock-points)
+      (set-flock-false);; Set all flock values to #f before chickens are in it
       (chicken-pls) ;; spawn the chickens offscreen
       )
       )
 
-      ;;We should sanity check the flock points here, then assume they are valid.
+      ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
 
       ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
       ;;If a chicken should despawn, set its target pos to 0,0,0.
       (assign-remove-demon-chicken-target)
 
-      ;; (set! (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) max-slot) *number-unlock-lvl*))
-      (set! *chicks-follow?* #t)
+       (when (process-by-ename "block-world-warp-gate-switch")(set! (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) max-slot) *number-unlock-lvl*))
       (mort-main-menu)
       ;;hack daxter back for now
       (if (=(-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))16)
@@ -271,7 +265,7 @@
         )
 
       (none)
-      )
+    )
 
     (defun runs-on-orb-pickup ((parent process-tree))
       (let* ((from-cache? (and parent (type-type? (-> parent type) orb-cache-top))))

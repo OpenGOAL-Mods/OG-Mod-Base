@@ -1788,17 +1788,6 @@
           (t9-1)
           )
       )
-  ;;     (if (and (<= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 1) *chicks-follow?*) 
-  ;;     ;;(demon-chicken-manager-start #t)
-  ;;     (begin 
-  ;;     (+! *num-chicken-follow* 1)
-  ;;       (if (not (= *num-chicken-follow*  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)))
-  ;; (chicken-pls)
-  ;; )
-  ;; (none)
-      
-  ;;     )
-  ;;     )
     (none)
     )
   :trans (behavior ()
