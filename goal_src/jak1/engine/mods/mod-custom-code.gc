@@ -74,7 +74,7 @@
                                      (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) 
                                       *close-to-portal?*
                                      )
-                      buf 300 (- 150 (* 8 4)) (font-color flat-yellow) (font-flags shadow kerning))))
+                      buf 400 (- 150 (* 8 16)) (font-color flat-yellow) (font-flags shadow kerning))))
     
     )
 (none)
@@ -116,7 +116,7 @@
                   (set! old-point-to-jak dist-target-meters)))))))
   ;; Draw the closest position
   ;;(format #t "WARNING: fuel-cell stall on not cloning. ~F~%" old-point-to-jak)
-  (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*) 
+  ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*) 
   ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" *closest-pos-index*) (-> *camera*  target-spline point *closest-pos-index* position)  (font-color green) (the-as vector2h #f))
   
 
@@ -214,6 +214,7 @@
     )
   )
 (define mort-level? #f)
+(define *show-debug* #f)
 (define *number-unlock-lvl* 0)
 (defun in-mort-level()
 (if (and (>= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 16)

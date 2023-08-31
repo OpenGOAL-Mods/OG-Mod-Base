@@ -550,8 +550,11 @@
   )
 
 (defun draw-origin ()
+(when *show-debug*
   (add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-orange*)
   (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "Origin point") *Origin* (font-color red) (the-as vector2h #f))
+)
+
   (none)
 )
 
@@ -636,9 +639,11 @@
 (defbehavior demon-chicken-chase-post demon-chicken ()
   "Chase post: Poll [[target]]'s position and update our own position, direction and trajectory time."
   ;;(set! (-> self target-pos quad) (-> (target-pos 0) quad))
-
-  (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> self target-pos) (meters 0.05) *color-red*)
+  (when *show-debug*
+    (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> self target-pos) (meters 0.05) *color-red*)
   (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~S" (-> self name))  (-> self target-pos) (font-color red) (the-as vector2h #f))
+  )
+
   ;;(set! (-> self target-pos quad) (-> (adjust-chick-origin (draw-chick-location)) quad))
   ;;Here we should check the demons distance to its target, if its too far away just teleport it to target
   (if (and (> (vector-vector-xz-distance  (-> self root trans) (-> self target-pos ))(meters 10.0)) (not *close-to-portal?*))
