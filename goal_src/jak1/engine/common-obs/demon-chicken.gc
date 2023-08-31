@@ -147,19 +147,22 @@
 
 
 (deftype flock (structure)
-  ((chicks handle 47   :offset-assert 0)
+  ((chicks handle NUM_FLOCKPOINTS  :offset-assert 0)
    )
   )
 (define *flock* (new 'static 'flock))
 
 (deftype flock-pos (structure)
-  ((points vector 47   :inline :offset-assert 0)
+  ((points vector NUM_FLOCKPOINTS   :inline :offset-assert 0)
    )
   )
   (define *flock-points* (new 'static 'flock-pos))
   
 (defun chicken-pls ()
 
+(define *chicken-0* (-> (start2) 0))
+(set! (-> *chicken-0* name) "chicken-0")
+(set! (-> *flock* chicks 0)  (process->handle *chicken-0*))
 (define *chicken-1* (-> (start2) 0))
 (set! (-> *chicken-1* name) "chicken-1")
 (set! (-> *flock* chicks 1)  (process->handle *chicken-1*))
@@ -238,13 +241,13 @@
 
 
   (defun set-flock-points-start ()
-  (dotimes (i 47)
+  (dotimes (i NUM_FLOCKPOINTS )
   (vector-identity!  (-> *flock-points* points i) )
   )
   )
 
   (defun point-at-origin? ()
-  (dotimes (i 47)
+  (dotimes (i NUM_FLOCKPOINTS )
   (if (= (vector-vector-distance (-> *flock-points* points i)  *Origin*)0.0)
   (return #t)
   )
@@ -254,75 +257,74 @@
   )
 
   (defun point-close-to-another? ((vec vector))
-  (dotimes (i 47)
-  (if (> (vector-vector-xz-distance vec  (-> *flock-points* points i)) (meters 0.1))
-  (return #t)
-  )
-  )
-  
+    (dotimes (i NUM_FLOCKPOINTS)
+      (if (> (vector-vector-xz-distance vec  (-> *flock-points* points i)) (meters 0.1))
+        (return #t)
+       )
+    )
   #f)
 
 
 (defun point-away-from-target()
-#t
+  "This will be a boolean used in validating random nest points."
+  #t
 )
+
 (defun pos-valid ((vec vector))
-(and (not (point-close-to-another? vec)) (point-at-origin?) (point-away-from-target))
+  "Takes in a position, then compares it against other flock points and returns t/f if its valid"
+  (and (not (point-close-to-another? vec)) (point-at-origin?) (point-away-from-target))
 )
 
-  (define temp-vec  (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0) )
-  (defun set-flock-points ()
-  
-  
-  (dotimes (i 47)
-  ;; If we dont have a point at the origin addone there
-  (if (not (point-at-origin?))
-  (begin
-   (vector-copy! (-> *flock-points* points i) *Origin*)
-   (set! i (+ i 1))
-  )
- 
-  )
-  ;;Do this so we can save the old origin
-  (vector-copy! temp-vec *Origin*)
-  ;; If we are too close to another point, then keep making random spots until we arent
-  (when (point-close-to-another? temp-vec)
- 
-  (format #t "MAKING NEW POS~%")
-  (set! (-> temp-vec x) (+ (-> temp-vec x) (rand-vu-float-range 0.0 (meters 2))))
-  ;;(set! (-> temp-vec y) (+ (-> temp-vec y) (rand-vu-float-range 0.0 (meters 1))))
-  (set! (-> temp-vec z) (+ (-> temp-vec z) (rand-vu-float-range 0.0 (meters 2))))
-  (format #t "MAKING NEW POS~%")
-  
-  
 
+(defun set-flock-points ()
+  (let ((old-origin (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0))
+       )
+    (dotimes (i NUM_FLOCKPOINTS)
+    ;; If we dont have a point at the origin addone there
+    (when (not (point-at-origin?))
+    ;;(format #t "There was no chicken at origin, assiging chicken ~D now ~%" i)
+    (vector-copy! (-> *flock-points* points i) *Origin*)
   )
+
+    ;;Do this so we can save the old origin
+    (vector-copy! old-origin *Origin*)
+
+    ;; If we are too close to another point, then keep making random spots until we arent
+    ;;This should be a (while valid?... instead of (when close...
+    (when (point-close-to-another? old-origin)
+      ;;(format #t "MAKING NEW POS~%")
+      (set! (-> old-origin x) (+ (-> old-origin x) (rand-vu-float-range 0.0 (meters 2))))
+      ;;(set! (-> old-origin y) (+ (-> old-origin y) (rand-vu-float-range 0.0 (meters 1))))
+      (set! (-> old-origin z) (+ (-> old-origin z) (rand-vu-float-range 0.0 (meters 2))))
+    )
+  
   ;;store it in the list of points
-  (vector-copy! (-> *flock-points* points i) temp-vec  )
-  )
-  )
-(defun move-flock-by-xz ((xchange float)(ychange float)(zchange float))
-(dotimes (i 47)
-(set! (-> *flock-points* points i x) (- (-> *flock-points* points i x) xchange))
-(set! (-> *flock-points* points i y) (- (-> *flock-points* points i y) ychange))
-(set! (-> *flock-points* points i z) (- (-> *flock-points* points i z) zchange))
+  (vector-copy! (-> *flock-points* points i) old-origin)))
 )
-(none))
+
+(defun move-flock-by-xz ((xchange float)(ychange float)(zchange float))
+    (dotimes (i NUM_FLOCKPOINTS )
+      (set! (-> *flock-points* points i x) (- (-> *flock-points* points i x) xchange))
+      (set! (-> *flock-points* points i y) (- (-> *flock-points* points i y) ychange))
+      (set! (-> *flock-points* points i z) (- (-> *flock-points* points i z) zchange))
+    ;;(format #t "Moved flock by X ~D Y ~D Z ~D~%" xchange ychange zchange)
+    )
+  (none)
+)
 
 
 (defun draw-beta-flock-points ()
 ;;beta function to draw spheres assiend my set-flock-points
-;; (dotimes (i 11)
-;; (dotimes (p 20)
-
-;; (if (= (-> (get-chick-from-flock (+! p 0)) target-pos) (-> *flock-points* points i))
-;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *flock-points* points i) (meters 0.05) *color-red*)
-;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *flock-points* points i) (meters 0.1) *color-green*)
-;; )
-
-;;   )
-
-;; )
+(when *show-debug*
+  (dotimes (i NUM_FLOCKPOINTS)
+    ;;draw a black circle where a chick is trying to get to.
+    (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> (get-chick-from-flock i) target-pos) (meters 0.10) *color-black*)
+    ;;draw index of chick trying to get to black circle
+    (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) (-> (get-chick-from-flock i) target-pos) (font-color red) (the-as vector2h #f))
+    ;;draw all possible flockpoints
+    (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *flock-points* points i) (meters 0.05) *color-cyan*))
+ ;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *flock-points* points i) (meters 0.1) *color-green*)
+  )
 (none)
 )
 ;;need to run this on bob-offset
@@ -330,14 +332,15 @@
 ;;(defun set-flock-points)
 (defun set-flock-false ()
   "initalizes the flock to #f to avoid crashes when referencing."
-  (dotimes (i 47)
-  (set! (-> *flock* chicks i)  (the handle #f))
+  (dotimes (i NUM_FLOCKPOINTS)
+  (set! (-> *flock* chicks i) (the handle #f))
   )
-  )
+)
 
 (defun get-chick-from-flock ((idx int))
-(if (!= idx 0) ;;We dont want zero as I put nothing there
-(the demon-chicken (handle->process (-> *flock* chicks idx))))
+  (if #t 
+    (the demon-chicken (handle->process (-> *flock* chicks idx)))
+    )
 )
 
 (defmethod debug-draw-text! demon-chicken ((this demon-chicken))
@@ -534,7 +537,7 @@
   "Basic post: Update grace period, shadow, joint control and disable sidekick."
   (update-direction-from-time-of-day (-> self draw shadow-ctrl))
   (false! (-> *setting-control* default play-hints))
-  (send-event *target* 'sidekick #f)
+  (send-event *target* 'sidekick #t)
   ;; joint control debug prints
   (if ORANGE_DEMON_DEBUG
     (aif (-> self skel) (debug-print-channels it (the symbol *stdcon*)))
@@ -583,7 +586,7 @@
             )
         )
   )
-            ;;Check if the position of all 47 flock points is valid here, if its not regenerate them.
+            ;;Check if the position of all NUM_FLOCKPOINTS flock points is valid here, if its not regenerate them.
             ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-yellow*)
             ;;Set the spot of CHICK1 to origin      
  
@@ -606,10 +609,9 @@
 
 (dotimes (i (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))
 ;;(format #t "~D" i)
-(set! (->  (get-chick-from-flock (+ i 1)) target-pos quad)(-> *flock-points* points i quad))
-(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) (->  (get-chick-from-flock (+ i 1)) target-pos )(font-color green) (the-as vector2h #f))
+(set! (->  (get-chick-from-flock i) target-pos quad)(-> *flock-points* points i quad))
+(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) (->  (get-chick-from-flock i) target-pos )(font-color green) (the-as vector2h #f))
  )
-  
 )
 
 ;;For some reason this crashes on boot for now
@@ -622,9 +624,9 @@
 ;;(->  (get-chick-from-flock (+! i 1)) target-pos quad)
 
 ;; loop all the possible flock positions
-(dotimes (p 47)
+(dotimes (p NUM_FLOCKPOINTS )
 
-(if (= (-> *flock-points* points p) (-> (get-chick-from-flock (+ i 1)) target-pos) )
+(if (= (-> *flock-points* points p) (-> (get-chick-from-flock i) target-pos) )
 (format #t "Found a chicken following!")
 
 )
@@ -641,7 +643,7 @@
   ;;(set! (-> self target-pos quad) (-> (target-pos 0) quad))
   (when *show-debug*
     (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> self target-pos) (meters 0.05) *color-red*)
-  (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~S" (-> self name))  (-> self target-pos) (font-color red) (the-as vector2h #f))
+ ;; (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~S" (-> self name))  (-> self target-pos) (font-color red) (the-as vector2h #f))
   )
 
   ;;(set! (-> self target-pos quad) (-> (adjust-chick-origin (draw-chick-location)) quad))
@@ -651,6 +653,10 @@
   (vector-copy! (-> self root trans) (-> self target-pos))
   )
   )
+
+
+
+
   
   (set! (-> self traj-time) (scale-traj-time))
   ;;(format *stdcon* "traj-time ~f~%" (-> self traj-time))

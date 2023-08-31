@@ -170,7 +170,7 @@
 
   (vector-copy! 
   (->  (get-chick-from-flock (the int(+ (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1)) current-chicks) 1))) target-pos)
- (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans)  )
+  (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans)  )
   (if (= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))saved-chicks) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks))
   (begin
   (play-rand-sound "snd/end-level.wav" 100)
@@ -214,34 +214,76 @@
     )
   )
 (define mort-level? #f)
-(define *show-debug* #f)
+(define *show-debug* #t)
 (define *number-unlock-lvl* 0)
-(defun in-mort-level()
+
+(defun update-mort-vars()
+"This function runs first thing and gets the updated state of variables/booleans"
+
+;;Are we in a mort level?
 (if (and (>= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 16)
          (<= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 34))
               (set! mort-level? #t)
               (set! mort-level? #f)
               )
+              (none)
 )
 
-(define spawned-chickens? #f)
-    (defun runs-every-frame ()
+(defun warp-demon-chick ()
 
-     (in-mort-level)
-     (when (and *target* (!= (-> (level-get-target-inside *level*)name) title)(!= (-> (level-get-target-inside *level*)name) mort-title)(!= (-> (level-get-target-inside *level*)name) 'mort-title) (!= (-> *target* state name) 'target-continue) mort-level?)
-    
-    ;;  ;; (when (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )
-    ;;   ;;If are flock points aren't setup, lets set them up.
-       (adjust-chick-origin(draw-chick-location))
-    ;;   ;;(inspect (-> *target* state name))
-    ;;  ;; (inspect  (-> *target* state name))
-      (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
-      (begin 
+(dotimes (i NUM_FLOCKPOINTS) 
+
+;;If they are close to the portal
+(if (< (vector-vector-distance   (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans) 
+                                (-> (get-chick-from-flock i) root trans)) (meters 0.1))
+                                (begin
+                                ;;Play portal effect on them
+                                (effect-control-method-10  (-> (get-chick-from-flock i) skel effect) 'death-warp-in -1.0 -1 )
+                                ;;set their target to 1,1,1
+                                (vector-identity! (-> (get-chick-from-flock i) target-pos))
+                                )
+                                
+                                
+                                )
+)
+
+ ;; (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans)  )
+(none)
+)
+
+(defun run-mort-code? ()
+"When these are true, we dont want to run mort code."
+(and *target* 
+      (!= (-> (level-get-target-inside *level*)name) title)
+      (!= (-> (level-get-target-inside *level*)name) mort-title)
+      (!= (-> (level-get-target-inside *level*)name) 'mort-title) 
+      (!= (-> *target* state name) 'target-continue) 
+      mort-level?)
+)
+
+(defun init-chickens ()
+      (format #t "INITIALIZING CHICKENS~%")
+      (format #t "ITS MORTIN TIME~%")
       (set-flock-points-start)
       (set-flock-points)
       (set-flock-false);; Set all flock values to #f before chickens are in it
       (chicken-pls) ;; spawn the chickens offscreen
-      )
+      (none))
+
+(define spawned-chickens? #f)
+    (defun runs-every-frame ()
+    (update-mort-vars)
+
+
+
+     (when (run-mort-code?)
+    
+
+
+       (adjust-chick-origin(draw-chick-location))
+       ;;If are flock points aren't setup, lets set them up.
+      (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+      (init-chickens)
       )
 
     ;;   ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
@@ -250,13 +292,13 @@
     ;;   ;;If a chicken should despawn, set its target pos to 0,0,0.
        (assign-remove-demon-chicken-target)
 
+  ;;Constantly check all chicks to see if they are in the warpgate if they are, then run chick-saved and increment saved per level
+  (warp-demon-chick)
     ;;    ;;(when (and *target* (process-by-ename "block-world-warp-gate-switch"))(set! (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) max-slot) *number-unlock-lvl*))
    
-    ;;   ;;hack daxter back for now
-    ;;   (if (=(-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))16)
-    ;;   (send-event *target* 'sidekick #t)
-    ;;   )
+
      ;; (while mort-level?
+     ;;This locks the first person with no rotation if in certain levels (psuedo loading screens)
       (cam-eye-no-rot)
       (check-portal-distance)
       (save-chicks-func)

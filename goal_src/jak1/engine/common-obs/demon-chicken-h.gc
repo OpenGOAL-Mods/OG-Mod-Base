@@ -32,7 +32,7 @@
     ;; demon-chicken-victory
     )
   )
-
+(defconstant NUM_FLOCKPOINTS 12)
 (deftype demon-chicken-manager (process)
   ((demon handle)
    )
