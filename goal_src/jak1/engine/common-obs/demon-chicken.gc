@@ -243,7 +243,7 @@
 
   (defun point-close-to-another? ((vec vector))
   (dotimes (i 47)
-  (if (> (vector-vector-distance vec  (-> *flock-points* points i)) (meters 0.1))
+  (if (> (vector-vector-xz-distance vec  (-> *flock-points* points i)) (meters 0.1))
   (return #t)
   )
   )
@@ -266,7 +266,7 @@
   ;; If we dont have a point at the origin addone there
   (if (not (point-at-origin?))
   (begin
-   (vector-copy! (-> *flock-points* points i) *Origin*  )
+   (vector-copy! (-> *flock-points* points i) *Origin*)
    (set! i (+ i 1))
   )
  
@@ -543,6 +543,7 @@
 )
 
 (defun adjust-chick-origin ((mmark vector))
+
   (draw-origin)
   (let ((xchange 0.0)
         (zchange 0.0))
@@ -564,6 +565,8 @@
             ;;Check if the position of all 47 flock points is valid here, if its not regenerate them.
             ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-yellow*)
             ;;Set the spot of CHICK1 to origin      
+ 
+ 
       *Origin*
 )
 

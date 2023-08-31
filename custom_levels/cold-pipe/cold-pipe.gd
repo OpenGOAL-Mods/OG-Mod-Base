@@ -1,7 +1,9 @@
 ("COL.DGO"(
 "static-screen.o"
-"warp-gate-switch-ag.go"
-"training-part.o"
-"warpgate-ag.go"
+
 "cold-pipe.go"
-"cold-pipe-code.o"))
+"cold-pipe-code.o"
+;; custom level here start
+"warp-gate-switch-ag.go"
+"warpgate-ag.go"
+))

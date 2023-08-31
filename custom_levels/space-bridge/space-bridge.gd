@@ -1,7 +1,9 @@
 ("SPA.DGO"(
 "static-screen.o"
-"warp-gate-switch-ag.go"
-"training-part.o"
-"warpgate-ag.go"
+
 "space-bridge.go"
-"space-bridge-code.o"))
+"space-bridge-code.o"
+;; custom level here start
+"warp-gate-switch-ag.go"
+"warpgate-ag.go"
+))
