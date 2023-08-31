@@ -351,17 +351,17 @@
   )
 
 (defun reset-all-hint-controls ()
-  (let ((v1-2 (length (-> *game-info* hint-control))))
-    (dotimes (a0-1 v1-2)
-      (let ((a1-2 (-> *game-info* hint-control a0-1)))
-        (set! (-> a1-2 start-time) 0)
-        (set! (-> a1-2 last-time-called) 0)
-        (set! (-> a1-2 num-attempts) 0)
-        (set! (-> a1-2 num-success) 0)
-        )
-      0
-      )
-    )
+  ;; (let ((v1-2 (length (-> *game-info* hint-control))))
+  ;;   (dotimes (a0-1 v1-2)
+  ;;     (let ((a1-2 (-> *game-info* hint-control a0-1)))
+  ;;       (set! (-> a1-2 start-time) 0)
+  ;;       (set! (-> a1-2 last-time-called) 0)
+  ;;       (set! (-> a1-2 num-attempts) 0)
+  ;;       (set! (-> a1-2 num-success) 0)
+  ;;       )
+  ;;     0
+  ;;     )
+  ;;   )
   0
   (none)
   )

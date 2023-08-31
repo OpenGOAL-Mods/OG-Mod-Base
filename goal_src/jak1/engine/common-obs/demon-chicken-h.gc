@@ -78,3 +78,7 @@
 
 (defun-extern get-chick-from-flock int demon-chicken)
 (define-extern *close-to-portal?* symbol)
+
+(defun-extern portal-mort-gate warp-gate)
+(defun-extern portal-mort-trans vector)
+(defun-extern portal-mort-switch warp-gate-switch)

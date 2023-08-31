@@ -483,6 +483,9 @@
     )
   )
 
+(defun-extern portal-mort-gate warp-gate)
+(defun-extern portal-mort-trans vector)
+;;(defun-extern portal-mort-switch warp-gate-switch)
 
 (defstate use (warp-gate)
   :virtual #t
@@ -502,8 +505,8 @@
       (set! (-> s4-0 message) 'change-state)
       (set! (-> s4-0 param 0) (the-as uint target-warp-out))
       (let ((v1-9 (new 'static 'vector)))
-          (if (the warp-gate (-> (the basebutton (process-by-ename "block-world-warp-gate-switch") )child 0))
-        (vector-copy! (-> self root trans) (-> (the warp-gate (-> (the basebutton (process-by-ename "block-world-warp-gate-switch") )child 0)) root trans))
+          (if (portal-mort-gate)
+        (vector-copy! (-> self root trans) (portal-mort-trans))
         )
         (set! (-> v1-9 quad) (-> self root trans quad))
         (set! (-> s4-0 param 1) (the-as uint v1-9))

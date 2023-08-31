@@ -18,6 +18,17 @@
 
 (defun-extern demon-chicken-init-by-other vector none)
 
+(defun portal-mort-trans ()
+  (-> (the warp-gate (-> (the basebutton (process-by-ename "block-world-warp-gate-switch") )child 0)) root trans)
+  )
+
+(defun portal-mort-switch ()
+  (the-as warp-gate-switch (process-by-ename "block-world-warp-gate-switch"))
+  )
+
+  (defun portal-mort-gate ()
+  (the warp-gate (-> (the basebutton (process-by-ename "block-world-warp-gate-switch") )child 0))
+  )
 
 
 (defun scale-traj-time ()
@@ -148,6 +159,7 @@
   (define *flock-points* (new 'static 'flock-pos))
   
 (defun chicken-pls ()
+
 (define *chicken-1* (-> (start2) 0))
 (set! (-> *chicken-1* name) "chicken-1")
 (set! (-> *flock* chicks 1)  (process->handle *chicken-1*))
@@ -289,10 +301,11 @@
   (vector-copy! (-> *flock-points* points i) temp-vec  )
   )
   )
-(defun move-flock-by-xz ((xchange float)(ychange float))
+(defun move-flock-by-xz ((xchange float)(ychange float)(zchange float))
 (dotimes (i 47)
 (set! (-> *flock-points* points i x) (- (-> *flock-points* points i x) xchange))
-(set! (-> *flock-points* points i z) (- (-> *flock-points* points i z) ychange))
+(set! (-> *flock-points* points i y) (- (-> *flock-points* points i y) ychange))
+(set! (-> *flock-points* points i z) (- (-> *flock-points* points i z) zchange))
 )
 (none))
 
@@ -546,15 +559,20 @@
 
   (draw-origin)
   (let ((xchange 0.0)
+        (ychange 0.0)
         (zchange 0.0))
-        (if (not (= (vector-vector-xz-distance *Origin* mmark) 0.0))
+        (if (not (= (vector-vector-distance *Origin* mmark) 0.0))
             (begin
               "Takes in the closest master mark from (draw-chicks-fund) then adjusts it and returns it to use as origin for chicken demons"
               ;; If the origin is not at its starting point, figure out how much it moved and store that.
+              
+
               (set! xchange (- (-> *Origin* x) (-> mmark x)))
+              (set! ychange (- (-> *Origin* y) (-> *target* root trans y)))
               (set! zchange (- (-> *Origin* z) (-> mmark z)))
+            
               ;;(format #t "Origin moved by ~m ~m ~%" xchange zchange)
-              (move-flock-by-xz xchange zchange)
+              (move-flock-by-xz xchange ychange zchange)
 
               ;;Update the stored Origin since it moved
               (vector-copy! *Origin* mmark)
@@ -581,9 +599,12 @@
 
 
 (defun assign-remove-demon-chicken-target ()
+
+
 (dotimes (i (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))
-(set! (->  (get-chick-from-flock (+! i 1)) target-pos quad)(-> *flock-points* points i quad))
-(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) (->  (get-chick-from-flock (+! i 1)) target-pos )(font-color green) (the-as vector2h #f))
+;;(format #t "~D" i)
+(set! (->  (get-chick-from-flock (+ i 1)) target-pos quad)(-> *flock-points* points i quad))
+(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) (->  (get-chick-from-flock (+ i 1)) target-pos )(font-color green) (the-as vector2h #f))
  )
   
 )
@@ -600,7 +621,7 @@
 ;; loop all the possible flock positions
 (dotimes (p 47)
 
-(if (= (-> *flock-points* points p) (-> (get-chick-from-flock (+! i 1)) target-pos) )
+(if (= (-> *flock-points* points p) (-> (get-chick-from-flock (+ i 1)) target-pos) )
 (format #t "Found a chicken following!")
 
 )

@@ -2137,6 +2137,7 @@
  "common-obs/nav-enemy-h.gc"
  "common-obs/nav-enemy.gc"
  "common-obs/baseplat.gc"
+
  "common-obs/basebutton.gc"
  "common-obs/tippy.gc"
  "anim/joint-exploder.gc"
@@ -2201,8 +2202,8 @@
 (goal-src "pc/debug/pc-debug-common.gc" "pckernel-impl" "entity-h" "game-info-h" "level-h" "settings-h" "gsound-h" "target-util")
 (goal-src "pc/debug/pc-debug-methods.gc" "pc-debug-common")
 (goal-src "engine/mods/input-display.gc")
-(goal-src "engine/common-obs/demon-chicken-h.gc" "process-drawable")
-(goal-src "engine/common-obs/demon-chicken.gc" "demon-chicken-h")
+(goal-src "engine/common-obs/demon-chicken-h.gc" "process-drawable" "basebutton" "villagep-obs")
+(goal-src "engine/common-obs/demon-chicken.gc" "demon-chicken-h" "process-drawable" "basebutton" "villagep-obs")
 (goal-src "pc/hud-demon-chicken.gc" "demon-chicken" "hud-classes-pc")
 
 

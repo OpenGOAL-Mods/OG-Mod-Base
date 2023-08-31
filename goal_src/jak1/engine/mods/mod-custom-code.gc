@@ -94,7 +94,7 @@
   (set! old-point-to-jak (meters 3729817398217391279))
   (dotimes (i 32)
     (let* ((current-ball-pos (-> *camera*  target-spline point i position))
-            (dist-target-meters (/ (vector-vector-xz-distance current-ball-pos (-> *target* root trans)) 40964))
+            (dist-target-meters (/ (vector-vector-distance current-ball-pos (-> *target* root trans)) 40964))
             (valid? (not (or (> dist-target-meters 1.0) (< dist-target-meters 0.27))))
             (less-than-stored-pos (< dist-target-meters old-point-to-jak)))
       ;; Too close to jak red/ignore them
@@ -116,7 +116,7 @@
                   (set! old-point-to-jak dist-target-meters)))))))
   ;; Draw the closest position
   ;;(format #t "WARNING: fuel-cell stall on not cloning. ~F~%" old-point-to-jak)
-  ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*) 
+  (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*) 
   ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" *closest-pos-index*) (-> *camera*  target-spline point *closest-pos-index* position)  (font-color green) (the-as vector2h #f))
   
 
@@ -149,7 +149,8 @@
             (+! (-> lvl-info saved-chicks) 1)
             (when (= (-> lvl-info saved-chicks) (-> lvl-info total-chicks))
               (play-rand-sound "snd/end-level.wav" 100)
-              (go-virtual-process (the-as warp-gate-switch (process-by-ename "block-world-warp-gate-switch")) basebutton-going-down)
+              (go-virtual-process (portal-mort-switch) basebutton-going-down)
+              (reset-actors #t)
               )
             )
           )
@@ -174,7 +175,8 @@
   (begin
   (play-rand-sound "snd/end-level.wav" 100)
   (+! *number-unlock-lvl* 1)
-  (go-virtual-process (the-as warp-gate-switch (process-by-ename "block-world-warp-gate-switch")) basebutton-going-down)
+  (go-virtual-process (portal-mort-switch) basebutton-going-down)
+   (reset-actors #t)
   )
   )
   )
@@ -221,50 +223,59 @@
               )
 )
 
+(define spawned-chickens? #f)
     (defun runs-every-frame ()
 
+    (in-mort-level)
+    (when (and *target* (!= (-> (level-get-target-inside *level*)name) title) (!= (-> *target* state name) 'target-continue) mort-level?)
+    
+     ;; (when (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )
+      ;;If are flock points aren't setup, lets set them up.
+      (adjust-chick-origin(draw-chick-location))
+      ;;(inspect (-> *target* state name))
+     ;; (inspect  (-> *target* state name))
+      (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+      (begin 
+      (set-flock-points-start)
+      (set-flock-points)
+      (set-flock-false);; Set all flock values to #f before chickens are in it
+      (chicken-pls) ;; spawn the chickens offscreen
+      )
+      )
 
-     
-    ;;   ;; (when (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )
-    ;;   ;;If are flock points aren't setup, lets set them up.
-    ;;   (adjust-chick-origin(draw-chick-location))
-    ;;   ;;(inspect (-> *target* state name))
-    ;;   (if (and (= (-> *flock-points* points 0 x) 0.0) (can-feet?)(!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-warp-in))
-    ;;   (begin 
-    ;;   (set-flock-points-start)
-    ;;   (set-flock-points)
-    ;;   (set-flock-false);; Set all flock values to #f before chickens are in it
-    ;;   (chicken-pls) ;; spawn the chickens offscreen
-    ;;   )
-    ;;   )
+      ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
 
-    ;;   ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
+      ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
+      ;;If a chicken should despawn, set its target pos to 0,0,0.
+      (assign-remove-demon-chicken-target)
 
-    ;;   ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
-    ;;   ;;If a chicken should despawn, set its target pos to 0,0,0.
-    ;;   (assign-remove-demon-chicken-target)
-
-    ;;    (when (process-by-ename "block-world-warp-gate-switch")(set! (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) max-slot) *number-unlock-lvl*))
-    ;;   (mort-main-menu)
-    ;;   ;;hack daxter back for now
-    ;;   (if (=(-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))16)
-    ;;   (send-event *target* 'sidekick #t)
-    ;;   )
-    ;;  ;; (while mort-level?
-    ;;   (cam-eye-no-rot)
-    ;;   (check-portal-distance)
-    ;;   (save-chicks-func)
-    ;;   (draw-beta-flock-points)
-    ;;   (mort-debug-text)
-    ;; ;;  )
+       ;;(when (and *target* (process-by-ename "block-world-warp-gate-switch"))(set! (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) max-slot) *number-unlock-lvl*))
+   
+      ;;hack daxter back for now
+      (if (=(-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))16)
+      (send-event *target* 'sidekick #t)
+      )
+     ;; (while mort-level?
+      (cam-eye-no-rot)
+      (check-portal-distance)
+      (save-chicks-func)
+      (draw-beta-flock-points)
+      (mort-debug-text)
+    ;;  )
       
 
   
-    ;;  (draw-chick-location)
-    ;;   (if *show-input-display* 
-    ;;     (input-display-on)
-    ;;     (input-display-off)
-    ;;     )
+     (draw-chick-location)
+      (if *show-input-display* 
+        (input-display-on)
+        (input-display-off)
+        )
+    
+    )
+       (mort-main-menu)
+
+     
+     
 
       (none)
     )
