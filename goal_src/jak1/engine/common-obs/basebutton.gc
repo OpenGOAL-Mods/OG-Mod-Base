@@ -445,10 +445,11 @@
 (define *warp-info* (new 'static 'boxed-array :type string
                       "block-world-warp"
                       "factory-cross-start"
+                      "pyramid-start"
                       "holly-wood-start"
                       "monument-start"
                       "cathederal-start"
-                      "pyramid-start"
+                 ;;PYRAMID SHOULD GO BETWEEN CATH AND ICE CANYON
                       "ice-canyon-start"
                       "coins-start"
                       "villa-cube-start"
