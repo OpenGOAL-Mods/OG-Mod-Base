@@ -225,46 +225,46 @@
 
 
      
-      ;; (when (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )
-      ;;If are flock points aren't setup, lets set them up.
-      (adjust-chick-origin(draw-chick-location))
-      ;;(inspect (-> *target* state name))
-      (if (and (= (-> *flock-points* points 0 x) 0.0) (can-feet?)(!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-warp-in))
-      (begin 
-      (set-flock-points-start)
-      (set-flock-points)
-      (set-flock-false);; Set all flock values to #f before chickens are in it
-      (chicken-pls) ;; spawn the chickens offscreen
-      )
-      )
+    ;;   ;; (when (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )
+    ;;   ;;If are flock points aren't setup, lets set them up.
+    ;;   (adjust-chick-origin(draw-chick-location))
+    ;;   ;;(inspect (-> *target* state name))
+    ;;   (if (and (= (-> *flock-points* points 0 x) 0.0) (can-feet?)(!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-warp-in))
+    ;;   (begin 
+    ;;   (set-flock-points-start)
+    ;;   (set-flock-points)
+    ;;   (set-flock-false);; Set all flock values to #f before chickens are in it
+    ;;   (chicken-pls) ;; spawn the chickens offscreen
+    ;;   )
+    ;;   )
 
-      ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
+    ;;   ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
 
-      ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
-      ;;If a chicken should despawn, set its target pos to 0,0,0.
-      (assign-remove-demon-chicken-target)
+    ;;   ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
+    ;;   ;;If a chicken should despawn, set its target pos to 0,0,0.
+    ;;   (assign-remove-demon-chicken-target)
 
-       (when (process-by-ename "block-world-warp-gate-switch")(set! (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) max-slot) *number-unlock-lvl*))
-      (mort-main-menu)
-      ;;hack daxter back for now
-      (if (=(-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))16)
-      (send-event *target* 'sidekick #t)
-      )
-     ;; (while mort-level?
-      (cam-eye-no-rot)
-      (check-portal-distance)
-      (save-chicks-func)
-      (draw-beta-flock-points)
-      (mort-debug-text)
-    ;;  )
+    ;;    (when (process-by-ename "block-world-warp-gate-switch")(set! (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) max-slot) *number-unlock-lvl*))
+    ;;   (mort-main-menu)
+    ;;   ;;hack daxter back for now
+    ;;   (if (=(-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))16)
+    ;;   (send-event *target* 'sidekick #t)
+    ;;   )
+    ;;  ;; (while mort-level?
+    ;;   (cam-eye-no-rot)
+    ;;   (check-portal-distance)
+    ;;   (save-chicks-func)
+    ;;   (draw-beta-flock-points)
+    ;;   (mort-debug-text)
+    ;; ;;  )
       
 
   
-     (draw-chick-location)
-      (if *show-input-display* 
-        (input-display-on)
-        (input-display-off)
-        )
+    ;;  (draw-chick-location)
+    ;;   (if *show-input-display* 
+    ;;     (input-display-on)
+    ;;     (input-display-off)
+    ;;     )
 
       (none)
     )

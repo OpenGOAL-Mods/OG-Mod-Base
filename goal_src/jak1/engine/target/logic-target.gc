@@ -2059,6 +2059,7 @@
   )
 
 (defun start ((arg0 symbol) (arg1 continue-point))
+
   (set! (-> *level* border?) #f)
   (set! (-> *setting-control* default border-mode) #f)
   (stop arg0)

@@ -502,8 +502,8 @@
       (set! (-> s4-0 message) 'change-state)
       (set! (-> s4-0 param 0) (the-as uint target-warp-out))
       (let ((v1-9 (new 'static 'vector)))
-          (if (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0))
-        (vector-copy! (-> self root trans) (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) root trans))
+          (if (the warp-gate (-> (the basebutton (process-by-ename "block-world-warp-gate-switch") )child 0))
+        (vector-copy! (-> self root trans) (-> (the warp-gate (-> (the basebutton (process-by-ename "block-world-warp-gate-switch") )child 0)) root trans))
         )
         (set! (-> v1-9 quad) (-> self root trans quad))
         (set! (-> s4-0 param 1) (the-as uint v1-9))
@@ -519,6 +519,7 @@
     ;; since the citadel warp gate is located in both levels at once (visually lavatube, technically citadel)
     ;; we add "training" to the list here so that the training warp gate waits until it's safe to
     ;; dispose the old code from memory.
+     
     (case (-> self level)
     ;;Tagmort
       (('citadel 'lavatube 'training 'block-world 'factory-cross 'blockworld)
@@ -538,9 +539,11 @@
     (set-blackout-frames (seconds 0.05))
     (start 'play (get-continue-by-name *game-info* (-> *warp-info* arg0)))
     (logior! (-> self mask) (process-mask sleep))
-    (suspend)
+    
+
     0
     (none)
+    
     )
   )
 
@@ -685,7 +688,9 @@
       (suspend)
       (ja :num! (seek! (ja-aframe 40.0 0)))
       )
+           
     (anim-loop)
+    
     (none)
     )
   :post target-no-stick-post
