@@ -227,14 +227,14 @@
 (define spawned-chickens? #f)
     (defun runs-every-frame ()
 
-    (in-mort-level)
-    (when (and *target* (!= (-> (level-get-target-inside *level*)name) title) (!= (-> *target* state name) 'target-continue) mort-level?)
+     (in-mort-level)
+     (when (and *target* (!= (-> (level-get-target-inside *level*)name) title)(!= (-> (level-get-target-inside *level*)name) mort-title)(!= (-> (level-get-target-inside *level*)name) 'mort-title) (!= (-> *target* state name) 'target-continue) mort-level?)
     
-     ;; (when (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )
-      ;;If are flock points aren't setup, lets set them up.
-      (adjust-chick-origin(draw-chick-location))
-      ;;(inspect (-> *target* state name))
-     ;; (inspect  (-> *target* state name))
+    ;;  ;; (when (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )
+    ;;   ;;If are flock points aren't setup, lets set them up.
+       (adjust-chick-origin(draw-chick-location))
+    ;;   ;;(inspect (-> *target* state name))
+    ;;  ;; (inspect  (-> *target* state name))
       (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
       (begin 
       (set-flock-points-start)
@@ -244,18 +244,18 @@
       )
       )
 
-      ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
+    ;;   ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
 
-      ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
-      ;;If a chicken should despawn, set its target pos to 0,0,0.
-      (assign-remove-demon-chicken-target)
+    ;;   ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
+    ;;   ;;If a chicken should despawn, set its target pos to 0,0,0.
+       (assign-remove-demon-chicken-target)
 
-       ;;(when (and *target* (process-by-ename "block-world-warp-gate-switch"))(set! (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) max-slot) *number-unlock-lvl*))
+    ;;    ;;(when (and *target* (process-by-ename "block-world-warp-gate-switch"))(set! (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) max-slot) *number-unlock-lvl*))
    
-      ;;hack daxter back for now
-      (if (=(-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))16)
-      (send-event *target* 'sidekick #t)
-      )
+    ;;   ;;hack daxter back for now
+    ;;   (if (=(-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))16)
+    ;;   (send-event *target* 'sidekick #t)
+    ;;   )
      ;; (while mort-level?
       (cam-eye-no-rot)
       (check-portal-distance)
@@ -272,7 +272,7 @@
         (input-display-off)
         )
     
-    )
+   )
        (mort-main-menu)
 
      

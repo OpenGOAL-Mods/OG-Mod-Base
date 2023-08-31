@@ -15,7 +15,7 @@
 (defun-extern adjust-chick-origin vector vector)
 (define *num-chicken-follow* 0)
 (define-extern *target3* demon-chicken)
-
+(define-extern *show-debug* symbol)
 (defun-extern demon-chicken-init-by-other vector none)
 
 (defun portal-mort-trans ()
