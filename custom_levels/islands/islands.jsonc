@@ -59,16 +59,7 @@
         "rot": ["float", -1.0000, -1.0000,-1.0]
       }
     },
-    {
-      "trans": [33.0, 320.0496, 154.1191], 
-      "etype": "fuel-cell",  
-      "game_task": 0, 
-      "quat" : [0, 0, 0, 1], 
-      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
-      "lump": {
-        "name":"level-building-orb-ig"
-      }
-    },
+    {"trans": [12.064227104187012, 321.36419677734375, 136.99610900878906], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.001", "eco-info": ["int32", 6, 2]}}, {"trans": [-38.44670104980469, 319.04443359375, 138.9282684326172], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.002", "eco-info": ["int32", 6, 2]}}, {"trans": [-64.48355865478516, 319.04443359375, 138.9282684326172], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.003", "eco-info": ["int32", 6, 2]}}, {"trans": [32.87757110595703, 309.3202209472656, 229.27186584472656], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.004", "eco-info": ["int32", 6, 2]}}, {"trans": [46.58802032470703, 322.4728088378906, 213.79551696777344], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.005", "eco-info": ["int32", 6, 2]}},
    
 
     
