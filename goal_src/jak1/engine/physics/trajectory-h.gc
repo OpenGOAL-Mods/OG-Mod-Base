@@ -21,7 +21,7 @@
   (:methods
     (eval-position! (_type_ float vector) vector 9)
     (eval-velocity! (_type_ float vector) vector 10)
-    (setup-from-to-duration! (_type_ vector vector float float) none 11)
+    (setup-from-to-duration! (_type_ vector vector float float float) none 11)
     (setup-from-to-xz-vel! (_type_ vector vector float float) none 12)
     (setup-from-to-y-vel! (_type_ vector vector float float) none 13)
     (setup-from-to-height! (_type_ vector vector float float) none 14)

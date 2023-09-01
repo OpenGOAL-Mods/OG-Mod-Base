@@ -12,6 +12,7 @@
    (anim-speed float)
    (traj-time float)
    (grace-period time-frame)
+   (to-point-speed float)
    )
   (:methods
     (init-collision! (_type_) none)

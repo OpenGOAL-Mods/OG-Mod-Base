@@ -11,7 +11,7 @@
 (defconstant NOTICE_DIST (meters 10000))
 (defconstant STOP_CHASE_DIST (meters 100000))
 (defconstant ORANGE_DEMON_DEBUG #f)
-(defun-extern draw-chick-location vector)
+(defun-extern find-best-master-mark vector)
 (defun-extern adjust-chick-origin vector vector)
 (define *num-chicken-follow* 0)
 (define-extern *target3* demon-chicken)
@@ -65,7 +65,7 @@
     (vector+! vec vec offset)
     )
     ;;Where a demon chicken spawns in
-   ;; (adjust-chick-origin (draw-chick-location))
+   ;; (adjust-chick-origin (find-best-master-mark))
   )
 
 (defbehavior sleep-code process ()
@@ -136,7 +136,6 @@
                                                            :from *demon-chicken-dead-pool*
                                                            :to *demon-chicken-pool*)
   )
-
 
 (defun demon-chicken-manager-start ((spawn? symbol))
   (if (not *demon-chicken-manager*)
@@ -431,6 +430,7 @@
   (set! (-> this anim-speed) 1.0)
   (set! (-> this traj-time) 1.0)
   (set! (-> this grace-period) (seconds 0))
+  (set! (-> this to-point-speed) 3.0)
   (set! (-> this part) (create-launch-control (-> *part-group-id-table* 800) this))
   (none)
   )
@@ -646,7 +646,7 @@
  ;; (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~S" (-> self name))  (-> self target-pos) (font-color red) (the-as vector2h #f))
   )
 
-  ;;(set! (-> self target-pos quad) (-> (adjust-chick-origin (draw-chick-location)) quad))
+  ;;(set! (-> self target-pos quad) (-> (adjust-chick-origin (find-best-master-mark)) quad))
   ;;Here we should check the demons distance to its target, if its too far away just teleport it to target
   (if (and (> (vector-vector-xz-distance  (-> self root trans) (-> self target-pos ))(meters 10.0)) (not *close-to-portal?*))
   (begin
@@ -658,7 +658,7 @@
 
 
   
-  (set! (-> self traj-time) (scale-traj-time))
+  (set! (-> self traj-time) 1.0)
   ;;(format *stdcon* "traj-time ~f~%" (-> self traj-time))
   (let ((fnt (new 'stack 'font-context *font-default-matrix* 170 130 0.0 (font-color red) (font-flags shadow kerning middle)))
         (percent (cond ((<= (-> self traj-time) 0.47) 100.0)
@@ -740,7 +740,8 @@
     (loop
       ;;(spawn (-> self part) (the vector (-> self cshape root-prim prim-core))) ;; fire rings
       ;; set up trajectory to follow target
-      (setup-from-to-duration! (-> self trajectory) (-> self cshape trans) (-> self target-pos) (-> self traj-time) 0.0)
+      ;;hack doesnt work(set! (-> self traj-time) 1.0)
+      (setup-from-to-duration! (-> self trajectory) (-> self cshape trans) (-> self target-pos) (-> self traj-time) 0.0 (-> self to-point-speed)) 
       (demon-chicken-follow-trajectory (ja-aframe-num 1))
       (when ORANGE_DEMON_DEBUG
         (debug-draw! (-> self trajectory))

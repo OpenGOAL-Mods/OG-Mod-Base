@@ -434,6 +434,7 @@
         (-> self jump-pos)
         (the-as float 300.0)
         (the-as float -2.2755556)
+        1.0
         )
       (set! (-> self state-time) (-> *display* base-frame-counter))
       (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 1))
