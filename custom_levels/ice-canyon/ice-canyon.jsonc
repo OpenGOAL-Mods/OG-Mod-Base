@@ -59,16 +59,7 @@
         "rot": ["float", -1.0000, -1.0000,-1.0]
       }
     },
-    {
-      "trans": [33.0, 320.0496, 154.1191], 
-      "etype": "fuel-cell",  
-      "game_task": 0, 
-      "quat" : [0, 0, 0, 1], 
-      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
-      "lump": {
-        "name":"level-building-orb-ig"
-      }
-    },
+    {"trans": [44.598785400390625, 317.390380859375, 142.80081176757812], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.003", "eco-info": ["int32", 6, 2]}}, {"trans": [71.99319458007812, 301.192626953125, 129.67422485351562], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.001", "eco-info": ["int32", 6, 2]}}, {"trans": [104.29207611083984, 301.192626953125, 150.13319396972656], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.002", "eco-info": ["int32", 6, 2]}}, {"trans": [100.52376556396484, 309.08197021484375, 128.80868530273438], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.004", "eco-info": ["int32", 6, 2]}}, {"trans": [112.01383209228516, 313.02593994140625, 147.96009826660156], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.005", "eco-info": ["int32", 6, 2]}}, {"trans": [113.60087585449219, 313.02593994140625, 176.87037658691406], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.006", "eco-info": ["int32", 6, 2]}}, {"trans": [80.90924072265625, 313.02593994140625, 150.02108764648438], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.007", "eco-info": ["int32", 6, 2]}}, {"trans": [50.694305419921875, 312.3641052246094, 191.08297729492188], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.008", "eco-info": ["int32", 6, 2]}}, {"trans": [62.45292663574219, 301.908447265625, 165.6680145263672], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.009", "eco-info": ["int32", 6, 2]}},
     {
       "trans": [-21.6238, 20.0496, 17.1191], // translation
       "etype": "fuel-cell",  // actor type
