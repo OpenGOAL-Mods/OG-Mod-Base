@@ -830,7 +830,7 @@
     )
   :trans (behavior ()
     (robotboss-always-trans (the-as (state robotboss) #f))
-    (spool-push *art-control* "finalbosscam-white-eco" 0 self (the-as float -1.0))
+    ;;mort  (spool-push *art-control* "finalbosscam-white-eco" 0 self (the-as float -1.0))
     (if (>= (-> self loc-t) 1.0)
         (go robotboss-white-eco-movie)
         )

@@ -22,7 +22,7 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     
 (define mort-level? #f)
-(define *show-debug* #t)
+(define *show-debug* #f)
 (define *number-unlock-lvl* 0)
 (define spawned-chickens? #f)
 (define *close-to-portal?* #f)
@@ -88,12 +88,13 @@
              (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
                                       (bucket-id subtitle))
-      (draw-string-xy (string-format "Mort Debug info ~%Level inside: ~D ~%Total Chicks is is ~D~%Current Chicks is is ~D~%saved Chicks is is ~D~%Close to portal? ~A~%"
+      (draw-string-xy (string-format "Mort Debug info ~%Level inside: ~D ~%Total Chicks is is ~D~%Current Chicks is is ~D~%saved Chicks is is ~D~%Close to portal? ~A~%Unlock lvl is ~D~%"
                                      (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))
                                      (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks) 
                                      (current-chicks-following) 
                                      (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) 
                                       *close-to-portal?*
+                                      *number-unlock-lvl*
                                      )
                       buf 400 (- 150 (* 8 16)) (font-color flat-yellow) (font-flags shadow kerning)))
           )
@@ -296,6 +297,18 @@
             (play-rand-sound "snd/end-level.wav" 100)
       (+! *number-unlock-lvl* 1)
       (reset-actors #t)
+      )
+
+      (if (and (process-by-ename "robotboss-3") *target*)
+      (if  (and (= (-> (process-by-ename "robotboss-3") state name) 'robotboss-blue-wait) (!= (-> *target* state name) 'target-continue) )
+        (begin
+              (suspend)
+        (go-process  (process-by-ename "robotboss-3") robotboss-white-eco-movie)
+        (suspend)
+        )
+  
+      )
+
       )
     (update-mort-vars)
     (when (run-mort-code?)
