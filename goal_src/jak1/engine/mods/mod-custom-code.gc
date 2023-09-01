@@ -66,6 +66,8 @@
 (set! (-> *custom-level-info* data 33 total-chicks) 12)
 (set! (-> *custom-level-info* data 34 total-chicks) 12)
 
+
+
 (defun check-portal-distance ()
     (cond
       ((< (vector-vector-distance (-> *target* root trans) (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans)) (meters 12))
@@ -290,6 +292,11 @@
       (none))
 
     (defun runs-every-frame ()
+      (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1)) 
+            (play-rand-sound "snd/end-level.wav" 100)
+      (+! *number-unlock-lvl* 1)
+      (reset-actors #t)
+      )
     (update-mort-vars)
     (when (run-mort-code?)
       (adjust-chick-origin (find-best-master-mark))
