@@ -817,6 +817,21 @@
     )
   )
 
+  (defun robo-movie-check ()
+  
+        (if (and (process-by-ename "robotboss-3") *target*)
+      (if  (and (= (-> (process-by-ename "robotboss-3") state name) 'robotboss-blue-wait) (!= (-> *target* state name) 'target-continue) )
+        (begin
+              (suspend)
+        (go-process  (process-by-ename "robotboss-3") robotboss-white-eco-movie)
+        (suspend)
+        )
+  
+      )
+
+      )
+      (none))
+
 (defstate robotboss-yellow-dark-bomb (robotboss)
   :enter (behavior ()
     (set! (-> self old-loc quad) (-> self desired-loc quad))

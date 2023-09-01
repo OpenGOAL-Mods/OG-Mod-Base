@@ -291,7 +291,7 @@
       (set-flock-false);; Set all flock values to #f before chickens are in it
       (chicken-pls) ;; spawn the chickens offscreen
       (none))
-
+(defun-extern robo-movie-check (none))
     (defun runs-every-frame ()
       (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1)) 
             (play-rand-sound "snd/end-level.wav" 100)
@@ -299,17 +299,8 @@
       (reset-actors #t)
       )
 
-      (if (and (process-by-ename "robotboss-3") *target*)
-      (if  (and (= (-> (process-by-ename "robotboss-3") state name) 'robotboss-blue-wait) (!= (-> *target* state name) 'target-continue) )
-        (begin
-              (suspend)
-        (go-process  (process-by-ename "robotboss-3") robotboss-white-eco-movie)
-        (suspend)
-        )
-  
-      )
 
-      )
+(robo-movie-check)
     (update-mort-vars)
     (when (run-mort-code?)
       (adjust-chick-origin (find-best-master-mark))
