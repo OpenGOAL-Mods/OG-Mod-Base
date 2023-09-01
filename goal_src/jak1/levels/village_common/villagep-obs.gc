@@ -348,8 +348,7 @@
           (suspend)
           )
 
-          (dotimes (i 200)(suspend))
-          ;;(go-process  (process-by-ename "robotboss-3") robotboss-white-eco-movie)
+   
   (return #f)
           )
           (let ((s1-2 (get-continue-by-name *game-info* (-> *warp-info* gp-0))))

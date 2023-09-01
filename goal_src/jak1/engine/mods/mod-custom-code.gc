@@ -299,8 +299,8 @@
       (reset-actors #t)
       )
 
-
-(robo-movie-check)
+  (when (and (process-by-ename "robotboss-3") *target*)
+(robo-movie-check))
     (update-mort-vars)
     (when (run-mort-code?)
       (adjust-chick-origin (find-best-master-mark))
