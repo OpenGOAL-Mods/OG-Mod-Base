@@ -52,7 +52,7 @@
 (set! (-> *custom-level-info* data 23 total-chicks) 1)
 (set! (-> *custom-level-info* data 24 total-chicks) 10)
 (set! (-> *custom-level-info* data 25 total-chicks) 6)
-(set! (-> *custom-level-info* data 26 total-chicks) 6)
+(set! (-> *custom-level-info* data 26 total-chicks) 5);; MISSING A CHICK IN ISLANDS
 (set! (-> *custom-level-info* data 26 total-chicks) 6)
 (set! (-> *custom-level-info* data 27 total-chicks) 10)
 (set! (-> *custom-level-info* data 27 total-chicks) 12)

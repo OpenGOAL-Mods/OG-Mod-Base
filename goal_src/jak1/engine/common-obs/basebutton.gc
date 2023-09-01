@@ -445,11 +445,10 @@
 (define *warp-info* (new 'static 'boxed-array :type string
                       "block-world-warp"
                       "factory-cross-warp"
-                      "pyramid-warp"
                       "holly-wood-warp"
                       "monument-warp"
                       "cathederal-warp"
-                 ;;PYRAMID SHOULD GO BETWEEN CATH AND ICE CANYON
+                      "pyramid-warp"
                       "ice-canyon-warp"
                       "coins-warp"
                       "villa-cube-warp"
