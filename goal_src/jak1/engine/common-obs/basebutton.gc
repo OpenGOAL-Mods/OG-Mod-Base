@@ -465,7 +465,7 @@
                       "cube-face-start"
                       )
         )
-
+;;Handle these warps in target-death.gc
 (deftype warp-gate (process-drawable)
   ((level      symbol  :offset-assert 176)
    (level-slot int32   :offset-assert 180)

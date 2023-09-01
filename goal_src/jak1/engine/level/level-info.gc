@@ -2086,9 +2086,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "factory-cross-start"
+                                             :name "factory-cross-warp"
                                              :level 'factory-cross
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2127,9 +2127,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "holly-wood-start"
+                                             :name "holly-wood-warp"
                                              :level 'holly-wood
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2168,9 +2168,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "monument-start"
+                                             :name "monument-warp"
                                              :level 'monument
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2209,9 +2209,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "cathederal-start"
+                                             :name "cathederal-warp"
                                              :level 'cathederal
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2250,9 +2250,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "pyramid-start"
+                                             :name "pyramid-warp"
                                              :level 'pyramid
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 159.93) :y (meters 300.0) :z (meters 55.74) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 53.43) :w 1.0)
@@ -2291,9 +2291,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "ice-canyon-start"
+                                             :name "ice-canyon-warp"
                                              :level 'ice-canyon
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2332,9 +2332,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "coins-start"
+                                             :name "coins-warp"
                                              :level 'coins
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2373,9 +2373,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "villa-cube-start"
+                                             :name "villa-cube-warp"
                                              :level 'villa-cube
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2414,9 +2414,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "ice-slide-start"
+                                             :name "ice-slide-warp"
                                              :level 'ice-slide
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2455,9 +2455,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "islands-start"
+                                             :name "islands-warp"
                                              :level 'islands
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2496,9 +2496,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "glass-towers-start"
+                                             :name "glass-towers-warp"
                                              :level 'glass-towers
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2537,9 +2537,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "chemical-factory-start"
+                                             :name "chemical-factory-warp"
                                              :level 'chemical-factory
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2578,9 +2578,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "space-bridge-start"
+                                             :name "space-bridge-warp"
                                              :level 'space-bridge
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2619,9 +2619,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "chicks-start"
+                                             :name "chicks-warp"
                                              :level 'chicks
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2660,9 +2660,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "garden-start"
+                                             :name "garden-warp"
                                              :level 'garden
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2701,9 +2701,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "cold-pipe-start"
+                                             :name "cold-pipe-warp"
                                              :level 'cold-pipe
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2742,9 +2742,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "block-man-start"
+                                             :name "block-man-warp"
                                              :level 'block-man
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2783,9 +2783,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "cube-face-start"
+                                             :name "cube-face-warp"
                                              :level 'cube-face
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
@@ -2826,9 +2826,9 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "mort-title-start"
+                                             :name "mort-title-warp"
                                              :level 'mort-title
-                                             ;;:flags (continue-flags warp)
+                                             :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x -0.00 :y  2.00 :z -0.62 :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x 0.7389 :y 5.4833 :z 9.3438 :w 1.0)
