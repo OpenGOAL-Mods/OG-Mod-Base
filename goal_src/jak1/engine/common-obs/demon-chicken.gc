@@ -430,7 +430,7 @@
   (set! (-> this anim-speed) 1.0)
   (set! (-> this traj-time) 1.0)
   (set! (-> this grace-period) (seconds 0))
-  (set! (-> this to-point-speed) 3.0)
+  (set! (-> this to-point-speed) 6.0)
   (set! (-> this part) (create-launch-control (-> *part-group-id-table* 800) this))
   (none)
   )
