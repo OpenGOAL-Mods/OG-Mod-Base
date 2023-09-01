@@ -59,19 +59,35 @@
         "rot": ["float", -1.0000, -1.0000,-1.0]
       }
     },
+    {"trans": [-80.38906860351562, 322.31005859375, 227.56239318847656], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.001", "eco-info": ["int32", 6, 2]}},
+     {"trans": [-50.42530822753906, 315.64459228515625, 215.58535766601562], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.002", "eco-info": ["int32", 6, 2]}}, 
+     {"trans": [-10.841796875, 297.6604919433594, 178.8570556640625], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.003", "eco-info": ["int32", 6, 2]}}, 
+     {"trans": [-39.835792541503906, 297.0624694824219, 237.24383544921875], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.004", "eco-info": ["int32", 6, 2]}},
+      {"trans": [56.21331787109375, 304.54638671875, 228.90626525878906], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.005", "eco-info": ["int32", 6, 2]}}, 
+      {"trans": [28.330669403076172, 302.21246337890625, 184.52166748046875], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.006", "eco-info": ["int32", 6, 2]}},
     {
-      "trans": [33.0, 320.0496, 154.1191], 
-      "etype": "fuel-cell",  
-      "game_task": 0, 
-      "quat" : [0, 0, 0, 1], 
-      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "trans": [-21.6238, 20.0496, 17.1191], // translation
+      "etype": "fuel-cell",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
       "lump": {
-        "name":"level-building-orb-ig"
+        "name":"test-fuel-cell"
       }
     },
-   
 
-    
+    {
+      "trans": [-15.2818, 15.2461, 17.1360], // translation
+      "etype": "crate",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [-15.2818, 15.2461, 17.1360, 10], // bounding sphere
+      "lump": {
+        "name":"test-crate",
+        "crate-type":"'steel",
+        "eco-info": ["int32", 5, 10]
+      }
+    },
 
     {
       "trans": [-5.4630, 17.4553, 1.6169], // translation

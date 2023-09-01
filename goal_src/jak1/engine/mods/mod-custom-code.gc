@@ -44,7 +44,27 @@
 ;;Then override its index here and set it to the proper value when complete.
 (set! (-> *custom-level-info* data 16 total-chicks) 6)
 (set! (-> *custom-level-info* data 17 total-chicks) 6)
+(set! (-> *custom-level-info* data 18 total-chicks) 6)
+(set! (-> *custom-level-info* data 19 total-chicks) 9)
+(set! (-> *custom-level-info* data 20 total-chicks) 10)
 (set! (-> *custom-level-info* data 21 total-chicks) 10)
+(set! (-> *custom-level-info* data 22 total-chicks) 9)
+(set! (-> *custom-level-info* data 23 total-chicks) 1)
+(set! (-> *custom-level-info* data 24 total-chicks) 10)
+(set! (-> *custom-level-info* data 25 total-chicks) 6)
+(set! (-> *custom-level-info* data 26 total-chicks) 6)
+(set! (-> *custom-level-info* data 26 total-chicks) 6)
+(set! (-> *custom-level-info* data 27 total-chicks) 10)
+(set! (-> *custom-level-info* data 27 total-chicks) 12)
+;;28 is chem factory
+(set! (-> *custom-level-info* data 29 total-chicks) 6)
+(set! (-> *custom-level-info* data 30 total-chicks) 36)
+(set! (-> *custom-level-info* data 30 total-chicks) 12)
+(set! (-> *custom-level-info* data 31 total-chicks) 10)
+(set! (-> *custom-level-info* data 32 total-chicks) 6)
+
+(set! (-> *custom-level-info* data 33 total-chicks) 12)
+(set! (-> *custom-level-info* data 34 total-chicks) 12)
 
 (defun check-portal-distance ()
     (cond

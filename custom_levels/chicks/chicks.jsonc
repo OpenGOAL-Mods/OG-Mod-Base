@@ -60,13 +60,112 @@
       }
     },
     {
-      "trans": [33.0, 320.0496, 154.1191], 
-      "etype": "fuel-cell",  
-      "game_task": 0, 
-      "quat" : [0, 0, 0, 1], 
-      "bsphere": [-21.6238, 19.3496, 17.1191, 10], 
+      "trans": [ 31.73, 303.37, 153.08], 
+      "etype": "fuel-cell",
+      "game_task": 0,
+      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
+      "bsphere": [1193.75, 48.39, -3630.47, 10],
       "lump": {
-        "name":"level-building-orb-ig"
+        "name": "block-world-warpgate"
+      }
+    },    {
+      "trans": [ 31.73, 303.37, 153.08], 
+      "etype": "fuel-cell",
+      "game_task": 0,
+      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
+      "bsphere": [1193.75, 48.39, -3630.47, 10],
+      "lump": {
+        "name": "block-world-warpgate"
+      }
+    },    {
+      "trans": [ 31.73, 303.37, 153.08], 
+      "etype": "fuel-cell",
+      "game_task": 0,
+      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
+      "bsphere": [1193.75, 48.39, -3630.47, 10],
+      "lump": {
+        "name": "block-world-warpgate"
+      }
+    },    {
+      "trans": [ 31.73, 303.37, 153.08], 
+      "etype": "fuel-cell",
+      "game_task": 0,
+      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
+      "bsphere": [1193.75, 48.39, -3630.47, 10],
+      "lump": {
+        "name": "block-world-warpgate"
+      }
+    },    {
+      "trans": [ 31.73, 303.37, 153.08], 
+      "etype": "fuel-cell",
+      "game_task": 0,
+      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
+      "bsphere": [1193.75, 48.39, -3630.47, 10],
+      "lump": {
+        "name": "block-world-warpgate"
+      }
+    },    {
+      "trans": [ 31.73, 303.37, 153.08], 
+      "etype": "fuel-cell",
+      "game_task": 0,
+      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
+      "bsphere": [1193.75, 48.39, -3630.47, 10],
+      "lump": {
+        "name": "block-world-warpgate"
+      }
+    },    {
+      "trans": [ 31.73, 303.37, 153.08], 
+      "etype": "fuel-cell",
+      "game_task": 0,
+      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
+      "bsphere": [1193.75, 48.39, -3630.47, 10],
+      "lump": {
+        "name": "block-world-warpgate"
+      }
+    },    {
+      "trans": [ 31.73, 303.37, 153.08], 
+      "etype": "fuel-cell",
+      "game_task": 0,
+      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
+      "bsphere": [1193.75, 48.39, -3630.47, 10],
+      "lump": {
+        "name": "block-world-warpgate"
+      }
+    },    {
+      "trans": [ 31.73, 303.37, 153.08], 
+      "etype": "fuel-cell",
+      "game_task": 0,
+      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
+      "bsphere": [1193.75, 48.39, -3630.47, 10],
+      "lump": {
+        "name": "block-world-warpgate"
+      }
+    },    {
+      "trans": [ 31.73, 303.37, 153.08], 
+      "etype": "fuel-cell",
+      "game_task": 0,
+      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
+      "bsphere": [1193.75, 48.39, -3630.47, 10],
+      "lump": {
+        "name": "block-world-warpgate"
+      }
+    },    {
+      "trans": [ 31.73, 303.37, 153.08], 
+      "etype": "fuel-cell",
+      "game_task": 0,
+      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
+      "bsphere": [1193.75, 48.39, -3630.47, 10],
+      "lump": {
+        "name": "block-world-warpgate"
+      }
+    },    {
+      "trans": [ 31.73, 303.37, 153.08], 
+      "etype": "fuel-cell",
+      "game_task": 0,
+      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
+      "bsphere": [1193.75, 48.39, -3630.47, 10],
+      "lump": {
+        "name": "block-world-warpgate"
       }
     },
    
