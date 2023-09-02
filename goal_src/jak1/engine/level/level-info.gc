@@ -2826,7 +2826,7 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "mort-title-warp"
+                                             :name "mort-title-start"
                                              :level 'mort-title
                                              :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x -0.00 :y  2.00 :z -0.62 :w 1.0)

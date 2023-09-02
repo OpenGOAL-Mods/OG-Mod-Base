@@ -1053,7 +1053,8 @@
 ;; method 10 level
 (defmethod is-object-visible? level ((obj level) (arg0 int))
   "Is arg0 visible? Note that this will return #f if the visibility data is not loaded."
-
+  (set! (-> *pc-settings* ps2-actor-vis?) #f)
+  ;;mort hack mort
   ;; note : pc port added option to show every actor regardless
   (with-pc (if (not (-> *pc-settings* ps2-actor-vis?)) (return #t)))
 
