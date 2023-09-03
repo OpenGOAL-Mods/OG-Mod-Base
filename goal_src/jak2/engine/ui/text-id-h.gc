@@ -690,6 +690,14 @@
   (progress-lod-low #x128b)
   (progress-lod-high #x128c)
   (progress-credits #x128d)
+
+
+  ;; mod text
+  (pad-triangle #x2000)
+  (pad-circle #x2001)
+  (pad-x #x2002)
+  (pad-square #x2003)
+
 )
 ;; ---text-id
 
