@@ -377,19 +377,6 @@
   (none)
   )
 
-(#when PC_PORT
-
-;; redefined from C kernel
-(define *scf-territory-debug* GAME_TERRITORY_SCEA)
-(defun scf-get-territory ()
-  "redefined from C kernel for convenience"
-  (if *debug-segment*
-      *scf-territory-debug*
-      *scf-territory-debug*)
-  )
-)
-
-
 (define *cheat-temp* (the-as (pointer int32) (malloc 'global 20)))
 (define *master-exit* #f)
 (define *progress-cheat* #f)
@@ -436,38 +423,227 @@
           )
          )
        (when *debug-segment*
-          (check-cheat-code (-> *cheat-temp* 3) 0
-              (x square triangle circle x square triangle circle)
-                (cpad-clear! 0 r1)
-                (set! *progress-cheat* (if *progress-cheat*
-                                            #f
-                                            'pal
-                                            )
-                      )
-                (cheats-sound-play *progress-cheat*)
-              )
-          (check-cheat-code (-> *cheat-temp* 5) 1
-              (triangle x circle square triangle x circle square)
-                (cpad-clear! 0 r1)
-                (set! *cheat-mode* (if (= *cheat-mode* 'camera)
-                                      #f
-                                      'camera
-                                      )
-                      )
+         (when (nonzero? (-> *cpad-list* cpads 0 button0-rel 0))
+           (let ((v1-95 (-> *cheat-temp* 3)))
+             (cond
+               ((zero? v1-95)
                 (cond
-                  (*cheat-mode*
-                    (if (not *external-cam-mode*)
-                        (external-cam-reset!)
-                        )
-                    (set! *external-cam-mode* 'pad-1)
-                    (sound-play-by-spec (static-sound-spec "menu-pick" :fo-curve 1) (new-sound-id) (the-as vector #t))
-                    )
+                  ((cpad-pressed? 0 x)
+                   (+! (-> *cheat-temp* 3) 1)
+                   )
                   (else
-                    (set! *external-cam-mode* #f)
-                    (sound-play-by-spec (static-sound-spec "menu-back" :fo-curve 1) (new-sound-id) (the-as vector #t))
+                    (set! (-> *cheat-temp* 3) 0)
+                    0
                     )
                   )
-              )
+                )
+               ((= v1-95 1)
+                (cond
+                  ((cpad-pressed? 0 square)
+                   (+! (-> *cheat-temp* 3) 1)
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 3) 0)
+                    0
+                    )
+                  )
+                )
+               ((= v1-95 2)
+                (cond
+                  ((cpad-pressed? 0 triangle)
+                   (+! (-> *cheat-temp* 3) 1)
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 3) 0)
+                    0
+                    )
+                  )
+                )
+               ((= v1-95 3)
+                (cond
+                  ((cpad-pressed? 0 circle)
+                   (+! (-> *cheat-temp* 3) 1)
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 3) 0)
+                    0
+                    )
+                  )
+                )
+               ((= v1-95 4)
+                (cond
+                  ((cpad-pressed? 0 x)
+                   (+! (-> *cheat-temp* 3) 1)
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 3) 0)
+                    0
+                    )
+                  )
+                )
+               ((= v1-95 5)
+                (cond
+                  ((cpad-pressed? 0 square)
+                   (+! (-> *cheat-temp* 3) 1)
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 3) 0)
+                    0
+                    )
+                  )
+                )
+               ((= v1-95 6)
+                (cond
+                  ((cpad-pressed? 0 triangle)
+                   (+! (-> *cheat-temp* 3) 1)
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 3) 0)
+                    0
+                    )
+                  )
+                )
+               ((= v1-95 7)
+                (cond
+                  ((cpad-pressed? 0 circle)
+                   (logclear! (-> *cpad-list* cpads 0 button0-abs 0) (pad-buttons r1))
+                   (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons r1))
+                   (set! *progress-cheat* (if *progress-cheat*
+                                              #f
+                                              'pal
+                                              )
+                         )
+                   (if *progress-cheat*
+                       (sound-play-by-spec (static-sound-spec "menu-pick" :fo-curve 1) (new-sound-id) (the-as vector #t))
+                       (sound-play-by-spec (static-sound-spec "menu-back" :fo-curve 1) (new-sound-id) (the-as vector #t))
+                       )
+                   (set! (-> *cheat-temp* 3) 0)
+                   0
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 3) 0)
+                    0
+                    )
+                  )
+                )
+               )
+             )
+           )
+         (when (nonzero? (-> *cpad-list* cpads 1 button0-rel 0))
+           (let ((v1-181 (-> *cheat-temp* 5)))
+             (cond
+               ((zero? v1-181)
+                (cond
+                  ((cpad-pressed? 1 triangle)
+                   (+! (-> *cheat-temp* 5) 1)
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 5) 0)
+                    0
+                    )
+                  )
+                )
+               ((= v1-181 1)
+                (cond
+                  ((cpad-pressed? 1 x)
+                   (+! (-> *cheat-temp* 5) 1)
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 5) 0)
+                    0
+                    )
+                  )
+                )
+               ((= v1-181 2)
+                (cond
+                  ((cpad-pressed? 1 circle)
+                   (+! (-> *cheat-temp* 5) 1)
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 5) 0)
+                    0
+                    )
+                  )
+                )
+               ((= v1-181 3)
+                (cond
+                  ((cpad-pressed? 1 square)
+                   (+! (-> *cheat-temp* 5) 1)
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 5) 0)
+                    0
+                    )
+                  )
+                )
+               ((= v1-181 4)
+                (cond
+                  ((cpad-pressed? 1 triangle)
+                   (+! (-> *cheat-temp* 5) 1)
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 5) 0)
+                    0
+                    )
+                  )
+                )
+               ((= v1-181 5)
+                (cond
+                  ((cpad-pressed? 1 x)
+                   (+! (-> *cheat-temp* 5) 1)
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 5) 0)
+                    0
+                    )
+                  )
+                )
+               ((= v1-181 6)
+                (cond
+                  ((cpad-pressed? 1 circle)
+                   (+! (-> *cheat-temp* 5) 1)
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 5) 0)
+                    0
+                    )
+                  )
+                )
+               ((= v1-181 7)
+                (cond
+                  ((cpad-pressed? 1 square)
+                   (logclear! (-> *cpad-list* cpads 0 button0-abs 0) (pad-buttons r1))
+                   (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons r1))
+                   (set! *cheat-mode* (if (= *cheat-mode* 'camera)
+                                          #f
+                                          'camera
+                                          )
+                         )
+                   (cond
+                     (*cheat-mode*
+                       (if (not *external-cam-mode*)
+                           (external-cam-reset!)
+                           )
+                       (set! *external-cam-mode* 'pad-1)
+                       (sound-play-by-spec (static-sound-spec "menu-pick" :fo-curve 1) (new-sound-id) (the-as vector #t))
+                       )
+                     (else
+                       (set! *external-cam-mode* #f)
+                       (sound-play-by-spec (static-sound-spec "menu-back" :fo-curve 1) (new-sound-id) (the-as vector #t))
+                       )
+                     )
+                   (set! (-> *cheat-temp* 5) 0)
+                   0
+                   )
+                  (else
+                    (set! (-> *cheat-temp* 5) 0)
+                    0
+                    )
+                  )
+                )
+               )
+             )
+           )
          )
        (none)
        )
@@ -877,11 +1053,7 @@
 
     ; ;; Run blerc to modify foreground models
     (with-profiler 'merc *profile-merc-color*
-      ;; with FP blerc, the vertices are modified in the PC renderer, so we can just skip
-      ;; this call to save time.
-      (unless *use-fp-blerc*
-        (blerc-execute)
-        )
+      (blerc-execute)
       (blerc-init)
       )
 
