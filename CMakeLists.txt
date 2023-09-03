@@ -302,5 +302,3 @@ build_third_party_lib(zydis Zydis)
 if(WIN32)
     build_third_party_lib(mman mman)
 endif()
-string(REPLACE " ${THIRDPARTY_IGNORED_WARNINGS} " "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-
