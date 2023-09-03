@@ -59,72 +59,16 @@
         "rot": ["float", -1.0000, -1.0000,-1.0]
       }
     },
-    {"trans": [28.546777725219727, 301.7408142089844, 147.34486389160156], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick", "eco-info": ["int32", 6, 2]}}, {"trans": [-25.474061965942383, 302.4716491699219, 203.09234619140625], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.001", "eco-info": ["int32", 6, 2]}}, {"trans": [-69.33426666259766, 311.79638671875, 193.01246643066406], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.002", "eco-info": ["int32", 6, 2]}}, {"trans": [-32.31855773925781, 317.1766662597656, 237.63238525390625], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.003", "eco-info": ["int32", 6, 2]}}, {"trans": [-45.10429382324219, 336.2275390625, 237.63238525390625], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.004", "eco-info": ["int32", 6, 2]}}, {"trans": [-67.91631317138672, 331.5443115234375, 167.00582885742188], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.005", "eco-info": ["int32", 6, 2]}},
+// Start automatic actors from blender
 
-    {
-      "trans": [-24.6687, -24.6687, -24.6687],// translation
-      "etype": "fuel-cell",  // chick
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat" : [0, 0, 0, 1], // quaternion
-      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
-      "lump": {
-        "name":"test-fuel-cell"
-      }
-    },
- 
-   {
-      "trans": [-46.4327, -46.4327, -46.4327],// translation
-      "etype": "fuel-cell",  // chick
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat" : [0, 0, 0, 1], // quaternion
-      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
-      "lump": {
-        "name":"test-fuel-cell"
-      }
-    },
- 
-   {
-      "trans": [-69.4705, -69.4705, -69.4705],// translation
-      "etype": "fuel-cell",  // chick
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat" : [0, 0, 0, 1], // quaternion
-      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
-      "lump": {
-        "name":"test-fuel-cell"
-      }
-    },
- 
-   {
-      "trans": [27.0001, 27.0001, 27.0001],// translation
-      "etype": "fuel-cell",  // chick
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat" : [0, 0, 0, 1], // quaternion
-      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
-      "lump": {
-        "name":"test-fuel-cell"
-      }
-    },
- 
-   {
-      "trans": [-33.0198, -33.0198, -33.0198],// translation
-      "etype": "fuel-cell",  // chick
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat" : [0, 0, 0, 1], // quaternion
-      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
-      "lump": {
-        "name":"test-fuel-cell"
-      }
-    },
- 
-   {
-      "trans": [-67.4411, -67.4411, -67.4411],// translation
-      "etype": "fuel-cell",  // chick
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat" : [0, 0, 0, 1], // quaternion
-      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
-      "lump": {
-        "name":"test-fuel-cell"
-      }
-    }
+//Cells below
+{"trans": [28.546777725219727, 301.7408142089844, 147.34486389160156], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-chick-1", "eco-info": ["int32", 6, 2]}}, {"trans": [-25.474061965942383, 302.4716491699219, 203.09234619140625], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-chick-2", "eco-info": ["int32", 6, 2]}}, {"trans": [-69.33426666259766, 311.79638671875, 193.01246643066406], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-chick-3", "eco-info": ["int32", 6, 2]}}, {"trans": [-32.31855773925781, 317.1766662597656, 237.63238525390625], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-chick-4", "eco-info": ["int32", 6, 2]}}, {"trans": [-45.10429382324219, 336.2275390625, 237.63238525390625], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-chick-5", "eco-info": ["int32", 6, 2]}}, {"trans": [-67.91631317138672, 331.5443115234375, 167.00582885742188], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-chick-6", "eco-info": ["int32", 6, 2]}},
+
+//Orbs below
+{"trans": [-22.056730270385742, 316.31201171875, 153.30322265625], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-1"}}, {"trans": [-22.056730270385742, 312.9599304199219, 158.18199157714844], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-2"}}, {"trans": [-22.056730270385742, 310.72607421875, 162.85140991210938], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-3"}}, {"trans": [-22.056730270385742, 310.72607421875, 173.04502868652344], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-4"}}, {"trans": [-22.056730270385742, 312.9599304199219, 178.02159118652344], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-5"}}, {"trans": [-22.056730270385742, 316.3121337890625, 182.9541015625], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-6"}}, {"trans": [-32.43906784057617, 325.9074401855469, 214.08302307128906], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-7"}}, {"trans": [-40.28543472290039, 310.3601989746094, 157.01332092285156], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-8"}}, {"trans": [-77.36711883544922, 320.27117919921875, 258.6278076171875], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-9"}}, {"trans": [-76.27127075195312, 334.40545654296875, 236.11456298828125], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-10"}}, {"trans": [-76.27127075195312, 336.1354675292969, 243.46763610839844], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-11"}}, {"trans": [-76.27127075195312, 336.1354675292969, 229.17442321777344], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-12"}}, {"trans": [-31.6761417388916, 325.8768615722656, 261.4409484863281], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-13"}}, {"trans": [26.807756423950195, 310.7632141113281, 232.98997497558594], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-14"}}, {"trans": [-82.83230590820312, 331.28570556640625, 182.95803833007812], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-15"}}, {"trans": [-71.2370834350586, 321.3222351074219, 152.8709716796875], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-16"}}, {"trans": [26.807756423950195, 310.7632141113281, 252.39154052734375], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-17"}}, {"trans": [-22.056730270385742, 316.31201171875, 167.76571655273438], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "holly-wood-money-18"}}
+
+//Crate Collection not found
+
+//End automatic actors from blender
   ]
 }
