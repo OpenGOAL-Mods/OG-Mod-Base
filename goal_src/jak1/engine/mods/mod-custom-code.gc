@@ -21,98 +21,156 @@
     ;; Begin function defintions.
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     
+(define mort-level? #f)
+(define *show-debug* #f)
+(define *number-unlock-lvl* 0)
+(define spawned-chickens? #f)
+(define *close-to-portal?* #f)
+(define *in-mort-menu* #f)
+(define *sphere-color* (new 'static 'rgba :r #xff :g #xff :b #xff :a #x80))
+(set! *sphere-color* *color-white*)
 
 
+
+
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; Setup total money/chicks per level
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; At first set everything to its index - its not null and doesnt crash and is nice when finding what level is what.
 (dotimes (i 40)
-(set! (-> *custom-level-info* data i total-chicks) 1)
+  (set! (-> *custom-level-info* data i total-chicks) 1)
 )
+;;Then override its index here and set it to the proper value when complete.
 (set! (-> *custom-level-info* data 16 total-chicks) 6)
 (set! (-> *custom-level-info* data 17 total-chicks) 6)
+(set! (-> *custom-level-info* data 18 total-chicks) 6)
+(set! (-> *custom-level-info* data 19 total-chicks) 9)
+(set! (-> *custom-level-info* data 20 total-chicks) 10)
 (set! (-> *custom-level-info* data 21 total-chicks) 10)
+(set! (-> *custom-level-info* data 22 total-chicks) 9)
+(set! (-> *custom-level-info* data 23 total-chicks) 1)
+(set! (-> *custom-level-info* data 24 total-chicks) 10)
+(set! (-> *custom-level-info* data 25 total-chicks) 6)
+(set! (-> *custom-level-info* data 26 total-chicks) 6)
+(set! (-> *custom-level-info* data 26 total-chicks) 5);; MISSING A CHICK IN ISLANDS
+(set! (-> *custom-level-info* data 27 total-chicks) 10)
+(set! (-> *custom-level-info* data 27 total-chicks) 12)
+;;28 is chem factory
+(set! (-> *custom-level-info* data 29 total-chicks) 6)
+(set! (-> *custom-level-info* data 30 total-chicks) 36)
+(set! (-> *custom-level-info* data 30 total-chicks) 12)
+(set! (-> *custom-level-info* data 31 total-chicks) 10)
+(set! (-> *custom-level-info* data 32 total-chicks) 6)
+
+(set! (-> *custom-level-info* data 33 total-chicks) 12)
+(set! (-> *custom-level-info* data 34 total-chicks) 12)
 
 
-
-
-
-(define *close-to-portal?* #f)
 
 (defun check-portal-distance ()
- (cond
-              ((< (vector-vector-distance (-> *target* root trans) (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans)) (meters 12))
-                (set! *close-to-portal?* #t)
-               )
-              (else
-              (set! *close-to-portal?* #f)
-                )
-              )
-;; stupid hack
-;; (if (= (vector-vector-distance (-> *target* root trans) (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans)) (meters 12))
-;; (reset-actors 'play)
-;; )
-(none)
+    (cond
+      ((< (vector-vector-distance (-> *target* root trans) (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans)) (meters 12))
+        (set! *close-to-portal?* #t)
+        )
+      (else
+      (set! *close-to-portal?* #f)
+        )
+    )
+  (none)
 )
-
-
-  (defun levelidx-inbounds?()
-  (and (>= (+ (-> (level-get-target-inside *level*)info index) -1) 0)
-        (< (+ (-> (level-get-target-inside *level*)info index) -1) (-> *level-task-data-remap* length)))
-  )
 
 (defun mort-debug-text ()
  ;;mort debugging
     (if *cheat-mode*
       (when (and (-> *pc-settings* speedrunner-mode?)
              (not (paused?))
-              (levelidx-inbounds?)
              (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
                                       (bucket-id subtitle))
-      (draw-string-xy (string-format "Mort Debug info ~%Level inside: ~D ~%Total Chicks is is ~D~%Current Chicks is is ~D~%saved Chicks is is ~D~%Close to portal? ~A~%"
+      (draw-string-xy (string-format "Mort Debug info ~%Level inside: ~D ~%Total Chicks is is ~D~%Current Chicks is is ~D~%saved Chicks is is ~D~%Close to portal? ~A~%Unlock lvl is ~D~%"
                                      (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))
                                      (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks) 
-                                     (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 
+                                     (current-chicks-following) 
                                      (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) 
                                       *close-to-portal?*
+                                      *number-unlock-lvl*
                                      )
-                      buf 300 (- 150 (* 8 4)) (font-color flat-yellow) (font-flags shadow kerning))))
-    
+                      buf 400 (- 150 (* 8 16)) (font-color flat-yellow) (font-flags shadow kerning)))
+          )
     )
 (none)
 )
 
 
-    ;;When this is true, it will apply all the hacks we need to fake a menu/loading screen
+;; (defun find-best-master-mark ()
+;;   (let ((old-point-to-jak (meters 3729817398217391279))
+;;         (closest-pos-index 0)
+;;        )
+;;   (dotimes (i 32)
+;;     (let* ((current-ball-pos (-> *camera*  target-spline point i position))
+;;             (dist-target-meters (/ (vector-vector-distance current-ball-pos (-> *target* root trans)) 40964))
+;;             (valid? (not (or (> dist-target-meters 1.0) (< dist-target-meters 0.27))))
+;;             (less-than-stored-pos (< dist-target-meters old-point-to-jak)))
+;;       ;; Too close to jak red/ignore them
+;;       (if (not valid?)
+;;           (none)
+;;           ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *color-black*)
+;;          ;; show all possible indexes for debugging
+;;          ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) current-ball-pos (font-color red) (the-as vector2h #f))
+;;          )
+;;       ;; Corrected part to update the closest position and distance
+;;       (if (and valid? less-than-stored-pos)
+;;           (begin 
+;;             (set! *sphere-color* *color-green*)
+;;             ;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *sphere-color*) 
+;;             (if less-than-stored-pos
+;;                 ;; If our current point is closer than our last point, store it and update closest known distance
+;;                 (begin
+;;                   (set! closest-pos-index i)
+;;                   (set! old-point-to-jak dist-target-meters)))))))
+;;   ;; Draw the closest position
+;;   ;;(format #t "WARNING: fuel-cell stall on not cloning. ~F~%" old-point-to-jak)
+;;   ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*) 
+;;   ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" *closest-pos-index*) (-> *camera*  target-spline point *closest-pos-index* position)  (font-color green) (the-as vector2h #f))
+  
+;;   (-> *camera*  target-spline point *closest-pos-index* position))
+;;   ) 
+  
+    (define *closest-pos-index* 0)
+    (define old-point-to-jak (meters 3729817398217391279))
+(defun find-best-master-mark ()
+  (set! old-point-to-jak (meters 3729817398217391279))
+  (dotimes (i 32)
+    (let* ((current-ball-pos (-> *camera*  target-spline point i position))
+            (dist-target-meters (/ (vector-vector-distance current-ball-pos (-> *target* root trans)) 40964))
+            (valid? (not (or (> dist-target-meters 1.0) (< dist-target-meters 0.27))))
+            (less-than-stored-pos (< dist-target-meters old-point-to-jak)))
+      ;; Too close to jak red/ignore them
+      (if (not valid?)
+          (none)
+          ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *color-black*)
+         ;; show all possible indexes for debugging
+         ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) current-ball-pos (font-color red) (the-as vector2h #f))
+         )
+      ;; Corrected part to update the closest position and distance
+      (if (and valid? less-than-stored-pos)
+          (begin 
+            (set! *sphere-color* *color-green*)
+            ;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *sphere-color*) 
+            (if less-than-stored-pos
+                ;; If our current point is closer than our last point, store it and update closest known distance
+                (begin
+                  (set! *closest-pos-index* i)
+                  (set! old-point-to-jak dist-target-meters)))))))
+  ;; Draw the closest position
+  ;;(format #t "WARNING: fuel-cell stall on not cloning. ~F~%" old-point-to-jak)
+  ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*) 
+  ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" *closest-pos-index*) (-> *camera*  target-spline point *closest-pos-index* position)  (font-color green) (the-as vector2h #f))
+  
 
-    (define *in-mort-menu* #f)
-    (define *sphere-color* (new 'static 'rgba :r #xff :g #xff :b #xff :a #x80))
-    (set! *sphere-color* *color-white*)
-
-    (define current-chicks-num 3)
-    (defun draw-chick-location ()
-    (dotimes (i 32)
- 
- 
-    (if (> (/ (vector-vector-distance  (-> *camera*  target-spline point i position) (-> *target* root trans))40964) 1.0)
-    (set! *sphere-color* *color-red*)
-    )
-
-    (if (and (= *sphere-color* *color-white*)(< (/ (vector-vector-distance  (-> *camera*  target-spline point i position) (-> *target* root trans))40964) 0.27))
-    (set! *sphere-color* *color-red*)
-    )
-
-    ;;mark all as valid
-    (if (= *sphere-color* *color-white*)
-    (set! *sphere-color* *color-yellow*)
-    )
-    (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.2) *sphere-color*) 
-    (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) (-> *camera*  target-spline point i position)  (font-color red) (the-as vector2h #f) )
-    (set! *sphere-color* *color-white*)
-    )
-    
-
-    
-    (none))
-
+  
+  (-> *camera*  target-spline point *closest-pos-index* position))
 
     (defun cam-eye-no-rot ()
       (if (or #f (= (-> (level-get-target-inside *level*)name ) 'mort-title))
@@ -122,51 +180,38 @@
     (none)
     )
 
-  ;;(-> *camera*  target-spline point 3 position)
-
-  (defun save-chicks-func-2 ()
-    ;; (format 0 "save-chx-2 lvl-tgt-inside ~A " (level-get-target-inside *level*))
-    (let ((inside-lvl-idx (+ (-> (level-get-target-inside *level*) info index) -1)))
-      ;; (format 0 " inside-lvl-idx ~D" inside-lvl-idx)
-      (when (and (>= inside-lvl-idx 0) (< inside-lvl-idx (-> *level-task-data-remap* length)))
-        (let* ((prog-lvl-idx (-> *level-task-data-remap* inside-lvl-idx))
-               (lvl-info (-> *custom-level-info* data prog-lvl-idx)))
-          ;; (format 0 " prog-lvl-idx ~D" prog-lvl-idx)
-          (when (and *close-to-portal?* (> (-> lvl-info current-chicks) 0))
-            ;; move a chick
-            (-! (-> lvl-info current-chicks) 1)
-            (+! (-> lvl-info saved-chicks) 1)
-            (when (= (-> lvl-info saved-chicks) (-> lvl-info total-chicks))
-              (play-rand-sound "snd/end-level.wav" 100)
-              (go-virtual-process (the-as warp-gate-switch (process-by-ename "block-world-warp-gate-switch")) basebutton-going-down)
-              )
-            )
-          )
-        )
-      )
-    ;; (format 0 "~%")
-    (none)
-    )
-
   (defun save-chicks-func ()
-  (if (and 
-  (levelidx-inbounds?)
-          *close-to-portal?* (> (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 0))
-  (begin
-  (set!  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) (- (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)  1))
-  (set!  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (+ (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks)  1))
-  (if (= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks))
-  (begin
-  (play-rand-sound "snd/end-level.wav" 100)
-  (+! *number-unlock-lvl* 1)
-  (go-virtual-process (the-as warp-gate-switch (process-by-ename "block-world-warp-gate-switch")) basebutton-going-down)
-  )
-  )
-  )
+  (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
+         (current-custom-info (-> *custom-level-info* data current-level-idx))
+         (warpgate-pos (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans))
+         )
   
-  )
+    (when (and 
+           *close-to-portal?*   
+           (> (-> current-custom-info current-chicks) 0)
+           )
+    
+    ;;Remove a chick that is following, and incrment saved chick for the level. This should be moved to when the chicken uses portal imo  
+    (set! (-> current-custom-info current-chicks) (- (-> current-custom-info current-chicks) 1))
+    (set! (-> current-custom-info saved-chicks) (+ (-> current-custom-info saved-chicks) 1))
 
-  (none))
+    (vector-copy! 
+      ;;We add 1 here, because we removed it above. Will need to adjust when it goes down on warp
+      (->  (get-chick-from-flock (the int (+ (-> current-custom-info current-chicks) 0))) target-pos)
+      warpgate-pos
+    )
+    (set! (-> (get-chick-from-flock (the int (+ (-> current-custom-info current-chicks) 0))) to-point-speed) 1.0)
+
+  (if (= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks))
+    (begin
+      (play-rand-sound "snd/end-level.wav" 100)
+      (+! *number-unlock-lvl* 1)
+      (go-virtual-process (portal-mort-switch) basebutton-going-down)
+      (reset-actors #t) ;;HACK for some reason, the warp gate doesnt let us use it after coming out of it but reseting actor fixes this.
+    ))))
+  (none)
+)
+
   (defun mort-main-menu ()
     (if (and *in-mort-menu* *target*)
       (begin
@@ -196,43 +241,99 @@
       (none)
     )
   )
-(define mort-level? #f)
-(define *number-unlock-lvl* 0)
-(defun in-mort-level()
-(if (and (>= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 16)
-         (<= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 34))
-              (set! mort-level? #t)
-              (set! mort-level? #f)
-              )
+
+
+(defun update-mort-vars()
+"This function runs first thing and gets the updated state of variables/booleans"
+  ;;This locks the first person with no rotation if in certain levels (psuedo loading screens)
+  (cam-eye-no-rot)
+  (check-portal-distance)
+  ;;Are we in a mort level?
+  (if (and (>= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 16)
+           (<= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 34))
+                (set! mort-level? #t)
+                (set! mort-level? #f)
+  )
+(none)
 )
 
+(defun warp-demon-chick ()
+  (dotimes (i NUM_FLOCKPOINTS) 
+;;If they are close to the portal
+    (when (< (vector-vector-distance  (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans) 
+                                    (-> (get-chick-from-flock i) root trans)) (meters 0.1))
+                                    ;;Play portal effect on them
+                                    (effect-control-method-10  (-> (get-chick-from-flock i) skel effect) 'death-warp-in -1.0 -1 )
+                                    ;;set their target to 1,1,1
+                                    (vector-identity! (-> (get-chick-from-flock i) target-pos))
+                                    )
+    )
+
+ ;; (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans)  )
+(none)
+)
+
+(defun run-mort-code? ()
+"When these are true, we dont want to run mort code."
+(and *target* 
+      (!= (-> (level-get-target-inside *level*)name) title)
+      (!= (-> (level-get-target-inside *level*)name) mort-title)
+      (!= (-> (level-get-target-inside *level*)name) 'mort-title) 
+      (!= (-> *target* state name) 'target-continue) 
+      mort-level?)
+)
+
+(defun init-chickens ()
+      (format #t "INITIALIZING CHICKENS~%")
+      (format #t "ITS MORTIN TIME~%")
+      (set-flock-points-start)
+      (set-flock-points)
+      (set-flock-false);; Set all flock values to #f before chickens are in it
+      (chicken-pls) ;; spawn the chickens offscreen
+      (none))
+(defun-extern robo-movie-check (none))
     (defun runs-every-frame ()
-      ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
-      ;;sets mort level to true or false so we know what fields are safe to call.
-     
-      ;; (when (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )
-      
-      ;; (set! (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) max-slot) *number-unlock-lvl*))
-      (mort-main-menu)
-      ;;hack daxter back for now
-      (if (=(-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))16)
-      (send-event *target* 'sidekick #t)
+      (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1)) 
+            (play-rand-sound "snd/end-level.wav" 100)
+      (+! *number-unlock-lvl* 1)
+      (reset-actors #t)
       )
-     ;; (while mort-level?
-      (cam-eye-no-rot)
-      (check-portal-distance)
+
+  (when (and (process-by-ename "robotboss-3") *target*)
+(robo-movie-check))
+    (update-mort-vars)
+    (when (run-mort-code?)
+      (adjust-chick-origin (find-best-master-mark))
+      ;;If are flock points aren't setup, lets set them up.
+      (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+        (init-chickens)
+      )
+
+    ;;   ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
+
+    ;;   ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
+    ;;   ;;If a chicken should despawn, set its target pos to 0,0,0.
+      (assign-remove-demon-chicken-target)
+
+    ;;Constantly check all chicks to see if they are in the warpgate if they are, then run chick-saved and increment saved per level
+      (warp-demon-chick)
       (save-chicks-func)
+      (draw-beta-flock-points)
       (mort-debug-text)
-    ;;  )
-      
-     ;;(draw-chick-location)
+
+     
       (if *show-input-display* 
         (input-display-on)
         (input-display-off)
         )
+    
+   )
+      ;;This should be done as the last thing
+      (find-best-master-mark)
+      (mort-main-menu)
 
       (none)
-      )
+    )
 
     (defun runs-on-orb-pickup ((parent process-tree))
       (let* ((from-cache? (and parent (type-type? (-> parent type) orb-cache-top))))

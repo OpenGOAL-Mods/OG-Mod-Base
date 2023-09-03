@@ -22,7 +22,7 @@
   result
   )
 
-(defmethod setup-from-to-duration! trajectory ((obj trajectory) (from vector) (to vector) (duration float) (grav float))
+(defmethod setup-from-to-duration! trajectory ((obj trajectory) (from vector) (to vector) (duration float) (grav float) (to-point-speed float))
   "Set up a trajectory that goes from->to in the given duration"
   (set! (-> obj initial-position quad) (-> from quad))
   (set! (-> obj gravity) grav)
@@ -30,6 +30,8 @@
   ;; the velocity we need in xz to make it in time
   (let ((xz-vel (/ (vector-vector-xz-distance to from) duration)))
     ;; our velocity will point along from -> to
+    ;; MORT
+    (set! xz-vel (* xz-vel to-point-speed))
     (vector-! (-> obj initial-velocity) to from)
     ;; but have magnitude that we calculated above.
     (vector-xz-normalize! (-> obj initial-velocity) xz-vel)
@@ -40,6 +42,7 @@
     (* (* 0.5 duration) (-> obj gravity))
     )
    )
+    (*! (-> obj initial-velocity y) to-point-speed)
   (none)
   )
 
@@ -47,7 +50,7 @@
   "Set up a trajectory that goes from->to with the given velocity"
   ;; just solve for the duration and use the previous
   (let ((duration (/ (vector-vector-xz-distance to from) xz-vel)))
-    (setup-from-to-duration! obj from to duration grav)
+    (setup-from-to-duration! obj from to duration grav 1.0)
     )
   (none)
   )
@@ -63,7 +66,7 @@
      (set! f0-3 (fmax (/ (- (- y-vel) f0-4) grav) (/ (+ (- y-vel) f0-4) grav)))
      )
     )
-   (setup-from-to-duration! obj from to f0-3 grav)
+   (setup-from-to-duration! obj from to f0-3 grav 1.0)
    )
   0
   (none)

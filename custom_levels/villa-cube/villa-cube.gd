@@ -1,7 +1,10 @@
 ("VIL.DGO"(
 "static-screen.o"
-"warp-gate-switch-ag.go"
-"training-part.o"
-"warpgate-ag.go"
+
 "villa-cube.go"
-"villa-cube-code.o"))
+"villa-cube-code.o"
+;; custom level here start
+"training-part.o"
+"warp-gate-switch-ag.go"
+"warpgate-ag.go"
+))

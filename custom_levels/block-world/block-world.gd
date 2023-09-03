@@ -2,9 +2,10 @@
 "static-screen.o"
 "block-world.go"
 "block-world-code.o"
-"warp-gate-switch-ag.go"
+;;Put back at some point once crash is figured out
 "training-part.o"
+"warp-gate-switch-ag.go"
 "warpgate-ag.go"
-"villagep-obs.o"
+
 ))
 

@@ -2,7 +2,9 @@
 "static-screen.o"
 "factory-cross.go"
 "factory-cross-code.o"
-"warp-gate-switch-ag.go"
+;; custom level here start
 "training-part.o"
+"warp-gate-switch-ag.go"
 "warpgate-ag.go"
-"villagep-obs.o"))
+
+))

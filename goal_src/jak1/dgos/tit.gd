@@ -1,8 +1,5 @@
 ("TIT.DGO"
  ("static-screen.o"
-"warp-gate-switch-ag.go"
-"training-part.o"
-"warpgate-ag.go"
   "title-obs.o"
   "tpage-1609.go"
   "tpage-416.go"

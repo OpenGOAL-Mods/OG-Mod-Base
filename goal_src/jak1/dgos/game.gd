@@ -345,7 +345,10 @@
   "plat-eco.o"
   "ropebridge.o"
   "ticky.o"
+  "demon-chicken-h.o"
+  "demon-chicken.o"
   "hud-classes-pc.o" ;; added
+  "hud-demon-chicken.o"
   "mod-settings.o" ;; added
   "mod-common-functions.o" ;; added
   "mod-custom-code.o" ;; added

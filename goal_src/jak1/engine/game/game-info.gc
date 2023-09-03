@@ -13,6 +13,7 @@
 (define-extern runs-on-jak-death (function symbol none))
 ;;Forward declaration Variable for mod base settings
 (define-extern startingDebugContinuePoint (string))
+(defun-extern demon-chicken-manager-start symbol none)
 
 ;;;;;;;;;;;;;;;;;;
 ;; border plane
@@ -320,6 +321,11 @@
                                              )
                                            (suspend)
                                            (start arg0 arg2)
+                                            (when arg3
+                                            (if (task-complete? *game-info* (game-task training-gimmie))
+                                              (demon-chicken-manager-start #t)
+                                              )
+                                             )
                                            (none)
                                            )
                               (-> obj mode) cause (get-or-create-continue! obj) save-to-load

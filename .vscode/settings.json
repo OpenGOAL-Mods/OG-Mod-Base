@@ -101,5 +101,6 @@
     "xtree": "cpp",
     "xutility": "cpp",
     "cwctype": "cpp"
-  }
+  },
+  "cmake.configureOnOpen": false
 }
