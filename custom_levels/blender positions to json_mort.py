@@ -1,7 +1,19 @@
 import bpy
 import json
 import os
+import re
 
+
+#globals
+
+orb_msg = ""
+orb_json = ""
+cell_msg = ""
+cell_json = ""
+crate_msg = ""
+crate_json =""
+star_msg = ""
+star_json =""
 
 #Cells
 # Get the collection
@@ -10,7 +22,8 @@ print(r"// Start automatic actors from blender")
 print()
 # Check if the collection exists
 if collection is None:
-    print(r"//Cell Collection not found")
+    cell_msg = r"//Cell Collection not found"
+    print(cell_msg)
     print()
 else:
     # Create a list to store the positions of all objects in the collection
@@ -51,8 +64,64 @@ else:
         positions.append(data)
 
     # Output the positions as JSON
-    print(r"//Cells below")
-    print(json.dumps(positions))
+    cell_msg = r"//Cells below"
+    print(cell_msg)
+    cell_json=(json.dumps(positions))[1:]
+    cell_json = cell_json[:-1] + ","
+    print(cell_json)
+    print()
+
+# Stars
+# Get the collection
+collection = bpy.data.collections.get("Star Collection")
+# Check if the collection exists
+if collection is None:
+    star_msg = r"//Star Collection not found"
+    print(star_msg)
+    print()
+else:
+    # Create a list to store the positions of all objects in the collection
+    positions = []
+
+    # Get the name of the blend file without the extension
+    blend_file_name = bpy.path.display_name_from_filepath(bpy.data.filepath).replace(" ", "-")
+    etype = "star"
+
+    # Counter for generating incrementing numbers
+    count = 1
+
+    # Loop through all objects in the collection
+    for obj in collection.objects:
+        # Get the object's position and bounding sphere
+        pos = obj.location
+        bsphere = obj.bound_box
+
+        # Create a dictionary to store the object's data
+        data = {
+            "trans": [pos.x, pos.z, -1 * pos.y],
+            "etype": etype,
+            "game_task": 2,
+            "quat": [0, 0, 0, 1],
+            "bsphere": [0.0, 0.0, 0.0, 0.0],
+            "lump": {
+                "name": f"{blend_file_name}-{etype}-{count}",
+                #"eco-info": ["int32", 6, 2],
+                #"movie-pos": [pos.x, pos.z, -1 * pos.y],
+            }
+        }
+
+        # Increment the counter
+        count += 1
+
+        # Add the object's data to the list of positions
+        positions.append(data)
+
+    # Output the positions as JSON
+    star_msg = r"//Stars below"
+    print(star_msg)
+    star_json=(json.dumps(positions))[1:]
+    star_json = star_json[:-1] + ","
+    print(star_json)
     print()
 
 
@@ -62,7 +131,8 @@ collection = bpy.data.collections.get("Orb Collection")
 
 # Check if the collection exists
 if collection is None:
-    print(r"//Orb Collection not found")
+    orb_msg = r"//Orb Collection not found"
+    print(orb_msg)
     print()
 else:
     # Create a list to store the positions of all objects in the collection
@@ -100,8 +170,11 @@ else:
         positions.append(data)
 
     # Output the positions as JSON
-    print(r"//Orbs below")
-    print(json.dumps(positions))
+    orb_msg = r"//Orbs below"
+    print(orb_msg)
+    orb_json=(json.dumps(positions))[1:]
+    orb_json = orb_json[:-1] + ","
+    print(orb_json)
     print()
     
 #Crates
@@ -110,7 +183,8 @@ collection = bpy.data.collections.get("Crate Collection")
 
 # Check if the collection exists
 if collection is None:
-    print(r"//Crate Collection not found")
+    crate_msg = r"//Crate Collection not found"
+    print(crate_msg)
     print()
 else:
     # Create a list to store the positions of all objects in the collection
@@ -148,12 +222,66 @@ else:
         positions.append(data)
 
     # Output the positions as JSON
-    print(r"//Crates below")
-    print(json.dumps(positions))
+    crate_msg = r"//Crates below"
+    print(crate_msg)
+    crate_json=(json.dumps(positions))[1:]
+    crate_json = crate_json[:-1] + ","
+    print(crate_json)
     print()
     
 print(r"//End automatic actors from blender")
 
+def replace_actors(file_path):
+    """Replaces the actors in a file between the markers "// Start automatic actors from blender" and "//End automatic actors from blender".
+    
+    Args:
+        file_path: The path to the file to read and write.
+    
+    Returns:
+        None.
+    """
+    
+    with open(file_path, "r") as f:
+        data = f.read()
+    
+    start_marker = "// Start automatic actors from blender"
+    end_marker = "//End automatic actors from blender"
+    
+    start_index = data.find(start_marker)
+    end_index = data.find(end_marker)
+    
+    if start_index == -1 or end_index == -1:
+        print("Could not find the start or end marker in the file.")
+        return
+    
+    custom_input = {
+        "name": "my_cusom_actor",
+        "etype": "money",
+        "game_task": 0,
+        "trans": [100, 200, 300],
+        "quat": [1, 0, 0, 0],
+        "bsphere": [10, 10, 10],
+        "lump": {"name": "my_custom_lump"}
+    }
+    
+    output = start_marker + "\n" + orb_msg + "\n" + orb_json + "\n" + cell_msg + "\n" + star_msg + "\n" + star_json + "\n" + cell_json + "\n" + crate_msg + "\n" + crate_json  + "\n" + end_marker
+
+    # Find the last comma and its index
+    last_comma_index = output.rfind(",")
+
+    if last_comma_index != -1:
+        # Remove the last comma
+        output = output[:last_comma_index] + output[last_comma_index + 1:]
+
+    new_data = data[:start_index] + output + data[end_index + len(end_marker):]
+    
+    with open(file_path, "w") as f:
+        f.write(new_data)
+
+
+blend_file_path = bpy.data.filepath
+jsonc_file_path = blend_file_path.rsplit('.', 1)[0] + '.jsonc'
+replace_actors(jsonc_file_path)
 
 
 # Define the path to the glb models
@@ -165,6 +293,11 @@ model_mapping = {
     "money": "money.glb",
     "crate": "crate-wood.glb",
 }
+
+# Function to check if a file exists in the glb model path
+def glb_file_exists(filename):
+    return os.path.exists(os.path.join(glb_model_path, filename))
+
 # Function to replace the model of an object while preserving its properties
 def replace_object_model(obj, glb_filename, new_collection):
     # Store object properties
@@ -174,35 +307,45 @@ def replace_object_model(obj, glb_filename, new_collection):
     # Remove the old object
     bpy.data.objects.remove(obj, do_unlink=True)
 
-    # Create a new object with the glb model
-    bpy.ops.import_scene.gltf(filepath=os.path.join(glb_model_path, glb_filename))
-    new_obj = bpy.context.selected_objects[0]
+    if glb_file_exists(glb_filename):
+        # Create a new object with the glb model
+        bpy.ops.import_scene.gltf(filepath=os.path.join(glb_model_path, glb_filename))
+        new_obj = bpy.context.selected_objects[0]
 
-    # Set properties of the new object based on the old object
-    new_obj.name = obj_name
-    new_obj.location = obj_location
+        # Set properties of the new object based on the old object
+        new_obj.name = obj_name
+        new_obj.location = obj_location
 
-    # Link the new object to the specified collection
-    # Remove the new object link to the main scene too
-    new_collection.objects.link(new_obj)
-    bpy.context.scene.collection.objects.unlink(new_obj)
-    return new_obj
+        # Link the new object to the specified collection
+        # Remove the new object link to the main scene too
+        new_collection.objects.link(new_obj)
+        bpy.context.scene.collection.objects.unlink(new_obj)
+        return new_obj
 
 # Cells
 cell_collection = bpy.data.collections.get("Cell Collection")
 if cell_collection:
     objects_to_replace = list(cell_collection.objects)
     for obj in objects_to_replace:
-        glb_filename = model_mapping["fuel-cell"]
-        replace_object_model(obj, glb_filename, cell_collection)
+        glb_filename = model_mapping.get("fuel-cell", "")
+        if glb_filename and glb_file_exists(glb_filename):
+            replace_object_model(obj, glb_filename, cell_collection)
 
 # Orbs
 orb_collection = bpy.data.collections.get("Orb Collection")
 if orb_collection:
     for obj in list(orb_collection.objects):  # Iterate through a copy of the objects
-        glb_filename = model_mapping["money"]
-        replace_object_model(obj, glb_filename, orb_collection)
-
+        glb_filename = model_mapping.get("money", "")
+        if glb_filename and glb_file_exists(glb_filename):
+            replace_object_model(obj, glb_filename, orb_collection)
+            
+# Star
+star_collection = bpy.data.collections.get("Star Collection")
+if star_collection:
+    for obj in list(star_collection.objects):  # Iterate through a copy of the objects
+        glb_filename = model_mapping.get("crate", "")
+        if glb_filename and glb_file_exists(glb_filename):
+            replace_object_model(obj, glb_filename, star_collection)
 
 # Crates
 crate_collection = bpy.data.collections.get("Crate Collection")
@@ -210,6 +353,7 @@ if crate_collection:
     for obj in crate_collection.objects:
         etype = obj.get("etype")
         if etype in model_mapping:
-            glb_filename = model_mapping[etype]
-            replace_object_model(obj, glb_filename, crate_collection)
+            glb_filename = model_mapping.get(etype, "")
+            if glb_filename and glb_file_exists(glb_filename):
+                replace_object_model(obj, glb_filename, crate_collection)
 
