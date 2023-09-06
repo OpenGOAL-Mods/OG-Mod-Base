@@ -116,6 +116,9 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
 // Define a vector to store references to the active music instances.
 std::vector<std::pair<sf::Music*, std::string>> activeMusics;
 
+// Index to store the main music in the vector.
+const size_t MAIN_MUSIC_INDEX = 0;
+
 // Function to stop all currently playing sounds.
 void stopAllSounds()
 {
@@ -138,11 +141,10 @@ std::vector<std::string> getPlayingFileNames()
 }
 
 // Function to play an MP3 file.
-void playMP3(u32 filePathu32, u32 volume)
-{
+void playMP3(u32 filePathu32, u32 volume) {
     // Spawn a new thread to play the music.
     std::thread thread([=]() {
-        std::string filePath = Ptr<String>(filePathu32).c()->data();
+      std::string filePath = Ptr<String>(filePathu32).c()->data();
         std::cout << "Playing MP3: " << filePath << std::endl;
 
         sf::Music* music = new sf::Music;
@@ -173,39 +175,79 @@ void playMP3(u32 filePathu32, u32 volume)
     thread.detach();
 }
 
+// Define a separate sf::Music pointer for the Main Music.
+sf::Music* mainMusicInstance = nullptr;
 
-// void playMP3(u32 filePathu32, u32 volume)
-// {
+// Define a flag to track the state of the Main Music.
+bool isMainMusicPaused = false;
 
-//     std::string filePath = Ptr<String>(filePathu32).c()->data();
-//     std::cout << "Playing MP3: " << filePath << std::endl;
-//     sf::Music music;
+// Function to play the Main Music.
+void playMainMusic(u32 filePathu32, u32 volume) {
+    std::string filePath = Ptr<String>(filePathu32).c()->data();
+    std::cout << "Playing Main Music: " << filePath << std::endl;
 
-//     std::ifstream file(filePath);
-//     if (!file)
-//     {
-//         std::cout << "Invalid file path: " << filePath << std::endl;
-//         return;
-//     }
+    // Stop and clean up the previous Main Music instance, if it exists.
+    if (mainMusicInstance) {
+        mainMusicInstance->stop();
+        delete mainMusicInstance;
+        mainMusicInstance = nullptr;
+    }
 
-//     if (!music.openFromFile(filePath))
-//     {
-//         printf("Failed to load: %s\n", filePath.c_str());
-//         std::cout << "Failed to load: " << filePath << std::endl;
-//         return;
-//     }
+    // Spawn a new thread to play the Main Music.
+    std::thread thread([=]() {
+        sf::Music* mainMusic = new sf::Music;
+        if (!mainMusic->openFromFile(filePath))
+        {
+            std::cout << "Failed to load: " << filePath << std::endl;
+            delete mainMusic;
+            return;
+        }
+        mainMusic->setVolume(volume);
+        mainMusic->play();
 
-//     music.setVolume(volume);
-//     music.play();
+        // Set the Main Music instance.
+        mainMusicInstance = mainMusic;
+        isMainMusicPaused = false;
 
-//     while (music.getStatus() == sf::Music::Playing)
-//     {
-//         sf::sleep(sf::milliseconds(100));
-//        sf::sleep(sf::milliseconds(100));
-//     }
-// }
+        while (mainMusic->getStatus() == sf::Music::Playing || mainMusic->getStatus() == sf::Music::Paused)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    });
 
+    // Detach the thread so it can run independently.
+    thread.detach();
+}
 
+// Function to change the volume of the Main Music.
+void changeMainMusicVolume(u32 volume) {
+    if (mainMusicInstance) {
+        mainMusicInstance->setVolume(volume);
+    }
+}
+
+// Function to pause or resume the Main Music.
+// Function to toggle between pausing and resuming the Main Music.
+void playPauseMainMusic()
+{
+    if (mainMusicInstance)
+    {
+        if (mainMusicInstance->getStatus() == sf::Music::Playing)
+        {
+            mainMusicInstance->pause();
+        }
+        else if (mainMusicInstance->getStatus() == sf::Music::Paused)
+        {
+            mainMusicInstance->play();
+        }
+        else if (mainMusicInstance->getStatus() == sf::Music::Stopped)
+        {
+            // If Main Music is stopped, start playing it.
+            mainMusicInstance->play();
+        }
+    }
+
+}
 /*!
  * Not checked super carefully for jak 2, but looks the same
  */
@@ -1019,6 +1061,13 @@ void init_common_pc_port_functions(
 
   //Play sound file
   make_func_symbol_func("play-rand-sound", (void*)playMP3);  
+
+  //Main music stuff
+  make_func_symbol_func("play-main-music", (void*)playMainMusic);
+  make_func_symbol_func("pause-play-main-music", (void*)playPauseMainMusic);
+  make_func_symbol_func("stop-main-music", (void*)playPauseMainMusic);
+  make_func_symbol_func("main-music-volume", (void*)changeMainMusicVolume);
+
   // discord rich presence
   make_func_symbol_func("pc-discord-rpc-set", (void*)set_discord_rpc);
 
