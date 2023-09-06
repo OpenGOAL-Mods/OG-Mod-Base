@@ -91,7 +91,17 @@
         "name":"test-fuel-cell"
       }
     },
- 
+ // Start automatic actors from blender
+//Orbs below
+{"trans": [32.95207595825195, 318.50836181640625, 87.65332794189453], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "factory-cross-money-1"}}, {"trans": [37.84577941894531, 318.50836181640625, 87.65332794189453], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "factory-cross-money-2"}},
+//Cell Collection not found
+//Stars below
+{"trans": [97.00384521484375, 307.3584899902344, 88.07563018798828], "etype": "star", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "factory-cross-star-1"}}, {"trans": [66.96453857421875, 307.3584899902344, 121.05072784423828], "etype": "star", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "factory-cross-star-2"}}, {"trans": [1.7823340892791748, 307.3584899902344, 121.05072784423828], "etype": "star", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "factory-cross-star-3"}}, {"trans": [1.7823340892791748, 307.3584899902344, 53.90259552001953], "etype": "star", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "factory-cross-star-4"}}, {"trans": [66.96453857421875, 307.3584899902344, 53.90259552001953], "etype": "star", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "factory-cross-star-5"}}, {"trans": [32.95207595825195, 322.7912292480469, 87.65332794189453], "etype": "star", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "factory-cross-star-6"}}, {"trans": [22.938560485839844, 322.7912292480469, 87.65332794189453], "etype": "star", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "factory-cross-star-7"}}, {"trans": [47.519371032714844, 322.7912292480469, 87.65332794189453], "etype": "star", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "factory-cross-star-8"}}
+
+//Crate Collection not found
+
+//End automatic actors from blender
+,
    {
       "trans": [98.5414, 292.5000, 84.6130],// translation
       "etype": "fuel-cell",  // chick

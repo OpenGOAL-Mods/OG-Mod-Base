@@ -2020,7 +2020,7 @@
                            
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'village1
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2078,7 +2078,7 @@
                            :nickname 'cro          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'village3
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2119,7 +2119,7 @@
                            :nickname 'hol          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'beach
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2160,7 +2160,7 @@
                            :nickname 'mon         ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'village1
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2201,7 +2201,7 @@
                            :nickname 'cat          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'village2
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2242,7 +2242,7 @@
                            :nickname 'pyr       ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'jungleb
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2283,7 +2283,7 @@
                            :nickname 'can          ;; nickname
                            :packages '(snow)
                            :sound-banks '(snow)
-                           :music-bank 'snow
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*snow-mood*
                            :mood-func 'update-mood-snow
@@ -2365,7 +2365,7 @@
                            :nickname 'vil         ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'jungle
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2406,7 +2406,7 @@
                            :nickname 'sli          ;; nickname
                            :packages '(snow)
                            :sound-banks '(snow)
-                           :music-bank 'snow
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*snow-mood*
                            :mood-func 'update-mood-snow
@@ -2447,7 +2447,7 @@
                            :nickname 'isl          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'village2
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2488,7 +2488,7 @@
                            :nickname 'gla          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'sunken
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2529,7 +2529,7 @@
                            :nickname 'che          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'village1
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2570,7 +2570,7 @@
                            :nickname 'spa          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'maincave
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2611,7 +2611,7 @@
                            :nickname 'chi          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'village3
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2652,7 +2652,7 @@
                            :nickname 'gar          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'beach
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2693,7 +2693,7 @@
                            :nickname 'COL          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'snow
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2734,7 +2734,7 @@
                            :nickname 'man          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'village1
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
@@ -2775,7 +2775,7 @@
                            :nickname 'FAC          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'village1
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training
