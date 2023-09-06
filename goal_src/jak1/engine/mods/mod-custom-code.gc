@@ -291,10 +291,20 @@
       (set-flock-false);; Set all flock values to #f before chickens are in it
       (chicken-pls) ;; spawn the chickens offscreen
       (none))
+
+  (defun zero-volume? ()
+  "Returns true if the volume of main music should be set to 0 This is a hack."
+  (or (not (= *master-mode* 'game) )
+  (= (-> (level-get-target-inside *level*)name) 'title)
+  )
+  )
 (defun-extern robo-movie-check (none))
     (defun runs-every-frame ()
     (main-music-volume (the int (-> *setting-control* default music-volume)))
-
+    ;; Its so funny that this works lol
+    (if (zero-volume?)
+      (main-music-volume 0)
+    )
       (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1)) 
             (play-rand-sound "snd/end-level.wav" 100)
       (+! *number-unlock-lvl* 1)

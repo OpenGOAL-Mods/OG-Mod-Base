@@ -69,10 +69,7 @@
         "name": "block-world-warpgate"
       }
     },
-   
-
-    
-
+  
     {
       "trans": [-5.4630, 17.4553, 1.6169], // translation
       "etype": "eco-yellow",  // actor type
