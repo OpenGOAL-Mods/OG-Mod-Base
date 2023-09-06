@@ -437,6 +437,7 @@
 
 (defbehavior demon-chicken-init-by-other demon-chicken ((vec vector))
   (common-init! self)
+  (set! (-> self to-point-speed) 6.0)
   (set! (-> self cshape trans quad) (-> vec quad))
   (go demon-chicken-dormant)
   (none)
