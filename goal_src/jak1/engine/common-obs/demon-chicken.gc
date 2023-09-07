@@ -19,15 +19,15 @@
 (defun-extern demon-chicken-init-by-other vector none)
 
 (defun portal-mort-trans ()
-  (-> (the warp-gate (-> (the basebutton (process-by-ename "block-world-warp-gate-switch") )child 0)) root trans)
+  (-> (the warp-gate (-> (the basebutton (process-by-ename "project-warp-gate-switch") )child 0)) root trans)
   )
 
 (defun portal-mort-switch ()
-  (the-as warp-gate-switch (process-by-ename "block-world-warp-gate-switch"))
+  (the-as warp-gate-switch (process-by-ename "project-warp-gate-switch"))
   )
 
   (defun portal-mort-gate ()
-  (the warp-gate (-> (the basebutton (process-by-ename "block-world-warp-gate-switch") )child 0))
+  (the warp-gate (-> (the basebutton (process-by-ename "project-warp-gate-switch") )child 0))
   )
 
 

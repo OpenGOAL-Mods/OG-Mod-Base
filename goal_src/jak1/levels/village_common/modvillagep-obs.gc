@@ -124,7 +124,7 @@
                         )
                       )
                  )
-                 (and *close-to-portal?* (=  (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) state name)'idle))
+                 (and *close-to-portal?* (=  (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "project-warp-gate-switch") )child 0)) state name)'idle))
                  )
         (hide-hud)
         (level-hint-surpress!)

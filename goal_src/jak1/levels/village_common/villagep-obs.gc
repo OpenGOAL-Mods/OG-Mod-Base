@@ -108,8 +108,8 @@
   :code (behavior ()
    ;; (remove-setting! 'allow-progress)
     (set! (-> self state-time) (-> *display* base-frame-counter))
-              (if (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0))
-        (vector-copy! (-> self root trans) (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "block-world-warp-gate-switch") )child 0)) root trans))
+              (if (the warp-gate (-> (the warp-gate-switch (process-by-ename "project-warp-gate-switch") )child 0))
+        (vector-copy! (-> self root trans) (-> (the warp-gate (-> (the warp-gate-switch (process-by-ename "project-warp-gate-switch") )child 0)) root trans))
         )
     (loop
 

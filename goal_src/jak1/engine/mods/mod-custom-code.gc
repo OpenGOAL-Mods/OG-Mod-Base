@@ -70,7 +70,7 @@
 
 (defun check-portal-distance ()
     (cond
-      ((< (vector-vector-distance (-> *target* root trans) (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans)) (meters 12))
+      ((< (vector-vector-distance (-> *target* root trans) (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans)) (meters 12))
         (set! *close-to-portal?* #t)
         )
       (else
@@ -183,7 +183,7 @@
   (defun save-chicks-func ()
   (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
          (current-custom-info (-> *custom-level-info* data current-level-idx))
-         (warpgate-pos (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans))
+         (warpgate-pos (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans))
          )
   
     (when (and 
@@ -260,7 +260,7 @@
 (defun warp-demon-chick ()
   (dotimes (i NUM_FLOCKPOINTS) 
 ;;If they are close to the portal
-    (when (< (vector-vector-distance  (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans) 
+    (when (< (vector-vector-distance  (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans) 
                                     (-> (get-chick-from-flock i) root trans)) (meters 0.1))
                                     ;;Play portal effect on them
                                     (effect-control-method-10  (-> (get-chick-from-flock i) skel effect) 'death-warp-in -1.0 -1 )
@@ -269,7 +269,7 @@
                                     )
     )
 
- ;; (-> (the-as training-part (process-by-ename "block-world-training-part-1") )root trans)  )
+ ;; (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans)  )
 (none)
 )
 

@@ -41,7 +41,7 @@
       "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
       "bsphere": [1193.75, 48.39, -3630.47, 10],
       "lump": {
-        "name": "block-world-warpgate"
+        "name": "project-warpgate"
       }
     },
 	
@@ -52,8 +52,8 @@
       "quat" : [0, 0, 0, 1],
       "bsphere": [1189.09, 48.11, -3619.92, 10],
       "lump": {
-        "name": "block-world-warp-gate-switch",
-		"alt-actor": "block-world-training-part-1"
+        "name": "project-warp-gate-switch",
+		"alt-actor": "project-training-part-1"
       }
     },
 	
@@ -64,7 +64,7 @@
       "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
       "bsphere": [1193.75, 51.39, -3630.47, 10],
       "lump": {
-        "name": "block-world-training-part-1",
+        "name": "project-training-part-1",
 		"effect-name": "'warpgate-loop",
         "art-name":"group-training-warpgate",
         "effect-param": ["float", 3.0000, 80.0000, 12.0000, 40.0000],
