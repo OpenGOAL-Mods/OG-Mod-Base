@@ -707,6 +707,7 @@
 (set! (-> *game-counts* data 18 money-count) 49)
 (set! (-> *game-counts* data 19 money-count) 45)
 (set! (-> *game-counts* data 20 money-count) 47)
+(set! (-> *game-counts* data 22 money-count) 45)
 (set! (-> *game-counts* data 29 money-count) 55)
 
 
