@@ -162,7 +162,7 @@ else:
                 "name": f"{blend_file_name}-{etype}-{count}",
             }
         }
-        f"{blend_file_name}-{etype}-{count}"
+        obj.name = f"{blend_file_name}-{etype}-{count}"
         # Increment the counter
         count += 1
 
@@ -212,9 +212,40 @@ else:
             "bsphere": [0.0, 0.0, 0.0, 0.0],
             "lump": {
                 "name": f"{blend_file_name}-{etype}-{count}",
+
             }
         }
-        f"{blend_file_name}-{etype}-{count}"
+
+        # Check if "yelloweco" is in the object's name
+        if "yeco" in obj.name.lower():
+            data["lump"]["name"] = data["lump"]["name"] + "-yeco"
+            data["lump"]["crate-type"] = "'wood"
+            data["lump"]["eco-info"] = ["int32", 1, 1]
+            data["lump"]["light-index"] = ["int32", 2]
+
+        # Check if "yelloweco" is in the object's name
+        if "reco" in obj.name.lower():
+            data["lump"]["name"] = data["lump"]["name"] + "-reco"
+            data["lump"]["crate-type"] = "'wood"
+            data["lump"]["eco-info"] = ["int32", 2, 1]
+            data["lump"]["light-index"] = ["int32", 2]
+
+        # Check if "yelloweco" is in the object's name
+        if "beco" in obj.name.lower():
+            data["lump"]["name"] = data["lump"]["name"] + "-beco"
+            data["lump"]["crate-type"] = "'wood"
+            data["lump"]["eco-info"] = ["int32", 3, 1]
+            data["lump"]["light-index"] = ["int32", 2]
+
+        # Check if "yelloweco" is in the object's name
+        if "geco" in obj.name.lower():
+            data["lump"]["name"] = data["lump"]["name"] + "-yeco"
+            data["lump"]["crate-type"] = "'wood"
+            data["lump"]["eco-info"] = ["int32", 4, 1]
+            data["lump"]["light-index"] = ["int32", 2]
+
+
+        obj.name = data["lump"]["name"]
         # Increment the counter
         count += 1
 
@@ -350,10 +381,7 @@ if star_collection:
 # Crates
 crate_collection = bpy.data.collections.get("Crate Collection")
 if crate_collection:
-    for obj in crate_collection.objects:
-        etype = obj.get("etype")
-        if etype in model_mapping:
-            glb_filename = model_mapping.get(etype, "")
-            if glb_filename and glb_file_exists(glb_filename):
-                replace_object_model(obj, glb_filename, crate_collection)
-
+    for obj in list(crate_collection.objects):  # Iterate through a copy of the objects
+        glb_filename = model_mapping.get("crate", "")
+        if glb_filename and glb_file_exists(glb_filename):
+            replace_object_model(obj, glb_filename, crate_collection)

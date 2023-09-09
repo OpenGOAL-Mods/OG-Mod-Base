@@ -476,12 +476,12 @@ void update_discord_rpc(u32 discord_info) {
         strcpy(state, "Intro");
       } else if (cutscene != offset_of_s7()) {
         strcpy(state, "Watching a cutscene");
-        strcpy(large_image_text, fmt::format("Cells: {} | Orbs: {} | Flies: {} | Deaths: {}",
+        strcpy(large_image_text, fmt::format("Cells: {} | Farts Obtained: {} |Beans: {} | Deaths: {}",
                                              std::to_string(cells), std::to_string(orbs),
                                              std::to_string(scout_flies), std::to_string(deaths))
                                      .c_str());
       } else {
-        strcpy(state, fmt::format("Cells: {} | Orbs: {} | Flies: {}", std::to_string(cells),
+        strcpy(state, fmt::format("Cells: {} | Farts Obtained: {} | Beans: {}", std::to_string(cells),
                                   std::to_string(orbs), std::to_string(scout_flies))
                           .c_str());
 
