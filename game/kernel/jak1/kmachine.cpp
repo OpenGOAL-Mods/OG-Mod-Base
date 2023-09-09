@@ -453,11 +453,12 @@ void update_discord_rpc(u32 discord_info) {
         strcpy(large_image_key, level);
       }
       strcpy(large_image_text, full_level_name);
-      if (!strcmp(full_level_name, "unknown")) {
-        strcpy(large_image_key, full_level_name);
-        strcpy(large_image_text, level);
-      }
+      // if (!strcmp(full_level_name, "unknown")) {
+      //   strcpy(large_image_key, full_level_name);
+      //   strcpy(large_image_text, level);
+      // }
       rpc.largeImageKey = large_image_key;
+      rpc.largeImageKey = "chef";
       if (!strcmp(level, "finalboss")) {
         strcpy(state, "Fighting Final Boss");
       } else if (plantboss != offset_of_s7()) {
@@ -465,8 +466,7 @@ void update_discord_rpc(u32 discord_info) {
         rpc.largeImageKey = "plant-boss";
         strcpy(large_image_text, "Dark Eco Plant");
       } else if (ogreboss != offset_of_s7()) {
-        strcpy(state, "Fighting Klaww");
-        rpc.largeImageKey = "ogreboss";
+        strcpy(state, "Fighting Klww");
         strcpy(large_image_text, "Klaww");
       } else if (!strcmp(level, "title")) {
         strcpy(state, "On title screen");
@@ -488,6 +488,7 @@ void update_discord_rpc(u32 discord_info) {
         strcat(large_image_text, fmt::format(" | Deaths: {}", std::to_string(deaths)).c_str());
       }
       rpc.largeImageText = large_image_text;
+      rpc.largeImageKey = "chef";
       rpc.state = state;
       if (racer != offset_of_s7()) {
         strcpy(small_image_key, "target-racer");
