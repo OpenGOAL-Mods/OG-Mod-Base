@@ -70,7 +70,48 @@
 //Crates below
 {"trans": [60.29990005493164, 300.0, 145.60000610351562], "etype": "crate", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "block-world-crate-1-yeco", "crate-type": "'wood", "eco-info": ["int32", 1, 1], "light-index": ["int32", 2]}}, {"trans": [37.0, 300.0, 112.9000015258789], "etype": "crate", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "block-world-crate-2-beco", "crate-type": "'wood", "eco-info": ["int32", 3, 1], "light-index": ["int32", 2]}}, {"trans": [37.0, 300.0, 172.60000610351562], "etype": "crate", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "block-world-crate-3-reco", "crate-type": "'wood", "eco-info": ["int32", 2, 1], "light-index": ["int32", 2]}}, {"trans": [65.4000015258789, 300.0, 184.0], "etype": "crate", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "block-world-crate-4-geco", "crate-type": "'wood", "eco-info": ["int32", 4, 1], "light-index": ["int32", 2]}},
 //Misc below
-{"trans": [58.31999969482422, 300.0, 153.99000549316406], "etype": "warp-gate-switch", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "project-warp-gate-switch", "alt-actor": "project-training-part-1"}}, {"trans": [30.278541564941406, 303.09063720703125, 152.8818359375], "etype": "training-part", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "project-training-part-1", "effect-name": "'warpgate-loop", "art-name": "group-training-warpgate", "effect-param": ["float", 3.0, 80.0, 12.0, 40.0], "cycle-speed": ["float", -1.0, 0.0], "rot": ["float", -1.0, -1.0, -1.0]}}, {"trans": [30.278541564941406, 305.59063720703125, 152.8818359375], "etype": "warpgate", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "project-warpgate"}}
+{
+  "trans": [58.32, 300.0, 153.99],
+  "etype": "warp-gate-switch",
+  "game_task": 117,
+  "quat": [0, 0, 0, 1],
+  "bsphere": [0.0, 0.0, 0.0, 0.0],
+  "lump": {
+    "name": "project-warp-gate-switch",
+    "alt-actor": "project-training-part-1"
+  }
+},
+{
+  "trans": [30.28, 303.09, 152.88],
+  "etype": "training-part",
+  "game_task": 0,
+  "quat": [     0.00037658907240256667,	
+  -0.15294678509235382,	
+  -0.003073971951380372,	
+  0.9882295727729797],
+  "bsphere": [	      1116.7928466796875,
+  56.44464111328125,
+  -3485.045166015625,
+  6.928192138671875],
+  "lump": {
+    "name": "project-training-part-1",
+    "effect-name": "'warpgate-loop",
+    "art-name": "group-training-warpgate",
+    "effect-param": ["float", 3.0, 20.0, 12.0, 60.0],
+    "cycle-speed": ["float", -1.0, 0.0],
+    "rot": ["float", -1.0, -1.0, -1.0]
+  }
+},
+{
+  "trans": [30.28, 305.59, 152.88],
+  "etype": "warpgate",
+  "game_task": 2,
+  "quat": [0, 0, 0, 1],
+  "bsphere": [0.0, 0.0, 0.0, 0.0],
+  "lump": {
+    "name": "project-warpgate"
+  }
+}
 //End automatic actors from blender 
 ,
 

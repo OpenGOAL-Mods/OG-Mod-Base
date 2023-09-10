@@ -158,7 +158,6 @@
   (define *flock-points* (new 'static 'flock-pos))
   
 (defun chicken-pls ()
-
 (define *chicken-0* (-> (start2) 0))
 (set! (-> *chicken-0* name) "chicken-0")
 (set! (-> *flock* chicks 0)  (process->handle *chicken-0*))
@@ -195,6 +194,9 @@
 (define *chicken-11* (-> (start2) 0))
 (set! (-> *chicken-11* name) "chicken-11")
 (set! (-> *flock* chicks 11)  (process->handle *chicken-11*))
+
+
+
 ;; (define *chicken-12* (-> (start2) 0))
 ;; (set! (-> *chicken-12* name) "chicken-12")
 ;; (set! (-> *flock* chicks 12)  (process->handle *chicken-12*))
@@ -744,6 +746,16 @@
       ;;(spawn (-> self part) (the vector (-> self cshape root-prim prim-core))) ;; fire rings
       ;; set up trajectory to follow target
       ;;hack doesnt work(set! (-> self traj-time) 1.0)
+
+    (if (and  (!= (-> self draw status) (the draw-status 17))
+    (< (vector-vector-distance  (target-pos 0) (-> self root trans)) (meters 100.0)) 
+   )
+                                    ;;Show demon chick
+                                   (set!  (-> self draw status) (the draw-status 17))
+                                    ;;Hide demon chick
+                                   (logior! (-> self draw status) (draw-status hidden))
+                                  )
+                                  
       (setup-from-to-duration! (-> self trajectory) (-> self cshape trans) (-> self target-pos) (-> self traj-time) 0.0 (-> self to-point-speed)) 
       (demon-chicken-follow-trajectory (ja-aframe-num 1))
       (when ORANGE_DEMON_DEBUG

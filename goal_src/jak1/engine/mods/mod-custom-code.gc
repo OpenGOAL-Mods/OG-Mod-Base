@@ -31,6 +31,8 @@
 (set! *sphere-color* *color-white*)
 (defun-extern init-chickens none)
 
+(define done-init? #f)
+
 
 
 
@@ -290,6 +292,7 @@
       (set-flock-points)
       (set-flock-false);; Set all flock values to #f before chickens are in it
       (chicken-pls) ;; spawn the chickens offscreen
+      (set! done-init? #t)
       (none))
 
   (defun zero-volume? ()
@@ -298,6 +301,9 @@
   (= (-> (level-get-target-inside *level*)name) 'title)
   )
   )
+
+
+
 (defun-extern robo-movie-check (none))
     (defun runs-every-frame ()
     (main-music-volume (the int (-> *setting-control* default music-volume)))
@@ -311,7 +317,7 @@
       (reset-actors #t)
       )
 
-  (when (and (process-by-ename "robotboss-3") *target*)
+(when (and (process-by-ename "robotboss-3") *target*)
 (robo-movie-check))
     (update-mort-vars)
     (when (run-mort-code?)
@@ -320,6 +326,8 @@
       (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
         (init-chickens)
       )
+
+
 
     ;;   ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
 
@@ -422,8 +430,18 @@
       (none)
       )
 
+(defun runs-on-warp-confirm ()
+  (dotimes (i NUM_FLOCKPOINTS) 
+    (when done-init?
+     (vector-identity! (-> (get-chick-from-flock i) target-pos))      
+     )                
+    )
+
+(none))
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
+    
+  
         (case (-> (level-get-target-inside *level*) name)
          (('mort-title)
           (play-main-music "SND/music-brave-chicken.mp3" (the int (-> *setting-control* default music-volume)))

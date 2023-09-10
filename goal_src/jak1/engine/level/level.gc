@@ -1049,12 +1049,25 @@
   )
 
 ;; method 27 level
-
+;;(define-extern money symbol)
 ;; method 10 level
-(defmethod is-object-visible? level ((obj level) (arg0 int))
-  "Is arg0 visible? Note that this will return #f if the visibility data is not loaded."
+(defmethod is-object-visible? level ((obj level) (arg0 int) (actor entity))
+   ;; hack to force visibility of stuff moved (rather than update visibility data)
+    ;; (case (-> (the entity-actor actor) etype)
+    ;;   (((the-as symbol money)
+    ;;     (the-as symbol fuel-cell)
+    ;;     (the-as symbol crate)
+    ;;     (the-as symbol demon-chicken)
+    ;;     (the-as symbol sidekick) 
+    ;;     (the-as symbol demon-chicken-manager))
+    ;;         (return #t)
+    ;;     )
+     
+    ;; )
+
+  (if  (-> *pc-settings* ps2-actor-vis?) 
   (set! (-> *pc-settings* ps2-actor-vis?) #f)
-  ;;mort hack mort
+  )
   ;; note : pc port added option to show every actor regardless
   (with-pc (if (not (-> *pc-settings* ps2-actor-vis?)) (return #t)))
 
