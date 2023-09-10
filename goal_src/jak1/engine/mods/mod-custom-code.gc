@@ -204,7 +204,7 @@
 
   (if (= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks))
     (begin
-      (play-rand-sound "snd/end-level.wav" 100)
+      (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
       (+! *number-unlock-lvl* 1)
       (go-virtual-process (portal-mort-switch) basebutton-going-down)
       (reset-actors #t) ;;HACK for some reason, the warp gate doesnt let us use it after coming out of it but reseting actor fixes this.
@@ -306,7 +306,7 @@
       (main-music-volume 0)
     )
       (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1)) 
-            (play-rand-sound "snd/end-level.wav" 100)
+            (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
       (+! *number-unlock-lvl* 1)
       (reset-actors #t)
       )
