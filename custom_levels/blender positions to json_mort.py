@@ -14,6 +14,8 @@ crate_msg = ""
 crate_json =""
 star_msg = ""
 star_json =""
+misc_msg = ""
+misc_json =""
 
 #Cells
 # Get the collection
@@ -46,13 +48,13 @@ else:
         data = {
             "trans": [pos.x, pos.z, -1 * pos.y],
             "etype": etype,
-            "game_task": 2,
+            "game_task": 117,
             "quat": [0, 0, 0, 1],
             "bsphere": [0.0, 0.0, 0.0, 0.0],
             "lump": {
                 #"name": f"{blend_file_name}-{etype}-{count}",
                 "name": f"{blend_file_name}-chick-{count}",
-                "eco-info": ["int32", 6, 2],
+                "eco-info": ["int32", 6, 117],
                 #"movie-pos": [pos.x, pos.z, -1 * pos.y],
             }
         }
@@ -162,7 +164,7 @@ else:
                 "name": f"{blend_file_name}-{etype}-{count}",
             }
         }
-        f"{blend_file_name}-{etype}-{count}"
+        obj.name = f"{blend_file_name}-{etype}-{count}"
         # Increment the counter
         count += 1
 
@@ -212,9 +214,40 @@ else:
             "bsphere": [0.0, 0.0, 0.0, 0.0],
             "lump": {
                 "name": f"{blend_file_name}-{etype}-{count}",
+
             }
         }
-        f"{blend_file_name}-{etype}-{count}"
+
+        # Check if "yelloweco" is in the object's name
+        if "yeco" in obj.name.lower():
+            data["lump"]["name"] = data["lump"]["name"] + "-yeco"
+            data["lump"]["crate-type"] = "'wood"
+            data["lump"]["eco-info"] = ["int32", 1, 1]
+            data["lump"]["light-index"] = ["int32", 2]
+
+        # Check if "yelloweco" is in the object's name
+        if "reco" in obj.name.lower():
+            data["lump"]["name"] = data["lump"]["name"] + "-reco"
+            data["lump"]["crate-type"] = "'wood"
+            data["lump"]["eco-info"] = ["int32", 2, 1]
+            data["lump"]["light-index"] = ["int32", 2]
+
+        # Check if "yelloweco" is in the object's name
+        if "beco" in obj.name.lower():
+            data["lump"]["name"] = data["lump"]["name"] + "-beco"
+            data["lump"]["crate-type"] = "'wood"
+            data["lump"]["eco-info"] = ["int32", 3, 1]
+            data["lump"]["light-index"] = ["int32", 2]
+
+        # Check if "yelloweco" is in the object's name
+        if "geco" in obj.name.lower():
+            data["lump"]["name"] = data["lump"]["name"] + "-geco"
+            data["lump"]["crate-type"] = "'wood"
+            data["lump"]["eco-info"] = ["int32", 4, 1]
+            data["lump"]["light-index"] = ["int32", 2]
+
+
+        obj.name = data["lump"]["name"]
         # Increment the counter
         count += 1
 
@@ -228,7 +261,94 @@ else:
     crate_json = crate_json[:-1] + ","
     print(crate_json)
     print()
-    
+
+
+# Misc
+# Get the collection
+collection = bpy.data.collections.get("Misc Collection")
+# Check if the collection exists
+if collection is None:
+    star_msg = r"//Misc Collection not found"
+    print(star_msg)
+    print()
+else:
+    # Create a list to store the positions of all objects in the collection
+    positions = []
+
+    # Get the name of the blend file without the extension
+    blend_file_name = bpy.path.display_name_from_filepath(bpy.data.filepath).replace(" ", "-")
+    etype = "Buzzer" # COME BACK TO THIS WONT WORK
+
+    # Counter for generating incrementing numbers
+    count = 1
+
+    # Loop through all objects in the collection
+    for obj in collection.objects:
+        # Get the object's position and bounding sphere
+        pos = obj.location
+        bsphere = obj.bound_box
+
+        # Create a dictionary to store the object's data
+        data = {
+            "trans": [pos.x, pos.z, -1 * pos.y],
+            "etype": etype,
+            "game_task": 2,
+            "quat": [0, 0, 0, 1],
+            "bsphere": [0.0, 0.0, 0.0, 0.0],
+            "lump": {
+                "name": f"{blend_file_name}-{etype}-{count}",
+                #"eco-info": ["int32", 6, 2],
+                #"movie-pos": [pos.x, pos.z, -1 * pos.y],
+            }
+        }
+
+
+        if "project-warpgate" in obj.name.lower():
+            data["etype"] = "warpgate"
+            #data["trans"] = [pos.x, pos.z, -1 * pos.y],
+            data["lump"]["name"] = "project-warpgate"
+            obj.name = data["lump"]["name"]
+            #training part
+            data2 = {
+            "trans": [pos.x, (pos.z - 2.5), -1 * pos.y],
+            "etype": "training-part",
+            "game_task": 0,
+            "quat": [0, 0, 0, 1],
+            "bsphere": [0.0, 0.0, 0.0, 0.0],
+            "lump": {
+                "name": "project-training-part-1",
+		        "effect-name": "'warpgate-loop",
+                "art-name":"group-training-warpgate",
+                "effect-param": ["float", 3.0000, 80.0000, 12.0000, 40.0000],
+                "cycle-speed": ["float", -1.0000, 0.0000],
+                "rot": ["float", -1.0000, -1.0000,-1.0]
+             }
+        }   
+            positions.append(data2)
+        
+        if obj.name.lower() == "project-warp-gate-switch":
+            data["etype"] = "warp-gate-switch"
+            data["lump"]["name"] = "project-warp-gate-switch"
+            data["game_task"] = 117
+            data["lump"]["alt-actor"] = "project-training-part-1"
+            obj.name = data["lump"]["name"]
+
+
+        # Increment the counter
+        count += 1
+
+        # Add the object's data to the list of positions
+        positions.append(data)
+        
+
+    # Output the positions as JSON
+    misc_msg = r"//Misc below"
+    print(misc_msg)
+    misc_json=(json.dumps(positions))[1:]
+    misc_json = misc_json[:-1] + ","
+    print(misc_json)
+    print()
+
 print(r"//End automatic actors from blender")
 
 def replace_actors(file_path):
@@ -264,7 +384,7 @@ def replace_actors(file_path):
         "lump": {"name": "my_custom_lump"}
     }
     
-    output = start_marker + "\n" + orb_msg + "\n" + orb_json + "\n" + cell_msg + "\n" + star_msg + "\n" + star_json + "\n" + cell_json + "\n" + crate_msg + "\n" + crate_json  + "\n" + end_marker
+    output = start_marker + "\n" + orb_msg + "\n" + orb_json + "\n" + cell_msg + "\n" + star_msg + "\n" + star_json + "\n" + cell_json + "\n" + crate_msg + "\n" + crate_json  + "\n" + misc_msg + "\n" + misc_json + "\n" +end_marker
 
     # Find the last comma and its index
     last_comma_index = output.rfind(",")
@@ -283,16 +403,11 @@ blend_file_path = bpy.data.filepath
 jsonc_file_path = blend_file_path.rsplit('.', 1)[0] + '.jsonc'
 replace_actors(jsonc_file_path)
 
+# Get the directory of the current Python script
+script_directory = os.path.dirname(os.path.abspath(__file__))
 
-# Define the path to the glb models
-glb_model_path = r"C:\Users\NinjaPC\AppData\Roaming\Blender Foundation\Blender\3.2\scripts\addons\OpenMaya\actorsa"
-
-# Define the mapping of etype to glb model filenames
-model_mapping = {
-    "fuel-cell": "fuel.glb",
-    "money": "money.glb",
-    "crate": "crate-wood.glb",
-}
+# Define the path to the glb models directory
+glb_model_path = os.path.join(script_directory, "models")
 
 # Function to check if a file exists in the glb model path
 def glb_file_exists(filename):
@@ -350,10 +465,7 @@ if star_collection:
 # Crates
 crate_collection = bpy.data.collections.get("Crate Collection")
 if crate_collection:
-    for obj in crate_collection.objects:
-        etype = obj.get("etype")
-        if etype in model_mapping:
-            glb_filename = model_mapping.get(etype, "")
-            if glb_filename and glb_file_exists(glb_filename):
-                replace_object_model(obj, glb_filename, crate_collection)
-
+    for obj in list(crate_collection.objects):  # Iterate through a copy of the objects
+        glb_filename = model_mapping.get("crate", "")
+        if glb_filename and glb_file_exists(glb_filename):
+            replace_object_model(obj, glb_filename, crate_collection)
