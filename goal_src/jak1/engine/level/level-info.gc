@@ -2057,7 +2057,8 @@
                                              :lev0 'block-world
                                              :disp0 'display
                                              :lev1 'village1
-                                             :disp1 'display
+                                             :disp1 #f
+                                             ;;this is a test, turn disp1 to display if we observe crashes
                                              ))
                            :tasks '()
                            :priority 100
