@@ -2,7 +2,27 @@ import bpy
 import json
 import os
 import re
+import math
 
+
+#functions
+
+def degree_to_value(degrees):
+    # Define the mapping range
+    min_degree = 0
+    max_degree = 360
+    min_value = 4  # Value for 0 degrees
+    max_value = -4  # Value for 180 degrees
+
+    # Ensure degrees are within the mapping range
+    if degrees < min_degree:
+        degrees = min_degree
+    elif degrees > max_degree:
+        degrees = max_degree
+
+    # Calculate the interpolated value
+    value = min_value + (max_value - min_value) * (degrees - min_degree) / (max_degree - min_degree)
+    return value
 
 #globals
 
@@ -307,7 +327,9 @@ else:
             data["etype"] = "warpgate"
             #data["trans"] = [pos.x, pos.z, -1 * pos.y],
             data["lump"]["name"] = "project-warpgate"
-            obj.name = data["lump"]["name"]
+            rotation_radians = obj.rotation_euler
+            rotation_degrees = [math.degrees(angle) for angle in rotation_radians]
+            obj.name = data["lump"]["name"] + "-rot" +str(degree_to_value(rotation_degrees[2]))
             #training part
             data2 = {
             "trans": [pos.x, (pos.z - 2.5), -1 * pos.y],
@@ -317,11 +339,12 @@ else:
             "bsphere": [0.0, 0.0, 0.0, 0.0],
             "lump": {
                 "name": "project-training-part-1",
-		        "effect-name": "'warpgate-loop",
+                "effect-name": "'warpgate-loop",
                 "art-name":"group-training-warpgate",
+                #"art-name" : str(degree_to_value(rotation_degrees[2])),
                 "effect-param": ["float", 3.0000, 80.0000, 12.0000, 40.0000],
                 "cycle-speed": ["float", -1.0000, 0.0000],
-                "rot": ["float", -1.0000, -1.0000,-1.0]
+                "game_task": str(degree_to_value(rotation_degrees[2])),
              }
         }   
             positions.append(data2)
@@ -334,6 +357,9 @@ else:
             obj.name = data["lump"]["name"]
 
 
+
+
+        
         # Increment the counter
         count += 1
 
@@ -350,6 +376,11 @@ else:
     print()
 
 print(r"//End automatic actors from blender")
+
+
+#START DEATH PLANE STUFF
+
+
 
 def replace_actors(file_path):
     """Replaces the actors in a file between the markers "// Start automatic actors from blender" and "//End automatic actors from blender".
@@ -403,11 +434,16 @@ blend_file_path = bpy.data.filepath
 jsonc_file_path = blend_file_path.rsplit('.', 1)[0] + '.jsonc'
 replace_actors(jsonc_file_path)
 
-# Get the directory of the current Python script
-script_directory = os.path.dirname(os.path.abspath(__file__))
 
-# Define the path to the glb models directory
-glb_model_path = os.path.join(script_directory, "models")
+# Define the path to the glb models
+glb_model_path = r"C:\Users\NinjaPC\AppData\Roaming\Blender Foundation\Blender\3.2\scripts\addons\OpenMaya\actorsa"
+
+# Define the mapping of etype to glb model filenames
+model_mapping = {
+    "fuel-cell": "fuel.glb",
+    "money": "money.glb",
+    "crate": "crate-wood.glb",
+}
 
 # Function to check if a file exists in the glb model path
 def glb_file_exists(filename):

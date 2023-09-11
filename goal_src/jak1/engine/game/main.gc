@@ -174,7 +174,7 @@
   )
 
 (define *last-master-mode* 'game)
-
+(define-extern *warp-info* (array string))
 (defun toggle-pause ()
   "Do pause/menu/progress transitions"
  
@@ -237,7 +237,7 @@
                         (set! *in-mort-menu* #f)
                         ;; replace with mort menu eventually
                         (sound-play "select-menu")
-                        (send-event *target* 'continue (get-continue-by-name *game-info* "block-world-start"))
+                        (send-event *target* 'continue (get-continue-by-name *game-info* (-> *warp-info* 0)))
                         (return 0)
                         )
                         )

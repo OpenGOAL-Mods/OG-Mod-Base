@@ -306,6 +306,8 @@
 
 (defun-extern robo-movie-check (none))
     (defun runs-every-frame ()
+    (when #t
+    
     (main-music-volume (the int (-> *setting-control* default music-volume)))
     ;; Its so funny that this works lol
     (if (zero-volume?)
@@ -341,6 +343,12 @@
       (draw-beta-flock-points)
       (mort-debug-text)
 
+  (if (!= (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))
+  )))
+       (set! (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))))
+     )
+  )
+
      
       (if *show-input-display* 
         (input-display-on)
@@ -352,6 +360,9 @@
       (find-best-master-mark)
       (mort-main-menu)
 
+    
+    )
+    
       (none)
     )
 

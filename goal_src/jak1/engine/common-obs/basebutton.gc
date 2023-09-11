@@ -442,7 +442,7 @@
   )
 
 (define *warp-info* (new 'static 'boxed-array :type string
-                      "block-world-warp"
+                      "block-world-warp" ;;-done
                       "factory-cross-warp"
                       "holly-wood-warp"
                       "monument-warp"
@@ -453,13 +453,13 @@
                       "villa-cube-warp"
                       "ice-slide-warp"
                       "islands-warp"
-                    ;;  "glass-towers-warp"
-                    ;;  "chemical-factory-warp"
+                  ;;  "glass-towers-warp"
+                  ;;  "chemical-factory-warp"
                       "space-bridge-warp"
-                   ;;   "chicks-warp"
+                  ;;   "chicks-warp"
                       "garden-warp"
                       "cold-pipe-warp"
-                      ;;"block-man-warp"
+                    ;;"block-man-warp"
                     ;;  "cube-face-warp"
                       )
         )
