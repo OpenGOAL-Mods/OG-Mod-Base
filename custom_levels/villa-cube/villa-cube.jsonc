@@ -21,58 +21,21 @@
 
 
   "actors" : [
-    {
-      "trans": [ 31.73, 303.37, 153.08], 
-      "etype": "warpgate",
-      "game_task": 0,
-      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
-      "bsphere": [1193.75, 48.39, -3630.47, 10],
-      "lump": {
-        "name": "project-warpgate"
-      }
-    },
-	
-	{
-      "trans": [58.32, 300.00, 153.99], 
-      "etype": "warp-gate-switch",
-      "game_task": 117,
-      "quat" : [0, 0, 0, 1],
-      "bsphere": [1189.09, 48.11, -3619.92, 10],
-      "lump": {
-        "name": "project-warp-gate-switch",
-		"alt-actor": "project-training-part-1"
-      }
-    },
-	
-	{
-      "trans": [ 31.73, 303.37, 153.08], 
-      "etype": "training-part",
-      "game_task": 0,
-      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
-      "bsphere": [1193.75, 51.39, -3630.47, 10],
-      "lump": {
-        "name": "project-training-part-1",
-		"effect-name": "'warpgate-loop",
-        "art-name":"group-training-warpgate",
-        "effect-param": ["float", 3.0000, 80.0000, 12.0000, 40.0000],
-        "cycle-speed": ["float", -1.0000, 0.0000],
-        "rot": ["float", -1.0000, -1.0000,-1.0]
-      }
-    },
-{"trans": [35.391761779785156, 301.9507141113281, 157.22988891601562], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.001", "eco-info": ["int32", 6, 2]}}, {"trans": [-22.105575561523438, 317.57928466796875, 148.6048583984375], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.002", "eco-info": ["int32", 6, 2]}}, {"trans": [-54.80731964111328, 317.57928466796875, 148.6048583984375], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.003", "eco-info": ["int32", 6, 2]}}, {"trans": [-7.909519672393799, 346.49285888671875, 155.57229614257812], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.004", "eco-info": ["int32", 6, 2]}}, {"trans": [-13.439390182495117, 336.76519775390625, 98.71724700927734], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.005", "eco-info": ["int32", 6, 2]}}, {"trans": [-40.402992248535156, 321.430908203125, 76.90836334228516], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.006", "eco-info": ["int32", 6, 2]}}, {"trans": [-32.170963287353516, 325.1839294433594, 62.315189361572266], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.007", "eco-info": ["int32", 6, 2]}}, {"trans": [36.17097854614258, 320.69195556640625, 111.87935638427734], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.008", "eco-info": ["int32", 6, 2]}}, {"trans": [39.4081916809082, 301.58953857421875, 88.70475769042969], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.009", "eco-info": ["int32", 6, 2]}}, {"trans": [82.96463012695312, 301.58953857421875, 92.89799499511719], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chick.010", "eco-info": ["int32", 6, 2]}},
    
 
+       
     
+ // Start automatic actors from blender
+//Orbs below
 
-    {
-      "trans": [-5.4630, 17.4553, 1.6169], // translation
-      "etype": "eco-yellow",  // actor type
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat" : [0, 0, 0, 1], // quaternion
-      "bsphere": [-5.4630, 17.4553, 1.6169, 10], // bounding sphere
-      "lump": {
-        "name":"test-eco"
-      }
-    }
+//Cells below
+//Stars below
+
+{"trans": [35.391761779785156, 301.9507141113281, 157.22988891601562], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "villa-cube-chick-1", "eco-info": ["int32", 6, 117]}}, {"trans": [-22.105575561523438, 317.57928466796875, 148.6048583984375], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "villa-cube-chick-2", "eco-info": ["int32", 6, 117]}}, {"trans": [-54.80731964111328, 317.57928466796875, 148.6048583984375], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "villa-cube-chick-3", "eco-info": ["int32", 6, 117]}}, {"trans": [-7.909519672393799, 346.49285888671875, 155.57229614257812], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "villa-cube-chick-4", "eco-info": ["int32", 6, 117]}}, {"trans": [-13.439390182495117, 336.76519775390625, 98.71724700927734], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "villa-cube-chick-5", "eco-info": ["int32", 6, 117]}}, {"trans": [-40.402992248535156, 321.430908203125, 76.90836334228516], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "villa-cube-chick-6", "eco-info": ["int32", 6, 117]}}, {"trans": [-32.170963287353516, 325.1839294433594, 62.315189361572266], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "villa-cube-chick-7", "eco-info": ["int32", 6, 117]}}, {"trans": [36.17097854614258, 320.69195556640625, 111.87935638427734], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "villa-cube-chick-8", "eco-info": ["int32", 6, 117]}}, {"trans": [39.4081916809082, 301.58953857421875, 88.70475769042969], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "villa-cube-chick-9", "eco-info": ["int32", 6, 117]}}, {"trans": [82.96463012695312, 301.58953857421875, 92.89799499511719], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "villa-cube-chick-10", "eco-info": ["int32", 6, 117]}},
+//Crates below
+{"trans": [-8.229963302612305, 342.5069274902344, 143.30624389648438], "etype": "crate", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "villa-cube-crate-1-yeco", "crate-type": "'wood", "eco-info": ["int32", 1, 1], "light-index": ["int32", 2]}}, {"trans": [29.965694427490234, 304.712158203125, 70.86126708984375], "etype": "crate", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "villa-cube-crate-2-yeco", "crate-type": "'wood", "eco-info": ["int32", 1, 1], "light-index": ["int32", 2]}}, {"trans": [50.886268615722656, 299.9834289550781, 107.39659118652344], "etype": "crate", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "villa-cube-crate-3-yeco", "crate-type": "'wood", "eco-info": ["int32", 1, 1], "light-index": ["int32", 2]}},
+//Misc below
+{"trans": [58.31999969482422, 274.7746276855469, 153.99000549316406], "etype": "warp-gate-switch", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "project-warp-gate-switch", "alt-actor": "project-training-part-1"}}, {"trans": [30.27850914001465, 303.09075927734375, 152.8817596435547], "etype": "training-part", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "project-training-part-1", "effect-name": "'warpgate-loop", "art-name": "group-training-warpgate", "effect-param": ["float", 3.0, 80.0, 12.0, 40.0], "cycle-speed": ["float", -1.0, 0.0], "game_task": "1.9999999443449297"}}, {"trans": [30.27850914001465, 305.59075927734375, 152.8817596435547], "etype": "warpgate", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "project-warpgate"}}
+//End automatic actors from blender
   ]
 }
