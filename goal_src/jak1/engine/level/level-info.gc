@@ -2210,14 +2210,20 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "cathederal-warp"
+                                             :name "cathedral-warp"
                                              :level 'cathederal
                                              :flags (continue-flags warp)
-                                             :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+                                             :trans (new 'static 'vector :x  (meters  16.88) :y (meters 310.00) :z (meters 216.83):w 1.0)
+                                             :quat (new 'static 'quaternion  :y 0.9886 :w -0.150)
+                                             :camera-trans (new 'static 'vector :x (meters 15.93) :y (meters 327.0) :z (meters 246.43) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 -0.9992 0.0000 -0.0387 0.0132 0.9398 -0.3414 0.0363 -0.3416 -0.9391)
                                              :load-commands '()
+
+                      ;;                        (static-continue-point "village1" ()
+                      ;;  (target 16.7094 310.0019 216.1895 0.0000 0.9886 0.0000 -0.1501)
+                      ;;  (camera 15.5265 327.1520 246.1453 -0.9992 0.0000 -0.0387 0.0132 0.9398 -0.3414 0.0363 -0.3416 -0.9391)      
+                      ;;  (load 'none 'cathederal 'display 'village1 'display)
+                      ;;  )
                                              :vis-nick 'none
                                              :lev0 'cathederal
                                              :disp0 'display

@@ -21,45 +21,7 @@
   "base_id": 2000000,"ambients": [],
 
   "actors" : [
-    {
-      "trans": [ 31.73, 303.37, 153.08], 
-      "etype": "warpgate",
-      "game_task": 0,
-      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
-      "bsphere": [1193.75, 48.39, -3630.47, 10],
-      "lump": {
-        "name": "project-warpgate"
-      }
-    },
-	
-	{
-      "trans": [58.32, 300.00, 153.99], 
-      "etype": "warp-gate-switch",
-      "game_task": 117,
-      "quat" : [0, 0, 0, 1],
-      "bsphere": [1189.09, 48.11, -3619.92, 10],
-      "lump": {
-        "name": "project-warp-gate-switch",
-		"alt-actor": "project-training-part-1"
-      }
-    },
-	
-	{
-      "trans": [ 31.73, 303.37, 153.08], 
-      "etype": "training-part",
-      "game_task": 0,
-      "quat" : [-0.1204, -0.1174, 0.6881, 0.7057],
-      "bsphere": [1193.75, 51.39, -3630.47, 10],
-      "lump": {
-        "name": "project-training-part-1",
-		"effect-name": "'warpgate-loop",
-        "art-name":"group-training-warpgate",
-        "effect-param": ["float", 3.0000, 80.0000, 12.0000, 40.0000],
-        "cycle-speed": ["float", -1.0000, 0.0000],
-        "rot": ["float", -1.0000, -1.0000,-1.0]
-      }
-    },
-
+   
     
  // Start automatic actors from blender
 //Orbs below
@@ -67,21 +29,14 @@
 //Cells below
 //Stars below
 {"trans": [-32.68657684326172, 350.9228210449219, 164.300537109375], "etype": "star", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-star-1"}}, {"trans": [-40.23258972167969, 351.9871520996094, 205.11561584472656], "etype": "star", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-star-2"}}, {"trans": [-9.823826789855957, 321.15179443359375, 143.9719696044922], "etype": "star", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-star-3"}}, {"trans": [-61.30055236816406, 331.9443664550781, 120.5140609741211], "etype": "star", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-star-4"}}, {"trans": [-61.30055236816406, 326.36187744140625, 120.5140609741211], "etype": "star", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-star-5"}},
-{"trans": [-67.10545349121094, 301.4056701660156, 171.30807495117188], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-1", "eco-info": ["int32", 6, 2]}}, {"trans": [-35.40632247924805, 301.8879089355469, 162.3479461669922], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-2", "eco-info": ["int32", 6, 2]}}, {"trans": [-68.65579986572266, 326.1506042480469, 126.39920043945312], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-3", "eco-info": ["int32", 6, 2]}}, {"trans": [-38.94060516357422, 326.1506042480469, 158.211181640625], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-4", "eco-info": ["int32", 6, 2]}}, {"trans": [-71.16788482666016, 316.9488525390625, 215.6291046142578], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-5", "eco-info": ["int32", 6, 2]}}, {"trans": [-26.11903953552246, 326.1506042480469, 171.11328125], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-6", "eco-info": ["int32", 6, 2]}}, {"trans": [45.6641731262207, 301.7868957519531, 115.74119567871094], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-7", "eco-info": ["int32", 6, 2]}}, {"trans": [16.372295379638672, 312.1804504394531, 200.3313446044922], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-8", "eco-info": ["int32", 6, 2]}}, {"trans": [28.40104866027832, 301.81158447265625, 223.72366333007812], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-9", "eco-info": ["int32", 6, 2]}}, {"trans": [-10.576087951660156, 321.1750183105469, 115.99034118652344], "etype": "fuel-cell", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-10", "eco-info": ["int32", 6, 2]}}
+{"trans": [-67.10545349121094, 301.4056701660156, 171.30807495117188], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-1", "eco-info": ["int32", 6, 117]}}, {"trans": [-35.40632247924805, 301.8879089355469, 162.3479461669922], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-2", "eco-info": ["int32", 6, 117]}}, {"trans": [-68.65579986572266, 326.1506042480469, 126.39920043945312], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-3", "eco-info": ["int32", 6, 117]}}, {"trans": [-38.94060516357422, 326.1506042480469, 158.211181640625], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-4", "eco-info": ["int32", 6, 117]}}, {"trans": [-71.16788482666016, 316.9488525390625, 215.6291046142578], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-5", "eco-info": ["int32", 6, 117]}}, {"trans": [-26.11903953552246, 326.1506042480469, 171.11328125], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-6", "eco-info": ["int32", 6, 117]}}, {"trans": [45.6641731262207, 301.7868957519531, 115.74119567871094], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-7", "eco-info": ["int32", 6, 117]}}, {"trans": [16.372295379638672, 312.1804504394531, 200.3313446044922], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-8", "eco-info": ["int32", 6, 117]}}, {"trans": [28.40104866027832, 301.81158447265625, 223.72366333007812], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-9", "eco-info": ["int32", 6, 117]}}, {"trans": [-10.576087951660156, 321.1750183105469, 115.99034118652344], "etype": "fuel-cell", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "cathederal-chick-10", "eco-info": ["int32", 6, 117]}},
 //Crate Collection not found
 
+//Misc below
+{"trans": [58.31999969482422, 274.7746276855469, 153.99000549316406], "etype": "warp-gate-switch", "game_task": 117, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "project-warp-gate-switch", "alt-actor": "project-training-part-1"}}, {"trans": [16.496889114379883, 313.09075927734375, 220.06976318359375], "etype": "training-part", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "project-training-part-1", "effect-name": "'warpgate-loop", "art-name": "group-training-warpgate", "effect-param": ["float", 3.0, 80.0, 12.0, 40.0], "cycle-speed": ["float", -1.0, 0.0], "game_task": "4.0"}}, {"trans": [16.496889114379883, 315.59075927734375, 220.06976318359375], "etype": "warpgate", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "project-warpgate"}}
 //End automatic actors from blender
-,
+
  
-   {
-      "trans": [-0.7373, -0.7373, -0.7373],// translation
-      "etype": "fuel-cell",  // chick
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat" : [0, 0, 0, 1], // quaternion
-      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
-      "lump": {
-        "name":"test-fuel-cell"
-      }
-    }
+  
   ]
 }
