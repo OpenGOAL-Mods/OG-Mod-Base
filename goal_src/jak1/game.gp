@@ -512,6 +512,7 @@
   "wobbler.gc"
   "twister.gc"
   "beach-obs.gc"
+   "flutflutegg.gc"
   "bird-lady.gc"
   "bird-lady-beach.gc"
   "mayor.gc"

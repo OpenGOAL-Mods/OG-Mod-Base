@@ -2,6 +2,7 @@
 (in-package goal)
 
 (import "goal_src/jak1/import/sidekick-ag.gc")
+(import "goal_src/jak1/import/flut-saddle-ag.gc")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Orange Demon Challenge
@@ -407,17 +408,30 @@
   (none)
   )
 
+(defskelgroup *flutflut-sg* flut-saddle flut-saddle-lod0-jg -1
+              ((flut-saddle-lod0-mg (meters 999999)))
+              :bounds (static-spherem 0 0 0 3.5)
+              :shadow flut-saddle-shadow-mg
+              :sort 1
+              )
+
+
 (defmethod init-skel! demon-chicken ((this demon-chicken))
-  (initialize-skeleton this *sidekick-sg* '())
+  (initialize-skeleton this *flutflut-sg* '())
   (set! (-> this draw origin-joint-index) (the uint 6))
   (set! (-> this draw shadow-joint-index) (the uint 6))
   (logior! (-> this skel status) (janim-status eye))
   (set! (-> this draw shadow-ctrl) *target-shadow-control*)
-  (let ((scale 0.5))
+  (let ((scale 0.25))
   (set! (-> this root scale x) scale)
   (set! (-> this root scale y) scale)
   (set! (-> this root scale z) scale)
   )
+  ;;Shiny chicken
+  (when (= (rand-vu-int-range 0 4096) 4096)
+  (set! (-> this draw color-mult x) (rand-vu-float-range 0.0 70.0))
+  (set! (-> this draw color-mult y) (rand-vu-float-range 0.0 70.0))
+  (set! (-> this draw color-mult z) (rand-vu-float-range 0.0 70.0)))
   (none)
   )
 
@@ -713,7 +727,7 @@
   :code (behavior ()
     (loop
       (ja-channel-set! 1)
-      (ja-no-eval :group! sidekick-stance-loop-ja :num! min)
+      (ja-no-eval :group! flut-saddle-flut-run-ja :num! min)
       (until (ja-done? 0)
         (suspend)
         (ja :num! (seek!))
@@ -741,7 +755,7 @@
     )
   :code (behavior ()
     (ja-channel-push! 1 (seconds 0.2))
-    (ja :group! sidekick-free-walk-ja :num! min)
+    (ja :group! flut-saddle-flut-run-ja :num! min)
     (loop
       ;;(spawn (-> self part) (the vector (-> self cshape root-prim prim-core))) ;; fire rings
       ;; set up trajectory to follow target
