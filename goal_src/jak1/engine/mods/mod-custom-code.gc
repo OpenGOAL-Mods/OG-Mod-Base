@@ -260,10 +260,16 @@
 )
 
 (defun warp-demon-chick ()
-  (dotimes (i NUM_FLOCKPOINTS) 
+
+
+(dotimes (i NUM_FLOCKPOINTS) 
 ;;If they are close to the portal
-    (when (< (vector-vector-distance  (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans) 
+    (when (and (!= (get-chick-from-flock i) #f) 
+    (the-as training-part (process-by-ename "project-training-part-1") )
+                                    (< (vector-vector-distance 
+                                    (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans) 
                                     (-> (get-chick-from-flock i) root trans)) (meters 0.1))
+                                    )
                                     ;;Play portal effect on them
                                     (effect-control-method-10  (-> (get-chick-from-flock i) skel effect) 'death-warp-in -1.0 -1 )
                                     ;;set their target to 1,1,1
@@ -272,6 +278,11 @@
     )
 
  ;; (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans)  )
+
+
+
+
+ 
 (none)
 )
 
@@ -281,7 +292,10 @@
       (!= (-> (level-get-target-inside *level*)name) title)
       (!= (-> (level-get-target-inside *level*)name) mort-title)
       (!= (-> (level-get-target-inside *level*)name) 'mort-title) 
-      (!= (-> *target* state name) 'target-continue) 
+      (!= (-> *target* state name) 'target-continue)
+      ;;This warp stuff is a total hack to fix warp-demon-chick in retail mode. Id like to remove it one day
+      (!= (-> *target* state name) 'target-warp-out) 
+      (!= (-> *target* state name) 'target-warp-in) 
       mort-level?)
 )
 
@@ -306,6 +320,7 @@
 
 (defun-extern robo-movie-check (none))
     (defun runs-every-frame ()
+    
     (when #t
     
     (main-music-volume (the int (-> *setting-control* default music-volume)))
@@ -321,7 +336,7 @@
 
 (when (and (process-by-ename "robotboss-3") *target*)
 (robo-movie-check))
-    (update-mort-vars)
+     (update-mort-vars)
     (when (run-mort-code?)
       (adjust-chick-origin (find-best-master-mark))
       ;;If are flock points aren't setup, lets set them up.
@@ -331,13 +346,13 @@
 
 
 
-    ;;   ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
+    ;; ;;   ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
 
-    ;;   ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
-    ;;   ;;If a chicken should despawn, set its target pos to 0,0,0.
-      (assign-remove-demon-chicken-target)
+    ;; ;;   ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
+    ;; ;;   ;;If a chicken should despawn, set its target pos to 0,0,0.
+       (assign-remove-demon-chicken-target)
 
-    ;;Constantly check all chicks to see if they are in the warpgate if they are, then run chick-saved and increment saved per level
+    ;; ;;Constantly check all chicks to see if they are in the warpgate if they are, then run chick-saved and increment saved per level
       (warp-demon-chick)
       (save-chicks-func)
       (draw-beta-flock-points)

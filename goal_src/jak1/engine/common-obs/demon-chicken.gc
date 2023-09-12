@@ -340,9 +340,11 @@
 )
 
 (defun get-chick-from-flock ((idx int))
-  (if #t 
+  (if (the demon-chicken (handle->process (-> *flock* chicks idx)))
     (the demon-chicken (handle->process (-> *flock* chicks idx)))
+    (the demon-chicken #f)
     )
+  
 )
 
 (defmethod debug-draw-text! demon-chicken ((this demon-chicken))
@@ -721,11 +723,28 @@
 (defstate demon-chicken-idle (demon-chicken)
   :event demon-chicken-event-handler
   :enter (behavior ()
+  (if (and  (!= (-> self draw status) (the draw-status 17))
+    (< (vector-vector-distance  (target-pos 0) (-> self root trans)) (meters 100.0)) 
+   )
+                                    ;;Show demon chick
+                                   (set!  (-> self draw status) (the draw-status 17))
+                                    ;;Hide demon chick
+                                   (logior! (-> self draw status) (draw-status hidden))
+                                  )
+
     (set! (-> self state-time) (current-time))
     (none)
     )
   :code (behavior ()
     (loop
+    (if (and  (!= (-> self draw status) (the draw-status 17))
+    (< (vector-vector-distance  (target-pos 0) (-> self root trans)) (meters 100.0)) 
+   )
+                                    ;;Show demon chick
+                                   (set!  (-> self draw status) (the draw-status 17))
+                                    ;;Hide demon chick
+                                   (logior! (-> self draw status) (draw-status hidden))
+                                  )
       (ja-channel-set! 1)
       (ja-no-eval :group! flut-saddle-flut-run-ja :num! min)
       (until (ja-done? 0)
