@@ -427,6 +427,11 @@
   (set! (-> this root scale y) scale)
   (set! (-> this root scale z) scale)
   )
+  ;;Shiny chicken
+  (when (= (rand-vu-int-range 0 4096) 4096)
+  (set! (-> this draw color-mult x) (rand-vu-float-range 0.0 70.0))
+  (set! (-> this draw color-mult y) (rand-vu-float-range 0.0 70.0))
+  (set! (-> this draw color-mult z) (rand-vu-float-range 0.0 70.0)))
   (none)
   )
 

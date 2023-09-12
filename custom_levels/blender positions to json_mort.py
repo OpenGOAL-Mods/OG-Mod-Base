@@ -228,43 +228,53 @@ else:
         # Create a dictionary to store the object's data
         data = {
             "trans": [pos.x, pos.z, -1 * pos.y],
-            "etype": etype,
+            "etype": "flutflutegg",
             "game_task": 0,
             "quat": [0, 0, 0, 1],
             "bsphere": [0.0, 0.0, 0.0, 0.0],
+            "scale" : ["vector",[0.2, 0.2, 0.2, 1.0]],
             "lump": {
                 "name": f"{blend_file_name}-{etype}-{count}",
+               "scale" : ["vector",[0.2, 0.2, 0.2, 1.0]],
 
             }
         }
+        
+        
+
 
         # Check if "yelloweco" is in the object's name
         if "yeco" in obj.name.lower():
             data["lump"]["name"] = data["lump"]["name"] + "-yeco"
             data["lump"]["crate-type"] = "'wood"
             data["lump"]["eco-info"] = ["int32", 1, 1]
-            data["lump"]["light-index"] = ["int32", 2]
+            data["lump"]["eco-collectable"] = "1"
+            data["lump"]["eco-quantity"] = "1"
+            #data["lump"]["light-index"] = ["int32", 2]
 
         # Check if "yelloweco" is in the object's name
         if "reco" in obj.name.lower():
             data["lump"]["name"] = data["lump"]["name"] + "-reco"
             data["lump"]["crate-type"] = "'wood"
-            data["lump"]["eco-info"] = ["int32", 2, 1]
-            data["lump"]["light-index"] = ["int32", 2]
+            data["lump"]["eco-collectable"] = "2"
+            data["lump"]["eco-quantity"] = "1"
+            #data["lump"]["light-index"] = ["int32", 2]
 
         # Check if "yelloweco" is in the object's name
         if "beco" in obj.name.lower():
             data["lump"]["name"] = data["lump"]["name"] + "-beco"
             data["lump"]["crate-type"] = "'wood"
-            data["lump"]["eco-info"] = ["int32", 3, 1]
-            data["lump"]["light-index"] = ["int32", 2]
+            data["lump"]["eco-collectable"] = "3"
+            data["lump"]["eco-quantity"] = "1"
+            #data["lump"]["light-index"] = ["int32", 2]
 
         # Check if "yelloweco" is in the object's name
         if "geco" in obj.name.lower():
             data["lump"]["name"] = data["lump"]["name"] + "-geco"
             data["lump"]["crate-type"] = "'wood"
-            data["lump"]["eco-info"] = ["int32", 4, 1]
-            data["lump"]["light-index"] = ["int32", 2]
+            data["lump"]["eco-collectable"] = "4"
+            data["lump"]["eco-quantity"] = "1"
+            #data["lump"]["light-index"] = ["int32", 2]
 
 
         obj.name = data["lump"]["name"]

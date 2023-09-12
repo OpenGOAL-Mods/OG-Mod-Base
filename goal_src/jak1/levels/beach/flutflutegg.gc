@@ -389,6 +389,11 @@
   :post (the-as (function none :behavior flutflutegg) ja-post)
   )
 
+(defun get-intstr-from-lump ((obj process-drawable) (field symbol))
+(string->int (the string (res-lump-struct (entity-by-name (the string (-> obj name))) field structure)))
+)
+
+
 (defmethod init-from-entity! flutflutegg ((obj flutflutegg) (arg0 entity-actor))
   (let ((s4-0 (new 'process 'collide-shape-moving obj (collide-list-enum hit-by-player))))
     (set! (-> s4-0 dynam) (copy *standard-dynamics* 'process))
@@ -441,8 +446,8 @@
   (set! (-> obj root scale y) 0.2)
   (set! (-> obj root scale z) 0.2)
   (set! (-> obj max-hp) 3) 
-  (set! (-> obj eco-collectable)  (string->int (the string (res-lump-struct (entity-by-name (the string (-> obj name))) 'eco-collectable  structure))))
-  (set! (-> obj eco-quantity)  (string->int (the string (res-lump-struct (entity-by-name (the string (-> obj name))) 'eco-quantity  structure))))
+  (set! (-> obj eco-collectable)  (get-intstr-from-lump obj 'eco-collectable))
+  (set! (-> obj eco-quantity)  (get-intstr-from-lump obj 'eco-quantity))
 
   (if (and (task-closed? (game-task beach-flutflut) (task-status need-reminder)) (not (name= (-> obj name) "jakup-beach-flutflutegg-01")))
       (go flutflutegg-break #t)
@@ -450,3 +455,4 @@
       )
   (none)
   )
+
