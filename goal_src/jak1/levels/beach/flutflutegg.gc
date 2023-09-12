@@ -20,6 +20,9 @@
    (ambients-played     int32                        :offset-assert 248)
    (ambient             ambient-control      :inline :offset-assert 256)
    (num-hit   int32 )
+   (max-hp int32)
+   (eco-collectable int32)
+   (eco-quantity int32)
    )
 
   (:methods
@@ -67,18 +70,27 @@
   )
 
 (defbehavior flutflutegg-hit-sounds flutflutegg ()
-
+  (sound-play "egg-hit")
        (set! (-> self num-hit) (+ (-> self num-hit)1))
-       (when (= 3 (-> self num-hit))
-       
-              (go flutflutegg-break #f)
-              (birth-pickup-at-point (-> self root trans) (pickup-type eco-blue) 1.0 #f *target* (the-as fact-info #f))
-           (cleanup-for-death self)
-    (deactivate self)
-       (return #f)
+       (when (= (- (-> self max-hp)1) (-> self num-hit))
+       ;;Want to crack the egg here when it has 1 hp left
+
        )
 
-  (sound-play "egg-hit")
+       (when (= (-> self max-hp) (-> self num-hit))
+       
+
+        (birth-pickup-at-point 
+              (-> self root trans) 
+              (the pickup-type (-> self eco-collectable)) 
+              (the float(-> self eco-quantity)) 
+              #f
+              *target* 
+              (the-as fact-info #f))
+           (go flutflutegg-break #t)
+       )
+
+
   (cond
     ((not (task-closed? (game-task beach-flutflut) (task-status need-introduction)))
      )
@@ -424,9 +436,14 @@
   (reset! (-> obj wobbler) 0.1 0.98 4096.0)
   (set! (-> obj last-impulse-time) 0)
   (set! (-> obj ambients-played) 0)
+  
   (set! (-> obj root scale x) 0.2)
-    (set! (-> obj root scale y) 0.2)
-      (set! (-> obj root scale z) 0.2)
+  (set! (-> obj root scale y) 0.2)
+  (set! (-> obj root scale z) 0.2)
+  (set! (-> obj max-hp) 3) 
+  (set! (-> obj eco-collectable)  (string->int (the string (res-lump-struct (entity-by-name (the string (-> obj name))) 'eco-collectable  structure))))
+  (set! (-> obj eco-quantity)  (string->int (the string (res-lump-struct (entity-by-name (the string (-> obj name))) 'eco-quantity  structure))))
+
   (if (and (task-closed? (game-task beach-flutflut) (task-status need-reminder)) (not (name= (-> obj name) "jakup-beach-flutflutegg-01")))
       (go flutflutegg-break #t)
       (go flutflutegg-idle)
