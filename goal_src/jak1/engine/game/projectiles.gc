@@ -675,6 +675,8 @@
                 (-> self root-override)
                 (-> self root-override transv)
                 (-> self root-override root-prim collide-with)
+                *collide-cache*
+                *collide-work*
                 )
               (set! (-> self old-dist (-> self old-dist-count))
                     (* 0.0625 (vector-vector-distance s3-0 (-> self root-override trans)))

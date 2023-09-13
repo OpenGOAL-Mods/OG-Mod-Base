@@ -1,0 +1,35 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: mod-settings-h.gc
+;; name in dgo: mod-settings-h
+;; dgos: TODO
+
+(defenum mp-tgt-state
+  :type uint32
+  (mp-tgt-disconnected)
+  (mp-tgt-connected)
+  )
+
+(defun mp-tgt-state->string ((cmd mp-tgt-state))
+  (enum->string mp-tgt-state cmd)
+  )
+
+(defenum tgt-color
+  :type uint32
+  (normal)
+  (green)
+  (blue)
+  (red)
+  (yellow)
+  (white)
+  (black)
+  (purple)
+  (pink)
+  (light-blue)
+  (max)
+  )
+
+(defun tgt-color->string ((cmd tgt-color))
+  (enum->string tgt-color cmd)
+  )

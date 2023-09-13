@@ -51,3 +51,63 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 ;; Change #f to #t here to show the input display by default
 (define *show-input-display* #f)
+
+
+
+(deftype remote-player-info (structure)
+ ((username   string)
+  (color      tgt-color)
+  (trans_x    float)
+  (trans_y    float)
+  (trans_z    float)
+  (quat_x     float)
+  (quat_y     float)
+  (quat_z     float)
+  (quat_w     float)
+  (tgt_state  symbol)
+  (mp_state   mp-tgt-state) 
+  )
+  :pack-me
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+
+(defconstant MAX_USERNAME_LEN 100)
+
+(defmethod new remote-player-info ((allocation symbol) (type-to-make type))
+  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+    (set! (-> obj username) (new 'global 'string MAX_USERNAME_LEN (the-as string #f)))
+    (set! (-> obj color) (tgt-color green))
+    (set! (-> obj trans_x) 0.0)
+    (set! (-> obj trans_y) 0.0)
+    (set! (-> obj trans_z) 0.0)
+    (set! (-> obj quat_x) 0.0)
+    (set! (-> obj quat_y) 0.0)
+    (set! (-> obj quat_z) 0.0)
+    (set! (-> obj quat_w) 0.0)
+    (set! (-> obj tgt_state) 'invalid)
+    (set! (-> obj mp_state) (mp-tgt-state mp-tgt-disconnected))
+    obj
+    )
+  )
+
+
+(deftype multiplayer-info (structure)
+ ((player_num           int32)
+  (players    remote-player-info MAX_MULTIPLAYER_COUNT :inline)
+  )
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+
+(defmethod new multiplayer-info ((allocation symbol) (type-to-make type))
+  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+    (set! (-> obj player_num) -1)
+    (dotimes (idx MAX_MULTIPLAYER_COUNT)
+      (set! (-> obj players idx username) (new 'global 'string MAX_USERNAME_LEN ""))
+      )
+    obj
+    )
+  )

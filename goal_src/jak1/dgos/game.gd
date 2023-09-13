@@ -31,6 +31,7 @@
   "dma-bucket.o"
   "dma-disasm.o"
   "pckernel-h.o" ;; added
+  "mod-settings-h.o" ;; added
   "pckernel-impl.o" ;; added
   "pc-debug-common.o" ;; added
   "pc-debug-methods.o" ;; added

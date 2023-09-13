@@ -755,6 +755,8 @@
           (-> self root-override)
           (-> self root-override transv)
           (collide-kind background)
+          *collide-cache*
+          *collide-work*
           )
         (quaternion*! (-> self root-override quat) (-> self root-override quat) (-> self tumble))
         (suspend)
@@ -779,6 +781,8 @@
         (-> self root-override)
         (-> self root-override transv)
         (collide-kind background)
+        *collide-cache*
+        *collide-work*
         )
       (let ((gp-2 (new 'stack-no-clear 'vector))
             (f30-1 (vector-length (-> self root-override transv)))

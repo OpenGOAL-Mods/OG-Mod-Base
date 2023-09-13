@@ -16,33 +16,343 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Useful GOAL modding documentation
-;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-#| 
-Checks the condition and if it is true it does first argument if false it does optional second argument
-(if (condition) (do if true) (do if false))
-
-Gives a random FLOAT or INT between the provided ranges when called
-(rand-vu-float-range 0.0 2.0)
-(rand-vu-int-range 0 10)
-
-if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't dance
-(if (= (rand-vu-int-range 0 10) 1) (DANCE!) (Don't dance))
-
-
-|#
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Custom Variables to use in mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(define *multiplayer-info* (new 'global 'multiplayer-info))
+(define *remote-targets* (new 'global 'boxed-array handle MAX_MULTIPLAYER_COUNT))
+
+(define *self-player-info* (the-as remote-player-info #f))
+(define *last-position-sync-time* (the-as time-frame #f))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Custom Functions to call in mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; add your own unique custom functions here!
+(defun color-target-rgb ((tgt process-drawable) (r float) (g float) (b float))
+  (set! (-> tgt draw color-mult r) r)
+  (set! (-> tgt draw color-mult g) g)
+  (set! (-> tgt draw color-mult b) b)
+  (none)
+  )
+
+(defun color-target ((tgt process-drawable) (color tgt-color))
+  (case color
+    (((tgt-color normal))
+      (color-target-rgb tgt 1.0 1.0 1.0)
+      )
+    (((tgt-color white))
+      (color-target-rgb tgt 10.0 10.0 10.0)
+      )
+    (((tgt-color black))
+      (color-target-rgb tgt 0.0 0.0 0.0)
+      )
+    (((tgt-color red))
+      (color-target-rgb tgt 5.0 0.0 0.0)
+      )
+    (((tgt-color green))
+      (color-target-rgb tgt 0.0 5.0 0.0)
+      )
+    (((tgt-color blue))
+      (color-target-rgb tgt 0.0 0.0 5.0)
+      )
+    (((tgt-color yellow))
+      (color-target-rgb tgt 5.0 5.0 0.0)
+      )
+    (((tgt-color purple))
+      (color-target-rgb tgt 0.7 0.2 2.0)
+      )
+    (((tgt-color pink))
+      (color-target-rgb tgt 5.0 0.0 5.0)
+      )
+    (((tgt-color light-blue))
+      (color-target-rgb tgt 0.0 5.0 5.0)
+      )
+    ;; (((tgt-color holo))
+    ;;   (color-target-rgb tgt 
+    ;;     (rand-vu-float-range 0.0 5.0)
+    ;;     (rand-vu-float-range 0.0 5.0)
+    ;;     (rand-vu-float-range 0.0 5.0))
+    ;;   )
+    )
+  )
+
+
+(defun set-up-self-remote-if-null ()
+  (when (not *self-player-info*)
+    (set! *self-player-info* (new 'global 'remote-player-info))
+    (set! (-> *self-player-info* username) "BLANK") 
+    (set! (-> *self-player-info* color)  (tgt-color green))
+    (set! (-> *multiplayer-info* player_num) 0)
+
+    (set! *last-position-sync-time* (+ (-> *display* base-frame-counter) (seconds 5.0)))
+
+    )
+  (none)
+)
+
+(defun update-self-multiplayer-info ()
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) username)   (-> *self-player-info* username))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) color)      (-> *self-player-info* color))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) trans_x)    (-> *target* root trans x))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) trans_y)    (-> *target* root trans y))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) trans_z)    (-> *target* root trans z))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_x)     (-> *target* root quat x))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_y)     (-> *target* root quat y))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_z)     (-> *target* root quat z))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_w)     (-> *target* root quat w))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) tgt_state)  (-> *target* state name))
+  (none)
+  )
+
+
+(defun target-sync-state ((tgt-state symbol) (t target))
+  (case tgt-state
+    ; (('target-attack))
+    ;; (('target-attack-air))
+    ;; (('target-attack-uppercut))
+    ;; (('target-attack-uppercut-jump))
+    ;; (('target-billy-game))
+    ;; (('target-clone-anim))
+    ;; (('target-continue))
+    ;; (('target-death))
+    ;; (('target-demo))
+    ;; (('target-double-jump))
+    ;; (('target-duck-high-jump))
+    ;; (('target-duck-high-jump-jump))
+    ;; (('target-duck-stance))
+    ;; (('target-duck-walk))
+    ;; (('target-eco-powerup) (send-event t 'powerup))
+    ;; (('target-edge-grab 'target-edge-grab-jump 'target-edge-grab-off)
+    ;;   (send-event t 'edge-grab)
+    ;;   )
+    (('target-falling) (send-event t 'change-mode 'falling))
+    ;; (('target-final-door))
+    ;; (('target-fishing) (send-event t 'change-mode 'fishing #f))
+    ;; (('target-flop))
+    ;; (('target-flop-hit-ground))
+    
+    (('target-flut-get-off 'target-flut-get-off-hit-ground 'target-flut-get-off-jump)
+      (case (-> t state name)
+        (('target-flut-air-attack 'target-flut-air-attack-hit-ground 'target-flut-clone-anim 'target-flut-death 
+        'target-flut-double-jump 'target-flut-falling 'target-flut-get-on 'target-flut-grab 'target-flut-hit 'target-flut-hit-ground 
+        'target-flut-jump 'target-flut-running-attack 'target-flut-stance 'target-flut-start 'target-flut-walk)
+          ;; on flutflut, get off
+          (send-event t 'change-mode 'normal #f)
+          )
+        )
+      )
+    (('target-flut-air-attack 'target-flut-air-attack-hit-ground 'target-flut-clone-anim 'target-flut-death 
+      'target-flut-double-jump 'target-flut-falling 'target-flut-get-on 'target-flut-grab 'target-flut-hit 'target-flut-hit-ground 
+      'target-flut-jump 'target-flut-running-attack 'target-flut-stance 'target-flut-start 'target-flut-walk)
+      (case (-> t state name)
+        (('target-racing 'target-racing-bounce 'target-racing-clone-anim 'target-racing-death 'target-racing-falling 'target-racing-get-on 
+        'target-racing-grab 'target-racing-hit 'target-racing-jump  'target-racing-smack 'target-racing-start)
+          ;; on zoomer, get off 
+          (send-event t 'change-mode 'normal #f)
+          )
+        (('target-flut-air-attack 'target-flut-air-attack-hit-ground 'target-flut-clone-anim 'target-flut-death 
+          'target-flut-double-jump 'target-flut-falling 'target-flut-get-on 'target-flut-grab 'target-flut-hit 'target-flut-hit-ground 
+          'target-flut-jump 'target-flut-running-attack 'target-flut-stance 'target-flut-start 'target-flut-walk)
+          ;; already on flutflut, do nothing
+          )
+        (else
+          (send-event t 'change-mode 'flut #f)
+          )
+        )
+      )
+    ;; (('target-grab))
+    ;; (('target-high-jump ))
+    ;; (('target-hit ))
+    ;; (('target-hit-ground ))
+    ;; (('target-hit-ground-hard))
+    ;; (('target-ice-stance))
+    ;; (('target-ice-walk))
+    ;; (('target-jump ))
+    ;; (('target-jump-forward ))
+    ;; (('target-launch))
+    ;; (('target-load-wait))
+    ;; (('target-look-around))
+    ;; (('target-periscope))
+    ;; (('target-play-anim ))
+    ;; (('target-pole-cycle) (send-event t 'pole-grab))
+    ;; (('target-pole-flip-forward))
+    ;; (('target-pole-flip-forward-jump))
+    ;; (('target-pole-flip-up))
+    ;; (('target-pole-flip-up-jump))
+    (('target-racing-get-off 'target-racing-get-off-hit-ground 'target-racing-get-off-jump)
+      (case (-> t state name)
+        (('target-racing 'target-racing-bounce 'target-racing-clone-anim 'target-racing-death 'target-racing-falling 'target-racing-get-on 
+        'target-racing-grab 'target-racing-hit 'target-racing-jump  'target-racing-smack 'target-racing-start)
+          ;; on zoomer, get off 
+          (send-event t 'change-mode 'normal #f)
+          )
+        )
+      )
+    (('target-racing 'target-racing-bounce 'target-racing-clone-anim 'target-racing-death 'target-racing-falling 'target-racing-get-on 
+      'target-racing-grab 'target-racing-hit 'target-racing-jump  'target-racing-smack 'target-racing-start)
+      (case (-> t state name)
+        (('target-flut-air-attack 'target-flut-air-attack-hit-ground 'target-flut-clone-anim 'target-flut-death 
+          'target-flut-double-jump 'target-flut-falling 'target-flut-get-on 'target-flut-grab 'target-flut-hit 'target-flut-hit-ground 
+          'target-flut-jump 'target-flut-running-attack 'target-flut-stance 'target-flut-start 'target-flut-walk)
+            ;; on flutflut, get off
+            (send-event t 'change-mode 'normal #f)
+            )
+        (('target-racing 'target-racing-bounce 'target-racing-clone-anim 'target-racing-death 'target-racing-falling 'target-racing-get-on 
+          'target-racing-grab 'target-racing-hit 'target-racing-jump  'target-racing-smack 'target-racing-start)
+          ;; already on zoomer, do nothing
+          )
+        (else
+          (send-event t 'change-mode 'racing #f)
+          )
+        )
+      )
+    ;; (('target-running-attack))
+    ;; (('target-slide-down))
+    ;; (('target-snowball))
+    ;; (('target-snowball-start))
+    ;; (('target-stance))
+    ;; (('target-stance-ambient))
+    ;; (('target-stance-look-around))
+    ;; (('target-startup))
+    (('target-swim-down 'target-swim-jump 'target-swim-jump-jump 'target-swim-stance 'target-swim-up 'target-swim-walk)
+      (case (-> t state name)
+        (('target-swim-down 'target-swim-jump 'target-swim-jump-jump 'target-swim-stance 'target-swim-up 'target-swim-walk)
+          ;; do nothing
+          )
+        (else
+          (send-event t 'swim)
+          )
+        )
+      )
+    ;; (('target-title))
+    ;; (('target-title-play))
+    ;; (('target-title-wait))
+    (('target-tube 'target-tube-death 'target-tube-hit 'target-tube-jump 'target-tube-start)
+      (case (-> t state name)
+        (('target-tube 'target-tube-death 'target-tube-hit 'target-tube-jump 'target-tube-start)
+          ;; do nothing
+          )
+        (else
+          (send-event t 'change-mode 'tube #f)
+          )
+        )
+      )
+    ;; (('target-turn-around))
+    (('target-wade-stance 'target-wade-walk)
+      (send-event t 'wade)
+      )
+    ;; (('target-walk))
+    ;; (('target-warp-in))
+    ;; (('target-warp-out))
+    ;; (('target-wheel))
+    ;; (('target-wheel-flip))
+    ;; (('target-yellow-blast))
+    ;; (('target-yellow-jump-blast))
+    )
+  (none)
+  )
+
+(defun update-actor-position ((obj process-drawable) (p remote-player-info))
+  ;; position
+  (set! (-> obj root trans x) (-> p trans_x))
+  (set! (-> obj root trans y) (-> p trans_y))
+  (set! (-> obj root trans z) (-> p trans_z))
+  ;; rotation
+  (set! (-> obj root quat x)  (-> p quat_x))
+  (set! (-> obj root quat y)  (-> p quat_y))
+  (set! (-> obj root quat z)  (-> p quat_z))
+  (set! (-> obj root quat w)  (-> p quat_w))
+
+  (color-target obj (-> p color))
+
+  ;; additional steps for rotation, state, etc
+  (case (-> obj type)
+    ((target)
+      (let* ((t (the target obj)) ;;!TODO: removed local-seeker? and remote-seeker? status check here, check if this is still needed
+             )
+        ;; draw usernames for all players
+        (add-debug-text-3d
+                      #t
+                      (bucket-id subtitle)
+                      (-> p username)
+                      (-> t root trans)
+                      (font-color white)
+                      (new 'static 'vector2h :y 16)
+                      )
+
+        ;; make invulnerable so they dont die
+        (logior! (-> t state-flags) (state-flags invulnerable))
+
+        ;; finalize rotation
+        (quaternion-copy! (-> t control dir-targ) (-> t root quat))
+          
+        ;; sync target state
+        (target-sync-state (-> p tgt_state) t)
+        )
+      )
+    ((money)
+      (let ((m (the money obj)))
+        (vector-copy! (-> m base) (-> m root trans))
+        (vector-copy! (-> m root-override root-prim world-sphere) (-> m root trans))
+        )
+      )
+    )
+    (none)
+  )
+
+(defun start-extra-target ()
+  (ppointer->handle (process-spawn
+                target
+                :init init-target
+                  (-> *game-info* current-continue)
+                :from *target-dead-pool*
+                :to *target-pool*
+                :stack *kernel-dram-stack*
+                ))
+  )
+
+(defun render-targets ()
+ (dotimes (idx MAX_MULTIPLAYER_COUNT)
+    (when (!= (-> *multiplayer-info* player_num) idx)
+      (when (!= (-> *multiplayer-info* players idx mp_state) (mp-tgt-state mp-tgt-disconnected))
+        ;; see if we need to spawn any remote targets
+        (when (or (zero? (-> *remote-targets* idx)) (not (handle->process (-> *remote-targets* idx))))
+          (set! (-> *remote-targets* idx) (start-extra-target))
+          )
+        ;; assume target spawned at this point 
+
+        ;; position/color remote targets
+        (let ((p (-> *multiplayer-info* players idx))
+              (obj (the process-drawable (handle->process (-> *remote-targets* idx)))))
+          (when obj
+            (update-actor-position obj p)
+            )
+          )
+        )
+      )
+    ) 
+  )
+
+
+(defun get-target ((idx int))
+  (if (= (-> *multiplayer-info* player_num) -1)
+    (if (= idx 0)
+      *target*
+      (the-as target #f)
+      )
+    (if (= (-> *multiplayer-info* player_num) idx)
+      *target*
+      (if (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (handle->process (-> *remote-targets* idx)))
+        (the target (handle->process (-> *remote-targets* idx)))
+        (the-as target #f)
+        )
+      )
+    )
+  )
+
 
 ;; Macros can be used more-or-less just like functions
 (defmacro current-cell-count ()
@@ -410,7 +720,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun draw-light-blue ((jak target))
   (draw-xyz jak 0.0 3.0 3.0)
 )
-
 
 
 

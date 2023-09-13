@@ -21,14 +21,38 @@
     ;; Begin function defintions.
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun runs-every-frame ()
-      ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
-      
-      (if *show-input-display* 
-        (input-display-on)
-        (input-display-off)
-        )
 
+    (defun runs-every-frame ()
+      (when (and (!= *target* #f) (!= (-> (level-get-target-inside *level*) name) 'title))
+      
+      ;; setup our own remote-player-info if we haven't yet
+      (set-up-self-remote-if-null)
+
+      (when (and *target* (>= (-> *multiplayer-info* player_num) 0) (< (-> *multiplayer-info* player_num) MAX_MULTIPLAYER_COUNT))
+
+        ;; if never synced positions, or its been X ms, request updated positions
+        (when (and (>= (-> *multiplayer-info* player_num) 0)
+               (or (not *last-position-sync-time*)
+                   (>= (- (-> *display* base-frame-counter) *last-position-sync-time*) (seconds 0.01))
+                   )
+               )
+                  
+          ;; update last sync time
+          (set! *last-position-sync-time* (-> *display* base-frame-counter))
+
+          ;; update this player's position
+          (update-self-multiplayer-info)
+
+          (if (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
+            (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-connected))
+            )
+
+          )
+
+        (render-targets)
+
+        )
+      )
       (none)
       )
 
@@ -109,6 +133,7 @@
 
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
+
       (none)
       )
 
