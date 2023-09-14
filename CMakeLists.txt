@@ -232,6 +232,8 @@ add_subdirectory(third-party/SFML EXCLUDE_FROM_ALL)
 #include_directories(third-party/SFML/lib)
 
 
+#asio
+include_directories(third-party/asio/include)
 
 # websocketpp
 add_subdirectory(third-party/websocketpp EXCLUDE_FROM_ALL)
