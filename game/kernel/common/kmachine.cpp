@@ -5,8 +5,8 @@
 #include <fstream>
 #include <thread>
 #include <chrono>
-#include <SFML/Audio.hpp>
-#include <SFML/Audio/Music.hpp>
+//#include <SFML/Audio.hpp>
+//#include <SFML/Audio/Music.hpp>
 
 
 #include "common/global_profiler/GlobalProfiler.h"
@@ -111,7 +111,7 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
 }
 
 
-
+/*
 void playMP3(u32 filePathu32, u32 volume)
 {
  
@@ -139,7 +139,7 @@ void playMP3(u32 filePathu32, u32 volume)
 
     // Detach the thread so it can run independently.
     thread.detach();
-}
+}*/
 
 // void playMP3(u32 filePathu32, u32 volume)
 // {
@@ -985,7 +985,7 @@ void init_common_pc_port_functions(
   make_func_symbol_func("pc-mkdir-file-path", (void*)pc_mkdir_filepath);
 
   //Play sound file
-  make_func_symbol_func("play-rand-sound", (void*)playMP3);  
+  //make_func_symbol_func("play-rand-sound", (void*)playMP3);  
   // discord rich presence
   make_func_symbol_func("pc-discord-rpc-set", (void*)set_discord_rpc);
 
