@@ -23,6 +23,8 @@
 
 #include "third-party/CLI11.hpp"
 
+#include "multiplayer.h"
+
 #ifdef _WIN32
 extern "C" {
 __declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
@@ -87,6 +89,8 @@ std::string game_arg_documentation() {
  */
 int main(int argc, char** argv) {
   ArgumentGuard u8_guard(argc, argv);
+
+  start_socket();
 
   // CLI flags
   bool show_version = false;

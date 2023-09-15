@@ -43,3 +43,25 @@ struct FileStream {
   u32 name;  // basic
   s32 file;  // int32
 };
+
+const int MAX_USERNAME_LEN = 100;
+struct RemotePlayerInfo {
+  u32 username; // string (basic)
+  u32 color;  // tgt-color enum
+  float trans_x;
+  float trans_y;
+  float trans_z;
+  float quat_x;
+  float quat_y;
+  float quat_z;
+  float quat_w;
+  u32 tgt_state;
+  u32 mp_state;  // mp-tgt-state enum
+};
+
+const int MAX_MULTIPLAYER_COUNT = 20;
+
+struct MultiplayerInfo {
+  s32 player_num;
+  RemotePlayerInfo players[MAX_MULTIPLAYER_COUNT];
+};

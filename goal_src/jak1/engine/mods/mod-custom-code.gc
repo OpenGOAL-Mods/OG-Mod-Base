@@ -22,6 +22,18 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+    (defun manual-position-update ((num int) (transX float) (transY float) (transZ float) (quatY float) (quatZ float) (quatW float) (state string))
+      (set! (-> *multiplayer-info* players num trans_x)    transX)
+      (set! (-> *multiplayer-info* players num trans_y)    transY)
+      (set! (-> *multiplayer-info* players num trans_z)    transZ)
+      (set! (-> *multiplayer-info* players num quat_y)     quatY)
+      (set! (-> *multiplayer-info* players num quat_z)     quatZ)
+      (set! (-> *multiplayer-info* players num quat_w)     quatW)
+      (set! (-> *multiplayer-info* players num tgt_state)  (string->symbol state))
+      (none)
+      )
+
+
     (defun runs-every-frame ()
       (when (and (!= *target* #f) (!= (-> (level-get-target-inside *level*) name) 'title))
       
@@ -44,6 +56,9 @@
               ;; update this player's position
               (update-self-multiplayer-info)
               ;; (update-debug-self-multiplayer-info)
+              
+              ;; send updated player info to client
+              (pc-update-position)
 
               (if (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
                 (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-connected))

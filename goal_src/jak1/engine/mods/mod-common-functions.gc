@@ -83,9 +83,12 @@
 (defun set-up-self-remote-if-null ()
   (when (not *self-player-info*)
     (set! *self-player-info* (new 'global 'remote-player-info))
-    (set! (-> *self-player-info* username) "BLANK") 
-    (set! (-> *self-player-info* color)  (tgt-color green))
+    (set! (-> *self-player-info* username) "local_player") 
+    (set! (-> *self-player-info* color)  (tgt-color normal))
+    (set! (-> *self-player-info* mp_state)  (mp-tgt-state mp-tgt-connected))
     (set! (-> *multiplayer-info* player_num) 0)
+    (pc-connect-mp-info *multiplayer-info* *self-player-info*)
+
 
     (set! *last-position-sync-time* (+ (-> *display* base-frame-counter) (seconds 5.0)))
 

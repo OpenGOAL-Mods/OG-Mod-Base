@@ -16,6 +16,7 @@
 #include "common/util/string_util.h"
 
 #include "game/external/discord_jak1.h"
+#include "game/multiplayer.h"
 #include "game/graphics/display.h"
 #include "game/graphics/gfx.h"
 #include "game/graphics/sceGraphicsInterface.h"
@@ -555,6 +556,11 @@ void InitMachine_PCPort() {
   make_function_symbol_from_c("__pc-set-levels", (void*)pc_set_levels);
 
   make_function_symbol_from_c("pc-discord-rpc-update", (void*)update_discord_rpc);
+
+  // websocket
+  make_function_symbol_from_c("pc-connect-mp-info", (void*)connect_mp_info);
+  make_function_symbol_from_c("pc-update-position", (void*)send_position_update);
+  
 
   // setup string constants
   // TODO - these may be able to be moved into `init_common_pc_port_functions` but it's trickier

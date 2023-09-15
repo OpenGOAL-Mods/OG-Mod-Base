@@ -211,6 +211,7 @@ set(RUNTIME_SOURCE
         overlord/jak2/streamlist.cpp
         overlord/jak2/vag.cpp
         runtime.cpp
+        multiplayer.cpp
         sce/deci2.cpp
         sce/iop.cpp
         sce/libcdvd_ee.cpp
