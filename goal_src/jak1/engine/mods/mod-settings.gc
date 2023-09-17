@@ -93,6 +93,56 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   )
 
 
+(deftype teamrun-player-info (structure)
+ ((debug_mode_active?    int32)
+  (current_level   string)
+  (current_checkpoint      string)
+  (on_zoomer?    int32)
+  (cell_count    int32)
+  (death_count    int32)
+  
+  ;; tasks
+  (jungle_lurkerm   string)
+  (village1_yakow   string)
+  (misty_muse   string)
+  (rolling_race   string)
+  (rolling_moles   string)
+  (village2_levitator   string)
+  (village3_button   string)
+  (lavatube_balls   string)
+  (village4_button   string)
+  (plunger_lurker_hit   string)
+  )
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+
+(defmethod new teamrun-player-info ((allocation symbol) (type-to-make type))
+  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+    (set! (-> obj debug_mode_active?) 0)
+    (set! (-> obj current_level) (new 'global 'string 32 (new 'global 'string 32 "")))
+    (set! (-> obj current_checkpoint) (new 'global 'string 32 (new 'global 'string 32 "")))
+    (set! (-> obj on_zoomer?) 0)
+    (set! (-> obj cell_count) 0)
+    (set! (-> obj death_count) 0)
+    
+    ;;tasks
+    (set! (-> obj jungle_lurkerm) (new 'global 'string 32 (new 'global 'string 32 "unknown")))
+    (set! (-> obj village1_yakow) (new 'global 'string 32 (new 'global 'string 32 "unknown")))
+    (set! (-> obj misty_muse) (new 'global 'string 32 (new 'global 'string 32 "unknown")))
+    (set! (-> obj rolling_race) (new 'global 'string 32 (new 'global 'string 32 "unknown")))
+    (set! (-> obj rolling_moles) (new 'global 'string 32 (new 'global 'string 32 "unknown")))
+    (set! (-> obj village2_levitator) (new 'global 'string 32 (new 'global 'string 32 "unknown")))
+    (set! (-> obj village3_button) (new 'global 'string 32 (new 'global 'string 32 "unknown")))
+    (set! (-> obj lavatube_balls) (new 'global 'string 32 (new 'global 'string 32 "unknown")))
+    (set! (-> obj village4_button) (new 'global 'string 32 (new 'global 'string 32 "unknown")))
+    (set! (-> obj plunger_lurker_hit) (new 'global 'string 32 (new 'global 'string 32 "unknown")))
+    obj
+    )
+  )
+
+
 (deftype multiplayer-info (structure)
  ((player_num           int32)
   (players    remote-player-info MAX_MULTIPLAYER_COUNT :inline)
@@ -106,7 +156,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
     (set! (-> obj player_num) -1)
     (dotimes (idx MAX_MULTIPLAYER_COUNT)
-      (set! (-> obj players idx username) (new 'global 'string MAX_USERNAME_LEN ""))
+      (set! (-> obj players idx username) (new 'global 'string MAX_USERNAME_LEN (new 'global 'string MAX_USERNAME_LEN "")))
       )
     obj
     )

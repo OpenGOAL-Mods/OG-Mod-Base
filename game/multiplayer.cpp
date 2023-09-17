@@ -12,6 +12,7 @@ using json = nlohmann::json;
 
 MultiplayerInfo* gMultiplayerInfo;
 RemotePlayerInfo* gSelfPlayerInfo;
+TeamrunPlayerInfo* gTeamrunInfo;
 
 // Create a server endpoint
 server ogSocket;
@@ -119,27 +120,54 @@ void start_socket() {
   }).detach();
 }
 
-void connect_mp_info(u64 mpInfo, u64 selfPlayerInfo) {
+void connect_mp_info(u64 mpInfo, u64 selfPlayerInfo, u64 teamrunInfo) {
   gMultiplayerInfo = Ptr<MultiplayerInfo>(mpInfo).c();
   gSelfPlayerInfo = Ptr<RemotePlayerInfo>(selfPlayerInfo).c();
+  gTeamrunInfo = Ptr<TeamrunPlayerInfo>(teamrunInfo).c();
   lg::info("Multiplayer ready");
 }
 
 
-void send_position_update() {
+void send_position_update(bool includeState) {
   if (!isConnected)
     return;
 
   // Construct JSON payload
   json json_payload = {
-    {"transX", gSelfPlayerInfo->trans_x}, 
-    {"transY", gSelfPlayerInfo->trans_y},
-    {"transZ", gSelfPlayerInfo->trans_z}, 
-    {"quatX", gSelfPlayerInfo->quat_x},
-    {"quatY", gSelfPlayerInfo->quat_y},   
-    {"quatZ", gSelfPlayerInfo->quat_z},
-    {"quatW", gSelfPlayerInfo->quat_w},   
-    {"tgtState", gSelfPlayerInfo->tgt_state}};
+    {"position", {
+      {"transX", gSelfPlayerInfo->trans_x},
+      {"transY", gSelfPlayerInfo->trans_y},
+      {"transZ", gSelfPlayerInfo->trans_z},
+      {"quatX", gSelfPlayerInfo->quat_x},
+      {"quatY", gSelfPlayerInfo->quat_y},
+      {"quatZ", gSelfPlayerInfo->quat_z},
+      {"quatW", gSelfPlayerInfo->quat_w},
+      {"tgtState", gSelfPlayerInfo->tgt_state}
+      }
+    }
+  };
+
+  if (includeState) {
+    json_payload["state"] = {
+        {"debugModeActive", gTeamrunInfo->debug_mode_active},
+        {"currentLevel", Ptr<String>(gTeamrunInfo->current_level).c()->data()},
+        {"currentCheckpoint", Ptr<String>(gTeamrunInfo->current_checkpoint).c()->data()},
+        {"onZoomer", gTeamrunInfo->on_zoomer},
+        {"cellCount", gTeamrunInfo->cell_count},
+        {"deathCount", gTeamrunInfo->death_count},
+        {"sharedTasks", {
+             {"jungle-lurkerm", Ptr<String>(gTeamrunInfo->jungle_lurkerm).c()->data()},
+             {"village1-yakow", Ptr<String>(gTeamrunInfo->village1_yakow).c()->data()},
+             {"misty-muse", Ptr<String>(gTeamrunInfo->misty_muse).c()->data()},
+             {"rolling-race", Ptr<String>(gTeamrunInfo->rolling_race).c()->data()},
+             {"rolling-moles", Ptr<String>(gTeamrunInfo->rolling_moles).c()->data()},
+             {"village2-levitator", Ptr<String>(gTeamrunInfo->village2_levitator).c()->data()},
+             {"village3-button", Ptr<String>(gTeamrunInfo->village3_button).c()->data()},
+             {"lavatube-balls", Ptr<String>(gTeamrunInfo->lavatube_balls).c()->data()},
+             {"village4-button", Ptr<String>(gTeamrunInfo->village4_button).c()->data()},
+             {"plunger-lurker-hit", Ptr<String>(gTeamrunInfo->plunger_lurker).c()->data()},
+         }}};
+  }
 
   try {
     ogSocket.send(connection, json_payload.dump(), websocketpp::frame::opcode::text);

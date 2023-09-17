@@ -59,6 +59,27 @@ struct RemotePlayerInfo {
   u32 mp_state;  // mp-tgt-state enum
 };
 
+struct TeamrunPlayerInfo {
+  s32 debug_mode_active;
+  u32 current_level;       // string (basic)
+  u32 current_checkpoint;  // string (basic)
+  s32 on_zoomer;
+  int cell_count;
+  int death_count;
+
+  //tasks
+  u32 jungle_lurkerm;      // string (basic)
+  u32 village1_yakow;      // string (basic)
+  u32 misty_muse;          // string (basic)
+  u32 rolling_race;        // string (basic)
+  u32 rolling_moles;       // string (basic)
+  u32 village2_levitator;  // string (basic)
+  u32 village3_button;     // string (basic)
+  u32 lavatube_balls;      // string (basic)
+  u32 village4_button;     // string (basic)
+  u32 plunger_lurker;      // string (basic)
+};
+
 const int MAX_MULTIPLAYER_COUNT = 20;
 
 struct MultiplayerInfo {

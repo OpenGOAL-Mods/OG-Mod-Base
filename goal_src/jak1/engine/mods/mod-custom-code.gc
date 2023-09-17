@@ -51,14 +51,22 @@
           ;; on player movement
           (when (or (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
           (!= (-> *self-player-info* trans_y) (-> *target* root trans y))
-          (!= (-> *self-player-info* trans_z) (-> *target* root trans z)))
+          (!= (-> *self-player-info* trans_z) (-> *target* root trans z))
+          (= *state-update?* #t))
 
               ;; update this player's position
               (update-self-multiplayer-info)
               ;; (update-debug-self-multiplayer-info)
               
               ;; send updated player info to client
-              (pc-update-position)
+              (if (= *state-update?* #t)
+              (pc-update-position 1)
+              (pc-update-position 0)
+              )
+
+              (if (= *state-update?* #t)
+                (set! *state-update?* #f)
+              )
 
               (if (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
                 (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-connected))
