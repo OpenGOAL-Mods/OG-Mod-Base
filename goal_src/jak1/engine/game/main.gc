@@ -9,6 +9,7 @@
 ;; Letterbox and blackout
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun-extern runs-every-frame (none))
+(define-extern runs-on-debug-toggle (function none))
 
 (defun set-letterbox-frames ((arg0 time-frame))
   "Set the letterbox frame counter for arg0 frames in the future"
@@ -374,6 +375,7 @@
           (cpad-clear! 0 r1)
           ;; toggle!
           (not! *cheat-mode*)
+          (runs-on-debug-toggle)
           (cheats-sound-play *cheat-mode*)
         )
 

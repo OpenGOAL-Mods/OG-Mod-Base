@@ -6,6 +6,7 @@
 ;; dgos: GAME, ENGINE
 
 (define-extern target-powerup-effect (function symbol none :behavior target))
+(define-extern runs-on-level-enter (function none))
 
 ;; DECOMP BEGINS
 
@@ -75,6 +76,7 @@
              )
            (send-event (ppointer->process (-> *hud-parts* buzzers)) 'sync)
            (format #t "GAMEPLAY: enter ~A~%" (-> arg3 param 0))
+           (runs-on-level-enter)
            )
          )
        )

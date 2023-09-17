@@ -5,6 +5,10 @@
 ;; name in dgo: task-control
 ;; dgos: GAME, ENGINE
 
+(define-extern runs-on-shared-task-update (function game-task none))
+(define-extern runs-on-task-complete (function game-task none))
+(define-extern runs-on-warp-gate-open (function game-task none))
+
 ;; DECOMP BEGINS
 
 (defun-debug task-status->string ((arg0 task-status))
@@ -4125,6 +4129,18 @@
       (dotimes (v1-1 (-> gp-0 stage length))
         (when (and (= arg0 (-> gp-0 stage v1-1 game-task)) (= arg1 (-> gp-0 stage v1-1 status)))
           (close-task! (-> gp-0 stage v1-1))
+
+          (if (or (= arg1 (task-status need-reminder)) (or (and (= arg1 (task-status need-hint)) (= arg0 (game-task plunger-lurker-hit))) (and (= arg1 (task-status need-resolution)) (= arg0 (game-task lavatube-balls)))))
+            (runs-on-shared-task-update arg0)
+          )
+
+          (if (= arg1 (task-status need-resolution))
+            (runs-on-task-complete arg0)
+          )
+
+          (if (and (= arg1 (task-status need-hint)) (or (or (= arg0 (game-task village2-levitator)) (= arg0 (game-task village3-button)) (= arg0 (game-task village4-button)))))
+            (runs-on-warp-gate-open arg0)
+          )
           (return (first-any gp-0 #t))
           )
         )

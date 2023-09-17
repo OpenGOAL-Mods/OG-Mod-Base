@@ -5,6 +5,8 @@
 ;; name in dgo: game-save
 ;; dgos: GAME, ENGINE
 
+(define-extern runs-after-save-load (function none))
+
 ;; The game-save system implements the "background autosave" feature.
 
 ;; The process works like this:
@@ -1069,6 +1071,7 @@
       (+! s5-1 1)
       )
     )
+  (runs-after-save-load)
   (label cfg-134)
   save
   )

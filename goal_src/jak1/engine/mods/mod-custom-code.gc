@@ -20,6 +20,102 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Begin function defintions.
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
+    
+    (defun update-state ()
+      (if (and (= *cheat-mode* #f) (= *debug-segment* #f))
+        (set! (-> *teamrun-info* debug_mode_active?) 0)
+        (set! (-> *teamrun-info* debug_mode_active?) 1)
+        )
+
+      (set! (-> *teamrun-info* cell_count) (the int32 (-> *game-info* fuel)))
+      (set! (-> *teamrun-info* death_count) (the int32 (-> *game-info* total-deaths)))
+
+      (set! (-> *teamrun-info* jungle_lurkerm) (enum->string task-status (get-task-status (game-task jungle-lurkerm))))
+      (set! (-> *teamrun-info* village1_yakow) (enum->string task-status (get-task-status (game-task village1-yakow))))
+      (set! (-> *teamrun-info* misty_muse) (enum->string task-status (get-task-status (game-task misty-muse))))
+      (set! (-> *teamrun-info* rolling_race) (enum->string task-status (get-task-status (game-task rolling-race))))
+      (set! (-> *teamrun-info* rolling_moles) (enum->string task-status (get-task-status (game-task rolling-moles))))
+      (set! (-> *teamrun-info* village2_levitator) (enum->string task-status (get-task-status (game-task village2-levitator))))
+      (set! (-> *teamrun-info* village3_button) (enum->string task-status (get-task-status (game-task village3-button))))
+      (set! (-> *teamrun-info* lavatube_balls) (enum->string task-status (get-task-status (game-task lavatube-balls))))
+      (set! (-> *teamrun-info* village4_button) (enum->string task-status (get-task-status (game-task village4-button))))
+      (set! (-> *teamrun-info* plunger_lurker_hit) (enum->string task-status (get-task-status (game-task plunger-lurker-hit))))
+
+      (set! *state-update?* #t)
+    (none)
+    )
+
+    (defun check-allow-cell-pickup? ()
+      *allow-cell-pickup?*
+    )
+
+    (defun check-allow-final-boss? ()
+      *allow-final-boss?*
+    )
+
+    (defun runs-on-level-enter ()
+      (when (and (!= *target* #f) (!= (-> (level-get-target-inside *level*) name) 'title))
+        (set! (-> *teamrun-info* current_level) (symbol->string (-> (level-get-target-inside *level*) name)))
+        (if (!= (-> *game-info* current-continue level) (-> *teamrun-info* current_level))
+          (update-state)
+          )
+        )
+    (none)
+    )
+
+    (defun runs-after-save-load ()
+        (update-state)
+    )
+
+
+    (defun set-zoomer-wait-mode ()
+      (set! (-> *racer-mods* target-speed) 33840.0)
+      (set! (-> *racer-air-mods* target-speed) 33840.0)
+    )
+    (defun set-zoomer-full-mode ()
+      (set! (-> *racer-mods* target-speed) 163840.0)
+      (set! (-> *racer-air-mods* target-speed) 163840.0)
+    )
+
+    (defun runs-on-zoomer-entry ()
+      (set! (-> *teamrun-info* on_zoomer?) 1)
+        (update-state)
+    (none)
+    )
+
+    (defun runs-on-zoomer-exit ()
+      (set! (-> *teamrun-info* on_zoomer?) 0)
+        (update-state)
+    )
+
+    (defun runs-on-shared-task-update ((task game-task))
+        (update-state)
+      (none)
+    )
+
+    (defun runs-on-task-complete ((task game-task))
+        (update-state)
+      (none)
+    )
+
+    (defun runs-on-debug-toggle ()
+      (update-state)
+    )
+
+    (defun runs-on-warp-gate-open ((task game-task))
+      (if (or (= (get-task-status task) (task-status invalid)) (= (get-task-status task) (task-status need-reminder-a)))
+        (update-state)
+      )
+      (none)
+    )
+
+    (defun runs-on-new-checkpoint ()
+      (when (and (!= *target* #f) (!= (-> (level-get-target-inside *level*) name) 'title))
+        (set! (-> *teamrun-info* current_checkpoint) (-> *game-info* current-continue name))
+        (update-state)
+      )
+      (none)
+    ) 
 
 
     (defun manual-position-update ((num int) (transX float) (transY float) (transZ float) (quatY float) (quatZ float) (quatW float) (state string))
@@ -158,6 +254,8 @@
 
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
+      (set! (-> *teamrun-info* on_zoomer?) 0)
+      (update-state)
 
       (none)
       )

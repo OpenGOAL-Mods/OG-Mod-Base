@@ -11,6 +11,7 @@
 ;; The "perm" data is saved to the memory card.
 
 (define-extern runs-on-jak-death (function symbol none))
+(define-extern runs-on-new-checkpoint (function none))
 ;;Forward declaration Variable for mod base settings
 (define-extern startingDebugContinuePoint (string))
 
@@ -156,6 +157,9 @@
     (when (!= s5-0 (-> obj current-continue))
       (set! (-> obj continue-deaths) 0)
       (set! (-> obj continue-time) (-> *display* base-frame-counter))
+      (if (-> obj current-continue level)
+        (runs-on-new-checkpoint)
+        )
       )
     )
   (-> obj current-continue)

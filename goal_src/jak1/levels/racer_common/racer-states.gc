@@ -6,6 +6,8 @@
 ;; dgos: FIC, LAV, MIS, OGR, ROL
 
 (define-extern *race-track-surface* surface)
+(define-extern runs-on-zoomer-entry (function none))
+(define-extern runs-on-zoomer-exit (function none))
 
 ;; DECOMP BEGINS
 
@@ -23,6 +25,7 @@
       (else
         (case event-type
           (('end-mode)
+           (runs-on-zoomer-exit)
            (go target-racing-get-off (process->handle proc))
            )
           (('touched)
@@ -146,6 +149,7 @@
     )
   :code (behavior ((arg0 handle))
     (target-exit)
+    (runs-on-zoomer-entry)
     (set! *display-profile* #f)
     (set! *display-entity-errors* #f)
     (set-setting! 'sound-flava #f 30.0 (music-flava racer))

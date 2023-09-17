@@ -6,6 +6,9 @@
 ;; dgos: FIN
 ;; DECOMP BEGINS
 
+(define-extern check-allow-final-boss? (function symbol))
+
+
 
 (defskelgroup *robotboss-cinematic-sg* robotboss-cinematic robotboss-cinematic-lod0-jg robotboss-cinematic-idle-ja
               ((robotboss-cinematic-lod0-mg (meters 999999)))
@@ -59,7 +62,10 @@
   (set! (-> obj force-dest) -1.0)
   (set! (-> obj targ-dest) -1.0)
   (set! (-> obj dest) 0.0)
-  (set! (-> obj speed) 0.1)
+  (if (= (check-allow-final-boss?) #t)
+    (set! (-> obj speed) 0.1)
+    (set! (-> obj speed) 0.0)
+  )
   (logclear! (-> obj mask) (process-mask actor-pause))
   (process-entity-status! obj (entity-perm-status bit-3) #t)
   (none)
@@ -146,6 +152,9 @@
         )
     (plat-trans)
     (when (send-event *target* 'query 'powerup (pickup-type eco-yellow))
+      (if (= (check-allow-final-boss?) #f)
+        (set-continue! *game-info* "finalboss-start")
+      )
       (process-entity-status! self (entity-perm-status complete) #t)
       (set! (-> self force-dest) 0.0)
       )

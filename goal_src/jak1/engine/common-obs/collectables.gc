@@ -8,6 +8,7 @@
 
 (define-extern runs-on-orb-pickup (function process-tree none))
 (define-extern runs-on-fly-pickup (function none))
+(define-extern check-allow-cell-pickup? (function symbol))
 (define-extern runs-on-cell-pickup (function symbol none))
 (define-extern runs-on-eco-pickup (function pickup-type process-tree none))
 
@@ -1528,6 +1529,9 @@
   :enter (behavior ((arg0 object) (arg1 handle))
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (set! (-> self state-object) #t)
+    (if (= (check-allow-cell-pickup?) #f)
+      (go-virtual wait)
+    )
     (let ((t9-1 (-> (the-as (state eco-collectable) (find-parent-method fuel-cell 23)) enter)))
       (if t9-1
           (t9-1)
