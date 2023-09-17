@@ -257,6 +257,14 @@
       (set! (-> *teamrun-info* on_zoomer?) 0)
       (update-state)
 
+      (when (and (string= (-> *game-info* current-continue name) "finalboss-fight") (= *allow-final-boss?* #f))
+        (set-continue! *game-info* "finalboss-start")
+        (+! (-> *target* root trans x) (meters -161.0))
+        (+! (-> *target* root trans z) (meters 120.0))
+        (+! (-> *target* root trans y) (meters 90.0))
+        (send-event *camera* 'change-state cam-string 0)
+      )
+      
       (none)
       )
 
