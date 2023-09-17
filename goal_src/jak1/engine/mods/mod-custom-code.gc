@@ -138,36 +138,29 @@
 
       (when (and *target* (>= (-> *multiplayer-info* player_num) 0) (!= (-> *self-player-info* mp_state) (mp-tgt-state mp-tgt-disconnected)))
 
-        ;; if never synced positions, or its been X ms, request updated positions
-        (when (or (not *last-position-sync-time*) (>= (- (-> *display* base-frame-counter) *last-position-sync-time*) (seconds 0.01)))
+        ;; on player movement
+        (when (or (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
+        (!= (-> *self-player-info* trans_y) (-> *target* root trans y))
+        (!= (-> *self-player-info* trans_z) (-> *target* root trans z))
+        (= *state-update?* #t))
 
-          ;; update last sync time
-          (set! *last-position-sync-time* (-> *display* base-frame-counter))
-
-          ;; on player movement
-          (when (or (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
-          (!= (-> *self-player-info* trans_y) (-> *target* root trans y))
-          (!= (-> *self-player-info* trans_z) (-> *target* root trans z))
-          (= *state-update?* #t))
-
-              ;; update this player's position
-              (update-self-multiplayer-info)
-              ;; (update-debug-self-multiplayer-info)
-              
-              ;; send updated player info to client
-              (if (= *state-update?* #t)
-              (pc-update-position 1)
-              (pc-update-position 0)
-              )
-
-              (if (= *state-update?* #t)
-                (set! *state-update?* #f)
-              )
-
-              (if (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
-                (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-connected))
-                )
+            ;; update this player's position
+            (update-self-multiplayer-info)
+            ;; (update-debug-self-multiplayer-info)
+            
+            ;; send updated player info to client
+            (if (= *state-update?* #t)
+            (pc-update-position 1)
+            (pc-update-position 0)
             )
+
+            (if (= *state-update?* #t)
+              (set! *state-update?* #f)
+            )
+
+            (if (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
+              (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-connected))
+              )
           )
 
         (render-targets)
