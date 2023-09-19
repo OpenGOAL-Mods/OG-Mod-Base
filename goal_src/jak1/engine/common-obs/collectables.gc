@@ -12,6 +12,8 @@
 (define-extern runs-on-cell-pickup (function symbol none))
 (define-extern runs-on-eco-pickup (function pickup-type process-tree none))
 (define-extern *chicks-follow?* symbol)
+(declare-type demon-chicken process-drawable)
+(defun-extern get-chick-from-flock int demon-chicken)
 (declare-type vent process-drawable)
 (declare-type eco eco-collectable)
 (define *MAXCURRENTCHICKS* 11)
@@ -27,6 +29,40 @@
   )
 (define *custom-level-info*(new 'static 'custom-level-info))
 
+;; This is a stupid hack
+(deftype demon-chicken (process-drawable)
+  ((cshape collide-shape-moving :offset 112)
+   (trajectory trajectory :inline)
+   (target-pos vector :inline)
+   (dir vector :inline)
+   (notice-dist meters)
+   (stop-chase-dist meters)
+   (touch-time time-frame)
+   (anim-speed float)
+   (traj-time float)
+   (grace-period time-frame)
+   (to-point-speed float)
+   (parent-cell-name string)
+   )
+  (:methods
+    (init-collision! (_type_) none)
+    (init-skel! (_type_) none)
+    (common-init! (_type_) none)
+    (target-in-range? (_type_ float) basic)
+    (move! (_type_) none)
+    (send-attack! (_type_ process touching-shapes-entry symbol) object)
+    (touch-handler (_type_ process event-message-block) object)
+    (debug-draw-text! (_type_) none)
+    (should-chase? (_type_) basic)
+    (dist-to-target (_type_) float)
+    )
+  (:states
+    demon-chicken-dormant
+    demon-chicken-idle
+    demon-chicken-chase
+    ;; demon-chicken-victory
+    )
+  )
 (defenum collectable-flags
   :bitfield #t
   :type uint32
@@ -1891,6 +1927,9 @@
     (stop! (-> self sound))
     ;;Saved a chick
     ;;Tagmort
+    (set! (-> (get-chick-from-flock (the int (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))) parent-cell-name) 
+    (the string(-> self name)))
+    ;; Increment after setting name
     (+! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 1)
     (play-rand-sound "snd/ChickPickup1.mp3" (the int (-> *setting-control* default sfx-volume)))
     (if (= (+  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks)

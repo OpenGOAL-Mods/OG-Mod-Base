@@ -631,8 +631,10 @@
 (set! (->  (get-chick-from-flock i) target-pos quad)(-> *flock-points* points i quad))
 ;; Once we warp the chick out restore its "fast" speed
 (set! (-> (get-chick-from-flock i ) to-point-speed) 3.0)
+(when *show-debug*
 (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) (->  (get-chick-from-flock i) target-pos )(font-color green) (the-as vector2h #f))
- )
+(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~S" (->  (get-chick-from-flock i) parent-cell-name )) (->  (get-chick-from-flock i) target-pos )(font-color green) (the-as vector2h #f))
+ ))
 )
 
 ;;For some reason this crashes on boot for now

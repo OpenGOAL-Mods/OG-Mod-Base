@@ -1631,7 +1631,6 @@
   (speedrun-il-space-bridge              #x151c)
   (speedrun-il-chicks          #x151d)
   (speedrun-il-garden           #x22520)
-   (speedrun-il-cold-pipe           #x151g)
   (speedrun-new-cat-ext          #x151f)
   (speedrun-new-game-plus        #x1520)
   (speedrun-hub1-100             #x1521)
@@ -8032,6 +8031,22 @@
   :method-count-assert 9
   :size-assert         #x30
   :flag-assert         #x900000030
+  )
+
+(defenum pickup-type
+  :type int32
+  (none)
+  (eco-yellow)
+  (eco-red)
+  (eco-blue)
+  (eco-green)
+  (money)
+  (fuel-cell)
+  (eco-pill)
+  (buzzer)
+  (eco-pill-random)
+  (star)
+  (eco-new)
   )
 
 (deftype mood-fog-table (structure)

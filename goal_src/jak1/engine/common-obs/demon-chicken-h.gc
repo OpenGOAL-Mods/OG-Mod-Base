@@ -13,6 +13,7 @@
    (traj-time float)
    (grace-period time-frame)
    (to-point-speed float)
+   (parent-cell-name string)
    )
   (:methods
     (init-collision! (_type_) none)
