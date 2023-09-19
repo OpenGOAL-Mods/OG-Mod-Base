@@ -48,6 +48,8 @@
                          )
   )
 
+
+;;tageco ADD NEW ECO HERE, ORDER IS IMPORTANT ONLY ADD TO END
 (defenum pickup-type
   :type int32
   (none)
@@ -61,6 +63,7 @@
   (buzzer)
   (eco-pill-random)
   (star)
+  (eco-new)
   )
 
 (defun pickup-type->string ((arg0 pickup-type))

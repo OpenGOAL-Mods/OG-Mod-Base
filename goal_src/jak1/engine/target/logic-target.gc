@@ -832,6 +832,20 @@
   (let ((s5-0 (new-stack-vector0))
         (gp-0 (new-stack-vector0))
         )
+
+        (when (send-event *target* 'query 'powerup (pickup-type eco-new))
+            (set!  (-> self control dynam gravity-length) (meters 20)) ;; 50
+            (set! (-> *TARGET-bank* jump-height-max) (meters 7.01));;3.5
+            (set! (-> *TARGET-bank* double-jump-height-max)  (meters 5.0)  ) ;;2.5
+        )
+        ;; The condition for 7.01 is a disgusting hack so we arent consitantly setting a new jump-height
+        (when (not (and (send-event *target* 'query 'powerup (pickup-type eco-new)) (= (-> *TARGET-bank* jump-height-max) (meters 7.01)))) 
+          ;;  (set!  (-> self control dynam gravity-length) (meters 50)) ;; 50 ;; Jaks gravity auto resets but we need to restore the jump heights
+              (set! (-> *TARGET-bank* jump-height-max) (meters 3.5));;3.5
+              (set! (-> *TARGET-bank* double-jump-height-max)   (meters 2.5))   ;;2.5
+        )
+   
+
     (compute-acc-due-to-gravity (-> self control) s5-0 (-> self control unknown-surface01 slip-factor))
     (vector-matrix*! gp-0 s5-0 (-> self control unknown-matrix00))
     (vector-v++! (-> self control unknown-vector00) gp-0)

@@ -450,19 +450,6 @@
   (melt)
   )
 
-(defenum pickup-type
-  :type int32
-  (none)
-  (eco-yellow)
-  (eco-red)
-  (eco-blue)
-  (eco-green)
-  (money)
-  (fuel-cell)
-  (eco-pill)
-  (buzzer)
-  (eco-pill-random)
-  )
 
 (defenum load-msg-result
   :type uint16

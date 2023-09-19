@@ -320,9 +320,9 @@
 
 (defun-extern robo-movie-check (none))
     (defun runs-every-frame ()
-    
+  
     (when #t
-    
+
     (main-music-volume (the int (-> *setting-control* default music-volume)))
     ;; Its so funny that this works lol
     (if (zero-volume?)
@@ -334,18 +334,16 @@
       (reset-actors #t)
       )
 
-(when (and (process-by-ename "robotboss-3") *target*)
-(robo-movie-check))
-     (update-mort-vars)
+    (when (and (process-by-ename "robotboss-3") *target*)
+    (robo-movie-check)
+    )
+    (update-mort-vars)
     (when (run-mort-code?)
       (adjust-chick-origin (find-best-master-mark))
       ;;If are flock points aren't setup, lets set them up.
       (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
         (init-chickens)
       )
-
-
-
     ;; ;;   ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
 
     ;; ;;   ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
@@ -358,6 +356,7 @@
       (draw-beta-flock-points)
       (mort-debug-text)
 
+  ;;This is a hack to rotate warp gate patricles
   (if (!= (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))
   )))
        (set! (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))))
