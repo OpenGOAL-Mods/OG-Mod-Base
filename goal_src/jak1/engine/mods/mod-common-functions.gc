@@ -316,8 +316,8 @@
                       (new 'static 'vector2h :y 16)
                       )
 
-        ;; make invulnerable so they dont die
-        (logior! (-> t state-flags) (state-flags invulnerable))
+        ;; activate nuka glitch for other targets
+        (logior! (-> t state-flags) (state-flags dying))
 
         ;; finalize rotation
         (quaternion-copy! (-> t control dir-targ) (-> t root quat))

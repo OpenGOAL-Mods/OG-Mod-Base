@@ -1451,7 +1451,9 @@
       (add-setting! 'allow-progress #f 0.0 0)
       (apply-settings *setting-control*)
       (logclear! (-> self mask) (process-mask actor-pause))
-      (go-virtual pickup #f (process->handle proc))
+      (when (= *target* (handle->process (process->handle proc)))
+        (go-virtual pickup #f (process->handle proc))
+        )
       )
     (the-as object (cond
                      ((= event-type 'trans)
