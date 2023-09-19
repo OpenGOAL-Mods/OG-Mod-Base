@@ -157,6 +157,7 @@ void send_position_update(bool includeState) {
         {"currentLevel", Ptr<String>(gTeamrunInfo->current_level).c()->data()},
         {"currentCheckpoint", Ptr<String>(gTeamrunInfo->current_checkpoint).c()->data()},
         {"onZoomer", gTeamrunInfo->on_zoomer},
+        {"justSpawned", gTeamrunInfo->just_spawned},
         {"cellCount", gTeamrunInfo->cell_count},
         {"deathCount", gTeamrunInfo->death_count},
         {"sharedTasks", {

@@ -98,6 +98,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (current_level   string)
   (current_checkpoint      string)
   (on_zoomer?    int32)
+  (just_spawned?    int32)
   (cell_count    int32)
   (death_count    int32)
   
@@ -124,6 +125,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> obj current_level) (new 'global 'string 32 (new 'global 'string 32 "")))
     (set! (-> obj current_checkpoint) (new 'global 'string 32 (new 'global 'string 32 "")))
     (set! (-> obj on_zoomer?) 0)
+    (set! (-> obj just_spawned?) 0)
     (set! (-> obj cell_count) 0)
     (set! (-> obj death_count) 0)
     

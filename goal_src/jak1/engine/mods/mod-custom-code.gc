@@ -154,8 +154,9 @@
             (pc-update-position 0)
             )
 
-            (if (= *state-update?* #t)
+            (when (= *state-update?* #t)
               (set! *state-update?* #f)
+              (set! (-> *teamrun-info* just_spawned?) 0)
             )
 
             (if (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
@@ -248,6 +249,7 @@
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
       (set! (-> *teamrun-info* on_zoomer?) 0)
+      (set! (-> *teamrun-info* just_spawned?) 1)
       (update-state)
 
       (when (and (string= (-> *game-info* current-continue name) "finalboss-fight") (= *allow-final-boss?* #f))

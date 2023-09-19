@@ -64,6 +64,7 @@ struct TeamrunPlayerInfo {
   u32 current_level;       // string (basic)
   u32 current_checkpoint;  // string (basic)
   s32 on_zoomer;
+  s32 just_spawned;
   int cell_count;
   int death_count;
 
