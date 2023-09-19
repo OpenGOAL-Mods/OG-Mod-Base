@@ -790,7 +790,7 @@
     )
   )
 
-(defmethod projectile-method-27 projectile ((obj projectile))
+(defmethod projectile-method-27 projectile ((obj projectile) (handle-from handle))
   0
   (none)
   )
@@ -847,7 +847,7 @@
   (none)
   )
 
-(defbehavior projectile-init-by-other projectile ((arg0 entity-actor) (arg1 vector) (arg2 vector) (arg3 uint) (arg4 handle))
+(defbehavior projectile-init-by-other projectile ((arg0 entity-actor) (arg1 vector) (arg2 vector) (arg3 uint) (arg4 handle) (handle-from handle))
   (stack-size-set! (-> self main-thread) 512)
   (set! (-> self entity) arg0)
   (set! (-> self attack-mode) #f)
@@ -879,7 +879,7 @@
   (vector-normalize-copy! (-> self base-vector) arg2 1.0)
   (vector+float*! (-> self target) (-> self root-override trans) (-> self root-override transv) 2.0)
   (set! (-> self target-base quad) (-> self target quad))
-  (projectile-method-27 self)
+  (projectile-method-27 self handle-from)
   (projectile-method-24 self)
   (when (not (type-type? (-> self type) projectile-blue))
     (let ((a1-8 (new 'stack-no-clear 'collide-edge-hold-list)))
@@ -893,8 +893,10 @@
   (none)
   )
 
-(defmethod projectile-method-27 projectile-yellow ((obj projectile-yellow))
-  (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 204 (seconds 0.1))
+(defmethod projectile-method-27 projectile-yellow ((obj projectile-yellow) (handle-from handle))
+  (if (= *target* (handle->process handle-from))
+    (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 204 (seconds 0.1))
+    )
   (set! (-> obj attack-mode) 'eco-yellow)
   (set! (-> obj mode) 1)
   (set! (-> obj max-speed) (vector-length (-> obj root-override transv)))
@@ -1101,8 +1103,10 @@
   (none)
   )
 
-(defmethod projectile-method-27 projectile-blue ((obj projectile-blue))
-  (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 204 (seconds 0.1))
+(defmethod projectile-method-27 projectile-blue ((obj projectile-blue) (handle-from handle))
+  (if (= *target* (handle->process handle-from))
+    (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 204 (seconds 0.1))
+    )
   (sound-play "blue-eco-on")
   (set! (-> obj mode) 2)
   (set! (-> obj max-speed) (-> *TARGET-bank* yellow-projectile-speed))
@@ -1180,7 +1184,7 @@
                     (t1-0 8)
                     (t2-0 (process->handle pp))
                     )
-                ((the-as (function process function object object object object object object) s2-0)
+                ((the-as (function process function object object object object object object object) s2-0)
                  s1-0
                  s0-0
                  sv-48
@@ -1188,6 +1192,7 @@
                  gp-0
                  t1-0
                  t2-0
+                 #f
                  )
                 )
               )

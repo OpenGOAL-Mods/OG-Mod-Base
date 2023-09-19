@@ -6,7 +6,7 @@
 ;; dgos: GAME, ENGINE
 
 (declare-type projectile process-drawable)
-(define-extern projectile-init-by-other (function entity-actor vector vector uint handle none :behavior projectile)) ;; 4th arg is `options`, 5th is `last-target`
+(define-extern projectile-init-by-other (function entity-actor vector vector uint handle handle none :behavior projectile)) ;; 4th arg is `options`, 5th is `last-target`
 
 ;; DECOMP BEGINS
 
@@ -47,7 +47,7 @@
     (projectile-method-24 (_type_) none 24)
     (projectile-method-25 (_type_) none 25)
     (projectile-method-26 (_type_) none 26)
-    (projectile-method-27 (_type_) none 27)
+    (projectile-method-27 (_type_ handle) none 27)
     (projectile-method-28 (_type_) none 28)
     )
   )

@@ -7,7 +7,7 @@
 
 ;; DECOMP BEGINS
 (define-extern runs-on-jak-spawn (function none))
-
+(import "goal_src/jak1/import/deathcam-ag.gc")
 
 (defskelgroup *deathcam-sg* deathcam deathcam-lod0-jg deathcam-idle-ja
               ((deathcam-lod0-mg (meters 999999)))
@@ -1036,10 +1036,7 @@
     (let ((v1-0 event-type))
       (the-as object (cond
                        ((= v1-0 'end-mode)
-                        (let ((v0-0 (the-as object #t)))
-                          (set! (-> self control unknown-uint20) (the-as uint v0-0))
-                          v0-0
-                          )
+                        (set! (-> self control unknown-uint20) (the-as uint #t))
                         )
                        ((= v1-0 'change-mode)
                         (case (-> event param 0)
@@ -1053,7 +1050,7 @@
                           (case (-> event param 0)
                             (('die 'abort-request)
                              (set! (-> self control unknown-uint20) (the-as uint #t))
-                             (the-as object (set-blackout-frames (seconds 0.2)))
+                             (set-blackout-frames (seconds 0.2))
                              )
                             )
                           )
