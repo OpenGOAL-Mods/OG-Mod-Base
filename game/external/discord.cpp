@@ -67,7 +67,7 @@ const char* get_full_level_name(const std::map<std::string, std::string>& level_
   if (nice_name != level_names.end()) {
     return nice_name->second.c_str();
   }
-  return "unknown";
+  return level_name;
 }
 
 // convert time of day float to a 24-hour hh:mm format string

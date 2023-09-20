@@ -17,17 +17,7 @@
 (declare-type vent process-drawable)
 (declare-type eco eco-collectable)
 (define *MAXCURRENTCHICKS* 11)
-(deftype level-information (structure)
-((name string)
- (total-chicks uint8)
- (current-chicks uint8)
- (saved-chicks uint8)
-))
-(deftype custom-level-info (structure)
-  ((data level-information 47 :inline  :offset-assert 0)
-   )
-  )
-(define *custom-level-info*(new 'static 'custom-level-info))
+
 
 ;; This is a stupid hack
 (deftype demon-chicken (process-drawable)

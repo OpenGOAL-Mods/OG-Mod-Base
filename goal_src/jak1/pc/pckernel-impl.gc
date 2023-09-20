@@ -131,6 +131,9 @@
    (racer? symbol)
    (flutflut? symbol)
    (time-of-day (pointer float))
+   (current-chicks (pointer int32))
+   (total-chicks (pointer int32))
+   (saved-chicks (pointer int32))
    )
   )
 

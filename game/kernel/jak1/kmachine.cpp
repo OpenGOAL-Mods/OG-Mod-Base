@@ -430,6 +430,11 @@ void update_discord_rpc(u32 discord_info) {
     if (info) {
       int cells = (int)*Ptr<float>(info->fuel).c();
       int orbs = (int)*Ptr<float>(info->money_total).c();
+      int current_chicks_ptr_value = (int)*Ptr<int>(info->current_chicks).c();
+      int saved_chicks_ptr_value = (int)*Ptr<int>(info->saved_chicks).c();
+      int currentchicks = current_chicks_ptr_value + saved_chicks_ptr_value;
+
+      int totalchicks = (int)*Ptr<int>(info->total_chicks).c();
       int scout_flies = (int)*Ptr<float>(info->buzzer_total).c();
       int deaths = *Ptr<int>(info->deaths).c();
       float time = *Ptr<float>(info->time_of_day).c();
@@ -443,22 +448,22 @@ void update_discord_rpc(u32 discord_info) {
       const char* full_level_name =
           get_full_level_name(level_names, level_name_remap, Ptr<String>(info->level).c()->data());
       memset(&rpc, 0, sizeof(rpc));
-      if (!indoors(indoor_levels, level)) {
-        char level_with_tod[128];
-        strcpy(level_with_tod, level);
-        strcat(level_with_tod, "-");
-        strcat(level_with_tod, time_of_day_str(time));
-        strcpy(large_image_key, level_with_tod);
-      } else {
+      // if (!indoors(indoor_levels, level)) {
+      //   char level_with_tod[128];
+      //   strcpy(level_with_tod, level);
+      //   strcat(level_with_tod, "-");
+      //   strcat(level_with_tod, time_of_day_str(time));
+      //   strcpy(large_image_key, level_with_tod);
+      // } else {
         strcpy(large_image_key, level);
-      }
+      //}
       strcpy(large_image_text, full_level_name);
       // if (!strcmp(full_level_name, "unknown")) {
       //   strcpy(large_image_key, full_level_name);
       //   strcpy(large_image_text, level);
       // }
       rpc.largeImageKey = large_image_key;
-      rpc.largeImageKey = "chef";
+      //rpc.largeImageKey = "chef";
       if (!strcmp(level, "finalboss")) {
         strcpy(state, "Fighting Final Boss");
       } else if (plantboss != offset_of_s7()) {
@@ -476,19 +481,19 @@ void update_discord_rpc(u32 discord_info) {
         strcpy(state, "Intro");
       } else if (cutscene != offset_of_s7()) {
         strcpy(state, "Watching a cutscene");
-        strcpy(large_image_text, fmt::format("Cells: {} | Farts Obtained: {} |Beans: {} | Deaths: {}",
-                                             std::to_string(cells), std::to_string(orbs),
-                                             std::to_string(scout_flies), std::to_string(deaths))
+        strcpy(large_image_text, fmt::format("Chicks: {}/{} | Orbs: {} | Deaths: {}",
+                                             std::to_string(currentchicks), std::to_string(totalchicks),
+                                             std::to_string(orbs), std::to_string(deaths))
                                      .c_str());
       } else {
-        strcpy(state, fmt::format("Cells: {} | Farts Obtained: {} | Beans: {}", std::to_string(cells),
-                                  std::to_string(orbs), std::to_string(scout_flies))
+        strcpy(state, fmt::format("Chicks: {}/{} | Orbs: {} ", std::to_string(currentchicks),
+                                  std::to_string(totalchicks), std::to_string(orbs))
                           .c_str());
 
         strcat(large_image_text, fmt::format(" | Deaths: {}", std::to_string(deaths)).c_str());
       }
       rpc.largeImageText = large_image_text;
-      rpc.largeImageKey = "chef";
+     // rpc.largeImageKey = "chef";
       rpc.state = state;
       if (racer != offset_of_s7()) {
         strcpy(small_image_key, "target-racer");

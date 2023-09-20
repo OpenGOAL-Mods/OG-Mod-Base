@@ -236,14 +236,30 @@
 
   0)
 
+;; move back to collectiables
+(deftype level-information (structure)
+((name string)
+ (total-chicks int32)
+ (current-chicks int32)
+ (saved-chicks int32)
+))
+(deftype custom-level-info (structure)
+  ((data level-information 47 :inline  :offset-assert 0)
+   )
+  )
+(define *custom-level-info*(new 'static 'custom-level-info))
+
+(define-extern done-init? symbol)
+(defun-extern run-mort-code? basic)
 (defmethod update-discord-rpc pc-settings-jak1 ((obj pc-settings-jak1))
   "update discord rpc module"
-  (let ((info (new 'stack 'discord-info)))
+  (when (and done-init? (run-mort-code?))
+   (let ((info (new 'stack 'discord-info)))
     (set! (-> info fuel) (&-> *game-info* fuel))
     (set! (-> info money-total) (&-> *game-info* money-total))
     (set! (-> info buzzer-total) (&-> *game-info* buzzer-total))
     (set! (-> info deaths) (&-> *game-info* total-deaths))
-    (set! (-> info status) "The Fart Legacy™")
+    (set! (-> info status) "Jak and Daxter: The Mort Legacy™")
     (set! (-> info level) (symbol->string (-> (level-get-target-inside *level*) name))) ;; grab the name of level we're in
     (set! (-> info cutscene?) (real-movie?))
     (set! (-> info ogreboss?) (aif (process-by-ename "ogreboss-1") (case (-> it next-state name) (
@@ -286,8 +302,14 @@
                                        'target-flut-start
                                        'target-flut-walk) #t))))
     (set! (-> info time-of-day) (&-> *time-of-day-context* time))
+    (set! (-> info current-chicks) (&-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))
+    (set! (-> info saved-chicks) (&-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks))
+
+    (set! (-> info total-chicks) (&-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks))
 
     (with-profiler "discord-update" (pc-discord-rpc-update info)))
+  )
+ 
   (none))
 
 (defmethod update-speedrun pc-settings-jak1 ((obj pc-settings-jak1))
