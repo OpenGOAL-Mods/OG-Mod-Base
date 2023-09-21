@@ -2331,7 +2331,7 @@
                            :nickname 'coi          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
-                           :music-bank 'village3
+                           :music-bank #f
                            :ambient-sounds '()
                            :mood '*training-mood*
                            :mood-func 'update-mood-training

@@ -1925,6 +1925,7 @@
     (if (= (+  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks)
     
     )  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks))
+
    (play-rand-sound "snd/coin1.wav" (the int (-> *setting-control* default sfx-volume)))
     )
     (if #f

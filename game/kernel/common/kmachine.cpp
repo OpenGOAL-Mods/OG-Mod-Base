@@ -140,16 +140,15 @@ std::vector<std::string> getPlayingFileNames()
     return playingFileNames;
 }
 
-// Function to play an MP3 file.
+std::mutex activeMusicsMutex;  // Mutex to synchronize access to activeMusics
+
 void playMP3(u32 filePathu32, u32 volume) {
-    // Spawn a new thread to play the music.
     std::thread thread([=]() {
-      std::string filePath = Ptr<String>(filePathu32).c()->data();
+        std::string filePath = Ptr<String>(filePathu32).c()->data();
         std::cout << "Playing MP3: " << filePath << std::endl;
 
         sf::Music* music = new sf::Music;
-        if (!music->openFromFile(filePath))
-        {
+        if (!music->openFromFile(filePath)) {
             std::cout << "Failed to load: " << filePath << std::endl;
             delete music;
             return;
@@ -157,75 +156,104 @@ void playMP3(u32 filePathu32, u32 volume) {
         music->setVolume(volume);
         music->play();
 
-        // Add the music instance and its file name to the active list.
-        activeMusics.push_back(std::make_pair(music, filePath));
-
-        while (music->getStatus() == sf::Music::Playing)
         {
+            std::lock_guard<std::mutex> lock(activeMusicsMutex);
+            activeMusics.push_back(std::make_pair(music, filePath));
+        }
+
+        while (music->getStatus() == sf::Music::Playing) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 
-        // Remove the music instance from the active list and clean up.
-        activeMusics.erase(std::remove_if(activeMusics.begin(), activeMusics.end(),
-            [music](const auto& pair) { return pair.first == music; }), activeMusics.end());
+        {
+            std::lock_guard<std::mutex> lock(activeMusicsMutex);
+            activeMusics.erase(std::remove_if(activeMusics.begin(), activeMusics.end(),
+                [music](const auto& pair) { return pair.first == music; }), activeMusics.end());
+        }
+
         delete music;
     });
 
-    // Detach the thread so it can run independently.
     thread.detach();
 }
-
 // Define a separate sf::Music pointer for the Main Music.
 sf::Music* mainMusicInstance = nullptr;
 
 // Define a flag to track the state of the Main Music.
 bool isMainMusicPaused = false;
 
+
+// Declare a mutex for synchronizing access to mainMusicInstance
+std::mutex mainMusicMutex;
+
+// Define a structure to hold music data
+struct MusicData {
+    sf::Music* music;
+    std::string filePath;
+    u32 volume;
+};
+
+// Define a vector to hold the music instances
+std::vector<MusicData> musicInstances;
+
+// Function to stop the Main Music.
+void stopMainMusic() {
+    for (auto& musicData : musicInstances) {
+        musicData.music->stop();
+        delete musicData.music;
+    }
+    musicInstances.clear();
+}
 // Function to play the Main Music.
 void playMainMusic(u32 filePathu32, u32 volume) {
     std::string filePath = Ptr<String>(filePathu32).c()->data();
     std::cout << "Playing Main Music: " << filePath << std::endl;
-
-    // Stop and clean up the previous Main Music instance, if it exists.
-    if (mainMusicInstance) {
-        mainMusicInstance->stop();
-        delete mainMusicInstance;
-        mainMusicInstance = nullptr;
+    stopMainMusic();
+    // Stop and clean up any existing music instances for this file path
+    for (auto it = musicInstances.begin(); it != musicInstances.end();) {
+        if (it->filePath == filePath) {
+            it->music->stop();
+            delete it->music;
+            it = musicInstances.erase(it);
+        } else {
+            ++it;
+        }
     }
 
-    // Spawn a new thread to play the Main Music.
-    std::thread thread([=]() {
-        sf::Music* mainMusic = new sf::Music;
-        if (!mainMusic->openFromFile(filePath))
-        {
-            std::cout << "Failed to load: " << filePath << std::endl;
-            delete mainMusic;
-            return;
-        }
-        mainMusic->setVolume(volume);
-        mainMusic->play();
+    // Create a new instance of sf::Music for the new Main Music.
+    sf::Music* mainMusic = new sf::Music;
+    if (!mainMusic->openFromFile(filePath))
+    {
+        std::cout << "Failed to load: " << filePath << std::endl;
+        delete mainMusic;
+        return;
+    }
+    mainMusic->setVolume(volume);
 
-        // Set the Main Music instance.
-        mainMusicInstance = mainMusic;
-        isMainMusicPaused = false;
+    // Set looping to true to make the track loop
+    mainMusic->setLoop(true);
 
-        while (mainMusic->getStatus() == sf::Music::Playing || mainMusic->getStatus() == sf::Music::Paused)
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-    });
+    mainMusic->play();
 
-    // Detach the thread so it can run independently.
-    thread.detach();
+    // Store the Main Music instance in the vector.
+    MusicData musicData = { mainMusic, filePath, volume };
+    musicInstances.push_back(musicData);
 }
+
+
+
 
 // Function to change the volume of the Main Music.
 void changeMainMusicVolume(u32 volume) {
-    if (mainMusicInstance) {
-        mainMusicInstance->setVolume(volume);
+    mainMusicMutex.lock();
+    for (auto& musicData : musicInstances) {
+        if (musicData.music) {
+            musicData.music->setVolume(volume);
+            musicData.volume = volume;
+        }
     }
+    mainMusicMutex.unlock();
 }
-
 // Function to pause or resume the Main Music.
 // Function to toggle between pausing and resuming the Main Music.
 void playPauseMainMusic()
