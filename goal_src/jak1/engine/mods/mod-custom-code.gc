@@ -315,6 +315,7 @@
       (set-flock-points)
       (set-flock-false);; Set all flock values to #f before chickens are in it
       (chicken-pls) ;; spawn the chickens offscreen
+      (dotimes (i 16)(set! (-> *game-counts* data i money-count) 0)(set! (-> *game-counts* data i buzzer-count) 0))
       (set! done-init? #t)
       (none))
 

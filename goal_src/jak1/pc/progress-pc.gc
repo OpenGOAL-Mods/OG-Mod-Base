@@ -2740,11 +2740,12 @@
       (set! (-> *progress-scroll* last-screen) (-> self display-state))
       )
     ;; draw the menus!!
-    (let* ((a1-0 (-> self display-level-index))
+    (let* ((a1-0 (-> self display-level-index)) ;;mort
            (gp-0 (-> *level-task-data* a1-0))
            (unk #t)
            (stats? #f)
            )
+
       (case (-> self display-state)
         (((progress-screen fuel-cell))
          (set! stats? #t)
