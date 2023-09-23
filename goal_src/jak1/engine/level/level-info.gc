@@ -1838,7 +1838,7 @@
     :nickname 'tit
     :packages '()
     :sound-banks '()
-    :music-bank 'village1
+    :music-bank #f
     :ambient-sounds '()
     :mood '*village1-mood*
     :mood-func 'update-mood-village1
@@ -2835,10 +2835,10 @@
                            :continues '((new 'static 'continue-point
                                              :name "mort-title-start"
                                              :level 'mort-title
-                                             :flags (continue-flags warp)
-                                             :trans (new 'static 'vector :x -0.00 :y  2.00 :z -0.62 :w 1.0)
+                                             ;;:flags (continue-flags warp)
+                                             :trans (new 'static 'vector :x -0.00 :y  (meters 302.00) :z -0.62 :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x 0.7389 :y 5.4833 :z 9.3438 :w 1.0)
+                                             :camera-trans (new 'static 'vector :x (meters 0.7389) :y (meters 305.4833) :z (meters 9.3438) :w 1.0)
                                              :camera-rot (new 'static 'array float 9 -0.00 0.0000 0.0000 -0.0 0.0000 -0.000 -0.000 -0.000 -1.0)
                                              :load-commands '()
                                              :vis-nick 'none
