@@ -228,11 +228,15 @@
       (begin
       ;;If we arent in hub 3 warp there.
         (if (and  (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
-          (send-event *target* 'continue (get-continue-by-name *game-info* "mort-title-start"))
+        (begin
+         (send-event *target* 'continue (get-continue-by-name *game-info* "mort-title-start"))
+             (set-blackout-frames (seconds 25.1))
+        )
+         
           )
 
         (if (and  (= (-> (level-get-target-inside *level*)name ) 'mort-title) (!= (-> *target* root trans y) (meters 1)))
-          (set! (-> *target* root trans y) (meters 1))
+          (set! (-> *target* root trans y) (meters 301))
           )
 
         ;;if we arent in cam-eye switch to cam-eye
@@ -252,13 +256,17 @@
       (none)
     )
   )
-
-
+(define *currentCutsceneFrame* 0)
+(define *currentSpoolName* "")
 (defun update-mort-vars()
 "This function runs first thing and gets the updated state of variables/booleans"
   ;;This locks the first person with no rotation if in certain levels (psuedo loading screens)
   (cam-eye-no-rot)
   (check-portal-distance)
+  (when (handle->process (-> *art-control* spool-lock))(with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the
+ int (ja-aframe-num 0))))
+  (set! *currentSpoolName* (-> *art-control* active-stream))
+ )
   ;;Are we in a mort level?
   (if (and (>= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 16)
            (<= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 34))
@@ -308,6 +316,47 @@
       mort-level?)
 )
 
+
+(defun sound-manager()
+"responsible for all the sounds played during cutscenes"
+  (when (handle->process (-> *art-control* spool-lock))(with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the
+ int (ja-aframe-num 0))))
+  (set! *currentSpoolName* (-> *art-control* active-stream)))
+(cond 
+((and (string= *currentSpoolName* "ndi-intro") (= *currentCutsceneFrame* 420))
+   (play-rand-sound "snd/zed.mp3" (the int (-> *setting-control* default sfx-volume)))
+   (until (time-elapsed? (current-time) (seconds 1))
+   (suspend)
+   )
+
+)
+)
+
+(none))
+
+(defbehavior sound-manager-proc process ()
+(while #t
+(sound-manager)
+(suspend)
+)
+(none)
+)
+(defun-extern music-manager (none) )
+(defbehavior music-manager-proc process ()
+(music-manager)
+(none)
+)
+
+
+(defun init-title ()
+      (format #t "INITIALIZING TITLE PROC~%")
+      (dotimes (i 16)(set! (-> *game-counts* data i money-count) 0)(set! (-> *game-counts* data i buzzer-count) 0))
+      (process-spawn-function process sound-manager-proc)
+
+
+    ;;  (set! done-init? #t)
+      (none))
+
 (defun init-chickens ()
       (format #t "INITIALIZING CHICKENS~%")
       (format #t "ITS MORTIN TIME~%")
@@ -315,7 +364,8 @@
       (set-flock-points)
       (set-flock-false);; Set all flock values to #f before chickens are in it
       (chicken-pls) ;; spawn the chickens offscreen
-      (dotimes (i 16)(set! (-> *game-counts* data i money-count) 0)(set! (-> *game-counts* data i buzzer-count) 0))
+      ;; (dotimes (i 16)(set! (-> *game-counts* data i money-count) 0)(set! (-> *game-counts* data i buzzer-count) 0))
+      ;; (process-spawn-function process sound-manager-proc)
       (set! done-init? #t)
       (none))
 
@@ -330,7 +380,8 @@
 
 (defun-extern robo-movie-check (none))
     (defun runs-every-frame ()
-  
+
+    
     (when #t
 
     (main-music-volume (the int (-> *setting-control* default music-volume)))
@@ -348,12 +399,14 @@
     (robo-movie-check)
     )
     (update-mort-vars)
+   ;; (sound-manager)
     (when (run-mort-code?)
-      (adjust-chick-origin (find-best-master-mark))
-      ;;If are flock points aren't setup, lets set them up.
-      (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+        (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
         (init-chickens)
       )
+      (adjust-chick-origin (find-best-master-mark))
+      ;;If are flock points aren't setup, lets set them up.
+
     ;;   ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
 
     ;;   ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
@@ -473,13 +526,11 @@
     )
 
 (none))
-    (defun runs-on-jak-spawn ()
-      ;; Code here runs every time jak spawns (loading a file new game or death)   
-    
-  
+
+(defun music-manager ()
         (case (-> (level-get-target-inside *level*) name)
          (('mort-title)
-          (play-main-music "SND/music-brave-chicken.mp3" (the int (-> *setting-control* default music-volume)))
+          (play-main-music "SND/jak-chicken-theme.mp3" (the int (-> *setting-control* default music-volume)))
           )
          (('block-world)
          (if (= (rand-vu-int-range 0 1)0)
@@ -535,6 +586,11 @@
           (stop-main-music)
           )
          )
+(none))
+
+    (defun runs-on-jak-spawn ()
+      ;; Code here runs every time jak spawns (loading a file new game or death)   
+      (process-spawn-function process music-manager-proc)
       (none)
       )
 
