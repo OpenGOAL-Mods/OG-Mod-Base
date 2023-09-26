@@ -159,19 +159,15 @@ void send_position_update(bool includeState) {
         {"onZoomer", gTeamrunInfo->on_zoomer},
         {"justSpawned", gTeamrunInfo->just_spawned},
         {"cellCount", gTeamrunInfo->cell_count},
-        {"deathCount", gTeamrunInfo->death_count},
-        {"sharedTasks", {
-             {"jungle-lurkerm", Ptr<String>(gTeamrunInfo->jungle_lurkerm).c()->data()},
-             {"village1-yakow", Ptr<String>(gTeamrunInfo->village1_yakow).c()->data()},
-             {"misty-muse", Ptr<String>(gTeamrunInfo->misty_muse).c()->data()},
-             {"rolling-race", Ptr<String>(gTeamrunInfo->rolling_race).c()->data()},
-             {"rolling-moles", Ptr<String>(gTeamrunInfo->rolling_moles).c()->data()},
-             {"village2-levitator", Ptr<String>(gTeamrunInfo->village2_levitator).c()->data()},
-             {"village3-button", Ptr<String>(gTeamrunInfo->village3_button).c()->data()},
-             {"lavatube-balls", Ptr<String>(gTeamrunInfo->lavatube_balls).c()->data()},
-             {"village4-button", Ptr<String>(gTeamrunInfo->village4_button).c()->data()},
-             {"plunger-lurker-hit", Ptr<String>(gTeamrunInfo->plunger_lurker).c()->data()},
-         }}};
+        {"deathCount", gTeamrunInfo->death_count}
+    };
+  }
+
+  if (gTeamrunInfo->has_task_update) {
+    json_payload["task"] = {
+      {"taskName", Ptr<String>(gTeamrunInfo->task_name).c()->data()},
+      {"taskStatus", Ptr<String>(gTeamrunInfo->task_status).c()->data()}
+    };
   }
 
   try {

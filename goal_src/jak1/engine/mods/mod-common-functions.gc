@@ -21,6 +21,7 @@
 
 ;; teamrun
 (define *teamrun-info* (the-as teamrun-player-info #f))
+(define *task-update-buffer* (new 'global 'boxed-array task-info MAX_TASK_BUFFER_COUNT))
 
 (define *state-update?* #f)
 (define *allow-cell-pickup?* #t)
@@ -96,14 +97,17 @@
     (set! (-> *self-player-info* color)  (tgt-color normal))
     (set! (-> *self-player-info* mp_state)  (mp-tgt-state mp-tgt-connected))
     (set! (-> *multiplayer-info* player_num) 0)
+
+    (dotimes (idx (-> *task-update-buffer* length))
+      (set! (-> *task-update-buffer* idx) (new 'global 'task-info))
+      )
+
     (pc-connect-mp-info *multiplayer-info* *self-player-info* *teamrun-info*)
     )
   (none)
 )
 
 (defun update-self-multiplayer-info ()
-  (set! (-> *self-player-info* username)   (-> *self-player-info* username))
-  (set! (-> *self-player-info* color)      (-> *self-player-info* color))
   (set! (-> *self-player-info* trans_x)    (-> *target* root trans x))
   (set! (-> *self-player-info* trans_y)    (-> *target* root trans y))
   (set! (-> *self-player-info* trans_z)    (-> *target* root trans z))

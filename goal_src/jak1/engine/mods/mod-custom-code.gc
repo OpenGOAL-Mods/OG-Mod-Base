@@ -30,17 +30,6 @@
       (set! (-> *teamrun-info* cell_count) (the int32 (-> *game-info* fuel)))
       (set! (-> *teamrun-info* death_count) (the int32 (-> *game-info* total-deaths)))
 
-      (set! (-> *teamrun-info* jungle_lurkerm) (enum->string task-status (get-task-status (game-task jungle-lurkerm))))
-      (set! (-> *teamrun-info* village1_yakow) (enum->string task-status (get-task-status (game-task village1-yakow))))
-      (set! (-> *teamrun-info* misty_muse) (enum->string task-status (get-task-status (game-task misty-muse))))
-      (set! (-> *teamrun-info* rolling_race) (enum->string task-status (get-task-status (game-task rolling-race))))
-      (set! (-> *teamrun-info* rolling_moles) (enum->string task-status (get-task-status (game-task rolling-moles))))
-      (set! (-> *teamrun-info* village2_levitator) (enum->string task-status (get-task-status (game-task village2-levitator))))
-      (set! (-> *teamrun-info* village3_button) (enum->string task-status (get-task-status (game-task village3-button))))
-      (set! (-> *teamrun-info* lavatube_balls) (enum->string task-status (get-task-status (game-task lavatube-balls))))
-      (set! (-> *teamrun-info* village4_button) (enum->string task-status (get-task-status (game-task village4-button))))
-      (set! (-> *teamrun-info* plunger_lurker_hit) (enum->string task-status (get-task-status (game-task plunger-lurker-hit))))
-
       (set! *state-update?* #t)
     (none)
     )
@@ -88,24 +77,11 @@
         (update-state)
     )
 
-    (defun runs-on-shared-task-update ((task game-task))
-        (update-state)
-      (none)
-    )
-
-    (defun runs-on-task-complete ((task game-task))
-        (update-state)
-      (none)
-    )
-
     (defun runs-on-debug-toggle ()
       (update-state)
     )
 
     (defun runs-on-warp-gate-open ((task game-task))
-      (if (or (= (get-task-status task) (task-status invalid)) (= (get-task-status task) (task-status need-reminder-a)))
-        (update-state)
-      )
       (none)
     )
 
@@ -116,6 +92,36 @@
       )
       (none)
     ) 
+
+    (defun add-task-to-buffer ((arg0 game-task) (arg1 task-status))
+      (dotimes (idx (-> *task-update-buffer* length))
+        (when (= (-> *task-update-buffer* idx status) (task-status invalid))
+          (set! (-> *task-update-buffer* idx task) arg0)
+          (set! (-> *task-update-buffer* idx status) arg1)
+          (return #t)
+          )
+        )
+      (none)
+    )
+
+    (defun check-set-teamrun-task-from-buffer ()
+      (dotimes (idx (-> *task-update-buffer* length))
+        (when (!= (-> *task-update-buffer* idx status) (task-status invalid))
+
+          (when (string= (enum->string game-task (-> *task-update-buffer* idx status)) "*unknown*")
+            (set! (-> *task-update-buffer* idx status) (task-status invalid))
+            (return #t)
+            )
+
+          (set! (-> *teamrun-info* task_name) (enum->string game-task (-> *task-update-buffer* idx task)))
+          (set! (-> *teamrun-info* task_status) (enum->string task-status (-> *task-update-buffer* idx status)))
+          (set! (-> *teamrun-info* has_task_update?) 1)
+
+          (set! (-> *task-update-buffer* idx status) (task-status invalid))
+          (return #t)
+          )
+        )
+    )
 
 
     (defun manual-position-update ((num int) (transX float) (transY float) (transZ float) (quatY float) (quatZ float) (quatW float) (state string))
@@ -138,6 +144,8 @@
 
       (when (and *target* (>= (-> *multiplayer-info* player_num) 0) (!= (-> *self-player-info* mp_state) (mp-tgt-state mp-tgt-disconnected)))
 
+        (check-set-teamrun-task-from-buffer)
+
         ;; on player movement
         (when (or (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
         (!= (-> *self-player-info* trans_y) (-> *target* root trans y))
@@ -154,10 +162,16 @@
             (pc-update-position 0)
             )
 
+            ;; clean state
             (when (= *state-update?* #t)
               (set! *state-update?* #f)
               (set! (-> *teamrun-info* just_spawned?) 0)
             )
+
+            ;; clean task
+            (when (= (-> *teamrun-info* has_task_update?) 1)
+              (set! (-> *teamrun-info* has_task_update?) 0)
+              )
 
             (if (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
               (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-connected))

@@ -383,6 +383,7 @@
 (define-extern pc-discord-rpc-set (function int none))
 
 (defconstant MAX_MULTIPLAYER_COUNT 20)
+(defconstant MAX_TASK_BUFFER_COUNT 6)
 
 (declare-type teamrun-player-info structure)
 (declare-type remote-player-info structure)

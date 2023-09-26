@@ -68,17 +68,10 @@ struct TeamrunPlayerInfo {
   int cell_count;
   int death_count;
 
-  //tasks
-  u32 jungle_lurkerm;      // string (basic)
-  u32 village1_yakow;      // string (basic)
-  u32 misty_muse;          // string (basic)
-  u32 rolling_race;        // string (basic)
-  u32 rolling_moles;       // string (basic)
-  u32 village2_levitator;  // string (basic)
-  u32 village3_button;     // string (basic)
-  u32 lavatube_balls;      // string (basic)
-  u32 village4_button;     // string (basic)
-  u32 plunger_lurker;      // string (basic)
+  //task updates
+  s32 has_task_update;
+  u32 task_name;          // string (basic)
+  u32 task_status;        // string (basic)
 };
 
 const int MAX_MULTIPLAYER_COUNT = 20;
