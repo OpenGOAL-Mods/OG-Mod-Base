@@ -21,17 +21,22 @@
     ;; Begin function defintions.
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define spawned-turret-hideout? #f)
+(define spawned-turrets-port? #f)
+(define spawned-turrets-pal? #f)
+(define spawned-turret-vin? #f)
+(define spawned-turret-market? #f)
+;;this chunk is temporary
+;;(define tvector-hideout (new 'static 'vector :x (meters -98.2844) :y (meters 7.9) :z (meters 1381.2529) :w 1.0))
+;;(define tvector-port1 (new 'static 'vector :x (meters -98.2844) :y (meters 7.9) :z (meters 1381.2529) :w 1.0))
+;;(define tvector-port2 (new 'static 'vector :x (meters -13.494) :y (meters 7.9) :z (meters 1324.7672) :w 1.0))
+;;(define tvector-palace1 (new 'static 'vector :x (meters 191.8888) :y (meters 7.9) :z (meters 888.5129) :w 1.0))
+;;(define tvector-palace2 (new 'static 'vector :x (meters -13.494) :y (meters 7.9) :z (meters 1324.7672) :w 1.0))
+;;(define tevctor-market (new 'static 'vector :x (meters -319.4657) :y (meters 7.9) :z (meters 704.0290) :w 1.0))
+;;(define tvector-vin (new 'static 'vector :x (meters 778.7822) :y (meters 7.9) :z (meters 1100.5985) :w 1.0))
+
     (defun runs-every-frame ()
-      ;; (increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
-
-      ;; Sample code to turn jak pink whenever he's doing the jetboard hover glitch
-      ;; (when *target* 
-      ;;   (if (board-hovering?)
-      ;;     (draw-pink *target*)
-      ;;     (draw-normal *target*)
-      ;;     )
-      ;;   )
-
+    
       (if *show-input-display* 
         (input-display-on)
         (input-display-off)
