@@ -107,6 +107,12 @@
   (none)
 )
 
+(defun mark-repl-connected ()
+    (send-event *target* 'loading)
+    (set! (-> *self-player-info* color)  (tgt-color normal))
+    (pc-acknowledge-repl-connection)
+  )
+
 (defun update-self-multiplayer-info ()
   (set! (-> *self-player-info* trans_x)    (-> *target* root trans x))
   (set! (-> *self-player-info* trans_y)    (-> *target* root trans y))

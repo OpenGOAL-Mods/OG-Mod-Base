@@ -390,6 +390,7 @@
 (declare-type multiplayer-info structure)
 (define-extern pc-connect-mp-info (function multiplayer-info remote-player-info teamrun-player-info none))  ;; links player position objects
 (define-extern pc-update-position (function int none))  ;; sends player's position over socket
+(define-extern pc-acknowledge-repl-connection (function none))  ;; marks the repl as connected to socket client
 
 (define-extern play-rand-sound (function string int none))
 (define-extern pc-filepath-exists? (function string symbol))

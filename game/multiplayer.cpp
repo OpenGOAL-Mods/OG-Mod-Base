@@ -19,6 +19,7 @@ server ogSocket;
 websocketpp::connection_hdl connection;
 bool isConnectedOverSocket = false;
 bool isConnectedToGame = false;
+bool sendReplConnectedUpdate = false;
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 
@@ -181,9 +182,22 @@ void send_position_update(bool includeState) {
     };
   }
 
+  if (sendReplConnectedUpdate) {
+    json_payload["connected"] = true;
+    sendReplConnectedUpdate = false;
+  }
+
   try {
     ogSocket.send(connection, json_payload.dump(), websocketpp::frame::opcode::text);
   } catch (websocketpp::exception const& e) {
     lg::warn("position update failed");
   }
+}
+
+
+void send_repl_connection_acknowledgement() {
+  sendReplConnectedUpdate = true;
+
+  if (isConnectedOverSocket)
+    send_position_update(false);
 }

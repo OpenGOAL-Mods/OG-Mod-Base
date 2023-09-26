@@ -13,5 +13,6 @@ typedef websocketpp::server<websocketpp::config::asio> server;
 void start_socket();
 void connect_mp_info(u64 mpInfo, u64 selfPlayerInfo, u64 teamrunInfo);
 void send_position_update(bool includeState);
+void send_repl_connection_acknowledgement();
 
 //extern char username[101];
