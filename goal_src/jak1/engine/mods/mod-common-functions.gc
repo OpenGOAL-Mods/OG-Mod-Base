@@ -94,7 +94,7 @@
     (set! *teamrun-info* (new 'global 'teamrun-player-info))
     (set! *self-player-info* (new 'global 'remote-player-info))
     (set! (-> *self-player-info* username) "local_player") 
-    (set! (-> *self-player-info* color)  (tgt-color normal))
+    (set! (-> *self-player-info* color)  (tgt-color red))
     (set! (-> *self-player-info* mp_state)  (mp-tgt-state mp-tgt-connected))
     (set! (-> *multiplayer-info* player_num) 0)
 
