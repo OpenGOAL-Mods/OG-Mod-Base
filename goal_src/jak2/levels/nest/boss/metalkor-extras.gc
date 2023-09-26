@@ -2008,6 +2008,7 @@ This commonly includes things such as:
         (add-process *gui-control* obj (gui-channel hud-middle-right) (gui-action hidden) (-> obj name) 81920.0 0)
         )
   (set! (-> obj values 0 target) 1)
+  (set! (-> *target* fact health) 1.0)
   (set! (-> obj values 1 target) 100)
   (logior! (-> obj flags) (hud-flags show))
   (set! (-> obj sprites 0 tex) (lookup-texture-by-id (new 'static 'texture-id :index #x3b :page #x67a)))

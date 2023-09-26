@@ -720,13 +720,13 @@
     (set-aim-at-default! self)
     (until #f
       (current-time)
-      (until (>= (- (current-time) (-> self last-hit-time)) (seconds 2))
+      (until (>= (- (current-time) (-> self last-hit-time)) (seconds 0.25))                       ;;;;;;;;;;;;;;;
         (suspend)
         )
       (update-collision! self)
       (sound-play "sew-gun-lock")
       (let ((frame-counter (current-time)))
-        (until (>= (- (current-time) frame-counter) (seconds 0.75))
+        (until (>= (- (current-time) frame-counter) (seconds 0.25))
           (aim-turret! self #t)
           (suspend)
           )
@@ -741,7 +741,7 @@
             (cond
               ((not (-> self can-shoot))
                )
-              ((>= (- (current-time) (the-as time-frame frames)) (seconds 0.05))
+              ((>= (- (current-time) (the-as time-frame frames)) (seconds 0.01))                   ;;;;;;;;;;
                (fire-turret! self fire-sound?)
                (set! frames (the-as int (current-time)))
                (set! fire-sound? (not fire-sound?))
