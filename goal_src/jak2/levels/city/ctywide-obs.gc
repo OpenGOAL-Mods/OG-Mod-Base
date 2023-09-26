@@ -1990,7 +1990,7 @@ This commonly includes things such as:
                             )
                           (quaternion-axis-angle! (-> obj jm-turret quat) 0.0 1.0 0.0 (-> obj angle-turret))
                           (when (= (+ (fabs (- (-> obj angle-turret) (-> s4-1 y))) (fabs (- (-> obj angle-guns) (-> s4-1 x)))) 0.0)
-                            (set! (-> obj next-time-shot) (+ (current-time) (seconds 1)))
+                            (set! (-> obj next-time-shot) (+ (current-time) (seconds 0.078)))
                             (set! (-> obj num-shots) (the-as uint 0))
                             0
                             )
