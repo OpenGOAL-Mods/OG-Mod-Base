@@ -165,8 +165,8 @@ void send_position_update(bool includeState) {
 
   if (gTeamrunInfo->has_task_update) {
     json_payload["task"] = {
-      {"taskName", Ptr<String>(gTeamrunInfo->task_name).c()->data()},
-      {"taskStatus", Ptr<String>(gTeamrunInfo->task_status).c()->data()}
+      {"name", Ptr<String>(gTeamrunInfo->task_name).c()->data()},
+      {"status", Ptr<String>(gTeamrunInfo->task_status).c()->data()}
     };
   }
 
