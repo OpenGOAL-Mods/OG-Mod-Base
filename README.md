@@ -1,5 +1,5 @@
 # HeroModePlus
-All elements in Jak 2 are amplified and the game throws everything it has at you. Adds weapon mods to the secrets menu
+All elements in Jak 2 are amplified and the game throws everything it has at you. Adds weapon mods to the secrets menu (not finished)
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 Weapon mods
