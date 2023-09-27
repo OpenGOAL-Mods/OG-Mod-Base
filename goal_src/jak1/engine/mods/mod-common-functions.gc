@@ -110,6 +110,7 @@
 (defun mark-repl-connected ()
     (send-event *target* 'loading)
     (set! (-> *self-player-info* color)  (tgt-color normal))
+    (set! (-> *pc-settings* ps2-actor-vis?) #f)
     (pc-acknowledge-repl-connection)
   )
 
