@@ -30,7 +30,8 @@
       (set! (-> *teamrun-info* cell_count) (the int32 (-> *game-info* fuel)))
       (set! (-> *teamrun-info* death_count) (the int32 (-> *game-info* total-deaths)))
 
-      (set! *state-update?* #t)
+      (set! (-> *teamrun-info* has_state_update?) 1)
+      (set! *has-none-position-update?* #t)
     (none)
     )
 
@@ -116,6 +117,7 @@
           (set! (-> *teamrun-info* task_name) (enum->string game-task (-> *task-update-buffer* idx task)))
           (set! (-> *teamrun-info* task_status) (enum->string task-status (-> *task-update-buffer* idx status)))
           (set! (-> *teamrun-info* has_task_update?) 1)
+          (set! *has-none-position-update?* #t)
 
           (set! (-> *task-update-buffer* idx status) (task-status invalid))
           (return #t)
@@ -150,28 +152,28 @@
         (when (or (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
         (!= (-> *self-player-info* trans_y) (-> *target* root trans y))
         (!= (-> *self-player-info* trans_z) (-> *target* root trans z))
-        (= *state-update?* #t))
+        (= *has-none-position-update?* #t))
 
             ;; update this player's position
             (update-self-multiplayer-info)
             ;; (update-debug-self-multiplayer-info)
             
             ;; send updated player info to client
-            (if (= *state-update?* #t)
-            (pc-update-position 1)
-            (pc-update-position 0)
-            )
+            (pc-update-position)
 
-            ;; clean state
-            (when (= *state-update?* #t)
-              (set! *state-update?* #f)
+
+            ;; clean none position updates
+            (when (= *has-none-position-update?* #t)
+              (set! *has-none-position-update?* #f)
+              
+              (set! (-> *teamrun-info* has_state_update?) 0)
               (set! (-> *teamrun-info* just_spawned?) 0)
-            )
-
-            ;; clean task
-            (when (= (-> *teamrun-info* has_task_update?) 1)
+              
               (set! (-> *teamrun-info* has_task_update?) 0)
+              (set! (-> *teamrun-info* has_buzzer_update?) 0)
+              (set! (-> *teamrun-info* has_money_update?) 0)
               )
+
 
             (if (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
               (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-connected))
@@ -189,7 +191,12 @@
       (none)
       )
 
-    (defun runs-on-orb-pickup ((parent process-tree))
+    (defun runs-on-orb-pickup ((parent process-tree) (money-ename string) (level-name string))
+      (set! (-> *teamrun-info* money_ename) money-ename)
+      (set! (-> *teamrun-info* collectable_level_name) level-name)
+      (set! (-> *teamrun-info* has_money_update?) 1)
+      (set! *has-none-position-update?* #t)
+
       (let* ((from-cache? (and parent (type-type? (-> parent type) orb-cache-top))))
         ;; Code here runs on ANY orb pickup
 
@@ -207,9 +214,13 @@
       (none)
       )
 
-    (defun runs-on-fly-pickup ()
+    (defun runs-on-fly-pickup ((buzzer-id int32) (parent-ename string) (level-name string))
       ;; Code here runs on any scout fly pickup
-
+      (set! (-> *teamrun-info* buzzer_id) buzzer-id)
+      (set! (-> *teamrun-info* buzzer_container_ename) parent-ename)
+      (set! (-> *teamrun-info* collectable_level_name) level-name)
+      (set! (-> *teamrun-info* has_buzzer_update?) 1)
+      (set! *has-none-position-update?* #t)
       (none)
       )
 

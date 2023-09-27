@@ -6,8 +6,8 @@
 ;; dgos: GAME, ENGINE
 
 
-(define-extern runs-on-orb-pickup (function process-tree none))
-(define-extern runs-on-fly-pickup (function none))
+(define-extern runs-on-orb-pickup (function process-tree string string none))
+(define-extern runs-on-fly-pickup (function int32 string string none))
 (define-extern check-allow-cell-pickup? (function symbol))
 (define-extern runs-on-cell-pickup (function symbol none))
 (define-extern runs-on-eco-pickup (function pickup-type process-tree none))
@@ -1198,7 +1198,13 @@
     (logclear! (-> self mask) (process-mask actor-pause))
     (clear-collide-with-as (-> self root-override))
     (process-entity-status! self (entity-perm-status dead) #t)
-    (runs-on-orb-pickup (ppointer->process (-> self parent)))  ;; trigger hook for mod base
+
+    (runs-on-orb-pickup 
+      (ppointer->process (-> self parent))
+      (the-as string (-> self name))
+      (symbol->string (-> *level* level (-> self draw level-index) name))
+      )  ;; trigger hook for mod base
+
     (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* money))))
 
     (none)
@@ -2190,7 +2196,13 @@
     (logclear! (-> self mask) (process-mask actor-pause))
     (process-entity-status! self (entity-perm-status complete) #t)
     (sound-play "buzzer-pickup")
-    (runs-on-fly-pickup)
+
+    (runs-on-fly-pickup 
+      (the int32 (-> self fact pickup-amount)) 
+      (the-as string (-> (ppointer->process (-> self parent)) name))
+      (symbol->string (-> *level* level (-> self draw level-index) name))
+      )
+
     (case (-> (level-get-target-inside *level*) name)
       (('training)
        (level-hint-spawn (text-id training-buzzer-hint) "asstvb44" (the-as entity #f) *entity-pool* (game-task none))

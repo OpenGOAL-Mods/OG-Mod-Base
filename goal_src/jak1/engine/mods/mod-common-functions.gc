@@ -23,7 +23,7 @@
 (define *teamrun-info* (the-as teamrun-player-info #f))
 (define *task-update-buffer* (new 'global 'boxed-array task-info MAX_TASK_BUFFER_COUNT))
 
-(define *state-update?* #f)
+(define *has-none-position-update?* #f)
 (define *allow-cell-pickup?* #t)
 (define *allow-zoomer-use?* #t)
 (define *allow-final-boss?* #t)

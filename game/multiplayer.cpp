@@ -35,7 +35,7 @@ void on_open(websocketpp::connection_hdl hdl) {
   lg::warn("Client connected");
 
   if (sendReplConnectedUpdate)
-    send_position_update(false);
+    send_position_update();
 }
 
 void on_close(websocketpp::connection_hdl) {
@@ -117,7 +117,7 @@ void start_socket() {
       // Start the server accept loop
       ogSocket.start_accept();
 
-      lg::info("Starting Teamrun socket on port: 9002");
+      lg::info("Starting Teamrun socket on port: 8111");
 
       // Start the ASIO io_service run loop
       ogSocket.run();
@@ -140,11 +140,11 @@ void connect_mp_info(u64 mpInfo, u64 selfPlayerInfo, u64 teamrunInfo) {
   isConnectedToGame = true;
 
   if (isConnectedOverSocket)
-    send_position_update(false);
+    send_position_update();
 }
 
 
-void send_position_update(bool includeState) {
+void send_position_update() {
   if (!isConnectedOverSocket || !isConnectedToGame)
     return;
 
@@ -163,7 +163,7 @@ void send_position_update(bool includeState) {
     }
   };
 
-  if (includeState) {
+  if (gTeamrunInfo->has_state_update || gTeamrunInfo->has_task_update) {
     json_payload["state"] = {
         {"debugModeActive", gTeamrunInfo->debug_mode_active},
         {"currentLevel", Ptr<String>(gTeamrunInfo->current_level).c()->data()},
@@ -179,6 +179,21 @@ void send_position_update(bool includeState) {
     json_payload["task"] = {
       {"name", Ptr<String>(gTeamrunInfo->task_name).c()->data()},
       {"status", Ptr<String>(gTeamrunInfo->task_status).c()->data()}
+    };
+  }
+
+  if (gTeamrunInfo->has_buzzer_update) {
+    json_payload["buzzer"] = {
+      {"id", gTeamrunInfo->buzzer_id},
+      {"ename", Ptr<String>(gTeamrunInfo->buzzer_container_ename).c()->data()},
+      {"level", Ptr<String>(gTeamrunInfo->collectable_level_name).c()->data()}
+    };
+  }
+
+  if (gTeamrunInfo->has_money_update) {
+    json_payload["money"] = {
+      {"ename", Ptr<String>(gTeamrunInfo->money_ename).c()->data()},
+      {"level", Ptr<String>(gTeamrunInfo->collectable_level_name).c()->data()}
     };
   }
 
@@ -199,5 +214,5 @@ void send_repl_connection_acknowledgement() {
   sendReplConnectedUpdate = true;
 
   if (isConnectedOverSocket)
-    send_position_update(false);
+    send_position_update();
 }

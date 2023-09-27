@@ -60,6 +60,7 @@ struct RemotePlayerInfo {
 };
 
 struct TeamrunPlayerInfo {
+  s32 has_state_update;
   s32 debug_mode_active;
   u32 current_level;       // string (basic)
   u32 current_checkpoint;  // string (basic)
@@ -72,6 +73,18 @@ struct TeamrunPlayerInfo {
   s32 has_task_update;
   u32 task_name;          // string (basic)
   u32 task_status;        // string (basic)
+
+  //buzzer updates
+  s32 has_buzzer_update;
+  int buzzer_id;
+  u32 buzzer_container_ename;          // string (basic)
+
+  //money updates
+  s32 has_money_update;
+  u32 money_ename;          // string (basic)
+
+  //shared update data
+  u32 collectable_level_name;          // string (basic)
 };
 
 const int MAX_MULTIPLAYER_COUNT = 20;

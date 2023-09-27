@@ -94,7 +94,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 
 (deftype teamrun-player-info (structure)
- ((debug_mode_active?    int32)
+ (
+  ;; state updates
+  (has_state_update?    int32)
+  (debug_mode_active?    int32)
   (current_level   string)
   (current_checkpoint      string)
   (on_zoomer?    int32)
@@ -102,10 +105,22 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (cell_count    int32)
   (death_count    int32)
 
-  ;; task update
+  ;; task updates
   (has_task_update?    int32)
   (task_name   string)
   (task_status   string)
+
+  ;; buzzer updates
+  (has_buzzer_update?    int32)
+  (buzzer_id    int32)
+  (buzzer_container_ename   string)
+
+  ;; money updates
+  (has_money_update?    int32)
+  (money_ename    string)
+
+  ;; shared update data
+  (collectable_level_name   string)
   )
   (:methods
     (new (symbol type) _type_ 0)
@@ -114,6 +129,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defmethod new teamrun-player-info ((allocation symbol) (type-to-make type))
   (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+  ;; state update
+    (set! (-> obj has_state_update?) 0)
     (set! (-> obj debug_mode_active?) 0)
     (set! (-> obj current_level) (new 'global 'string 32 (new 'global 'string 32 "")))
     (set! (-> obj current_checkpoint) (new 'global 'string 32 (new 'global 'string 32 "")))
@@ -126,6 +143,18 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> obj has_task_update?) 0)
     (set! (-> obj task_name) (new 'global 'string 32 (new 'global 'string 32 "")))
     (set! (-> obj task_status) (new 'global 'string 32 (new 'global 'string 32 "unknown")))
+
+  ;; buzzer update
+    (set! (-> obj has_buzzer_update?) 0)
+    (set! (-> obj buzzer_id) 0)
+    (set! (-> obj buzzer_container_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
+
+  ;; money update
+    (set! (-> obj has_money_update?) 0)
+    (set! (-> obj money_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
+
+  ;; shared update data
+    (set! (-> obj collectable_level_name) (new 'global 'string 32 (new 'global 'string 32 "none")))
     obj
     )
   )
