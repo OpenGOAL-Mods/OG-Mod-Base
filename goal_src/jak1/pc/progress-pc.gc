@@ -2921,7 +2921,7 @@
 (set! (-> progress-going-out enter)
   (lambda :behavior progress ()
     (sound-play "menu-close")
-   ;; (pause-play-main-music)
+   ;; (pause-main-music)
     (hide-progress-icons)
     (remove-setting! 'music)
     (apply-settings *setting-control*)

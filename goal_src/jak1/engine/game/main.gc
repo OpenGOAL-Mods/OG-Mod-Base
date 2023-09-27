@@ -586,7 +586,7 @@
 
     (while *run*
    
-      (runs-every-frame) ;; trigger hook for mod base
+     ;; (runs-every-frame) ;; trigger hook for mod base
       
       ;; start immediately after all process updates finish.
       (profiler-instant-event "display-loop-top")

@@ -2219,7 +2219,7 @@
     (add-setting! 'process-mask 'set 0.0 (process-mask progress))
     (apply-settings *setting-control*)
     (sound-play "select-menu")
-     ;; (pause-play-main-music)
+     ;; (pause-main-music)
     (set-blackout-frames 0)
     (set! *pause-lock* #f)
     (none)

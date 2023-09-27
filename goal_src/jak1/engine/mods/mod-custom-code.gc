@@ -201,25 +201,31 @@
            *close-to-portal?*   
            (> (-> current-custom-info current-chicks) 0)
            )
-    
+           
+
+
+
     ;;Remove a chick that is following, and incrment saved chick for the level. This should be moved to when the chicken uses portal imo  
     (set! (-> current-custom-info current-chicks) (- (-> current-custom-info current-chicks) 1))
-    (set! (-> current-custom-info saved-chicks) (+ (-> current-custom-info saved-chicks) 1))
+
 
     (vector-copy! 
       ;;We add 1 here, because we removed it above. Will need to adjust when it goes down on warp
       (->  (get-chick-from-flock (the int (-> current-custom-info current-chicks))) target-pos)
       warpgate-pos
     )
-    (set! (-> (get-chick-from-flock (the int (-> current-custom-info current-chicks))) to-point-speed) 1.0)
+    (set! (-> (get-chick-from-flock (the int (-> current-custom-info current-chicks))) to-point-speed) 3.0)
+   
+    (let ((current-timea (current-time)))
+           (until (time-elapsed? current-timea (seconds 0.35))
+           ;;(format #t "~S~%" "NOT ELAPSED")
+        (suspend)
+      )
+    )
 
-  (if (= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks))
-    (begin
-      (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
-      (+! *number-unlock-lvl* 1)
-      (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
-      (reset-actors #t) ;;HACK for some reason, the warp gate doesnt let us use it after coming out of it but reseting actor fixes this.
-    ))))
+  ))
+
+  
   (none)
 )
 
@@ -280,6 +286,10 @@
 
 
 (dotimes (i NUM_FLOCKPOINTS) 
+  (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
+         (current-custom-info (-> *custom-level-info* data current-level-idx))
+         (warpgate-pos (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans))
+         )
 ;;If they are close to the portal
     (when (and (!= (get-chick-from-flock i) #f) 
     (the-as training-part (process-by-ename "project-training-part-1") )
@@ -291,13 +301,25 @@
                                     (effect-control-method-10  (-> (get-chick-from-flock i) skel effect) 'death-warp-in -1.0 -1 )
                                     ;;set their target to 1,1,1
                                     (vector-identity! (-> (get-chick-from-flock i) target-pos))
+
+    (set! (-> current-custom-info saved-chicks) (+ (-> current-custom-info saved-chicks) 1))
+    
+                                    (if (= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks))
+    (begin
+      (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
+      (+! *number-unlock-lvl* 1)
+      (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
+      (reset-actors #t) ;;HACK for some reason, the warp gate doesnt let us use it after coming out of it but reseting actor fixes this.
+    ))
+
+
                                     )
     )
 
  ;; (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans)  )
 
 
-
+)
 
  
 (none)
@@ -334,13 +356,26 @@
 
 (none))
 
-(defbehavior sound-manager-proc process ()
+(defbehavior run-every-frame-proc process ()
 (while #t
-(sound-manager)
+(runs-every-frame)
 (suspend)
 )
 (none)
 )
+
+(defbehavior sound-manager-proc process ()
+"handles the sound, and if it needs to spawn the runs-every-frame process it does that too"
+(while #t
+(sound-manager)
+(if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+  (init-chickens)
+)
+(suspend)
+)
+(none)
+)
+
 (defun-extern music-manager (none) )
 (defbehavior music-manager-proc process ()
 (music-manager)
@@ -348,16 +383,18 @@
 )
 
 
+
 (defun init-title ()
+(when (not done-init?)
       (format #t "INITIALIZING TITLE PROC~%")
       (dotimes (i 16)(set! (-> *game-counts* data i money-count) 0)(set! (-> *game-counts* data i buzzer-count) 0))
       (process-spawn-function process sound-manager-proc)
-
-
-    ;;  (set! done-init? #t)
+      (set! done-init? #t)
+)
       (none))
 
 (defun init-chickens ()
+      (process-spawn-function process run-every-frame-proc)
       (format #t "INITIALIZING CHICKENS~%")
       (format #t "ITS MORTIN TIME~%")
       (set-flock-points-start)
@@ -379,8 +416,9 @@
 
 
 (defun-extern robo-movie-check (none))
-    (defun runs-every-frame ()
 
+    (defun runs-every-frame ()
+      "this is ran in its own process called run-every-frame-proc"
     
     (when #t
 
@@ -401,9 +439,9 @@
     (update-mort-vars)
    ;; (sound-manager)
     (when (run-mort-code?)
-        (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
-        (init-chickens)
-      )
+      ;;   (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+      ;;   (init-chickens)
+      ;; )
       (adjust-chick-origin (find-best-master-mark))
       ;;If are flock points aren't setup, lets set them up.
 
@@ -590,6 +628,7 @@
 
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
+      (init-title)
       (process-spawn-function process music-manager-proc)
       (none)
       )

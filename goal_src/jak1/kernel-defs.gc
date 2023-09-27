@@ -384,8 +384,9 @@
 
 ;;main music start
 (define-extern play-main-music (function string int none))
-(define-extern pause-play-main-music (function none))
+(define-extern pause-main-music (function none))
 (define-extern stop-main-music (function none))
+(define-extern resume-main-music (function none))
 (define-extern main-music-volume (function int none))
 ;;main music end
 
