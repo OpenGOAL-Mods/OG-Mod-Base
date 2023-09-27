@@ -363,6 +363,55 @@
 )
 (none)
 )
+(defun-extern chicken-every-frame none)
+(defbehavior chicken-every-frame-proc process ()
+"Process is responsible for most chicken related functions"
+(while #t
+(chicken-every-frame)
+(suspend)
+)
+(none)
+)
+
+(defun-extern variable-every-frame none)
+(defbehavior variable-every-frame-proc process ()
+"Process is responsible for updating most variables/globals this process should never be suspended"
+(while #t
+(variable-every-frame)
+(suspend)
+)
+(none)
+)
+
+(defun-extern text-every-frame none)
+(defbehavior text-every-frame-proc process ()
+"Process is responsible for drawing text this process should never be suspended"
+(while #t
+(text-every-frame)
+(suspend)
+)
+(none)
+)
+
+(defun-extern debug-text-every-frame none)
+(defbehavior debug-text-every-frame-proc process ()
+"Process is responsible for drawing debug text this process should never be suspended"
+(while #t
+(debug-text-every-frame)
+(suspend)
+)
+(none)
+)
+
+(defun-extern stupid-hacks-every-frame none)
+(defbehavior stupid-hacks-every-frame-proc process ()
+"Ideally this process does nothing, but unfortunately it does alot"
+(while #t
+(stupid-hacks-every-frame)
+(suspend)
+)
+(none)
+)
 
 (defbehavior sound-manager-proc process ()
 "handles the sound, and if it needs to spawn the runs-every-frame process it does that too"
@@ -395,6 +444,11 @@
 
 (defun init-chickens ()
       (process-spawn-function process run-every-frame-proc)
+      (process-spawn-function process chicken-every-frame-proc)
+      (process-spawn-function process variable-every-frame-proc)
+      (process-spawn-function process text-every-frame-proc)
+      (process-spawn-function process debug-text-every-frame-proc)
+      (process-spawn-function process stupid-hacks-every-frame-proc)
       (format #t "INITIALIZING CHICKENS~%")
       (format #t "ITS MORTIN TIME~%")
       (set-flock-points-start)
@@ -418,58 +472,17 @@
 (defun-extern robo-movie-check (none))
 
     (defun runs-every-frame ()
-      "this is ran in its own process called run-every-frame-proc"
+    "this is ran in its own process called run-every-frame-proc"
     
     (when #t
 
-    (main-music-volume (the int (-> *setting-control* default music-volume)))
-    ;; Its so funny that this works lol
-    (if (zero-volume?)
-      (main-music-volume 0)
-    )
-      (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1)) 
-            (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
-      (+! *number-unlock-lvl* 1)
-      (reset-actors #t)
-      )
-
-    (when (and (process-by-ename "robotboss-3") *target*)
-    (robo-movie-check)
-    )
-    (update-mort-vars)
    ;; (sound-manager)
     (when (run-mort-code?)
       ;;   (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
       ;;   (init-chickens)
       ;; )
-      (adjust-chick-origin (find-best-master-mark))
-      ;;If are flock points aren't setup, lets set them up.
+    (none)
 
-    ;;   ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
-
-    ;;   ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
-    ;;   ;;If a chicken should despawn, set its target pos to 0,0,0.
-      (assign-remove-demon-chicken-target)
-
-    ;;Constantly check all chicks to see if they are in the warpgate if they are, then run chick-saved and increment saved per level
-     (warp-demon-chick)
-     (save-chicks-func)
-     (draw-beta-flock-points)
-     (mort-debug-text)
-
-  ;;This is a hack to rotate warp gate patricles
-  (if (!= (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))
-  )))
-       (set! (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))))
-     )
-  )
-
-     
-      (if *show-input-display* 
-        (input-display-on)
-        (input-display-off)
-        )
-    
    )
      ;; This should be done as the last thing
       (find-best-master-mark)
@@ -480,6 +493,80 @@
     
       (none)
     )
+
+(defun chicken-every-frame ()
+
+(when (run-mort-code?)
+ (adjust-chick-origin (find-best-master-mark))
+    ;;If are flock points aren't setup, lets set them up.
+
+    ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
+
+    ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
+    ;;If a chicken should despawn, set its target pos to 0,0,0.
+    (assign-remove-demon-chicken-target)
+    ;;Constantly check all chicks to see if they are in the warpgate if they are, then run chick-saved and increment saved per level
+    ;;THIS FUNCTION HAS A SLEEP/SUSPEND WHEN IT RUNS (have a chick, be near portal)
+    (warp-demon-chick)
+    (save-chicks-func)
+)
+(none))
+
+(defun variable-every-frame()
+ "Responsible for updating most globals - if this isnt running something is terribly wrong" 
+(update-mort-vars)
+;;If we input a button combo and we are in debug, unlock the next level
+      (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1) *cheat-mode*) 
+      (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
+      (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
+      (+! *number-unlock-lvl* 1)
+      (reset-actors #t)
+      )
+
+(none))
+
+(defun text-every-frame ()
+"This should be used to draw text, Near portal need X chicks etc"
+     
+      (if *show-input-display* 
+        (input-display-on)
+        (input-display-off)
+        )
+    
+(none))
+
+(defun debug-text-every-frame ()
+"This process ONLY spawns when debug mode is on and shows some extra info"
+"I have no idea why the close-to-portal check is needed but it works."
+    (when (and run-mort-code? (not *close-to-portal?*))
+     (draw-beta-flock-points)
+     (mort-debug-text)
+    )
+    
+(none))
+
+(defun stupid-hacks-every-frame ()
+(when run-mort-code?
+;;Hack the main menu music since we cant pause it yet
+(main-music-volume (the int (-> *setting-control* default music-volume)))
+    ;; Its so funny that this works lol
+    (if (zero-volume?)
+      (main-music-volume 0)
+    )
+
+;;Hack to warp/skip to the light eco cutscene if we are in citadel because I dont know how to make mort bosses yet
+(when (and (process-by-ename "robotboss-3") *target*)
+    (robo-movie-check)
+    )
+
+;;Hack to rotat the warpgate this one is extra weird 
+  (if (!= (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))
+  )))
+       (set! (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))))
+     )
+  ))
+(none)
+)
 
     (defun runs-on-orb-pickup ((parent process-tree))
       (let* ((from-cache? (and parent (type-type? (-> parent type) orb-cache-top))))
