@@ -13,6 +13,7 @@ using json = nlohmann::json;
 MultiplayerInfo* gMultiplayerInfo;
 RemotePlayerInfo* gSelfPlayerInfo;
 TeamrunPlayerInfo* gTeamrunInfo;
+TeamrunLevelInfo* gTeamrunLevelInfo;
 
 // Create a server endpoint
 server ogSocket;
@@ -132,10 +133,12 @@ void start_socket() {
   }).detach();
 }
 
-void connect_mp_info(u64 mpInfo, u64 selfPlayerInfo, u64 teamrunInfo) {
+void connect_mp_info(u64 mpInfo, u64 selfPlayerInfo, u64 teamrunInfo, u64 teamrunLevelInfo) {
   gMultiplayerInfo = Ptr<MultiplayerInfo>(mpInfo).c();
   gSelfPlayerInfo = Ptr<RemotePlayerInfo>(selfPlayerInfo).c();
   gTeamrunInfo = Ptr<TeamrunPlayerInfo>(teamrunInfo).c();
+  gTeamrunLevelInfo = Ptr<TeamrunLevelInfo>(teamrunLevelInfo).c();
+
   lg::info("Multiplayer ready");
   isConnectedToGame = true;
 
@@ -195,6 +198,19 @@ void send_position_update() {
       {"ename", Ptr<String>(gTeamrunInfo->money_ename).c()->data()},
       {"level", Ptr<String>(gTeamrunInfo->collectable_level_name).c()->data()}
     };
+  }
+
+  if (gTeamrunLevelInfo->has_level_update) {
+    json_payload["levels"] = json::array({
+      {
+      {"name", Ptr<String>(gTeamrunLevelInfo->level0_name).c()->data()},
+      {"status", Ptr<String>(gTeamrunLevelInfo->level0_status).c()->data()}
+      },
+      {
+      {"name", Ptr<String>(gTeamrunLevelInfo->level1_name).c()->data()},
+      {"status", Ptr<String>(gTeamrunLevelInfo->level1_status).c()->data()}
+      }
+    });
   }
 
   if (sendReplConnectedUpdate) {

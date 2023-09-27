@@ -94,6 +94,28 @@
       (none)
     ) 
 
+    (defun runs-on-level-status-update ()
+      ;; this could/should be improved to some more dynamic structure
+      ;; especially if we want to support multiplayer in jak 2 in the future as well
+
+      (when (and (!= *target* #f) (!= (-> (level-get-target-inside *level*) name) 'title))
+        (when (-> *level* level 0)
+          (set! (-> *teamrun-levels-info* level0_name) (symbol->string (-> *level* level 0 name)))
+          (set! (-> *teamrun-levels-info* level0_status) (symbol->string (-> *level* level 0 status)))
+          )
+
+        (when (-> *level* level 1)
+          (set! (-> *teamrun-levels-info* level1_name) (symbol->string (-> *level* level 1 name)))
+          (set! (-> *teamrun-levels-info* level1_status) (symbol->string (-> *level* level 1 status)))
+          )
+
+        
+        (set! (-> *teamrun-levels-info* has_level_update?) 1)
+        (set! *has-none-position-update?* #t)
+        )
+      (none)
+      )
+
     (defun add-task-to-buffer ((arg0 game-task) (arg1 task-status))
       (dotimes (idx (-> *task-update-buffer* length))
         (when (= (-> *task-update-buffer* idx status) (task-status invalid))
@@ -172,6 +194,8 @@
               (set! (-> *teamrun-info* has_task_update?) 0)
               (set! (-> *teamrun-info* has_buzzer_update?) 0)
               (set! (-> *teamrun-info* has_money_update?) 0)
+
+              (set! (-> *teamrun-levels-info* has_level_update?) 0)
               )
 
 

@@ -87,6 +87,16 @@ struct TeamrunPlayerInfo {
   u32 collectable_level_name;          // string (basic)
 };
 
+struct TeamrunLevelInfo {
+  s32 has_level_update;
+  
+  u32 level0_name;       // string (basic)
+  u32 level0_status;  // string (basic)
+
+  u32 level1_name;       // string (basic)
+  u32 level1_status;  // string (basic)
+};
+
 const int MAX_MULTIPLAYER_COUNT = 20;
 
 struct MultiplayerInfo {

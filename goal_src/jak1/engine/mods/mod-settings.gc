@@ -160,6 +160,34 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   )
 
 
+(deftype game-levels-info (structure)
+ ((has_level_update?    int32)
+ 
+  (level0_name   string)
+  (level0_status string)
+
+  (level1_name   string)
+  (level1_status string)
+  )
+  :pack-me
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+
+(defmethod new game-levels-info ((allocation symbol) (type-to-make type))
+  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+    (set! (-> obj has_level_update?) 0)
+    (set! (-> obj level0_name) (new 'global 'string 32 (new 'global 'string 32 "")))
+    (set! (-> obj level0_status) (new 'global 'string 32 (new 'global 'string 32 "")))
+
+    (set! (-> obj level1_name) (new 'global 'string 32 (new 'global 'string 32 "")))
+    (set! (-> obj level1_status) (new 'global 'string 32 (new 'global 'string 32 "")))
+    obj
+    )
+  )
+
+
 (deftype task-info (structure)
  ((task   game-task)
   (status task-status)

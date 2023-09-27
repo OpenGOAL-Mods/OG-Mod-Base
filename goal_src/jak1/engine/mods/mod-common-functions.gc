@@ -20,7 +20,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; teamrun
-(define *teamrun-info* (the-as teamrun-player-info #f))
+(define *teamrun-info* (new 'global 'teamrun-player-info))
+(define *teamrun-levels-info* (new 'global 'game-levels-info))
 (define *task-update-buffer* (new 'global 'boxed-array task-info MAX_TASK_BUFFER_COUNT))
 
 (define *has-none-position-update?* #f)
@@ -91,7 +92,6 @@
 
 (defun set-up-self-remote-if-null ()
   (when (not *self-player-info*)
-    (set! *teamrun-info* (new 'global 'teamrun-player-info))
     (set! *self-player-info* (new 'global 'remote-player-info))
     (set! (-> *self-player-info* username) "local_player") 
     (set! (-> *self-player-info* color)  (tgt-color red))
@@ -102,7 +102,7 @@
       (set! (-> *task-update-buffer* idx) (new 'global 'task-info))
       )
 
-    (pc-connect-mp-info *multiplayer-info* *self-player-info* *teamrun-info*)
+    (pc-connect-mp-info *multiplayer-info* *self-player-info* *teamrun-info* *teamrun-levels-info*)
     )
   (none)
 )

@@ -9,6 +9,8 @@
 ;; level info/names
 ;;;;;;;;;;;;;;;;;;;;;;
 
+(define-extern runs-on-level-status-update (function none))
+
 (defun lookup-level-info ((name symbol))
   "Get the level-load-info of a level using its name. name can be the level name, the visname or the nickname. First match is returned."
 
@@ -865,6 +867,7 @@
   (set! loading-level global)
   (set! (-> *level* loading-level) (-> *level* level-default))
   (set! (-> *level* log-in-level-bsp) #f)
+  (runs-on-level-status-update)
   ; 0
   ; (.mfc0 v1-154 Count)
   ; (- v1-154 initial-timer)
@@ -875,6 +878,7 @@
 (defmethod birth level ((obj level))
   "Birth a level to make it alive! It must be loaded."
 
+  (runs-on-level-status-update)
   (case (-> obj status)
     (('loaded)
      (protect (loading-level
@@ -893,6 +897,7 @@
          (send-event *camera* 'level-activate (-> obj name))
          (send-event *target* 'level-activate (-> obj name))
          )
+    (runs-on-level-status-update)
      )
     )
   obj
@@ -949,6 +954,7 @@
   (if (= (-> *level* log-in-level-bsp) (-> obj bsp))
     (set! (-> *level* log-in-level-bsp) #f)
     )
+  (runs-on-level-status-update)
   obj
   )
 
