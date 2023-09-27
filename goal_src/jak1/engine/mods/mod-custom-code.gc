@@ -496,6 +496,7 @@
 
 (defun chicken-every-frame ()
 
+
 (when (run-mort-code?)
  (adjust-chick-origin (find-best-master-mark))
     ;;If are flock points aren't setup, lets set them up.
@@ -523,7 +524,9 @@
       (reset-actors #t)
       )
 
+
 (none))
+
 
 (defun text-every-frame ()
 "This should be used to draw text, Near portal need X chicks etc"
@@ -559,12 +562,16 @@
     (robo-movie-check)
     )
 
-;;Hack to rotat the warpgate this one is extra weird 
-  (if (!= (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))
-  )))
+
+;;Hack to rotat the warpgate this one is extra weird the math on this is wrong but the idea is close enough, might not work in coins??
+  (if (and  (entity-by-name "project-training-part-1") (!= (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))
+  ))))
        (set! (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))))
      )
-  ))
+  )
+  
+  )
+
 (none)
 )
 
