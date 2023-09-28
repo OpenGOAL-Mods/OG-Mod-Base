@@ -1693,9 +1693,9 @@
 
 
 ;; it should point to the .jsonc file that specifies the level.
-(build-custom-level "cathederal")
+(build-custom-level "cathedral")
 ;; the DGO file
-(custom-level-cgo "CAT.DGO" "cathederal/cathederal.gd")
+(custom-level-cgo "CAT.DGO" "cathedral/cathedral.gd")
 
 
 ;; it should point to the .jsonc file that specifies the level.
@@ -2217,7 +2217,7 @@
  "mods/Mort/block-world-code.gc"
  "mods/Mort/pyramid-code.gc"
  "mods/Mort/block-man-code.gc"
- "mods/Mort/cathederal-code.gc"
+ "mods/Mort/cathedral-code.gc"
  "mods/Mort/chemical-factory-code.gc"
  "mods/Mort/chicks-code.gc"
  "mods/Mort/coins-code.gc"

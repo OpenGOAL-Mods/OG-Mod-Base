@@ -1,0 +1,39 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: cathedral-code.gc
+;; name in dgo: cathedral-code
+;; dgos: TODO
+#|
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define cathedral-load-level-id 26)
+(define cathedral-per-level-id 20)
+(define cathedral-num-chicks 3)
+(define cathedral-num-fuel 0)
+(define cathedral-spawn-point 0)
+
+(define cathedral-nextCheckpoint "pyramid-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  cathedral-load-level-id -1))fuel-count) cathedral-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  cathedral-load-level-id -1))chicks-count) cathedral-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun cathedral-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'cathedral )
+    (<= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  cathedral-load-level-id -1))money-count)
+        (-> *game-info* money-per-level cathedral-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level cathedral-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  cathedral-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* cathedral-nextCheckpoint))  
+)
+(none)
+)
+|#

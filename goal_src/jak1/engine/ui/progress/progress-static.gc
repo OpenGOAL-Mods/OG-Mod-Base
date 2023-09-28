@@ -178,7 +178,7 @@
 (factorycross 17)
 (hollyworld 18)
 (monument 19)
-(cathederal 20)
+(cathedral 20)
 (pyramid 21)
 (icecanyon 22)
 (coins 23)
@@ -251,7 +251,7 @@
 
 (level-task-data-index hollyworld)
 (level-task-data-index monument)
-(level-task-data-index cathederal)
+(level-task-data-index cathedral)
 (level-task-data-index pyramid)
 (level-task-data-index icecanyon)
 (level-task-data-index coins)
@@ -1600,7 +1600,7 @@
                    )
               )
                         (new 'static 'level-tasks-info
-              :level-name-id (text-id cathederal-level-name)
+              :level-name-id (text-id cathedral-level-name)
               :text-group-index 1
               :nb-of-tasks 3
               :buzzer-task-index 2

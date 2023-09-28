@@ -95,6 +95,7 @@
  ;;mort debugging
     (if *cheat-mode*
       (when (and (-> *pc-settings* speedrunner-mode?)
+            (portal-mort-switch)
              (not (paused?))
              (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
@@ -443,7 +444,7 @@
       (none))
 
 (defun init-chickens ()
-      (process-spawn-function process run-every-frame-proc)
+       (process-spawn-function process run-every-frame-proc)
       (process-spawn-function process chicken-every-frame-proc)
       (process-spawn-function process variable-every-frame-proc)
       (process-spawn-function process text-every-frame-proc)
@@ -541,6 +542,7 @@
 (defun debug-text-every-frame ()
 "This process ONLY spawns when debug mode is on and shows some extra info"
 "I have no idea why the close-to-portal check is needed but it works."
+    (update-mort-vars)
     (when (and run-mort-code? (not *close-to-portal?*))
      (draw-beta-flock-points)
      (mort-debug-text)
@@ -678,7 +680,7 @@
          (('monument)
           (play-main-music "SND/music-monument.mp3" (the int (-> *setting-control* default music-volume)))
           )
-         (('cathederal)
+         (('cathedral)
           (play-main-music "SND/music-block-world.mp3" (the int (-> *setting-control* default music-volume))) ;;FIX
           )
          (('pyramid)

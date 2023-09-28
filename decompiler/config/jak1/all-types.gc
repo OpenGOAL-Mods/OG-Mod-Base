@@ -1669,7 +1669,7 @@
   (factory-cross-level-name            #x2502)
   (holly-world-level-name            #x2503)
   (monument-level-name            #x2504)
-  (cathederal-level-name            #x2505)
+  (cathedral-level-name            #x2505)
   (pyramid-level-name            #x2506)
   (ice-canyon-level-name            #x2507)
   (coins-level-name            #x2508)

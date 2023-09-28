@@ -14,7 +14,7 @@
 (define monument-num-fuel 0)
 (define monument-spawn-point 0)
 
-(define monument-nextCheckpoint "cathederal-start")
+(define monument-nextCheckpoint "cathedral-start")
 
 ;;money and buzzer are already set, but we need to add these to the levels count-info
 (set! (-> *game-counts* data(-> *level-task-data-remap* (+  monument-load-level-id -1))fuel-count) monument-num-fuel)

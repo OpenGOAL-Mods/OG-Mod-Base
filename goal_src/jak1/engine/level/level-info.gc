@@ -2195,10 +2195,10 @@
                            )
         )
 
-(define cathederal (new 'static 'level-load-info
+(define cathedral (new 'static 'level-load-info
                            :index 31
-                           :name 'cathederal
-                           :visname 'cathederal-vis ;; name + -vis
+                           :name 'cathedral
+                           :visname 'cathedral-vis ;; name + -vis
                            :nickname 'cat          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
@@ -2211,7 +2211,8 @@
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
                                              :name "cathedral-warp"
-                                             :level 'cathederal
+                                             ;;:name "cathedral-warp"
+                                             :level 'cathedral
                                              :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x  (meters  16.88) :y (meters 310.00) :z (meters 216.83):w 1.0)
                                              :quat (new 'static 'quaternion  :y 0.9886 :w -0.150)
@@ -2222,10 +2223,10 @@
                       ;;                        (static-continue-point "village1" ()
                       ;;  (target 16.7094 310.0019 216.1895 0.0000 0.9886 0.0000 -0.1501)
                       ;;  (camera 15.5265 327.1520 246.1453 -0.9992 0.0000 -0.0387 0.0132 0.9398 -0.3414 0.0363 -0.3416 -0.9391)      
-                      ;;  (load 'none 'cathederal 'display 'village1 'display)
+                      ;;  (load 'none 'cathedral 'display 'village1 'display)
                       ;;  )
                                              :vis-nick 'none
-                                             :lev0 'cathederal
+                                             :lev0 'cathedral
                                              :disp0 'display
                                              :lev1 'village1
                                              :disp1 'display
@@ -2875,7 +2876,7 @@
 (cons! *level-load-list* 'coins)
 (cons! *level-load-list* 'ice-canyon)
 (cons! *level-load-list* 'pyramid)
-(cons! *level-load-list* 'cathederal)
+(cons! *level-load-list* 'cathedral)
 (cons! *level-load-list* 'monument)
 (cons! *level-load-list* 'holly-wood)
 (cons! *level-load-list* 'factory-cross)
@@ -2888,7 +2889,7 @@
                                              "factory-cross-start"
                                              "holly-world-start"
                                              "monument-start"
-                                             "cathederal-start"
+                                             "cathedral-start"
                                              "pyramid-start"
                                              "ice-canyon-start"
                                              "coins-start"
