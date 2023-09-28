@@ -230,6 +230,16 @@
   (none)
 )
 
+
+(defbehavior josh-suprise-sound-25 process ()
+             (let ((current-timea (current-time)))
+             (until (time-elapsed? current-timea (seconds 27))
+             (suspend)
+             )
+             (play-rand-sound "snd/joshsuprise.mp3" (the int 200))
+        
+             )
+(none))
   (defun mort-main-menu ()
     (if (and *in-mort-menu* *target*)
       (begin
@@ -237,14 +247,15 @@
         (if (and  (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
         (begin
          (send-event *target* 'continue (get-continue-by-name *game-info* "mort-title-start"))
-             (set-blackout-frames (seconds 25.1))
-             (let ((current-timea (current-time)))
-             (until (time-elapsed? current-timea (seconds 25))
+            (set-blackout-frames (seconds 25.1))
+            ;;We need to sleep for a tiny amount of time, so we dont spawn multiple process
+            (let ((current-timea (current-time)))
+             (until (time-elapsed? current-timea (seconds 0.2))
              (suspend)
              )
-             (play-rand-sound "snd/joshsuprise.mp3" (the int 200))
-        
              )
+             ;;This function sleeps for 27 seconds so it has to be in another process to not block this one
+            (process-spawn-function process josh-suprise-sound-25)
         )
          
           )
