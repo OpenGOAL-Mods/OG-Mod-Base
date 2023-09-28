@@ -109,6 +109,7 @@
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (loop
       (when (or (and *close-to-portal?*
+      
                       (not (movie?))
                       (not (level-hint-displayed?))
                       (not (logtest? (-> *target* control root-prim prim-core action)
@@ -195,13 +196,13 @@
 
 (defun get-next-slot-up ((arg0 warp-gate) (arg1 int))
   (let ((v0-0 (+ arg1 1)))
-    (if (< (-> arg0 max-slot) v0-0)
+    (if (< *number-unlock-lvl* v0-0)
         (set! v0-0 (-> arg0 min-slot))
         )
     (if (= v0-0 (-> arg0 level-slot))
         (+! v0-0 1)
         )
-    (if (< (-> arg0 max-slot) v0-0)
+    (if (< *number-unlock-lvl* v0-0)
         (set! v0-0 (-> arg0 min-slot))
         )
     v0-0
@@ -211,13 +212,13 @@
 (defun get-next-slot-down ((arg0 warp-gate) (arg1 int))
   (let ((v0-0 (+ arg1 -1)))
     (if (< v0-0 (-> arg0 min-slot))
-        (set! v0-0 (-> arg0 max-slot))
+        (set! v0-0 *number-unlock-lvl*)
         )
     (if (= v0-0 (-> arg0 level-slot))
         (+! v0-0 -1)
         )
     (if (< v0-0 (-> arg0 min-slot))
-        (set! v0-0 (-> arg0 max-slot))
+        (set! v0-0 *number-unlock-lvl*)
         )
     v0-0
     )

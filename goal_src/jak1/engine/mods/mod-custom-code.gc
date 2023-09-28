@@ -238,6 +238,13 @@
         (begin
          (send-event *target* 'continue (get-continue-by-name *game-info* "mort-title-start"))
              (set-blackout-frames (seconds 25.1))
+             (let ((current-timea (current-time)))
+             (until (time-elapsed? current-timea (seconds 25))
+             (suspend)
+             )
+             (play-rand-sound "snd/joshsuprise.mp3" (the int 200))
+        
+             )
         )
          
           )
