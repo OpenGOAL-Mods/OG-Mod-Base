@@ -367,6 +367,7 @@
             )
           (can-grab-display? self)
           (hide-hud)
+
           (let ((s1-2 (get-continue-by-name *game-info* (-> *warp-info* gp-0))))
             (lookup-level-info (-> s1-2 level))
             (when (and (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.05)) (cpad-pressed? 0 circle) (have-all-chicks-safe))
@@ -374,6 +375,17 @@
               (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons circle))
               (go-virtual use gp-0 (the-as level s1-2))
               )
+                             
+                                  (when (= *number-unlock-lvl* (-> *warp-info* length))
+                                      (process-release? *target*)
+          (start 'play (get-continue-by-name *game-info* "finalboss-fight"))
+          (while (not (process-by-ename "robotboss-3"))
+          (suspend)
+          )
+
+   
+  (return #f)
+          )
             )
           (let ((s1-3
                   (new 'stack 'font-context *font-default-matrix* 6 110 0.0 (font-color default) (font-flags shadow kerning))
