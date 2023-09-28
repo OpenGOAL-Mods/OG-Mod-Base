@@ -71,6 +71,10 @@
     (ja-channel-set! 1)
     (send-event self 'do-effect 'death-warp-in -1.0)
     (sound-play "warpgate-tele")
+        ;;hack
+        (runs-on-jak-spawn) ;; trigger hook for mod base
+        (reset-actors #t)
+
     (ja-no-eval :group! (-> self draw art-group data 41)
                 :num! (seek! (ja-aframe 50.0 0))
                 :frame-num (ja-aframe 40.0 0)

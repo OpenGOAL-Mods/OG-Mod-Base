@@ -725,6 +725,7 @@
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
       (init-title)
+      (format #t  "RUNNING MUSIC PROC")
       (process-spawn-function process music-manager-proc)
       (none)
       )
