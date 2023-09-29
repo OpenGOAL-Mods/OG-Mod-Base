@@ -715,7 +715,7 @@
      (-> obj buzzer)
      )
      ;;tageco this handles picking up all eco with a timer
-    (((pickup-type eco-red) (pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-new))
+    (((pickup-type eco-red) (pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-new) (pickup-type eco-ice))
      ;; the green vent jumps here.
      (label cfg-80)
 
@@ -784,6 +784,9 @@
             (sound-play "get-yellow-eco")
             )
            (((pickup-type eco-green))
+            (sound-play "get-green-eco")
+            )
+           (((pickup-type eco-ice))
             (sound-play "get-green-eco")
             )
            (((pickup-type eco-yellow))

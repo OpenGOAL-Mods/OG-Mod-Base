@@ -8047,6 +8047,7 @@
   (eco-pill-random)
   (star)
   (eco-new)
+  (eco-ice)
   )
 
 (deftype mood-fog-table (structure)
