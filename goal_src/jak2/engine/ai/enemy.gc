@@ -1060,7 +1060,7 @@
       )
   (set! (-> obj water-max-height) 8192.0)
   (if (logtest? (-> *game-info* secrets) (game-secrets hero-mode))
-      (set! (-> obj hit-points) (* (-> obj enemy-info default-hit-points) 2))
+      (set! (-> obj hit-points) (* (-> obj enemy-info default-hit-points) 3))
       (set! (-> obj hit-points) (-> obj enemy-info default-hit-points))
       )
   (let* ((v1-38 *game-info*)

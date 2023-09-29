@@ -7,8 +7,16 @@
 
 ;; DECOMP BEGINS
 
+;Gun Mod definitions
+;---------------------------------------
 (define rapid-fire-option #f)
 (define rapid-fire-int 0)
+(define double-tap-option #f)
+(define double-tap-int 0)
+(define fire-pierce-option #f)
+(define fire-pierce-int 0)
+
+;---------------------------------------
 
 (if (not (nmember "gunp" *kernel-packages*))
     (set! *kernel-packages* (cons "gunp" *kernel-packages*))
@@ -668,13 +676,13 @@
          (when (and (= rapid-fire-option #t) (= rapid-fire-int 3))
             (set! (-> self gun fire-delay) (the-as uint 1))
             (set! (-> self gun combo-fire-delay) (the-as uint 1))
-            (print "im fuckin fast yo bleu (gross)")
+            (print "im fast yo bleu (gross)")
             )
          (set! (-> self gun track-beam-size) 2457.6)
          (remove-setting! 'gun-min-height)
          (remove-setting! 'gun-max-height)
          )
-        ((1) ;yellow
+        ((1) ;yellow                                                          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
          (set! (-> self gun fire-range) 409600.0)
          (set! (-> self gun track-find-range) 286720.0)
          (set! (-> self gun track-tilt-range) 409600.0)
@@ -682,9 +690,9 @@
          (set! (-> self gun track-angle-mult) 1.75)
          (set! (-> self gun track-require) (the-as uint 3))
          (set! (-> self gun fire-delay) (the-as uint 96))
-         (when (and (= rapid-fire-option #t) (= rapid-fire-int 5))
+         (when (and (= rapid-fire-option #t) (= rapid-fire-int 1))
             (set! (-> self gun fire-delay) (the-as uint 15))
-            (print "im fuckin fast yo yellow")
+            (print "im fast yo yellow")
             )
          (set! (-> self gun combo-fire-delay) (the-as uint 30))
          (set! (-> self gun track-beam-size) 819.2)
@@ -707,7 +715,7 @@
          (when (and (= rapid-fire-option #t) (= rapid-fire-int 2))
             (set! (-> self gun fire-delay) (the-as uint 25))
             (set! (-> self gun combo-fire-delay) (the-as uint 1))
-            (print "im fuckin fast yo red")
+            (print "im fast yo red")
           )
          (set! (-> self gun track-beam-size) 1228.8)
          (remove-setting! 'gun-min-height)
@@ -724,7 +732,7 @@
          (when (and (= rapid-fire-option #t) (= rapid-fire-int 4))
             (set! (-> self gun fire-delay) (the-as uint 50))
             (set! (-> self gun combo-fire-delay) (the-as uint 50))
-            (print "im fuckin fast yo PEACEMAKER >:)")
+            (print "im fast yo PEACEMAKER >:)")
           )
          (set! (-> self gun track-beam-size) 1228.8)
          (set! (-> self gun track-require) (the-as uint 2))

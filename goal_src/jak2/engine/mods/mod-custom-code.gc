@@ -93,8 +93,6 @@
 ;---------------------------------------------------------
 
 ;;regular save gun mods
-(define doubletap-option #f)
-;sets a chance for a projectile to fire twice
 (define fire-rate-slow-option #f)
 ;makes your projectiles slower, and pierce.
 

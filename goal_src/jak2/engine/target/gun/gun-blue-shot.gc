@@ -34,9 +34,12 @@
         )
       (set! (-> s4-1 timeout) (seconds 4))
       (spawn-projectile gun-blue-shot s4-1 (ppointer->process (-> gp-0 gun)) *default-dead-pool*)
+      (when (and (and (= double-tap-option #t) (= double-tap-int 3) (rand-vu-percent? 0.2)))
+        (spawn-projectile gun-blue-shot s4-1 (ppointer->process (-> gp-0 gun)) *default-dead-pool*)
       )
     )
   )
+)
 
 (deftype gun-blue-shot (projectile)
   ((init-pos       vector :inline :offset-assert 480)
