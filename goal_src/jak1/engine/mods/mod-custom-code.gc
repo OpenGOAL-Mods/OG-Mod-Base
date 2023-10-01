@@ -116,6 +116,102 @@
       (none)
       )
 
+    (defun reset-specific-actor ((actor-name string))
+      (let* ((actor-obj (process-by-ename actor-name)))
+        (when (-> actor-obj entity)
+          (kill! (-> actor-obj entity))
+          (update-perm! (-> actor-obj entity extra perm) 'life (the-as entity-perm-status 623))
+          )
+        )
+        (none)
+      )
+
+    (defun safe-kill-cache-orb ((cache-name string))
+      (let* ((orb-cache (process-by-ename cache-name)))
+        (when (-> orb-cache state)
+          (case (-> orb-cache state)
+            ((orb-cache-top-activate)
+                (deactivate (handle->process (-> (the-as orb-cache-top orb-cache) money-list (- (-> (the-as orb-cache-top orb-cache) money) 1))))
+              )
+            ((orb-cache-top-idle)
+              (set! (-> (the-as orb-cache-top orb-cache) money) (- (-> (the-as orb-cache-top orb-cache) money) 1))
+              (set! (-> (the-as orb-cache-top orb-cache) entity extra perm user-int16 0) (- 15 (-> (the-as orb-cache-top orb-cache) money)))
+              )
+            )
+          )
+        )
+        (none)
+      )
+
+    (defun safe-kill-crate-orb ((crate-name string))
+      (let* ((obj-crate (process-by-ename crate-name)))
+
+        (when (name= (-> (the-as crate obj-crate) state name) "wait")
+          (set! (-> (the-as crate obj-crate) fact pickup-amount) (- (-> (the-as crate obj-crate) fact pickup-amount) 1))
+          (when (<= (-> (the-as crate obj-crate) fact pickup-amount) 0)
+            (set! (-> (the-as crate obj-crate) entity extra perm user-int8 1) 0)
+            (process-entity-status! (the-as crate obj-crate) (entity-perm-status bit-4) #f)
+            (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
+            (process-entity-status! (the-as crate obj-crate) (entity-perm-status complete) #t)
+            ((method-of-type crate deactivate) (the-as crate obj-crate))
+            )
+          (return #t)
+          )
+
+        (when (name= (-> (the-as crate obj-crate) state name) "special-contents-die") ;; when in orb collect phase
+
+          (when (>= (-> (the-as crate obj-crate) entity extra perm user-int8 0) 1) ;; all orbs have not been collected
+
+            (set! (-> (the-as crate obj-crate) entity extra perm user-int8 1) (+ (-> (the-as crate obj-crate) entity extra perm user-int8 1) 1))
+            (+! (-> (the-as crate obj-crate) child-count) -1)
+
+            ;; depspawn orb if exists
+            (if (-> (the-as crate obj-crate) child 0)
+              ((method-of-type money deactivate) (the-as money (-> (the-as crate obj-crate) child 0)))
+              )
+
+            ;; mark as completed if done
+            (when (or (= (-> (the-as crate obj-crate) entity extra perm user-int8 1) 0) (= (-> (the-as crate obj-crate) entity extra perm user-int8 1) (float->int (-> (the-as crate obj-crate) fact pickup-amount)))) ;; if no orbs are left
+                (set! (-> (the-as crate obj-crate) entity extra perm user-int8 1) 0)
+                (process-entity-status! (the-as crate obj-crate) (entity-perm-status bit-4) #f)
+                (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
+                (process-entity-status! (the-as crate obj-crate) (entity-perm-status complete) #t)
+                ((method-of-type crate deactivate) (the-as crate obj-crate))
+              )
+            )
+          )
+        )
+        (none)
+      )
+
+    (defun safe-kill-crate-buzzer ((crate-name string))
+      (let* ((obj-crate (process-by-ename crate-name)))
+
+        (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
+        (process-entity-status! (the-as crate obj-crate) (entity-perm-status complete) #t)
+
+        (when (name= (-> (the-as crate obj-crate) state name) "wait")
+          )
+
+        ;; depspawn buzzer if exists
+        (when (and (name= (-> (the-as crate obj-crate) state name) "special-contents-die") (-> (the-as crate obj-crate) child 0))
+          ((method-of-type buzzer deactivate) (the-as buzzer (-> (the-as crate obj-crate) child 0)))
+          )
+        ;; depspawn crate
+        ((method-of-type crate deactivate) (the-as crate obj-crate))
+        )
+        (none)
+      )
+
+      (defun safe-break-crate ((crate-name string))
+      (let* ((obj-crate (process-by-ename crate-name)))
+        (if (not (or (name= (-> (the-as crate obj-crate) state name) "die") (name= (-> (the-as crate obj-crate) state name) "special-contents-die")))
+          (go-virtual-process (the-as crate obj-crate) die #f 0)
+          )
+        )
+        (none)
+        )
+
     (defun add-task-to-buffer ((arg0 game-task) (arg1 task-status))
       (dotimes (idx (-> *task-update-buffer* length))
         (when (= (-> *task-update-buffer* idx status) (task-status invalid))
@@ -125,7 +221,7 @@
           )
         )
       (none)
-    )
+      )
 
     (defun check-set-teamrun-task-from-buffer ()
       (dotimes (idx (-> *task-update-buffer* length))
@@ -194,6 +290,7 @@
               (set! (-> *teamrun-info* has_task_update?) 0)
               (set! (-> *teamrun-info* has_buzzer_update?) 0)
               (set! (-> *teamrun-info* has_money_update?) 0)
+              (set! (-> *teamrun-info* has_crate_update?) 0)
 
               (set! (-> *teamrun-levels-info* has_level_update?) 0)
               )
@@ -215,8 +312,22 @@
       (none)
       )
 
+    (defun runs-on-crate-break ((crate-ename string) (crate-type string) (level-name string))
+      (set! (-> *teamrun-info* crate_ename) crate-ename)
+      (set! (-> *teamrun-info* crate_type) crate-type)
+      (set! (-> *teamrun-info* collectable_level_name) level-name)
+      (set! (-> *teamrun-info* has_crate_update?) 1)
+      (set! *has-none-position-update?* #t)
+
+      (none)
+      )
+
     (defun runs-on-orb-pickup ((parent process-tree) (money-ename string) (level-name string))
       (set! (-> *teamrun-info* money_ename) money-ename)
+      (if (name= (-> parent name) "entity-pool")
+        (set! (-> *teamrun-info* money_parent_ename) (symbol->string (-> parent name)))
+        (set! (-> *teamrun-info* money_parent_ename) (the-as string (-> parent name)))
+        )
       (set! (-> *teamrun-info* collectable_level_name) level-name)
       (set! (-> *teamrun-info* has_money_update?) 1)
       (set! *has-none-position-update?* #t)
@@ -241,7 +352,7 @@
     (defun runs-on-fly-pickup ((buzzer-id int32) (parent-ename string) (level-name string))
       ;; Code here runs on any scout fly pickup
       (set! (-> *teamrun-info* buzzer_id) buzzer-id)
-      (set! (-> *teamrun-info* buzzer_container_ename) parent-ename)
+      (set! (-> *teamrun-info* buzzer_parent_ename) parent-ename)
       (set! (-> *teamrun-info* collectable_level_name) level-name)
       (set! (-> *teamrun-info* has_buzzer_update?) 1)
       (set! *has-none-position-update?* #t)

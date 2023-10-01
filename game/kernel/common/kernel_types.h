@@ -77,11 +77,17 @@ struct TeamrunPlayerInfo {
   //buzzer updates
   s32 has_buzzer_update;
   int buzzer_id;
-  u32 buzzer_container_ename;          // string (basic)
+  u32 buzzer_parent_ename;          // string (basic)
 
   //money updates
   s32 has_money_update;
   u32 money_ename;          // string (basic)
+  u32 money_parent_ename;          // string (basic)
+
+  //money updates
+  s32 has_crate_update;
+  u32 crate_ename;          // string (basic)
+  u32 crate_type;          // string (basic)
 
   //shared update data
   u32 collectable_level_name;          // string (basic)

@@ -113,11 +113,17 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   ;; buzzer updates
   (has_buzzer_update?    int32)
   (buzzer_id    int32)
-  (buzzer_container_ename   string)
+  (buzzer_parent_ename   string)
 
   ;; money updates
   (has_money_update?    int32)
   (money_ename    string)
+  (money_parent_ename   string)
+
+  ;; crate updates
+  (has_crate_update?    int32)
+  (crate_ename    string)
+  (crate_type   string)
 
   ;; shared update data
   (collectable_level_name   string)
@@ -147,11 +153,17 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   ;; buzzer update
     (set! (-> obj has_buzzer_update?) 0)
     (set! (-> obj buzzer_id) 0)
-    (set! (-> obj buzzer_container_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
+    (set! (-> obj buzzer_parent_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
 
   ;; money update
     (set! (-> obj has_money_update?) 0)
     (set! (-> obj money_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
+    (set! (-> obj money_parent_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
+
+  ;; crate update
+    (set! (-> obj has_crate_update?) 0)
+    (set! (-> obj crate_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
+    (set! (-> obj crate_type) (new 'global 'string 32 (new 'global 'string 32 "none")))
 
   ;; shared update data
     (set! (-> obj collectable_level_name) (new 'global 'string 32 (new 'global 'string 32 "none")))
