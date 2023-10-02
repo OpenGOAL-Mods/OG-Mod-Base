@@ -124,6 +124,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (has_crate_update?    int32)
   (crate_ename    string)
   (crate_type   string)
+  (crate_amount   int32)
 
   ;; eco updates
   (has_eco_update?    int32)
@@ -169,6 +170,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> obj has_crate_update?) 0)
     (set! (-> obj crate_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
     (set! (-> obj crate_type) (new 'global 'string 32 (new 'global 'string 32 "none")))
+    (set! (-> obj crate_amount) 0)
 
   ;; eco update
     (set! (-> obj has_eco_update?) 0)

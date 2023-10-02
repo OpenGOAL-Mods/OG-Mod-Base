@@ -205,6 +205,7 @@ void send_position_update() {
     json_payload["crate"] = {
       {"ename", Ptr<String>(gTeamrunInfo->crate_ename).c()->data()},
       {"type", Ptr<String>(gTeamrunInfo->crate_type).c()->data()},
+      {"pickupAmount", gTeamrunInfo->crate_amount},
       {"level", Ptr<String>(gTeamrunInfo->collectable_level_name).c()->data()}
     };
   }

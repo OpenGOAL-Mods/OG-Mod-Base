@@ -334,9 +334,10 @@
       (none)
       )
 
-    (defun runs-on-crate-break ((crate-ename string) (crate-type string) (level-name string))
+    (defun runs-on-crate-break ((crate-ename string) (crate-type string) (crate-amount int) (level-name string))
       (set! (-> *teamrun-info* crate_ename) crate-ename)
       (set! (-> *teamrun-info* crate_type) crate-type)
+      (set! (-> *teamrun-info* crate_amount) crate-amount)
       (set! (-> *teamrun-info* collectable_level_name) level-name)
       (set! (-> *teamrun-info* has_crate_update?) 1)
       (set! *has-none-position-update?* #t)

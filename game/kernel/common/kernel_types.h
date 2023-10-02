@@ -88,6 +88,7 @@ struct TeamrunPlayerInfo {
   s32 has_crate_update;
   u32 crate_ename;          // string (basic)
   u32 crate_type;          // string (basic)
+  int crate_amount;
 
   //eco updates
   s32 has_eco_update;
