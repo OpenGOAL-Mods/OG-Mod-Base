@@ -103,6 +103,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (on_zoomer?    int32)
   (just_spawned?    int32)
   (cell_count    int32)
+  (buzzer_count    int32)
+  (money_count    int32)
   (death_count    int32)
 
   ;; task updates
@@ -149,6 +151,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> obj on_zoomer?) 0)
     (set! (-> obj just_spawned?) 0)
     (set! (-> obj cell_count) 0)
+    (set! (-> obj buzzer_count) 0)
+    (set! (-> obj money_count) 0)
     (set! (-> obj death_count) 0)
 
   ;; task update

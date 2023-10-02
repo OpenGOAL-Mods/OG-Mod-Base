@@ -28,6 +28,8 @@
         )
 
       (set! (-> *teamrun-info* cell_count) (the int32 (-> *game-info* fuel)))
+      (set! (-> *teamrun-info* buzzer_count) (the int32 (-> *game-info* buzzer-total)))
+      (set! (-> *teamrun-info* money_count) (the int32 (-> *game-info* money)))
       (set! (-> *teamrun-info* death_count) (the int32 (-> *game-info* total-deaths)))
 
       (set! (-> *teamrun-info* has_state_update?) 1)
@@ -460,7 +462,6 @@
           (case eco-type
             (((pickup-type eco-yellow) (pickup-type eco-red) (pickup-type eco-blue) (pickup-type eco-green))
             
-              (format #t "got a ~s ~%" eco-ename)
               (if (name= (-> parent name) "entity-pool")
                 (set! (-> *teamrun-info* eco_ename) eco-ename)
                 (set! (-> *teamrun-info* eco_ename) (symbol->string eco-ename))
