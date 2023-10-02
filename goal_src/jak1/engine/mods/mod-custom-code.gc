@@ -126,6 +126,15 @@
         (none)
       )
 
+    (defun safe-break-crate ((crate-name string))
+    (let* ((obj-crate (process-by-ename crate-name)))
+      (if (not (or (name= (-> (the-as crate obj-crate) state name) "die") (name= (-> (the-as crate obj-crate) state name) "special-contents-die")))
+        (go-virtual-process (the-as crate obj-crate) die #f 0)
+        )
+      )
+      (none)
+      )
+
     (defun safe-kill-cache-orb ((cache-name string))
       (let* ((orb-cache (process-by-ename cache-name)))
         (when (-> orb-cache state)
@@ -190,11 +199,8 @@
         (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
         (process-entity-status! (the-as crate obj-crate) (entity-perm-status complete) #t)
 
-        (when (name= (-> (the-as crate obj-crate) state name) "wait")
-          )
-
         ;; depspawn buzzer if exists
-        (when (and (name= (-> (the-as crate obj-crate) state name) "special-contents-die") (-> (the-as crate obj-crate) child 0))
+        (if (and (name= (-> (the-as crate obj-crate) state name) "special-contents-die") (-> (the-as crate obj-crate) child 0))
           ((method-of-type buzzer deactivate) (the-as buzzer (-> (the-as crate obj-crate) child 0)))
           )
         ;; depspawn crate
@@ -203,14 +209,29 @@
         (none)
       )
 
-      (defun safe-break-crate ((crate-name string))
+    (defun safe-pickup-crate-eco ((crate-name string))
       (let* ((obj-crate (process-by-ename crate-name)))
-        (if (not (or (name= (-> (the-as crate obj-crate) state name) "die") (name= (-> (the-as crate obj-crate) state name) "special-contents-die")))
-          (go-virtual-process (the-as crate obj-crate) die #f 0)
+
+        (if (name= (-> (the-as crate obj-crate) state name) "wait")
+          (safe-break-crate crate-name)
+          )
+
+        ;; pickup eco if exists
+        (when (and (name= (-> (the-as crate obj-crate) state name) "special-contents-die") (-> (the-as crate obj-crate) child 0))
+          (go-virtual-process (the-as eco-collectable (-> (the-as crate obj-crate) child 0)) pickup #f (the-as handle #f))
           )
         )
         (none)
+      )
+
+    (defun safe-pickup-eco ((eco-ename string))
+      (let* ((obj-eco (process-by-ename eco-ename)))
+        (when (-> obj-eco name)
+          (go-virtual-process (the-as eco-collectable obj-eco) pickup #f (process->handle (the-as eco-collectable obj-eco)))
+          )
         )
+        (none)
+      )
 
     (defun add-task-to-buffer ((arg0 game-task) (arg1 task-status))
       (dotimes (idx (-> *task-update-buffer* length))
@@ -291,6 +312,7 @@
               (set! (-> *teamrun-info* has_buzzer_update?) 0)
               (set! (-> *teamrun-info* has_money_update?) 0)
               (set! (-> *teamrun-info* has_crate_update?) 0)
+              (set! (-> *teamrun-info* has_eco_update?) 0)
 
               (set! (-> *teamrun-levels-info* has_level_update?) 0)
               )
@@ -374,9 +396,29 @@
       (none)
       )
 
-    (defun runs-on-eco-pickup ((eco-type pickup-type) (parent process-tree))
+    (defun runs-on-eco-pickup ((eco-type pickup-type) (parent process-tree) (eco-ename string))
       (let* ((from-vent? (and parent (type-type? (-> parent type) vent))))
         ;; Code here runs as soon as you pickup ANY eco
+
+        (when (not from-vent?)
+          (case eco-type
+            (((pickup-type eco-yellow) (pickup-type eco-red) (pickup-type eco-blue) (pickup-type eco-green))
+            
+              (format #t "got a ~s ~%" eco-ename)
+              (if (name= (-> parent name) "entity-pool")
+                (set! (-> *teamrun-info* eco_ename) eco-ename)
+                (set! (-> *teamrun-info* eco_ename) (symbol->string eco-ename))
+                )
+              (if (name= (-> parent name) "entity-pool")
+                (set! (-> *teamrun-info* eco_parent_ename) (symbol->string (-> parent name)))
+                (set! (-> *teamrun-info* eco_parent_ename) (the-as string (-> parent name)))
+                )
+              (set! (-> *teamrun-info* collectable_level_name) (-> *teamrun-info* current_level))
+              (set! (-> *teamrun-info* has_eco_update?) 1)
+              (set! *has-none-position-update?* #t)
+              )
+            )
+          )
 
         (case eco-type
           (((pickup-type eco-yellow))      

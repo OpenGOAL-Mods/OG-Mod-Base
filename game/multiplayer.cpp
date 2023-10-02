@@ -209,6 +209,14 @@ void send_position_update() {
     };
   }
 
+  if (gTeamrunInfo->has_eco_update) {
+    json_payload["eco"] = {
+      {"ename", Ptr<String>(gTeamrunInfo->eco_ename).c()->data()},
+      {"parentEname", Ptr<String>(gTeamrunInfo->eco_parent_ename).c()->data()},
+      {"level", Ptr<String>(gTeamrunInfo->collectable_level_name).c()->data()}
+    };
+  }
+
   if (gTeamrunLevelInfo->has_level_update) {
     json_payload["levels"] = json::array({
       {

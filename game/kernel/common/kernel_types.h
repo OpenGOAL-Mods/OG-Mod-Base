@@ -84,10 +84,15 @@ struct TeamrunPlayerInfo {
   u32 money_ename;          // string (basic)
   u32 money_parent_ename;          // string (basic)
 
-  //money updates
+  //crate updates
   s32 has_crate_update;
   u32 crate_ename;          // string (basic)
   u32 crate_type;          // string (basic)
+
+  //eco updates
+  s32 has_eco_update;
+  u32 eco_ename;          // string (basic)
+  u32 eco_parent_ename;          // string (basic)
 
   //shared update data
   u32 collectable_level_name;          // string (basic)
