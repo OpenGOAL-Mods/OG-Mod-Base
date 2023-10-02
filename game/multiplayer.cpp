@@ -166,7 +166,7 @@ void send_position_update() {
     }
   };
 
-  if (gTeamrunInfo->has_state_update || gTeamrunInfo->has_task_update) {
+  if (gTeamrunInfo->has_state_update) {
     json_payload["state"] = {
         {"debugModeActive", gTeamrunInfo->debug_mode_active},
         {"currentLevel", Ptr<String>(gTeamrunInfo->current_level).c()->data()},

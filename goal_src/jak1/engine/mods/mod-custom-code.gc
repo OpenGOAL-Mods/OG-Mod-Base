@@ -286,7 +286,7 @@
           (set! (-> *teamrun-info* task_name) (enum->string game-task (-> *task-update-buffer* idx task)))
           (set! (-> *teamrun-info* task_status) (enum->string task-status (-> *task-update-buffer* idx status)))
           (set! (-> *teamrun-info* has_task_update?) 1)
-          (set! *has-none-position-update?* #t)
+          (update-state)
 
           (set! (-> *task-update-buffer* idx status) (task-status invalid))
           (return #t)
