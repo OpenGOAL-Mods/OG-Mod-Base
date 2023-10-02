@@ -22,7 +22,10 @@
 ;; teamrun
 (define *teamrun-info* (new 'global 'teamrun-player-info))
 (define *teamrun-levels-info* (new 'global 'game-levels-info))
+
 (define *task-update-buffer* (new 'global 'boxed-array task-info MAX_TASK_BUFFER_COUNT))
+(define *money-update-buffer* (new 'global 'boxed-array money-info MAX_MONEY_BUFFER_COUNT))
+(define *crate-update-buffer* (new 'global 'boxed-array crate-info MAX_CRATE_BUFFER_COUNT))
 
 (define *has-none-position-update?* #f)
 (define *allow-cell-pickup?* #t)
@@ -100,6 +103,14 @@
 
     (dotimes (idx (-> *task-update-buffer* length))
       (set! (-> *task-update-buffer* idx) (new 'global 'task-info))
+      )
+
+    (dotimes (idx (-> *money-update-buffer* length))
+      (set! (-> *money-update-buffer* idx) (new 'global 'money-info))
+      )
+
+    (dotimes (idx (-> *crate-update-buffer* length))
+      (set! (-> *crate-update-buffer* idx) (new 'global 'crate-info))
       )
 
     (pc-connect-mp-info *multiplayer-info* *self-player-info* *teamrun-info* *teamrun-levels-info*)

@@ -230,6 +230,54 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   )
 
 
+(deftype money-info (structure)
+ ((has_update? symbol)
+  (ename    string)
+  (parent_ename   string)
+  (level_name   string)
+  )
+  :pack-me
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+
+(defmethod new money-info ((allocation symbol) (type-to-make type))
+  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+    (set! (-> obj has_update?) #f)
+    (set! (-> obj ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
+    (set! (-> obj parent_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
+    (set! (-> obj level_name) (new 'global 'string 32 (new 'global 'string 32 "none")))
+    obj
+    )
+  )
+
+
+(deftype crate-info (structure)
+ ((has_update? symbol)
+  (ename    string)
+  (type   string)
+  (amount   int32)
+  (level_name   string)
+  )
+  :pack-me
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+
+(defmethod new crate-info ((allocation symbol) (type-to-make type))
+  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+    (set! (-> obj has_update?) #f)
+    (set! (-> obj ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
+    (set! (-> obj type) (new 'global 'string 32 (new 'global 'string 32 "none")))
+    (set! (-> obj level_name) (new 'global 'string 32 (new 'global 'string 32 "none")))
+    (set! (-> obj amount) 0)
+    obj
+    )
+  )
+
+
 (deftype multiplayer-info (structure)
  ((player_num           int32)
   (players    remote-player-info MAX_MULTIPLAYER_COUNT :inline)

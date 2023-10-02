@@ -384,6 +384,8 @@
 
 (defconstant MAX_MULTIPLAYER_COUNT 20)
 (defconstant MAX_TASK_BUFFER_COUNT 6)
+(defconstant MAX_MONEY_BUFFER_COUNT 35) ;; flut flut 2 x orb vents in snowy
+(defconstant MAX_CRATE_BUFFER_COUNT 6)
 
 (declare-type teamrun-player-info structure)
 (declare-type game-levels-info structure)
