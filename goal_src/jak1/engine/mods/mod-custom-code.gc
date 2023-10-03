@@ -460,8 +460,8 @@
 
         (when (not from-vent?)
           (case eco-type
-            (((pickup-type eco-yellow) (pickup-type eco-red) (pickup-type eco-blue) (pickup-type eco-green))
-            
+            (((pickup-type eco-yellow) (pickup-type eco-red) (pickup-type eco-blue))
+
               (if (name= (-> parent name) "entity-pool")
                 (set! (-> *teamrun-info* eco_ename) eco-ename)
                 (set! (-> *teamrun-info* eco_ename) (symbol->string eco-ename))
