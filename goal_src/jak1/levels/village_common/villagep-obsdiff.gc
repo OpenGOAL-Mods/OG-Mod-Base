@@ -264,7 +264,7 @@
 
 
 
-(define-extern *number-unlock-lvl* int)
+(define-extern (get-unlock-level) int)
 (defstate active (warp-gate)
   :virtual #t
   :enter (behavior ()
@@ -312,7 +312,7 @@
     Had to move this here, because if you make all actors always visible (like in a custom level), and you load saved game into such a level, the warp gate is initialized before the task statuses are loaded.
     So we instead set the "max-slot" when a warp gate's menu is activated by the player. By this time, the task statuses are surely loaded.
     |#
-    (set! (-> self max-slot) *number-unlock-lvl*)
+    (set! (-> self max-slot) (get-unlock-level))
           
     ;; (if (= *cheat-mode* 'debug)
     ;;       (set! (-> self max-slot) (- (-> *warp-info* length) 1)) ;; We still want to have a way to show all options, so we just let it happen if cheat mode is set to debug
@@ -356,7 +356,7 @@
             )
           (can-grab-display? self)
           (hide-hud)
-          (when (= *number-unlock-lvl* 14)
+          (when (= (get-unlock-level) 14)
           (start 'play (get-continue-by-name *game-info* "finalboss-fight"))
           (while (not (process-by-ename "robotboss-3"))
           (suspend)
@@ -509,7 +509,7 @@
           )
     )
   (format 0 "SELF LEVEL-SLOT: ~D~%" (-> self level-slot))
-  (set! (-> self max-slot) *number-unlock-lvl*
+  (set! (-> self max-slot) (get-unlock-level)
         )
   (go-virtual idle)
   (none)

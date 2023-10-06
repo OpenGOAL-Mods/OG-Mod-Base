@@ -23,7 +23,6 @@
     
 (define mort-level? #f)
 (define *show-debug* #f)
-(define *number-unlock-lvl* 0)
 (define spawned-chickens? #f)
 (define *close-to-portal?* #f)
 (define *in-mort-menu* #f)
@@ -107,7 +106,7 @@
                                      (current-chicks-following) 
                                      (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) 
                                       *close-to-portal?*
-                                      *number-unlock-lvl*
+                                      (get-unlock-level)
                                      )
                       buf 400 (- 150 (* 8 16)) (font-color flat-yellow) (font-flags shadow kerning)))
           )
@@ -231,6 +230,16 @@
   (none)
 )
 
+(defun set-unlock-level ((arg1 int))
+"adds to the unlock level"
+(set! (-> *game-info* money-per-level 3) (+ (-> *game-info* money-per-level 3) (the-as uint arg1)))
+(format #t "unlock level is ~D" (-> *game-info* money-per-level 3))
+(none))
+
+(defun get-unlock-level ()
+(format #t "getting unlock level it is ~D" (-> *game-info* money-per-level 3))
+(the int (-> *game-info* money-per-level 3) )
+)
 
 (defbehavior josh-suprise-sound-25 process ()
              (let ((current-timea (current-time)))
@@ -333,7 +342,7 @@
                                     (if (= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks))
     (begin
       (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
-      (+! *number-unlock-lvl* 1)
+      (set-unlock-level 1)
       (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
       (reset-actors #t) ;;HACK for some reason, the warp gate doesnt let us use it after coming out of it but reseting actor fixes this.
     ))
@@ -398,7 +407,7 @@
 ;;Stop custom music
 (when (not custom-music-eco-paused?)
 (set!  (-> (-> (level-get-target-inside *level*)info)music-bank) 'snow)
-(play-main-music "" (the int (-> *setting-control* default music-volume)))
+(stop-main-music)
 (set! custom-music-eco-paused? #t)
 )
 )
@@ -491,7 +500,18 @@
 (none)
 )
 
+(defun restore-cells ()
 
+;;Loop the flock and restore all the Cells
+(dotimes (i (current-chicks-following))
+(set-or-clear-status! (the entity-actor (entity-by-name (-> (get-chick-from-flock i) parent-cell-name))) (entity-perm-status dead) #f)
+)
+
+
+;;Clear the flock to 0
+(set! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 0)
+
+)
 
 (defun init-title ()
 (when (not done-init?)
@@ -583,7 +603,7 @@
       (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1) *cheat-mode*) 
       (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
       (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
-      (+! *number-unlock-lvl* 1)
+      (set-unlock-level 1)
       (reset-actors #t)
       )
 
@@ -804,6 +824,7 @@
           )
         (('blackout)
           ;; Code here runs after jak dies (and any death cutscene finishes), during the blackout before he spawns
+          (restore-cells)
 
           )
         )

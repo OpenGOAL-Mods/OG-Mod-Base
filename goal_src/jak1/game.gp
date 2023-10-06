@@ -474,7 +474,7 @@
 
    "village_common/villagep-obs.gc"
    "village_common/oracle.gc"
-
+  "village_common/warpgate.gc"
    "common/blocking-plane.gc"
    "common/launcherdoor.gc"
    "common/battlecontroller.gc"
