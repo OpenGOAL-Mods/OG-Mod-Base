@@ -1997,8 +1997,8 @@
                                              :vis-nick 'none
                                              :lev0 'test-zone
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2041,8 +2041,8 @@
                                               :vis-nick 'none
                                               :lev0 'block-world
                                               :disp0 'display
-                                              :lev1 'village1
-                                              :disp1 'display
+                                              :lev1 #f
+                                              :disp1 #f
                                               )
                             (new 'static 'continue-point
                                              :name "block-world-start"
@@ -2056,7 +2056,7 @@
                                              :vis-nick 'none
                                              :lev0 'block-world
                                              :disp0 'display
-                                             :lev1 'village1
+                                             :lev1 #f
                                              :disp1 #f
                                              ;;this is a test, turn disp1 to display if we observe crashes
                                              ))
@@ -2098,8 +2098,8 @@
                                              :vis-nick 'none
                                              :lev0 'factory-cross
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2139,8 +2139,8 @@
                                              :vis-nick 'none
                                              :lev0 'holly-wood
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2180,8 +2180,8 @@
                                              :vis-nick 'none
                                              :lev0 'monument
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2228,8 +2228,8 @@
                                              :vis-nick 'none
                                              :lev0 'cathedral
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2269,8 +2269,8 @@
                                              :vis-nick 'none
                                              :lev0 'pyramid
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2310,8 +2310,8 @@
                                              :vis-nick 'none
                                              :lev0 'ice-canyon
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2351,8 +2351,8 @@
                                              :vis-nick 'none
                                              :lev0 'coins
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2392,8 +2392,8 @@
                                              :vis-nick 'none
                                              :lev0 'villa-cube
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2433,8 +2433,8 @@
                                              :vis-nick 'none
                                              :lev0 'ice-slide
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2474,8 +2474,8 @@
                                              :vis-nick 'none
                                              :lev0 'islands
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2515,8 +2515,8 @@
                                              :vis-nick 'none
                                              :lev0 'glass-towers
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2556,8 +2556,8 @@
                                              :vis-nick 'none
                                              :lev0 'chemical-factory
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2597,8 +2597,8 @@
                                              :vis-nick 'none
                                              :lev0 'space-bridge
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2638,8 +2638,8 @@
                                              :vis-nick 'none
                                              :lev0 'chicks
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2679,8 +2679,8 @@
                                              :vis-nick 'none
                                              :lev0 'garden
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2720,8 +2720,8 @@
                                              :vis-nick 'none
                                              :lev0 'cold-pipe
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2761,8 +2761,8 @@
                                              :vis-nick 'none
                                              :lev0 'block-man
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2802,8 +2802,8 @@
                                              :vis-nick 'none
                                              :lev0 'cube-face
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100
@@ -2845,7 +2845,7 @@
                                              :vis-nick 'none
                                              :lev0 'mort-title
                                              :disp0 'display
-                                             :lev1 'village1
+                                             :lev1 #f
                                              :disp1 '#f
                                              ))
                            :tasks '()

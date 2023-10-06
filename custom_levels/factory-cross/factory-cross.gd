@@ -9,6 +9,7 @@
 "wobbler.o"
 "twister.o"
 "flutflutegg.o"
+"warpgate.o"
 "lurkerworm.o"
 "misty-teetertotter.o"
 "teetertotter-ag.go"
