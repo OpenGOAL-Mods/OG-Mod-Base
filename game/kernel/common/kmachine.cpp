@@ -176,11 +176,6 @@ void playMP3(u32 filePathu32, u32 volume) {
 
     thread.detach();
 }
-// Define a separate sf::Music pointer for the Main Music.
-sf::Music* mainMusicInstance = nullptr;
-
-// Define a flag to track the state of the Main Music.
-bool isMainMusicPaused = false;
 
 
 // Declare a mutex for synchronizing access to mainMusicInstance
@@ -191,24 +186,36 @@ struct MusicData {
     sf::Music* music;
     std::string filePath;
     u32 volume;
+    bool isPaused; // Added flag to track pause/resume state
 };
 
 // Define a vector to hold the music instances
 std::vector<MusicData> musicInstances;
+std::string mainMusicFilePath; // Global variable to store the main music file path
 
 // Function to stop the Main Music.
 void stopMainMusic() {
-    for (auto& musicData : musicInstances) {
-        musicData.music->stop();
-        delete musicData.music;
+  std::cout << "Trying to stop Main Music: " << mainMusicFilePath << std::endl;
+    auto it = musicInstances.begin();
+    while (it != musicInstances.end()) {
+        std::cout << "Looking for Main Music: " << mainMusicFilePath << std::endl;
+        if (it->filePath == mainMusicFilePath) {
+          std::cout << "FOUND!!! Main Music: " << mainMusicFilePath << std::endl;
+            it->music->stop();
+            delete it->music;
+            it = musicInstances.erase(it);  // 'erase' will automatically move to the next element
+        } else {
+            ++it;
+        }
     }
-    musicInstances.clear();
 }
+
 // Function to play the Main Music.
 void playMainMusic(u32 filePathu32, u32 volume) {
     std::string filePath = Ptr<String>(filePathu32).c()->data();
     std::cout << "Playing Main Music: " << filePath << std::endl;
-    stopMainMusic();
+    mainMusicFilePath = filePath;
+    //stopMainMusic();
     // Stop and clean up any existing music instances for this file path
     for (auto it = musicInstances.begin(); it != musicInstances.end();) {
         if (it->filePath == filePath) {
@@ -229,17 +236,43 @@ void playMainMusic(u32 filePathu32, u32 volume) {
         return;
     }
     mainMusic->setVolume(volume);
-
     // Set looping to true to make the track loop
     mainMusic->setLoop(true);
 
     mainMusic->play();
 
     // Store the Main Music instance in the vector.
-    MusicData musicData = { mainMusic, filePath, volume };
+    MusicData musicData = { mainMusic, filePath, volume, false }; // Initialize isPaused to false
     musicInstances.push_back(musicData);
 }
 
+
+
+void pauseMainMusic() {
+    mainMusicMutex.lock();
+    for (auto& musicData : musicInstances) {
+        if (musicData.music && !musicData.isPaused) {
+            if (musicData.music->getStatus() == sf::SoundSource::Playing) {
+                musicData.music->pause();
+                musicData.isPaused = true;
+            }
+        }
+    }
+    mainMusicMutex.unlock();
+}
+
+void resumeMainMusic() {
+    mainMusicMutex.lock();
+    for (auto& musicData : musicInstances) {
+        if (musicData.music && musicData.isPaused) {
+            if (musicData.music->getStatus() == sf::SoundSource::Paused) {
+                musicData.music->play();
+                musicData.isPaused = false;
+            }
+        }
+    }
+    mainMusicMutex.unlock();
+}
 
 
 
@@ -254,28 +287,7 @@ void changeMainMusicVolume(u32 volume) {
     }
     mainMusicMutex.unlock();
 }
-// Function to pause or resume the Main Music.
-// Function to toggle between pausing and resuming the Main Music.
-void playPauseMainMusic()
-{
-    if (mainMusicInstance)
-    {
-        if (mainMusicInstance->getStatus() == sf::Music::Playing)
-        {
-            mainMusicInstance->pause();
-        }
-        else if (mainMusicInstance->getStatus() == sf::Music::Paused)
-        {
-            mainMusicInstance->play();
-        }
-        else if (mainMusicInstance->getStatus() == sf::Music::Stopped)
-        {
-            // If Main Music is stopped, start playing it.
-            mainMusicInstance->play();
-        }
-    }
 
-}
 /*!
  * Not checked super carefully for jak 2, but looks the same
  */
@@ -1092,8 +1104,10 @@ void init_common_pc_port_functions(
 
   //Main music stuff
   make_func_symbol_func("play-main-music", (void*)playMainMusic);
-  make_func_symbol_func("pause-play-main-music", (void*)playPauseMainMusic);
-  make_func_symbol_func("stop-main-music", (void*)playPauseMainMusic);
+  make_func_symbol_func("pause-main-music", (void*)pauseMainMusic);
+  make_func_symbol_func("stop-main-music", (void*)stopMainMusic);
+  make_func_symbol_func("resume-main-music", (void*)resumeMainMusic);
+
   make_func_symbol_func("main-music-volume", (void*)changeMainMusicVolume);
 
   // discord rich presence

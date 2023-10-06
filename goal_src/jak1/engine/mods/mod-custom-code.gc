@@ -33,6 +33,7 @@
 
 (define done-init? #f)
 
+(defun-extern music-manager (none) )
 
 
 
@@ -263,6 +264,12 @@
         (if (and  (= (-> (level-get-target-inside *level*)name ) 'mort-title) (!= (-> *target* root trans y) (meters 1)))
           (set! (-> *target* root trans y) (meters 301))
           )
+        (if (and  (= (-> (level-get-target-inside *level*)name ) 'mort-title) (!= (-> *target* root trans x) (meters 0.0)))
+          (set! (-> *target* root trans x) (meters 0.0))
+          )
+        (if (and  (= (-> (level-get-target-inside *level*)name ) 'mort-title) (!= (-> *target* root trans z) (meters 0.0)))
+          (set! (-> *target* root trans z) (meters 0.0))
+          )
 
         ;;if we arent in cam-eye switch to cam-eye
         (if (and (!= (-> (-> (the-as (pointer camera-slave) (-> *camera* child) ))state name) 'cam-eye))
@@ -378,6 +385,7 @@
 (define custom-music-eco-paused? #f)
 (defun eco-manager ()
 
+   
 ;;Ice eco start
 (when (send-event *target* 'query 'powerup (pickup-type eco-ice))
 
@@ -477,7 +485,7 @@
 (none)
 )
 
-(defun-extern music-manager (none) )
+
 (defbehavior music-manager-proc process ()
 (music-manager)
 (none)
@@ -527,7 +535,7 @@
     "this is ran in its own process called run-every-frame-proc"
     
     (when #t
-
+   
    ;; (sound-manager)
     (when (run-mort-code?)
       ;;   (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
@@ -607,11 +615,10 @@
 (defun stupid-hacks-every-frame ()
 (when run-mort-code?
 ;;Hack the main menu music since we cant pause it yet
-(main-music-volume (the int (-> *setting-control* default music-volume)))
+;;(main-music-volume (the int (-> *setting-control* default music-volume)))
+
     ;; Its so funny that this works lol
-    (if (zero-volume?)
-      (main-music-volume 0)
-    )
+
 
 ;;Hack to warp/skip to the light eco cutscene if we are in citadel because I dont know how to make mort bosses yet
 (when (and (process-by-ename "robotboss-3") *target*)
@@ -715,8 +722,10 @@
     )
 
 (none))
-
+(defun-extern stop-main-music (none))
 (defun music-manager ()
+(stop-main-music)
+
         (case (-> (level-get-target-inside *level*) name)
          (('mort-title)
           (play-main-music "SND/jak-chicken-theme.mp3" (the int (-> *setting-control* default music-volume)))
@@ -776,6 +785,7 @@
           ;;(stop-main-music) This function is broken but playing a invalid sound does the same thing
           )
          )
+        
 (none))
 
     (defun runs-on-jak-spawn ()
