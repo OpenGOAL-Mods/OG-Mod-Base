@@ -1,9 +1,9 @@
-("CHE.DGO"(
+("CHE.DGO"
+(
 "static-screen.o"
-
 "chemical-factory.go"
 "chemical-factory-code.o"
-;; custom level here start
+;;Start of "default" package for mort levels
 "training-part.o"
 "warp-gate-switch-ag.go"
 "warpgate-ag.go"
@@ -11,4 +11,5 @@
 "warpgate.o"
 "flutflut-ag.go"
 "flutflutegg-ag.go"
+;;End of "default" package - level specific stuff should go under here
 ))
