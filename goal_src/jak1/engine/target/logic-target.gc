@@ -1953,8 +1953,10 @@
   )
 
 (defbehavior init-target target ((arg0 continue-point))
-  (set-setting! 'allow-pause #f 0.0 0)
-  (set-setting! 'allow-progress #f 0.0 0)
+  (when (= self *target*)
+    (set-setting! 'allow-pause #f 0.0 0)
+    (set-setting! 'allow-progress #f 0.0 0)
+    )
   (apply-settings *setting-control*)
   (if (not arg0)
       (set! arg0 (get-or-create-continue! *game-info*))
