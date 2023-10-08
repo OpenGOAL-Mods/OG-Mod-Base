@@ -36,6 +36,10 @@
 ;; multiplayer
 (define *multiplayer-info* (new 'global 'multiplayer-info))
 (define *remote-targets* (new 'global 'boxed-array handle MAX_MULTIPLAYER_COUNT))
+(define *enable-remote-target-attacks* #f)
+(define *enable-remote-target-yellow-eco-blasts* #f)
+(define *enable-remote-target-pvp-attacks* #f)
+(define *pvp-attack-sphere-size* 3000.0)
 
 (define *self-player-info* (the-as remote-player-info #f))
 
@@ -49,6 +53,27 @@
   (set! (-> tgt draw color-mult g) g)
   (set! (-> tgt draw color-mult b) b)
   (none)
+  )
+
+(defun target-on-racer? ((t target))
+  (logtest? (-> t control root-prim prim-core action) (collide-action racer))
+)
+
+(defun target-on-flut? ((t target))
+  (logtest? (-> t control root-prim prim-core action) (collide-action flut))
+)
+
+(defun target-on-foot? ((t target))
+  (not (or 
+        (logtest? (-> t control root-prim prim-core action) (collide-action racer)) 
+        (logtest? (-> t control root-prim prim-core action) (collide-action flut)))
+  )
+)
+
+(defun is-grabbed? ()
+  (logtest? (-> *target* state-flags)
+    (state-flags grabbed)
+    )
   )
 
 (defun color-target ((tgt process-drawable) (color tgt-color))
@@ -133,7 +158,14 @@
   (set! (-> *self-player-info* quat_y)     (-> *target* root quat y))
   (set! (-> *self-player-info* quat_z)     (-> *target* root quat z))
   (set! (-> *self-player-info* quat_w)     (-> *target* root quat w))
+
+  (if (target-on-racer? *target*)
+    (set! (-> *self-player-info* zoomer_rot_y)     (-> *target* racer rot y))
+    (set! (-> *self-player-info* zoomer_rot_y)     0.0)
+    )
+
   (set! (-> *self-player-info* tgt_state)  (-> *target* state name))
+  (set! (-> *self-player-info* active_tgt_state)  (-> *target* state name))
 
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) username)   (-> *self-player-info* username))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) color)      (-> *self-player-info* color))
@@ -144,7 +176,9 @@
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_y)     (-> *target* root quat y))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_z)     (-> *target* root quat z))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_w)     (-> *target* root quat w))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) zoomer_rot_y)     (-> *self-player-info* zoomer_rot_y))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) tgt_state)  (-> *target* state name))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) active_tgt_state)  (-> *target* state name))
   (none)
   )
 
@@ -159,153 +193,180 @@
   (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) quat_z)     (-> *target* root quat z))
   (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) quat_w)     (-> *target* root quat w))
   (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) tgt_state)  (-> *target* state name))
+  (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) active_tgt_state)  (-> *target* state name))
+  (if (target-on-racer? *target*)
+    (set! (-> *self-player-info* zoomer_rot_y)     (-> *target* racer rot y))
+    )
   (none)
   )
 
 
 (defun target-sync-state ((tgt-state symbol) (t target))
   (case tgt-state
-    ; (('target-attack))
-    ;; (('target-attack-air))
-    ;; (('target-attack-uppercut))
-    ;; (('target-attack-uppercut-jump))
-    ;; (('target-billy-game))
-    ;; (('target-clone-anim))
-    ;; (('target-continue))
-    ;; (('target-death))
-    ;; (('target-demo))
-    ;; (('target-double-jump))
-    ;; (('target-duck-high-jump))
-    ;; (('target-duck-high-jump-jump))
-    ;; (('target-duck-stance))
-    ;; (('target-duck-walk))
-    ;; (('target-eco-powerup) (send-event t 'powerup))
-    ;; (('target-edge-grab 'target-edge-grab-jump 'target-edge-grab-off)
-    ;;   (send-event t 'edge-grab)
-    ;;   )
-    (('target-falling) (send-event t 'change-mode 'falling))
-    ;; (('target-final-door))
-    ;; (('target-fishing) (send-event t 'change-mode 'fishing #f))
-    ;; (('target-flop))
-    ;; (('target-flop-hit-ground))
+    ;; normal attacks (and relevant jumps) !DONE!
+    (('target-running-attack) (go-process t target-running-attack))
+    (('target-attack) (go-process t target-attack))
+    (('target-attack-air) (go-process t target-attack-air #f))
+    (('target-attack-uppercut) (go-process t target-attack-uppercut (-> *TARGET-bank* attack-jump-height-min) (-> *TARGET-bank* attack-jump-height-max)))
+    (('target-attack-uppercut-jump) (go-process t target-attack-uppercut-jump (-> *TARGET-bank* attack-jump-height-min) (-> *TARGET-bank* attack-jump-height-max)))
+    (('target-flop) (go-process t target-flop (the-as float 33775.48) (the-as float -122880.0)  (the-as float 0.0))) ;;ground pound
+    (('target-flop-hit-ground) (go-process t target-flop-hit-ground #f))
+    (('target-wheel) (go-process t target-wheel))
+    (('target-wheel-flip) (go-process t target-wheel-flip (-> *TARGET-bank* wheel-flip-height) (-> *TARGET-bank* wheel-flip-dist)))
     
-    (('target-flut-get-off 'target-flut-get-off-hit-ground 'target-flut-get-off-jump)
-      (case (-> t state name)
-        (('target-flut-air-attack 'target-flut-air-attack-hit-ground 'target-flut-clone-anim 'target-flut-death 
-        'target-flut-double-jump 'target-flut-falling 'target-flut-get-on 'target-flut-grab 'target-flut-hit 'target-flut-hit-ground 
-        'target-flut-jump 'target-flut-running-attack 'target-flut-stance 'target-flut-start 'target-flut-walk)
-          ;; on flutflut, get off
-          (send-event t 'change-mode 'normal #f)
-          )
-        )
-      )
-    (('target-flut-air-attack 'target-flut-air-attack-hit-ground 'target-flut-clone-anim 'target-flut-death 
-      'target-flut-double-jump 'target-flut-falling 'target-flut-get-on 'target-flut-grab 'target-flut-hit 'target-flut-hit-ground 
-      'target-flut-jump 'target-flut-running-attack 'target-flut-stance 'target-flut-start 'target-flut-walk)
-      (case (-> t state name)
-        (('target-racing 'target-racing-bounce 'target-racing-clone-anim 'target-racing-death 'target-racing-falling 'target-racing-get-on 
-        'target-racing-grab 'target-racing-hit 'target-racing-jump  'target-racing-smack 'target-racing-start)
-          ;; on zoomer, get off 
-          (send-event t 'change-mode 'normal #f)
-          )
-        (('target-flut-air-attack 'target-flut-air-attack-hit-ground 'target-flut-clone-anim 'target-flut-death 
-          'target-flut-double-jump 'target-flut-falling 'target-flut-get-on 'target-flut-grab 'target-flut-hit 'target-flut-hit-ground 
-          'target-flut-jump 'target-flut-running-attack 'target-flut-stance 'target-flut-start 'target-flut-walk)
-          ;; already on flutflut, do nothing
-          )
-        (else
-          (send-event t 'change-mode 'flut #f)
-          )
-        )
-      )
-    ;; (('target-grab))
-    ;; (('target-high-jump ))
-    ;; (('target-hit ))
-    ;; (('target-hit-ground ))
-    ;; (('target-hit-ground-hard))
-    ;; (('target-ice-stance))
-    ;; (('target-ice-walk))
-    ;; (('target-jump ))
-    ;; (('target-jump-forward ))
-    ;; (('target-launch))
-    ;; (('target-load-wait))
-    ;; (('target-look-around))
-    ;; (('target-periscope))
-    ;; (('target-play-anim ))
-    ;; (('target-pole-cycle) (send-event t 'pole-grab))
-    ;; (('target-pole-flip-forward))
-    ;; (('target-pole-flip-forward-jump))
-    ;; (('target-pole-flip-up))
-    ;; (('target-pole-flip-up-jump))
-    (('target-racing-get-off 'target-racing-get-off-hit-ground 'target-racing-get-off-jump)
-      (case (-> t state name)
-        (('target-racing 'target-racing-bounce 'target-racing-clone-anim 'target-racing-death 'target-racing-falling 'target-racing-get-on 
-        'target-racing-grab 'target-racing-hit 'target-racing-jump  'target-racing-smack 'target-racing-start)
-          ;; on zoomer, get off 
-          (send-event t 'change-mode 'normal #f)
-          )
-        )
-      )
-    (('target-racing 'target-racing-bounce 'target-racing-clone-anim 'target-racing-death 'target-racing-falling 'target-racing-get-on 
-      'target-racing-grab 'target-racing-hit 'target-racing-jump  'target-racing-smack 'target-racing-start)
-      (case (-> t state name)
-        (('target-flut-air-attack 'target-flut-air-attack-hit-ground 'target-flut-clone-anim 'target-flut-death 
-          'target-flut-double-jump 'target-flut-falling 'target-flut-get-on 'target-flut-grab 'target-flut-hit 'target-flut-hit-ground 
-          'target-flut-jump 'target-flut-running-attack 'target-flut-stance 'target-flut-start 'target-flut-walk)
-            ;; on flutflut, get off
-            (send-event t 'change-mode 'normal #f)
-            )
-        (('target-racing 'target-racing-bounce 'target-racing-clone-anim 'target-racing-death 'target-racing-falling 'target-racing-get-on 
-          'target-racing-grab 'target-racing-hit 'target-racing-jump  'target-racing-smack 'target-racing-start)
-          ;; already on zoomer, do nothing
-          )
-        (else
-          (send-event t 'change-mode 'racing #f)
-          )
-        )
-      )
-    ;; (('target-running-attack))
-    ;; (('target-slide-down))
+    ;; jumps !DONE!
+    (('target-jump) (go-process t target-jump (-> *TARGET-bank* jump-height-min) (-> *TARGET-bank* jump-height-max) (the-as surface #f)))
+    (('target-double-jump) (go-process t target-double-jump (-> *TARGET-bank* double-jump-height-min) (-> *TARGET-bank* double-jump-height-max)))
+    (('target-high-jump) (go-process t target-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'flip))
+    (('target-duck-high-jump) (go-process t target-duck-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'duck))
+    (('target-duck-high-jump-jump) (go-process t target-duck-high-jump-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'duck))
+
+    ;; eco !DONE!
+    (('target-eco-powerup) (send-event t 'powerup))
+    (('target-yellow-blast) (go-process t target-yellow-blast))
+    (('target-yellow-jump-blast) (go-process t target-yellow-jump-blast))
+    (('target-launch) (go-process t target-launch (the-as float (-> t control unknown-dword60)) (the-as symbol (-> t control unknown-dword61)) (-> t control unknown-vector102) (-> t control unknown-dword63)))
+
+    ;; edge grabs !DONE!
+    (('target-edge-grab) (go-process t target-edge-grab))
+    (('target-edge-grab-off) (go-process t target-edge-grab-off))
+    (('target-edge-grab-jump) (go-process t target-edge-grab-jump (-> *TARGET-bank* edge-grab-jump-height-min) (-> *TARGET-bank* edge-grab-jump-height-max)))
+    (('target-jump-forward) (go-process t target-jump-forward (-> *TARGET-bank* edge-grab-jump-height-min) (-> *TARGET-bank* edge-grab-jump-height-max)))
+
+    ;; normal movement
+    (('target-stance) (go-process t target-stance))
+    (('target-stance-ambient) (go-process t target-stance-ambient))
+    (('target-stance-look-around) (go-process t target-stance-look-around))
+    (('target-walk) (go-process t target-walk))
+    (('target-wade-stance) (go-process t target-wade-stance))
+    (('target-wade-walk) (go-process t target-wade-walk))
+    (('target-ice-stance) (go-process t target-ice-stance))
+    (('target-ice-walk) (go-process t target-ice-walk))
+    (('target-load-wait) (go-process t target-load-wait)) ;; trip
+    (('target-slide-down) (go-process t target-slide-down)) ;; slippery surface
+    (('target-turn-around) (go-process t target-turn-around))
+    (('target-falling) (go-process t target-falling #f))
+
+    ;; hit !DONE!
+    (('target-hit) (go-process t target-hit 'shove (-> t attack-info-rec)))
+    (('target-hit-ground) (go-process t target-hit-ground #f))
+    (('target-hit-ground-hard) (go-process t target-hit-ground-hard 0.0)) ;;toggle to 1.0 to flash invuln frames)
+
+    ;; tube slide
+    (('target-tube-start) (send-event t 'change-mode 'tube #f))
+    (('target-tube) (go-process t target-tube))
+    (('target-tube-jump) (go-process t target-tube-jump (-> *TARGET-bank* tube-jump-height-min) (-> *TARGET-bank* tube-jump-height-max)))
+    ;;(('target-tube-hit) (go-process t target-hit-ground #f)
+
+    ;; poles !TODO: crashes if *target* is in another level so the remote level isn't loaded
+    ;; (('target-pole-cycle) (go-process t target-pole-flip-up 28672.0 28672.0 6000.0))
+    ;; (('target-pole-flip-forward) (go-process t target-pole-flip-forward (the-as float 14336.0) (the-as float 14336.0) (the-as float 57344.0)))
+    ;; (('target-pole-flip-forward-jump) (go-process t target-pole-flip-forward-jump (the-as float 14336.0) (the-as float 14336.0)))
+    ;; (('target-pole-flip-up) (go-process t target-pole-flip-up 28672.0 28672.0 6000.0))
+    ;; (('target-pole-flip-up-jump) (go-process t target-pole-flip-up-jump 28672.0 28672.0))
+
+    ;; swiming & water
+    (('target-swim-stance) (send-event t 'change-mode 'swim) (go-process t target-swim-stance))
+    (('target-swim-walk) (send-event t 'change-mode 'swim) (go-process t target-swim-walk))
+    (('target-swim-down) (go-process t target-swim-down))
+    (('target-swim-up) (go-process t target-swim-up))
+    (('target-swim-jump) (go-process t target-swim-jump (-> *TARGET-bank* swim-jump-height-min) (-> *TARGET-bank* swim-jump-height-max)))
+    (('target-swim-jump-jump) (go-process t target-swim-jump-jump (-> *TARGET-bank* swim-jump-height-min) (-> *TARGET-bank* swim-jump-height-max) (the-as surface #f)))
+   
+    ;; duck !DONE!
+    (('target-duck-stance) (go-process t target-duck-stance))
+    (('target-duck-walk) (go-process t target-duck-walk))
+
+    ;; warp gates !DONE!
+    (('target-warp-out) (go-process t target-duck-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'duck))
+    (('target-warp-in) (go-process t target-duck-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'duck))
+
+
+    ;; other
+    ;; (('target-clone-anim) (spool-push *art-control* "fuel-cell-victory" 0 t (the-as float -99.0)) (send-event t 'clone-anim t)) ;; powercell pickup
+    (('target-fishing) (send-event t 'change-mode 'fishing #f))
+    (('target-periscope) (send-event t 'change-mode 'periscope #f))
+    (('target-grab) (go-process t target-grab)) ;; process-grab animation while in cutscenes
+
+    ;; unknown
+    (('target-look-around) (go-process t target-look-around))
+
+    ;; redundant for multiplayer
+    ;; (('target-death) (go-process t target-hit-ground-hard 0.0))
+    ;; (('target-tube-death))
+    ;; (('target-billy-game)) ;; will only put you in first person
+    ;; (('target-play-anim))
     ;; (('target-snowball))
     ;; (('target-snowball-start))
-    ;; (('target-stance))
-    ;; (('target-stance-ambient))
-    ;; (('target-stance-look-around))
-    ;; (('target-startup))
-    (('target-swim-down 'target-swim-jump 'target-swim-jump-jump 'target-swim-stance 'target-swim-up 'target-swim-walk)
-      (case (-> t state name)
-        (('target-swim-down 'target-swim-jump 'target-swim-jump-jump 'target-swim-stance 'target-swim-up 'target-swim-walk)
-          ;; do nothing
-          )
-        (else
-          (send-event t 'swim)
-          )
-        )
-      )
     ;; (('target-title))
     ;; (('target-title-play))
     ;; (('target-title-wait))
-    (('target-tube 'target-tube-death 'target-tube-hit 'target-tube-jump 'target-tube-start)
-      (case (-> t state name)
-        (('target-tube 'target-tube-death 'target-tube-hit 'target-tube-jump 'target-tube-start)
-          ;; do nothing
-          )
-        (else
-          (send-event t 'change-mode 'tube #f)
+    ;; (('target-continue))
+    ;; (('target-demo))
+    ;; (('target-startup))
+    ;; (('target-final-door))
+
+
+    ;; zoomer !DONE!
+    (('target-racing 'target-racing-start 'target-racing-get-on 'target-racing-bounce 'target-racing-clone-anim 
+      'target-racing-falling 'target-racing-grab 'target-racing-hit 'target-racing-jump  'target-racing-smack)
+      
+      (if (not (target-on-racer? t))
+        (send-event t 'change-mode 'racing #f)
+        )
+      
+      (when (target-on-racer? t) 
+        (case tgt-state
+          (('target-racing) (go-process t target-racing))
+          (('target-racing-bounce) (go-process t target-racing-bounce 2048.0 2048.0 #f))
+          (('target-racing-jump) (go-process t target-racing-jump 2048.0 5324.8 #t))
+          (('target-racing-smack) (go-process t target-racing-smack (-> t control unknown-float01) #t))
+          (('target-racing-grab) (go-process t target-racing-grab))
+          (('target-racing-falling) (go-process t target-racing-falling))
+          ;; (('target-racing-hit))
+          ;; (('target-racing-clone-anim))
           )
         )
       )
-    ;; (('target-turn-around))
-    (('target-wade-stance 'target-wade-walk)
-      (send-event t 'wade)
+    (('target-racing-get-off 'target-racing-get-off-hit-ground 'target-racing-get-off-jump 'target-racing-death)
+      (if (target-on-racer? t)
+          (send-event t 'end-mode)
+        )
       )
-    ;; (('target-walk))
-    ;; (('target-warp-in))
-    ;; (('target-warp-out))
-    ;; (('target-wheel))
-    ;; (('target-wheel-flip))
-    ;; (('target-yellow-blast))
-    ;; (('target-yellow-jump-blast))
+
+
+    ;; flut flut !DONE!
+    (('target-flut-air-attack 'target-flut-air-attack-hit-ground 'target-flut-clone-anim 'target-flut-death 
+      'target-flut-double-jump 'target-flut-falling 'target-flut-get-on 'target-flut-grab 'target-flut-hit 'target-flut-hit-ground 
+      'target-flut-jump 'target-flut-running-attack 'target-flut-stance 'target-flut-start 'target-flut-walk)
+      
+      (if (not (target-on-flut? t))
+        (send-event t 'change-mode 'flut #f)
+        )
+
+      (when (target-on-flut? t) 
+        (case tgt-state
+          (('target-flut-stance) (go-process t target-flut-stance))
+          (('target-flut-walk) (go-process t target-flut-walk))
+          (('target-flut-falling) (go-process t target-flut-falling #f))
+          (('target-flut-running-attack) (go-process t target-flut-running-attack))
+          (('target-flut-jump) (go-process t target-flut-jump (-> *FLUT-bank* jump-height-min) (-> *FLUT-bank* jump-height-max)))
+          (('target-flut-double-jump) (go-process t target-flut-double-jump (-> *FLUT-bank* double-jump-height-min) (-> *FLUT-bank* double-jump-height-max)))
+          (('target-flut-air-attack) (go-process t target-flut-air-attack (-> *FLUT-bank* air-attack-speed)))
+          (('target-flut-air-attack-hit-ground) (go-process t target-flut-air-attack-hit-ground))
+          (('target-flut-grab) (go-process t target-flut-grab))
+          (('target-flut-hit) (go-process t target-flut-hit 'shove (-> t attack-info-rec)))
+          (('target-flut-hit-ground) (go-process t target-flut-hit-ground ))
+          ;; (('target-flut-clone-anim))
+          )
+      )
+      )
+    (('target-flut-get-off 'target-flut-get-off-hit-ground 'target-flut-get-off-jump 'target-flut-death)
+      (if (target-on-flut? t)
+          (send-event t 'end-mode)
+        )
+      )
+
     )
   (none)
   )
@@ -326,8 +387,12 @@
   ;; additional steps for rotation, state, etc
   (case (-> obj type)
     ((target)
-      (let* ((t (the target obj)) ;;!TODO: removed local-seeker? and remote-seeker? status check here, check if this is still needed
-             )
+      (let* ((t (the target obj)))
+
+        (if (target-on-racer? t)
+          (set! (-> t racer rot y) (-> p zoomer_rot_y))
+          )
+
         ;; draw usernames for all players
         (add-debug-text-3d
                       #t
@@ -345,7 +410,10 @@
         (quaternion-copy! (-> t control dir-targ) (-> t root quat))
           
         ;; sync target state
-        (target-sync-state (-> p tgt_state) t)
+        (when (!= (-> p active_tgt_state) (-> p tgt_state))
+          (set! (-> p active_tgt_state) (-> p tgt_state))
+          (target-sync-state (-> p tgt_state) t)
+          )
         )
       )
     ((money)

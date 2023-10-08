@@ -235,6 +235,12 @@
         (none)
       )
 
+    (defun safe-release-from-grab ()
+      (when (is-grabbed?)
+        (process-release? *target*)
+        )
+      )
+
     (defun add-task-to-buffer ((arg0 game-task) (arg1 task-status))
       (dotimes (idx (-> *task-update-buffer* length))
         (when (= (-> *task-update-buffer* idx status) (task-status invalid))
@@ -356,8 +362,8 @@
         (when (or (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
         (!= (-> *self-player-info* trans_y) (-> *target* root trans y))
         (!= (-> *self-player-info* trans_z) (-> *target* root trans z))
+        (!= (-> *self-player-info* tgt_state) (-> *target* state name))
         (= *has-none-position-update?* #t))
-
             ;; update this player's position
             (update-self-multiplayer-info)
             ;; (update-debug-self-multiplayer-info)

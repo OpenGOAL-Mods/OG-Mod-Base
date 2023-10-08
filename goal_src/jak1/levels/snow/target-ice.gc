@@ -198,7 +198,7 @@
       (remove-exit)
       (go target-duck-stance)
       )
-    (when (and (not (move-legs?)) (let ((gp-0 (ja-group))
+    (when (and (not (move-legs?)) (= self *target*) (let ((gp-0 (ja-group))
                                         (f0-1 (ja-aframe-num 0))
                                         )
                                     (if (and (= gp-0 (-> self draw art-group data 102)) (>= f0-1 30.0) (>= 35.0 f0-1))

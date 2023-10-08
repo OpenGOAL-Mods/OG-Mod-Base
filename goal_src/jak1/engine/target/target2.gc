@@ -7,6 +7,8 @@
 
 (declare-type first-person-hud process)
 
+(define-extern *enable-remote-target-attacks* symbol)
+(define-extern *enable-remote-target-yellow-eco-blasts* symbol)
 
 
 ;; DECOMP BEGINS
@@ -1335,8 +1337,10 @@
     (set! (-> self control unknown-surface00) *run-attack-mods*)
     (set! (-> *run-attack-mods* turnv) 655360.0)
     (set! (-> *run-attack-mods* turnvv) 655360.0)
-    (target-start-attack)
-    (target-danger-set! 'spin #f)
+    (when (or (= self *target*) *enable-remote-target-attacks*)
+      (target-start-attack)
+      (target-danger-set! 'spin #f)
+      )
     (set! (-> self control unknown-uint20) (the-as uint 0))
     (set! (-> self control unknown-int21) 0)
     (set! (-> self control unknown-uint31) (the-as uint 0))
@@ -1402,9 +1406,10 @@
       (let ((s5-2 (vector-z-quaternion! (new 'stack-no-clear 'vector) (-> self control quat))))
         (set! (-> s5-2 y) 0.0)
         (vector-normalize! s5-2 (-> *TARGET-bank* yellow-projectile-speed))
-        (when (and (= (-> self fact-info-target eco-type) (pickup-type eco-yellow))
+        (when (or (and (= (-> self fact-info-target eco-type) (pickup-type eco-yellow))
                    (>= (-> self fact-info-target eco-level) 1.0)
-                   )
+                   (= self *target*)
+                   ) *enable-remote-target-yellow-eco-blasts*) ;; give free pass to shoot for remotes
           (let ((gp-1 (get-process *default-dead-pool* projectile-yellow #x4000)))
             (set! gp-0 (ppointer->handle
                          (when gp-1
@@ -1534,23 +1539,25 @@
         )
       )
     (ja :num! (seek!))
-    (process-spawn
-      projectile-yellow
-      :init projectile-init-by-other
-      (-> self entity)
-      (-> self control unknown-vector90)
-      (vector-float*!
-        (new 'stack-no-clear 'vector)
-        (vector-z-quaternion! (new 'stack-no-clear 'vector) (-> self control quat))
-        (the-as float (-> *TARGET-bank* yellow-projectile-speed))
-        )
-      (if (>= (-> self fact-info-target eco-level) (-> *FACT-bank* eco-level-max))
-          16
-          0
+    (when (or (= self *target*) *enable-remote-target-yellow-eco-blasts*)
+      (process-spawn
+        projectile-yellow
+        :init projectile-init-by-other
+        (-> self entity)
+        (-> self control unknown-vector90)
+        (vector-float*!
+          (new 'stack-no-clear 'vector)
+          (vector-z-quaternion! (new 'stack-no-clear 'vector) (-> self control quat))
+          (the-as float (-> *TARGET-bank* yellow-projectile-speed))
           )
-      #f
-      self
-      :to self
+        (if (>= (-> self fact-info-target eco-level) (-> *FACT-bank* eco-level-max))
+            16
+            0
+            )
+        #f
+        self
+        :to self
+        )
       )
     (set! (-> self control unknown-dword82) (-> *display* base-frame-counter))
     (let ((gp-4 (-> *display* base-frame-counter)))
@@ -1673,9 +1680,10 @@
     )
   :trans (behavior ()
     ((-> self state-hook))
-    (when (and (not (logtest? (-> self water flags) (water-flags wt10)))
-               (>= (- (-> *display* base-frame-counter) (-> self water wade-time)) (seconds 0.05))
-               )
+    (when (and (= self *target*) 
+              (not (logtest? (-> self water flags) (water-flags wt10)))
+              (>= (- (-> *display* base-frame-counter) (-> self water wade-time)) (seconds 0.05))
+              )
       (if (logtest? (-> self water flags) (water-flags wt11))
           (go target-swim-stance)
           (go target-stance)
@@ -1718,9 +1726,10 @@
   :exit (-> target-wade-stance exit)
   :trans (behavior ()
     ((-> self state-hook))
-    (when (and (not (logtest? (-> self water flags) (water-flags wt10)))
-               (>= (- (-> *display* base-frame-counter) (-> self water wade-time)) (seconds 0.1))
-               )
+    (when (and (= self *target*) 
+              (not (logtest? (-> self water flags) (water-flags wt10)))
+              (>= (- (-> *display* base-frame-counter) (-> self water wade-time)) (seconds 0.1))
+              )
       (if (logtest? (-> self water flags) (water-flags wt11))
           (go target-swim-stance)
           (go target-stance)
@@ -1823,6 +1832,8 @@
           (gp-6 0)
           )
       (loop
+        (if (!= self *target*) (set! (-> self control unknown-float01) 40960.0)) ;; set player xz velocity to max run speed for animation
+        
         (let ((f0-10 (fmax -1.0 (fmin 1.0 (* 2.0 (-> self control unknown-float61)))))
               (f24-0 (fmax -1.0 (fmin 1.0 (* 1.6 (-> self control unknown-float62)))))
               )
@@ -1994,9 +2005,10 @@
              )
         (set-zero! (-> self water bob))
         )
-    (when (and (not (logtest? (-> self water flags) (water-flags wt11)))
-               (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.1))
-               )
+    (when (and (= self *target*)
+              (not (logtest? (-> self water flags) (water-flags wt11)))
+              (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.1))
+              )
       (if (logtest? (-> self water flags) (water-flags wt10))
           (go target-wade-stance)
           (go target-stance)
@@ -2109,9 +2121,10 @@
              )
         (set-zero! (-> self water bob))
         )
-    (when (and (not (logtest? (-> self water flags) (water-flags wt11)))
-               (>= (- (-> *display* base-frame-counter) (-> self water swim-time)) (seconds 0.1))
-               )
+    (when (and (= self *target*)
+              (not (logtest? (-> self water flags) (water-flags wt11)))
+              (>= (- (-> *display* base-frame-counter) (-> self water swim-time)) (seconds 0.1))
+              )
       (if (logtest? (-> self water flags) (water-flags wt10))
           (go target-wade-stance)
           (go target-stance)
@@ -2607,7 +2620,7 @@
       (suspend)
       (ja :num! (seek! (ja-aframe (the-as float 15.0) 0) 3.0))
       )
-    (if arg1
+    (if (and arg1 (= self *target*))
         (send-event *camera* 'change-state arg1 (seconds 0.6))
         )
     (if (nonzero? arg3)
