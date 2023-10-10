@@ -216,6 +216,7 @@
 )
 
   (defun mort-main-menu ()
+
     (if (and *in-mort-menu* *target*)
       (begin
       ;;If we arent in hub 3 warp there.
@@ -230,7 +231,7 @@
              )
              )
              ;;This function sleeps for 27 seconds so it has to be in another process to not block this one
-            (process-spawn-function process josh-suprise-sound-25)
+           (when (not (process-by-name "josh-suprise-sound-25" *active-pool*))  (process-spawn-function process josh-suprise-sound-25 :name "josh-suprise-sound-25"))
         )
          
           )
@@ -520,7 +521,21 @@
     "this is ran in its own process called run-every-frame-proc"
     
     (when #t
-   
+
+
+    ;;This is kind of a hack to start up during the opening cutscene
+    (when (and (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (>= *currentCutsceneFrame* 1649))
+    (set! *in-mort-menu* #t)
+                  (let ((current-timea (current-time)))
+                    (until (time-elapsed? current-timea (seconds 0.55))
+                    ;;(format #t "~S~%" "NOT ELAPSED")
+                      (suspend)
+                    )
+              )
+    (str-play-stop *currentSpoolName*)
+    (set! (-> *art-control* active-stream) #f)
+    
+    )
    ;; (sound-manager)
     (when (run-mort-code?)
       ;;   (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
