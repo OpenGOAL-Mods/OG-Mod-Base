@@ -56,7 +56,7 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
 
   // update player positions
   for (const auto& item : response_json.items()) {
-    int playerId = stoi(item.key());
+    int playerId = stoi(item.key()) + 1; //current player not included which 0 is reserved for
     if (playerId < MAX_MULTIPLAYER_COUNT && playerId != gMultiplayerInfo->player_num) {
       RemotePlayerInfo* player = &(gMultiplayerInfo->players[playerId]);
 

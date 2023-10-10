@@ -139,6 +139,7 @@
 
 (defmethod-mips2c "(method 18 collide-edge-work)" 18 collide-edge-work)
 (define-extern get-target (function int target))
+(define-extern get-interactive-target (function int target))
 
 (defmethod check-grab-for-collisions collide-edge-work ((obj collide-edge-work) (arg0 collide-edge-hold-item) (arg1 edge-grab-info))
   (local-vars (sv-144 (function vector vector vector float vector)) (sv-160 vector) (sv-176 vector))

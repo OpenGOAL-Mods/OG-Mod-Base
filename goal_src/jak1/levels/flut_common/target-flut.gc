@@ -5,6 +5,7 @@
 ;; name in dgo: target-flut
 ;; dgos: L1, SNO, SWA
 
+(define-extern is-interactive? (function int symbol))
 (define-extern *enable-remote-target-attacks* symbol)
 (define-extern *enable-remote-target-yellow-eco-blasts* symbol)
 (define-extern *enable-remote-target-pvp-attacks* symbol)
@@ -1229,7 +1230,7 @@
     (set! (-> self control unknown-surface00) *flut-run-attack-mods*)
     (set! (-> *run-attack-mods* turnv) 655360.0)
     (set! (-> *run-attack-mods* turnvv) 655360.0)
-    (when (or (= self *target*) *enable-remote-target-attacks*)
+    (when (or (= self *target*) (and *enable-remote-target-attacks* (is-interactive? (the int (-> self saved-owner)))))
       (target-start-attack)
       (target-danger-set! 'flut-attack #f)
       )
@@ -1249,7 +1250,7 @@
                     )
                (>= (- (-> *display* base-frame-counter) (-> self control unknown-dword82)) (seconds 0.25))
                )
-              *enable-remote-target-yellow-eco-blasts*)
+              (and *enable-remote-target-yellow-eco-blasts* (is-interactive? (the int (-> self saved-owner)))))
       (let ((gp-0 (vector-z-quaternion! (new 'stack-no-clear 'vector) (-> self control quat)))
             (s5-0 (vector<-cspace! (new 'stack-no-clear 'vector) (-> self manipy 0 node-list data 32)))
             )
@@ -1472,7 +1473,7 @@
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (logclear! (-> self control status) (cshape-moving-flags onsurf onground tsurf))
     (set! (-> self control unknown-surface00) *flut-air-attack-mods*)
-    (when (or (= self *target*) *enable-remote-target-attacks*)
+    (when (or (= self *target*) (and *enable-remote-target-attacks* (is-interactive? (the int (-> self saved-owner)))))
       (target-start-attack)
       (target-danger-set! 'flut-attack #f)
       )

@@ -301,7 +301,9 @@
               )
           )
     (set! (-> s5-0 mask) (attack-mask attacker shove-back shove-up angle))
-    (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.1))
+    (if (= self *target*)
+      (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.1))
+      )
     (go arg3 'shove s5-0)
     )
   )
@@ -401,7 +403,9 @@
              )
          self
          )
-       (cpad-set-buzz! (-> *cpad-list* cpads 0) 0 255 (seconds 0.5))
+       (if (= self *target*)
+        (cpad-set-buzz! (-> *cpad-list* cpads 0) 0 255 (seconds 0.5))
+        )
        (sound-play "oof")
        #t
        )
@@ -501,7 +505,9 @@
                #f
                (static-sound-name "spin-hit")
                )
-             (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.2))
+             (if (= self *target*)
+              (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.2))
+              )
              )
             ((= v1-5 'punch)
              (set! sv-128 (prims-touching? arg2 (-> self control) (the-as uint 64)))
@@ -582,8 +588,10 @@
                #f
                (static-sound-name "punch-hit")
                )
-             (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))
-             )
+             (if (= self *target*)
+              (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))
+              )
+            )
             ((= v1-5 'flip)
              (effect-control-method-12
                (-> self skel effect)
@@ -593,7 +601,9 @@
                #f
                (static-sound-name "punch-hit")
                )
-             (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.1))
+             (if (= self *target*)
+              (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.1))
+              )
              )
             ((= v1-5 'uppercut)
              (set! sv-176 (prims-touching? arg2 (-> self control) (the-as uint 64)))
@@ -675,7 +685,9 @@
                #f
                (static-sound-name "uppercut-hit")
                )
-             (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))
+             (if (= self *target*)
+              (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))
+              )
              )
             ((or (= v1-5 'flop) (= v1-5 'flop-down))
              (effect-control-method-10 (-> self skel effect) 'group-flop-hit (the-as float -1.0) 23)
@@ -688,7 +700,9 @@
                #f
                (static-sound-name "flop-hit")
                )
-             (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))
+             (if (= self *target*)
+              (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 178 (seconds 0.1))
+              )
              )
             ((= v1-5 'flut-attack)
              (effect-control-method-12
@@ -699,7 +713,9 @@
                #f
                (static-sound-name "punch-hit")
                )
-             (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.2))
+             (if (= self *target*)
+              (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.2))
+              )
              )
             )
           )

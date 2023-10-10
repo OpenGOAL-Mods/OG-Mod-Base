@@ -8,7 +8,8 @@
 (defenum mp-tgt-state
   :type uint32
   (mp-tgt-disconnected)
-  (mp-tgt-connected)
+  (mp-tgt-active)
+  (mp-tgt-interactive)
   )
 
 (defun mp-tgt-state->string ((cmd mp-tgt-state))

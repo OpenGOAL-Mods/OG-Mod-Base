@@ -36,8 +36,9 @@
 ;; multiplayer
 (define *multiplayer-info* (new 'global 'multiplayer-info))
 (define *remote-targets* (new 'global 'boxed-array handle MAX_MULTIPLAYER_COUNT))
-(define *enable-remote-target-attacks* #f)
-(define *enable-remote-target-yellow-eco-blasts* #f)
+
+(define *enable-remote-target-attacks* #t)
+(define *enable-remote-target-yellow-eco-blasts* #t)
 (define *enable-remote-target-pvp-attacks* #f)
 (define *pvp-attack-sphere-size* 3000.0)
 
@@ -74,6 +75,10 @@
   (logtest? (-> *target* state-flags)
     (state-flags grabbed)
     )
+  )
+
+(defun is-interactive? ((tgt-idx int))
+  (= (-> *multiplayer-info* players tgt-idx mp_state) (mp-tgt-state mp-tgt-interactive))
   )
 
 (defun color-target ((tgt process-drawable) (color tgt-color))
@@ -123,7 +128,7 @@
     (set! *self-player-info* (new 'global 'remote-player-info))
     (set! (-> *self-player-info* username) "local_player") 
     (set! (-> *self-player-info* color)  (tgt-color red))
-    (set! (-> *self-player-info* mp_state)  (mp-tgt-state mp-tgt-connected))
+    (set! (-> *self-player-info* mp_state)  (mp-tgt-state mp-tgt-interactive))
     (set! (-> *multiplayer-info* player_num) 0)
 
     (dotimes (idx (-> *task-update-buffer* length))
@@ -444,6 +449,7 @@
         ;; see if we need to spawn any remote targets
         (when (or (zero? (-> *remote-targets* idx)) (not (handle->process (-> *remote-targets* idx))))
           (set! (-> *remote-targets* idx) (start-extra-target))
+          (set! (-> (the-as target (handle->process (-> *remote-targets* idx))) saved-owner) idx)
           )
         ;; assume target spawned at this point 
 
@@ -469,6 +475,23 @@
     (if (= (-> *multiplayer-info* player_num) idx)
       *target*
       (if (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (handle->process (-> *remote-targets* idx)))
+        (the target (handle->process (-> *remote-targets* idx)))
+        (the-as target #f)
+        )
+      )
+    )
+  )
+
+
+(defun get-interactive-target ((idx int))
+  (if (= (-> *multiplayer-info* player_num) -1)
+    (if (= idx 0)
+      *target*
+      (the-as target #f)
+      )
+    (if (= (-> *multiplayer-info* player_num) idx)
+      *target*
+      (if (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (= (-> *multiplayer-info* players idx mp_state) (mp-tgt-state mp-tgt-interactive)) (handle->process (-> *remote-targets* idx)))
         (the target (handle->process (-> *remote-targets* idx)))
         (the-as target #f)
         )

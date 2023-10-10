@@ -241,6 +241,15 @@
         )
       )
 
+    (defun safe-deactivate-remote-target ((idx int))
+      (let* ((remote-target (-> *remote-targets* idx)))
+        (when (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (handle->process (-> *remote-targets* idx)))
+          (set! (-> *multiplayer-info* players idx mp_state) (mp-tgt-state mp-tgt-disconnected))
+          (deactivate (handle->process remote-target))
+          )
+        )
+      )
+
     (defun add-task-to-buffer ((arg0 game-task) (arg1 task-status))
       (dotimes (idx (-> *task-update-buffer* length))
         (when (= (-> *task-update-buffer* idx status) (task-status invalid))
@@ -390,7 +399,7 @@
 
 
             (if (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
-              (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-connected))
+              (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-interactive))
               )
           )
 
