@@ -8,7 +8,7 @@
 ;; DECOMP BEGINS
 
 (define-extern *allow-flutflut-anywhere* symbol)
-(define-extern close? (function string float basic))
+(define-extern process-close? (function process-drawable float basic))
 
 (import "goal_src/jak1/import/flut-saddle-ag.gc")
 
@@ -129,7 +129,7 @@
           ((= v1-0 3)
            (cond
              ((and (task-complete? *game-info* (-> self entity extra perm task)) (not (handle->process (-> self cell))))
-              (when (and (-> self auto-get-off) (close? (the-as string (-> self name)) 12000.0) (send-event *target* 'end-mode))
+              (when (and (-> self auto-get-off) (process-close? self 12000.0) (send-event *target* 'end-mode))
                 (set! (-> self auto-get-off) #f)
                 (go-virtual pickup (method-of-object self idle))
                 )
@@ -302,7 +302,7 @@
 (defstate wait-for-return (flutflut)
   :virtual #t
   :event (behavior ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
-    (if (and (or (= arg2 'touch) (= arg2 'attack)) (close? (the-as string (-> self name)) 12000.0) (send-event *target* 'end-mode))
+    (if (and (or (= arg2 'touch) (= arg2 'attack)) (process-close? self 12000.0) (send-event *target* 'end-mode))
         (go-virtual pickup (method-of-object self idle))
         )
     (the-as

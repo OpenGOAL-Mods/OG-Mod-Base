@@ -6,7 +6,7 @@
 ;; dgos: L1, FIC, LAV, MIS, OGR, RACERP, ROL
 
 (define-extern *allow-zoomer-anywhere* symbol)
-(define-extern close? (function string float basic))
+(define-extern process-close? (function process-drawable float basic))
 
 (define-extern blocking-plane-destroy (function none))
 (define-extern blocking-plane-spawn (function curve-control none :behavior process))
@@ -164,7 +164,7 @@
       ((3)
        (cond
          ((and (task-complete? *game-info* (-> self entity extra perm task)) (not (handle->process (-> self cell))))
-          (when (and (-> self auto-get-off) (close? (the-as string (-> self name)) 12000.0) (send-event *target* 'end-mode))
+          (when (and (-> self auto-get-off) (process-close? self 12000.0) (send-event *target* 'end-mode))
             (set! (-> self auto-get-off) #f)
             (go-virtual pickup (the-as (state collectable) (method-of-object self idle)))
             )
@@ -350,7 +350,7 @@
   :virtual #t
   :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
     (if (and (or (= event-type 'touch) (= event-type 'attack))
-             (and (!= (-> self condition) 4) (close? (the-as string (-> self name)) 12000.0) (send-event *target* 'end-mode))
+             (and (!= (-> self condition) 4) (process-close? self 12000.0) (send-event *target* 'end-mode))
              )
         (go-virtual pickup (the-as (state collectable) (method-of-object self idle)))
         )
