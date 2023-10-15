@@ -241,15 +241,6 @@
         )
       )
 
-    (defun safe-deactivate-remote-target ((idx int))
-      (let* ((remote-target (-> *remote-targets* idx)))
-        (when (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (handle->process (-> *remote-targets* idx)))
-          (set! (-> *multiplayer-info* players idx mp_state) (mp-tgt-state mp-tgt-disconnected))
-          (deactivate (handle->process remote-target))
-          )
-        )
-      )
-
     (defun add-task-to-buffer ((arg0 game-task) (arg1 task-status))
       (dotimes (idx (-> *task-update-buffer* length))
         (when (= (-> *task-update-buffer* idx status) (task-status invalid))
@@ -458,7 +449,8 @@
       (case cell-event
         (('pickup)      
           ;; Code here runs as soon as you pickup a powercell
-
+          
+          (safe-deactivate-remote-cell)
           )
         (('cutscene-end)      
           ;; Code here runs at the end of any powercell cutscene

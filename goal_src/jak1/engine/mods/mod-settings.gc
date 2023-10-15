@@ -66,7 +66,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (quat_w     float)
   (zoomer_rot_y     float)
   (tgt_state  symbol)
-  (active_tgt_state  symbol)
   (mp_state   mp-tgt-state) 
   )
   :pack-me
@@ -90,7 +89,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> obj quat_w) 0.0)
     (set! (-> obj zoomer_rot_y) 0.0)
     (set! (-> obj tgt_state) 'invalid)
-    (set! (-> obj active_tgt_state) 'invalid)
     (set! (-> obj mp_state) (mp-tgt-state mp-tgt-disconnected))
     obj
     )

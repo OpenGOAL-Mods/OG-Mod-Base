@@ -57,7 +57,6 @@ struct RemotePlayerInfo {
   float quat_w;
   float zoomer_rot_y;
   u32 tgt_state;
-  u32 active_tgt_state;
   u32 mp_state;  // mp-tgt-state enum
 };
 

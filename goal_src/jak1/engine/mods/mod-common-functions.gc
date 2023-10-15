@@ -27,22 +27,22 @@
 (define *money-update-buffer* (new 'global 'boxed-array money-info MAX_MONEY_BUFFER_COUNT))
 (define *crate-update-buffer* (new 'global 'boxed-array crate-info MAX_CRATE_BUFFER_COUNT))
 
-(define *has-none-position-update?* #f)
 (define *allow-cell-pickup?* #t)
-(define *allow-zoomer-use?* #t)
 (define *allow-final-boss?* #t)
 (define *has-none-position-update?* #f)
-
 
 ;; multiplayer
 (define *multiplayer-info* (new 'global 'multiplayer-info))
 (define *remote-targets* (new 'global 'boxed-array handle MAX_MULTIPLAYER_COUNT))
+(define *remote-target-active-count* 0)
 
+;; multiplayer settings
 (define *enable-remote-target-attacks* #t)
 (define *enable-remote-target-yellow-eco-blasts* #t)
 (define *enable-remote-target-pvp-attacks* #f)
 (define *pvp-attack-sphere-size* 3000.0)
 
+;; multiplayer self
 (define *self-player-info* (the-as remote-player-info #f))
 
 
@@ -81,6 +81,34 @@
 (defun is-interactive? ((tgt-idx int))
   (= (-> *multiplayer-info* players tgt-idx mp_state) (mp-tgt-state mp-tgt-interactive))
   )
+
+(defun safe-deactivate-remote-target ((idx int))
+  (let* ((remote-target (-> *remote-targets* idx)))
+    (when (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (handle->process (-> *remote-targets* idx)))
+      (set! (-> *multiplayer-info* players idx mp_state) (mp-tgt-state mp-tgt-disconnected))
+      (deactivate (handle->process remote-target))
+      )
+    )
+  )
+
+  (defun safe-deactivate-remote-cell ()
+    (let* ((remote-cell (process-by-name "remote-cell" *active-pool*)))
+      (when remote-cell
+        (deactivate remote-cell)
+      )
+    )
+  )
+
+  (defun run-target-fuel-cell-pickup ((remote-target target))
+    (when (process-close? remote-target 500000.0)
+      (let* ((remote-cell (birth-pickup-at-point (-> remote-target control trans) (pickup-type fuel-cell) 1.0 #f remote-target (the-as fact-info #f))))
+        (safe-deactivate-remote-cell)
+        (set! (-> (the-as fuel-cell (ppointer->process remote-cell)) name) "remote-cell")
+        (go-virtual-process (the-as fuel-cell (ppointer->process remote-cell)) pickup #f (process->handle remote-target))
+      )
+    )
+    (none)
+    )
 
 (defun color-target ((tgt process-drawable) (color tgt-color))
   (case color
@@ -171,7 +199,6 @@
     )
 
   (set! (-> *self-player-info* tgt_state)  (-> *target* state name))
-  (set! (-> *self-player-info* active_tgt_state)  (-> *target* state name))
 
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) username)   (-> *self-player-info* username))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) color)      (-> *self-player-info* color))
@@ -184,7 +211,6 @@
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_w)     (-> *target* root quat w))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) zoomer_rot_y)     (-> *self-player-info* zoomer_rot_y))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) tgt_state)  (-> *target* state name))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) active_tgt_state)  (-> *target* state name))
   (none)
   )
 
@@ -199,7 +225,6 @@
   (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) quat_z)     (-> *target* root quat z))
   (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) quat_w)     (-> *target* root quat w))
   (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) tgt_state)  (-> *target* state name))
-  (set! (-> *multiplayer-info* players (+ (-> *multiplayer-info* player_num) 1) active_tgt_state)  (-> *target* state name))
   (if (target-on-racer? *target*)
     (set! (-> *self-player-info* zoomer_rot_y)     (-> *target* racer rot y))
     )
@@ -284,12 +309,12 @@
     (('target-duck-walk) (go-process t target-duck-walk))
 
     ;; warp gates !DONE!
-    (('target-warp-out) (go-process t target-duck-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'duck))
-    (('target-warp-in) (go-process t target-duck-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'duck))
+    (('target-warp-out) (if (and (-> t state name) (!= (-> t state name) 'target-duck-high-jump) (!= (-> t state name) 'target-duck-high-jump-jump))(go-process t target-duck-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'duck)))
+    (('target-warp-in) (if (and (-> t state name) (!= (-> t state name) 'target-duck-high-jump) (!= (-> t state name) 'target-duck-high-jump-jump))(go-process t target-duck-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'duck)))
 
 
     ;; other
-    ;; (('target-clone-anim) (spool-push *art-control* "fuel-cell-victory" 0 t (the-as float -99.0)) (send-event t 'clone-anim t)) ;; powercell pickup
+    ;; (('target-clone-anim) (if (and (-> t state name) (!= (-> t state name) 'target-stance)) (run-target-fuel-cell-pickup t)))
     (('target-fishing) (send-event t 'change-mode 'fishing #f))
     (('target-periscope) (send-event t 'change-mode 'periscope #f))
     (('target-grab) (go-process t target-grab)) ;; process-grab animation while in cutscenes
@@ -409,15 +434,17 @@
                       (new 'static 'vector2h :y 16)
                       )
 
-        ;; activate nuka glitch for other targets
-        (logior! (-> t state-flags) (state-flags dying))
+        ;; activate invuln for interactive and nuka glitch for ghost targets
+        (if (= (-> p mp_state) (mp-tgt-state mp-tgt-interactive))
+          (logior! (-> t state-flags) (state-flags invulnerable))
+          (logior! (-> t state-flags) (state-flags dying))
+        )
 
         ;; finalize rotation
         (quaternion-copy! (-> t control dir-targ) (-> t root quat))
           
         ;; sync target state
-        (when (!= (-> p active_tgt_state) (-> p tgt_state))
-          (set! (-> p active_tgt_state) (-> p tgt_state))
+        (when (and (-> t state name) (!= (-> t state name) (-> p tgt_state)))
           (target-sync-state (-> p tgt_state) t)
           )
         )
@@ -444,26 +471,40 @@
   )
 
 (defun render-targets ()
- (dotimes (idx MAX_MULTIPLAYER_COUNT)
-    (when (!= (-> *multiplayer-info* player_num) idx)
-      (when (!= (-> *multiplayer-info* players idx mp_state) (mp-tgt-state mp-tgt-disconnected))
-        ;; see if we need to spawn any remote targets
-        (when (or (zero? (-> *remote-targets* idx)) (not (handle->process (-> *remote-targets* idx))))
-          (set! (-> *remote-targets* idx) (start-extra-target))
-          (set! (-> (the-as target (handle->process (-> *remote-targets* idx))) saved-owner) idx)
-          )
-        ;; assume target spawned at this point 
-
-        ;; position/color remote targets
-        (let ((p (-> *multiplayer-info* players idx))
-              (obj (the process-drawable (handle->process (-> *remote-targets* idx)))))
-          (when obj
-            (update-actor-position obj p)
+ (let ((target-count 0))
+    (dotimes (idx MAX_MULTIPLAYER_COUNT)
+      (when (!= (-> *multiplayer-info* player_num) idx)
+        (when (!= (-> *multiplayer-info* players idx mp_state) (mp-tgt-state mp-tgt-disconnected))
+          ;; see if we need to spawn any remote targets
+          (when (or (zero? (-> *remote-targets* idx)) (not (handle->process (-> *remote-targets* idx))))
+            (set! (-> *remote-targets* idx) (start-extra-target))
+            (set! (-> (the-as target (handle->process (-> *remote-targets* idx))) saved-owner) idx) ;; used to identify remote index from target
             )
+          ;; assume target spawned at this point 
+
+          ;; position/color remote targets
+          (let ((p (-> *multiplayer-info* players idx))
+                (obj (the process-drawable (handle->process (-> *remote-targets* idx)))))
+            (when obj
+              (update-actor-position obj p)
+              )
+            )
+            (set! target-count (+ target-count 1))
           )
         )
       )
-    ) 
+    ;; despawn newly disconnected targets
+    (when (!= target-count *remote-target-active-count*)
+      (dotimes (idx MAX_MULTIPLAYER_COUNT)
+        (when (!= (-> *multiplayer-info* player_num) idx)
+          (when (= (-> *multiplayer-info* players idx mp_state) (mp-tgt-state mp-tgt-disconnected))
+            (safe-deactivate-remote-target idx)
+            )
+          )
+        )
+      (set! *remote-target-active-count* target-count)
+      )
+    )
   )
 
 
