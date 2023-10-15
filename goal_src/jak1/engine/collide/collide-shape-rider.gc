@@ -155,7 +155,7 @@
   "Add a rider to this platform."
   (let ((gp-0 (the-as collide-sticky-rider #f)))
     (cond
-      ((< (-> obj num-riders) (-> obj allocated-riders))
+      ((or (< (+ (-> obj num-riders) 1) (-> obj allocated-riders)) (= (the-as target (handle->process arg0)) *target*))
        (set! gp-0 (-> obj rider (-> obj num-riders)))
        (+! (-> obj num-riders) 1)
        (let ((v1-6 gp-0))
@@ -164,7 +164,9 @@
          )
        )
       (else
-        (format 0 "ERROR: Exeeded max number of riders!~%")
+        (if (= (the-as target (handle->process arg0)) *target*)
+          (format 0 "ERROR: Exeeded max number of riders!~%")
+          )
         )
       )
     gp-0

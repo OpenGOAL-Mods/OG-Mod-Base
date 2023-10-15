@@ -5,6 +5,8 @@
 ;; name in dgo: baseplat
 ;; dgos: GAME, COMMON, L1
 
+(define-extern any-interactive-targets-close? (function process-drawable float basic))
+
 (defenum eco-door-flags
   :bitfield #t
   :type int32
@@ -208,10 +210,7 @@ eco-door-event-handler
     (update-transforms! (-> self root-override))
     (ja-post)
     (loop
-      (when (and *target* (>= (-> self open-distance)
-                              (vector-vector-distance (-> self root-override trans) (-> *target* control trans))
-                              )
-                 )
+      (when (and *target* (any-interactive-targets-close? self (-> self open-distance)))
         (eco-door-method-26 self)
         (if (and (not (-> self locked))
                  (or (and (-> self entity) (logtest? (-> self entity extra perm status) (entity-perm-status complete)))
@@ -233,24 +232,30 @@ eco-door-event-handler
   :virtual #t
   :event eco-door-event-handler
   :code (behavior ()
-    (let ((gp-0
-            (and (not (and (-> self entity) (logtest? (-> self entity extra perm status) (entity-perm-status complete))))
-                 (send-event *target* 'query 'powerup (pickup-type eco-blue))
-                 )
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (let ((target (get-interactive-target tgt-idx)))
+        (let ((gp-0
+                (and (not (and (-> self entity) (logtest? (-> self entity extra perm status) (entity-perm-status complete))))
+                    (send-event target 'query 'powerup (pickup-type eco-blue))
+                    )
+                )
+              )
+          (when (= target *target*)
+            (if gp-0
+                (sound-play "blue-eco-on" :position (the-as symbol (-> self root-override trans)))
+                )
+            (sound-play-by-name (-> self open-sound) (new-sound-id) 1024 0 0 (sound-group sfx) #t)
+            )
+          (clear-collide-with-as (-> self root-override))
+          (until (ja-done? 0)
+            (ja :num! (seek! max (-> self speed)))
+            (if (and gp-0 (rand-vu-percent? 0.5))
+                (spawn-projectile-blue target)
+                )
+            (suspend)
             )
           )
-      (if gp-0
-          (sound-play "blue-eco-on" :position (the-as symbol (-> self root-override trans)))
-          )
-      (sound-play-by-name (-> self open-sound) (new-sound-id) 1024 0 0 (sound-group sfx) #t)
-      (clear-collide-with-as (-> self root-override))
-      (until (ja-done? 0)
-        (ja :num! (seek! max (-> self speed)))
-        (if (and gp-0 (rand-vu-percent? 0.5))
-            (spawn-projectile-blue *target*)
-            )
-        (suspend)
-        )
+      	)
       )
     (go-virtual door-open)
     (none)
@@ -275,9 +280,7 @@ eco-door-event-handler
             (f28-0 (vector4-dot (-> self out-dir) (camera-pos)))
             )
         (when (and (-> self auto-close)
-                   (or (not *target*) (< (-> self close-distance)
-                                         (vector-vector-distance (-> self root-override trans) (-> *target* control trans))
-                                         )
+                   (or (not *target*) (not (any-interactive-targets-close? self (-> self open-distance)))
                        )
                    )
           (if (and (>= (* f30-0 f28-0) 0.0) (< 16384.0 (fabs f28-0)))
