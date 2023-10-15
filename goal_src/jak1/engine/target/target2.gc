@@ -2581,7 +2581,7 @@
        (if (= self *target*) (go target-death 'target-hit-ground-hard))
        )
       (else
-        (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.1))
+        (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.1)))
         (ja-channel-push! 1 1)
         (ja :group! eichar-painful-land-ja :num! min)
         (until (and (ja-done? 0) (= (-> self skel root-channel 0) (-> self skel channel)))

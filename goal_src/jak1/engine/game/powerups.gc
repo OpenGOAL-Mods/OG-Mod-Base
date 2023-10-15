@@ -693,7 +693,7 @@
                            (vector<-cspace! (new 'stack-no-clear 'vector) (-> self node-list data v1-168))
                            )
          )
-       (cpad-set-buzz! (-> *cpad-list* cpads 0) 0 1 (seconds 0.1))
+       (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 0 1 (seconds 0.1)))
        )
       (((pickup-type eco-green))
        (change-sound! (-> self sound) (static-sound-name "green-eco-jak"))

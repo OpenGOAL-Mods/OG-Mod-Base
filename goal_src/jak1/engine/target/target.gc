@@ -1905,9 +1905,7 @@
          (or (= v1-4 eichar-launch-jump-ja) (= v1-4 eichar-launch-jump-loop-ja))
          )
        (effect-control-method-10 (-> self skel effect) 'group-blue-hit-ground-effect (the-as float 0.0) -1)
-       (if (= self *target*)
-        (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.3))
-        )
+       (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.3)))
        )
       (else
         (let ((f0-1 (vector-dot
@@ -2025,9 +2023,7 @@
                  (>= (-> self fact-info-target eco-level) 1.0)
                  )
         (effect-control-method-10 (-> self skel effect) 'group-red-eco-spinkick (ja-frame-num 0) 74)
-        (if (= self *target*)
-          (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1))
-          )
+        (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1)))
         (level-hint-spawn
           (text-id misty-eco-red-first-use)
           "sksp0072"
@@ -2236,9 +2232,7 @@
                  (>= (-> self fact-info-target eco-level) 1.0)
                  )
         (effect-control-method-10 (-> self skel effect) 'group-red-eco-spinkick (ja-frame-num 0) 23)
-        (if (= self *target*)
-          (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1))
-          )
+        (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1)))
         (level-hint-spawn
           (text-id misty-eco-red-first-use)
           "sksp0072"
@@ -2478,9 +2472,7 @@
                (>= (-> self fact-info-target eco-level) 1.0)
                )
       (effect-control-method-10 (-> self skel effect) 'group-red-eco-spinkick (ja-frame-num 0) 70)
-      (if (= self *target*)
-        (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1))
-        )
+      (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1)))
       (level-hint-spawn
         (text-id misty-eco-red-first-use)
         "sksp0072"
@@ -2670,9 +2662,7 @@
                (>= (-> self fact-info-target eco-level) 1.0)
                )
       (effect-control-method-10 (-> self skel effect) 'group-red-eco-spinkick (ja-frame-num 0) 23)
-      (if (= self *target*)
-        (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1))
-        )
+      (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1)))
       )
     (if (and (= (-> self control unknown-symbol30) 'uppercut)
              (< (vector-dot (-> self control dynam gravity-normal) (-> self control transv)) -8192.0)
@@ -2825,9 +2815,7 @@
         (when (and (= (-> self fact-info-target eco-type) (pickup-type eco-red))
                    (>= (-> self fact-info-target eco-level) 1.0)
                    )
-          (if (= self *target*)
-            (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.5))
-            )
+          (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.5)))
           (effect-control-method-10 (-> self skel effect) 'group-red-eco-strike-ground (ja-frame-num 0) 0)
           (let ((s5-1 (process-spawn touch-tracker :init touch-tracker-init (-> self control trans) 4096.0 30 :to self)))
             (send-event (ppointer->process s5-1) 'event 'attack 'flop)
@@ -2863,9 +2851,7 @@
             17
             )
         )
-      (if (= self *target*)
-        (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1))
-        )
+      (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1)))
       )
     (when (and (not (-> self control unknown-symbol30)) (ja-group? eichar-flop-down-ja) (>= (ja-aframe-num 0) 8.0))
       (when (or (= self *target*) (and *enable-remote-target-attacks* (is-interactive? (the int (-> self saved-owner)))))
@@ -3012,9 +2998,7 @@
           )
       )
     (target-land-effect)
-    (if (= self *target*)
-      (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.1))
-    )
+    (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.1)))
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (set! (-> self control unknown-uint20) (the-as uint arg0))
     (set-forward-vel (the-as float 0.0))
@@ -3044,9 +3028,7 @@
             17
             )
         )
-      (if (= self *target*)
-        (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1))
-        )
+      (if (= self *target*) (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 153 (seconds 0.1)))
       )
     (when (= *enable-remote-target-pvp-attacks* #t)
       (let ((gp-2 (process-spawn touch-tracker :init touch-tracker-init (-> self control trans) 4096.0 30 :to self)))
