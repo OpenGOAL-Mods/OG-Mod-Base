@@ -31,6 +31,7 @@
 (define *allow-cell-pickup?* #t)
 (define *allow-zoomer-use?* #t)
 (define *allow-final-boss?* #t)
+(define *has-none-position-update?* #f)
 
 
 ;; multiplayer
