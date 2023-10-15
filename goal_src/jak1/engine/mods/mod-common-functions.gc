@@ -39,6 +39,7 @@
 ;; multiplayer settings
 (define *enable-remote-target-attacks* #t)
 (define *enable-remote-target-yellow-eco-blasts* #t)
+(define *enable-remote-target-eco-pickup* #f)
 (define *enable-remote-target-pvp-attacks* #f)
 (define *pvp-attack-sphere-size* 3000.0)
 
@@ -859,6 +860,30 @@
       dist
       )
     )
+  )
+(defun process-close? ((proc process-drawable) (dist float))
+  (and 
+    proc
+    (<= 
+      (vector-vector-distance 
+        (target-pos 0) 
+        (-> proc root trans)
+        )
+      dist
+      )
+    )
+  )
+
+;;This returns true or false depending on if all jaks are within a provided distance from an actor
+(defun any-interactive-targets-close? ((proc process-drawable) (dist float))
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (let ((target (get-interactive-target tgt-idx)))
+      (if (and target (and proc (<= (vector-vector-distance (remote-target-pos 0 target) (-> proc root trans)) dist)))
+          (return #t)
+        )
+      )
+    )
+    #f
   )
 
 
