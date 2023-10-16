@@ -833,13 +833,13 @@
         (gp-0 (new-stack-vector0))
         )
 
-        (when (send-event *target* 'query 'powerup (pickup-type eco-new))
+        (when (send-event *target* 'query 'powerup (pickup-type eco-gravity))
             (set!  (-> self control dynam gravity-length) (meters 20)) ;; 50
             (set! (-> *TARGET-bank* jump-height-max) (meters 7.01));;3.5
             (set! (-> *TARGET-bank* double-jump-height-max)  (meters 5.0)  ) ;;2.5
         )
         ;; The condition for 7.01 is a disgusting hack so we arent consitantly setting a new jump-height
-        (when (not (and (send-event *target* 'query 'powerup (pickup-type eco-new)) (= (-> *TARGET-bank* jump-height-max) (meters 7.01)))) 
+        (when (not (and (send-event *target* 'query 'powerup (pickup-type eco-gravity)) (= (-> *TARGET-bank* jump-height-max) (meters 7.01)))) 
           ;;  (set!  (-> self control dynam gravity-length) (meters 50)) ;; 50 ;; Jaks gravity auto resets but we need to restore the jump heights
               (set! (-> *TARGET-bank* jump-height-max) (meters 3.5));;3.5
               (set! (-> *TARGET-bank* double-jump-height-max)   (meters 2.5))   ;;2.5
@@ -1001,7 +1001,7 @@
   0
   (none)
   )
-
+(define-extern *has-chicken-eco* symbol)
 (defbehavior flag-setup target ()
   (level-setup)
   (set! (-> self control unknown-vector10 quad) (-> self control transv quad))
@@ -1057,11 +1057,13 @@
         (send-event self 'change-mode 'look-around)
         )
     )
-  (when (and (= *cheat-mode* 'debug)
+  (when (or (and *has-chicken-eco* (cpad-hold? 0 r2))
+  
+          (and (= *cheat-mode* 'debug)
              (cpad-hold? (-> self control unknown-cpad-info00 number) r2)
              (not *pause-lock*)
              (not (logtest? (-> self state-flags) (state-flags grabbed first-person-mode)))
-             )
+             ))
     (if (!= (-> self next-state name) 'target-falling)
         (send-event self 'change-mode 'falling)
         )

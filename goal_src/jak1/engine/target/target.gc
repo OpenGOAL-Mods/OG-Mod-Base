@@ -21,11 +21,20 @@
 (define-extern target-bonk-event-handler (function process int symbol event-message-block object :behavior target))
 
 ;; DECOMP BEGINS
+(define *has-chicken-eco* #f)
+(defun return-hover-animation ()
+
+(if *has-chicken-eco*
+(-> *target* draw art-group data 39);;jump flap
+(-> *target* draw art-group data 38);;debug hover loop
+
+)
+)
 
 (defbehavior target-falling-anim target ((arg0 time-frame) (arg1 time-frame))
   (let ((v1-2 (ja-group)))
     (cond
-      ((or (= v1-2 eichar-jump-loop-ja) (= v1-2 eichar-attack-uppercut-ja))
+      ((or (= v1-2 (return-hover-animation)) (= v1-2 eichar-attack-uppercut-ja))
        )
       ((let ((v1-8 (ja-group)))
          (or (= v1-8 eichar-edge-grab-stance0-ja) (= v1-8 eichar-edge-grab-stance1-ja))
@@ -54,18 +63,18 @@
        )
       (else
         (ja-channel-push! 1 arg1)
-        (ja :group! eichar-jump-loop-ja)
+        (ja :group! (return-hover-animation))
         (while (!= (-> self skel root-channel 0) (-> self skel channel))
           (suspend)
           )
         )
       )
     )
-  (ja-no-eval :group! eichar-jump-loop-ja :num! (loop!) :frame-num 0.0)
+  (ja-no-eval :group! (return-hover-animation) :num! (loop!) :frame-num 0.0)
   (let ((s5-1 (-> *display* base-frame-counter)))
     (while (or (= arg0 -1) (< (- (-> *display* base-frame-counter) s5-1) arg0))
       (suspend)
-      (ja :group! eichar-jump-loop-ja :num! (loop!))
+      (ja :group! (return-hover-animation) :num! (loop!))
       )
     )
   #f
@@ -73,10 +82,10 @@
 
 (defbehavior target-falling-anim-trans target ()
   (let ((v1-2 (ja-group)))
-    (b! (or (= v1-2 eichar-jump-loop-ja) (= v1-2 eichar-jump-land-ja)) cfg-7 :delay (empty-form))
+    (b! (or (= v1-2 (return-hover-animation)) (= v1-2 eichar-jump-land-ja)) cfg-7 :delay (empty-form))
     )
   (ja-channel-push! 1 (seconds 0.33))
-  (ja :group! eichar-jump-loop-ja)
+  (ja :group! (return-hover-animation))
   (b! #t cfg-23 :delay (nop!))
   (label cfg-7)
   (cond
@@ -84,7 +93,7 @@
      (ja-channel-push! 1 (seconds 0.02))
      (ja :group! eichar-jump-land-ja)
      )
-    ((ja-group? eichar-jump-loop-ja)
+    ((ja-group? (return-hover-animation))
      (ja :num! (loop!))
      )
     ((ja-group? eichar-jump-land-ja)
@@ -237,7 +246,7 @@
        #f
        )
       ((let ((v1-95 (ja-group)))
-         (or (or (= v1-95 eichar-jump-loop-ja) (= v1-95 eichar-launch-jump-ja) (= v1-95 eichar-launch-jump-loop-ja))
+         (or (or (= v1-95 (return-hover-animation)) (= v1-95 eichar-launch-jump-ja) (= v1-95 eichar-launch-jump-loop-ja))
              (and (ja-group? eichar-jump-ja) (>= (ja-aframe-num 0) 38.0))
              )
          )
@@ -251,7 +260,7 @@
        )
       ((and (ja-group? eichar-jump-ja) (>= (ja-aframe-num 0) 35.0))
        (ja-channel-set! 1)
-       (ja-no-eval :group! eichar-jump-short-land-ja :num! (seek!) :frame-num 0.0)
+       (ja-no-eval :group! (return-hover-animation) :num! (seek!) :frame-num 0.0)
        (until (ja-done? 0)
          (suspend)
          (ja :num! (seek!))
@@ -267,7 +276,7 @@
          (or (= v1-187 eichar-jump-ja) (= v1-187 eichar-duck-high-jump-ja))
          )
        (ja-channel-set! 1)
-       (ja-no-eval :group! eichar-jump-short-land-ja :num! (seek!) :frame-num (ja-aframe (the-as float 38.0) 0))
+       (ja-no-eval :group! (return-hover-animation) :num! (seek!) :frame-num (ja-aframe (the-as float 38.0) 0))
        (until (ja-done? 0)
          (suspend)
          (ja :num! (seek!))
@@ -290,7 +299,7 @@
                     )
              )
          (ja-channel-push! 1 (seconds 0.04))
-         (ja-no-eval :group! eichar-jump-short-land-ja :num! (seek!) :frame-num (ja-aframe (the-as float 38.0) 0))
+         (ja-no-eval :group! (return-hover-animation) :num! (seek!) :frame-num (ja-aframe (the-as float 38.0) 0))
          (until (ja-done? 0)
            (set-forward-vel f30-2)
            (suspend)
@@ -740,7 +749,7 @@
                (ja-channel-push! 7 (seconds 0.05))
                )
               ((let ((v1-146 (ja-group)))
-                 (and (or (or (= v1-146 eichar-jump-loop-ja)
+                 (and (or (or (= v1-146 (return-hover-animation))
                               (= v1-146 eichar-wheel-flip-ja)
                               (= v1-146 eichar-attack-from-jump-end-ja)
                               (= v1-146 eichar-attack-uppercut-ja)
@@ -1431,7 +1440,7 @@
             (* 0.003921569 (the float (-> *cpad-list* cpads (-> self control unknown-cpad-info00 number) abutton 6)))
             )
           )
-    (target-falling-trans #f (the-as time-frame (if (ja-group? eichar-jump-loop-ja)
+    (target-falling-trans #f (the-as time-frame (if (ja-group? (return-hover-animation))
                                                     15
                                                     -1
                                                     )
@@ -1530,10 +1539,10 @@
       (suspend)
       (ja :num! (seek!))
       )
-    (ja-no-eval :group! eichar-jump-loop-ja :num! (loop!) :frame-num 0.0)
+    (ja-no-eval :group! (return-hover-animation) :num! (loop!) :frame-num 0.0)
     (loop
       (suspend)
-      (ja :group! eichar-jump-loop-ja :num! (loop!))
+      (ja :group! (return-hover-animation) :num! (loop!))
       )
     (none)
     )
@@ -1561,7 +1570,7 @@
     )
   :exit target-exit
   :trans (behavior ()
-    (target-falling-trans #f (the-as time-frame (if (ja-group? eichar-jump-loop-ja)
+    (target-falling-trans #f (the-as time-frame (if (ja-group? (return-hover-animation))
                                                     15
                                                     -1
                                                     )
@@ -1655,7 +1664,7 @@
     )
   :exit target-exit
   :trans (behavior ()
-    (target-falling-trans #f (the-as time-frame (if (ja-group? eichar-jump-loop-ja)
+    (target-falling-trans #f (the-as time-frame (if (ja-group? (return-hover-animation))
                                                     15
                                                     -1
                                                     )
@@ -1844,10 +1853,10 @@
            )
          )
         (else
-          (ja-no-eval :group! eichar-jump-loop-ja :num! (loop!) :frame-num 0.0)
+          (ja-no-eval :group! (return-hover-animation) :num! (loop!) :frame-num 0.0)
           (loop
             (suspend)
-            (ja :group! eichar-jump-loop-ja :num! (loop!))
+            (ja :group! (return-hover-animation) :num! (loop!))
             )
           )
         )
@@ -3103,7 +3112,7 @@
         )
     (if (and (cpad-pressed? (-> self control unknown-cpad-info00 number) circle)
              (can-feet?)
-             (and (ja-group? eichar-jump-loop-ja) (= (-> self skel root-channel 0) (-> self skel channel)))
+             (and (ja-group? (return-hover-animation)) (= (-> self skel root-channel 0) (-> self skel channel)))
              )
         (go target-attack-air #f)
         )
@@ -3151,9 +3160,9 @@
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (while (not (logtest? (-> self control status) (cshape-moving-flags onsurf)))
       (when (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.01))
-        (when (not (ja-group? eichar-jump-loop-ja))
+        (when (not (ja-group? (return-hover-animation)))
           (ja-channel-push! 1 (seconds 0.1))
-          (ja :group! eichar-jump-loop-ja :num! min)
+          (ja :group! (return-hover-animation) :num! min)
           )
         )
       (let ((gp-2 (new-stack-vector0))
@@ -3173,7 +3182,7 @@
           )
         )
       (suspend)
-      (if (ja-group? eichar-jump-loop-ja)
+      (if (ja-group? (return-hover-animation))
           (ja :num! (loop!))
           (ja :num-func num-func-identity :frame-num max)
           )
@@ -3204,7 +3213,7 @@
             (none)
             )
           )
-    (if (ja-group? eichar-jump-loop-ja)
+    (if (ja-group? (return-hover-animation))
         (go target-hit-ground #f)
         (go target-stance)
         )

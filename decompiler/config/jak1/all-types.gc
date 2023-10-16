@@ -8046,8 +8046,9 @@
   (buzzer)
   (eco-pill-random)
   (star)
-  (eco-new)
+  (eco-gravity)
   (eco-ice)
+  (eco-chicken)
   )
 
 (deftype mood-fog-table (structure)

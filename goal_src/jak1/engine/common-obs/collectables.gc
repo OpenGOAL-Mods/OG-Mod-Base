@@ -208,7 +208,7 @@
 (defmethod initialize-effect eco-collectable ((obj eco-collectable) (arg0 pickup-type))
   (set! (-> obj fact pickup-type) arg0)
   (case (-> obj fact pickup-type)
-    (((pickup-type eco-blue) (pickup-type eco-red) (pickup-type eco-green) (pickup-type eco-yellow) (pickup-type eco-new) (pickup-type eco-ice)) ;;tageco Add all eco blobs here
+    (((pickup-type eco-blue) (pickup-type eco-red) (pickup-type eco-green) (pickup-type eco-yellow) (pickup-type eco-gravity) (pickup-type eco-ice) (pickup-type eco-chicken)) ;;tageco Add all eco blobs here
      (logclear! (-> obj mask) (process-mask actor-pause))
      )
     )
@@ -236,7 +236,7 @@
      (set! (-> obj sound-name) (static-sound-spec "blue-eco-idle" :fo-max 15))
      )
      ;;tageco This determines the look, and sound of the new eco
-    (((pickup-type eco-new))
+    (((pickup-type eco-gravity))
      (set! (-> obj eco-effect) (-> *part-group-id-table* 709))
      (set! (-> obj collect-effect) (-> *part-group-id-table* 66))
      (set! (-> obj collect-effect2) (-> *part-group-id-table* 43))
@@ -249,6 +249,13 @@
      (set! (-> obj collect-effect2) (-> *part-group-id-table* 49))
      (set! (-> obj collect-effect-time) (seconds 0.5))
      (set! (-> obj sound-name) (static-sound-spec "red-eco-idle" :fo-max 15))
+     )
+    (((pickup-type eco-chicken))
+     (set! (-> obj eco-effect) (-> *part-group-id-table* 756))
+     (set! (-> obj collect-effect) (-> *part-group-id-table* 66))
+     (set! (-> obj collect-effect2) (-> *part-group-id-table* 43))
+     (set! (-> obj collect-effect-time) (seconds 0.5))
+     (set! (-> obj sound-name) (static-sound-spec "blue-eco-idle" :fo-max 15))
      )
     (((pickup-type eco-green))
      (set! (-> obj eco-effect) (-> *part-group-id-table* 58))
@@ -286,7 +293,7 @@
   (initialize-effect self (-> self fact pickup-type))
   (set! (-> self notify-parent) #f)
   (case (-> self fact pickup-type)
-    (((pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-red) (pickup-type eco-new) (pickup-type eco-ice)) ;;tageco add collectable ecos here for timeout, dont add green eco
+    (((pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-red) (pickup-type eco-gravity) (pickup-type eco-ice) (pickup-type eco-chicken)) ;;tageco add collectable ecos here for timeout, dont add green eco
      (initialize-params
        self
        (the-as time-frame (if (and arg2 (logtest? (-> arg2 options) (fact-options fade)))
@@ -842,11 +849,14 @@
          )
        )
        ;;tageco This controls the sound the eco plays when its picked up
-      (((pickup-type eco-new))
+      (((pickup-type eco-gravity))
        (sound-play "y-eco-pickup")
        )
       (((pickup-type eco-ice))
        (sound-play "g-eco-pickup")
+       )
+      (((pickup-type eco-chicken))
+       (sound-play "g-eco-pickup") ;;TODO ;;Tagmort make this a chicken sound instead
        )
       (((pickup-type eco-green))
        (sound-play "g-eco-pickup")
@@ -1048,7 +1058,7 @@
   )
 
 ;;tageco eco must be defined, and have a init method!
-(deftype eco-new (eco)
+(deftype eco-gravity (eco)
   ()
   :heap-base #x130
   :method-count-assert 31
@@ -1070,11 +1080,24 @@
   (none)
   )
 
-(defmethod init-from-entity! eco-new ((obj eco-new) (arg0 entity-actor))
-  (initialize-eco obj arg0 (pickup-type eco-new) (-> *FACT-bank* eco-single-inc))
+(defmethod init-from-entity! eco-gravity ((obj eco-gravity) (arg0 entity-actor))
+  (initialize-eco obj arg0 (pickup-type eco-gravity) (-> *FACT-bank* eco-single-inc))
   (none)
   )
 
+  (deftype eco-chicken (eco)
+  ()
+  :heap-base #x130
+  :method-count-assert 31
+  :size-assert         #x194
+  :flag-assert         #x1f01300194
+  )
+
+
+(defmethod init-from-entity! eco-chicken((obj eco-chicken) (arg0 entity-actor))
+  (initialize-eco obj arg0 (pickup-type eco-chicken) (-> *FACT-bank* eco-single-inc))
+  (none)
+  )
 (deftype health (eco-collectable)
   ()
   :heap-base #x130
@@ -2730,8 +2753,11 @@
                            eco-blue
                            )
                            ;;tageco not sure what this does but probably important
-                          ((= v1-2 (pickup-type eco-new))
-                           eco-new
+                          ((= v1-2 (pickup-type eco-gravity))
+                           eco-gravity
+                           )
+                          ((= v1-2 (pickup-type eco-chicken))
+                           eco-chicken
                            )
                           ((= v1-2 (pickup-type eco-ice))
                            eco-ice
@@ -2795,6 +2821,12 @@
     (sv-176 process)
     (sv-192 (pointer process))
     )
+
+    (if (= arg1 (pickup-type eco-chicken))
+    (play-rand-sound "snd/chicken-eco-intro.mp3" (* 25 (the int (-> *setting-control* default music-volume))))
+    )
+
+    
   (set! sv-32 arg5)
   (let ((s1-0 (new-stack-vector0))
         (t9-0 (method-of-type res-lump get-property-value-float))
@@ -2888,12 +2920,26 @@
                sv-192
                )
                ;;tageco this is needed to be able to spawn the eco with the birth-pickup command
-              ((= v1-25 (pickup-type eco-new))
-               (set! sv-96 (get-process *pickup-dead-pool* eco-new #x4000))
+              ((= v1-25 (pickup-type eco-gravity))
+               (set! sv-96 (get-process *pickup-dead-pool* eco-gravity #x4000))
                (set! v1-40 (when sv-96
                              (set! sv-192 (the-as (pointer process) v1-40))
-                             (let ((t9-11 (method-of-type eco-new activate)))
-                               (t9-11 (the-as eco-new sv-96) arg4 'eco-new (the-as pointer #x70004000))
+                             (let ((t9-11 (method-of-type eco-gravity activate)))
+                               (t9-11 (the-as eco-gravity sv-96) arg4 'eco-gravity (the-as pointer #x70004000))
+                               )
+                             (run-now-in-process sv-96 initialize-eco-by-other arg0 s1-0 s0-0)
+                             (set! sv-192 (-> sv-96 ppointer))
+                             v1-40
+                             )
+                     )
+               sv-192
+               )
+              ((= v1-25 (pickup-type eco-chicken))
+               (set! sv-96 (get-process *pickup-dead-pool* eco-chicken #x4000))
+               (set! v1-40 (when sv-96
+                             (set! sv-192 (the-as (pointer process) v1-40))
+                             (let ((t9-11 (method-of-type eco-chicken activate)))
+                               (t9-11 (the-as eco-chicken sv-96) arg4 'eco-chicken (the-as pointer #x70004000))
                                )
                              (run-now-in-process sv-96 initialize-eco-by-other arg0 s1-0 s0-0)
                              (set! sv-192 (-> sv-96 ppointer))
@@ -3212,7 +3258,13 @@
      (set! (-> obj sound) (new 'process 'ambient-sound 'eco-bg-blue (-> obj root-override trans)))
      )
      ;;tageco custom eco vents?
-    (((pickup-type eco-new))
+    (((pickup-type eco-gravity))
+     (set! (-> obj part) (create-launch-control (-> *part-group-id-table* 44) obj))
+     (set! (-> obj collect-effect) (-> *part-group-id-table* 67))
+     (set! (-> obj collect-effect2) (-> *part-group-id-table* 43))
+     (set! (-> obj sound) (new 'process 'ambient-sound 'eco-bg-blue (-> obj root-override trans)))
+     )
+    (((pickup-type eco-chicken))
      (set! (-> obj part) (create-launch-control (-> *part-group-id-table* 44) obj))
      (set! (-> obj collect-effect) (-> *part-group-id-table* 67))
      (set! (-> obj collect-effect2) (-> *part-group-id-table* 43))
@@ -3458,7 +3510,21 @@
 
 
 (defmethod init-from-entity! ventnew ((obj ventnew) (arg0 entity-actor))
-  (initialize obj arg0 (pickup-type eco-new))
+  (initialize obj arg0 (pickup-type eco-gravity))
+  (none)
+  )
+
+  (deftype ventchicken (vent)
+  ()
+  :heap-base #x70
+  :method-count-assert 21
+  :size-assert         #xd8
+  :flag-assert         #x15007000d8
+  )
+
+
+  (defmethod init-from-entity! ventchicken ((obj ventchicken) (arg0 entity-actor))
+  (initialize obj arg0 (pickup-type eco-chicken))
   (none)
   )
 

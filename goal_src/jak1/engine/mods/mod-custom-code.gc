@@ -360,7 +360,16 @@
 (define custom-music-eco-paused? #f)
 (defun eco-manager ()
 
-   
+;;Eco-chicken start
+(when (send-event *target* 'query 'powerup (pickup-type eco-chicken))
+(set! *has-chicken-eco* #t)
+
+)
+
+(when (not (send-event *target* 'query 'powerup (pickup-type eco-chicken)))
+(set! *has-chicken-eco* #f)
+
+)
 ;;Ice eco start
 (when (send-event *target* 'query 'powerup (pickup-type eco-ice))
 
