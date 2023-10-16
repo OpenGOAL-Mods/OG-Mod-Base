@@ -642,8 +642,16 @@
      )
   )
   
-  )
 
+
+  )
+  ;;Hack to disable cutscene skips for specific cutscenes     (if               ;;Cutscenes added here will be unskippable witht the triangle button
+          (if (or  (string= *currentSpoolName* "sage-intro-sequence-a")
+                        (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
+                        (string= *currentSpoolName* "sidekick-human-intro-sequence-c"))
+                        (set! (-> *pc-settings* skip-movies?) #f)
+                        (set! (-> *pc-settings* skip-movies?) #t)
+                  )
 (none)
 )
 
