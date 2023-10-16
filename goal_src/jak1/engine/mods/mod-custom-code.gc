@@ -218,7 +218,7 @@
 )
 
 (defun reset-saved-chick-from-mem()
-(format #t "warp gate was used, setting saved chicks mem to 0")
+(format #t "All chicks in this level are safe, setting saved chicks mem to 0")
 (set! (-> *game-info* money-per-level 5) 0)
 (none))
 
@@ -328,6 +328,7 @@
     (begin
       (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
       (set-unlock-level 1)
+      (reset-saved-chick-from-mem)
       (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
       (reset-actors #t) ;;HACK for some reason, the warp gate doesnt let us use it after coming out of it but reseting actor fixes this.
     ))

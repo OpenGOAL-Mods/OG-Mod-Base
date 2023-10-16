@@ -291,7 +291,7 @@
     (apply-settings *setting-control*)
     (sound-play "start-options")
     (set! (-> self state-time) (-> *display* base-frame-counter))
-      (reset-saved-chick-from-mem)
+      ;;(reset-saved-chick-from-mem)
     (none)
     )
   :trans (behavior ()
