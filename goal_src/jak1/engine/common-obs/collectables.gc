@@ -1874,7 +1874,8 @@
     (none)
     )
   )
-
+(defun-extern reset-saved-chicks-from-mem none)
+(defun-extern get-saved-chicks-from-mem int)
 (defstate pickup (fuel-cell)
   :virtual #t
   :enter (behavior ((arg0 object) (arg1 handle))
@@ -1963,6 +1964,20 @@
     (stop! (-> self sound))
     ;;Saved a chick
     ;;Tagmort
+
+    ;;check to see the saved chickens stored and maybe restore it
+    (if (= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 0)
+    (begin
+    (format #t "picked up a chick and its first in the level~%")
+    (if (> (get-saved-chicks-from-mem) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks))
+    (begin 
+    (format #t "Found saved chick data that was non zero, updating saved chicks in level to ~D~%" (get-saved-chicks-from-mem))
+    (set! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (get-saved-chicks-from-mem))
+    )
+    )
+    )
+    )
+
     (set! (-> (get-chick-from-flock (the int (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))) parent-cell-name) 
     (the string(-> self name)))
     ;; Increment after setting name
@@ -2050,7 +2065,9 @@
     (process-spawn othercam self 10 #f #t :to self)
     ))
    
-    (auto-save-command 'auto-save 0 0 *default-pool*)
+
+   ;;dont autosave so if we crash the cell comes back maybe?
+    ;;(auto-save-command 'auto-save 0 0 *default-pool*)
 
     ;; play powercell animation if randomizer disabled
     (if 

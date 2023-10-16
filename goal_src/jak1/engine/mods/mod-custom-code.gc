@@ -104,7 +104,7 @@
                                      (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))
                                      (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks) 
                                      (current-chicks-following) 
-                                     (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) 
+                                     (get-saved-chicks-from-mem)
                                       *close-to-portal?*
                                       (get-unlock-level)
                                      )
@@ -205,6 +205,23 @@
   (the int (-> *game-info* money-per-level 3) )
 )
 
+(defun update-saved-chicks ((arg1 int))
+"adds to the unlock level"
+  (set! (-> *game-info* money-per-level 5) (+ (-> *game-info* money-per-level 5) (the-as uint arg1)))
+  (format #t "Adding saved chick vale to mem stored value is now  ~D~%" (-> *game-info* money-per-level 5))
+  (none)
+)
+
+(defun get-saved-chicks-from-mem ()
+  ;;(format #t "getting unlock level it is ~D~%" (-> *game-info* money-per-level 3))
+  (the int (-> *game-info* money-per-level 5) )
+)
+
+(defun reset-saved-chick-from-mem()
+(format #t "warp gate was used, setting saved chicks mem to 0")
+(set! (-> *game-info* money-per-level 5) 0)
+(none))
+
 (defbehavior josh-suprise-sound-25 process ()
             (let ((current-timea (current-time)))
                 (until (time-elapsed? current-timea (seconds 27))
@@ -302,8 +319,10 @@
                                     (effect-control-method-10  (-> (get-chick-from-flock i) skel effect) 'death-warp-in -1.0 -1 )
                                     ;;set their target to 1,1,1
                                     (vector-identity! (-> (get-chick-from-flock i) target-pos))
+                                    (auto-save-command 'auto-save 0 0 *default-pool*)
 
     (set! (-> current-custom-info saved-chicks) (+ (-> current-custom-info saved-chicks) 1))
+    (update-saved-chicks 1)
     
                                     (if (= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks))
     (begin

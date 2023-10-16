@@ -96,6 +96,8 @@
 )
 
 )
+
+(defun-extern reset-saved-chick-from-mem none)
 (defstate idle (warp-gate)
   :virtual #t
   :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
@@ -289,6 +291,7 @@
     (apply-settings *setting-control*)
     (sound-play "start-options")
     (set! (-> self state-time) (-> *display* base-frame-counter))
+      (reset-saved-chick-from-mem)
     (none)
     )
   :trans (behavior ()
