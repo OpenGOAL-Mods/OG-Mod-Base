@@ -329,7 +329,7 @@
 (defun run-mort-code? ()
 "When these are true, we dont want to run mort code."
 (and *target* 
-      (!= (-> (level-get-target-inside *level*)name) title)
+      (!= (-> (level-get-target-inside *level*)name) title) ;; this doesnt work and should be 'title but I am afraid fixing it will cause bugs
       (!= (-> (level-get-target-inside *level*)name) mort-title)
       (!= (-> (level-get-target-inside *level*)name) 'mort-title) 
       (!= (-> *target* state name) 'target-continue)

@@ -817,6 +817,10 @@
                                    )
                                )
                         )
+                      ;;If in title hide the cell count
+                    (if  (= (-> (level-get-target-inside *level*)name) 'title)
+                    (set! a2-17 62)
+                    )
                     (sv-80 a0-56 a1-21 a2-17)
                     )
                   (s0-6 *temp-string* arg0 #f s4-1 22)
@@ -828,6 +832,10 @@
                         (a1-23 "/~D")
                         (a2-19 (-> obj total-nb-of-orbs))
                         )
+                    ;;If in title hide the orb count
+                    (if  (= (-> (level-get-target-inside *level*)name) 'title)
+                    (set! a2-19 2000)
+                    )
                     (sv-96 a0-60 a1-23 a2-19)
                     )
                   (s0-7 *temp-string* arg0 #f s4-1 22)
@@ -839,6 +847,10 @@
                         (a1-25 "/~D")
                         (a2-21 (-> obj total-nb-of-buzzers))
                         )
+                    ;;If in title hide the orb count
+                    (if  (= (-> (level-get-target-inside *level*)name) 'title)
+                    (set! a2-21 111)
+                    )
                     (sv-112 a0-64 a1-25 a2-21)
                     )
                   (s0-8 *temp-string* arg0 #f s4-1 22)
