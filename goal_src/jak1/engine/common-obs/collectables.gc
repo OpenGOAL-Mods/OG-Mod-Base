@@ -1966,7 +1966,8 @@
     ;;Tagmort
 
     ;;check to see the saved chickens stored and maybe restore it
-    (if (= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 0)
+    (if (and (= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 0) 
+    (= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) 0) )
     (begin
     (format #t "picked up a chick and its first in the level~%")
     (if (> (get-saved-chicks-from-mem) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks))

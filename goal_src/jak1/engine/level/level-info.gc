@@ -2092,8 +2092,8 @@
                                              :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+                                             :camera-trans (new 'static 'vector :x (meters 32.98) :y (meters 304.7363) :z (meters 160.266) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 -0.9995 0.0000 0.0299 -0.0038 0.9916 -0.1289 -0.0297 -0.1289 -0.9912)
                                              :load-commands '()
                                              :vis-nick 'none
                                              :lev0 'factory-cross
@@ -2133,8 +2133,8 @@
                                              :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+                                             :camera-trans (new 'static 'vector :x (meters 40.6249) :y (meters 305.1114) :z (meters 152.67) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 -0.0031 -0.0000 0.9999 -0.1210 0.9926 -0.0003 -0.9926 -0.1210 -0.0031)
                                              :load-commands '()
                                              :vis-nick 'none
                                              :lev0 'holly-wood
@@ -2172,10 +2172,10 @@
                                              :name "monument-warp"
                                              :level 'monument
                                              :flags (continue-flags warp)
-                                             :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
+                                             :trans (new 'static 'vector :x (meters 36.91) :y (meters 300.0) :z (meters 153.08) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+                                             :camera-trans (new 'static 'vector :x (meters 26.533) :y (meters 304.3346) :z (meters 153.5773) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 -0.0925 0.0000 -0.9957 0.1549 0.9878 -0.0144 0.9835 -0.1556 -0.0913)
                                              :load-commands '()
                                              :vis-nick 'none
                                              :lev0 'monument
@@ -2263,8 +2263,8 @@
                                              :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 159.93) :y (meters 300.0) :z (meters 55.74) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 53.43) :w 1.0)
-                                             :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+                                             :camera-trans (new 'static 'vector :x (meters 177.4368) :y (meters 305.0) :z (meters 57.33) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 -0.0419 -0.0000 0.9991 -0.1189 0.9928 -0.0049 -0.9920 -0.1190 -0.0416)
                                              :load-commands '()
                                              :vis-nick 'none
                                              :lev0 'pyramid
@@ -2302,10 +2302,10 @@
                                              :name "ice-canyon-warp"
                                              :level 'ice-canyon
                                              :flags (continue-flags warp)
-                                             :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+                                             :trans (new 'static 'vector :x (meters 37.48) :y (meters 300.0) :z (meters 151.9672) :w 1.0)
+                                             :quat (new 'static 'quaternion  :y -0.7211 :w -0.6928)
+                                             :camera-trans (new 'static 'vector :x (meters 35.0925) :y (meters 305.1517) :z (meters 153.7964) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 -0.1463 0.0000 -0.9892 0.1189 0.9927 -0.0175 0.9820 -0.1202 -0.1452)
                                              :load-commands '()
                                              :vis-nick 'none
                                              :lev0 'ice-canyon
@@ -2345,8 +2345,8 @@
                                              :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+                                              :camera-trans (new 'static 'vector :x (meters 32.98) :y (meters 304.7363) :z (meters 160.266) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 -0.9995 0.0000 0.0299 -0.0038 0.9916 -0.1289 -0.0297 -0.1289 -0.9912)
                                              :load-commands '()
                                              :vis-nick 'none
                                              :lev0 'coins
@@ -2427,8 +2427,8 @@
                                              :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+                                             :camera-trans (new 'static 'vector :x (meters 138.3519) :y (meters 304.54) :z (meters 115.8367) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 0.1877 -0.0000 0.9822 -0.1289 0.9913 0.0246 -0.9737 -0.1312 0.1861)
                                              :load-commands '()
                                              :vis-nick 'none
                                              :lev0 'ice-slide
@@ -2466,10 +2466,10 @@
                                              :name "islands-warp"
                                              :level 'islands
                                              :flags (continue-flags warp)
-                                             :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+                                             :trans (new 'static 'vector :x (meters 31.1678) :y (meters 300.0) :z (meters 154.2877) :w 1.0)
+                                             :quat (new 'static 'quaternion  :y -0.0819 :w -0.9966)
+                                             :camera-trans (new 'static 'vector :x (meters 31.1157) :y (meters 304.9515) :z (meters 142.5124) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 0.9999 -0.0000 -0.0033 0.0004 0.9928 0.1195 0.0033 -0.1195 0.9928)
                                              :load-commands '()
                                              :vis-nick 'none
                                              :lev0 'islands
@@ -2630,10 +2630,10 @@
                                              :name "chicks-warp"
                                              :level 'chicks
                                              :flags (continue-flags warp)
-                                             :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
+                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+                                             :camera-trans (new 'static 'vector :x (meters 32.98) :y (meters 304.7363) :z (meters 160.266) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 -0.9995 0.0000 0.0299 -0.0038 0.9916 -0.1289 -0.0297 -0.1289 -0.9912)
                                              :load-commands '()
                                              :vis-nick 'none
                                              :lev0 'chicks
@@ -2671,10 +2671,10 @@
                                              :name "garden-warp"
                                              :level 'garden
                                              :flags (continue-flags warp)
-                                             :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+                                             :trans (new 'static 'vector :x (meters 29.8066) :y (meters 300.0) :z (meters 148.9750) :w 1.0)
+                                             :quat (new 'static 'quaternion  :y -0.9965 :w 0.0832)
+                                             :camera-trans (new 'static 'vector :x (meters 32.3679) :y (meters 304.7546) :z (meters 159.7181) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9  -0.9730 -0.0000 0.2307 -0.0294 0.9918 -0.1241 -0.2289 -0.1276 -0.9650)
                                              :load-commands '()
                                              :vis-nick 'none
                                              :lev0 'garden
@@ -2712,10 +2712,10 @@
                                              :name "cold-pipe-warp"
                                              :level 'cold-pipe
                                              :flags (continue-flags warp)
-                                             :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+                                             :trans (new 'static 'vector :x (meters 32.8233) :y (meters 299.799) :z (meters 154.6168) :w 1.0)
+                                             :quat (new 'static 'quaternion  :y -0.1079 :w 0.9941)
+                                             :camera-trans (new 'static 'vector :x (meters 37.8242) :y (meters 305.1197) :z (meters 143.2896) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 0.9152 0.0000 0.4028 -0.0488 0.9926 0.1108 -0.3998 -0.1211 0.9085)
                                              :load-commands '()
                                              :vis-nick 'none
                                              :lev0 'cold-pipe
