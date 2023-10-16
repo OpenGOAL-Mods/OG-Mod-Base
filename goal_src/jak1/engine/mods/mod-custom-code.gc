@@ -330,7 +330,7 @@
       (set-unlock-level 1)
       (reset-saved-chick-from-mem)
       (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
-      (reset-actors #t) ;;HACK for some reason, the warp gate doesnt let us use it after coming out of it but reseting actor fixes this.
+     ;; (reset-actors #t) ;;HACK for some reason, the warp gate doesnt let us use it after coming out of it but reseting actor fixes this.
     ))
 
 
@@ -613,7 +613,7 @@
       (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
       (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
       (set-unlock-level 1)
-      (reset-actors #t)
+      ;;(reset-actors #t)
       )
 
 
