@@ -742,13 +742,13 @@
 (defun-extern stop-main-music (none))
 (defun music-manager ()
 (stop-main-music)
-
+        ;; Some of the alt sounds only play if you stay in a level for a very long time, so its nice to give them a rare chance to get a spotlight
         (case (-> (level-get-target-inside *level*) name)
          (('mort-title)
           (play-main-music "SND/jak-chicken-theme.mp3" (the int (-> *setting-control* default music-volume)))
           )
          (('block-world)
-         (if (= (rand-vu-int-range 0 1)0)
+         (if (> (knuth-rand-int-range 0 15) (+ 8 5))
           (play-main-music "SND/music-block-world2.mp3" (the int (-> *setting-control* default music-volume)))
           (play-main-music "SND/music-block-world.mp3" (the int (-> *setting-control* default music-volume))))
           )
@@ -756,31 +756,44 @@
           (play-main-music "SND/music-factory-cross-chicks.mp3" (the int (-> *setting-control* default music-volume)))
           )
          (('holly-wood)
+          (if (> (knuth-rand-int-range 0 15) (+ 8 5))
           (play-main-music "SND/music-holly-wood2.mp3" (the int (-> *setting-control* default music-volume))) ;;get holly wood 1?
+          (play-main-music "SND/music-holly-wood1.mp3" (the int (-> *setting-control* default music-volume))) ;;get holly wood 1?
           )
+         )
          (('monument)
-          (play-main-music "SND/music-monument.mp3" (the int (-> *setting-control* default music-volume)))
+          (if (> (knuth-rand-int-range 0 15) (+ 8 5))
+          (play-main-music "SND/music-monument2.mp3" (the int (-> *setting-control* default music-volume)))
+          (play-main-music "SND/music-monument1.mp3" (the int (-> *setting-control* default music-volume)))
+          )
+          ;;add alt theme? ITS SO GOOD YES
           )
          (('cathedral)
-          (play-main-music "SND/music-block-world.mp3" (the int (-> *setting-control* default music-volume))) ;;FIX
+          (if (> (knuth-rand-int-range 0 15) (+ 8 5))
+          (play-main-music "SND/music-cathedral2.mp3" (the int (-> *setting-control* default music-volume)))
+          (play-main-music "SND/music-cathedral1.mp3" (the int (-> *setting-control* default music-volume)))
+          )
           )
          (('pyramid)
           (play-main-music "SND/music-pyramid.mp3" (the int (-> *setting-control* default music-volume)))
           )
          (('ice-canyon 'cold-pipe)
-          (play-main-music "SND/music-ice-canyon-cold-pipe.mp3" (the int (-> *setting-control* default music-volume)));;2?
-          )  
+         (if (> (knuth-rand-int-range 0 15) (+ 8 5))
+                (play-main-music "SND/music-ice-canyon2.mp3" (the int (-> *setting-control* default music-volume)));;2?
+                (play-main-music "SND/music-ice-canyon-cold-pipe.mp3" (the int (-> *setting-control* default music-volume)));;2?
+         )
+         )  
          (('coins)
           (play-main-music "SND/music-coins.mp3" (the int (-> *setting-control* default music-volume)))
           )
          (('villa-cube)
-          (play-main-music "SND/music-block-world.mp3" (the int (-> *setting-control* default music-volume))) ;;FIX
+           (play-main-music "SND/music-monument1.mp3" (the int (-> *setting-control* default music-volume))) ;; monument and villa cuba share audio
           )                  
          (('ice-slide)
           (play-main-music "SND/music-ice-slide.mp3" (the int (-> *setting-control* default music-volume)))
           )
          (('islands)
-          (play-main-music "SND/music-block-world.mp3" (the int (-> *setting-control* default music-volume))) ;;FIX
+          (play-main-music "SND/music-holly-wood1.mp3" (the int (-> *setting-control* default music-volume))) ;; shares track with islands
           )          
          (('glass-towers 'chemical-factory)
           (play-main-music "SND/music-glass-towers-chemical-factory.mp3" (the int (-> *setting-control* default music-volume)))
@@ -789,7 +802,7 @@
           (play-main-music "SND/music-space-bridge.mp3" (the int (-> *setting-control* default music-volume)))
           )          
          (('garden)
-          (play-main-music "SND/music-garden.mp3" (the int (-> *setting-control* default music-volume))) ;;FIX
+          (play-main-music "SND/music-block-man.mp3" (the int (-> *setting-control* default music-volume))) ;;FIX
           )          
          (('block-man)
           (play-main-music "SND/music-block-man.mp3" (the int (-> *setting-control* default music-volume)))
