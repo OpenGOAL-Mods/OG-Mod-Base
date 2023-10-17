@@ -362,16 +362,26 @@
 
 (defun sound-manager()
 "responsible for all the sounds played during cutscenes"
+(let ((current-timea (current-time)))
   (when (handle->process (-> *art-control* spool-lock))(with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the
  int (ja-aframe-num 0))))
   (set! *currentSpoolName* (-> *art-control* active-stream)))
 (cond 
 ((and (string= *currentSpoolName* "ndi-intro") (= *currentCutsceneFrame* 420))
    (play-rand-sound "snd/zed.mp3" (the int (-> *setting-control* default sfx-volume)))
-   (until (time-elapsed? (current-time) (seconds 1))
+   (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
 
+)
+
+((and (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 0))
+   (play-rand-sound "snd/fart-intro.mp3" (the int (-> *setting-control* default sfx-volume)))
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
 )
 )
 
@@ -641,6 +651,8 @@
     
 (none))
 
+
+(define *old-voice-volume* 0.0)
 (defun stupid-hacks-every-frame ()
 (when run-mort-code?
 ;;Hack the main menu music since we cant pause it yet
@@ -672,7 +684,30 @@
                         (set! (-> *pc-settings* skip-movies?) #f)
                         (set! (-> *pc-settings* skip-movies?) #t)
                   )
-(none)
+
+;;Hack to set the voice volume to 0 during these cutscenes, then restore it when the cutscene is overridden.
+
+          (if (or  (string= *currentSpoolName* "sage-intro-sequence-a")
+                   (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
+                   (string= *currentSpoolName* "sidekick-human-intro-sequence-c"))
+                        (begin
+                        ;;store the current volume setting
+                        (if (= *old-voice-volume* 0.0)
+                        (set! *old-voice-volume* (-> *setting-control* default dialog-volume))
+                        )
+                        ;;set volume to 0 during this cutscene
+                        (set! (-> *setting-control* default dialog-volume) 0.0)
+                        )
+                        (begin
+                        (if (and (!= *old-voice-volume* 0.0 )(= (-> *setting-control* default dialog-volume) 0.0))
+                          (begin 
+                          (set! (-> *setting-control* default dialog-volume) *old-voice-volume*)
+                          (set! *old-voice-volume* 0.0)
+                          )
+                        )
+                  )
+          )
+  (none)
 )
 
     (defun runs-on-orb-pickup ((parent process-tree))

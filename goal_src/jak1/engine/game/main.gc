@@ -178,7 +178,11 @@
 (defun toggle-pause ()
   "Do pause/menu/progress transitions"
  
-
+ (if (or  (string= *currentSpoolName* "sage-intro-sequence-a")
+                        (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
+                        (string= *currentSpoolName* "sidekick-human-intro-sequence-c"))
+                        (return 0)
+                  )
 
   (case *master-mode*
     (('game)
