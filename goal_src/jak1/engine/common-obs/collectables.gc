@@ -1768,10 +1768,23 @@
                      )
                )
           (spawn (-> self part) (the-as vector gp-2))
-          (when (nonzero? (-> self sound))
+         (if (< (vector-vector-xz-distance (target-pos 0) (-> self root trans)) (meters 8.0)) 
+         ;;tag mort
+                 (begin  (when (nonzero? (-> self sound))
             (update-trans! (-> self sound) (the-as vector gp-2))
             (update! (-> self sound))
-            )
+           )
+                 )
+
+                  (begin  (when (nonzero? (-> self sound))
+            (update-trans! (-> self sound) (new 'static 'vector))
+            (update! (-> self sound))
+           )
+                 )
+           
+         
+         )
+
           )
         )
       )
@@ -2402,7 +2415,7 @@
   (set! (-> obj old-base quad) (-> obj root-override trans quad))
   (set! (-> obj part) (create-launch-control (-> *part-group-id-table* 63) obj))
   (set! (-> obj sound)
-        (new 'process 'ambient-sound (static-sound-spec "powercell-idle" :fo-max 40) (-> obj root-override trans))
+        (new 'process 'ambient-sound (static-sound-spec "powercell-idle" :fo-max 40 :volume 70.0) (-> obj root-override trans))
         )
   (set! (-> obj victory-anim) (fuel-cell-pick-anim obj))
   obj

@@ -172,7 +172,7 @@
   0
   (none)
   )
-
+(define-extern *currentSpoolName* string)
 (define *last-master-mode* 'game)
 (define-extern *warp-info* (array string))
 (defun toggle-pause ()

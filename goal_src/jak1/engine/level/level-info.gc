@@ -2425,10 +2425,10 @@
                                              :name "ice-slide-warp"
                                              :level 'ice-slide
                                              :flags (continue-flags warp)
-                                             :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
-                                             :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x (meters 138.3519) :y (meters 304.54) :z (meters 115.8367) :w 1.0)
-                                             :camera-rot (new 'static 'array float 9 0.1877 -0.0000 0.9822 -0.1289 0.9913 0.0246 -0.9737 -0.1312 0.1861)
+                                             :trans (new 'static 'vector :x (meters 128.1315) :y (meters 300.0) :z (meters 118.7232) :w 1.0)
+                                             :quat (new 'static 'quaternion  :y -0.6295 :w 0.7769)
+                                             :camera-trans (new 'static 'vector :x (meters 136.7704) :y (meters 304.8455) :z (meters 126.8554) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 -0.6590 -0.0000 0.7520 -0.0886 0.9930 -0.0776 -0.7468 -0.1178 -0.6544)
                                              :load-commands '()
                                              :vis-nick 'none
                                              :lev0 'ice-slide
