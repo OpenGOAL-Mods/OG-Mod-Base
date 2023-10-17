@@ -1002,6 +1002,7 @@
   (none)
   )
 (define-extern *has-chicken-eco* symbol)
+(defun-extern is-in-chem-fac-silo symbol)
 (defbehavior flag-setup target ()
   (level-setup)
   (set! (-> self control unknown-vector10 quad) (-> self control transv quad))

@@ -711,15 +711,15 @@
 (set! (-> *game-counts* data 16 money-count) 55);;block world
 (set! (-> *game-counts* data 17 money-count) 45);;factory cross
 (set! (-> *game-counts* data 18 money-count) 50);;hollywood
-(set! (-> *game-counts* data 19 money-count) 46);;monument
+(set! (-> *game-counts* data 19 money-count) 51);;monument
 (set! (-> *game-counts* data 20 money-count) 47)
 (set! (-> *game-counts* data 21 money-count) 47);;pyramid
 (set! (-> *game-counts* data 22 money-count) 46);;ice canyon
 (set! (-> *game-counts* data 23 money-count) 98);;coins
 (set! (-> *game-counts* data 24 money-count) 0);;villa-cuba   NEED
-(set! (-> *game-counts* data 25 money-count) 25);;ice-slide
+(set! (-> *game-counts* data 25 money-count) 35);;ice-slide
 (set! (-> *game-counts* data 26 money-count) 36);; islands
-(set! (-> *game-counts* data 27 money-count) 0);;glass towers NEED
+(set! (-> *game-counts* data 27 money-count) 43);;glass towers NEED
 (set! (-> *game-counts* data 28 money-count) 49);;chemical factory
 (set! (-> *game-counts* data 29 money-count) 55) ;;space  bridge
 (set! (-> *game-counts* data 30 money-count) 1);;chicks
