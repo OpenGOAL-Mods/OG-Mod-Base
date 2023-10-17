@@ -300,8 +300,12 @@ else:
             data["lump"]["eco-quantity"] = "1"
             #data["lump"]["light-index"] = ["int32", 2]
 
+        # Check end of crate file name for quantity
+        quantity = re.search(r'(\d+)$', obj.name)
+        if quantity:
+            data["lump"]["eco-quantity"] = quantity.group(1)
+            obj.name = data["lump"]["name"] + "-" + quantity.group(1)
 
-        obj.name = data["lump"]["name"]
         # Increment the counter
         count += 1
 

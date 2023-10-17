@@ -381,6 +381,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 ;;This returns true or false if jak is within a bubble defined by coordiantes and width
 (defun in-bubble? ((x float) (y float) (z float) (w float))
+  (if *cheat-mode* 
+    (add-debug-sphere #t (bucket-id debug-no-zbuf) (set-vector! (new-stack-vector0) x y z 1.0) (meters w) *color-black*)
+  )
   (<= 
     (vector-vector-distance 
       (target-pos 0) 
@@ -389,6 +392,35 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (/ w 2.0)
     )
   )
+
+ ;; Simple Tomato Pasta Sauce
+(defun is-in-chem-fac-silo ()
+  (if (in-bubble? (meters 131.51) (meters 310.37) (meters 200.12) (meters 29.0))
+    (return #t) 
+  )
+  (if (in-bubble? (meters 131.51) (meters 315.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 320.57) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 325.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 330.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 335.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 340.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 345.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  #f
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jak Color functions

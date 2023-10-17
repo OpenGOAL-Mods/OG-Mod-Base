@@ -24,7 +24,7 @@
 (define *has-chicken-eco* #f)
 (defun return-hover-animation ()
 
-(if *has-chicken-eco*
+(if (or *has-chicken-eco* (is-in-chem-fac-silo))
 (-> *target* draw art-group data 39);;jump flap
 (-> *target* draw art-group data 38);;debug hover loop
 
