@@ -746,10 +746,7 @@
   (set! (-> *game-counts* data i buzzer-count) i)
   )
   )
-(set! (-> *game-counts* data 24 money-count) 0);;coins
-(set! (-> *game-counts* data 27 money-count) 0);;coins
-  (set! (-> *game-counts* data 33 money-count) 0);;coins
-  (set! (-> *game-counts* data 34 money-count) 0);;coins
+
 
   obj
   )

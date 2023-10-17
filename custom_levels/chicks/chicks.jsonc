@@ -21,6 +21,7 @@
 
 
   "actors" : [
+
      // Start automatic actors from blender
 //Orbs below
 {"trans": [27.443004608154297, 303.805419921875, 154.7650909423828], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "chicks-money-1"}},
@@ -33,7 +34,18 @@
 //Misc below
 {"trans": [32.932552337646484, 303.09075927734375, 157.37408447265625], "etype": "training-part", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "project-training-part-1", "effect-name": "'warpgate-loop", "art-name": "group-training-warpgate", "effect-param": ["float", 3.0, 80.0, 12.0, 40.0], "cycle-speed": ["float", -1.0, 0.0], "game_task": "4.0"}}, {"trans": [32.932552337646484, 305.59075927734375, 157.37408447265625], "etype": "warpgate", "game_task": 2, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "project-warpgate"}}
 //End automatic actors from blender 
-
+,
+{
+  "trans": [58.32, 300.00, 153.99], 
+  "etype": "warp-gate-switch",
+  "game_task": 117,
+  "quat" : [0, 0, 0, 1],
+  "bsphere": [1189.09, 48.11, -3619.92, 10],
+  "lump": {
+    "name": "project-warp-gate-switch",
+"alt-actor": "project-training-part-1"
+  }
+}
     
   ]
 }

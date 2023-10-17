@@ -57,11 +57,11 @@
 (set! (-> *custom-level-info* data 26 total-chicks) 6)
 (set! (-> *custom-level-info* data 26 total-chicks) 5);; MISSING A CHICK IN ISLANDS
 (set! (-> *custom-level-info* data 27 total-chicks) 10)
-(set! (-> *custom-level-info* data 27 total-chicks) 12)
+(set! (-> *custom-level-info* data 28 total-chicks) 6)
 ;;28 is chem factory
 (set! (-> *custom-level-info* data 29 total-chicks) 6)
 (set! (-> *custom-level-info* data 30 total-chicks) 36)
-(set! (-> *custom-level-info* data 30 total-chicks) 12)
+(set! (-> *custom-level-info* data 30 total-chicks) 32)
 (set! (-> *custom-level-info* data 31 total-chicks) 10)
 (set! (-> *custom-level-info* data 32 total-chicks) 6)
 
