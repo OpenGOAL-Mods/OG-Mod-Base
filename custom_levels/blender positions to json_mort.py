@@ -275,6 +275,30 @@ else:
             data["lump"]["eco-collectable"] = "4"
             data["lump"]["eco-quantity"] = "1"
             #data["lump"]["light-index"] = ["int32", 2]
+       
+        # Check if "yelloweco" is in the object's name
+        if "ieco" in obj.name.lower():
+            data["lump"]["name"] = data["lump"]["name"] + "-ieco"
+            data["lump"]["crate-type"] = "'wood"
+            data["lump"]["eco-collectable"] = "12"
+            data["lump"]["eco-quantity"] = "1"
+            #data["lump"]["light-index"] = ["int32", 2]
+       
+        # Check if "yelloweco" is in the object's name
+        if "graveco" in obj.name.lower():
+            data["lump"]["name"] = data["lump"]["name"] + "-graveco"
+            data["lump"]["crate-type"] = "'wood"
+            data["lump"]["eco-collectable"] = "11"
+            data["lump"]["eco-quantity"] = "1"
+            #data["lump"]["light-index"] = ["int32", 2]
+        
+        # Check if "yelloweco" is in the object's name
+        if "chickeco" in obj.name.lower():
+            data["lump"]["name"] = data["lump"]["name"] + "-chickeco"
+            data["lump"]["crate-type"] = "'wood"
+            data["lump"]["eco-collectable"] = "13"
+            data["lump"]["eco-quantity"] = "1"
+            #data["lump"]["light-index"] = ["int32", 2]
 
 
         obj.name = data["lump"]["name"]
