@@ -177,7 +177,7 @@
 (define-extern *warp-info* (array string))
 (defun toggle-pause ()
   "Do pause/menu/progress transitions"
- 
+ ;;Ban pausing in these cutscenes so the custom audio doesnt desync
  (if (or  (string= *currentSpoolName* "sage-intro-sequence-a")
                         (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
                         (string= *currentSpoolName* "sidekick-human-intro-sequence-c"))
