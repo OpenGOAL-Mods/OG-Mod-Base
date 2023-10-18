@@ -88,7 +88,8 @@
   )
 (defun-extern get-unlock-level int)
 (defun-extern get-loaded-cell-count int)
-
+(defun-extern set-unlock-level int none)
+(defun-extern reset-saved-chick-from-mem none)
 (defun have-all-chicks-safe ()
 
 (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
@@ -100,6 +101,7 @@
 (= (-> (level-get-target-inside *level*)name) (->  (get-continue-by-name *game-info* (-> *warp-info* (get-unlock-level))) level))
 (begin (set-unlock-level 1)
  (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
+ (reset-saved-chick-from-mem)
 )
 )
 )
