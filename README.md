@@ -5,9 +5,11 @@ All elements in Jak 2 are amplified and the game throws everything it has at you
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 Weapon mods
 -------------------------------------------------------------------------------------------------------------------------------------------------------
-- Rare chance to drop only from Krimzon Guards (for now)
+- 4 Gun Mods are obtainable via missions
+- Default gun mod attachment is placed on Yellow Gun for now
 - Any mod is attachable to any weapon without cap
-- System to select weapon to install mod is not in place yet, once mod-base is updated with miscellaneous menu I'll work on it.
+- System to select weapon to install mod is not in place yet, waiting on mod-base update
+- a random legendary gun mod can be obtained via rare drop from the guards. Only one shall exist in the world
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 Green Eco mods (modifiers)
