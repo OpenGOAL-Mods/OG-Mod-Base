@@ -184,6 +184,9 @@
       (when (and (= leg-random-int 3)(= leg-random-shot #t))                                    ;random shot
         (set! wm-rand-shot #t)
       )
+      (when (and (and (rand-vu-percent? 0.00001)(= pm-shot-trigger #f)(= peacemaker-ability #t))) ;peacemaker-ability
+        (set! pm-shot-trigger #t)
+      )
       (when (and (and (= guard-shot-option #t)(= guard-shot-int 3)(rand-vu-percent? 0.3))             ;guard-shot
       (set! inv-frame-start-g #t)
       
