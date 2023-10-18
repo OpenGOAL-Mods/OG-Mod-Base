@@ -126,6 +126,9 @@
           )
         )
       (process-spawn gun-red-shot (-> gp-0 fire-point) (-> gp-0 fire-dir-out) :to (ppointer->process (-> gp-0 gun)))    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      (when (and (= leg-random-int 2)(= leg-random-shot #t))                                    ;random shot
+        (set! wm-rand-shot #t)
+      )
       (when (and (and (rand-vu-percent? 0.00001)(= pm-shot-trigger #f)(= peacemaker-ability #t))) ;peacemaker-ability
         (set! pm-shot-trigger #t)
       )

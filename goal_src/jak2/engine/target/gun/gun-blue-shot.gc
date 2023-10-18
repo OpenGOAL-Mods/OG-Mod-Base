@@ -13,6 +13,9 @@
 (define inv-frame-counter 0)
 (define inv-frame-start-g #f)
 (define inv-frame-counter-g 0)
+(define-extern leg-random-shot symbol)
+(define-extern wm-rand-shot symbol)
+(define leg-random-int 0)
 
 
 (deftype gun-dark-shot (projectile)
@@ -178,6 +181,9 @@
         )
       (set! (-> s4-1 timeout) (seconds 4))
       (spawn-projectile gun-blue-shot s4-1 (ppointer->process (-> gp-0 gun)) *default-dead-pool*)     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;WEAPON MOD CHANGES OCCUR HERE AND DOWN
+      (when (and (= leg-random-int 3)(= leg-random-shot #t))                                    ;random shot
+        (set! wm-rand-shot #t)
+      )
       (when (and (and (rand-vu-percent? 0.00001)(= pm-shot-trigger #f)(= peacemaker-ability #t))) ;peacemaker-ability
         (set! pm-shot-trigger #t)
       )
