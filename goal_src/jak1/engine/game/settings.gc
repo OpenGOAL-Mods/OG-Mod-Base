@@ -440,7 +440,7 @@
     (set! (-> gp-0 process-mask) (process-mask execute sleep))
     (set! (-> gp-0 screenx) 0)
     (set! (-> gp-0 screeny) 0)
-    (set! (-> gp-0 vibration) #t)
+    (set! (-> gp-0 vibration) #f)
     (set! (-> gp-0 auto-save) #f)
     (set! (-> gp-0 play-hints) #f)
     (set! (-> gp-0 movie) (the-as (pointer process) #f))
