@@ -3992,7 +3992,7 @@
 ;              WEAPON MOD CHANCED SPAWN
 ;-------------------------------------------------------
 
-  (when (rand-vu-percent? 0.005) ;real chance is 0.005 (0.05%)
+  (when (and (= weapon-mod-toggle #t)(rand-vu-percent? 0.005)) ;real chance is 0.005 (0.05%)
     (set! wm-drop #t)
     )
   (when (and (= wm-drop #t)(= leg-got? #f))

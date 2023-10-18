@@ -30,9 +30,6 @@
     (when (and (= leg-random-int 1)(= leg-random-shot #t))                                    ;random shot
         (set! wm-rand-shot #t)
       )
-    (when (and (and (rand-vu-percent? 0.00001)(= pm-shot-trigger #f)(= peacemaker-ability #t))) ;peacemaker-ability
-        (set! pm-shot-trigger #t)
-      )
     (when (and (and (= guard-shot-option #t)(= guard-shot-int 1)(rand-vu-percent? 0.3))          ;guard-shot
     (set! inv-frame-start-g #t)
         (let ((gp-0 (new 'stack-no-clear 'projectile-init-by-other-params)))
