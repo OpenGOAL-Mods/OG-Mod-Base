@@ -453,14 +453,14 @@
                       "villa-cube-warp"
                       "ice-slide-warp"
                       "islands-warp"
-                    "glass-towers-warp"
-                    "chemical-factory-warp"
+                      "glass-towers-warp"
+                      "chemical-factory-warp"
                       "space-bridge-warp"
-                     "chicks-warp"
+                      "chicks-warp"
                       "garden-warp"
                       "cold-pipe-warp"
                     ;;"block-man-warp"
-                    ;;  "cube-face-warp"
+                    ;;"cube-face-warp"
                       )
         )
 ;;Handle these warps in target-death.gc

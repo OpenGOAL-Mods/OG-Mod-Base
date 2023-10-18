@@ -231,7 +231,35 @@
             )
   (none)
 )
+(define *count-crates* 0)
+(defun get-loaded-cell-count ()
+(set! *count-crates* 0)
+(execute-process-tree *active-pool* (lambda ((proc process)) 
+(when (-> proc entity) 
+(let (
+    (vec (-> proc entity trans)) 
+    (quat (-> proc entity quat)) 
+    (name (the string (-> proc name))))
+    (when (= (-> (the entity-actor (-> proc entity)) etype) fuel-cell)
 
+    ;;We know its a cell
+
+ 
+
+    ;;If its wood, increase our count
+
+    (set! *count-crates* (+ *count-crates* 1))
+    
+    )
+    
+    ))
+    
+
+    )
+    *kernel-context*)
+    *count-crates*
+  
+)
   (defun mort-main-menu ()
 
     (if (and *in-mort-menu* *target*)

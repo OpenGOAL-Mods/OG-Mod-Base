@@ -87,15 +87,18 @@
   :post target-no-move-post
   )
 (defun-extern get-unlock-level int)
+(defun-extern get-loaded-cell-count int)
 
 (defun have-all-chicks-safe ()
 
 (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
          (current-custom-info (-> *custom-level-info* data current-level-idx)))
-(or (= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks)) *cheat-mode*)
+(or 
+      (= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks)) 
+      *cheat-mode*
+      (and (= (get-loaded-cell-count) 0) (= (-> current-custom-info current-chicks) 0))
 )
-
-)
+))
 
 (defun-extern reset-saved-chick-from-mem none)
 (defstate idle (warp-gate)
@@ -191,7 +194,7 @@
               (set! (-> v1-55 scale) 0.9)
               )
             (set! (-> gp-0 flags) (font-flags shadow kerning large))
-            (if (or (= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks)) *cheat-mode*)
+            (if (have-all-chicks-safe)
             (print-game-text (lookup-text! *common-text* (text-id press-to-use) #f) gp-0 #f 128 22)
             (print-game-text (string-format "SAVE MORE CHICKENS!! ~D/~D~%" (-> (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))) saved-chicks) (-> (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))) total-chicks)) gp-0 #f 128 22)
             )
