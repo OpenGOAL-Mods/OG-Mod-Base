@@ -139,8 +139,9 @@ CURRENT BUGS:
 #|;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;      Var Definitions     ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;|#
-(define mod-kill? #f)
+(define mod-rand 0)
 (define mod-pick #f)
+(define mod-reroll #f)
 
 (define weapon-mod-toggle #f)
 (define wm-drop #f) ;Turns on weapon mods dropping off the next spawned enemy that can drop mods.
@@ -186,6 +187,7 @@ CURRENT BUGS:
 (define mission-grab-2 #f)
 (define mission-grab-3 #f)
 (define mission-grab-4 #f)
+
 
 
 (deftype predator-shot (metalhead-shot)
@@ -322,121 +324,149 @@ CURRENT BUGS:
 ;Once a legendary is spawned it unlocks it for you. Later ill figure how to do it upon pickup, but for now I have no fucking clue. :L
 ;Right now all gun mods are set towards mod-default-gun, which is the yellow gun atm, until Mod-Base updates with the updated misc menu in "game-options" then you can select it yourself.
 
-#|
-(when (and (= (-> *game-info* fuel) 0.0)(= mod-pick #f))
+
+
+
+
+(when (= mod-reroll #t)
+  (when (>= (-> *game-info* gem) 10.0)
+    (set! (-> *game-info* gem) (- (-> *game-info* gem) 10.0))
+    (set! mod-pick #t)
+    (print "SUCCESSFULLY REROLLED :)")
+    (set! mod-reroll #f)
+  )
+  (when (< (-> *game-info* gem) 10.0)
+    (print "NOT ENOUGH GEMS, REQUIRE 10 TO REROLL")
+    (set! mod-reroll #f)
+  )
+)
+
+
+(when (and (= (-> *game-info* fuel) 0.0)(= weapon-mod-toggle #t)) ;checks for if you have weapon mod toggle on, then gives you a modifier
   (set! mod-pick #t)
 )
 
-(when (and (= mod-pick #t)(= mod-kill? #f))
-  (set! mod-pick #f)
-  (set! mod-kill? #t)
+(when (= mod-pick #t)
+  (set! mod-rand (rand-vu-int-range 1 3))
+  (when (= mod-rand 1)
+    (set! (-> *game-info* fuel) 1.0)
+    (set! mod-pick #f)
+  )
+  (when (= mod-rand 2)
+    (set! (-> *game-info* fuel) 2.0)
+    (set! mod-pick #f)
+  )
+  (when (= mod-rand 3)
+    (set! (-> *game-info* fuel) 3.0)
+    (set! mod-pick #f)
+  )
 )
 
+(when (and (!= (-> *game-info* fuel) 0.0)(= weapon-mod-toggle #f))
+  (set! weapon-mod-toggle #t)
+)
 
 (when (= weapon-mod-toggle #t)
+  ;Legendary Weapon Mod Saves
+  (when (and (= (-> *game-info* buzzer-total) 0.0)(= pm-extra-shot-option #f)) ;if none
+    (set! pm-extra-shot-option #f)
+    (set! leg-random-shot #f)
+    (set! leg-got? #f)
+  )
+  (when (and (= (-> *game-info* buzzer-total) 1.0)(= pm-extra-shot-option #f)) ;if 1, legendary extra chanced peacemaker-shot
+    (set! pm-extra-shot-option #t)
+    (set! pm-extra-shot-int mod-default-gun)
+    (set! leg-got? #t)
+  )
 
+  (when (and (= (-> *game-info* buzzer-total) 2.0)(= leg-random-shot #f)) ;if 2, legendary random shot
+    (set! leg-random-shot #t)
+    (set! leg-random-int mod-default-gun)
+    (set! leg-got? #t)
+  )
+  ;Modifier Saves
+  (when (and (= (-> *game-info* fuel) 0.0)(= ability-stopped? #f)) ;if none
+    (set! peacemaker-ability #f)
+    (set! hover-damage #f)
+    (set! tp-fb #f)
+    (set! ability-stopped? #t)
+    (set! weapon-mod-toggle #f)
+  )
+
+  (when (and (= (-> *game-info* fuel) 1.0)(= peacemaker-ability #f)) ;if 1, peacemaker ability
+    (set! peacemaker-ability #t)
+    (set! tp-fb #f)
+    (set! hover-damage #f)
+    (set! ability-stopped? #f)
+    (set! weapon-mod-toggle #t)
+  )
+
+
+  (when (and (= (-> *game-info* fuel) 2.0)(= tp-fb #f)) ;if 2, tp-fb
+    (set! tp-fb #t)
+    (set! hover-damage #f)
+    (set! peacemaker-ability #f)
+    (set! ability-stopped? #f)
+    (set! weapon-mod-toggle #t)
+  )
+
+  (when (and (= (-> *game-info* fuel) 3.0)(= hover-damage #f)) ;if 3, hover-damage
+    (set! hover-damage #t)
+    (set! peacemaker-ability #f)
+    (set! tp-fb #f)
+    (set! ability-stopped? #f)
+    (set! weapon-mod-toggle #t)
+  )
+
+  ;Mission-Based Weapon Mod Gets
+  (when (and (task-node-closed? (game-task-node city-krew-delivery-resolution))(= mission-grab-1 #f)) ;after red gun, get rapid fire
+    (set! mission-grab-1 #t)
+    (set! rapid-fire-option #t)
+    (set! rapid-fire-int mod-default-gun)
+    (print "Rapid Fire Acquired, please choose gun via (set! rapid-fire-int (integer 1 through 4))")
+  )
+
+  (when (and (task-node-closed? (game-task-node sewer-enemy-resolution))(= mission-grab-2 #f)) ;after yellow gun, get double tap
+    (set! mission-grab-2 #t)
+    (set! double-tap-option #t)
+    (set! double-tap-int mod-default-gun)
+    (print "Chanced Double Tap Acquired, please choose gun via (set! double-tap-int (integer 1 through 4))")
+  )
+
+  (when (and (task-node-closed? (game-task-node ruins-enemy-introduction))(= mission-grab-3 #f)) ;after blue gun, get chanced guard shot
+    (set! mission-grab-3 #t)
+    (set! guard-shot-int mod-default-gun)
+    (set! guard-shot-option #t)
+    (print "Chanced Guard Shot Acquired, please choose gun via (set! guard-shot-int (integer 1 through 4))")
+  )
+
+  (when (and (task-node-closed? (game-task-node sewer-escort-get-gun))(= mission-grab-4 #f)) ;after dark gun, get chanced predator shot
+    (set! mission-grab-4 #t)
+    (set! predator-shot-int mod-default-gun)
+    (set! predator-shot-option #t)
+    (print "Chanced Predator Shot Acquired, please choose gun via (set! predator-shot-int (integer 1 through 4))")
+  )
+  ;looks for if their missions become un-completed after setting them, then takes away mission gun mods respectively
+  (when (and (not (task-node-closed? (game-task-node city-krew-delivery-resolution)))(= mission-grab-1 #t))
+    (set! mission-grab-1 #f)
+    (set! rapid-fire-option #f)
+  )
+
+  (when (and (not (task-node-closed? (game-task-node sewer-enemy-resolution)))(= mission-grab-2 #t))
+    (set! mission-grab-2 #f)
+    (set! double-tap-option #f)
+  )
+
+  (when (and (not (task-node-closed? (game-task-node ruins-enemy-introduction)))(= mission-grab-3 #t))
+    (set! mission-grab-3 #f)
+    (set! guard-shot-option #f)
+  )
+
+  (when (and (not (task-node-closed? (game-task-node sewer-escort-get-gun)))(= mission-grab-4 #t))
+    (set! mission-grab-4 #f)
+    (set! predator-shot-option #f)
+  )
 )
-|#
-
-
-
-
-;Legendary Weapon Mod Saves
-(when (and (= (-> *game-info* buzzer-total) 0.0)(= pm-extra-shot-option #f)) ;if none
-  (set! pm-extra-shot-option #f)
-  (set! leg-random-shot #f)
-  (set! leg-got? #f)
-)
-(when (and (= (-> *game-info* buzzer-total) 1.0)(= pm-extra-shot-option #f)) ;if 1, legendary extra chanced peacemaker-shot
-  (set! pm-extra-shot-option #t)
-  (set! pm-extra-shot-int mod-default-gun)
-  (set! leg-got? #t)
-)
-
-(when (and (= (-> *game-info* buzzer-total) 2.0)(= leg-random-shot #f)) ;if 2, legendary random shot
-  (set! leg-random-shot #t)
-  (set! leg-random-int mod-default-gun)
-  (set! leg-got? #t)
-)
-;Modifier Saves
-(when (and (= (-> *game-info* fuel) 0.0)(= ability-stopped? #f)) ;if none
-  (set! peacemaker-ability #f)
-  (set! hover-damage #f)
-  (set! tp-fb #f)
-  (set! ability-stopped? #t)
-)
-
-(when (and (= (-> *game-info* fuel) 1.0)(= peacemaker-ability #f)) ;if 1, peacemaker ability
-  (set! peacemaker-ability #t)
-  (set! tp-fb #f)
-  (set! hover-damage #f)
-  (set! ability-stopped? #f)
-)
-
-
-(when (and (= (-> *game-info* fuel) 2.0)(= tp-fb #f)) ;if 2, tp-fb
-  (set! tp-fb #t)
-  (set! hover-damage #f)
-  (set! peacemaker-ability #f)
-  (set! ability-stopped? #f)
-)
-
-(when (and (= (-> *game-info* fuel) 3.0)(= hover-damage #f)) ;if 3, hover-damage
-  (set! hover-damage #t)
-  (set! peacemaker-ability #f)
-  (set! tp-fb #f)
-  (set! ability-stopped? #f)
-)
-
-;Mission-Based Weapon Mod Gets
-(when (and (task-node-closed? (game-task-node city-krew-delivery-resolution))(= mission-grab-1 #f)) ;after red gun, get rapid fire
-  (set! mission-grab-1 #t)
-  (set! rapid-fire-option #t)
-  (set! rapid-fire-int mod-default-gun)
-  (print "Rapid Fire Acquired, please choose gun via (set! rapid-fire-int (integer 1 through 4))")
-)
-
-(when (and (task-node-closed? (game-task-node sewer-enemy-resolution))(= mission-grab-2 #f)) ;after yellow gun, get double tap
-  (set! mission-grab-2 #t)
-  (set! double-tap-option #t)
-  (set! double-tap-int mod-default-gun)
-  (print "Chanced Double Tap Acquired, please choose gun via (set! double-tap-int (integer 1 through 4))")
-)
-
-(when (and (task-node-closed? (game-task-node ruins-enemy-introduction))(= mission-grab-3 #f)) ;after blue gun, get chanced guard shot
-  (set! mission-grab-3 #t)
-  (set! guard-shot-int mod-default-gun)
-  (set! guard-shot-option #t)
-  (print "Chanced Guard Shot Acquired, please choose gun via (set! guard-shot-int (integer 1 through 4))")
-)
-
-(when (and (task-node-closed? (game-task-node sewer-escort-get-gun))(= mission-grab-4 #f)) ;after dark gun, get chanced predator shot
-  (set! mission-grab-4 #t)
-  (set! predator-shot-int mod-default-gun)
-  (set! predator-shot-option #t)
-  (print "Chanced Predator Shot Acquired, please choose gun via (set! predator-shot-int (integer 1 through 4))")
-)
-;looks for if their missions become un-completed after setting them, then takes away mission gun mods respectively
-(when (and (not (task-node-closed? (game-task-node city-krew-delivery-resolution)))(= mission-grab-1 #t))
-  (set! mission-grab-1 #f)
-  (set! rapid-fire-option #f)
-)
-
-(when (and (not (task-node-closed? (game-task-node sewer-enemy-resolution)))(= mission-grab-2 #t))
-  (set! mission-grab-2 #f)
-  (set! double-tap-option #f)
-)
-
-(when (and (not (task-node-closed? (game-task-node ruins-enemy-introduction)))(= mission-grab-3 #t))
-  (set! mission-grab-3 #f)
-  (set! guard-shot-option #f)
-)
-
-(when (and (not (task-node-closed? (game-task-node sewer-escort-get-gun)))(= mission-grab-4 #t))
-  (set! mission-grab-4 #f)
-  (set! predator-shot-option #f)
-)
-
 
 
 ;Roll for a random legenedary gun mod
@@ -858,6 +888,10 @@ CURRENT BUGS:
 ;---------------------------------------------------------
 ;(vector-rotate-y! svec-pos svec-pos 3.0) ;possible line for enlarging the radius of gun-point, possible fix for invulnerability turning off game secrets.
       
+      (when (and (and (= peacemaker-ability #t)(rand-vu-percent? 0.00001)(> (-> *target* fact health) 1)))
+        (set! pm-shot-trigger #t)
+      )
+
       (if (and (and (= peacemaker-ability #t)(rand-vu-percent? 0.45)(= pm-shot-trigger #t))) ;
         (let ((svec-pos (new-stack-vector0))
         (tpoz (-> *target* gun fire-point)))
@@ -1040,6 +1074,73 @@ All of the variables set are for time-based events based off of frames |#
       )
 
 
+
+
+
+(define help 
+
+"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+What are the commands to set your Green Eco or Gun Mod?
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+ALL WEAPON MODS ARE TOGGLED OFF BY DEFAULT, ONCE YOU SET IT ON AND SAVE, THERES NO GOING BACK ON YOUR SAVE.
+(unless you set weapon-mod-toggle to false and (-> *game-info* fuel) to 0, then save)
+
+
+you can set it via (set! weapon-mod-toggle #t) 
+(this will choose a random modifier for you)
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+WEAPON MODS: Each weapon mod will come with the option boolean, and an integer (which is referred in example as V) storing from 1-4 defining the selected gun. 1=Yellow, 2=Red, 3=Blue, 4=Dark
+All of these changes are done in target-gun.gc
+Example:
+(set! rapid-fire-option #t)
+(set! rapid-fire-int V)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+rapid-fire-option                 Fire rate increased dramatically
+rapid-fire-int
+
+double-tap-option                 Every shot has a chance to fire 2
+double-tap-int
+
+infinite-range-option             Every shot follows newtons law              (not working)
+infinite-range-int                (meaning every shot has a max range of 999)
+
+big-shot-option                   bigger bullets, bigger hitbox, right?       (not working)
+big-shot-int
+
+pm-extra-shot-option              Every shot has a chance to fire a peacemaker shot :)
+pm-extra-shot-int
+
+predator-shot-option              Every shot has a good chance to spawn a predator shot with it
+predator-shot-int
+
+guard-shot-option                 Every shot has a good chance to spawn a guard shot with it
+guard-shot-int
+
+leg-random-shot                   Your gun can fire every shot known to man.
+leg-random-int
+
+Every guard that spawns will have a chance to drop a Weapon Mod, alongside some other enemies for legendaries.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+GREEN ECO MODS(modifiers): Each mod works differently, but I keep all of it on a toggle boolean.
+Example: (set! peacemaker-ability #t)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+peacemaker-ability                at any given points in the game, jak has a chance to fire 100 peacemaker shots
+                                  but you must one-hit every boss.
+
+tp-fb                             upon death, there's a 0.01% chance per death frame that jak will tp to the final boss
+                                  BUT the final boss is extremely unfair, and if you die you're sent back to your original area.
+
+hover-damage                      Your hoverboard goes much faster, tricks virtually mean nothing for speed
+                                  but mostly all enemies (except guards in traffic) have X5 HP. (oof)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+"
+)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; deprecated function defintions.
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
