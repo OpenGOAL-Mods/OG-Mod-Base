@@ -3,6 +3,7 @@
 
 #|
 
+default-menu-pc.gc
   Extra debug menus for PC port.
 
 |#

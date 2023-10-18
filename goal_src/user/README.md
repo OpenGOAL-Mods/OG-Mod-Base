@@ -29,6 +29,7 @@ Additionally, you can provide a `repl-config.json` to set various REPL settings,
     "gameVersionFolder": "jak2_pal", // corresponds with your "gameName" in the decomp config, "jak2" by default
     "asmFileSearchDirs": [
       "goal_src/jak2"
+      "goal_src/startup.gc"
     ]
   },
   "appendKeybinds": true,
