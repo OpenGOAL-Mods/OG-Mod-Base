@@ -93,6 +93,18 @@
 
 (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
          (current-custom-info (-> *custom-level-info* data current-level-idx)))
+
+(when (and (= (get-loaded-cell-count) 0) (= (-> current-custom-info current-chicks) 0))
+
+(if 
+(= (-> (level-get-target-inside *level*)name) (->  (get-continue-by-name *game-info* (-> *warp-info* (get-unlock-level))) level))
+(begin (set-unlock-level 1)
+ (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
+)
+)
+)
+
+
 (or 
       (= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks)) 
       *cheat-mode*
