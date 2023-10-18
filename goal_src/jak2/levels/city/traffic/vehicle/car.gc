@@ -873,7 +873,7 @@
     :inv-max-engine-thrust 0.000008138021
     :engine-response-rate 8.0
     :engine-intake-factor 1.0
-    :brake-factor 8.25
+    :brake-factor 3.25
     :turbo-boost-factor 1.0
     :max-xz-speed (meters 45)
     :ground-probe-distance (meters 4.5)

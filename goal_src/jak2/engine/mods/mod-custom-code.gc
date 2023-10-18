@@ -888,7 +888,7 @@ CURRENT BUGS:
 ;---------------------------------------------------------
 ;(vector-rotate-y! svec-pos svec-pos 3.0) ;possible line for enlarging the radius of gun-point, possible fix for invulnerability turning off game secrets.
       
-      (when (and (and (= peacemaker-ability #t)(rand-vu-percent? 0.00001)(> (-> *target* fact health) 1)))
+      (when (and (and (= peacemaker-ability #t)(rand-vu-percent? 0.0001)(> (-> *target* fact health) 0.0)))
         (set! pm-shot-trigger #t)
       )
 
@@ -938,7 +938,16 @@ All of the variables set are for time-based events based off of frames |#
         (when (= start-frame-count #t)
           (+! frame-count 1)
         )
-        (when (and (and (and (= stored-cp? #f)(= tp-fb #t)(rand-vu-percent? 0.0006)(< (-> *target* fact health) 1)))) ;looks for teleport percentage upon death, if so, init new game.
+        (when (and (and (and (= stored-cp? #f)(= tp-fb #t)(rand-vu-percent? 0.007)(< (-> *target* fact health) 1)))) ;looks for teleport percentage upon death, if so, init new game.
+          (set! mission-grab-1 #t)
+          (set! mission-grab-2 #t)
+          (set! mission-grab-3 #t)
+          (set! mission-grab-4 #t)
+          (set! weapon-mod-toggle #f)
+          (set! rapid-fire-option #f)
+          (set! double-tap-option #f)
+          (set! guard-shot-option #f)
+          (set! predator-shot-option #f)
           (set! start-frame-count #t)
           (initialize! *game-info* 'game (the-as game-save #f) (the-as string #f))
           (set! stored-cp? #t)
@@ -958,15 +967,21 @@ All of the variables set are for time-based events based off of frames |#
           (set! new-game-s? #f)
           (print "started frame-count for game-save load")
         )
-        (when (and (= frame-count 120)(= going-back-tp #t)) ;loads the save you had after 120 frames of DEATH
+        (when (and (= frame-count 60)(= going-back-tp #t)) ;loads the save you had after 120 frames of DEATH
           (auto-save-command 'restore 0 0 *default-pool* #f)
           (print "crash?")
         )
-        (when (and (= going-back-tp #t)(= frame-count 130)) ;resets everything back to original state 10 frames after the game-load, to avoid crashes.
+        (when (and (= going-back-tp #t)(= frame-count 80)) ;resets everything back to original state 10 frames after the game-load, to avoid crashes.
           (set! stored-cp? #f)
           (set! going-back-tp #f)
           (set! start-frame-count #f)
           (set! frame-count 0)
+          (set! (-> *game-info* fuel) 2.0)
+          (set! weapon-mod-toggle #t)
+          (set! mission-grab-1 #f)
+          (set! mission-grab-2 #f)
+          (set! mission-grab-3 #f)
+          (set! mission-grab-4 #f)
           (print "It worked!! POGGERS!!! (I logged 42 hours on this problem :D)")
         )
 
