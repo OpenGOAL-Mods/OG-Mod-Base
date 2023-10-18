@@ -21,3 +21,6 @@ Green Eco mods (modifiers)
 - Upon loading for the first time in fortress, you will be given the option to choose one or none. (not implemented yet)
 - If you choose none, weapon mods will be disabled, too
   (all examples in mod-custom-code.gc, or by using (print help) while connected to the game in REPL)
+
+
+  These mods aim to make the game more difficult, but hero-mode will only be beaten by the worthy.
