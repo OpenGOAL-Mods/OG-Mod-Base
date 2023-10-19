@@ -1261,6 +1261,23 @@
   
   ;;(birth-log "call to birth! on ~A~%" obj)
 
+
+
+        (if (string= (the-as string (res-lump-struct obj 'name basic)) "crate-3256")
+         (set!(-> obj etype) sage)
+         )
+
+                 (if (string= (the-as string (res-lump-struct obj 'name basic)) "crate-3258")
+         (set!(-> obj etype) sage)
+         )
+
+        (if (string= (the-as string (res-lump-struct obj 'name basic)) "crate-3259")
+         (set!(-> obj etype) sage)
+         )
+
+                 (if (string= (the-as string (res-lump-struct obj 'name basic)) "crate-3250")
+         (set!(-> obj etype) sage)
+         )
   (let* ((entity-type (-> obj etype))
          (info (entity-info-lookup entity-type))
          (entity-process (get-process *default-dead-pool* entity-type (if info
@@ -1276,11 +1293,15 @@
        )
       ((begin
          (set! (-> entity-process type) entity-type)
+
+
+
          (and entity-type
               (valid? entity-type type #f #f 0)
               (valid? (method-of-object entity-process init-from-entity!) function #f #f 0)
               )
          )
+
        (init-entity entity-process obj)
        )
       (else
@@ -1292,8 +1313,15 @@
       )
     )
   obj
-  )
+  ) 
 
+(defun move-samos-butts ()
+(vector-copy! (-> (the sage (process-by-ename "crate-3256"))root trans) (new 'static 'vector :x (meters 3025.28) :y (meters 485.76) :z (meters -4821.85)))
+(vector-copy! (-> (the sage (process-by-ename "crate-3258"))root trans) (new 'static 'vector :x (meters 3065.19) :y (meters 485.76) :z (meters -4859.85)))
+(vector-copy! (-> (the sage (process-by-ename "crate-3259"))root trans) (new 'static 'vector :x (meters 2985.19) :y (meters 485.76) :z (meters -4859.85)))
+(vector-copy! (-> (the sage (process-by-ename "crate-3250"))root trans) (new 'static 'vector :x (meters 3017.5074) :y (meters 485.76) :z (meters -4896.85)))
+
+(none))
 (defun entity-deactivate-handler ((arg0 process) (arg1 entity-actor))
   "Handle a deactivation in the entity.
    The entity directly stores a process so it should remove that after deactivating."

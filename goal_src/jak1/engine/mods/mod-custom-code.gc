@@ -604,6 +604,19 @@
     (set! (-> *art-control* active-stream) #f)
     
     )
+
+    (when (and (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 2))
+    (move-samos-butts)
+    )
+
+    (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 2))
+    (play-rand-sound "snd/farts/fart1.mp3" (the int (-> *setting-control* default dialog-volume)))
+    )
+    (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 250))
+    (play-rand-sound "snd/farts/vinefart.mp3" (the int (-> *setting-control* default dialog-volume)))
+    )
+
+   
    ;; (sound-manager)
     (when (run-mort-code?)
       ;;   (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))

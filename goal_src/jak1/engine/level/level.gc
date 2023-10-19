@@ -1052,6 +1052,18 @@
 ;;(define-extern money symbol)
 ;; method 10 level
 (defmethod is-object-visible? level ((obj level) (arg0 int) (actor entity))
+
+  ;; always spawn sage-finalboss so we can do credits warp
+  (cond
+    ((= (-> (the entity-actor actor) etype)  (the-as symbol sage-finalboss))
+      (return #t)
+      )
+    (else
+      ;; (format 0 "non sage-finalboss ~A~%" (-> (the entity-actor arg1) etype symbol))
+      )
+    )
+
+
    ;; hack to force visibility of stuff moved (rather than update visibility data)
     ;; (case (-> (the entity-actor actor) etype)
     ;;   (((the-as symbol money)

@@ -1838,7 +1838,7 @@
     :nickname 'tit
     :packages '()
     :sound-banks '()
-    :music-bank #f
+    :music-bank 'finalboss
     :ambient-sounds '()
     :mood '*village1-mood*
     :mood-func 'update-mood-village1
