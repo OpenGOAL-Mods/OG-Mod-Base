@@ -1,4 +1,4 @@
-# HeroModePlus
+# HeroModePlus (alpha demo)
 All elements in Jak 2 are amplified and the game throws everything it has at you. Adds weapon mods
 (note: Mod is not finished, some of the levels are unplayable with weapon mods, very few though)
 
