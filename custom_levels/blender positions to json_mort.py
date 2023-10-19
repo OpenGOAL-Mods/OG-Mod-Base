@@ -249,7 +249,7 @@ else:
             data["lump"]["crate-type"] = "'wood"
             data["lump"]["eco-info"] = ["int32", 1, 1]
             data["lump"]["eco-collectable"] = "1"
-            data["lump"]["eco-quantity"] = "1"
+            data["lump"]["eco-quantity"] = "2"
             #data["lump"]["light-index"] = ["int32", 2]
 
         # Check if "yelloweco" is in the object's name
@@ -257,7 +257,7 @@ else:
             data["lump"]["name"] = data["lump"]["name"] + "-reco"
             data["lump"]["crate-type"] = "'wood"
             data["lump"]["eco-collectable"] = "2"
-            data["lump"]["eco-quantity"] = "1"
+            data["lump"]["eco-quantity"] = "2"
             #data["lump"]["light-index"] = ["int32", 2]
 
         # Check if "yelloweco" is in the object's name
@@ -265,7 +265,7 @@ else:
             data["lump"]["name"] = data["lump"]["name"] + "-beco"
             data["lump"]["crate-type"] = "'wood"
             data["lump"]["eco-collectable"] = "3"
-            data["lump"]["eco-quantity"] = "1"
+            data["lump"]["eco-quantity"] = "2"
             #data["lump"]["light-index"] = ["int32", 2]
 
         # Check if "yelloweco" is in the object's name
@@ -273,7 +273,7 @@ else:
             data["lump"]["name"] = data["lump"]["name"] + "-geco"
             data["lump"]["crate-type"] = "'wood"
             data["lump"]["eco-collectable"] = "4"
-            data["lump"]["eco-quantity"] = "1"
+            data["lump"]["eco-quantity"] = "2"
             #data["lump"]["light-index"] = ["int32", 2]
        
         # Check if "yelloweco" is in the object's name
@@ -281,7 +281,7 @@ else:
             data["lump"]["name"] = data["lump"]["name"] + "-ieco"
             data["lump"]["crate-type"] = "'wood"
             data["lump"]["eco-collectable"] = "12"
-            data["lump"]["eco-quantity"] = "1"
+            data["lump"]["eco-quantity"] = "2"
             #data["lump"]["light-index"] = ["int32", 2]
        
         # Check if "yelloweco" is in the object's name
@@ -289,7 +289,7 @@ else:
             data["lump"]["name"] = data["lump"]["name"] + "-graveco"
             data["lump"]["crate-type"] = "'wood"
             data["lump"]["eco-collectable"] = "11"
-            data["lump"]["eco-quantity"] = "1"
+            data["lump"]["eco-quantity"] = "2"
             #data["lump"]["light-index"] = ["int32", 2]
         
         # Check if "yelloweco" is in the object's name
@@ -297,7 +297,7 @@ else:
             data["lump"]["name"] = data["lump"]["name"] + "-chickeco"
             data["lump"]["crate-type"] = "'wood"
             data["lump"]["eco-collectable"] = "13"
-            data["lump"]["eco-quantity"] = "1"
+            data["lump"]["eco-quantity"] = "2"
             #data["lump"]["light-index"] = ["int32", 2]
 
         # Check end of crate file name for quantity

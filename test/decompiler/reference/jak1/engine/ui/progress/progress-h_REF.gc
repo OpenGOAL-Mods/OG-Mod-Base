@@ -273,7 +273,7 @@
   (format #t "~T~Ttransition-percentage-invert: ~f~%" (-> obj transition-percentage-invert))
   (format #t "~T~Ttransition-speed: ~f~%" (-> obj transition-speed))
   (format #t "~T~Ttotal-nb-of-power-cells: ~D~%" (-> obj total-nb-of-power-cells))
-  (format #t "~T~Ttotal-nb-of-orbs: ~D~%" (-> obj total-nb-of-orbs))
+  (format #t "~T~Ttotal-nb-of-orbs: ~D~%" *mort-orb-total*)
   (format #t "~T~Ttotal-nb-of-buzzers: ~D~%" (-> obj total-nb-of-buzzers))
   (format #t "~T~Tcard-info: #<mc-slot-info @ #x~X>~%" (-> obj card-info))
   (format #t "~T~Tlast-option-index-change: ~D~%" (-> obj last-option-index-change))

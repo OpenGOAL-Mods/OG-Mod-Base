@@ -20,7 +20,7 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Begin function defintions.
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
-    
+(define *custom-cutscene?* #t)    
 (define mort-level? #f)
 (define *show-debug* #f)
 (define spawned-chickens? #f)
@@ -403,7 +403,7 @@
 
 )
 
-((and (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 0))
+((and *custom-cutscene?* (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 0))
    (play-rand-sound "snd/fart-intro.mp3" (the int (-> *setting-control* default sfx-volume)))
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
@@ -568,6 +568,7 @@
       (set-flock-points)
       (set-flock-false);; Set all flock values to #f before chickens are in it
       (chicken-pls) ;; spawn the chickens offscreen
+      (get-mort-orb-total)
       ;; (dotimes (i 16)(set! (-> *game-counts* data i money-count) 0)(set! (-> *game-counts* data i buzzer-count) 0))
       ;; (process-spawn-function process sound-manager-proc)
       (set! done-init? #t)
@@ -684,7 +685,7 @@
 (defun stupid-hacks-every-frame ()
 (when run-mort-code?
 ;;Hack the main menu music since we cant pause it yet
-;;(main-music-volume (the int (-> *setting-control* default music-volume)))
+(main-music-volume (the int (-> *setting-control* default music-volume)))
 
     ;; Its so funny that this works lol
 
@@ -706,18 +707,18 @@
 
   )
   ;;Hack to disable cutscene skips for specific cutscenes     (if               ;;Cutscenes added here will be unskippable witht the triangle button
-          (if (or  (string= *currentSpoolName* "sage-intro-sequence-a")
+          (if (and *custom-cutscene?* (or  (string= *currentSpoolName* "sage-intro-sequence-a")
                         (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
-                        (string= *currentSpoolName* "sidekick-human-intro-sequence-c"))
+                        (string= *currentSpoolName* "sidekick-human-intro-sequence-c")))
                         (set! (-> *pc-settings* skip-movies?) #f)
                         (set! (-> *pc-settings* skip-movies?) #t)
                   )
 
 ;;Hack to set the voice volume to 0 during these cutscenes, then restore it when the cutscene is overridden.
 
-          (if (or  (string= *currentSpoolName* "sage-intro-sequence-a")
+          (if (and *custom-cutscene?* (or  (string= *currentSpoolName* "sage-intro-sequence-a")
                    (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
-                   (string= *currentSpoolName* "sidekick-human-intro-sequence-c"))
+                   (string= *currentSpoolName* "sidekick-human-intro-sequence-c")))
                         (begin
                         ;;store the current volume setting
                         (if (= *old-voice-volume* 0.0)

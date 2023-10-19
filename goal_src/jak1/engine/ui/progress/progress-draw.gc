@@ -264,7 +264,7 @@
         )
       (+! (-> s4-1 origin y) 15.0)
       (let ((s5-2 print-game-text-scaled))
-        (format (clear *temp-string*) "~D/~D" (the int (-> *game-info* money-total)) (-> obj total-nb-of-orbs))
+        (format (clear *temp-string*) "~D/~D" (the int (-> *game-info* money-total)) *mort-orb-total*)
         (s5-2 *temp-string* f30-0 s4-1 (the int (* 128.0 f30-0)))
         )
       )
@@ -830,7 +830,7 @@
                   (set! sv-96 format)
                   (let ((a0-60 (clear *temp-string*))
                         (a1-23 "/~D")
-                        (a2-19 (-> obj total-nb-of-orbs))
+                        (a2-19 *mort-orb-total*) 
                         )
                     ;;If in title hide the orb count
                     (if  (= (-> (level-get-target-inside *level*)name) 'title)

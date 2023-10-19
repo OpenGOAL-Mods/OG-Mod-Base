@@ -382,11 +382,17 @@
 
           (let ((s1-2 (get-continue-by-name *game-info* (-> *warp-info* gp-0))))
             (lookup-level-info (-> s1-2 level))
+           (if (and (= (-> (level-get-target-inside *level*)name) (->  (get-continue-by-name *game-info* (-> *warp-info* gp-0)) level)) (cpad-pressed? 0 circle) (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.05)))
+          (play-rand-sound "snd/nope.mp3" (the int (-> *setting-control* default dialog-volume)))
+           (begin
+            
             (when (and (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.05)) (cpad-pressed? 0 circle) (have-all-chicks-safe))
               (logclear! (-> *cpad-list* cpads 0 button0-abs 0) (pad-buttons circle))
               (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons circle))
               (go-virtual use gp-0 (the-as level s1-2))
               )
+           )
+           )
                              
                                   (when (= (get-unlock-level) (-> *warp-info* length))
                                       (process-release? *target*)

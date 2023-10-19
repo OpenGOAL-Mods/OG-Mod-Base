@@ -685,6 +685,25 @@
   (none)
   )
 
+(define *mort-orb-total* 0)
+(defun get-mort-orb-total ()
+    ;;Make sure this is 1 longer than money-count to account for starting at index 0
+    (if (= *mort-orb-total* 0)
+    (begin
+    (dotimes (i 33)
+      (if (>= i 16)
+        (set! *mort-orb-total* (+ *mort-orb-total*(-> *game-counts* data i money-count)))
+      )
+    )
+    )
+    )
+    ;; (dotimes (i 32)
+    ;;   (if (>= i 16)
+    ;;     (format #t "adding ~D~%" (-> *game-counts* data i money-count))
+    ;;   )
+    ;; )
+    (none)
+)
 (define *game-counts* (the game-count-info (malloc 'global 10000)))
 (defmethod relocate game-count-info ((obj game-count-info) (arg0 int))
   "Load in the game-count-info. This is a bit of a hack."
@@ -718,7 +737,7 @@
 (set! (-> *game-counts* data 23 money-count) 98);;coins
 (set! (-> *game-counts* data 24 money-count) 0);;villa-cuba   NEED
 (set! (-> *game-counts* data 25 money-count) 35);;ice-slide
-(set! (-> *game-counts* data 26 money-count) 36);; islands
+(set! (-> *game-counts* data 26 money-count) 41);; islands
 (set! (-> *game-counts* data 27 money-count) 43);;glass towers NEED
 (set! (-> *game-counts* data 28 money-count) 49);;chemical factory
 (set! (-> *game-counts* data 29 money-count) 55) ;;space  bridge
