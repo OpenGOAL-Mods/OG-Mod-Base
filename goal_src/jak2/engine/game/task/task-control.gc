@@ -5,6 +5,8 @@
 ;; name in dgo: task-control
 ;; dgos: ENGINE, GAME
 
+(define-extern hell-mode-option symbol)
+
 (defenum fail-mission-flags
   :bitfield #t
   :type uint8
