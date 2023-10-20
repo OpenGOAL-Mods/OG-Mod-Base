@@ -347,7 +347,7 @@ CURRENT BUGS:
 
 
 (when (= mod-reroll #t)
-  (when (>= (-> *game-info* gem) 10.0)
+  (when (and (not (logtest? (-> *game-info* secrets) (game-secrets hero-mode)))(>= (-> *game-info* gem) 10.0))
     (set! (-> *game-info* gem) (- (-> *game-info* gem) 10.0))
     (set! mod-pick #t)
     (print "SUCCESSFULLY REROLLED :)")
@@ -355,6 +355,10 @@ CURRENT BUGS:
   )
   (when (< (-> *game-info* gem) 10.0)
     (print "NOT ENOUGH GEMS, REQUIRE 10 TO REROLL")
+    (set! mod-reroll #f)
+  )
+  (when (logtest? (-> *game-info* secrets) (game-secrets hero-mode))
+    (print "YOU'RE NOT ALLOWED TO RE-ROLL WHILE IN HELL-MODE }:]")
     (set! mod-reroll #f)
   )
 )
@@ -1325,7 +1329,7 @@ All of the variables set are for time-based events based off of frames |#
 
 ;trip-metalheads function
 ;--------------------------------------------
-(when (and (or (cpad-pressed? 0 l1)(cpad-pressed? 0 r1)(cpad-pressed? 0 x)(cpad-pressed? 0 square)(cpad-pressed? 0 circle))(rand-vu-percent? 0.03)(= trip-metalheads #t))
+(when (and (or (cpad-pressed? 0 l1)(cpad-pressed? 0 r1)(cpad-pressed? 0 x)(cpad-pressed? 0 square)(cpad-pressed? 0 circle))(rand-vu-percent? 0.008)(= trip-metalheads #t))
   (send-event *target* 'loading)
   (set! trip-start #t)
   (when (and (send-event *target* 'loading)(= trip-cooldown 0))
