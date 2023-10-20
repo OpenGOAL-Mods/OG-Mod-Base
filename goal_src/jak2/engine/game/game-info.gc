@@ -12,6 +12,7 @@
 (define-extern *lightning-darkjak-pill* lightning-spec)
 (define-extern lightning-probe-callback (function lightning-tracker none))
 (define-extern process-drawable-shock-effect (function process-drawable lightning-spec (function lightning-tracker none) sparticle-launcher int int float object)) ;; guess
+(define-extern dark-traffic symbol)
 
 ;; DECOMP BEGINS
 
@@ -615,6 +616,9 @@
               (talker-spawn-func (-> *talker-speech* 79) *entity-pool* (target-pos 0) (the-as region #f))
               )
           (+! (-> obj eco-pill-dark-total) arg1)
+          (when (and (rand-vu-percent? 0.003)(= dark-traffic #t))
+      (set! (-> *game-info* eco-pill-dark) (-> *FACT-bank* eco-pill-dark-max-default))
+    )
           )
          (else
            (seek! (-> obj eco-pill-dark) 0.0 (- arg1))

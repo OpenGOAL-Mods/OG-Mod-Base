@@ -7,6 +7,8 @@
 
 ;; DECOMP BEGINS
 
+(define-extern dark-traffic symbol)
+
 (defmethod draw hud-map ((obj hud-map))
   (set-hud-piece-position!
     (-> obj sprites 1)

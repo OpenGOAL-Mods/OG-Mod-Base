@@ -1833,9 +1833,9 @@ Process is recycled and moved to reserved, if it deactivates."
   )
 
 (defmethod increase-alert-level traffic-engine ((obj traffic-engine) (arg0 int) (arg1 target))
-  #|(when (= peacemaker-ability #t)
+  (when (= dark-traffic #t) ;makes it so that traffic alerts max when jak does anything bad. 
     (send-event *traffic-manager* 'set-alert-level 4)
-  )|# ;free debuff for increasing alert level to cap instantly
+  )
   (when (and (logtest? (-> obj alert-state flags) (traffic-alert-flag target-jak))
              (logtest? (-> arg1 mask) (process-mask target))
              )

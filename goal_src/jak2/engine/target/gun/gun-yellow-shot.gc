@@ -6,13 +6,23 @@
 ;; dgos: ENGINE, GAME
 
 ;; DECOMP BEGINS
+(defmethod init-proj-settings! guard-shot ((obj guard-shot))
+  "Init relevant settings for the [[projectile]] such as gravity, speed, timeout, etc"
+  (set! (-> obj tail-pos quad) (-> obj root trans quad))
+  (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 204 (seconds 0.1))
+  (set! (-> obj attack-mode) 'turret)
+  (set! (-> obj max-speed) 1228800.0)
+  (set! (-> obj move) guard-shot-move)
+  (set! (-> obj damage) 1.0)
+  (logior! (-> obj options) (projectile-options deal-damage))
+  (none)
+  )
 
 (defbehavior target-gun-fire-yellow target ()
   (let ((s5-0 (-> self gun))
         (gp-0 (new 'stack-no-clear 'projectile-init-by-other-params))
         )
     (set! (-> gp-0 ent) (-> self entity))
-    (set! (-> gp-0 charge) 1.0)
     (set! (-> gp-0 options) (projectile-options account-for-target-velocity deal-damage proj-options-8000))
     (set! (-> gp-0 pos quad) (-> s5-0 fire-point quad))
     (set! (-> gp-0 notify-handle) (the-as handle #f))
@@ -26,33 +36,48 @@
       )
     (set! (-> gp-0 timeout) (seconds 4))
     (vector-float*! (-> gp-0 vel) (-> s5-0 fire-dir-out) 819200.0)
-    (spawn-projectile gun-yellow-shot gp-0 (ppointer->process (-> s5-0 gun)) *default-dead-pool*)           ;;;;;;;;;;;;;;;;;;;;
+    (when (!= guard-shot-int 1)
+      (spawn-projectile gun-yellow-shot gp-0 (ppointer->process (-> s5-0 gun)) *default-dead-pool*)           ;;;;;;;;;;;;;;;;;;;;
+    )
     (when (and (= leg-random-int 1)(= leg-random-shot #t))                                    ;random shot
         (set! wm-rand-shot #t)
       )
-    (when (and (and (= guard-shot-option #t)(= guard-shot-int 1)(rand-vu-percent? 0.3))          ;guard-shot
-    (set! inv-frame-start-g #t)
-        (let ((gp-0 (new 'stack-no-clear 'projectile-init-by-other-params)))
-          (set! (-> gp-0 ent) (-> *target* entity))
-          (set! (-> gp-0 charge) 1.0)
-          (set! (-> gp-0 options) (projectile-options account-for-target-velocity proj-options-8000))
-          (set! (-> gp-0 pos quad) (-> *target* gun fire-point quad))
-          (set! (-> gp-0 vel quad) (-> *target* gun fire-dir-out quad))
-          (set! (-> gp-0 notify-handle) (the-as handle #f))
-          (set! (-> gp-0 owner-handle) (the-as handle #f))
-          (set! (-> gp-0 ignore-handle) (process->handle *target*))
-          (let* ((v1-9 *game-info*)
-            (a0-9 (+ (-> v1-9 attack-id) 1))
-                )
-            (set! (-> v1-9 attack-id) a0-9)
-            (set! (-> gp-0 attack-id) a0-9)
-          )
-    (set! (-> *game-info* secrets) (game-secrets invulnerable))
-    (spawn-projectile turret-shot gp-0 (ppointer->process (-> *target* gun gun)) *default-dead-pool*)
+      (when (and (rand-vu-percent? 0.3)(= double-tap-option #t)(= double-tap-int 1))                    ;double-tap
+      (set! dt-frame-start #t)
+      )
+    (when (and (and (= guard-shot-option #t)(= guard-shot-int 1)))          ;guard-shot
+    ;ctywide ctyport dig1 forresca prison consite
+;      (when (not (or (or (or (or (or (or (= (-> (level-get-target-inside *level*) name) 'ctywide)(= (-> (level-get-target-inside *level*) name) 'ctyport)(= (-> (level-get-target-inside *level*) name) 'dig1)(= (-> (level-get-target-inside *level*) name) 'forresca)(= (-> (level-get-target-inside *level*) name) 'prison)(= (-> (level-get-target-inside *level*) name) 'consite)))))))))
+;        (sound-play "drl-turret-fire")
+;      )
+      (set! inv-frame-start-g #t)
+          (let ((s4-1 (new 'stack-no-clear 'projectile-init-by-other-params)))
+            (set! (-> s4-1 ent) (-> *target* entity))
+            (set! (-> s4-1 charge) 1.0)
+            (set! (-> s4-1 options) (projectile-options account-for-target-velocity proj-options-8000))
+            (set! (-> s4-1 pos quad) (-> *target* gun fire-point quad))
+            (set! (-> s4-1 vel quad) (-> *target* gun fire-dir-out quad))
+            (set! (-> s4-1 notify-handle) (the-as handle #f))
+            (set! (-> s4-1 owner-handle) (the-as handle #f))
+            (set! (-> s4-1 ignore-handle) (the-as handle #f))
+            (let* ((a0-13 *game-info*)
+            (a1-12 (+ (-> a0-13 attack-id) 1))
+            )
+        (set! (-> a0-13 attack-id) a1-12)
+        (set! (-> s4-1 attack-id) a1-12)
         )
+      (set! (-> s4-1 timeout) (seconds 4))
+      (vector-normalize! (-> s4-1 vel) 819200.0)
+      (when (not (logtest? (-> *game-info* secrets) (game-secrets hero-mode)))
+    (set! (-> *game-info* secrets) (game-secrets invulnerable)) ;this also makes it so that theres no game secrets allowed when using predator/guard shot. I could be lazy and make it for all of them
+  )
+  (when (logtest? (-> *game-info* secrets) (game-secrets hero-mode))
+    (set! (-> *game-info* secrets) (game-secrets invulnerable hero-mode)) ;this also makes it so that theres no game secrets allowed when using predator/guard shot. I could be lazy and make it for all of them
+  )
+      (spawn-projectile guard-shot s4-1 (ppointer->process (-> *target* gun gun)) *default-dead-pool*)
       )
-      )
-    (when (and (and (= predator-shot-option #t)(rand-vu-percent? 0.4)(= predator-shot-int 1)))  ;predator-shot
+    )
+    (when (and (and (= predator-shot-option #t)(= predator-shot-int 1)))  ;predator-shot
     (set! inv-frame-start #t)
     (defmethod init-proj-settings! metalhead-predator-shot ((obj metalhead-predator-shot))
   "Init relevant settings for the [[projectile]] such as gravity, speed, timeout, etc"
@@ -77,7 +102,12 @@
           (set! (-> gp-0 owner-handle) (the-as handle #f))
           (set! (-> gp-0 ignore-handle) (process->handle (the-as process (send-event *target* 'get-vehicle))))
           (set! (-> gp-0 timeout) (seconds 4))
-          (set! (-> *game-info* secrets) (game-secrets invulnerable))
+          (when (not (logtest? (-> *game-info* secrets) (game-secrets hero-mode)))
+    (set! (-> *game-info* secrets) (game-secrets invulnerable)) ;this also makes it so that theres no game secrets allowed when using predator/guard shot. I could be lazy and make it for all of them
+  )
+  (when (logtest? (-> *game-info* secrets) (game-secrets hero-mode))
+    (set! (-> *game-info* secrets) (game-secrets invulnerable hero-mode)) ;this also makes it so that theres no game secrets allowed when using predator/guard shot. I could be lazy and make it for all of them
+  )
           (spawn-projectile metalhead-predator-shot gp-0 (ppointer->process (-> *target* gun gun)) *default-dead-pool*)
     )
     )
@@ -466,11 +496,16 @@
   (set! (-> obj move) gun-yellow-shot-move)
   (set! (-> obj timeout) (seconds 0.5))
   (set! (-> obj sound-id) (new-sound-id))
-  (set! (-> obj damage) (if (logtest? (game-feature gun-upgrade-damage) (-> *game-info* features))
+  (when (not (= stored-cp? #t))
+              (set! (-> obj damage) (if (logtest? (game-feature gun-upgrade-damage) (-> *game-info* features))
                             4.0
                             2.0
                             )
         )
+            )
+            (when (= stored-cp? #t)
+              (set! (-> obj damage) 0.5)
+            )
   0
   (none)
   )
