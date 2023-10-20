@@ -373,22 +373,27 @@ CURRENT BUGS:
   (when (= mod-rand 1)
     (set! (-> *game-info* fuel) 1.0)
     (set! mod-pick #f)
+    (print "rolled for Peacemaker Ability!")
   )
   (when (= mod-rand 2)
     (set! (-> *game-info* fuel) 2.0)
     (set! mod-pick #f)
+    (print "rolled for Teleport to Final Boss!")
   )
   (when (= mod-rand 3)
     (set! (-> *game-info* fuel) 3.0)
     (set! mod-pick #f)
+    (print "rolled for Hoverboard/Enemy Health!")
   )
   (when (= mod-rand 4)
     (set! (-> *game-info* fuel) 4.0)
     (set! mod-pick #f)
+    (print "rolled for Dark Eco / Threatening Traffic")
   )
   (when (= mod-rand 5)
     (set! (-> *game-info* fuel) 5.0)
     (set! mod-pick #f)
+    (print "rolled for Trip Jak / Metalheads!")
   )
   (when (= mod-rand 6)
     (set! (-> *game-info* fuel) 6.0) ;added but not used
@@ -1462,6 +1467,11 @@ ALL WEAPON MODS ARE TOGGLED OFF BY DEFAULT, ONCE YOU SET IT ON AND SAVE, THERES 
 
 you can set it via (set! weapon-mod-toggle #t) 
 (this will choose a random modifier for you)
+
+If you want to re-roll for another modifier you can do so with
+(set! mod-reroll #t)
+You must have 10 metalhead gems to reroll.
+
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 WEAPON MODS: Each weapon mod will come with the option boolean, and an integer (which is referred in example as V) storing from 1-4 defining the selected gun. 1=Yellow, 2=Red, 3=Blue, 4=Dark
