@@ -31,5 +31,6 @@ jobs:
       skipMacOS: true
       skipLinux: true
       toolingBinaryDir: "out/build/Release/bin"
+      copyEntireBinaryDir: true
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
