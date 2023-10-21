@@ -1999,6 +1999,7 @@
   (none)
   )
 
+(define-extern mod-override-child-fuel-cell-movie-pos (function vector fuel-cell process none))
 (defbehavior fuel-cell-init-by-other fuel-cell ((arg0 vector) (arg1 vector) (arg2 fact-info) (arg3 entity-actor))
   (let ((s3-0 (-> arg2 pickup-type))
         (f30-0 (-> arg2 pickup-spawn-amount))
@@ -2020,6 +2021,7 @@
   (logclear! (-> self fact options) (fact-options can-collect))
   (update-transforms! (-> self root-override))
   (let ((gp-1 (res-lump-struct (-> self entity) 'movie-pos structure :time (the-as float -1000000000.0))))
+    (mod-override-child-fuel-cell-movie-pos (the-as vector gp-1) self (-> arg3 extra process))
     (cond
       ((and *debug-segment* (< (-> *fuel-cell-tune-pos* w) 1000000000.0))
        (set! (-> self jump-pos quad) (-> *fuel-cell-tune-pos* quad))

@@ -551,6 +551,18 @@
       (((task-status need-reminder-a))
        (case (get-response (-> self query))
          (('yes)
+          (cond
+            ((name= (-> self name) "billy-2")
+              (birth-pickup-at-point
+                (new 'static 'vector :x 596.80 :y 2.17 :z -2026.90 :w 1.0)
+                (pickup-type fuel-cell)
+                (the float (game-task swamp-billy))
+                #f
+                self
+                (the-as fact-info #f)
+                )
+              )
+            )
           (go-virtual play-accept)
           )
          (('no)
