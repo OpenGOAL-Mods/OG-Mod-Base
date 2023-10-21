@@ -57,8 +57,8 @@
 
 
     (defun set-zoomer-wait-mode ()
-      (set! (-> *racer-mods* target-speed) 33840.0)
-      (set! (-> *racer-air-mods* target-speed) 33840.0)
+      (set! (-> *racer-mods* target-speed) 13840.0)
+      (set! (-> *racer-air-mods* target-speed) 13840.0)
     )
     (defun set-zoomer-full-mode ()
       (set! (-> *racer-mods* target-speed) 163840.0)
