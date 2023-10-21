@@ -34,3 +34,22 @@
 (defun tgt-color->string ((cmd tgt-color))
   (enum->string tgt-color cmd)
   )
+
+
+;; Follows pickup-type structure, thus same enum value should be kept for relevant types
+(defenum interaction-type
+  :type int32
+  (none)
+  (eco-yellow)
+  (eco-red)
+  (eco-blue)
+  (eco-green)
+  (money)
+  (game-task)
+  (enemy-death) ;; unused
+  (buzzer)
+  (crate-normal)
+  (crate-iron)
+  (crate-steel)
+  (crate-darkeco)
+  )

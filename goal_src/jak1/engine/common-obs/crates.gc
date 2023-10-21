@@ -8,7 +8,7 @@
 (declare-type crate process-drawable)
 (declare-type crate-buzzer crate)
 
-(define-extern runs-on-crate-break (function string string int string none))
+(define-extern runs-on-crate-break (function interaction-type float process none))
 
 ;; DECOMP BEGINS
 
@@ -495,12 +495,7 @@
              (increment-success-for-hint (text-id training-ironcrate))
              (send-event arg0 'get-attack-count 1)
 
-             (runs-on-crate-break 
-              (the-as string (-> self name))
-              (symbol->string (-> self defense))
-              (float->int (-> self fact pickup-amount))
-              (symbol->string (-> *level* level (-> self draw level-index) name))
-             )
+             (runs-on-crate-break (interaction-type crate-iron) (-> self fact pickup-amount) self)
 
              (go-virtual die #f (the-as int s5-0))
              )
@@ -557,12 +552,7 @@
                  )
                )
 
-             (runs-on-crate-break 
-              (the-as string (-> self name))
-              (symbol->string (-> self defense))
-              (float->int (-> self fact pickup-amount))
-              (symbol->string (-> *level* level (-> self draw level-index) name))
-              )
+             (runs-on-crate-break (interaction-type crate-steel) (-> self fact pickup-amount) self)
              
              (go-virtual die #f (the-as int s5-0))
              )
@@ -632,24 +622,14 @@
               )
             )
 
-            (runs-on-crate-break 
-              (the-as string (-> self name))
-              (symbol->string (-> self defense))
-              (float->int (-> self fact pickup-amount))
-              (symbol->string (-> *level* level (-> self draw level-index) name))
-            )
+          (runs-on-crate-break (interaction-type crate-darkeco) (-> self fact pickup-amount) self)
              
           (go-virtual die #f (the-as int s5-0))
           )
          (else
            (send-event arg0 'get-attack-count 1)
 
-            (runs-on-crate-break 
-              (the-as string (-> self name))
-              (symbol->string (-> self defense))
-              (float->int (-> self fact pickup-amount))
-              (symbol->string (-> *level* level (-> self draw level-index) name))
-            )
+           (runs-on-crate-break (interaction-type crate-normal) (-> self fact pickup-amount) self)
              
            (go-virtual die #f (the-as int s5-0))
            )
@@ -661,12 +641,7 @@
        (('darkeco)
         (send-event arg0 'attack (-> arg3 param 0) (static-attack-info ((mode 'darkeco))))
 
-        (runs-on-crate-break
-          (the-as string (-> self name)) 
-          (symbol->string (-> self defense))
-          (float->int (-> self fact pickup-amount))
-          (symbol->string (-> *level* level (-> self draw level-index) name))
-        )
+        (runs-on-crate-break (interaction-type crate-darkeco) (-> self fact pickup-amount) self)
              
         (go-virtual die #f 0)
         )
@@ -765,12 +740,20 @@
                 (when (and (< f30-0 (-> *FACT-bank* suck-suck-dist)) (!= (-> self defense) 'steel))
                   (logior! (-> self fact options) (fact-options can-collect))
 
-                  (runs-on-crate-break 
-                    (the-as string (-> self name))
-                    (symbol->string (-> self defense))
-                    (float->int (-> self fact pickup-amount))
-                    (symbol->string (-> *level* level (-> self draw level-index) name))
-                  )
+                  (case (-> self defense)
+                    (('iron)
+                      (runs-on-crate-break (interaction-type crate-iron) (-> self fact pickup-amount) self)
+                      )
+                    (('steel)
+                      (runs-on-crate-break (interaction-type crate-steel) (-> self fact pickup-amount) self)
+                      )
+                    (('darkeco)
+                      (runs-on-crate-break (interaction-type crate-darkeco) (-> self fact pickup-amount) self)
+                      )
+                    (else
+                      (runs-on-crate-break (interaction-type crate-normal) (-> self fact pickup-amount) self)
+                      )
+                    )
              
                   (go-virtual die #f 0)
                   )

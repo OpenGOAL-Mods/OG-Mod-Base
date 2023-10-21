@@ -5,7 +5,7 @@
 ;; name in dgo: task-control
 ;; dgos: GAME, ENGINE
 
-(define-extern add-task-to-buffer (function game-task task-status none))
+(define-extern add-task-to-interaction-buffer (function game-task task-status none))
 (define-extern runs-on-warp-gate-open (function game-task none))
 
 ;; DECOMP BEGINS
@@ -4124,7 +4124,7 @@
 (defun close-specific-task! ((arg0 game-task) (arg1 task-status))
   "Close a cstage for a game-task"
 
-  (add-task-to-buffer arg0 arg1)
+  (add-task-to-interaction-buffer arg0 arg1)
 
   (let ((gp-0 (get-task-control arg0)))
     (when gp-0

@@ -5,7 +5,7 @@
 ;; name in dgo: process-taskable
 ;; dgos: GAME, ENGINE
 
-(define-extern check-allow-cell-pickup? (function symbol))
+(define-extern *allow-cell-pickup?* symbol)
 
 (defmacro is-nan-hack (flt)
   `(and (< 0.0 ,flt) (< ,flt 0.0))
@@ -956,11 +956,11 @@
                   (set! (-> v1-59 scale) 0.9)
                   )
                 (set! (-> gp-1 flags) (font-flags shadow kerning left large))
-                (if (= (check-allow-cell-pickup?) #t)
+                (if *allow-cell-pickup?*
                   (print-game-text (lookup-text! *common-text* (-> self talk-message) #f) gp-1 #f 128 22)
                   )
                 )
-                (if (= (check-allow-cell-pickup?) #t)
+                (if *allow-cell-pickup?*
                   (when (and (cpad-pressed? 0 circle) (process-grab? *target*))
                     (logclear! (-> *cpad-list* cpads 0 button0-abs 0) (pad-buttons circle))
                     (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons circle))

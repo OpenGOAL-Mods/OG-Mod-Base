@@ -82,6 +82,19 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
           player->quat_w = field.value().get<float>();
         } else if (field.key().compare("rotY") == 0) {
           player->zoomer_rot_y = field.value().get<float>();
+        } else if (field.key().compare("interType") == 0) {
+          player->inter_type = field.value().get<float>();
+        } else if (field.key().compare("interAmount") == 0) {
+          player->inter_amount = field.value().get<float>();
+        } else if (field.key().compare("interName") == 0) {
+          std::string ename = field.value();
+          strncpy(Ptr<String>(player->inter_name).c()->data(), ename.c_str(), INTERACTION_STRING_LEN);
+        } else if (field.key().compare("interParent") == 0) {
+          std::string parent = field.value();
+          strncpy(Ptr<String>(player->inter_parent).c()->data(), parent.c_str(), INTERACTION_STRING_LEN);
+        } else if (field.key().compare("interLevel") == 0) {
+          std::string level = field.value();
+          strncpy(Ptr<String>(player->inter_level).c()->data(), level.c_str(), INTERACTION_STRING_LEN);
         } else if (field.key().compare("tgtState") == 0) {
           player->tgt_state = field.value();
         } else if (field.key().compare("mpState") == 0) {
@@ -164,7 +177,12 @@ void send_position_update() {
       {"quatZ", gSelfPlayerInfo->quat_z},
       {"quatW", gSelfPlayerInfo->quat_w},
       {"rotY", gSelfPlayerInfo->zoomer_rot_y},
-      {"tgtState", gSelfPlayerInfo->tgt_state}
+      {"tgtState", gSelfPlayerInfo->tgt_state},
+      {"interType", gSelfPlayerInfo->inter_type},
+      {"interAmount", gSelfPlayerInfo->inter_amount},
+      {"interName", Ptr<String>(gSelfPlayerInfo->inter_name).c()->data()},
+      {"interParent", Ptr<String>(gSelfPlayerInfo->inter_parent).c()->data()},
+      {"interLevel", Ptr<String>(gSelfPlayerInfo->inter_level).c()->data()}
       }
     }
   };
@@ -180,46 +198,6 @@ void send_position_update() {
         {"buzzerCount", gTeamrunInfo->buzzer_count},
         {"orbCount", gTeamrunInfo->money_count},
         {"deathCount", gTeamrunInfo->death_count}
-    };
-  }
-
-  if (gTeamrunInfo->has_task_update) {
-    json_payload["task"] = {
-      {"name", Ptr<String>(gTeamrunInfo->task_name).c()->data()},
-      {"status", Ptr<String>(gTeamrunInfo->task_status).c()->data()}
-    };
-  }
-
-  if (gTeamrunInfo->has_buzzer_update) {
-    json_payload["buzzer"] = {
-      {"id", gTeamrunInfo->buzzer_id},
-      {"parentEname", Ptr<String>(gTeamrunInfo->buzzer_parent_ename).c()->data()},
-      {"level", Ptr<String>(gTeamrunInfo->collectable_level_name).c()->data()}
-    };
-  }
-
-  if (gTeamrunInfo->has_money_update) {
-    json_payload["orb"] = {
-      {"ename", Ptr<String>(gTeamrunInfo->money_ename).c()->data()},
-      {"parentEname", Ptr<String>(gTeamrunInfo->money_parent_ename).c()->data()},
-      {"level", Ptr<String>(gTeamrunInfo->collectable_level_name).c()->data()}
-    };
-  }
-
-  if (gTeamrunInfo->has_crate_update) {
-    json_payload["crate"] = {
-      {"ename", Ptr<String>(gTeamrunInfo->crate_ename).c()->data()},
-      {"type", Ptr<String>(gTeamrunInfo->crate_type).c()->data()},
-      {"pickupAmount", gTeamrunInfo->crate_amount},
-      {"level", Ptr<String>(gTeamrunInfo->collectable_level_name).c()->data()}
-    };
-  }
-
-  if (gTeamrunInfo->has_eco_update) {
-    json_payload["eco"] = {
-      {"ename", Ptr<String>(gTeamrunInfo->eco_ename).c()->data()},
-      {"parentEname", Ptr<String>(gTeamrunInfo->eco_parent_ename).c()->data()},
-      {"level", Ptr<String>(gTeamrunInfo->collectable_level_name).c()->data()}
     };
   }
 

@@ -64,7 +64,15 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (quat_y     float)
   (quat_z     float)
   (quat_w     float)
-  (zoomer_rot_y     float)
+
+  (zoomer_rot_y   float)
+
+  (inter_type    interaction-type)
+  (inter_amount  float)
+  (inter_name    string)
+  (inter_parent  string)
+  (inter_level   string)
+
   (tgt_state  symbol)
   (mp_state   mp-tgt-state) 
   )
@@ -75,6 +83,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   )
 
 (defconstant MAX_USERNAME_LEN 100)
+(defconstant INTERACTION_STRING_LEN 32)
 
 (defmethod new remote-player-info ((allocation symbol) (type-to-make type))
   (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
@@ -88,8 +97,39 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> obj quat_z) 0.0)
     (set! (-> obj quat_w) 0.0)
     (set! (-> obj zoomer_rot_y) 0.0)
+    (set! (-> obj inter_type) (interaction-type none))
+    (set! (-> obj inter_amount) 0.0)
+    (set! (-> obj inter_name) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+    (set! (-> obj inter_parent) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+    (set! (-> obj inter_level) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
     (set! (-> obj tgt_state) 'invalid)
-    (set! (-> obj mp_state) (mp-tgt-state mp-tgt-disconnected))
+    obj
+    )
+  )
+
+
+(deftype interaction-info (structure)
+ ((has_update? symbol)
+  (type     interaction-type)
+  (amount   float)
+  (ename    string)
+  (parent   string)
+  (level    string)
+  )
+  :pack-me
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+
+(defmethod new interaction-info ((allocation symbol) (type-to-make type))
+  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+    (set! (-> obj has_update?) #f)
+    (set! (-> obj type) (interaction-type none))
+    (set! (-> obj amount) 0.0)
+    (set! (-> obj ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
+    (set! (-> obj parent) (new 'global 'string 32 (new 'global 'string 32 "none")))
+    (set! (-> obj level) (new 'global 'string 32 (new 'global 'string 32 "none")))
     obj
     )
   )
@@ -108,35 +148,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (buzzer_count    int32)
   (money_count    int32)
   (death_count    int32)
-
-  ;; task updates
-  (has_task_update?    int32)
-  (task_name   string)
-  (task_status   string)
-
-  ;; buzzer updates
-  (has_buzzer_update?    int32)
-  (buzzer_id    int32)
-  (buzzer_parent_ename   string)
-
-  ;; money updates
-  (has_money_update?    int32)
-  (money_ename    string)
-  (money_parent_ename   string)
-
-  ;; crate updates
-  (has_crate_update?    int32)
-  (crate_ename    string)
-  (crate_type   string)
-  (crate_amount   int32)
-
-  ;; eco updates
-  (has_eco_update?    int32)
-  (eco_ename    string)
-  (eco_parent_ename   string)
-
-  ;; shared update data
-  (collectable_level_name   string)
   )
   (:methods
     (new (symbol type) _type_ 0)
@@ -156,35 +167,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> obj buzzer_count) 0)
     (set! (-> obj money_count) 0)
     (set! (-> obj death_count) 0)
-
-  ;; task update
-    (set! (-> obj has_task_update?) 0)
-    (set! (-> obj task_name) (new 'global 'string 32 (new 'global 'string 32 "")))
-    (set! (-> obj task_status) (new 'global 'string 32 (new 'global 'string 32 "unknown")))
-
-  ;; buzzer update
-    (set! (-> obj has_buzzer_update?) 0)
-    (set! (-> obj buzzer_id) 0)
-    (set! (-> obj buzzer_parent_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
-
-  ;; money update
-    (set! (-> obj has_money_update?) 0)
-    (set! (-> obj money_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
-    (set! (-> obj money_parent_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
-
-  ;; crate update
-    (set! (-> obj has_crate_update?) 0)
-    (set! (-> obj crate_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
-    (set! (-> obj crate_type) (new 'global 'string 32 (new 'global 'string 32 "none")))
-    (set! (-> obj crate_amount) 0)
-
-  ;; eco update
-    (set! (-> obj has_eco_update?) 0)
-    (set! (-> obj eco_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
-    (set! (-> obj eco_parent_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
-
-  ;; shared update data
-    (set! (-> obj collectable_level_name) (new 'global 'string 32 (new 'global 'string 32 "none")))
     obj
     )
   )
@@ -218,72 +200,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   )
 
 
-(deftype task-info (structure)
- ((task   game-task)
-  (status task-status)
-  )
-  :pack-me
-  (:methods
-    (new (symbol type) _type_ 0)
-    )
-  )
-
-(defmethod new task-info ((allocation symbol) (type-to-make type))
-  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
-    (set! (-> obj status) (task-status invalid))
-    obj
-    )
-  )
-
-
-(deftype money-info (structure)
- ((has_update? symbol)
-  (ename    string)
-  (parent_ename   string)
-  (level_name   string)
-  )
-  :pack-me
-  (:methods
-    (new (symbol type) _type_ 0)
-    )
-  )
-
-(defmethod new money-info ((allocation symbol) (type-to-make type))
-  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
-    (set! (-> obj has_update?) #f)
-    (set! (-> obj ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
-    (set! (-> obj parent_ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
-    (set! (-> obj level_name) (new 'global 'string 32 (new 'global 'string 32 "none")))
-    obj
-    )
-  )
-
-
-(deftype crate-info (structure)
- ((has_update? symbol)
-  (ename    string)
-  (type   string)
-  (amount   int32)
-  (level_name   string)
-  )
-  :pack-me
-  (:methods
-    (new (symbol type) _type_ 0)
-    )
-  )
-
-(defmethod new crate-info ((allocation symbol) (type-to-make type))
-  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
-    (set! (-> obj has_update?) #f)
-    (set! (-> obj ename) (new 'global 'string 32 (new 'global 'string 32 "none")))
-    (set! (-> obj type) (new 'global 'string 32 (new 'global 'string 32 "none")))
-    (set! (-> obj level_name) (new 'global 'string 32 (new 'global 'string 32 "none")))
-    (set! (-> obj amount) 0)
-    obj
-    )
-  )
-
-
 (deftype multiplayer-info (structure)
  ((player_num           int32)
   (players    remote-player-info MAX_MULTIPLAYER_COUNT :inline)
@@ -298,6 +214,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> obj player_num) -1)
     (dotimes (idx MAX_MULTIPLAYER_COUNT)
       (set! (-> obj players idx username) (new 'global 'string MAX_USERNAME_LEN (new 'global 'string MAX_USERNAME_LEN "")))
+      (set! (-> obj players idx inter_name) (new 'global 'string INTERACTION_STRING_LEN (new 'global 'string INTERACTION_STRING_LEN "")))
+      (set! (-> obj players idx inter_parent) (new 'global 'string INTERACTION_STRING_LEN (new 'global 'string INTERACTION_STRING_LEN "")))
+      (set! (-> obj players idx inter_level) (new 'global 'string INTERACTION_STRING_LEN (new 'global 'string INTERACTION_STRING_LEN "")))
       )
     obj
     )

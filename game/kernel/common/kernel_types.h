@@ -45,9 +45,10 @@ struct FileStream {
 };
 
 const int MAX_USERNAME_LEN = 100;
+const int INTERACTION_STRING_LEN = 32;
 struct RemotePlayerInfo {
-  u32 username; // string (basic)
-  u32 color;  // tgt-color enum
+  u32 username;           // string (basic)
+  u32 color;              // tgt-color enum
   float trans_x;
   float trans_y;
   float trans_z;
@@ -55,9 +56,17 @@ struct RemotePlayerInfo {
   float quat_y;
   float quat_z;
   float quat_w;
+  
   float zoomer_rot_y;
+
+  u32 inter_type;
+  float inter_amount;
+  u32 inter_name;         // string (basic)
+  u32 inter_parent;       // string (basic)
+  u32 inter_level;        // string (basic)
+
   u32 tgt_state;
-  u32 mp_state;  // mp-tgt-state enum
+  u32 mp_state;           // mp-tgt-state enum
 };
 
 struct TeamrunPlayerInfo {
@@ -71,35 +80,6 @@ struct TeamrunPlayerInfo {
   int buzzer_count;
   int money_count;
   int death_count;
-
-  //task updates
-  s32 has_task_update;
-  u32 task_name;          // string (basic)
-  u32 task_status;        // string (basic)
-
-  //buzzer updates
-  s32 has_buzzer_update;
-  int buzzer_id;
-  u32 buzzer_parent_ename;          // string (basic)
-
-  //money updates
-  s32 has_money_update;
-  u32 money_ename;          // string (basic)
-  u32 money_parent_ename;          // string (basic)
-
-  //crate updates
-  s32 has_crate_update;
-  u32 crate_ename;          // string (basic)
-  u32 crate_type;          // string (basic)
-  int crate_amount;
-
-  //eco updates
-  s32 has_eco_update;
-  u32 eco_ename;          // string (basic)
-  u32 eco_parent_ename;          // string (basic)
-
-  //shared update data
-  u32 collectable_level_name;          // string (basic)
 };
 
 struct TeamrunLevelInfo {

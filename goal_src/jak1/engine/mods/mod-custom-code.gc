@@ -37,10 +37,6 @@
     (none)
     )
 
-    (defun check-allow-cell-pickup? ()
-      *allow-cell-pickup?*
-    )
-
     (defun check-allow-final-boss? ()
       *allow-final-boss?*
     )
@@ -128,206 +124,111 @@
         (none)
       )
 
-    (defun safe-break-crate ((crate-name string))
-    (let* ((obj-crate (process-by-ename crate-name)))
-      (if (not (or (name= (-> (the-as crate obj-crate) state name) "die") (name= (-> (the-as crate obj-crate) state name) "special-contents-die")))
-        (go-virtual-process (the-as crate obj-crate) die #f 0)
-        )
-      )
-      (none)
-      )
+    (defun add-pickup-to-interaction-buffer ((kind pickup-type) (amount float) (proc process))
+      (dotimes (idx (-> *interaction-update-buffer* length))
+        (when (= (-> *interaction-update-buffer* idx has_update?) #f)
 
-    (defun safe-kill-cache-orb ((cache-name string))
-      (let* ((orb-cache (process-by-ename cache-name)))
-        (when (-> orb-cache state)
-          (case (-> orb-cache state)
-            ((orb-cache-top-activate)
-                (deactivate (handle->process (-> (the-as orb-cache-top orb-cache) money-list (- (-> (the-as orb-cache-top orb-cache) money) 1))))
-              )
-            ((orb-cache-top-idle)
-              (set! (-> (the-as orb-cache-top orb-cache) money) (- (-> (the-as orb-cache-top orb-cache) money) 1))
-              (set! (-> (the-as orb-cache-top orb-cache) entity extra perm user-int16 0) (- 15 (-> (the-as orb-cache-top orb-cache) money)))
-              )
-            )
-          )
-        )
-        (none)
-      )
+          (format #t "parent: ~s ~%" (the-as string (-> (ppointer->process (-> proc parent)) name)))
+          (format #t "ename: ~s ~%" (the-as string (-> proc name)))
 
-    (defun safe-kill-crate-orb ((crate-name string))
-      (let* ((obj-crate (process-by-ename crate-name)))
+          (set! (-> *interaction-update-buffer* idx type) (the-as interaction-type kind))
+          (set! (-> *interaction-update-buffer* idx amount) amount)
 
-        (when (name= (-> (the-as crate obj-crate) state name) "wait")
-          (set! (-> (the-as crate obj-crate) fact pickup-amount) (- (-> (the-as crate obj-crate) fact pickup-amount) 1))
-          (when (<= (-> (the-as crate obj-crate) fact pickup-amount) 0)
-            (set! (-> (the-as crate obj-crate) entity extra perm user-int8 1) 0)
-            (process-entity-status! (the-as crate obj-crate) (entity-perm-status bit-4) #f)
-            (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
-            (process-entity-status! (the-as crate obj-crate) (entity-perm-status complete) #t)
-            ((method-of-type crate deactivate) (the-as crate obj-crate))
-            )
-          (return #t)
-          )
-
-        (when (name= (-> (the-as crate obj-crate) state name) "special-contents-die") ;; when in orb collect phase
-
-          (when (>= (-> (the-as crate obj-crate) entity extra perm user-int8 0) 1) ;; all orbs have not been collected
-
-            (set! (-> (the-as crate obj-crate) entity extra perm user-int8 1) (+ (-> (the-as crate obj-crate) entity extra perm user-int8 1) 1))
-            (+! (-> (the-as crate obj-crate) child-count) -1)
-
-            ;; depspawn orb if exists
-            (if (-> (the-as crate obj-crate) child 0)
-              ((method-of-type money deactivate) (the-as money (-> (the-as crate obj-crate) child 0)))
+          (case kind
+            (((pickup-type money) (pickup-type buzzer) (pickup-type fuel-cell))
+              (if (or (name= (-> proc name) "fuel-cell") (name= (-> proc name) "buzzer"))
+                (set! (-> *interaction-update-buffer* idx ename) (symbol->string (-> proc name)))
+                (set! (-> *interaction-update-buffer* idx ename) (the-as string (-> proc name)))
+                )
+                (let* ((parent (ppointer->process (-> proc parent))))
+                  (if (or (name= (-> parent name) "entity-pool") (name= (-> parent name) "buzzer"))
+                  (set! (-> *interaction-update-buffer* idx parent) (symbol->string (-> parent name)))
+                  (set! (-> *interaction-update-buffer* idx parent) (the-as string (-> parent name)))
+                    )
+                  )
+              (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> *level* level (-> (the-as process-drawable proc) draw level-index) name)))
               )
 
-            ;; mark as completed if done
-            (when (or (= (-> (the-as crate obj-crate) entity extra perm user-int8 1) 0) (= (-> (the-as crate obj-crate) entity extra perm user-int8 1) (float->int (-> (the-as crate obj-crate) fact pickup-amount)))) ;; if no orbs are left
-                (set! (-> (the-as crate obj-crate) entity extra perm user-int8 1) 0)
-                (process-entity-status! (the-as crate obj-crate) (entity-perm-status bit-4) #f)
-                (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
-                (process-entity-status! (the-as crate obj-crate) (entity-perm-status complete) #t)
-                ((method-of-type crate deactivate) (the-as crate obj-crate))
+            (((pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-green) (pickup-type eco-red))
+                (let* ((parent (ppointer->process (-> proc parent))))
+                  (if (and (name= (-> parent name) "entity-pool") (not (or (name= (-> proc name) "health") (name= (-> proc name) "eco-blue") (name= (-> proc name) "eco-red") (name= (-> proc name) "eco-yellow"))))
+                    (set! (-> *interaction-update-buffer* idx ename) (the-as string (-> proc name)))
+                    (set! (-> *interaction-update-buffer* idx ename) (symbol->string (-> proc name)))
+                    )
+                  (if (name= (-> parent name) "entity-pool")
+                    (set! (-> *interaction-update-buffer* idx parent) "entity-pool") ;; crash exist if assigned from parent name on green-eco from box
+                    (set! (-> *interaction-update-buffer* idx parent) (the-as string (-> parent name)))
+                    )
+                  )
+              (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> (level-get-target-inside *level*) name)))
               )
             )
-          )
-        )
-        (none)
-      )
-
-    (defun safe-kill-crate-buzzer ((crate-name string))
-      (let* ((obj-crate (process-by-ename crate-name)))
-
-        (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
-        (process-entity-status! (the-as crate obj-crate) (entity-perm-status complete) #t)
-
-        ;; depspawn buzzer if exists
-        (if (and (name= (-> (the-as crate obj-crate) state name) "special-contents-die") (-> (the-as crate obj-crate) child 0))
-          ((method-of-type buzzer deactivate) (the-as buzzer (-> (the-as crate obj-crate) child 0)))
-          )
-        ;; depspawn crate
-        ((method-of-type crate deactivate) (the-as crate obj-crate))
-        )
-        (none)
-      )
-
-    (defun safe-pickup-crate-eco ((crate-name string))
-      (let* ((obj-crate (process-by-ename crate-name)))
-
-        (if (name= (-> (the-as crate obj-crate) state name) "wait")
-          (safe-break-crate crate-name)
-          )
-
-        ;; pickup eco if exists
-        (when (and (name= (-> (the-as crate obj-crate) state name) "special-contents-die") (-> (the-as crate obj-crate) child 0))
-          (go-virtual-process (the-as eco-collectable (-> (the-as crate obj-crate) child 0)) pickup #f (the-as handle #f))
-          )
-        )
-        (none)
-      )
-
-    (defun safe-pickup-eco ((eco-ename string))
-      (let* ((obj-eco (process-by-ename eco-ename)))
-        (when (-> obj-eco name)
-          (go-virtual-process (the-as eco-collectable obj-eco) pickup #f (process->handle (the-as eco-collectable obj-eco)))
-          )
-        )
-        (none)
-      )
-
-    (defun safe-release-from-grab ()
-      (when (is-grabbed?)
-        (process-release? *target*)
-        )
-      )
-
-    (defun add-task-to-buffer ((arg0 game-task) (arg1 task-status))
-      (dotimes (idx (-> *task-update-buffer* length))
-        (when (= (-> *task-update-buffer* idx status) (task-status invalid))
-          (set! (-> *task-update-buffer* idx task) arg0)
-          (set! (-> *task-update-buffer* idx status) arg1)
+            
+          (set! (-> *interaction-update-buffer* idx has_update?) #t)
           (return #t)
           )
         )
       (none)
       )
 
-    (defun add-money-to-buffer ((parent-ename string) (money-ename string) (level-name string))
-      (dotimes (idx (-> *money-update-buffer* length))
-        (when (= (-> *money-update-buffer* idx has_update?) #f)
-          (set! (-> *money-update-buffer* idx parent_ename) parent-ename)
-          (set! (-> *money-update-buffer* idx ename) money-ename)
-          (set! (-> *money-update-buffer* idx level_name) level-name)
-          (set! (-> *money-update-buffer* idx has_update?) #t)
-          (return #t)
-          )
-        )
-      (none)
-      )
+    (defun add-task-to-interaction-buffer ((task game-task) (status task-status))
+      (when (and (!= task *last-task*) (!= status *last-task-status*))
+        (dotimes (idx (-> *interaction-update-buffer* length))
+          (when (= (-> *interaction-update-buffer* idx has_update?) #f)
 
+            (set! *last-task* task)
+            (set! *last-task-status* status)
 
-    (defun add-crate-to-buffer ((crate-ename string) (crate-type string) (crate-amount int) (level-name string))
-      (dotimes (idx (-> *crate-update-buffer* length))
-        (when (= (-> *crate-update-buffer* idx has_update?) #f)
-          (set! (-> *crate-update-buffer* idx ename) crate-ename)
-          (set! (-> *crate-update-buffer* idx type) crate-type)
-          (set! (-> *crate-update-buffer* idx amount) crate-amount)
-          (set! (-> *crate-update-buffer* idx level_name) level-name)
-          (set! (-> *crate-update-buffer* idx has_update?) #t)
-          (return #t)
-          )
-        )
-      (none)
-      )
+            (format #t "name: ~s ~%" (game-task->string task))
+            (format #t "status: ~s ~%" (task-status->string status))
 
-    (defun check-set-teamrun-task-from-buffer ()
-      (dotimes (idx (-> *task-update-buffer* length))
-        (when (!= (-> *task-update-buffer* idx status) (task-status invalid))
-
-          (when (string= (enum->string game-task (-> *task-update-buffer* idx status)) "*unknown*")
-            (set! (-> *task-update-buffer* idx status) (task-status invalid))
+            (set! (-> *interaction-update-buffer* idx type) (interaction-type game-task))
+            (set! (-> *interaction-update-buffer* idx amount) (the float status))
+            (set! (-> *interaction-update-buffer* idx ename) (game-task->string task))
+            (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> (level-get-target-inside *level*) name)))
+            (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
+            
+            (set! (-> *interaction-update-buffer* idx has_update?) #t)
+              
             (return #t)
             )
+          )
+        )
+      (none)
+      )
 
-          (set! (-> *teamrun-info* task_name) (enum->string game-task (-> *task-update-buffer* idx task)))
-          (set! (-> *teamrun-info* task_status) (enum->string task-status (-> *task-update-buffer* idx status)))
-          (set! (-> *teamrun-info* has_task_update?) 1)
-          (update-state)
+    (defun add-crate-to-interaction-buffer ((type interaction-type) (amount float) (proc process))
+      (dotimes (idx (-> *interaction-update-buffer* length))
+        (when (= (-> *interaction-update-buffer* idx has_update?) #f)
 
-          (set! (-> *task-update-buffer* idx status) (task-status invalid))
+          (format #t "parent: ~s ~%" (the-as string (-> (ppointer->process (-> proc parent)) name)))
+          (format #t "ename: ~s ~%" (the-as string (-> proc name)))
+
+          (set! (-> *interaction-update-buffer* idx type) type)
+          (set! (-> *interaction-update-buffer* idx amount) amount)
+          (set! (-> *interaction-update-buffer* idx ename) (the-as string (-> proc name)))
+          (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> *level* level (-> (the-as process-drawable proc) draw level-index) name)))
+          (set! (-> *interaction-update-buffer* idx parent) (symbol->string (-> (ppointer->process (-> proc parent)) name)))
+            
+          (set! (-> *interaction-update-buffer* idx has_update?) #t)
           (return #t)
           )
         )
-    )
+      (none)
+      )
 
-    (defun check-set-teamrun-money-collected-from-buffer ()
-      (dotimes (idx (-> *money-update-buffer* length))
-        (when (= (-> *money-update-buffer* idx has_update?) #t)
+    (defun check-set-interaction-from-buffer ()
+      (dotimes (idx (-> *interaction-update-buffer* length))
+        (when (= (-> *interaction-update-buffer* idx has_update?) #t)
 
-          (set! (-> *teamrun-info* money_ename) (-> *money-update-buffer* idx ename))
-          (set! (-> *teamrun-info* money_parent_ename) (-> *money-update-buffer* idx parent_ename))
-          (set! (-> *teamrun-info* collectable_level_name) (-> *money-update-buffer* idx level_name))
-          (set! (-> *teamrun-info* has_money_update?) 1)
+          (set! (-> *self-player-info* inter_type) (-> *interaction-update-buffer* idx type))
+          (set! (-> *self-player-info* inter_amount) (-> *interaction-update-buffer* idx amount))
+          (set! (-> *self-player-info* inter_name) (-> *interaction-update-buffer* idx ename))
+          (set! (-> *self-player-info* inter_parent) (-> *interaction-update-buffer* idx parent))
+          (set! (-> *self-player-info* inter_level) (-> *interaction-update-buffer* idx level))
           (set! *has-none-position-update?* #t)
 
-          (set! (-> *money-update-buffer* idx has_update?) #f)
-          (return #t)
-          )
-        )
-    )
-
-    (defun check-set-teamrun-crate-destroyed-from-buffer ()
-      (dotimes (idx (-> *crate-update-buffer* length))
-        (when (= (-> *crate-update-buffer* idx has_update?) #t)
-
-          (set! (-> *teamrun-info* crate_ename) (-> *crate-update-buffer* idx ename))
-          (set! (-> *teamrun-info* crate_type) (-> *crate-update-buffer* idx type))
-          (set! (-> *teamrun-info* crate_amount) (-> *crate-update-buffer* idx amount))
-          (set! (-> *teamrun-info* collectable_level_name) (-> *crate-update-buffer* idx level_name))
-          (set! (-> *teamrun-info* has_crate_update?) 1)
-          (set! *has-none-position-update?* #t)
-
-          (set! (-> *crate-update-buffer* idx has_update?) #f)
+          (set! (-> *interaction-update-buffer* idx has_update?) #f)
           (return #t)
           )
         )
@@ -354,9 +255,7 @@
 
       (when (and *target* (>= (-> *multiplayer-info* player_num) 0) (!= (-> *self-player-info* mp_state) (mp-tgt-state mp-tgt-disconnected)))
 
-        (check-set-teamrun-task-from-buffer)
-        (check-set-teamrun-money-collected-from-buffer)
-        (check-set-teamrun-crate-destroyed-from-buffer)
+        (check-set-interaction-from-buffer)
 
         ;; on player movement
         (when (or (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
@@ -375,15 +274,17 @@
             ;; clean none position updates
             (when (= *has-none-position-update?* #t)
               (set! *has-none-position-update?* #f)
+
+              ;; target pickup data
+              (set! (-> *self-player-info* inter_type) (interaction-type none))
+              (set! (-> *self-player-info* inter_amount) 0.0)
+              (set! (-> *self-player-info* inter_name) "")
+              (set! (-> *self-player-info* inter_parent) "")
+              (set! (-> *self-player-info* inter_level) "")
               
+              ;; update flags
               (set! (-> *teamrun-info* has_state_update?) 0)
               (set! (-> *teamrun-info* just_spawned?) 0)
-              
-              (set! (-> *teamrun-info* has_task_update?) 0)
-              (set! (-> *teamrun-info* has_buzzer_update?) 0)
-              (set! (-> *teamrun-info* has_money_update?) 0)
-              (set! (-> *teamrun-info* has_crate_update?) 0)
-              (set! (-> *teamrun-info* has_eco_update?) 0)
 
               (set! (-> *teamrun-levels-info* has_level_update?) 0)
               )
@@ -405,19 +306,21 @@
       (none)
       )
 
-    (defun runs-on-crate-break ((crate-ename string) (crate-type string) (crate-amount int) (level-name string))
-      (add-crate-to-buffer crate-ename crate-type crate-amount level-name)
+    (defun runs-on-pickup ((kind pickup-type) (amount float) (proc process))
+      (if (and (-> proc parent) (not (name= (-> proc name) "display"))) ;; prevent pickups given over REPL
+        (add-pickup-to-interaction-buffer kind amount proc)
+        )
 
       (none)
       )
 
-    (defun runs-on-orb-pickup ((parent process-tree) (money-ename string) (level-name string))
+    (defun runs-on-crate-break ((type interaction-type) (amount float) (proc process))
+      (add-crate-to-interaction-buffer type amount proc)
 
-      (if (name= (-> parent name) "entity-pool")
-        (add-money-to-buffer (symbol->string (-> parent name)) money-ename level-name)
-        (add-money-to-buffer (the-as string (-> parent name)) money-ename level-name)
-        )
+      (none)
+      )
 
+    (defun runs-on-orb-pickup ((parent process-tree))
       (let* ((from-cache? (and parent (type-type? (-> parent type) orb-cache-top))))
         ;; Code here runs on ANY orb pickup
 
@@ -435,13 +338,8 @@
       (none)
       )
 
-    (defun runs-on-fly-pickup ((buzzer-id int32) (parent-ename string) (level-name string))
+    (defun runs-on-fly-pickup ((buzzer-id float))
       ;; Code here runs on any scout fly pickup
-      (set! (-> *teamrun-info* buzzer_id) buzzer-id)
-      (set! (-> *teamrun-info* buzzer_parent_ename) parent-ename)
-      (set! (-> *teamrun-info* collectable_level_name) level-name)
-      (set! (-> *teamrun-info* has_buzzer_update?) 1)
-      (set! *has-none-position-update?* #t)
       (none)
       )
 
@@ -461,28 +359,9 @@
       (none)
       )
 
-    (defun runs-on-eco-pickup ((eco-type pickup-type) (parent process-tree) (eco-ename string))
+    (defun runs-on-eco-pickup ((eco-type pickup-type) (parent process-tree))
       (let* ((from-vent? (and parent (type-type? (-> parent type) vent))))
         ;; Code here runs as soon as you pickup ANY eco
-
-        (when (not from-vent?)
-          (case eco-type
-            (((pickup-type eco-yellow) (pickup-type eco-red) (pickup-type eco-blue))
-
-              (if (name= (-> parent name) "entity-pool")
-                (set! (-> *teamrun-info* eco_ename) eco-ename)
-                (set! (-> *teamrun-info* eco_ename) (symbol->string eco-ename))
-                )
-              (if (name= (-> parent name) "entity-pool")
-                (set! (-> *teamrun-info* eco_parent_ename) (symbol->string (-> parent name)))
-                (set! (-> *teamrun-info* eco_parent_ename) (the-as string (-> parent name)))
-                )
-              (set! (-> *teamrun-info* collectable_level_name) (-> *teamrun-info* current_level))
-              (set! (-> *teamrun-info* has_eco_update?) 1)
-              (set! *has-none-position-update?* #t)
-              )
-            )
-          )
 
         (case eco-type
           (((pickup-type eco-yellow))      

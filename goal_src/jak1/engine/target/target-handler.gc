@@ -7,6 +7,7 @@
 
 (define-extern target-powerup-effect (function symbol none :behavior target))
 (define-extern runs-on-level-enter (function none))
+(define-extern runs-on-pickup (function pickup-type float process none))
 
 ;; DECOMP BEGINS
 
@@ -20,6 +21,15 @@
          (let ((s4-0 (-> arg3 param 0))
                (f28-0 (the-as float (-> arg3 param 1)))
                )
+            (if (and 
+                (= self *target*) 
+                (!= (the-as pickup-type s4-0) (pickup-type none))
+                (!= (the-as pickup-type s4-0) (pickup-type eco-pill-random))
+                (!= (the-as pickup-type s4-0) (pickup-type eco-pill))
+                (!= (the-as pickup-type s4-0) (pickup-type fuel-cell)) ;; is instead taken from task-control
+                )
+              (runs-on-pickup (the-as pickup-type s4-0) f28-0 arg0)
+              )
            (if (!= (pickup-collectable!
                      (-> self fact-info-target)
                      (the-as pickup-type s4-0)

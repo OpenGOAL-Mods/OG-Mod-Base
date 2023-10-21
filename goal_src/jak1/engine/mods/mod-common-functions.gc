@@ -23,9 +23,9 @@
 (define *teamrun-info* (new 'global 'teamrun-player-info))
 (define *teamrun-levels-info* (new 'global 'game-levels-info))
 
-(define *task-update-buffer* (new 'global 'boxed-array task-info MAX_TASK_BUFFER_COUNT))
-(define *money-update-buffer* (new 'global 'boxed-array money-info MAX_MONEY_BUFFER_COUNT))
-(define *crate-update-buffer* (new 'global 'boxed-array crate-info MAX_CRATE_BUFFER_COUNT))
+(define *interaction-update-buffer* (new 'global 'boxed-array interaction-info MAX_INTERACTION_BUFFER_COUNT))
+(define *last-task* (game-task none)) ;; tasks get closed twice in a row sometimes, this is used to prevent it from sending multiple of same close over socket
+(define *last-task-status* (task-status invalid))
 
 (define *allow-cell-pickup?* #t)
 (define *allow-final-boss?* #t)
@@ -103,8 +103,171 @@
     )
   )
 
+    (defun safe-break-crate ((crate-name string))
+    (let* ((obj-crate (process-by-ename crate-name)))
+      (when obj-crate
+        (if (not (or (name= (-> (the-as crate obj-crate) state name) "die") (name= (-> (the-as crate obj-crate) state name) "special-contents-die")))
+          (go-virtual-process (the-as crate obj-crate) die #f 0)
+          )
+        )
+      )
+      (none)
+      )
+
+    (defun safe-kill-orb ((money-name string))
+      (process-entity-status! (the-as money (process-by-ename money-name)) (entity-perm-status dead) #t)
+      (kill-by-name money-name *active-pool*)
+      )
+
+    (defun safe-kill-cache-orb ((cache-name string))
+      (let* ((orb-cache (process-by-ename cache-name)))
+        (when (-> orb-cache state)
+          (case (-> orb-cache state)
+            ((orb-cache-top-activate)
+                (deactivate (handle->process (-> (the-as orb-cache-top orb-cache) money-list (- (-> (the-as orb-cache-top orb-cache) money) 1))))
+              )
+            ((orb-cache-top-idle)
+              (set! (-> (the-as orb-cache-top orb-cache) money) (- (-> (the-as orb-cache-top orb-cache) money) 1))
+              (set! (-> (the-as orb-cache-top orb-cache) entity extra perm user-int16 0) (- 15 (-> (the-as orb-cache-top orb-cache) money)))
+              )
+            )
+          )
+        )
+        (none)
+      )
+
+    (defun safe-kill-crate-orb ((crate-name string))
+      (let* ((obj-crate (process-by-ename crate-name)))
+
+        (when (name= (-> (the-as crate obj-crate) state name) "wait")
+          (set! (-> (the-as crate obj-crate) fact pickup-amount) (- (-> (the-as crate obj-crate) fact pickup-amount) 1))
+          (when (<= (-> (the-as crate obj-crate) fact pickup-amount) 0)
+            (set! (-> (the-as crate obj-crate) entity extra perm user-int8 1) 0)
+            (process-entity-status! (the-as crate obj-crate) (entity-perm-status bit-4) #f)
+            (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
+            (process-entity-status! (the-as crate obj-crate) (entity-perm-status complete) #t)
+            ((method-of-type crate deactivate) (the-as crate obj-crate))
+            )
+          (return #t)
+          )
+
+        (when (name= (-> (the-as crate obj-crate) state name) "special-contents-die") ;; when in orb collect phase
+
+          (when (>= (-> (the-as crate obj-crate) entity extra perm user-int8 0) 1) ;; all orbs have not been collected
+
+            (set! (-> (the-as crate obj-crate) entity extra perm user-int8 1) (+ (-> (the-as crate obj-crate) entity extra perm user-int8 1) 1))
+            (+! (-> (the-as crate obj-crate) child-count) -1)
+
+            ;; depspawn orb if exists
+            (if (-> (the-as crate obj-crate) child 0)
+              ((method-of-type money deactivate) (the-as money (-> (the-as crate obj-crate) child 0)))
+              )
+
+            ;; mark as completed if done
+            (when (or (= (-> (the-as crate obj-crate) entity extra perm user-int8 1) 0) (= (-> (the-as crate obj-crate) entity extra perm user-int8 1) (float->int (-> (the-as crate obj-crate) fact pickup-amount)))) ;; if no orbs are left
+                (set! (-> (the-as crate obj-crate) entity extra perm user-int8 1) 0)
+                (process-entity-status! (the-as crate obj-crate) (entity-perm-status bit-4) #f)
+                (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
+                (process-entity-status! (the-as crate obj-crate) (entity-perm-status complete) #t)
+                ((method-of-type crate deactivate) (the-as crate obj-crate))
+              )
+            )
+          )
+        )
+        (none)
+      )
+
+    (defun safe-kill-crate-buzzer ((crate-name string))
+      (let* ((obj-crate (process-by-ename crate-name)))
+
+        (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
+        (process-entity-status! (the-as crate obj-crate) (entity-perm-status complete) #t)
+
+        ;; depspawn buzzer if exists
+        (if (and obj-crate (name= (-> (the-as crate obj-crate) state name) "special-contents-die") (-> (the-as crate obj-crate) child 0))
+          ((method-of-type buzzer deactivate) (the-as buzzer (-> (the-as crate obj-crate) child 0)))
+          )
+        ;; depspawn crate
+        (if obj-crate
+          ((method-of-type crate deactivate) (the-as crate obj-crate))
+          )
+        )
+        (none)
+      )
+
+    (defun safe-pickup-crate-eco ((crate-name string))
+      (let* ((obj-crate (process-by-ename crate-name)))
+
+        (if (name= (-> (the-as crate obj-crate) state name) "wait")
+          (safe-break-crate crate-name)
+          )
+
+        ;; pickup eco if exists
+        (when (and (name= (-> (the-as crate obj-crate) state name) "special-contents-die") (-> (the-as crate obj-crate) child 0))
+          (go-virtual-process (the-as eco-collectable (-> (the-as crate obj-crate) child 0)) pickup #f (the-as handle #f))
+          )
+        )
+        (none)
+      )
+
+    (defun safe-pickup-eco ((eco-ename string))
+      (let* ((obj-eco (process-by-ename eco-ename)))
+        (when (-> obj-eco name)
+          (go-virtual-process (the-as eco-collectable obj-eco) pickup #f (process->handle (the-as eco-collectable obj-eco)))
+          )
+        )
+        (none)
+      )
+
+    (defun give-buzzer-from-level ((buzzer-id float) (level string))
+        (cond
+          ((name= (-> (level-get-target-inside *level*) name) level)
+            (pickup-collectable! (-> *target* fact-info-target) (pickup-type buzzer) buzzer-id (process->handle *target*))
+            )
+          (else
+            (adjust (-> *target* game) 'buzzer buzzer-id (process->handle *target*))
+            (sound-play "cursor-options")
+            )
+          )
+          (none)
+      )
+
+    (defun give-money-from-level ((level string))
+      (pickup-collectable! (-> *target* fact-info-target) (pickup-type money) 1.0 (process->handle (-> (-> *target* fact-info-target) process)))
+      ;; get the level index
+      (let ((level-idx (-> *level-task-data-remap* (+ (-> (lookup-level-info (string->symbol level)) index) -1))))
+        ;; increment the level money count
+        (+! (-> *target* game money-per-level level-idx) 1)
+        ;; increment our total money in the game (out of the 2000 max orbs)
+        (+! (-> *target* game money-total) 1.0)
+        ;; if we have all the money in our level, display the all orbs graphic
+        (if (= (-> *target* game money-per-level level-idx) (-> (get-game-count level-idx) money-count))
+            (activate-orb-all level-idx)
+            )
+        )
+        (none)
+      )
+
+    (defun give-fuel-cell-from-level ((cell-name string) (task game-task))
+      (dm-give-cell task)
+      (process-entity-status! (the-as fuel-cell (process-by-ename cell-name)) (entity-perm-status dead) #t)
+      (kill-by-name cell-name *active-pool*)
+      )
+
+    (defun safe-give-eco-by-target-idx ((idx int) (type int) (amount float))
+      (let ((target (get-interactive-target idx)))
+        (send-event target 'get-pickup type amount)
+        )
+      )
+
+    (defun safe-release-from-grab ()
+      (when (is-grabbed?)
+        (process-release? *target*)
+        )
+      )
+
   (defun run-target-fuel-cell-pickup ((remote-target target))
-    (when (process-close? remote-target 500000.0)
+    (when (process-close? remote-target 500000.0) ;; only run if *target* is close enough as pickup sound is global
       (let* ((remote-cell (birth-pickup-at-point (-> remote-target control trans) (pickup-type fuel-cell) 1.0 #f remote-target (the-as fact-info #f))))
         (safe-deactivate-remote-cell)
         (set! (-> (the-as fuel-cell (ppointer->process remote-cell)) name) "remote-cell")
@@ -164,16 +327,8 @@
     (set! (-> *self-player-info* mp_state)  (mp-tgt-state mp-tgt-interactive))
     (set! (-> *multiplayer-info* player_num) 0)
 
-    (dotimes (idx (-> *task-update-buffer* length))
-      (set! (-> *task-update-buffer* idx) (new 'global 'task-info))
-      )
-
-    (dotimes (idx (-> *money-update-buffer* length))
-      (set! (-> *money-update-buffer* idx) (new 'global 'money-info))
-      )
-
-    (dotimes (idx (-> *crate-update-buffer* length))
-      (set! (-> *crate-update-buffer* idx) (new 'global 'crate-info))
+    (dotimes (idx (-> *interaction-update-buffer* length))
+      (set! (-> *interaction-update-buffer* idx) (new 'global 'interaction-info))
       )
 
     (pc-connect-mp-info *multiplayer-info* *self-player-info* *teamrun-info* *teamrun-levels-info*)
@@ -215,6 +370,11 @@
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_w)     (-> *target* root quat w))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) zoomer_rot_y)     (-> *self-player-info* zoomer_rot_y))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) tgt_state)  (-> *target* state name))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_type)     (-> *self-player-info* inter_type))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_amount)   (-> *self-player-info* inter_amount))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_name)     (-> *self-player-info* inter_name))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_parent)   (-> *self-player-info* inter_parent))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_level)   (-> *self-player-info* inter_level))
   (none)
   )
 
@@ -318,7 +478,7 @@
 
 
     ;; other
-    ;; (('target-clone-anim) (if (and (-> t state name) (!= (-> t state name) 'target-stance)) (run-target-fuel-cell-pickup t)))
+    (('target-clone-anim) (if (and (-> t state name) (!= (-> t state name) 'target-stance)) (run-target-fuel-cell-pickup t)))
     (('target-fishing) (send-event t 'change-mode 'fishing #f))
     (('target-periscope) (send-event t 'change-mode 'periscope #f))
     (('target-grab) (go-process t target-grab)) ;; process-grab animation while in cutscenes
@@ -424,6 +584,7 @@
     ((target)
       (let* ((t (the target obj)))
 
+        ;; zoomer rotation
         (if (target-on-racer? t)
           (set! (-> t racer rot y) (-> p zoomer_rot_y))
           )
@@ -448,7 +609,9 @@
         (quaternion-copy! (-> t control dir-targ) (-> t root quat))
           
         ;; sync target state
-        (when (and (-> t state name) (!= (-> t state name) (-> p tgt_state)))
+        (when (and (-> t state name) (!= (-> t state name) (-> p tgt_state)) 
+        (or (!= (-> p tgt_state) 'target-clone-anim) (= (-> p inter_type) (interaction-type game-task))) ;; only allow fuel cells from 'target-clone-anim
+        )
           (target-sync-state (-> p tgt_state) t)
           )
         )
@@ -870,6 +1033,19 @@
     (<= 
       (vector-vector-distance 
         (target-pos 0) 
+        (-> proc root trans)
+        )
+      dist
+      )
+    )
+  )
+
+(defun remote-target-process-close? ((remote-target target) (proc process-drawable) (dist float))
+  (and 
+    proc
+    (<= 
+      (vector-vector-distance 
+        (remote-target-pos 0 remote-target) 
         (-> proc root trans)
         )
       dist
