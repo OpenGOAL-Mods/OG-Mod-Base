@@ -38,6 +38,23 @@ an orb |#
   )
 
 (defun runs-every-frame ()
+
+  ;; credits warp if you're in finalboss with only 4 cells and we haven't already played credits
+  (let ((boss (the robotboss (process-by-ename "robotboss-3")))
+        (sage (the sage-finalboss (process-by-ename "sage-finalboss-1")))
+        )
+    (when (and (> (-> *display* base-frame-counter) (-> *game-info* blackout-time))
+               *target*
+               boss
+               (= (level-status *level* 'finalboss) 'active)
+               (or (not sage) (not (-> sage credits-played)))
+               (not (task-closed? (game-task finalboss-movies) (task-status need-reward-speech)))
+               (= (-> *game-info* fuel) 4))
+      (format 0 "birthing sage-finalboss-1 ~%")
+      (birth! (entity-by-name "sage-finalboss-1"))
+      )
+    )
+    
   (when (and (cpad-hold? 0 l1) (cpad-hold? 0 r1) (cpad-hold? 0 l2) (cpad-hold? 0 r2)
             (movie?) (-> *art-control* spool-lock) (-> *art-control* active-stream)
             )
