@@ -399,7 +399,7 @@
 
   (if (and (is-in-chem-fac-silo) (not chem-bool))
   (begin
-   (play-rand-sound "snd/zed.mp3" (the int (-> *setting-control* default sfx-volume)))
+   (play-rand-sound "snd/windy.wav" (the int (-> *setting-control* default sfx-volume)))
    (set! chem-bool #t)
    (until (time-elapsed? current-timea (seconds 20))
    (suspend)
