@@ -1024,7 +1024,7 @@
               ;;      (clear-collide-with-as (-> (the-as collectable s0-2) root-override))
               ;;      )
               ;;    )
-              ;;  )
+               )
              )
             )
           )
