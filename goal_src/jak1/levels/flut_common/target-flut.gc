@@ -1292,7 +1292,12 @@
                    )
                (!= (-> self control unknown-uint31) 1)
                )
-          (target-shoved (meters 2) (-> *TARGET-bank* smack-surface-height) (the-as process #f) target-flut-hit)
+          (target-shoved
+            (target-bonk-dist)
+            (target-bonk-height)
+            (the-as process #f) 
+            target-flut-hit
+            )
           )
       (if (and (logtest? (-> self water flags) (water-flags wt09))
                (zero? (mod (- (-> *display* base-frame-counter) (-> self state-time)) 21))
@@ -1649,8 +1654,8 @@
         (case arg0
           (('shove)
            (let ((v1-5 gp-0))
-             (set! (-> v1-5 shove-back) (-> *TARGET-bank* smack-surface-dist))
-             (set! (-> v1-5 shove-up) (-> *TARGET-bank* smack-surface-height))
+             (set! (-> v1-5 shove-back) (target-bonk-dist))
+             (set! (-> v1-5 shove-up) (target-bonk-height))
              (set! (-> v1-5 angle) 'shove)
              )
            )

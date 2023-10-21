@@ -2039,6 +2039,23 @@
   :post target-post
   )
 
+(defun target-bonk-dist ()
+  (if (or (cpad-hold? 0 r1) (cpad-hold? 0 l1))
+    (meters 50.0)
+    (-> *TARGET-bank* smack-surface-dist)
+    )
+  )
+
+(defun target-bonk-height ()
+  (if (or (cpad-hold? 0 x))
+    (meters 75.0)
+    (if (or (cpad-hold? 0 r1) (cpad-hold? 0 l1))
+      (meters 10.0)
+      (-> *TARGET-bank* smack-surface-height)
+      )
+    )
+  )
+
 (defstate target-running-attack (target)
   :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
     (case event-type
@@ -2167,8 +2184,8 @@
                (!= (-> self control unknown-uint31) 1)
                )
           (target-shoved
-            (-> *TARGET-bank* smack-surface-dist)
-            (-> *TARGET-bank* smack-surface-height)
+            (target-bonk-dist)
+            (target-bonk-height)
             (the-as process #f)
             target-hit
             )
@@ -3011,8 +3028,8 @@
                      )
             (if (>= 6.0 (ja-aframe-num 0))
                 (target-shoved
-                  (-> *TARGET-bank* smack-surface-dist)
-                  (-> *TARGET-bank* smack-surface-height)
+                  (target-bonk-dist)
+                  (target-bonk-height)
                   (the-as process #f)
                   target-hit
                   )
@@ -3095,8 +3112,8 @@
              (!= (-> self state-time) (-> *display* base-frame-counter))
              )
         (target-shoved
-          (-> *TARGET-bank* smack-surface-dist)
-          (-> *TARGET-bank* smack-surface-height)
+          (target-bonk-dist)
+          (target-bonk-height)
           (the-as process #f)
           target-hit
           )

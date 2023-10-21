@@ -853,8 +853,8 @@
         (case arg0
           (('shove)
            (let ((v1-7 gp-0))
-             (set! (-> v1-7 shove-back) (-> *TARGET-bank* smack-surface-dist))
-             (set! (-> v1-7 shove-up) (-> *TARGET-bank* smack-surface-height))
+             (set! (-> v1-7 shove-back) (target-bonk-dist))
+             (set! (-> v1-7 shove-up) (target-bonk-height))
              (set! (-> v1-7 angle) 'shove)
              )
            )
