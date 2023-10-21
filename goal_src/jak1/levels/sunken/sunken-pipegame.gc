@@ -850,20 +850,20 @@
       ((zero? a2-0)
        (let ((v1-5 (handle->process (-> obj prize v1-0 actor-handle))))
          (when v1-5
-           (if arg0
+          ;;  (if arg0
                (restore-collide-with-as (-> (the-as collectable v1-5) root-override))
-               (clear-collide-with-as (-> (the-as collectable v1-5) root-override))
-               )
+              ;;  (clear-collide-with-as (-> (the-as collectable v1-5) root-override))
+              ;;  )
            )
          )
        )
       ((or (= a2-0 1) (= a2-0 2))
        (let ((v1-13 (handle->process (-> obj prize v1-0 actor-handle))))
          (when v1-13
-           (if arg0
+          ;;  (if arg0
                (restore-collide-with-as (-> (the-as collectable v1-13) root-override))
-               (clear-collide-with-as (-> (the-as collectable v1-13) root-override))
-               )
+              ;;  (clear-collide-with-as (-> (the-as collectable v1-13) root-override))
+              ;;  )
            )
          )
        )
@@ -971,11 +971,11 @@
                        (birth-pickup-at-point (-> s0-0 jar-pos) (pickup-type fuel-cell) 45.0 #f obj (the-as fact-info #f))
                        )
                      )
-               (let ((a1-10 (handle->process (-> s0-0 actor-handle))))
-                 (if a1-10
-                     (clear-collide-with-as (-> (the-as collectable a1-10) root-override))
-                     )
-                 )
+              ;;  (let ((a1-10 (handle->process (-> s0-0 actor-handle))))
+              ;;    (if a1-10
+              ;;        (clear-collide-with-as (-> (the-as collectable a1-10) root-override))
+              ;;        )
+              ;;    )
                )
              )
             ((= v1-30 1)
@@ -994,12 +994,12 @@
                        (birth-pickup-at-point (-> s0-0 jar-pos) (pickup-type buzzer) 49.0 #f obj (the-as fact-info #f))
                        )
                      )
-               (let ((s0-1 (handle->process (-> s0-0 actor-handle))))
-                 (when s0-1
-                   (send-event s0-1 'movie-pos 1)
-                   (clear-collide-with-as (-> (the-as collectable s0-1) root-override))
-                   )
-                 )
+              ;;  (let ((s0-1 (handle->process (-> s0-0 actor-handle))))
+              ;;    (when s0-1
+              ;;      (send-event s0-1 'movie-pos 1)
+              ;;      (clear-collide-with-as (-> (the-as collectable s0-1) root-override))
+              ;;      )
+              ;;    )
                )
              )
             ((= v1-30 2)
@@ -1018,13 +1018,13 @@
                        (birth-pickup-at-point (-> s0-0 jar-pos) (pickup-type buzzer) 65585.0 #f obj (the-as fact-info #f))
                        )
                      )
-               (let ((s0-2 (handle->process (-> s0-0 actor-handle))))
-                 (when s0-2
-                   (send-event s0-2 'movie-pos 2)
-                   (clear-collide-with-as (-> (the-as collectable s0-2) root-override))
-                   )
-                 )
-               )
+              ;;  (let ((s0-2 (handle->process (-> s0-0 actor-handle))))
+              ;;    (when s0-2
+              ;;      (send-event s0-2 'movie-pos 2)
+              ;;      (clear-collide-with-as (-> (the-as collectable s0-2) root-override))
+              ;;      )
+              ;;    )
+              ;;  )
              )
             )
           )
