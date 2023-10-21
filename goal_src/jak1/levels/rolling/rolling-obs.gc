@@ -1318,6 +1318,16 @@
   )
 
 (defstate gorge-start-idle (gorge-start)
+  :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
+    (case event-type
+      (('finished)
+       (go gorge-start-race-finished)
+       )
+      (('aborted)
+       (go gorge-start-race-aborted)
+       )
+      )
+    )
   :enter (behavior ()
     (logior! (-> self mask) (process-mask actor-pause))
     (process-entity-status! self (entity-perm-status bit-3) #f)
@@ -1360,6 +1370,14 @@
   (set! (-> obj tasks) (get-task-control (-> obj entity extra perm task)))
   (set! (-> obj start-banner) (the-as handle #f))
   (set! (-> obj end-banner) (the-as handle #f))
+  (race-time-read (-> obj record-time) (-> obj tasks) (seconds 45))
+  (process-spawn
+    gorge-finish
+    (new 'static 'vector :x -86016.0 :y 114688.0 :z -6303744.0)
+    (new 'static 'vector :x -1.0)
+    57344.0
+    :to obj
+    )
   (set! (-> obj timer-pos-offset) 100)
   (go gorge-start-idle)
   (none)
