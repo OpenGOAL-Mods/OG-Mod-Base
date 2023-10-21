@@ -184,6 +184,13 @@ yakow-default-event-handler
           (not (and (-> self entity) (logtest? (-> self entity extra perm status) (entity-perm-status complete))))
           )
         )
+    (when (= (->(process-by-ename "yakow-10") entity) (-> self entity))
+      (process-entity-status! (process-by-ename "yakow-10") (entity-perm-status complete) #t)
+      (process-entity-status! (process-by-ename "yakow-11") (entity-perm-status complete) #t)
+      (process-entity-status! (process-by-ename "yakow-12") (entity-perm-status complete) #t)
+      (process-entity-status! (process-by-ename "yakow-9") (entity-perm-status complete) #t)
+      (process-entity-status! (process-by-ename "yakow-8") (entity-perm-status complete) #t)
+      )
     (if arg0
         (process-entity-status! self (entity-perm-status complete) #t)
         (process-entity-status! self (entity-perm-status complete) #f)
