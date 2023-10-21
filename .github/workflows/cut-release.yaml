@@ -31,6 +31,8 @@ jobs:
       skipMacOS: true
       skipLinux: true
       toolingBinaryDir: "out/build/Release/bin"
+      gameAssetsDir: "./game/assets"
       copyEntireBinaryDir: true
+
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
