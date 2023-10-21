@@ -267,12 +267,22 @@
                 (none)
                 )
               )
+        (fax (new 'static 'fact-info :options (fact-options skip-jump-anim)))
         )
     (ja-post)
     (when (not (task-closed? (the-as game-task (-> obj first-task)) (task-status need-resolution)))
       (vector<-cspace! s4-0 (-> obj node-list data 5))
       (set! (-> obj right-eye-cell)
-            (ppointer->handle (manipy-spawn s4-0 (-> obj entity) *fuel-cell-sg* (new 'static 'vector :w 4915.2) :to obj))
+            (ppointer->handle
+              (birth-pickup-at-point
+                s4-0
+                (pickup-type fuel-cell)
+                (the float (the-as int (-> obj first-task)))
+                #f
+                obj
+                fax
+                )
+              )
             )
       (send-event
         (handle->process (-> obj right-eye-cell))
@@ -288,8 +298,17 @@
     (when (not (task-closed? (the-as game-task (-> obj second-task)) (task-status need-resolution)))
       (vector<-cspace! s4-0 (-> obj node-list data 6))
       (set! (-> obj left-eye-cell)
-            (ppointer->handle (manipy-spawn s4-0 (-> obj entity) *fuel-cell-sg* (new 'static 'vector :w 4915.2) :to obj))
+        (ppointer->handle
+          (birth-pickup-at-point
+            s4-0
+            (pickup-type fuel-cell)
+            (the float (the-as int (-> obj second-task)))
+            #f
+            obj
+            fax
             )
+          )
+        )
       (send-event
         (handle->process (-> obj left-eye-cell))
         'eval
