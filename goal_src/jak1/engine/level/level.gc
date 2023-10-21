@@ -1054,14 +1054,14 @@
 (defmethod is-object-visible? level ((obj level) (arg0 int) (actor entity))
 
   ;; always spawn sage-finalboss so we can do credits warp
-  (cond
-    ((= (-> (the entity-actor actor) etype)  (the-as symbol sage-finalboss))
-      (return #t)
-      )
-    (else
-      ;; (format 0 "non sage-finalboss ~A~%" (-> (the entity-actor arg1) etype symbol))
-      )
-    )
+  ;; (cond
+  ;;   ((= (-> (the entity-actor actor) etype)  (the-as symbol sage-finalboss))
+  ;;     (return #t)
+  ;;     )
+  ;;   (else
+  ;;     ;; (format 0 "non sage-finalboss ~A~%" (-> (the entity-actor arg1) etype symbol))
+  ;;     )
+  ;;   )
 
 
    ;; hack to force visibility of stuff moved (rather than update visibility data)

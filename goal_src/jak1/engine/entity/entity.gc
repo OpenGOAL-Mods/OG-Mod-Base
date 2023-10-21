@@ -1236,6 +1236,15 @@
   (none)
   )
 
+(deftype sage (process-taskable)
+  ((reminder-played basic   :offset-assert 380)
+   (assistant       handle  :offset-assert 384)
+   )
+  :heap-base #x120
+  :method-count-assert 53
+  :size-assert         #x188
+  :flag-assert         #x3501200188
+  )
 
 ;; TODO
 (define-extern birth-viewer (function process entity-actor object))
@@ -1243,6 +1252,8 @@
 (defmacro obj-etype? (&rest types)
   `(or ,@(apply (lambda (x) `(begin (define-extern ,x type) (type-type? (-> obj etype) ,x))) types))
   )
+
+
 
 (defmethod birth! entity-actor ((obj entity-actor))
   "Create a process for this entity and start it."

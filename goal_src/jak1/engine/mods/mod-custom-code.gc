@@ -390,26 +390,125 @@
 
 (defun sound-manager()
 "responsible for all the sounds played during cutscenes"
-(let ((current-timea (current-time)))
+(let ((current-timea (current-time))
+      (chem-bool #f))
   (when (handle->process (-> *art-control* spool-lock))(with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the
  int (ja-aframe-num 0))))
   (set! *currentSpoolName* (-> *art-control* active-stream)))
+
+
+  (if (and (is-in-chem-fac-silo) (not chem-bool))
+  (begin
+   (play-rand-sound "snd/zed.mp3" (the int (-> *setting-control* default sfx-volume)))
+   (set! chem-bool #t)
+   (until (time-elapsed? current-timea (seconds 20))
+   (suspend)
+   )
+   (set! chem-bool #f)
+  )
+  )
+
+   
 (cond 
 ((and (string= *currentSpoolName* "ndi-intro") (= *currentCutsceneFrame* 420))
    (play-rand-sound "snd/zed.mp3" (the int (-> *setting-control* default sfx-volume)))
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
+
 
 )
 
 ((and *custom-cutscene?* (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 0))
-   (play-rand-sound "snd/fart-intro.mp3" (the int (-> *setting-control* default sfx-volume)))
+   (play-rand-sound "snd/fart-intro.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
 
 )
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 2447))
+   (play-rand-sound "snd/dax/oldgreenstufftoldusnotto.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 16))
+   (play-rand-sound "snd/dax/what_are_we_doing_here.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 220))
+   (play-rand-sound "snd/dax/euagh_ooop.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;375 huH
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 375))
+   (play-rand-sound "snd/dax/stupid_precursor_gas.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+
+;;410 STUPID PERCURSOR GAS
+
+;;584 eek daRT TOOT
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 584))
+   (play-rand-sound "snd/dax/what_is_that_dark_toot.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;725 BREATH
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 725))
+   (play-rand-sound "snd/dax/yaps_on_about.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;1019 POWERTOOTS
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1019))
+   (play-rand-sound "snd/dax/power_toots.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+
+;;1215 how did you do that
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1215))
+   (play-rand-sound "snd/dax/wow_how_did_you_do_that.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;1340 JAK WE IN TROUBLE
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1340))
+   (play-rand-sound "snd/dax/i_think_were_in_trouble.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;1627 ahhhHHH
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1627))
+   (play-rand-sound "snd/dax/daxter_ahh.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+
 )
 )
 

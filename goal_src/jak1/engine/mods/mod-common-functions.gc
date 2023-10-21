@@ -421,7 +421,26 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   )
   #f
 )
+(define *heard-chem-hint* #f)
+(defun-extern music-manager none)
+(defun play-chem-hint ()
 
+
+
+(when (is-in-chem-fac-silo)
+(if (not *heard-chem-hint*)
+(begin
+(set! *heard-chem-hint* #t)
+(play-rand-sound "snd/dax/daxter_for_zed.mp3" (the int (-> *setting-control* default dialog-volume)))
+)
+)
+
+
+
+
+)
+(none)
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jak Color functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;

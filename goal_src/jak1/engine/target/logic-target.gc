@@ -1003,6 +1003,7 @@
   )
 (define-extern *has-chicken-eco* symbol)
 (defun-extern is-in-chem-fac-silo symbol)
+(defun-extern play-chem-hint none)
 (defbehavior flag-setup target ()
   (level-setup)
   (set! (-> self control unknown-vector10 quad) (-> self control transv quad))
@@ -1058,6 +1059,7 @@
         (send-event self 'change-mode 'look-around)
         )
     )
+   (if (is-in-chem-fac-silo)(play-chem-hint))
   (when (or (and *has-chicken-eco* (cpad-hold? 0 r2)) (and (is-in-chem-fac-silo) (cpad-hold? 0 r2))
   
           (and (= *cheat-mode* 'debug)

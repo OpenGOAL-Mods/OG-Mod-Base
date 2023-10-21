@@ -735,7 +735,7 @@
 (set! (-> *game-counts* data 21 money-count) 47);;pyramid
 (set! (-> *game-counts* data 22 money-count) 46);;ice canyon
 (set! (-> *game-counts* data 23 money-count) 98);;coins
-(set! (-> *game-counts* data 24 money-count) 0);;villa-cuba   NEED
+(set! (-> *game-counts* data 24 money-count) 43);;villa-cuba   NEED
 (set! (-> *game-counts* data 25 money-count) 35);;ice-slide
 (set! (-> *game-counts* data 26 money-count) 41);; islands
 (set! (-> *game-counts* data 27 money-count) 43);;glass towers NEED
