@@ -185,6 +185,49 @@
     (the-as
       object
       (case event-type
+        (('attack)
+         (case (-> event param 1)
+           (('explode)
+            (let ((a0-2 (handle->process (-> self fuel-cell))))
+              (if a0-2
+                  (send-event a0-2 'trans (-> self root-override trans))
+                  )
+              )
+            (go pelican-explode #f)
+            #f
+            )
+           (else
+             (let* ((gp-0 proc)
+                    (v1-13 (if (and (nonzero? gp-0) (type-type? (-> gp-0 type) process-drawable))
+                               gp-0
+                               )
+                           )
+                    (f30-0 8192.0)
+                    (gp-1 (-> self root-override))
+                    (s4-0 (-> (the-as process-drawable v1-13) root trans))
+                    )
+               (if (< f30-0
+                      (fabs
+                        (deg-diff (y-angle gp-1) (vector-y-angle (vector-! (new 'stack-no-clear 'vector) s4-0 (-> gp-1 trans))))
+                        )
+                      )
+                   (go pelican-explode #f) ;;  (go pelican-spit)
+                   )
+               )
+             )
+           )
+         )
+        (('touch)
+         (the-as object (send-shove-back
+                          (-> self root-override)
+                          proc
+                          (the-as touching-shapes-entry (-> event param 0))
+                          0.7
+                          6144.0
+                          16384.0
+                          )
+                 )
+         )
         (('dive)
          (let ((v0-0 (the-as structure #t)))
            (set! (-> self state-object) (the-as symbol v0-0))
@@ -242,7 +285,10 @@
           )
       (set! (-> self path-pos) (- f0-3 (* (the float (the int (/ f0-3 f1-2))) f1-2)))
       )
-    (when (and (and *target* (>= 81920.0 (vector-vector-xz-distance (-> self path-vector) (-> *target* control trans))))
+    (when (and (and *target* 
+                    (>= 81920.0 (vector-vector-xz-distance (-> self path-vector) (-> *target* control trans)))
+                    (logtest? (-> *target* control status) (cshape-moving-flags onsurf))  ;; target grounded
+                    )
                (not (handle->process (-> self cam-tracker)))
                )
       (set! (-> self cam-tracker)

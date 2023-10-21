@@ -27,6 +27,12 @@ an orb |#
       (set-vector-meters! dst 596.80 2.17 -2026.90)
       (set-vector-meters! (res-lump-struct (-> obj entity) 'movie-pos (vector) :time (the-as float -1000000000.0)) 596.80 2.17 -2026.90)
       )
+    ;; this didnt work for some reason anyway, but im pretty sure I had it working in orb hunt? 
+    ;; (('pelican-1)
+    ;;   (when (name= (-> (the pelican (ppointer->process (-> obj parent))) state name) 'pelican-explode)
+    ;;     (vector-copy! dst (-> (the pelican (ppointer->process (-> obj parent))) root trans))
+    ;;     )
+    ;;   )
     )
   (none)
   )
