@@ -901,16 +901,18 @@
   :virtual #t
   :code (behavior ()
     (suspend)
-    (process-drawable-delay-player (seconds 1))
-    (let ((gp-1 (ppointer->handle
-                  (process-spawn pov-camera (-> self root trans) *swampcam-sg* "swamp-ambush" 0 #f '() :to self)
+    (when *enable-ingame-cutscenes?*
+      (process-drawable-delay-player (seconds 1))
+      (let ((gp-1 (ppointer->handle
+                    (process-spawn pov-camera (-> self root trans) *swampcam-sg* "swamp-ambush" 0 #f '() :to self)
+                    )
                   )
-                )
+            )
+        (while (handle->process (the-as handle gp-1))
+          (suspend)
           )
-      (while (handle->process (the-as handle gp-1))
-        (suspend)
         )
-      )
+    )
     (go-virtual battlecontroller-active)
     (none)
     )

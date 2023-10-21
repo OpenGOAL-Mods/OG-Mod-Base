@@ -825,9 +825,13 @@
     (none)
     )
   :trans (behavior ()
-    (if (and *target* (>= 81920.0 (vector-vector-distance (target-pos 0) (-> self root-override trans))))
-        (go gnawer-retreat-into-post)
-        )
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (let ((target (get-interactive-target tgt-idx)))
+        (if (and target (>= 81920.0 (vector-vector-distance (remote-target-pos 0 target) (-> self root-override trans))))
+            (go gnawer-retreat-into-post)
+            )
+      	)
+      )
     (none)
     )
   :code (behavior ()
@@ -1204,16 +1208,29 @@
                             (let ((t9-4 (method-of-type maincavecam activate)))
                               (t9-4 s5-0 self 'maincavecam (the-as pointer #x70004000))
                               )
-                            (run-now-in-process
-                              s5-0
-                              pov-camera-init-by-other
-                              gp-0
-                              *maincavecam-sg*
-                              (new 'static 'spool-anim :name "maincavecam-gnawer-fuel-cell" :index 3 :parts 1 :command-list '())
-                              0
-                              self
-                              '()
-                              )
+                              (if *enable-ingame-cutscenes?*
+                                (run-now-in-process
+                                  s5-0
+                                  pov-camera-init-by-other
+                                  gp-0
+                                  *maincavecam-sg*
+                                  (new 'static 'spool-anim :name "maincavecam-gnawer-fuel-cell" :index 3 :parts 1 :command-list '())
+                                  0
+                                  self
+                                  '()
+                                  )
+                                (let ((a0-7 (new 'stack-no-clear 'vector)))
+                                  (set-vector! a0-7 4485903.0 51184.027 -12815461.0 1.0)
+                                  (birth-pickup-at-point
+                                    a0-7
+                                    (pickup-type fuel-cell)
+                                    (the float (-> self entity extra perm task))
+                                    #f
+                                    self
+                                    (the-as fact-info #f)
+                                    )
+                                  )
+                                )
                             (-> s5-0 ppointer)
                             )
                           0

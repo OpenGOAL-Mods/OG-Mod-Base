@@ -1761,15 +1761,17 @@
 (defstate battlecontroller-play-intro-camera (misty-battlecontroller)
   :virtual #t
   :code (behavior ()
-    (let ((gp-1 (ppointer->handle
-                  (process-spawn pov-camera (-> self root trans) *mistycam-sg* "lurkerattack" 0 #f '() :to self)
+    (when *enable-ingame-cutscenes?*
+      (let ((gp-1 (ppointer->handle
+                    (process-spawn pov-camera (-> self root trans) *mistycam-sg* "lurkerattack" 0 #f '() :to self)
+                    )
                   )
-                )
+            )
+        (while (handle->process (the-as handle gp-1))
+          (suspend)
           )
-      (while (handle->process (the-as handle gp-1))
-        (suspend)
         )
-      )
+    )
     (go-virtual battlecontroller-active)
     (none)
     )
@@ -1858,7 +1860,7 @@
     )
   :code (behavior ()
     (process-drawable-birth-fuel-cell (the-as entity #f) (the-as vector #f) #f)
-    (when (and *target* (-> self play-cutscene?))
+    (when (and *enable-ingame-cutscenes?* *target* (-> self play-cutscene?))
       (ambient-hint-spawn "gamcam02" (the-as vector #f) *entity-pool* 'camera)
       (let ((gp-1
               (ppointer->handle

@@ -357,21 +357,23 @@
       (-> self root-override trans)
       :to *entity-pool*
       )
-    (let ((v1-7
-            (process-spawn
-              snowcam
-              :init pov-camera-init-by-other
-              (-> self spawn-trans)
-              *snowcam-sg*
-              "gearstart"
-              0
-              self
-              '((0 ambient camera "gamcam38") (10 alive "ecovent-278"))
-              :to self
+    (if *enable-ingame-cutscenes?*
+      (let ((v1-7
+              (process-spawn
+                snowcam
+                :init pov-camera-init-by-other
+                (-> self spawn-trans)
+                *snowcam-sg*
+                "gearstart"
+                0
+                self
+                '((0 ambient camera "gamcam38") (10 alive "ecovent-278"))
+                :to self
+                )
               )
             )
-          )
-      (set! (-> (the-as snowcam (-> v1-7 0)) seq) (the-as uint 2))
+        (set! (-> (the-as snowcam (-> v1-7 0)) seq) (the-as uint 2))
+        )
       )
     (change-sound! (-> self sound) (static-sound-name "snw-eggtop-seq"))
     (save-reminder (get-task-control (-> self entity extra perm task)) 2 4)
@@ -1348,35 +1350,39 @@
   :trans (the-as (function none :behavior snow-switch) rider-trans)
   :code (behavior ()
     (local-vars (v1-1 symbol))
-    (until v1-1
-      (suspend)
-      (set! v1-1 (or (not *target*) (not (logtest? (-> *target* state-flags) (state-flags grabbed)))))
+    (if *enable-ingame-cutscenes?*
+      (until v1-1
+        (suspend)
+        (set! v1-1 (or (not *target*) (not (logtest? (-> *target* state-flags) (state-flags grabbed)))))
+        )
       )
     (sound-play "prec-button1" :pitch -1)
-    (let ((gp-1 (get-process *default-dead-pool* snowcam #x4000)))
-      (set! (-> (the-as snowcam (-> (when gp-1
-                                      (let ((t9-3 (method-of-type snowcam activate)))
-                                        (t9-3 (the-as snowcam gp-1) self 'snowcam (the-as pointer #x70004000))
+    (if *enable-ingame-cutscenes?*
+      (let ((gp-1 (get-process *default-dead-pool* snowcam #x4000)))
+        (set! (-> (the-as snowcam (-> (when gp-1
+                                        (let ((t9-3 (method-of-type snowcam activate)))
+                                          (t9-3 (the-as snowcam gp-1) self 'snowcam (the-as pointer #x70004000))
+                                          )
+                                        (run-now-in-process
+                                          gp-1
+                                          pov-camera-init-by-other
+                                          (new 'static 'vector :x 3411656.8 :y 779689.56 :z -13573010.0 :w 1.0)
+                                          *snowcam-sg*
+                                          "gearstart"
+                                          0
+                                          self
+                                          '()
+                                          )
+                                        (-> gp-1 ppointer)
                                         )
-                                      (run-now-in-process
-                                        gp-1
-                                        pov-camera-init-by-other
-                                        (new 'static 'vector :x 3411656.8 :y 779689.56 :z -13573010.0 :w 1.0)
-                                        *snowcam-sg*
-                                        "gearstart"
-                                        0
-                                        self
-                                        '()
-                                        )
-                                      (-> gp-1 ppointer)
+                                      0
                                       )
-                                    0
-                                    )
-                        )
-                seq
-                )
-            (the-as uint 0)
-            )
+                          )
+                  seq
+                  )
+              (the-as uint 0)
+              )
+        )
       )
     0
     (let ((gp-2 #f))

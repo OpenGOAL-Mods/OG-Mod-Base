@@ -54,49 +54,53 @@
     (case (-> self path-pos)
       ((0.0)
        (load-state-want-display-level 'sunken 'display)
-       (let ((gp-0 (get-process *default-dead-pool* village2cam #x4000)))
-         (set! (-> (the-as village2cam (-> (when gp-0
-                                             (let ((t9-3 (method-of-type village2cam activate)))
-                                               (t9-3 (the-as village2cam gp-0) self 'village2cam (the-as pointer #x70004000))
-                                               )
-                                             (run-now-in-process
-                                               gp-0
-                                               pov-camera-init-by-other
-                                               (-> self spawn-pos)
-                                               *village2cam-sg*
-                                               "elevator-at-top-going-down"
-                                               0
-                                               #f
-                                               '()
-                                               )
-                                             (-> gp-0 ppointer)
-                                             )
-                                           0
-                                           )
-                           )
-                   seq
-                   )
-               (the-as uint 0)
-               )
-         )
-       0
-       )
-      ((1.0)
-       (let ((v1-10 (process-spawn
-                      village2cam
-                      :init pov-camera-init-by-other
-                      (-> self spawn-pos)
-                      *village2cam-sg*
-                      "elevator-at-top-going-down"
-                      0
-                      #f
-                      '()
-                      :to self
-                      )
+       (when *enable-ingame-cutscenes?*
+        (let ((gp-0 (get-process *default-dead-pool* village2cam #x4000)))
+          (set! (-> (the-as village2cam (-> (when gp-0
+                                              (let ((t9-3 (method-of-type village2cam activate)))
+                                                (t9-3 (the-as village2cam gp-0) self 'village2cam (the-as pointer #x70004000))
+                                                )
+                                              (run-now-in-process
+                                                gp-0
+                                                pov-camera-init-by-other
+                                                (-> self spawn-pos)
+                                                *village2cam-sg*
+                                                "elevator-at-top-going-down"
+                                                0
+                                                #f
+                                                '()
+                                                )
+                                              (-> gp-0 ppointer)
+                                              )
+                                            0
+                                            )
+                            )
+                    seq
                     )
-             )
-         (set! (-> (the-as village2cam (-> v1-10 0)) seq) (the-as uint 1))
-         )
+                (the-as uint 0)
+                )
+          )
+        )
+        0
+      )
+      ((1.0)
+       (when *enable-ingame-cutscenes?*
+        (let ((v1-10 (process-spawn
+                        village2cam
+                        :init pov-camera-init-by-other
+                        (-> self spawn-pos)
+                        *village2cam-sg*
+                        "elevator-at-top-going-down"
+                        0
+                        #f
+                        '()
+                        :to self
+                        )
+                      )
+              )
+          (set! (-> (the-as village2cam (-> v1-10 0)) seq) (the-as uint 1))
+          )
+        )
        )
       )
     (none)
@@ -124,20 +128,22 @@
       (set! *teleport* #t)
       (set! (-> self play-at-top-going-up-camera?) #f)
       (load-state-want-display-level 'sunken 'special)
-      (let ((v1-8 (process-spawn
-                    village2cam
-                    :init pov-camera-init-by-other
-                    (-> self spawn-pos)
-                    *village2cam-sg*
-                    "elevator-at-top-going-down"
-                    0
-                    #f
-                    '()
-                    :to self
+      (when *enable-ingame-cutscenes?*
+        (let ((v1-8 (process-spawn
+                      village2cam
+                      :init pov-camera-init-by-other
+                      (-> self spawn-pos)
+                      *village2cam-sg*
+                      "elevator-at-top-going-down"
+                      0
+                      #f
+                      '()
+                      :to self
+                      )
                     )
-                  )
-            )
-        (set! (-> (the-as village2cam (-> v1-8 0)) seq) (the-as uint 2))
+              )
+          (set! (-> (the-as village2cam (-> v1-8 0)) seq) (the-as uint 2))
+          )
         )
       )
     (none)
@@ -158,7 +164,7 @@
             )
         )
       (vector-! gp-0 (-> self root-override trans) s5-0)
-      (when (< (-> self path-pos) 0.9)
+      (when *enable-ingame-cutscenes?* (< (-> self path-pos) 0.9)
         (move-by-vector! (-> *target* control) gp-0)
         (send-event *target* 'reset-height)
         )

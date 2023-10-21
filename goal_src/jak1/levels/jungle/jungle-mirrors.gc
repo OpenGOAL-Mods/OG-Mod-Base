@@ -8,6 +8,7 @@
 (declare-type reflector process-drawable)
 
 (define-extern draw-power-beam (function vector vector none))
+(define-extern process-close? (function process-drawable float basic))
 
 ;; DECOMP BEGINS
 
@@ -1057,95 +1058,97 @@
   )
 
 (defbehavior peri-beamcam-init-by-other process ((arg0 string))
-  (let ((gp-0 (entity-by-name "junglecam-1")))
-    (the-as
-      (pointer pov-camera)
-      (cond
-        (gp-0
-          (cond
-            ((name= arg0 "reflector-mirror-2")
-             (process-spawn
-               pov-camera
-               (-> gp-0 extra trans)
-               *junglecam-sg*
-               "tower1"
-               0
-               #f
-               '((0 ambient camera "gamcam14"))
-               :to self
-               )
-             )
-            ((name= arg0 "periscope-11")
-             (process-spawn
-               pov-camera
-               (-> gp-0 extra trans)
-               *junglecam-sg*
-               "tower2"
-               0
-               #f
-               '((0 ambient camera "gamcam15") (0 want-force-vis jungle #t) (0 want-force-vis village1 #t))
-               :to self
-               )
-             )
-            ((name= arg0 "periscope-12")
-             (process-spawn
-               pov-camera
-               (-> gp-0 extra trans)
-               *junglecam-sg*
-               "tower3"
-               0
-               #f
-               '((0 ambient camera "gamcam16"))
-               :to self
-               )
-             )
-            ((name= arg0 "periscope-13")
-             (process-spawn
-               pov-camera
-               (-> gp-0 extra trans)
-               *junglecam-sg*
-               "tower4"
-               0
-               #f
-               '((0 ambient camera "gamcam17"))
-               :to self
-               )
-             )
-            ((name= arg0 "periscope-14")
-             (process-spawn
-               pov-camera
-               (-> gp-0 extra trans)
-               *junglecam-sg*
-               "tower5"
-               0
-               #f
-               '((0 ambient camera "gamcam18") (0 want-force-vis jungle #t) (0 want-force-vis village1 #t))
-               :to self
-               )
-             )
-            ((name= arg0 "periscope-15")
-             (process-spawn
-               pov-camera
-               (-> gp-0 extra trans)
-               *junglecam-sg*
-               "beamcam"
-               0
-               #f
-               '((0 ambient camera "gamcam19")
-                 (0 want-force-vis jungle #t)
-                 (0 want-force-vis village1 #t)
-                 (0 display-level village1 movie)
-                 )
-               :to self
-               )
-             )
-            (else
-              (format #t "ERROR<GMJ>: don't know which peri-beamcam to play for ~S~%" arg0)
+  (when *enable-ingame-cutscenes?*
+    (let ((gp-0 (entity-by-name "junglecam-1")))
+      (the-as
+        (pointer pov-camera)
+        (cond
+          (gp-0
+            (cond
+              ((name= arg0 "reflector-mirror-2")
+              (process-spawn
+                pov-camera
+                (-> gp-0 extra trans)
+                *junglecam-sg*
+                "tower1"
+                0
+                #f
+                '((0 ambient camera "gamcam14"))
+                :to self
+                )
+              )
+              ((name= arg0 "periscope-11")
+              (process-spawn
+                pov-camera
+                (-> gp-0 extra trans)
+                *junglecam-sg*
+                "tower2"
+                0
+                #f
+                '((0 ambient camera "gamcam15") (0 want-force-vis jungle #t) (0 want-force-vis village1 #t))
+                :to self
+                )
+              )
+              ((name= arg0 "periscope-12")
+              (process-spawn
+                pov-camera
+                (-> gp-0 extra trans)
+                *junglecam-sg*
+                "tower3"
+                0
+                #f
+                '((0 ambient camera "gamcam16"))
+                :to self
+                )
+              )
+              ((name= arg0 "periscope-13")
+              (process-spawn
+                pov-camera
+                (-> gp-0 extra trans)
+                *junglecam-sg*
+                "tower4"
+                0
+                #f
+                '((0 ambient camera "gamcam17"))
+                :to self
+                )
+              )
+              ((name= arg0 "periscope-14")
+              (process-spawn
+                pov-camera
+                (-> gp-0 extra trans)
+                *junglecam-sg*
+                "tower5"
+                0
+                #f
+                '((0 ambient camera "gamcam18") (0 want-force-vis jungle #t) (0 want-force-vis village1 #t))
+                :to self
+                )
+              )
+              ((name= arg0 "periscope-15")
+              (process-spawn
+                pov-camera
+                (-> gp-0 extra trans)
+                *junglecam-sg*
+                "beamcam"
+                0
+                #f
+                '((0 ambient camera "gamcam19")
+                  (0 want-force-vis jungle #t)
+                  (0 want-force-vis village1 #t)
+                  (0 display-level village1 movie)
+                  )
+                :to self
+                )
+              )
+              (else
+                (format #t "ERROR<GMJ>: don't know which peri-beamcam to play for ~S~%" arg0)
+                )
               )
             )
-          )
-        (else
-          (format #t "ERROR<GMJ>: couldn't find junglecam-1 to initialize peri-beamcam~%")
+          (else
+            (format #t "ERROR<GMJ>: couldn't find junglecam-1 to initialize peri-beamcam~%")
+            )
           )
         )
       )
@@ -1878,7 +1881,7 @@
           (suspend)
           )
         )
-      (process-grab? *target*)
+      (if *enable-ingame-cutscenes?* (process-grab? *target*))
       (while (or (-> self child) (-> *setting-control* current ambient))
         (suspend)
         )
@@ -1969,7 +1972,9 @@
                   )
                 0.0
                 )
-            (send-event *target* 'get-pickup 3 5.0)
+            (if (process-close? (the-as process-drawable (process-by-ename "reflector-mirror-2")) 22000.0)
+              (send-event *target* 'get-pickup 3 5.0)
+              )
             )
         )
       )

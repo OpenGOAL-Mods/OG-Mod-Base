@@ -5,6 +5,8 @@
 ;; name in dgo: plat-button
 ;; dgos: GAME, COMMON, L1
 
+(define-extern *enable-ingame-cutscenes?* symbol)
+
 ;; DECOMP BEGINS
 
 
@@ -66,7 +68,7 @@
                    (-> self root-override)
                    (the-as uint 1)
                    )
-                  (or (not (-> self should-grab-player?)) (set! (-> self grab-player?) (process-grab? *target*)))
+                  (or (not *enable-ingame-cutscenes?*) (not (-> self should-grab-player?)) (set! (-> self grab-player?) (process-grab? *target*)))
                   )
              (go-virtual plat-button-pressed)
              )

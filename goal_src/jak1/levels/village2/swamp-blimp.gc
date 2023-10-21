@@ -627,42 +627,44 @@
     )
   :code (behavior ()
     (let ((gp-0 (tetherrock-get-info (-> self entity))))
-      (hide-hud-quick)
-      (process-grab? *target*)
-      (set-setting! 'movie (process->ppointer self) 0.0 0)
-      (set-setting! 'process-mask 'set 0.0 (process-mask movie platform))
-      (apply-settings *setting-control*)
-      (let* ((s4-0 (get-task-control (game-task swamp-tether-1)))
-             (s5-0 (+ (get-reminder s4-0 0) 1))
-             )
-        (save-reminder s4-0 s5-0 0)
-        (cond
-          ((= s5-0 1)
-           (ambient-hint-spawn "gamcam03" (the-as vector #f) *entity-pool* 'camera)
-           )
-          ((= s5-0 2)
-           (ambient-hint-spawn "gamcam03" (the-as vector #f) *entity-pool* 'camera)
-           )
-          ((= s5-0 3)
-           (ambient-hint-spawn "gamcam03" (the-as vector #f) *entity-pool* 'camera)
-           )
-          ((= s5-0 4)
-           (ambient-hint-spawn "gamcam06" (the-as vector #f) *entity-pool* 'camera)
-           )
+      (when *enable-ingame-cutscenes?*
+        (hide-hud-quick)
+        (process-grab? *target*)
+        (set-setting! 'movie (process->ppointer self) 0.0 0)
+        (set-setting! 'process-mask 'set 0.0 (process-mask movie platform))
+        (apply-settings *setting-control*)
+        (let* ((s4-0 (get-task-control (game-task swamp-tether-1)))
+              (s5-0 (+ (get-reminder s4-0 0) 1))
+              )
+          (save-reminder s4-0 s5-0 0)
+          (cond
+            ((= s5-0 1)
+            (ambient-hint-spawn "gamcam03" (the-as vector #f) *entity-pool* 'camera)
+            )
+            ((= s5-0 2)
+            (ambient-hint-spawn "gamcam03" (the-as vector #f) *entity-pool* 'camera)
+            )
+            ((= s5-0 3)
+            (ambient-hint-spawn "gamcam03" (the-as vector #f) *entity-pool* 'camera)
+            )
+            ((= s5-0 4)
+            (ambient-hint-spawn "gamcam06" (the-as vector #f) *entity-pool* 'camera)
+            )
+            )
           )
+        (let ((s5-1 (entity-by-name (-> gp-0 rock-camera))))
+          (cam-slave-get-vector-with-offset (the-as entity-actor s5-1) *camera-other-trans* 'trans)
+          (cam-slave-get-rot (the-as entity-actor s5-1) *camera-other-matrix*)
+          (set! (-> *camera-other-fov* data) (cam-slave-get-fov s5-1))
+          )
+        (set! (-> *camera-other-root* quad) (-> self root-override trans quad))
+        (set! (-> self state-time) (-> *display* base-frame-counter))
+        (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.6))
+          (set! *camera-look-through-other* 2)
+          (suspend)
+          )
+        (set! (-> self tension) 0.0)
         )
-      (let ((s5-1 (entity-by-name (-> gp-0 rock-camera))))
-        (cam-slave-get-vector-with-offset (the-as entity-actor s5-1) *camera-other-trans* 'trans)
-        (cam-slave-get-rot (the-as entity-actor s5-1) *camera-other-matrix*)
-        (set! (-> *camera-other-fov* data) (cam-slave-get-fov s5-1))
-        )
-      (set! (-> *camera-other-root* quad) (-> self root-override trans quad))
-      (set! (-> self state-time) (-> *display* base-frame-counter))
-      (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.6))
-        (set! *camera-look-through-other* 2)
-        (suspend)
-        )
-      (set! (-> self tension) 0.0)
       (close-specific-task! (-> self entity extra perm task) (task-status need-reminder))
       (birth-pickup-at-point
         (-> self root-override trans)
@@ -672,129 +674,220 @@
         self
         (the-as fact-info #f)
         )
-      (let ((a1-12 (new 'stack-no-clear 'event-message-block)))
-        (set! (-> a1-12 from) self)
-        (set! (-> a1-12 num-params) 1)
-        (set! (-> a1-12 message) 'tetherrock-break-evt)
-        (set! (-> a1-12 param 0) (the-as uint (-> self entity)))
-        (let* ((t9-19 send-event-function)
-               (v1-41 (-> self blimp))
-               (s5-2 (t9-19
-                       (if v1-41
-                           (-> v1-41 extra process)
-                           )
-                       a1-12
-                       )
-                     )
-               )
-          (process-spawn
-            part-tracker
-            :init part-tracker-init
-            (-> *part-group-id-table* 285)
-            -1
-            #f
-            #f
-            #f
-            (-> self root-override trans)
-            :to *entity-pool*
-            )
-          (logior! (-> self draw status) (draw-status skip-bones))
-          (let ((s4-3 (ppointer->handle (manipy-spawn
-                                          (-> self root-override trans)
-                                          (-> self entity)
-                                          *swamp-tetherrock-explode-sg*
-                                          #f
-                                          :to *entity-pool*
-                                          )
-                                        )
+      (if *enable-ingame-cutscenes?*
+        (let ((a1-12 (new 'stack-no-clear 'event-message-block)))
+          (set! (-> a1-12 from) self)
+          (set! (-> a1-12 num-params) 1)
+          (set! (-> a1-12 message) 'tetherrock-break-evt)
+          (set! (-> a1-12 param 0) (the-as uint (-> self entity)))
+          (let* ((t9-19 send-event-function)
+                (v1-41 (-> self blimp))
+                (s5-2 (t9-19
+                        (if v1-41
+                            (-> v1-41 extra process)
+                            )
+                        a1-12
+                        )
                       )
                 )
-            (send-event (handle->process (the-as handle s4-3)) 'anim-mode 'play1)
-            (send-event (handle->process (the-as handle s4-3)) 'art-joint-anim "swamp-tetherrock-explode-explode" 0)
-            (send-event (handle->process (the-as handle s4-3)) 'draw #t)
-            (while (handle->process (the-as handle s4-3))
-              (set! *camera-look-through-other* 2)
-              (suspend)
+            (process-spawn
+              part-tracker
+              :init part-tracker-init
+              (-> *part-group-id-table* 285)
+              -1
+              #f
+              #f
+              #f
+              (-> self root-override trans)
+              :to *entity-pool*
               )
-            )
-          (set! (-> self state-time) (-> *display* base-frame-counter))
-          (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 3))
-            (set! *camera-look-through-other* 2)
-            (suspend)
-            )
-          (when (zero? s5-2)
-            (let ((gp-1 (entity-by-name (-> gp-0 arm-camera))))
-              (cam-slave-get-vector-with-offset (the-as entity-actor gp-1) *camera-other-trans* 'trans)
-              (cam-slave-get-rot (the-as entity-actor gp-1) *camera-other-matrix*)
-              (set! (-> *camera-other-fov* data) (cam-slave-get-fov gp-1))
-              )
-            (set! (-> *camera-other-root* quad) (-> self root-override trans quad))
-            (set! (-> self state-time) (-> *display* base-frame-counter))
-            (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 5))
-              (set! *camera-look-through-other* 2)
-              (suspend)
-              )
-            (set! (-> self state-time) (-> *display* base-frame-counter))
-            (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 5))
-              (set! *camera-look-through-other* 2)
-              (let ((gp-2 (new 'stack-no-clear 'vector))
-                    (a0-58 (-> self blimp extra process))
-                    )
-                (when a0-58
-                  (vector-! gp-2 (-> (the-as swamp-blimp a0-58) root-override trans) *camera-other-trans*)
-                  (vector-normalize! gp-2 1.0)
-                  (forward-down->inv-matrix *camera-other-matrix* gp-2 (-> *camera* local-down))
+            (logior! (-> self draw status) (draw-status skip-bones))
+            (let ((s4-3 (ppointer->handle (manipy-spawn
+                                            (-> self root-override trans)
+                                            (-> self entity)
+                                            *swamp-tetherrock-explode-sg*
+                                            #f
+                                            :to *entity-pool*
+                                            )
+                                          )
+                        )
                   )
-                )
-              (suspend)
-              )
-            )
-          (process-release? *target*)
-          (process-spawn-function
-            process
-            (lambda ((arg0 int))
-              (while (or (-> *setting-control* current ambient)
-                         (-> *setting-control* current hint)
-                         (-> *setting-control* current movie)
-                         )
+              (send-event (handle->process (the-as handle s4-3)) 'anim-mode 'play1)
+              (send-event (handle->process (the-as handle s4-3)) 'art-joint-anim "swamp-tetherrock-explode-explode" 0)
+              (send-event (handle->process (the-as handle s4-3)) 'draw #t)
+              (while (handle->process (the-as handle s4-3))
+                (set! *camera-look-through-other* 2)
                 (suspend)
                 )
-              (cond
-                ((= arg0 3)
-                 (level-hint-spawn
-                   (text-id swamp-tetherrocks-3-left)
-                   "sksp0157"
-                   (the-as entity #f)
-                   *entity-pool*
-                   (game-task none)
-                   )
-                 )
-                ((= arg0 2)
-                 (level-hint-spawn
-                   (text-id swamp-tetherrocks-2-left)
-                   "sksp0158"
-                   (the-as entity #f)
-                   *entity-pool*
-                   (game-task none)
-                   )
-                 )
-                ((= arg0 1)
-                 (level-hint-spawn
-                   (text-id swamp-tetherrocks-1-left)
-                   "sksp0159"
-                   (the-as entity #f)
-                   *entity-pool*
-                   (game-task none)
-                   )
-                 )
-                ((zero? arg0)
-                 (level-hint-spawn (text-id swamp-arm-resolution) "sagevb04" (the-as entity #f) *entity-pool* (game-task none))
-                 )
-                )
-              (none)
               )
-            s5-2
-            :to self
+            (set! (-> self state-time) (-> *display* base-frame-counter))
+            (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 3))
+              (set! *camera-look-through-other* 2)
+              (suspend)
+              )
+            (when (zero? s5-2)
+              (let ((gp-1 (entity-by-name (-> gp-0 arm-camera))))
+                (cam-slave-get-vector-with-offset (the-as entity-actor gp-1) *camera-other-trans* 'trans)
+                (cam-slave-get-rot (the-as entity-actor gp-1) *camera-other-matrix*)
+                (set! (-> *camera-other-fov* data) (cam-slave-get-fov gp-1))
+                )
+              (set! (-> *camera-other-root* quad) (-> self root-override trans quad))
+              (set! (-> self state-time) (-> *display* base-frame-counter))
+              (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 5))
+                (set! *camera-look-through-other* 2)
+                (suspend)
+                )
+              (set! (-> self state-time) (-> *display* base-frame-counter))
+              (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 5))
+                (set! *camera-look-through-other* 2)
+                (let ((gp-2 (new 'stack-no-clear 'vector))
+                      (a0-58 (-> self blimp extra process))
+                      )
+                  (when a0-58
+                    (vector-! gp-2 (-> (the-as swamp-blimp a0-58) root-override trans) *camera-other-trans*)
+                    (vector-normalize! gp-2 1.0)
+                    (forward-down->inv-matrix *camera-other-matrix* gp-2 (-> *camera* local-down))
+                    )
+                  )
+                (suspend)
+                )
+              )
+            (process-release? *target*)
+            (process-spawn-function
+              process
+              (lambda ((arg0 int))
+                (while (or (-> *setting-control* current ambient)
+                          (-> *setting-control* current hint)
+                          (-> *setting-control* current movie)
+                          )
+                  (suspend)
+                  )
+                (cond
+                  ((= arg0 3)
+                  (level-hint-spawn
+                    (text-id swamp-tetherrocks-3-left)
+                    "sksp0157"
+                    (the-as entity #f)
+                    *entity-pool*
+                    (game-task none)
+                    )
+                  )
+                  ((= arg0 2)
+                  (level-hint-spawn
+                    (text-id swamp-tetherrocks-2-left)
+                    "sksp0158"
+                    (the-as entity #f)
+                    *entity-pool*
+                    (game-task none)
+                    )
+                  )
+                  ((= arg0 1)
+                  (level-hint-spawn
+                    (text-id swamp-tetherrocks-1-left)
+                    "sksp0159"
+                    (the-as entity #f)
+                    *entity-pool*
+                    (game-task none)
+                    )
+                  )
+                  ((zero? arg0)
+                  (level-hint-spawn (text-id swamp-arm-resolution) "sagevb04" (the-as entity #f) *entity-pool* (game-task none))
+                  )
+                  )
+                (none)
+                )
+              s5-2
+              :to self
+              )
+            )
+          )
+        (let ((a1-12 (new 'stack-no-clear 'event-message-block)))
+          (set! (-> a1-12 from) self)
+          (set! (-> a1-12 num-params) 1)
+          (set! (-> a1-12 message) 'tetherrock-break-evt)
+          (set! (-> a1-12 param 0) (the-as uint (-> self entity)))
+          (let* ((t9-19 send-event-function)
+                (v1-41 (-> self blimp))
+                (s5-2 (t9-19
+                        (if v1-41
+                            (-> v1-41 extra process)
+                            )
+                        a1-12
+                        )
+                      )
+                )
+            (process-spawn
+              part-tracker
+              :init part-tracker-init
+              (-> *part-group-id-table* 285)
+              -1
+              #f
+              #f
+              #f
+              (-> self root-override trans)
+              :to *entity-pool*
+              )
+            (logior! (-> self draw status) (draw-status skip-bones))
+            (let ((s4-3 (ppointer->handle (manipy-spawn
+                                            (-> self root-override trans)
+                                            (-> self entity)
+                                            *swamp-tetherrock-explode-sg*
+                                            #f
+                                            :to *entity-pool*
+                                            )
+                                          )
+                        )
+                  )
+              (send-event (handle->process (the-as handle s4-3)) 'anim-mode 'play1)
+              (send-event (handle->process (the-as handle s4-3)) 'art-joint-anim "swamp-tetherrock-explode-explode" 0)
+              (send-event (handle->process (the-as handle s4-3)) 'draw #t)
+              )
+            (process-spawn-function
+              process
+              (lambda ((arg0 int))
+                (while (or (-> *setting-control* current ambient)
+                          (-> *setting-control* current hint)
+                          (-> *setting-control* current movie)
+                          )
+                  (suspend)
+                  )
+                (cond
+                  ((= arg0 3)
+                  (level-hint-spawn
+                    (text-id swamp-tetherrocks-3-left)
+                    "sksp0157"
+                    (the-as entity #f)
+                    *entity-pool*
+                    (game-task none)
+                    )
+                  )
+                  ((= arg0 2)
+                  (level-hint-spawn
+                    (text-id swamp-tetherrocks-2-left)
+                    "sksp0158"
+                    (the-as entity #f)
+                    *entity-pool*
+                    (game-task none)
+                    )
+                  )
+                  ((= arg0 1)
+                  (level-hint-spawn
+                    (text-id swamp-tetherrocks-1-left)
+                    "sksp0159"
+                    (the-as entity #f)
+                    *entity-pool*
+                    (game-task none)
+                    )
+                  )
+                  ((zero? arg0)
+                  (level-hint-spawn (text-id swamp-arm-resolution) "sagevb04" (the-as entity #f) *entity-pool* (game-task none))
+                  )
+                  )
+                (none)
+                )
+              s5-2
+              :to self
+              )
             )
           )
         )

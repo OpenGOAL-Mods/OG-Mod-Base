@@ -43,7 +43,7 @@
       ((or (not (ja-group? arg2)) (< f0-0 arg0) (< arg1 f0-0))
        (robotboss-cut-cam-exit)
        )
-      ((or (and (logtest? (-> *target* control unknown-surface00 flags) (surface-flags jump))
+      ((or (not *enable-ingame-cutscenes?*) (and (logtest? (-> *target* control unknown-surface00 flags) (surface-flags jump))
                 (not (logtest? (-> *target* control status) (cshape-moving-flags onsurf)))
                 )
            (-> self skip-cut)

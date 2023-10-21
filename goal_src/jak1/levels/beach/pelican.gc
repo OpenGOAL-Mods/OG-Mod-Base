@@ -242,59 +242,93 @@
           )
       (set! (-> self path-pos) (- f0-3 (* (the float (the int (/ f0-3 f1-2))) f1-2)))
       )
-    (when (and (and *target* (>= 81920.0 (vector-vector-xz-distance (-> self path-vector) (-> *target* control trans))))
-               (not (handle->process (-> self cam-tracker)))
-               )
-      (set! (-> self cam-tracker)
-            (ppointer->handle (process-spawn
-                                camera-tracker
-                                :init camera-tracker-init
-                                (lambda :behavior camera-tracker
-                                  ()
-                                  (local-vars
-                                    (a0-6 process-tree)
-                                    (a1-5 event-message-block)
-                                    (t9-6 (function process-tree event-message-block object))
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (let ((target (get-interactive-target tgt-idx)))
+        (when (and (and target (>= 81920.0 (vector-vector-xz-distance (-> self path-vector) (-> target control trans))))
+                (not (handle->process (-> self cam-tracker)))
+                )
+          (cond 
+            (*enable-ingame-cutscenes?*
+              (set! (-> self cam-tracker)
+                    (ppointer->handle (process-spawn
+                                        camera-tracker
+                                        :init camera-tracker-init
+                                        (lambda :behavior camera-tracker
+                                          ()
+                                          (local-vars
+                                            (a0-6 process-tree)
+                                            (a1-5 event-message-block)
+                                            (t9-6 (function process-tree event-message-block object))
+                                            )
+                                          (while (not (process-grab? *target*))
+                                            (suspend)
+                                            )
+                                          (send-event (ppointer->process (-> self parent)) 'position 4.0)
+                                          (send-event (ppointer->process (-> self parent)) 'dive)
+                                          (suspend)
+                                          (suspend)
+                                          (send-event *camera* 'blend-from-as-fixed)
+                                          (camera-look-at (the-as pair (ppointer->process (-> self parent))) (the-as uint 0))
+                                          (camera-change-to "camera-215" 0 #f)
+                                          (until (t9-6 a0-6 a1-5)
+                                            (suspend)
+                                            (set! a1-5 (new 'stack-no-clear 'event-message-block))
+                                            (set! (-> a1-5 from) self)
+                                            (set! (-> a1-5 num-params) 0)
+                                            (set! (-> a1-5 message) 'got-cell?)
+                                            (set! t9-6 send-event-function)
+                                            (set! a0-6 (ppointer->process (-> self parent)))
+                                            )
+                                          (send-event *camera* 'point-of-interest #f)
+                                          (while (!= (-> self message) 'release)
+                                            (suspend)
+                                            )
+                                          (set! (-> self message) #f)
+                                          (while (not (process-release? (handle->process (-> self grab-target))))
+                                            (suspend)
+                                            )
+                                          (send-event *camera* 'blend-from-as-fixed)
+                                          (camera-look-at (the-as pair *target*) (the-as uint 0))
+                                          (camera-change-to (the-as string 'base) 150 #f)
+                                          (none)
+                                          )
+                                        :to self
+                                        )
+                                      )
+                    )
+              )
+            (else
+              (ppointer->handle (process-spawn
+                                    camera-tracker
+                                    :init camera-tracker-init
+                                    (lambda :behavior camera-tracker
+                                      ()
+                                      (local-vars
+                                        (a0-6 process-tree)
+                                        (a1-5 event-message-block)
+                                        (t9-6 (function process-tree event-message-block object))
+                                        )
+                                      (send-event (ppointer->process (-> self parent)) 'dive)
+                                      (set! a1-5 (new 'stack-no-clear 'event-message-block))
+                                      (set! (-> a1-5 from) self)
+                                      (set! (-> a1-5 num-params) 0)
+                                      (set! (-> a1-5 message) 'got-cell?)
+                                      (set! t9-6 send-event-function)
+                                      (set! a0-6 (ppointer->process (-> self parent)))
+                                      (set! (-> self message) #f)
+                                      (none)
+                                      )
+                                    :to self
                                     )
-                                  (while (not (process-grab? *target*))
-                                    (suspend)
-                                    )
-                                  (send-event (ppointer->process (-> self parent)) 'position 4.0)
-                                  (send-event (ppointer->process (-> self parent)) 'dive)
-                                  (suspend)
-                                  (suspend)
-                                  (send-event *camera* 'blend-from-as-fixed)
-                                  (camera-look-at (the-as pair (ppointer->process (-> self parent))) (the-as uint 0))
-                                  (camera-change-to "camera-215" 0 #f)
-                                  (until (t9-6 a0-6 a1-5)
-                                    (suspend)
-                                    (set! a1-5 (new 'stack-no-clear 'event-message-block))
-                                    (set! (-> a1-5 from) self)
-                                    (set! (-> a1-5 num-params) 0)
-                                    (set! (-> a1-5 message) 'got-cell?)
-                                    (set! t9-6 send-event-function)
-                                    (set! a0-6 (ppointer->process (-> self parent)))
-                                    )
-                                  (send-event *camera* 'point-of-interest #f)
-                                  (while (!= (-> self message) 'release)
-                                    (suspend)
-                                    )
-                                  (set! (-> self message) #f)
-                                  (while (not (process-release? (handle->process (-> self grab-target))))
-                                    (suspend)
-                                    )
-                                  (send-event *camera* 'blend-from-as-fixed)
-                                  (camera-look-at (the-as pair *target*) (the-as uint 0))
-                                  (camera-change-to (the-as string 'base) 150 #f)
-                                  (none)
                                   )
-                                :to self
-                                )
-                              )
+              )
             )
-      (set! (-> self draw force-lod) 0)
-      0
+          (set! (-> self draw force-lod) 0)
+          0
+          )
+        )
       )
+    
     (when (and (-> self state-object) (>= (-> self path-pos) 6.0) (< (-> self path-pos) 7.0))
       (let ((v1-24 (-> self entity extra perm)))
         (logior! (-> v1-24 status) (entity-perm-status user-set-from-cstage))
@@ -595,15 +629,17 @@
             (ppointer->handle (manipy-spawn (-> self entity extra trans) (-> self entity) *beachcam-sg* #f :to self))
             )
           )
-      (let ((s5-0 (get-process *default-dead-pool* othercam #x4000)))
-        (ppointer->handle (when s5-0
-                            (let ((t9-4 (method-of-type othercam activate)))
-                              (t9-4 (the-as othercam s5-0) (-> gp-1 process 0) 'othercam (the-as pointer #x70004000))
+      (when *enable-ingame-cutscenes?*
+        (let ((s5-0 (get-process *default-dead-pool* othercam #x4000)))
+          (ppointer->handle (when s5-0
+                              (let ((t9-4 (method-of-type othercam activate)))
+                                (t9-4 (the-as othercam s5-0) (-> gp-1 process 0) 'othercam (the-as pointer #x70004000))
+                                )
+                              (run-now-in-process s5-0 othercam-init-by-other (-> gp-1 process 0) 4 #f #t)
+                              (-> s5-0 ppointer)
                               )
-                            (run-now-in-process s5-0 othercam-init-by-other (-> gp-1 process 0) 4 #f #t)
-                            (-> s5-0 ppointer)
                             )
-                          )
+          )
         )
       (let ((s4-0
               (ppointer->handle (process-spawn fuel-cell :init fuel-cell-init-as-clone (process->handle self) 0 :to self))
@@ -611,9 +647,11 @@
             (s5-2 (new 'stack-no-clear 'quaternion))
             )
         (quaternion-copy! s5-2 (-> self root-override quat))
-        (until v1-21
-          (suspend)
-          (set! v1-21 (or (not *target*) (process-grab? *target*)))
+        (when *enable-ingame-cutscenes?*
+          (until v1-21
+            (suspend)
+            (set! v1-21 (or (not *target*) (process-grab? *target*)))
+            )
           )
         (send-event (-> gp-1 process 0) 'anim-mode 'clone-anim)
         (ja-play-spooled-anim
@@ -621,7 +659,7 @@
             :name "pelican-spit-ext"
             :index 11
             :parts 2
-            :command-list '((10 send-event camera 'teleport-to-vector-start-string (static-vectorm -179 16 -421)))
+            :command-list '((if *enable-ingame-cutscenes?* (10 send-event camera 'teleport-to-vector-start-string (static-vectorm -179 16 -421))))
             )
           (the-as art-joint-anim pelican-sleep-ja)
           (the-as art-joint-anim #f)

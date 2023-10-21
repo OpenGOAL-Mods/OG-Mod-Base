@@ -788,119 +788,164 @@
          (go race-ring-idle)
          )
         )
-      (when *target*
-        (let ((gp-0 (new 'stack-no-clear 'vector)))
-          (set! (-> gp-0 quad) (-> self old-hips quad))
-          (set! (-> self old-hips quad) (-> (target-pos 26) quad))
-          (vector-! gp-0 gp-0 (-> self old-hips))
-          (when (>= (ray-flat-cyl-intersect (-> self cyl) (-> self old-hips) gp-0) 0.0)
-            (level-hint-spawn
-              (text-id rolling-ring-chase-1-hint)
-              "sksp0119"
-              (the-as entity #f)
-              *entity-pool*
-              (game-task none)
-              )
-            (if (= (-> self entity extra perm task) (game-task rolling-ring-chase-2))
+      (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+        (let ((target (get-interactive-target tgt-idx)))
+          (when target
+            (let ((gp-0 (new 'stack-no-clear 'vector)))
+              (set! (-> gp-0 quad) (-> self old-hips quad))
+              (set! (-> self old-hips quad) (-> (remote-target-pos 26 target) quad))
+              (vector-! gp-0 gp-0 (-> self old-hips))
+              (when (>= (ray-flat-cyl-intersect (-> self cyl) (-> self old-hips) gp-0) 0.0)
+                (format #t "here ~%")
                 (level-hint-spawn
-                  (text-id rolling-ring-chase-2-hint)
-                  "sksp0120"
+                  (text-id rolling-ring-chase-1-hint)
+                  "sksp0119"
                   (the-as entity #f)
                   *entity-pool*
                   (game-task none)
                   )
-                )
-            (cond
-              ((first-ring? self)
-               (close-specific-task! (-> self entity extra perm task) (task-status need-hint))
-               (entity-birth-no-kill (-> self link next))
-               (let ((a1-9 (new 'stack-no-clear 'event-message-block)))
-                 (set! (-> a1-9 from) self)
-                 (set! (-> a1-9 num-params) 0)
-                 (set! (-> a1-9 message) 'activate)
-                 (let ((t9-12 send-event-function)
-                       (v1-30 (-> self link next))
-                       )
-                   (t9-12
-                     (if v1-30
-                         (-> v1-30 extra process)
-                         )
-                     a1-9
-                     )
-                   )
-                 )
-               )
-              ((last-ring? self)
-               (let ((gp-2 (ppointer->handle (process-spawn othercam self 4 #f #t :to self)))
-                     (s5-2 (ppointer->handle (process-spawn
-                                               fuel-cell
-                                               :init fuel-cell-init-as-clone
-                                               (process->handle self)
-                                               (-> self entity extra perm task)
-                                               :to self
-                                               )
-                                             )
-                           )
-                     )
-                 (if *target*
-                     (logior! (-> *target* mask) (process-mask sleep))
-                     )
-                 (close-specific-task! (-> self entity extra perm task) (task-status need-reminder))
-                 (logclear! (-> self draw status) (draw-status hidden))
-                 (logior! (-> self draw status) (draw-status skip-bones))
-                 (if (= (-> self entity extra perm task) (game-task rolling-ring-chase-2))
-                     (ja-play-spooled-anim
-                       (new 'static 'spool-anim :name "race-ring-second-anim" :index 4 :parts 2 :command-list '())
-                       (the-as art-joint-anim #f)
-                       (the-as art-joint-anim #f)
-                       (the-as (function process-drawable symbol) false-func)
-                       )
-                     (ja-play-spooled-anim
-                       (new 'static 'spool-anim :name "race-ring-anim" :index 3 :parts 2 :command-list '())
-                       (the-as art-joint-anim #f)
-                       (the-as art-joint-anim #f)
-                       (the-as (function process-drawable symbol) false-func)
-                       )
-                     )
-                 (logclear! (-> self draw status) (draw-status skip-bones))
-                 (logior! (-> self draw status) (draw-status hidden))
-                 (cond
-                   ((handle->process (the-as int gp-2))
-                    (deactivate (-> gp-2 process 0))
+                (if (= (-> self entity extra perm task) (game-task rolling-ring-chase-2))
+                    (level-hint-spawn
+                      (text-id rolling-ring-chase-2-hint)
+                      "sksp0120"
+                      (the-as entity #f)
+                      *entity-pool*
+                      (game-task none)
+                      )
                     )
-                   (else
-                     )
-                   )
-                 (if *target*
-                     (logclear! (-> *target* mask) (process-mask sleep))
-                     )
-                 (let ((a0-54 (handle->process s5-2)))
-                   (if a0-54
-                       (send-event a0-54 'stop-cloning)
-                       )
-                   )
-                 )
-               )
-              (else
-                (entity-birth-no-kill (-> self link next))
-                (let ((a1-22 (new 'stack-no-clear 'event-message-block)))
-                  (set! (-> a1-22 from) self)
-                  (set! (-> a1-22 num-params) 0)
-                  (set! (-> a1-22 message) 'activate)
-                  (let ((t9-26 send-event-function)
-                        (v1-86 (-> self link next))
-                        )
-                    (t9-26
-                      (if v1-86
-                          (-> v1-86 extra process)
+                (cond
+                  ((first-ring? self)
+                  (close-specific-task! (-> self entity extra perm task) (task-status need-hint))
+                  (entity-birth-no-kill (-> self link next))
+                  (let ((a1-9 (new 'stack-no-clear 'event-message-block)))
+                    (set! (-> a1-9 from) self)
+                    (set! (-> a1-9 num-params) 0)
+                    (set! (-> a1-9 message) 'activate)
+                    (let ((t9-12 send-event-function)
+                          (v1-30 (-> self link next))
                           )
-                      a1-22
+                      (t9-12
+                        (if v1-30
+                            (-> v1-30 extra process)
+                            )
+                        a1-9
+                        )
                       )
                     )
                   )
+                  ((last-ring? self)
+                  (if *enable-ingame-cutscenes?*
+                    (let ((gp-2 (ppointer->handle (process-spawn othercam self 4 #f #t :to self)))
+                          (s5-2 (ppointer->handle (process-spawn
+                                                    fuel-cell
+                                                    :init fuel-cell-init-as-clone
+                                                    (process->handle self)
+                                                    (-> self entity extra perm task)
+                                                    :to self
+                                                    )
+                                                  )
+                                )
+                          )
+                      (if *target*
+                          (logior! (-> *target* mask) (process-mask sleep))
+                          )
+                      (close-specific-task! (-> self entity extra perm task) (task-status need-reminder))
+                      (logclear! (-> self draw status) (draw-status hidden))
+                      (logior! (-> self draw status) (draw-status skip-bones))
+                      (if (= (-> self entity extra perm task) (game-task rolling-ring-chase-2))
+                          (ja-play-spooled-anim
+                            (new 'static 'spool-anim :name "race-ring-second-anim" :index 4 :parts 2 :command-list '())
+                            (the-as art-joint-anim #f)
+                            (the-as art-joint-anim #f)
+                            (the-as (function process-drawable symbol) false-func)
+                            )
+                          (ja-play-spooled-anim
+                            (new 'static 'spool-anim :name "race-ring-anim" :index 3 :parts 2 :command-list '())
+                            (the-as art-joint-anim #f)
+                            (the-as art-joint-anim #f)
+                            (the-as (function process-drawable symbol) false-func)
+                            )
+                          )
+                      (logclear! (-> self draw status) (draw-status skip-bones))
+                      (logior! (-> self draw status) (draw-status hidden))
+                      (cond
+                        ((handle->process (the-as int gp-2))
+                          (deactivate (-> gp-2 process 0))
+                          )
+                        (else
+                          )
+                        )
+                      (if *target*
+                          (logclear! (-> *target* mask) (process-mask sleep))
+                          )
+                      (let ((a0-54 (handle->process s5-2)))
+                        (if a0-54
+                            (send-event a0-54 'stop-cloning)
+                            )
+                        )
+                      )
+                    (let ((s5-2 (ppointer->handle (process-spawn
+                                                    fuel-cell
+                                                    :init fuel-cell-init-as-clone
+                                                    (process->handle self)
+                                                    (-> self entity extra perm task)
+                                                    :to self
+                                                    )
+                                                  )
+                                )
+                          )
+                      (close-specific-task! (-> self entity extra perm task) (task-status need-reminder))
+                      (logclear! (-> self draw status) (draw-status hidden))
+                      (logior! (-> self draw status) (draw-status skip-bones))
+                      (if (= (-> self entity extra perm task) (game-task rolling-ring-chase-2))
+                          (ja-play-spooled-anim
+                            (new 'static 'spool-anim :name "race-ring-second-anim" :index 4 :parts 2 :command-list '())
+                            (the-as art-joint-anim #f)
+                            (the-as art-joint-anim #f)
+                            (the-as (function process-drawable symbol) false-func)
+                            )
+                          (ja-play-spooled-anim
+                            (new 'static 'spool-anim :name "race-ring-anim" :index 3 :parts 2 :command-list '())
+                            (the-as art-joint-anim #f)
+                            (the-as art-joint-anim #f)
+                            (the-as (function process-drawable symbol) false-func)
+                            )
+                          )
+                      (logclear! (-> self draw status) (draw-status skip-bones))
+                      (logior! (-> self draw status) (draw-status hidden))
+                      (if *target*
+                          (logclear! (-> *target* mask) (process-mask sleep))
+                          )
+                      (let ((a0-54 (handle->process s5-2)))
+                        (if a0-54
+                            (send-event a0-54 'stop-cloning)
+                            )
+                        )
+                      )
+                    )
+                  )
+                  (else
+                    (entity-birth-no-kill (-> self link next))
+                    (let ((a1-22 (new 'stack-no-clear 'event-message-block)))
+                      (set! (-> a1-22 from) self)
+                      (set! (-> a1-22 num-params) 0)
+                      (set! (-> a1-22 message) 'activate)
+                      (let ((t9-26 send-event-function)
+                            (v1-86 (-> self link next))
+                            )
+                        (t9-26
+                          (if v1-86
+                              (-> v1-86 extra process)
+                              )
+                          a1-22
+                          )
+                        )
+                      )
+                    )
+                  )
+                (go race-ring-idle)
                 )
               )
-            (go race-ring-idle)
             )
           )
         )

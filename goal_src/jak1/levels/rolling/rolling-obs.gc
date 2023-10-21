@@ -209,11 +209,17 @@
               )
 
 (defun dark-plant-check-target ((arg0 dark-plant))
-  (the-as symbol (and *target* (and (< (vector-vector-distance (-> arg0 root trans) (target-pos 0)) 16384.0)
-                                    (send-event *target* 'query 'powerup (pickup-type eco-green))
-                                    )
-                      )
-          )
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (let ((target (get-interactive-target tgt-idx)))
+      (if (the-as symbol (and target (and (< (vector-vector-distance (-> arg0 root trans) (remote-target-pos 0 target)) 16384.0)
+                                        (send-event target 'query 'powerup (pickup-type eco-green))
+                                        )
+                          )
+              )
+              (return #t)
+        )
+      )
+    )
   )
 
 (defun dark-plant-randomize ((arg0 dark-plant))
@@ -335,24 +341,28 @@
   :trans dark-plant-trans
   :code (behavior ()
     (loop
-      (when (and (logtest? (-> self draw status) (draw-status was-drawn))
-                 *target*
-                 (>= 81920.0 (vector-vector-distance (-> self root trans) (-> *target* control trans)))
-                 )
-        (if (rand-vu-percent? 0.3)
-            (sound-play "darkvine-move")
-            )
-        (when (task-closed? (game-task rolling-plants) (task-status need-hint))
-          (level-hint-spawn (text-id rolling-plants-hint) "sksp0113" (the-as entity #f) *entity-pool* (game-task none))
-          (if (not (send-event *target* 'query 'powerup (pickup-type eco-green)))
-              (level-hint-spawn
-                (text-id rolling-plants-hint-eco-green)
-                "sksp0114"
-                (the-as entity #f)
-                *entity-pool*
-                (game-task none)
+      (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+        (let ((target (get-interactive-target tgt-idx)))
+          (when (and (logtest? (-> self draw status) (draw-status was-drawn))
+                    target
+                    (>= 81920.0 (vector-vector-distance (-> self root trans) (-> target control trans)))
+                    )
+            (if (rand-vu-percent? 0.3)
+                (sound-play "darkvine-move")
                 )
+            (when (task-closed? (game-task rolling-plants) (task-status need-hint))
+              (level-hint-spawn (text-id rolling-plants-hint) "sksp0113" (the-as entity #f) *entity-pool* (game-task none))
+              (if (not (send-event target 'query 'powerup (pickup-type eco-green)))
+                  (level-hint-spawn
+                    (text-id rolling-plants-hint-eco-green)
+                    "sksp0114"
+                    (the-as entity #f)
+                    *entity-pool*
+                    (game-task none)
+                    )
+                  )
               )
+            )
           )
         )
       (let ((gp-1 (-> self skel root-channel 0)))
@@ -529,58 +539,89 @@
   :code (behavior ()
     (close-specific-task! (game-task rolling-plants) (task-status need-reminder))
     (process-entity-status! self (entity-perm-status bit-3) #t)
-    (logclear! (-> self mask) (process-mask actor-pause))
-    (while (and *target* (< (vector-vector-distance (-> self root-override trans) (target-pos 0)) 24576.0))
-      (suspend)
+    (when *enable-ingame-cutscenes?*
+      (logclear! (-> self mask) (process-mask actor-pause))
+      (while (and *target* (< (vector-vector-distance (-> self root-override trans) (target-pos 0)) 24576.0))
+        (suspend)
+        )
       )
-    (let ((gp-2
-            (ppointer->handle (manipy-spawn (-> self entity extra trans) (-> self entity) *rollingcam-sg* #f :to self))
+    (if *enable-ingame-cutscenes?*
+      (let ((gp-2
+              (ppointer->handle (manipy-spawn (-> self entity extra trans) (-> self entity) *rollingcam-sg* #f :to self))
+              )
             )
-          )
-      (let ((s5-1 (get-process *default-dead-pool* othercam #x4000)))
-        (ppointer->handle (when s5-1
-                            (let ((t9-8 (method-of-type othercam activate)))
-                              (t9-8 (the-as othercam s5-1) (-> gp-2 process 0) 'othercam (the-as pointer #x70004000))
+        (let ((s5-1 (get-process *default-dead-pool* othercam #x4000)))
+          (ppointer->handle (when s5-1
+                              (let ((t9-8 (method-of-type othercam activate)))
+                                (t9-8 (the-as othercam s5-1) (-> gp-2 process 0) 'othercam (the-as pointer #x70004000))
+                                )
+                              (run-now-in-process s5-1 othercam-init-by-other (-> gp-2 process 0) 4 #f #t)
+                              (-> s5-1 ppointer)
                               )
-                            (run-now-in-process s5-1 othercam-init-by-other (-> gp-2 process 0) 4 #f #t)
-                            (-> s5-1 ppointer)
                             )
-                          )
-        )
-      (let ((s5-3
-              (ppointer->handle (process-spawn fuel-cell :init fuel-cell-init-as-clone (process->handle self) 55 :to self))
+          )
+        (let ((s5-3
+                (ppointer->handle (process-spawn fuel-cell :init fuel-cell-init-as-clone (process->handle self) 55 :to self))
+                )
+              )
+          (if *target*
+              (logior! (-> *target* mask) (process-mask sleep))
+              )
+          (send-event (-> gp-2 process 0) 'anim-mode 'clone-anim)
+          (ja-play-spooled-anim
+            (new 'static 'spool-anim
+              :name "happy-plant-open"
+              :index 5
+              :parts 2
+              :command-list '((0 send-event target draw #f) (10000 send-event target draw #t))
+              )
+            (the-as art-joint-anim #f)
+            (the-as art-joint-anim (-> self draw art-group data 4))
+            (the-as (function process-drawable symbol) false-func)
+            )
+          (ja-channel-set! 1)
+          (ja :group! (-> self draw art-group data 4))
+          (if (handle->process (the-as int gp-2))
+              (deactivate (-> gp-2 process 0))
+              )
+          (let ((gp-3 (handle->process s5-3)))
+            (when gp-3
+              (send-event gp-3 'stop-cloning)
+              (let ((s5-4 (new-stack-vector0)))
+                (vector<-cspace! s5-4 (-> self node-list data 25))
+                (send-event gp-3 'trans s5-4)
+                )
               )
             )
-        (if *target*
-            (logior! (-> *target* mask) (process-mask sleep))
-            )
-        (send-event (-> gp-2 process 0) 'anim-mode 'clone-anim)
-        (ja-play-spooled-anim
-          (new 'static 'spool-anim
-            :name "happy-plant-open"
-            :index 5
-            :parts 2
-            :command-list '((0 send-event target draw #f) (10000 send-event target draw #t))
-            )
-          (the-as art-joint-anim #f)
-          (the-as art-joint-anim (-> self draw art-group data 4))
-          (the-as (function process-drawable symbol) false-func)
           )
-        (ja-channel-set! 1)
-        (ja :group! (-> self draw art-group data 4))
-        (if (handle->process (the-as int gp-2))
-            (deactivate (-> gp-2 process 0))
+        )
+        (let ((s5-3
+                (ppointer->handle (process-spawn fuel-cell :init fuel-cell-init-as-clone (process->handle self) 55 :to self))
+                )
+              )
+          (ja-play-spooled-anim
+            (new 'static 'spool-anim
+              :name "happy-plant-open"
+              :index 5
+              :parts 2
+              :command-list '()
+              )
+            (the-as art-joint-anim #f)
+            (the-as art-joint-anim (-> self draw art-group data 4))
+            (the-as (function process-drawable symbol) false-func)
             )
-        (let ((gp-3 (handle->process s5-3)))
-          (when gp-3
-            (send-event gp-3 'stop-cloning)
-            (let ((s5-4 (new-stack-vector0)))
-              (vector<-cspace! s5-4 (-> self node-list data 25))
-              (send-event gp-3 'trans s5-4)
+          (ja-channel-set! 1)
+          (ja :group! (-> self draw art-group data 4))
+          (let ((gp-3 (handle->process s5-3)))
+            (when gp-3
+              (send-event gp-3 'stop-cloning)
+              (let ((s5-4 (new-stack-vector0)))
+                (vector<-cspace! s5-4 (-> self node-list data 25))
+                (send-event gp-3 'trans s5-4)
+                )
               )
             )
           )
-        )
       )
     (restore-collide-with-as (-> self root-override))
     (go happy-plant-opened)

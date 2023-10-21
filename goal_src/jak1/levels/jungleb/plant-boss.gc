@@ -954,13 +954,17 @@
       (ja-no-eval :group! plant-boss-main-initial-ja :num! (seek!) :frame-num 0.0)
       (until (ja-done? 0)
         (seek! (-> self energy) (the-as float 0.25) (-> *display* seconds-per-frame))
-        (if (and (and *target*
-                      (>= 245760.0 (vector-vector-distance (-> self root-override trans) (-> *target* control trans)))
-                      )
-                 (< (fabs (- (-> (target-pos 0) y) (-> self root-override trans y))) 40960.0)
-                 )
-            (go plant-boss-intro)
+        (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+          (let ((target (get-interactive-target tgt-idx)))
+            (if (and (and target
+                          (>= 245760.0 (vector-vector-distance (-> self root-override trans) (-> target control trans)))
+                          )
+                    (< (fabs (- (-> (target-pos 0) y) (-> self root-override trans y))) 40960.0)
+                    )
+                (go plant-boss-intro)
+                )
             )
+          )
         (suspend)
         (ja :num! (seek!))
         )
@@ -973,7 +977,7 @@
 (defstate plant-boss-intro (plant-boss)
   :code (behavior ()
     (set-setting! 'music 'danger 0.0 0)
-    (send-event *target* 'reset-pickup 'eco)
+    (if *enable-ingame-cutscenes?* (send-event *target* 'reset-pickup 'eco))
     (let ((v1-9 (-> self entity extra perm)))
       (logior! (-> v1-9 status) (entity-perm-status user-set-from-cstage))
       (b! (zero? (-> v1-9 user-int8 2)) cfg-5 :delay (empty-form))
@@ -992,7 +996,7 @@
     (set-mode! (-> self body) (joint-mod-handler-mode world-look-at))
     (b! #t cfg-17 :delay (nop!))
     (label cfg-5)
-    (if (not (handle->process (-> self cam-tracker)))
+    (if (and *enable-ingame-cutscenes?* (not (handle->process (-> self cam-tracker))))
         (set! (-> self cam-tracker)
               (ppointer->handle (process-spawn
                                   camera-tracker
@@ -1070,34 +1074,38 @@
     (none)
     )
   :trans (behavior ()
-    (let ((f30-0 (vector-vector-distance (target-pos 0) (-> self root-override trans))))
-      (if (< 409600.0 f30-0)
-          (go plant-boss-far-idle)
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (let ((target (get-interactive-target tgt-idx)))
+        (let ((f30-0 (vector-vector-distance (remote-target-pos 0 target) (-> self root-override trans))))
+          (if (< 409600.0 f30-0)
+              (go plant-boss-far-idle)
+              )
+          (if (and (< f30-0 143360.0)
+                  (>= (- (-> *display* base-frame-counter) (-> self state-time)) (cond
+                                                                                    ((>= (-> self try) 15)
+                                                                                    1500
+                                                                                    )
+                                                                                    ((>= (-> self try) 10)
+                                                                                    1200
+                                                                                    )
+                                                                                    ((>= (-> self try) 5)
+                                                                                    900
+                                                                                    )
+                                                                                    (else
+                                                                                      600
+                                                                                      )
+                                                                                    )
+                      )
+                  target
+                  (not (logtest? (-> target state-flags)
+                                  (state-flags being-attacked invulnerable timed-invulnerable invuln-powerup do-not-notice dying)
+                                  )
+                        )
+                  )
+              (go plant-boss-attack 1)
+              )
           )
-      (if (and (< f30-0 143360.0)
-               (>= (- (-> *display* base-frame-counter) (-> self state-time)) (cond
-                                                                                ((>= (-> self try) 15)
-                                                                                 1500
-                                                                                 )
-                                                                                ((>= (-> self try) 10)
-                                                                                 1200
-                                                                                 )
-                                                                                ((>= (-> self try) 5)
-                                                                                 900
-                                                                                 )
-                                                                                (else
-                                                                                  600
-                                                                                  )
-                                                                                )
-                   )
-               *target*
-               (not (logtest? (-> *target* state-flags)
-                              (state-flags being-attacked invulnerable timed-invulnerable invuln-powerup do-not-notice dying)
-                              )
-                    )
-               )
-          (go plant-boss-attack 1)
-          )
+        )
       )
     (none)
     )

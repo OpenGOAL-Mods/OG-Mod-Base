@@ -339,9 +339,16 @@
   )
 
 (defmethod blue-eco-charger-method-20 blue-eco-charger ((obj blue-eco-charger))
-  (and (and *target* (>= 16384.0 (vector-vector-distance (-> obj root-override trans) (-> *target* control trans))))
-       (send-event *target* 'query 'powerup (pickup-type eco-blue))
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (let ((target (get-interactive-target tgt-idx)))
+      (if (and (and target (>= 16384.0 (vector-vector-distance (-> obj root-override trans) (-> target control trans))))
+       (send-event target 'query 'powerup (pickup-type eco-blue))
        )
+        (return #t)
+        )
+  
+      	)
+      )
   )
 
 (defstate blue-eco-charger-idle (blue-eco-charger)
@@ -351,17 +358,21 @@
     (ja :group! (-> self draw art-group data 2) :num! min)
     (loop
       (when (logtest? (-> self draw status) (draw-status was-drawn))
-        (if (and (and *target* (>= 16384.0 (vector-vector-distance (-> self root-override trans) (-> *target* control trans))))
-                 (not (send-event *target* 'query 'powerup (pickup-type eco-blue)))
-                 )
-            (level-hint-spawn
-              (text-id sunken-blue-eco-charger-hint)
-              "sksp0125"
-              (the-as entity #f)
-              *entity-pool*
-              (game-task none)
-              )
+        (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+          (let ((target (get-interactive-target tgt-idx)))
+            (if (and (and target (>= 16384.0 (vector-vector-distance (-> self root-override trans) (-> target control trans))))
+                    (not (send-event target 'query 'powerup (pickup-type eco-blue)))
+                    )
+                (level-hint-spawn
+                  (text-id sunken-blue-eco-charger-hint)
+                  "sksp0125"
+                  (the-as entity #f)
+                  *entity-pool*
+                  (game-task none)
+                  )
+                )
             )
+          )
         )
       (when (blue-eco-charger-method-20 self)
         (increment-success-for-hint (text-id sunken-blue-eco-charger-hint))

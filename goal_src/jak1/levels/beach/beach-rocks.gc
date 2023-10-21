@@ -347,48 +347,81 @@
     (until v1-3
       (spool-push *art-control* "lrocklrg-falling" 0 self -1.0)
       (suspend)
-      (set! v1-3 (or (not *target*) (process-grab? *target*)))
+      (set! v1-3 (or (not *enable-ingame-cutscenes?*) (not *target*) (process-grab? *target*)))
       )
     (logclear! (-> self draw status) (draw-status hidden))
     (ja-channel-set! 1)
     (ja :group! (-> self draw art-group data 2) :num! min)
-    (let ((gp-2 (ppointer->handle (process-spawn othercam self 7 #f #t :to self)))
-          (s5-1 (ppointer->handle (process-spawn
-                                    fuel-cell
-                                    :init fuel-cell-init-as-clone
-                                    (process->handle self)
-                                    (-> self entity extra perm task)
-                                    :to self
+    (if *enable-ingame-cutscenes?*
+      (let ((gp-2 (ppointer->handle (process-spawn othercam self 7 #f #t :to self)))
+            (s5-1 (ppointer->handle (process-spawn
+                                      fuel-cell
+                                      :init fuel-cell-init-as-clone
+                                      (process->handle self)
+                                      (-> self entity extra perm task)
+                                      :to self
+                                      )
                                     )
-                                  )
-                )
-          )
-      (close-specific-task! (-> self entity extra perm task) (task-status need-reminder))
-      (set! (-> self movie-start) (-> *display* base-frame-counter))
-      (spool-push *art-control* "lrocklrg-falling" 0 self -1.0)
-      (ja-play-spooled-anim
-        (new 'static 'spool-anim
-          :name "lrocklrg-falling"
-          :index 4
-          :parts 4
-          :command-list '((-150 blackout 100) (-116 blackout 0))
-          )
-        (the-as art-joint-anim (-> self draw art-group data 2))
-        (the-as art-joint-anim (-> self draw art-group data 3))
-        (the-as (function process-drawable symbol) false-func)
-        )
-      (process-entity-status! self (entity-perm-status complete) #t)
-      (cond
-        ((handle->process gp-2)
-         (deactivate (-> gp-2 process 0))
-         )
-        (else
-          )
-        )
-      (let ((a0-28 (handle->process s5-1)))
-        (if a0-28
-            (send-event a0-28 'stop-cloning)
+                  )
             )
+        (close-specific-task! (-> self entity extra perm task) (task-status need-reminder))
+        (set! (-> self movie-start) (-> *display* base-frame-counter))
+        (spool-push *art-control* "lrocklrg-falling" 0 self -1.0)
+        (ja-play-spooled-anim
+          (new 'static 'spool-anim
+            :name "lrocklrg-falling"
+            :index 4
+            :parts 4
+            :command-list '((-150 blackout 100) (-116 blackout 0))
+            )
+          (the-as art-joint-anim (-> self draw art-group data 2))
+          (the-as art-joint-anim (-> self draw art-group data 3))
+          (the-as (function process-drawable symbol) false-func)
+          )
+        (process-entity-status! self (entity-perm-status complete) #t)
+        (cond
+          ((handle->process gp-2)
+          (deactivate (-> gp-2 process 0))
+          )
+          (else
+            )
+          )
+        (let ((a0-28 (handle->process s5-1)))
+          (if a0-28
+              (send-event a0-28 'stop-cloning)
+              )
+          )
+        )
+      (let ((s5-1 (ppointer->handle (process-spawn
+                                      fuel-cell
+                                      :init fuel-cell-init-as-clone
+                                      (process->handle self)
+                                      (-> self entity extra perm task)
+                                      :to self
+                                      )
+                                    )
+                  )
+            )
+        (close-specific-task! (-> self entity extra perm task) (task-status need-reminder))
+        (set! (-> self movie-start) (-> *display* base-frame-counter))
+        (spool-push *art-control* "lrocklrg-falling" 0 self -1.0)
+        (ja-play-spooled-anim
+          (new 'static 'spool-anim
+            :name "lrocklrg-falling"
+            :index 4
+            :parts 4
+            :command-list '((-150 blackout 0) (-116 blackout 0))
+            )
+          (the-as art-joint-anim (-> self draw art-group data 2))
+          (the-as art-joint-anim (-> self draw art-group data 3))
+          (the-as (function process-drawable symbol) false-func)
+          )
+        (process-entity-status! self (entity-perm-status complete) #t)
+        (let ((a0-28 (handle->process s5-1)))
+          (if a0-28
+              (send-event a0-28 'stop-cloning)
+              )
+          )
         )
       )
     (until v1-49

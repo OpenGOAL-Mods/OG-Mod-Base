@@ -100,15 +100,19 @@
       )
     )
   :trans (behavior ()
-    (if (and *target* (>= 40960.0 (vector-vector-distance (-> self root-override trans) (-> *target* control trans))))
-        (level-hint-spawn
-          (text-id darkcave-light-hint)
-          "sksp0333"
-          (the-as entity #f)
-          *entity-pool*
-          (game-task none)
-          )
-        )
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (let ((target (get-interactive-target tgt-idx)))
+        (if (and target (>= 40960.0 (vector-vector-distance (-> self root-override trans) (-> target control trans))))
+            (level-hint-spawn
+              (text-id darkcave-light-hint)
+              "sksp0333"
+              (the-as entity #f)
+              *entity-pool*
+              (game-task none)
+              )
+            )
+      	)
+      )
     (update-connected-crystals! self)
     (none)
     )

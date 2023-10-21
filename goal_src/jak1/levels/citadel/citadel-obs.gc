@@ -1536,25 +1536,27 @@
   :code (behavior ()
     (level-hint-spawn (text-id citadel-battle) "sksp0383" (the-as entity #f) *entity-pool* (game-task none))
     (suspend)
-    (let ((gp-1 (ppointer->handle (process-spawn
-                                    pov-camera
-                                    (-> (entity-by-name "citadelcam-1") extra trans)
-                                    *citadelcam-sg*
-                                    "citadel-bunnies"
-                                    0
-                                    #f
-                                    '()
-                                    :to self
+    (if *enable-ingame-cutscenes?*
+      (let ((gp-1 (ppointer->handle (process-spawn
+                                      pov-camera
+                                      (-> (entity-by-name "citadelcam-1") extra trans)
+                                      *citadelcam-sg*
+                                      "citadel-bunnies"
+                                      0
+                                      #f
+                                      '()
+                                      :to self
+                                      )
                                     )
-                                  )
-                )
+                  )
+            )
+        (send-event (handle->process (the-as handle gp-1)) 'mask 2048)
+        (while (handle->process (the-as handle gp-1))
+          (logclear! (-> *target* state-flags) (state-flags invulnerable))
+          (suspend)
           )
-      (send-event (handle->process (the-as handle gp-1)) 'mask 2048)
-      (while (handle->process (the-as handle gp-1))
-        (logclear! (-> *target* state-flags) (state-flags invulnerable))
-        (suspend)
         )
-      )
+    )
     (go-virtual battlecontroller-active)
     (none)
     )

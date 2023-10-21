@@ -605,19 +605,21 @@
       (go qbert-plat-master-idle)
       )
     (set! (-> self state-time) (-> *display* base-frame-counter))
-    (cond
-      (arg0
-        (ambient-hint-spawn "gamcam08" (the-as vector #f) *entity-pool* 'camera)
-        (process-spawn pov-camera (-> self root trans) *sunkencam-sg* "qbert-show-door-open" 0 #f '() :to self)
-        (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 1.4))
-          (suspend)
+    (if *enable-ingame-cutscenes?*
+      (cond
+        (arg0
+          (ambient-hint-spawn "gamcam08" (the-as vector #f) *entity-pool* 'camera)
+          (process-spawn pov-camera (-> self root trans) *sunkencam-sg* "qbert-show-door-open" 0 #f '() :to self)
+          (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 1.4))
+            (suspend)
+            )
           )
-        )
-      (else
-        (ambient-hint-spawn "gamcam07" (the-as vector #f) *entity-pool* 'camera)
-        (process-spawn pov-camera (-> self root trans) *sunkencam-sg* "qbert-show-door-close" 0 #f '() :to self)
-        (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 1))
-          (suspend)
+        (else
+          (ambient-hint-spawn "gamcam07" (the-as vector #f) *entity-pool* 'camera)
+          (process-spawn pov-camera (-> self root trans) *sunkencam-sg* "qbert-show-door-close" 0 #f '() :to self)
+          (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 1))
+            (suspend)
+            )
           )
         )
       )
