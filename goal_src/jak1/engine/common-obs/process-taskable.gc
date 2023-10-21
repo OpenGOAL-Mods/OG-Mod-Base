@@ -636,7 +636,36 @@
     (none)
     )
   :code (behavior ()
-    (process-taskable-play-anim-code (the-as art-joint-anim (get-art-elem self)) (play-anim! self #t))
+    (let ((anim (the-as spool-anim (play-anim! self #t))))
+      (process-taskable-play-anim-code (the-as art-joint-anim (get-art-elem self)) anim)
+      ;; if miners, and now we have >= 90 orbs, and we were in a reminder cutscene, give all 4 cells
+      (when (and (= (-> self type symbol) 'minershort) 
+                 (>= (-> *game-info* money) (-> *GAME-bank* money-task-inc))
+                 )
+          (case-str (-> anim name)
+            (("minershort-reminder-1-orbs" "minershort-reminder-2-orbs")
+              (send-event *target* 'get-pickup (pickup-type money) (- (-> *GAME-bank* money-task-inc)))
+              (close-specific-task! (game-task village3-miner-money1) (task-status need-resolution))
+              (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (game-task village3-miner-money1)))
+              (close-specific-task! (game-task village3-miner-money2) (task-status need-resolution))
+              (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (game-task village3-miner-money2)))
+              (close-specific-task! (game-task village3-miner-money3) (task-status need-resolution))
+              (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (game-task village3-miner-money3)))
+              ;; do the 4th one via the cutscene
+              (set! (-> self cell-for-task) (game-task village3-miner-money4))
+              ;; setup fuel-cell-anim
+              (process-taskable-play-anim-code (the-as art-joint-anim (get-art-elem self)) 
+                (new 'static 'spool-anim
+                  :name "minershort-resolution-2-orbs"
+                  :index 8
+                  :parts 6
+                  :command-list '((154 joint "cameraB") (461 joint "camera"))
+                  )
+                )
+              )
+            )
+        )
+      )
     (process-taskable-method-38 self)
     (none)
     )
