@@ -6,6 +6,7 @@
 ;; dgos: GAME, COMMON, L1
 
 (define-extern any-interactive-targets-close? (function process-drawable float basic))
+(define-extern remote-target-process-close? (function target process-drawable float basic))
 
 (defenum eco-door-flags
   :bitfield #t
@@ -212,14 +213,22 @@ eco-door-event-handler
     (loop
       (when (and *target* (any-interactive-targets-close? self (-> self open-distance)))
         (eco-door-method-26 self)
-        (if (and (not (-> self locked))
-                 (or (and (-> self entity) (logtest? (-> self entity extra perm status) (entity-perm-status complete)))
-                     (send-event *target* 'query 'powerup (pickup-type eco-blue))
-                     (and (-> self one-way) (< (vector4-dot (-> self out-dir) (target-pos 0)) -8192.0))
-                     )
-                 )
-            (go-virtual door-opening)
+        (let ((has-found-close-target #f))
+          (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+            (let ((target (get-interactive-target tgt-idx)))
+              (when (and (not has-found-close-target) ;; prevent multi opens if more than 1 target is close
+                      (not (-> self locked))
+                      (or (and (-> self entity) (logtest? (-> self entity extra perm status) (entity-perm-status complete)))
+                          (and (remote-target-process-close? target self (-> self open-distance)) (send-event target 'query 'powerup (pickup-type eco-blue)))
+                          (and (-> self one-way) (< (vector4-dot (-> self out-dir) (target-pos 0)) -8192.0))
+                          )
+                      )
+                  (go-virtual door-opening)
+                  (set! has-found-close-target #t)
+                  )
+              )
             )
+          )
         (level-hint-spawn (text-id zero) (the-as string #f) (-> self entity) *entity-pool* (game-task none))
         )
       (suspend)
