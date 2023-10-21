@@ -401,9 +401,10 @@
   (begin
    (play-rand-sound "snd/zed.mp3" (the int (-> *setting-control* default sfx-volume)))
    (set! chem-bool #t)
-   (until (time-elapsed? current-timea (seconds 20))
+   (until (or (not (is-in-chem-fac-silo)) (time-elapsed? current-timea (seconds 20)))
    (suspend)
    )
+   (stop-rand-sound)
    (set! chem-bool #f)
   )
   )
