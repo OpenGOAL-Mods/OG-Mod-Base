@@ -1191,7 +1191,8 @@
     peeper-wait
     )
   )
-
+  
+(define-extern static-vector-meters (function float float float vector))
 (defun peeper-cell-check ((self peeper))
   (when (and (not (-> self child))  ;; havent already spawned cell
              (task-closed? (game-task rolling-moles) (task-status need-hint))
