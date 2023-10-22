@@ -456,7 +456,12 @@
                (and (logtest? (-> self flags) (collectable-flags can-collect))
                     (>= (- (-> *display* base-frame-counter) (-> self birth-time)) (-> self collect-timeout))
                     (!= (-> self next-state name) 'pickup)
-                    (or (not (or *enable-remote-target-eco-pickup* (= *target* proc))) (send-event proc 'get-pickup (-> self fact pickup-type) (-> self fact pickup-amount)))
+                    (and 
+                      (or *enable-remote-target-eco-pickup* (= *target* proc)
+                        (and (!= (-> self fact pickup-type) (pickup-type eco-blue)) 
+                             (!= (-> self fact pickup-type) (pickup-type eco-red)) 
+                             (!= (-> self fact pickup-type) (pickup-type eco-yellow)))) 
+                      (send-event proc 'get-pickup (-> self fact pickup-type) (-> self fact pickup-amount)))
                     )
                )
       (logclear! (-> self mask) (process-mask actor-pause))
