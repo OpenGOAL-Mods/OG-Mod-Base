@@ -97,7 +97,9 @@
 (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
          (current-custom-info (-> *custom-level-info* data current-level-idx)))
 
-(when (and (= (get-loaded-cell-count) 0) (= (-> current-custom-info current-chicks) 0))
+(when (or (and (= (get-loaded-cell-count) 0) (= (-> current-custom-info current-chicks) 0))
+(and (= (get-loaded-cell-count) 0) (> (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks) ))
+)
 
 (if 
 (= (-> (level-get-target-inside *level*)name) (->  (get-continue-by-name *game-info* (-> *warp-info* (get-unlock-level))) level))

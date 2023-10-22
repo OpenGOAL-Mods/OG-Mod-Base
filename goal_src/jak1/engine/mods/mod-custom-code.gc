@@ -493,7 +493,7 @@ Temporary hardcoded hack so I can be sure how this works for release
     (set! (-> current-custom-info saved-chicks) (+ (-> current-custom-info saved-chicks) 1))
     (update-saved-chicks 1)
     
-                                    (if (= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks))
+                                    (if (>= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks))
     (begin
       (set-unlock-level)
     
