@@ -128,9 +128,6 @@
       (dotimes (idx (-> *interaction-update-buffer* length))
         (when (= (-> *interaction-update-buffer* idx has_update?) #f)
 
-          (format #t "parent: ~s ~%" (the-as string (-> (ppointer->process (-> proc parent)) name)))
-          (format #t "ename: ~s ~%" (the-as string (-> proc name)))
-
           (set! (-> *interaction-update-buffer* idx type) (the-as interaction-type kind))
           (set! (-> *interaction-update-buffer* idx amount) amount)
 
@@ -179,9 +176,6 @@
             (set! *last-task* task)
             (set! *last-task-status* status)
 
-            (format #t "name: ~s ~%" (game-task->string task))
-            (format #t "status: ~s ~%" (task-status->string status))
-
             (set! (-> *interaction-update-buffer* idx type) (interaction-type game-task))
             (set! (-> *interaction-update-buffer* idx amount) (the float status))
             (set! (-> *interaction-update-buffer* idx ename) (game-task->string task))
@@ -200,9 +194,6 @@
     (defun add-crate-to-interaction-buffer ((type interaction-type) (amount float) (proc process))
       (dotimes (idx (-> *interaction-update-buffer* length))
         (when (= (-> *interaction-update-buffer* idx has_update?) #f)
-
-          (format #t "parent: ~s ~%" (the-as string (-> (ppointer->process (-> proc parent)) name)))
-          (format #t "ename: ~s ~%" (the-as string (-> proc name)))
 
           (set! (-> *interaction-update-buffer* idx type) type)
           (set! (-> *interaction-update-buffer* idx amount) amount)
