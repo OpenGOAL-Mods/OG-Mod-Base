@@ -553,6 +553,9 @@ Temporary hardcoded hack so I can be sure how this works for release
 (cond 
 ((and (string= *currentSpoolName* "ndi-intro") (= *currentCutsceneFrame* 420))
    (play-rand-sound "snd/zed.mp3" (the int (-> *setting-control* default sfx-volume)))
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
 
 
 )
@@ -829,9 +832,11 @@ Temporary hardcoded hack so I can be sure how this works for release
     "this is ran in its own process called run-every-frame-proc"
     ;;This is a hack to run softlock prevention
 
-    (have-all-chicks-safe)
     (when #t
-
+    ;;(format #t "~A" (-> *target* state name))
+      (if (= (-> *target* state name) 'target-stance)
+      (have-all-chicks-safe)
+      )
 
     ;;This is kind of a hack to start up during the opening cutscene
     (when (and (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (>= *currentCutsceneFrame* 1649))
@@ -1160,6 +1165,9 @@ Temporary hardcoded hack so I can be sure how this works for release
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
       (init-title)
+
+
+      
       (format #t  "RUNNING MUSIC PROC~%")
       (process-spawn-function process music-manager-proc)
       (restore-cells)

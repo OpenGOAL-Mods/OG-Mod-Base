@@ -395,6 +395,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
  ;; Simple Tomato Pasta Sauce
 (defun is-in-chem-fac-silo ()
+(when  (= (-> (level-get-target-inside *level*)name ) 'chemical-factory) 
   (if (in-bubble? (meters 131.51) (meters 310.37) (meters 200.12) (meters 29.0))
     (return #t) 
   )
@@ -419,6 +420,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (if (in-bubble? (meters 131.51) (meters 345.37) (meters 200.12) (meters 29.0))
     (return #t)
   )
+)
   #f
 )
 (define *heard-chem-hint* #f)

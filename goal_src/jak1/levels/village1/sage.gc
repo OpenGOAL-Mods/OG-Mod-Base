@@ -538,7 +538,7 @@
   )
 
 (defmethod should-display? sage ((obj sage))
-  (not (sages-kidnapped?))
+  #t;;(not (sages-kidnapped?))
   )
 
 (defmethod initialize-collision sage ((obj sage) (arg0 int) (arg1 vector))

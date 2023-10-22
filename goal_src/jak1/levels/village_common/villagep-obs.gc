@@ -100,6 +100,7 @@
 
 (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
          (current-custom-info (-> *custom-level-info* data current-level-idx)))
+         ;;After the launch, add a AND here and make sure the alive cells are 0???
 (or (= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks)) *cheat-mode*)
 )
 
