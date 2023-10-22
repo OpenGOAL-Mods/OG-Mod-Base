@@ -95,6 +95,10 @@ an orb |#
     (input-display-off)
     )
 
+    (when (in-bubble-meters? 3021.48 500.00 -4851.23 5.0)
+    (send-event (process-by-ename "robotboss-3") 'white-eco-picked-up)
+    )
+    
   (none)
   )
 
