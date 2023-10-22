@@ -1192,6 +1192,21 @@
     )
   )
 
+(defun peeper-cell-check ((self peeper))
+  (when (and (not (-> self child))  ;; havent already spawned cell
+             (task-closed? (game-task rolling-moles) (task-status need-hint))
+             (not (task-closed? (game-task rolling-moles) (task-status need-resolution)))
+             )
+      (birth-pickup-at-point
+          (static-vector-meters -64.33  10.0 -1562.12)
+          (pickup-type fuel-cell)
+          (the float (game-task rolling-moles))
+          #f
+          self
+          (the-as fact-info #f)
+          )
+      )
+  )
 
 (defstate peeper-wait (peeper)
   :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
@@ -1221,6 +1236,7 @@
     (none)
     )
   :code (behavior ()
+    (peeper-cell-check self)
     (logior! (-> self draw status) (draw-status hidden))
     (loop
       (suspend)
@@ -1232,6 +1248,7 @@
 
 (defstate peeper-hide (peeper)
   :code (behavior ()
+    (peeper-cell-check self)
     (if (nonzero? (-> self sound))
         (stop! (-> self sound))
         )
@@ -1262,6 +1279,7 @@
     (none)
     )
   :code (behavior ()
+    (peeper-cell-check self)
     (logior! (-> self draw status) (draw-status hidden))
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 1))
@@ -1317,6 +1335,7 @@
     (none)
     )
   :code (behavior ()
+    (peeper-cell-check self)
     (loop
       (ja-no-eval :group! (-> self draw art-group data 13) :num! (seek!) :frame-num 0.0)
       (until (ja-done? 0)
