@@ -127,7 +127,7 @@ an orb |#
                boss
                (= (level-status *level* 'finalboss) 'active)
                (or (not sage) (not (-> sage credits-played)))
-               (not (task-closed? (game-task finalboss-movies) (task-status need-reward-speech)))
+               (not (task-closed? (game-task finalboss-movies) (task-status need-reminder-a)))
                (= (-> *game-info* fuel) 4))
       (format 0 "birthing sage-finalboss-1 ~%")
       (birth! (entity-by-name "sage-finalboss-1"))

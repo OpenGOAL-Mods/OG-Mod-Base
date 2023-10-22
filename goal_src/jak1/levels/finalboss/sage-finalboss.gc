@@ -957,7 +957,7 @@
   (cond
     ((-> self kick-the-credits)
      (set! (-> self kick-the-credits) #f)
-     (close-specific-task! (game-task finalboss-movies) (task-status need-reward-speech))
+     (close-specific-task! (game-task finalboss-movies) (task-status need-reminder-a))
      (go sage-finalboss-credits)
      )
     ((-> self kick-in-the-door)
@@ -1022,7 +1022,7 @@
   (set! (-> obj kick-the-credits) 
     (and (= (-> *game-info* fuel) 4)
          (> (-> *display* base-frame-counter) (-> *game-info* blackout-time))
-         (not (task-closed? (game-task finalboss-movies) (task-status need-reward-speech)))
+         (not (task-closed? (game-task finalboss-movies) (task-status need-reminder-a)))
          )
     )
   (set! (-> obj credits-played) #f)
