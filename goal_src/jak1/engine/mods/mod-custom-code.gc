@@ -200,6 +200,15 @@
   (none)
 )
 
+
+(defun unlock-level-func ((idx int))
+(set-unlock-level-val idx)
+(play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
+(reset-saved-chick-from-mem)
+(auto-save-command 'auto-save 0 0 *default-pool*)
+(none)
+)
+
 (defun set-unlock-level ()
 "adds to the unlock level"
   ;; (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))
@@ -325,13 +334,6 @@ Temporary hardcoded hack so I can be sure how this works for release
   (none)
 )
 
-(defun unlock-level-func ((idx int))
-(set-unlock-level-val idx)
-(play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
-(reset-saved-chick-from-mem)
-(auto-save-command 'auto-save 0 0 *default-pool*)
-(none)
-)
 (defun get-unlock-level ()
   ;;(format #t "getting unlock level it is ~D~%" (-> *game-info* money-per-level 3))
   (the int (-> *game-info* money-per-level 3) )
@@ -826,7 +828,7 @@ Temporary hardcoded hack so I can be sure how this works for release
     (defun runs-every-frame ()
     "this is ran in its own process called run-every-frame-proc"
     ;;This is a hack to run softlock prevention
-    
+
     (have-all-chicks-safe)
     (when #t
 
