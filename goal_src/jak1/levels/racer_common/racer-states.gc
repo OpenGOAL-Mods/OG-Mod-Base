@@ -896,6 +896,7 @@
     (none)
     )
   :code (behavior ((arg0 symbol))
+    (runs-on-jak-death 'dying)
     (local-vars (v1-154 symbol))
     (set! (-> self racer stick-off) #t)
     (set! (-> self neck flex-blend) 0.0)

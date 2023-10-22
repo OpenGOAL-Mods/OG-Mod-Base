@@ -166,7 +166,14 @@ an orb |#
   (case death-event
     (('dying)
       ;; Code here runs immediately every time jak dies, before any death animation or death cutscene
-      
+
+      (when (and (logtest? (-> *target* control root-prim prim-core action) (collide-action racer))
+                 (= (level-status *level* 'rolling) 'active)
+                 (string= (-> *game-info* current-continue name) "ogre-race")
+                 )
+        ;; LTSS - if you hit the nick: ogr and ogre-race load boundaries with zoomer IJs, have a free LTS
+        (set! (-> *game-info* current-continue) (get-continue-by-name *game-info* "lavatube-middle"))
+        )
       )
     (('blackout)
       ;; Code here runs after jak dies (and any death cutscene finishes), during the blackout before he spawns

@@ -1786,6 +1786,7 @@
     )
   :trans (-> target-hit trans)
   :code (behavior ((arg0 symbol))
+    (runs-on-jak-death 'dying)
     (local-vars (v1-104 symbol))
     (logior! (-> self state-flags) (state-flags dying))
     (set! (-> self neck flex-blend) 0.0)
