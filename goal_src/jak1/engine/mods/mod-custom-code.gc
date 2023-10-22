@@ -193,13 +193,145 @@
     (none)
   )
 
-(defun set-unlock-level ((arg1 int))
+
+(defun set-unlock-level-val ((arg1 int))
+  (set! (-> *game-info* money-per-level 3)  (the-as uint arg1))
+(format #t "unlock level is set to ~D~%" (-> *game-info* money-per-level 3))
+  (none)
+)
+
+(defun set-unlock-level ()
 "adds to the unlock level"
-  (set! (-> *game-info* money-per-level 3) (+ (-> *game-info* money-per-level 3) (the-as uint arg1)))
+  ;; (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))
+  ;; (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks) 
+ (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
+ (case (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))
+        ((16)      
+          ;; Code here runs as soon as you pickup a powercell
+            (when (< (get-unlock-level)  1)
+              (unlock-level-func 1)
+            )
+          )
+        ((17)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  2)
+              (unlock-level-func 2)
+            )
+          )
+        ((18)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  3)
+              (unlock-level-func 3)
+            )
+          )
+        ((19)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  4)
+              (unlock-level-func 4)
+            )
+          )
+        ((20)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  5)
+              (unlock-level-func 5)
+            )
+          )
+        ((21)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  6)
+              (unlock-level-func 6)
+            )
+          )
+        ((22)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  7)
+              (unlock-level-func 7)
+            )
+          )
+        ((23)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  8)
+              (unlock-level-func 8)
+            )
+          )
+        ((24)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  9)
+              (unlock-level-func 9)
+            )
+          )
+        ((25)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  10)
+              (unlock-level-func 10)
+            )
+          )
+        ((26)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  11)
+              (unlock-level-func 11)
+            )
+          )
+        ((27)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  12)
+              (unlock-level-func 12)
+            )
+          )
+        ((28)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  13)
+              (unlock-level-func 13)
+            )
+          )
+        ((29)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  14)
+              (unlock-level-func 14)
+            )
+          )
+        ((30)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  15)
+              (unlock-level-func 15)
+            )
+          )
+        ((31)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  16)
+              (unlock-level-func 16)
+            )
+          )
+        ((32)      
+          ;; Code here runs at the end of any powercell cutscene
+            (when (< (get-unlock-level)  17)
+              (unlock-level-func 17)
+            )
+          )
+        )
+  
+
+#|
+Temporary hardcoded hack so I can be sure how this works for release
+
+
+|#
+
+
+
+;;end hack original currently bugged function below
+  ;(set! (-> *game-info* money-per-level 3) (+ (-> *game-info* money-per-level 3) (the-as uint arg1)))
 ;;(format #t "unlock level is ~D~%" (-> *game-info* money-per-level 3))
   (none)
 )
 
+(defun unlock-level-func ((idx int))
+(set-unlock-level-val idx)
+(play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
+(reset-saved-chick-from-mem)
+(auto-save-command 'auto-save 0 0 *default-pool*)
+(none)
+)
 (defun get-unlock-level ()
   ;;(format #t "getting unlock level it is ~D~%" (-> *game-info* money-per-level 3))
   (the int (-> *game-info* money-per-level 3) )
@@ -207,6 +339,13 @@
 
 (defun update-saved-chicks ((arg1 int))
 "adds to the unlock level"
+  (when (>= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks)
+   )
+    (reset-saved-chick-from-mem)
+    (format #t "ERROR TRYING TO ADD MORE THAN TOTAL CHICKS IN LEVEL~%")
+    (auto-save-command 'auto-save 0 0 *default-pool*)
+    (return #f)
+  )
   (set! (-> *game-info* money-per-level 5) (+ (-> *game-info* money-per-level 5) (the-as uint arg1)))
   (format #t "Adding saved chick vale to mem stored value is now  ~D~%" (-> *game-info* money-per-level 5))
   (none)
@@ -354,10 +493,9 @@
     
                                     (if (= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks))
     (begin
-      (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
-      (set-unlock-level 1)
-      (reset-saved-chick-from-mem)
-      (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
+      (set-unlock-level)
+    
+      
      ;; (reset-actors #t) ;;HACK for some reason, the warp gate doesnt let us use it after coming out of it but reseting actor fixes this.
     ))
 
@@ -687,7 +825,9 @@
 
     (defun runs-every-frame ()
     "this is ran in its own process called run-every-frame-proc"
+    ;;This is a hack to run softlock prevention
     
+    (have-all-chicks-safe)
     (when #t
 
 
@@ -763,8 +903,8 @@
 ;;If we input a button combo and we are in debug, unlock the next level
       (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1) *cheat-mode*) 
       (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
-      (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
-      (set-unlock-level 1)
+      (set-unlock-level)
+      ;;This might be ok to revert later
       ;;(reset-actors #t)
       )
 
@@ -1020,6 +1160,7 @@
       (init-title)
       (format #t  "RUNNING MUSIC PROC~%")
       (process-spawn-function process music-manager-proc)
+      (restore-cells)
       (none)
       )
 
