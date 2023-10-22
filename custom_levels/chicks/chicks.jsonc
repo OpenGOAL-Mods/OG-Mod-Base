@@ -14,7 +14,7 @@
   "gltf_file": "custom_levels/chicks/test-zone2.glb",
   "automatic_wall_detection": true,
   "automatic_wall_angle": 45.0,
-  "base_id": 10451,
+  "base_id": 60451,
   // if your mesh has triangles with incorrect orientation, set this to make all collision mesh triangles double sided
   // this makes collision 2x slower and bigger, so only use if really needed
   "double_sided_collide": false,"ambients": [],
