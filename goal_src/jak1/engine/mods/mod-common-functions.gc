@@ -228,17 +228,16 @@
         (none)
       )
 
-    (defun give-buzzer-from-level ((buzzer-id float) (level string))
-        (cond
-          ((name= (-> (level-get-target-inside *level*) name) level)
-            (pickup-collectable! (-> *target* fact-info-target) (pickup-type buzzer) buzzer-id (process->handle *target*))
-            )
-          (else
-            (adjust (-> *target* game) 'buzzer buzzer-id (process->handle *target*))
-            (sound-play "cursor-options")
-            )
-          )
-          (none)
+    (defun remove-money-dupe-from-level ((level string))
+      (send-event *target* 'get-pickup 5 -1.0)
+      ;; get the level index
+      (let ((level-idx (-> *level-task-data-remap* (+ (-> (lookup-level-info (string->symbol level)) index) -1))))
+        ;; decrease the level money count
+        (+! (-> *target* game money-per-level level-idx) -1)
+        ;; increment our total money in the game (out of the 2000 max orbs)
+        (+! (-> *target* game money-total) -1.0)
+        )
+        (none)
       )
 
     (defun give-money-from-level ((level string))
@@ -255,6 +254,19 @@
             )
         )
         (none)
+      )
+
+    (defun give-buzzer-from-level ((buzzer-id float) (level string))
+        (cond
+          ((name= (-> (level-get-target-inside *level*) name) level)
+            (pickup-collectable! (-> *target* fact-info-target) (pickup-type buzzer) buzzer-id (process->handle *target*))
+            )
+          (else
+            (adjust (-> *target* game) 'buzzer buzzer-id (process->handle *target*))
+            (sound-play "cursor-options")
+            )
+          )
+          (none)
       )
 
     (defun give-fuel-cell ((cell-name string) (task game-task))

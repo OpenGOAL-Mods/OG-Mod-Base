@@ -22,7 +22,7 @@
                (f28-0 (the-as float (-> arg3 param 1)))
                )
             (if (and 
-                (= self *target*) 
+                (or (= self *target*) (= (the-as pickup-type s4-0) (pickup-type money))) ;; money allowed to be able to run dupe logic on remote touch pickup
                 (!= (the-as pickup-type s4-0) (pickup-type none))
                 (!= (the-as pickup-type s4-0) (pickup-type eco-pill-random))
                 (!= (the-as pickup-type s4-0) (pickup-type eco-pill))
