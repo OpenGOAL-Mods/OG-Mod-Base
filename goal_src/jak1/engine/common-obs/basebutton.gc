@@ -586,7 +586,7 @@
     (ja-no-eval :group! eichar-duck-high-jump-ja :num! (seek! (ja-aframe 16.0 0)) :frame-num 0.0)
     (until (ja-done? 0)
       (let ((state-ticks (- (current-time) (-> self state-time))))
-        ;; finalboss warp if in geyser and user presses triangle within ~ 5-frame (@ 60fps) window
+        ;; credits warp if in geyser and user presses triangle within ~ 5-frame (@ 60fps) window
         (when (and (< 25 state-ticks)
                    (<= state-ticks 50)
                    (cpad-pressed? 0 triangle)

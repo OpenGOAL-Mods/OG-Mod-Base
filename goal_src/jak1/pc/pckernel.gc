@@ -585,33 +585,14 @@
 ;;;; other
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-extern *robotboss-hp* int)
-(define-extern *robotboss-phase-timeout* int)
-(define-extern choose-next-phase-symbol (function symbol))
-(define-extern phase-hits-to-go (function process-drawable int))
 (defun draw-build-revision ()
   (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
                                      (bucket-id debug-no-zbuf))
-    (let* ((boss (the process-drawable (process-by-ename "robotboss-3")))
-            (boss-ticks (if boss 
-                                  (- (+ (-> boss state-time) *robotboss-phase-timeout*) (current-time))
-                                  69
-                                  ))
-            )
-          (when boss
-            (format
-              (clear *temp-string*)
-              " boss HP: ~D / phase HP: ~D ~% remaining ticks: ~D ~% next-phase: ~A "
-              *robotboss-hp*
-              (phase-hits-to-go boss)
-              boss-ticks
-              (choose-next-phase-symbol)
-              )
-            (draw-string-xy *temp-string*
-                            buf
-                            0 (* 10 (-> (get-video-params) relative-y-scale))
-                            (font-color flat-yellow)
-                            (font-flags shadow kerning))))))
+          (draw-string-xy *pc-settings-built-sha*
+                          buf
+                          0 (* 10 (-> (get-video-params) relative-y-scale))
+                          (font-color flat-yellow)
+                          (font-flags shadow kerning))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
