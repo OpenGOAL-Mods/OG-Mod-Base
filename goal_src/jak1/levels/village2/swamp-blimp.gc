@@ -925,6 +925,14 @@
      (go swamp-tetherrock-hide)
      )
     (else
+    (birth-pickup-at-point
+       (-> obj root-override trans)
+       (pickup-type fuel-cell)
+       (the float (-> obj entity extra perm task))
+       #f
+       obj
+       (the-as fact-info #f)
+       )
       (go swamp-tetherrock-idle)
       )
     )
