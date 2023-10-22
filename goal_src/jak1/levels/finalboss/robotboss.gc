@@ -388,6 +388,27 @@
 
 (defbehavior robotboss-handler robotboss ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (the-as object (case arg2
+                       (('white-eco-picked-up)
+                        (close-specific-task! (game-task finalboss-movies) (task-status unknown))
+                        (entity-birth-no-kill (-> self alts 5))
+                        (let ((a1-2 (new 'stack-no-clear 'event-message-block)))
+                          (set! (-> a1-2 from) self)
+                          (set! (-> a1-2 num-params) 0)
+                          (set! (-> a1-2 message) 'play-anim)
+                          (let ((t9-2 send-event-function)
+                                (v1-2 (-> self alts 5))
+                                )
+                            (t9-2
+                              (if v1-2
+                                  (-> v1-2 extra process)
+                                  )
+                              a1-2
+                              )
+                            )
+                          )
+                        (cleanup-for-death self)
+                        (the-as object (deactivate self))
+                        )
                    (('flash)
                     (set! (-> self palette-val) (* 0.0078125 (the-as float (-> arg3 param 0))))
                     )
