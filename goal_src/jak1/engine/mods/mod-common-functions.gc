@@ -435,7 +435,6 @@
     ;; normal movement
     (('target-stance) (go-process t target-stance))
     (('target-stance-ambient) (go-process t target-stance-ambient))
-    (('target-stance-look-around) (go-process t target-stance-look-around))
     (('target-walk) (go-process t target-walk))
     (('target-wade-stance) (go-process t target-wade-stance))
     (('target-wade-walk) (go-process t target-wade-walk))
@@ -487,11 +486,10 @@
     (('target-periscope) (send-event t 'change-mode 'periscope #f))
     (('target-grab) (go-process t target-grab)) ;; process-grab animation while in cutscenes
 
-    ;; unknown
-    (('target-look-around) (go-process t target-look-around))
-
     ;; redundant for multiplayer
     ;; (('target-death) (go-process t target-hit-ground-hard 0.0))
+    ;; (('target-look-around) (go-process t target-look-around)) ;; first person enter
+    ;; (('target-stance-look-around) (go-process t target-stance-look-around)) ;; first person exit
     ;; (('target-tube-death))
     ;; (('target-billy-game)) ;; will only put you in first person
     ;; (('target-play-anim))
