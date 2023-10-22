@@ -1669,6 +1669,10 @@
           (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (game-task rolling-ring-chase-1)))
           )
         )
+      (((game-task swamp-billy))
+        ;; make sure load state is restored?
+        (restore-load-state-and-cleanup *load-state*)
+        )
       )
     (set! (-> self draw bounds w) 32768.0)
     (logior! (-> self skel status) (janim-status inited))
