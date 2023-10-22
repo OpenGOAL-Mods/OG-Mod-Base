@@ -90,6 +90,15 @@ an orb |#
       )
     )
 
+  ;; klaww skip
+  (let ((klaww (process-by-ename "ogreboss-1")))
+    (when (and klaww
+              (string= (-> *art-control* active-stream) "plunger-lurker-blowup")
+              )
+      (logior! (-> klaww entity extra perm status) (entity-perm-status complete))
+      )
+    )
+
   (if *show-input-display* 
     (input-display-on)
     (input-display-off)
