@@ -37,6 +37,85 @@ an orb |#
   (none)
   )
 
+(define *robber-cell* (the process-tree #f))
+(defun mod-on-level-activated ((lvl-name symbol))
+  (case lvl-name
+    (('rolling)
+      ;; if robbers not complete, check if any robbers are dead, if so spawn cell
+      (when (and (not (task-closed? (game-task rolling-robbers) (task-status need-resolution)))
+                 (not *robber-cell*)
+                 )
+        (let ((robber2 (entity-by-name "robber-2"))
+              (robber3 (entity-by-name "robber-3"))
+              (robber4 (entity-by-name "robber-4"))
+              (robber5 (entity-by-name "robber-5"))
+              (v (new 'stack-no-clear 'vector))
+              )
+          (cond
+            ((logtest? (-> robber2 extra perm status) (entity-perm-status complete))
+              (vector-copy! v (-> robber2 extra trans))
+              (+! (-> v y) (meters 2))
+              (set! *robber-cell* (ppointer->process
+                (birth-pickup-at-point
+                  v
+                  (pickup-type fuel-cell)
+                  (the float (game-task rolling-robbers))
+                  #f
+                  *entity-pool*
+                  (the-as fact-info #f)
+                  )
+                ))
+              )
+            ((logtest? (-> robber3 extra perm status) (entity-perm-status complete))
+              (vector-copy! v (-> robber3 extra trans))
+              (+! (-> v y) (meters 2))
+              (set! *robber-cell* (ppointer->process
+                (birth-pickup-at-point
+                  v
+                  (pickup-type fuel-cell)
+                  (the float (game-task rolling-robbers))
+                  #f
+                  *entity-pool*
+                  (the-as fact-info #f)
+                  )
+                ))
+              )
+            ((logtest? (-> robber4 extra perm status) (entity-perm-status complete))
+              (vector-copy! v (-> robber4 extra trans))
+              (+! (-> v y) (meters 2))
+              (set! *robber-cell* (ppointer->process
+                (birth-pickup-at-point
+                  v
+                  (pickup-type fuel-cell)
+                  (the float (game-task rolling-robbers))
+                  #f
+                  *entity-pool*
+                  (the-as fact-info #f)
+                  )
+                ))
+              )
+            ((logtest? (-> robber5 extra perm status) (entity-perm-status complete))
+              (vector-copy! v (-> robber5 extra trans))
+              (+! (-> v y) (meters 2))
+              (set! *robber-cell* (ppointer->process
+                (birth-pickup-at-point
+                  v
+                  (pickup-type fuel-cell)
+                  (the float (game-task rolling-robbers))
+                  #f
+                  *entity-pool*
+                  (the-as fact-info #f)
+                  )
+                ))
+              )
+            )
+          )
+        )
+      )
+    )
+  (none)
+  )
+
 (defun runs-every-frame ()
 
   ;; credits warp if you're in finalboss with only 4 cells and we haven't already played credits

@@ -369,6 +369,7 @@
     )
   )
 
+(define-extern mod-on-level-activated (function symbol none))
 (defmethod level-status-set! level ((obj level) (want-status symbol))
   "Change the status of a level, performing any cleanup and prep work as necessary.
    Only change loading statuses in order!
@@ -435,6 +436,8 @@
               )
             (set! (-> obj level-distance) 0.0)
             (set! (-> obj status) 'active)
+            
+            (mod-on-level-activated (-> obj name))
             )
           )
          )
