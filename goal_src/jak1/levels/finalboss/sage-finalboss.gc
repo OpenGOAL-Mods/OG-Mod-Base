@@ -909,7 +909,7 @@
           (cond
             ((paused?)
              )
-            ((and (< 1300.0 f30-0) (cpad-hold? 0 circle x))
+            ((and (< 450.0 f30-0) (cpad-hold? 0 circle x))
              (set! f28-0 (seek f28-0 16.0 (* 4.0 (-> *display* seconds-per-frame))))
              (+! f30-0 (* f28-0 (-> *display* time-adjust-ratio)))
              )
