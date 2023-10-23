@@ -42,9 +42,12 @@
 ;; multiplayer settings
 (define *enable-remote-target-attacks* #t)
 (define *enable-remote-target-yellow-eco-blasts* #t)
-(define *enable-remote-target-eco-pickup* #f)
 (define *enable-remote-target-pvp-attacks* #f)
 (define *pvp-attack-sphere-size* 3000.0)
+
+;; pickup toggles for remote
+(define *enable-remote-target-eco-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that the physical target can't accidentally miss it
+(define *enable-remote-target-buzzer-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that cell fly can't drop two cells on pickup
 
 ;; multiplayer self
 (define *self-player-info* (the-as remote-player-info #f))
@@ -185,20 +188,35 @@
         (none)
       )
 
-    (defun safe-kill-crate-buzzer ((crate-name string))
-      (let* ((obj-crate (process-by-ename crate-name)))
+    (defun safe-kill-crate-buzzer ((crate-name string) (run-pickup symbol) (kill-if-not-buzzer symbol))
+      (let* ((obj-crate (process-by-ename crate-name))
+            (is-cell-buzzer #f)) ;; swap to check if cell buzzer so it checks programatically if the count is 7
 
-        (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
-        (process-entity-status! (the-as crate obj-crate) (entity-perm-status complete) #t)
+        (when (and run-pickup obj-crate (-> (the-as crate obj-crate) child 0))
+          (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
+
+          (let* ((buzzer (the-as buzzer (-> (the-as crate obj-crate) child 0)))
+                (s5-2 (logand (the int (-> buzzer fact pickup-amount)) #xffff))
+                (s4-1 (get-task-control (the-as game-task s5-2)))
+                )
+
+            (go-virtual-process buzzer pickup #f (process->handle buzzer))
+            
+            (when (and (= (get-reminder s4-1 0) 127) (and (-> buzzer entity) (not (task-complete? *game-info* (the-as game-task s5-2)))))
+              (set! is-cell-buzzer #t)
+              )
+            )
+          )
 
         ;; depspawn buzzer if exists
-        (if (and obj-crate (name= (-> (the-as crate obj-crate) state name) "special-contents-die") (-> (the-as crate obj-crate) child 0))
+        (if (and obj-crate kill-if-not-buzzer (not is-cell-buzzer) (name= (-> (the-as crate obj-crate) state name) "special-contents-die") (-> (the-as crate obj-crate) child 0))
           ((method-of-type buzzer deactivate) (the-as buzzer (-> (the-as crate obj-crate) child 0)))
           )
         ;; depspawn crate
-        (if obj-crate
+        (if (and obj-crate (not is-cell-buzzer) (name= (-> (the-as crate obj-crate) state name) "wait"))
           ((method-of-type crate deactivate) (the-as crate obj-crate))
           )
+
         )
         (none)
       )
