@@ -126,10 +126,11 @@
   )
 
 (defbehavior target-has-all-the-cells? process ()
-  (the-as
-    symbol
-    (and *target* (>= (the int (the-as float (send-event *target* 'query 'pickup (pickup-type fuel-cell)))) 100))
-    )
+  ;; (the-as
+  ;;   symbol
+  ;;   (and *target* (>= (the int (the-as float (send-event *target* 'query 'pickup (pickup-type fuel-cell)))) 100))
+  ;;   )
+  #t
   )
 
 (defskelgroup *robotboss-sg* robotboss robotboss-basic-lod0-jg robotboss-idle-ja
