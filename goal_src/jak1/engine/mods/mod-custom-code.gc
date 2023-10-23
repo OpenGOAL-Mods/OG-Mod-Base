@@ -367,12 +367,17 @@ Temporary hardcoded hack so I can be sure how this works for release
   (when (>= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks)
    )
     (reset-saved-chick-from-mem)
-    (format #t "ERROR TRYING TO ADD MORE THAN TOTAL CHICKS IN LEVEL~%")
+    (when *debug-segment* 
+    (format #t "ERROR TRYING TO ADD MORE THAN TOTAL CHICKS IN LEVEL~%"))
+    
     (auto-save-command 'auto-save 0 0 *default-pool*)
     (return #f)
   )
   (set! (-> *game-info* money-per-level 5) (+ (-> *game-info* money-per-level 5) (the-as uint arg1)))
-  (format #t "Adding saved chick vale to mem stored value is now  ~D~%" (-> *game-info* money-per-level 5))
+  (when *debug-segment*
+    (format #t "Adding saved chick vale to mem stored value is now  ~D~%" (-> *game-info* money-per-level 5))
+  )
+
   (none)
 )
 
@@ -599,6 +604,14 @@ Temporary hardcoded hack so I can be sure how this works for release
 
 )
 
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-b") (= *currentCutsceneFrame* 555))
+   (play-rand-sound "snd/htootsgas.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
 ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 16))
    (play-rand-sound "snd/dax/what_are_we_doing_here.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
@@ -673,6 +686,33 @@ Temporary hardcoded hack so I can be sure how this works for release
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
+)
+
+
+((and *custom-cutscene?* (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 52))
+   (play-rand-sound "snd/hnot_my_farts.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+
+((and *custom-cutscene?* (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 165))
+   (play-rand-sound "snd/htootsgas2.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+
+((and *custom-cutscene?* (string= *currentSpoolName* "green-sagecage-daxter-sacrifice") (= *currentCutsceneFrame* 12))
+   (play-rand-sound "snd/dax/daxter light eco.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
 )
 
 
@@ -829,8 +869,11 @@ Temporary hardcoded hack so I can be sure how this works for release
       (process-spawn-function process text-every-frame-proc)
       (process-spawn-function process debug-text-every-frame-proc)
       (process-spawn-function process stupid-hacks-every-frame-proc)
+      (when *debug-segment*
       (format #t "INITIALIZING CHICKENS~%")
       (format #t "ITS MORTIN TIME~%")
+      )
+
       (set-flock-points-start)
       (set-flock-points)
       (set-flock-false);; Set all flock values to #f before chickens are in it
@@ -1007,16 +1050,42 @@ Temporary hardcoded hack so I can be sure how this works for release
   ;;Hack to disable cutscene skips for specific cutscenes     (if               ;;Cutscenes added here will be unskippable witht the triangle button
           (if (and *custom-cutscene?* (or  (string= *currentSpoolName* "sage-intro-sequence-a")
                         (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
-                        (string= *currentSpoolName* "sidekick-human-intro-sequence-c")))
+                        (string= *currentSpoolName* "sidekick-human-intro-sequence-c")
+                        (string= *currentSpoolName* "finalbosscam-white-eco")
+                        (string= *currentSpoolName* "green-sagecage-daxter-sacrifice")
+                        (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a")
+                        
+                        
+                        ))
                         (set! (-> *pc-settings* skip-movies?) #f)
                         (set! (-> *pc-settings* skip-movies?) #t)
                   )
 
 ;;Hack to set the voice volume to 0 during these cutscenes, then restore it when the cutscene is overridden.
 
-          (if (and *custom-cutscene?* (or  (string= *currentSpoolName* "sage-intro-sequence-a")
+(when (string= *currentSpoolName* "green-sagecage-outro-beat-boss-b")
+    (str-play-stop *currentSpoolName*)
+    (set! (-> *art-control* active-stream) #f)
+
+)
+
+          (if (or (and *custom-cutscene?* (or  (string= *currentSpoolName* "sage-intro-sequence-a")
                    (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
                    (string= *currentSpoolName* "sidekick-human-intro-sequence-c")))
+                   
+                   
+                   (and *custom-cutscene?*  (string= *currentSpoolName* "finalbosscam-white-eco") 
+
+                    (or (< *currentCutsceneFrame* 267)
+                    (> *currentCutsceneFrame* 321)
+                    )
+                   )
+                   ;;annoying but the daxter cutscene takes a second to update the volume...
+                   (and *custom-cutscene?*  (string= *currentSpoolName* "green-sagecage-daxter-sacrifice") )
+                   )
+
+
+          
                         (begin
                         ;;store the current volume setting
                         (if (= *old-voice-volume* 0.0)
@@ -1033,7 +1102,11 @@ Temporary hardcoded hack so I can be sure how this works for release
                           )
                         )
                   )
+          
           )
+
+
+
   (none)
 )
 
