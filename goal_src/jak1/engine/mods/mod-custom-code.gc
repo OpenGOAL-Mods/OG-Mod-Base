@@ -115,6 +115,29 @@
 )
 
 
+(define *loaded-cell-pause* 0)
+
+(defun mort-chicks-text ()
+ ;;mort debugging
+    (if *cheat-mode*
+      (when (and
+            (portal-mort-switch)
+             
+             (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
+    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
+                                      (bucket-id subtitle))
+      (draw-string-xy (string-format "Mort Chicken info ~%Chickens Saved: ~D ~%Chickens Following ~D~%Remaining Cells ~D~%"
+                                     (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks)
+                                     (current-chicks-following)
+                                     *loaded-cell-pause*
+                                     )
+                      buf 15 (- 150 (* 8 4)) (font-color green) (font-flags shadow kerning)))
+          )
+    )
+(none)
+)
+
+
 ;;This function is a mess TODO: Pretend it doesn't exist.
 (define *closest-pos-index* 0)
 (define old-point-to-jak (meters 3729817398217391279))
@@ -798,6 +821,7 @@ Temporary hardcoded hack so I can be sure how this works for release
 )
       (none))
 
+
 (defun init-chickens ()
        (process-spawn-function process run-every-frame-proc)
       (process-spawn-function process chicken-every-frame-proc)
@@ -832,14 +856,22 @@ Temporary hardcoded hack so I can be sure how this works for release
     "this is ran in its own process called run-every-frame-proc"
     ;;This is a hack to run softlock prevention
     
+    (when (and (not (cpad-hold? 0 l3))(cpad-hold? 0 down))
+    (mort-chicks-text)
+    )
+    (if (not (= *master-mode* 'progress))
+    (set! *loaded-cell-pause* (get-loaded-cell-count))
+
+    )
+
     ;;This is a hack to try to patch a bug, remove if it messes up save/restoring
-    (if (and *target* (!= (-> *target* state name) 'target-warp-out))
+    (if (and *target* (= (-> *target* state name) 'target-warp-out))
     (reset-saved-chick-from-mem)
     ) 
     
     (when #t
     ;;(format #t "~A" (-> *target* state name))
-      (if (and (= (-> *target* state name) 'target-stance) (not (movie?)) (!= (level-get-target-inside *level*) #f) (!= (-> (level-get-target-inside *level*)name ) 'misty)  )
+      (if (and (= (-> *target* state name) 'target-stance) (not (movie?)) (!= (level-get-target-inside *level*) #f) (!= (-> (level-get-target-inside *level*)name ) 'misty))
 
       (have-all-chicks-safe)
       )

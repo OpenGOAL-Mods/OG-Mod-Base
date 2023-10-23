@@ -1203,7 +1203,7 @@
         (((hud-collectable-view original))
           ;; show original (cells collected across entire game)
           (draw-string-xy
-            (string-format "~D" (-> obj value))
+            (string-format "~D" (+  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)));;(-> obj value))
             buf
             string-x
             string-y

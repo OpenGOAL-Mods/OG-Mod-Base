@@ -86,9 +86,12 @@
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Pause/Master Mode
 ;;;;;;;;;;;;;;;;;;;;;
-
+(defun-extern mort-chicks-text none)
+(defun-extern run-mort-code? basic)
 (defun paused? ()
   "Are we paused? True if *master-mode* = pause, progress is not hidden, or *master-mode* = menu"
+
+
   (the-as symbol
           (or (= *master-mode* 'pause)
               (or (and *progress-process* (not (hidden? (-> *progress-process* 0))))
@@ -563,6 +566,7 @@
   0
   )
 (defun-extern zero-volume? (symbol))
+(defun-extern mort-chicks-text none)
 (defbehavior display-loop process ()
   "the main 'display loop' in GOAL. v-sync is done in this function, so all frames start and end here."
 
@@ -590,6 +594,8 @@
     (while *run*
    
      ;; (runs-every-frame) ;; trigger hook for mod base
+
+
               (if (zero-volume?)  (pause-main-music)  (resume-main-music))  
               ;;We need to run this check in here, if we spawn a process for it processes are paused while in the menu
       ;; start immediately after all process updates finish.
