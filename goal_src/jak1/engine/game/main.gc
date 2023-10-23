@@ -183,7 +183,10 @@
  ;;Ban pausing in these cutscenes so the custom audio doesnt desync
  (if (or  (string= *currentSpoolName* "sage-intro-sequence-a")
                         (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
-                        (string= *currentSpoolName* "sidekick-human-intro-sequence-c"))
+                        (string= *currentSpoolName* "sidekick-human-intro-sequence-c")
+                        (string= *currentSpoolName* "finalbosscam-white-eco")
+                        (string= *currentSpoolName* "green-sagecage-daxter-sacrifice")
+                        (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a"))
                         (return 0)
                   )
 
