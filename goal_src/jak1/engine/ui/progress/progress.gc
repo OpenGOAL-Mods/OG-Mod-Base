@@ -739,7 +739,7 @@
 (set! (-> *game-counts* data 25 money-count) 35);;ice-slide
 (set! (-> *game-counts* data 26 money-count) 41);; islands
 (set! (-> *game-counts* data 27 money-count) 43);;glass towers NEED
-(set! (-> *game-counts* data 28 money-count) 49);;chemical factory
+(set! (-> *game-counts* data 28 money-count) 54);;chemical factory
 (set! (-> *game-counts* data 29 money-count) 55) ;;space  bridge
 (set! (-> *game-counts* data 30 money-count) 1);;chicks
 (set! (-> *game-counts* data 31 money-count) 33);;garden
