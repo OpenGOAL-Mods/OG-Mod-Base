@@ -169,7 +169,7 @@
       )
 
     (defun add-task-to-interaction-buffer ((task game-task) (status task-status))
-      (when (and (!= task *last-task*) (!= status *last-task-status*))
+      (when (or (!= task *last-task*) (!= status *last-task-status*))
         (dotimes (idx (-> *interaction-update-buffer* length))
           (when (= (-> *interaction-update-buffer* idx has_update?) #f)
 
