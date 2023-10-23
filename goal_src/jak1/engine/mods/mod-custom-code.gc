@@ -831,10 +831,16 @@ Temporary hardcoded hack so I can be sure how this works for release
     (defun runs-every-frame ()
     "this is ran in its own process called run-every-frame-proc"
     ;;This is a hack to run softlock prevention
-
+    
+    ;;This is a hack to try to patch a bug, remove if it messes up save/restoring
+    (if (and *target* (!= (-> *target* state name) 'target-warp-out))
+    (reset-saved-chick-from-mem)
+    ) 
+    
     (when #t
     ;;(format #t "~A" (-> *target* state name))
-      (if (= (-> *target* state name) 'target-stance)
+      (if (and (= (-> *target* state name) 'target-stance) (not (movie?)) (!= (level-get-target-inside *level*) #f) (!= (-> (level-get-target-inside *level*)name ) 'misty)  )
+
       (have-all-chicks-safe)
       )
 
