@@ -174,9 +174,17 @@
   )
 
 (define *last-master-mode* 'game)
-
+(define-extern *currentSpoolName* string)
 (defun toggle-pause ()
   "Do pause/menu/progress transitions"
+
+  ;; Ban pausing in these cutscenes so the custom audio doesnt desync
+  (case-str *currentSpoolName*
+    (("green-sagecage-outro-big-finish")
+      (return 0)
+      )
+    )
+
   (case *master-mode*
     (('game)
      ;; coming from normal gameplay

@@ -116,7 +116,64 @@ an orb |#
   (none)
   )
 
+(define *currentCutsceneFrame* 0)
+(define *currentSpoolName* "")
+
 (defun runs-every-frame ()
+  (when (handle->process (-> *art-control* spool-lock))
+    (with-proc ((handle->process (-> *art-control* spool-lock)))
+      (set! *currentCutsceneFrame* (the int (ja-aframe-num 0)))
+      )
+    (set! *currentSpoolName* (-> *art-control* active-stream))
+    )
+
+  ;; custom cutscene stuff
+  
+  (when (string= *currentSpoolName* "green-sagecage-outro-big-finish")
+    ;; (format 0 "~S ~D~%" *currentSpoolName* *currentCutsceneFrame*)
+    (when (= *currentCutsceneFrame* 590)
+      ;; final door zed quote
+      (process-spawn-function process 
+        (lambda :behavior process () 
+          (let ((stime (current-time)))
+            (format 0 "playing zed select~%")
+            (play-rand-sound "snd/Zed_Select.ogg" 80)
+            (until (> (- (current-time) stime) (seconds 3.5))
+              (suspend)
+              )
+            )
+          )
+        )
+      )
+    (when (= *currentCutsceneFrame* 630)
+      ;; final door gol NOOO
+      (process-spawn-function process 
+        (lambda :behavior process () 
+          (let ((stime (current-time)))
+            (format 0 "playing gol NOOO~%")
+            (play-rand-sound "snd/gol-nooo.mp3" 100) 
+            (until (> (- (current-time) stime) (seconds 3.5))
+              (suspend)
+              )
+            )
+          )
+        )
+      )
+    (when (= *currentCutsceneFrame* 710)
+      ;; final door fart
+      (process-spawn-function process 
+        (lambda :behavior process () 
+          (let ((stime (current-time)))
+            (format 0 "playing fart~%")
+            (play-rand-sound "snd/random-fart-1.mp3" 100) 
+            (until (> (- (current-time) stime) (seconds 1.5))
+              (suspend)
+              )
+            )
+          )
+        )
+      )
+    )
 
   ;; credits warp if you're in finalboss with only 4 cells and we haven't already played credits
   (let ((boss (the robotboss (process-by-ename "robotboss-3")))

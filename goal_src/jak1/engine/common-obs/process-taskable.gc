@@ -436,22 +436,35 @@
      ;; save a sort of timestamp just so we know if it took at least 1 frame
      (#when PC_PORT
         (define *play-anim-time* (current-time)))
-     (if (#if PC_PORT
-              (= (-> *pc-settings* skip-movies?) #t)
-              (and *debug-segment* *cheat-mode*))
-         (ja-play-spooled-anim
-           (the-as spool-anim arg1)
-           arg0
-           (-> self blend-on-exit)
-           (lambda ((arg0 process-taskable)) (= (get-response (-> arg0 query)) 'no))
-           )
-         (ja-play-spooled-anim
-           (the-as spool-anim arg1)
-           arg0
-           (-> self blend-on-exit)
-           (the-as (function process-drawable symbol) false-func)
-           )
-         )
+     (cond
+      ((or (string= (-> (the-as spool-anim arg1) name) "green-sagecage-outro-big-finish"))
+        ;; custom cutscene, no skips for audio desync
+        (ja-play-spooled-anim
+          (the-as spool-anim arg1)
+          arg0
+          (-> self blend-on-exit)
+          (the-as (function process-drawable symbol) false-func)
+          )
+        )
+      ((#if PC_PORT
+            (= (-> *pc-settings* skip-movies?) #t)
+            (and *debug-segment* *cheat-mode*))
+        (ja-play-spooled-anim
+          (the-as spool-anim arg1)
+          arg0
+          (-> self blend-on-exit)
+          (lambda ((arg0 process-taskable)) (= (get-response (-> arg0 query)) 'no))
+          )
+        )
+      (else
+        (ja-play-spooled-anim
+          (the-as spool-anim arg1)
+          arg0
+          (-> self blend-on-exit)
+          (the-as (function process-drawable symbol) false-func)
+          )
+        )
+      )
      (#when PC_PORT
         (if (= (current-time) *play-anim-time*) (suspend)))
      (remove-setting! 'music-volume)
