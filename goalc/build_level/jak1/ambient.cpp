@@ -24,10 +24,7 @@
   )
 */
 
-<<<<<<<< HEAD:goalc/build_level/ambient.cpp
-========
 namespace jak1 {
->>>>>>>> vanilla/master:goalc/build_level/jak1/ambient.cpp
 size_t DrawableTreeAmbient::add_to_object_file(DataObjectGenerator& gen, size_t ambient_array) {
   gen.align_to_basic();
   gen.add_type_tag("drawable-tree-ambient");

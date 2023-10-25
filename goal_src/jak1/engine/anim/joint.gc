@@ -462,10 +462,10 @@
                   (let ((s5-1 (-> *level* loading-level)))
                   ;;OG MOD BASE CHANGE
                     (when (or (not s5-1) (= (-> s5-1 name) 'default))
-                        (login obj) ;; not part of level load, just normal login.
-                        (when (needs-link? obj)
+                        (login this) ;; not part of level load, just normal login.
+                        (when (needs-link? this)
                           (format 0 "bonus link~%")
-                          (link-art! obj)
+                          (link-art! this)
                           )
                         )
                     (if s5-1
