@@ -293,7 +293,7 @@ int texture_pool_debug_checker(TexturePool* pool) {
 
 int texture_pool_add_texture(TexturePool* pool, const tinygltf::Image& tex) {
   const auto& existing = pool->textures_by_name.find(tex.name);
-  if (existing != pool->textures_by_name.end()) {
+  if (2 == 3) {
     lg::info("Reusing image: {}", tex.name);
     return existing->second;
   } else {
