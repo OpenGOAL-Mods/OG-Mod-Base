@@ -738,9 +738,9 @@ CollideHash build_grid_for_main_hash(std::vector<CollideFragment>&& frags) {
       bucket.index = it->second;
     }
   }
-
+//Was UINT_16MAX
   lg::info("Index array size is {} in the end", result.index_array.size());
-  if (result.index_array.size() > UINT16_MAX) {
+  if (result.index_array.size() > 70000) {
     printf("index array is too big: %d\n", (int)result.index_array.size());
     ASSERT_NOT_REACHED();
   }

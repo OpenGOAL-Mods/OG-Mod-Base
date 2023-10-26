@@ -302,6 +302,19 @@
 ;; the DGO file
 (custom-level-cgo "TSZ.DGO" "test-zone/testzone.gd")
 
+
+(build-custom-level "lavatubea")
+;; the DGO file
+(custom-level-cgo "LTA.DGO" "lavatubea/lavatubea.gd")
+
+(build-custom-level "lavatubeb")
+;; the DGO file
+(custom-level-cgo "LTB.DGO" "lavatubeb/lavatubeb.gd")
+
+(build-custom-level "lavatubec")
+;; the DGO file
+(custom-level-cgo "LTC.DGO" "lavatubec/lavatubec.gd")
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; ANIMATIONS
 ;;;;;;;;;;;;;;;;;;;;;
