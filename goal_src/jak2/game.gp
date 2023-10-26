@@ -311,9 +311,33 @@
 ;; the DGO file
 (custom-level-cgo "LTB.DGO" "lavatubeb/lavatubeb.gd")
 
-(build-custom-level "lavatubec")
+(build-custom-level "hub1")
 ;; the DGO file
-(custom-level-cgo "LTC.DGO" "lavatubec/lavatubec.gd")
+(custom-level-cgo "hb1.dgo" "hub1/hub1.gd")
+
+(build-custom-level "vi12")
+;; the DGO file
+(custom-level-cgo "sad.dgo" "vi12/vi12.gd")
+
+(build-custom-level "beachc")
+;; the DGO file
+(custom-level-cgo "bec.dgo" "beachc/beachc.gd")
+
+(build-custom-level "junglec")
+;; the DGO file
+(custom-level-cgo "jgc.dgo" "junglec/junglec.gd")
+
+(build-custom-level "mistyc")
+;; the DGO file
+(custom-level-cgo "mis.dgo" "mistyc/mistyc.gd")
+
+(build-custom-level "firecanyonc")
+;; the DGO file
+(custom-level-cgo "fic.dgo" "firecanyonc/firecanyonc.gd")
+
+(build-custom-level "trainingc")
+;; the DGO file
+(custom-level-cgo "tra.dgo" "trainingc/trainingc.gd")
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; ANIMATIONS

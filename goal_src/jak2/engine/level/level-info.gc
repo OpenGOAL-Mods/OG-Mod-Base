@@ -15966,13 +15966,13 @@
     )
   )
 
-  (define lavatubec
+  (define hub1
   (new 'static 'level-load-info
     :index #x9e
-    :name 'lavatubec
-    :visname 'lavatubec-vis
-    :nickname 'ltc
-    :dbname 'lavatubec
+    :name 'hub1
+    :visname 'hub1-vis
+    :nickname 'hb1
+    :dbname 'hub1
     :taskname 'default
     :packages '()
     :memory-mode (load-buffer-mode small-edge)
@@ -15985,9 +15985,9 @@
     :use-camera-other #f
     :part-engine-max 16
     :continues '((new 'static 'continue-point
-        :name "lavatubec-start"
-        :level 'lavatubec
-        :trans (new 'static 'vector :x 5511317.0 :y 159871.8 :z -14621239.0 :w 1.0)
+        :name "hub1-start"
+        :level 'hub1
+        :trans (new 'static 'vector :x 0.0 :y (meters 10) :z (meters 10) :w 1.0)
         :quat (new 'static 'vector :y 0.061 :w 0.9981)
         :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
         :camera-rot (new 'static 'inline-array vector3s 3
@@ -15998,8 +15998,493 @@
         :on-goto #f
         :vis-nick #f
         :want (new 'static 'inline-array level-buffer-state 6
-          (new 'static 'level-buffer-state :name 'lavatubec :display? 'display :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name 'hub1 :display? 'display :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name 'lavatubea :display? 'display :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          )
+        :want-sound (new 'static 'array symbol 3 #f #f #f)
+        )
+      )
+    :tasks '()
+    :priority 100
+    :load-commands '()
+    :alt-load-commands '()
+    :bsp-mask #xffffffffffffffff
+    :buttom-height (meters -10000000)
+    :run-packages '()
+    :wait-for-load #t
+    :login-func #f
+    :activate-func #f
+    :deactivate-func #f
+    :kill-func #f
+    :borrow-level (new 'static 'array symbol 2 #f #f)
+    :borrow-display? (new 'static 'array symbol 2 #f #f)
+    :base-task-mask (task-mask task0)
+    :texture-anim-tfrag #f
+    :texture-anim-pris #f
+    :texture-anim-shrub #f
+    :texture-anim-alpha #f
+    :texture-anim-water #f
+    :texture-anim-twarp #f
+    :texture-anim-pris2 #f
+    :texture-anim-sprite #f
+    :texture-anim-map #f
+    :texture-anim-sky #f
+    :draw-priority 10.0
+    :fog-height 327680.0
+    :bigmap-id (bigmap-id bigmap-id-20)
+    :ocean-near-translucent? #t
+    :ocean-far? #t
+    :mood-range (new 'static 'mood-range :data (new 'static 'array float 4 0.0 1.0 0.0 1.0))
+    :max-rain 1.0
+    :fog-mult 1.0
+    :ocean-alpha 1.0
+    :extra-sound-bank #f
+    )
+  )
+
+  (define vi12
+  (new 'static 'level-load-info
+    :index #x9e
+    :name 'sad
+    :visname 'sad-vis
+    :nickname 'sad
+    :dbname 'sad
+    :taskname 'default
+    :packages '()
+    :memory-mode (load-buffer-mode small-edge)
+    :music-bank #f
+    :ambient-sounds '()
+    :mood-func 'update-mood-default
+    :mood-init #f
+    :ocean #f
+    :sky #t
+    :use-camera-other #f
+    :part-engine-max 16
+    :continues '((new 'static 'continue-point
+        :name "village12-start"
+        :level 'vi12
+        :trans (new 'static 'vector :x -638860.06 :y 139319.7 :z 769990.6 :w 1.0)
+        :quat (new 'static 'vector :y 0.061 :w 0.9981)
+        :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
+        :camera-rot (new 'static 'inline-array vector3s 3
+          (new 'static 'vector3s :data (new 'static 'array float 3 1.0 0.0 0.0))
+          (new 'static 'vector3s :data (new 'static 'array float 3 0.0 1.0 0.0))
+          (new 'static 'vector3s :data (new 'static 'array float 3 0.0 0.0 1.0))
+          )
+        :on-goto #f
+        :vis-nick #f
+        :want (new 'static 'inline-array level-buffer-state 6
+          (new 'static 'level-buffer-state :name 'hub1 :display? 'display :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name 'junglec :display? 'display :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name 'beachc :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          )
+        :want-sound (new 'static 'array symbol 3 #f #f #f)
+        )
+      )
+    :tasks '()
+    :priority 100
+    :load-commands '()
+    :alt-load-commands '()
+    :bsp-mask #xffffffffffffffff
+    :buttom-height (meters -10000000)
+    :run-packages '()
+    :wait-for-load #t
+    :login-func #f
+    :activate-func #f
+    :deactivate-func #f
+    :kill-func #f
+    :borrow-level (new 'static 'array symbol 2 #f #f)
+    :borrow-display? (new 'static 'array symbol 2 #f #f)
+    :base-task-mask (task-mask task0)
+    :texture-anim-tfrag #f
+    :texture-anim-pris #f
+    :texture-anim-shrub #f
+    :texture-anim-alpha #f
+    :texture-anim-water #f
+    :texture-anim-twarp #f
+    :texture-anim-pris2 #f
+    :texture-anim-sprite #f
+    :texture-anim-map #f
+    :texture-anim-sky #f
+    :draw-priority 10.0
+    :fog-height 327680.0
+    :bigmap-id (bigmap-id bigmap-id-20)
+    :ocean-near-translucent? #t
+    :ocean-far? #t
+    :mood-range (new 'static 'mood-range :data (new 'static 'array float 4 0.0 1.0 0.0 1.0))
+    :max-rain 1.0
+    :fog-mult 1.0
+    :ocean-alpha 1.0
+    :extra-sound-bank #f
+    )
+  )
+
+  (define beachc
+  (new 'static 'level-load-info
+    :index #x9e
+    :name 'beachc
+    :visname 'beachc-vis
+    :nickname 'bec
+    :dbname 'bec
+    :taskname 'default
+    :packages '()
+    :memory-mode (load-buffer-mode small-edge)
+    :music-bank #f
+    :ambient-sounds '()
+    :mood-func 'update-mood-default
+    :mood-init #f
+    :ocean #f
+    :sky #t
+    :use-camera-other #f
+    :part-engine-max 16
+    :continues '((new 'static 'continue-point
+        :name "beach-start"
+        :level 'beachc
+        :trans (new 'static 'vector :x -504960.22 :y 9477.325 :z -223513.81 :w 1.0)
+        :quat (new 'static 'vector :y 0.061 :w 0.9981)
+        :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
+        :camera-rot (new 'static 'inline-array vector3s 3
+          (new 'static 'vector3s :data (new 'static 'array float 3 1.0 0.0 0.0))
+          (new 'static 'vector3s :data (new 'static 'array float 3 0.0 1.0 0.0))
+          (new 'static 'vector3s :data (new 'static 'array float 3 0.0 0.0 1.0))
+          )
+        :on-goto #f
+        :vis-nick #f
+        :want (new 'static 'inline-array level-buffer-state 6
+          (new 'static 'level-buffer-state :name 'hub1 :display? 'display :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name 'beachc :display? 'display :force-vis? #f :force-inside? #f)
+          ;;(new 'static 'level-buffer-state :name 'vi12 :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          )
+        :want-sound (new 'static 'array symbol 3 #f #f #f)
+        )
+      )
+    :tasks '()
+    :priority 100
+    :load-commands '()
+    :alt-load-commands '()
+    :bsp-mask #xffffffffffffffff
+    :buttom-height (meters -10000000)
+    :run-packages '()
+    :wait-for-load #t
+    :login-func #f
+    :activate-func #f
+    :deactivate-func #f
+    :kill-func #f
+    :borrow-level (new 'static 'array symbol 2 #f #f)
+    :borrow-display? (new 'static 'array symbol 2 #f #f)
+    :base-task-mask (task-mask task0)
+    :texture-anim-tfrag #f
+    :texture-anim-pris #f
+    :texture-anim-shrub #f
+    :texture-anim-alpha #f
+    :texture-anim-water #f
+    :texture-anim-twarp #f
+    :texture-anim-pris2 #f
+    :texture-anim-sprite #f
+    :texture-anim-map #f
+    :texture-anim-sky #f
+    :draw-priority 10.0
+    :fog-height 327680.0
+    :bigmap-id (bigmap-id bigmap-id-20)
+    :ocean-near-translucent? #t
+    :ocean-far? #t
+    :mood-range (new 'static 'mood-range :data (new 'static 'array float 4 0.0 1.0 0.0 1.0))
+    :max-rain 1.0
+    :fog-mult 1.0
+    :ocean-alpha 1.0
+    :extra-sound-bank #f
+    )
+  )
+
+(define junglec
+  (new 'static 'level-load-info
+    :index #x9e
+    :name 'junglec
+    :visname 'junglec-vis
+    :nickname 'jgc
+    :dbname 'jgc
+    :taskname 'default
+    :packages '()
+    :memory-mode (load-buffer-mode small-edge)
+    :music-bank #f
+    :ambient-sounds '()
+    :mood-func 'update-mood-default
+    :mood-init #f
+    :ocean #f
+    :sky #t
+    :use-camera-other #f
+    :part-engine-max 16
+    :continues '((new 'static 'continue-point
+        :name "jungle-start"
+        :level 'junglec
+        :trans (new 'static 'vector :x 1057631.9 :y 86404.305 :z -647140.56 :w 1.0)
+        :quat (new 'static 'vector :y 0.061 :w 0.9981)
+        :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
+        :camera-rot (new 'static 'inline-array vector3s 3
+          (new 'static 'vector3s :data (new 'static 'array float 3 1.0 0.0 0.0))
+          (new 'static 'vector3s :data (new 'static 'array float 3 0.0 1.0 0.0))
+          (new 'static 'vector3s :data (new 'static 'array float 3 0.0 0.0 1.0))
+          )
+        :on-goto #f
+        :vis-nick #f
+        :want (new 'static 'inline-array level-buffer-state 6
+          (new 'static 'level-buffer-state :name 'hub1 :display? 'display :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name 'junglec :display? 'display :force-vis? #f :force-inside? #f)
+          ;;(new 'static 'level-buffer-state :name 'vi12 :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          )
+        :want-sound (new 'static 'array symbol 3 #f #f #f)
+        )
+      )
+    :tasks '()
+    :priority 100
+    :load-commands '()
+    :alt-load-commands '()
+    :bsp-mask #xffffffffffffffff
+    :buttom-height (meters -10000000)
+    :run-packages '()
+    :wait-for-load #t
+    :login-func #f
+    :activate-func #f
+    :deactivate-func #f
+    :kill-func #f
+    :borrow-level (new 'static 'array symbol 2 #f #f)
+    :borrow-display? (new 'static 'array symbol 2 #f #f)
+    :base-task-mask (task-mask task0)
+    :texture-anim-tfrag #f
+    :texture-anim-pris #f
+    :texture-anim-shrub #f
+    :texture-anim-alpha #f
+    :texture-anim-water #f
+    :texture-anim-twarp #f
+    :texture-anim-pris2 #f
+    :texture-anim-sprite #f
+    :texture-anim-map #f
+    :texture-anim-sky #f
+    :draw-priority 10.0
+    :fog-height 327680.0
+    :bigmap-id (bigmap-id bigmap-id-20)
+    :ocean-near-translucent? #t
+    :ocean-far? #t
+    :mood-range (new 'static 'mood-range :data (new 'static 'array float 4 0.0 1.0 0.0 1.0))
+    :max-rain 1.0
+    :fog-mult 1.0
+    :ocean-alpha 1.0
+    :extra-sound-bank #f
+    )
+  )
+
+  (define mistyc
+  (new 'static 'level-load-info
+    :index #x9e
+    :name 'mistyc
+    :visname 'mistyc-vis
+    :nickname 'mis
+    :dbname 'mis
+    :taskname 'default
+    :packages '()
+    :memory-mode (load-buffer-mode small-edge)
+    :music-bank #f
+    :ambient-sounds '()
+    :mood-func 'update-mood-default
+    :mood-init #f
+    :ocean #f
+    :sky #t
+    :use-camera-other #f
+    :part-engine-max 16
+    :continues '((new 'static 'continue-point
+        :name "misty-start"
+        :level 'mistyc
+        :trans (new 'static 'vector :x 164316.78 :y 15128.576 :z 3390588.0 :w 1.0)
+        :quat (new 'static 'vector :y 0.061 :w 0.9981)
+        :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
+        :camera-rot (new 'static 'inline-array vector3s 3
+          (new 'static 'vector3s :data (new 'static 'array float 3 1.0 0.0 0.0))
+          (new 'static 'vector3s :data (new 'static 'array float 3 0.0 1.0 0.0))
+          (new 'static 'vector3s :data (new 'static 'array float 3 0.0 0.0 1.0))
+          )
+        :on-goto #f
+        :vis-nick #f
+        :want (new 'static 'inline-array level-buffer-state 6
+          (new 'static 'level-buffer-state :name 'hub1 :display? 'display :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name 'mistyc :display? 'display :force-vis? #f :force-inside? #f)
+          ;;(new 'static 'level-buffer-state :name 'vi12 :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          )
+        :want-sound (new 'static 'array symbol 3 #f #f #f)
+        )
+      )
+    :tasks '()
+    :priority 100
+    :load-commands '()
+    :alt-load-commands '()
+    :bsp-mask #xffffffffffffffff
+    :buttom-height (meters -10000000)
+    :run-packages '()
+    :wait-for-load #t
+    :login-func #f
+    :activate-func #f
+    :deactivate-func #f
+    :kill-func #f
+    :borrow-level (new 'static 'array symbol 2 #f #f)
+    :borrow-display? (new 'static 'array symbol 2 #f #f)
+    :base-task-mask (task-mask task0)
+    :texture-anim-tfrag #f
+    :texture-anim-pris #f
+    :texture-anim-shrub #f
+    :texture-anim-alpha #f
+    :texture-anim-water #f
+    :texture-anim-twarp #f
+    :texture-anim-pris2 #f
+    :texture-anim-sprite #f
+    :texture-anim-map #f
+    :texture-anim-sky #f
+    :draw-priority 10.0
+    :fog-height 327680.0
+    :bigmap-id (bigmap-id bigmap-id-20)
+    :ocean-near-translucent? #t
+    :ocean-far? #t
+    :mood-range (new 'static 'mood-range :data (new 'static 'array float 4 0.0 1.0 0.0 1.0))
+    :max-rain 1.0
+    :fog-mult 1.0
+    :ocean-alpha 1.0
+    :extra-sound-bank #f
+    )
+  )
+
+  (define trainingc
+  (new 'static 'level-load-info
+    :index #x9e
+    :name 'trainingc
+    :visname 'trainingc-vis
+    :nickname 'tra
+    :dbname 'tra
+    :taskname 'default
+    :packages '()
+    :memory-mode (load-buffer-mode small-edge)
+    :music-bank #f
+    :ambient-sounds '()
+    :mood-func 'update-mood-default
+    :mood-init #f
+    :ocean #f
+    :sky #t
+    :use-camera-other #f
+    :part-engine-max 16
+    :continues '((new 'static 'continue-point
+        :name "training-start"
+        :level 'trainingc
+        :trans (new 'static 'vector :x -5393740.5 :y 28259.533 :z 4360945.5 :w 1.0)
+        :quat (new 'static 'vector :y 0.061 :w 0.9981)
+        :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
+        :camera-rot (new 'static 'inline-array vector3s 3
+          (new 'static 'vector3s :data (new 'static 'array float 3 1.0 0.0 0.0))
+          (new 'static 'vector3s :data (new 'static 'array float 3 0.0 1.0 0.0))
+          (new 'static 'vector3s :data (new 'static 'array float 3 0.0 0.0 1.0))
+          )
+        :on-goto #f
+        :vis-nick #f
+        :want (new 'static 'inline-array level-buffer-state 6
+          (new 'static 'level-buffer-state :name 'hub1 :display? 'display :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name 'trainingc :display? 'display :force-vis? #f :force-inside? #f)
+          ;;(new 'static 'level-buffer-state :name 'vi12 :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          )
+        :want-sound (new 'static 'array symbol 3 #f #f #f)
+        )
+      )
+    :tasks '()
+    :priority 100
+    :load-commands '()
+    :alt-load-commands '()
+    :bsp-mask #xffffffffffffffff
+    :buttom-height (meters -10000000)
+    :run-packages '()
+    :wait-for-load #t
+    :login-func #f
+    :activate-func #f
+    :deactivate-func #f
+    :kill-func #f
+    :borrow-level (new 'static 'array symbol 2 #f #f)
+    :borrow-display? (new 'static 'array symbol 2 #f #f)
+    :base-task-mask (task-mask task0)
+    :texture-anim-tfrag #f
+    :texture-anim-pris #f
+    :texture-anim-shrub #f
+    :texture-anim-alpha #f
+    :texture-anim-water #f
+    :texture-anim-twarp #f
+    :texture-anim-pris2 #f
+    :texture-anim-sprite #f
+    :texture-anim-map #f
+    :texture-anim-sky #f
+    :draw-priority 10.0
+    :fog-height 327680.0
+    :bigmap-id (bigmap-id bigmap-id-20)
+    :ocean-near-translucent? #t
+    :ocean-far? #t
+    :mood-range (new 'static 'mood-range :data (new 'static 'array float 4 0.0 1.0 0.0 1.0))
+    :max-rain 1.0
+    :fog-mult 1.0
+    :ocean-alpha 1.0
+    :extra-sound-bank #f
+    )
+  )
+
+  (define firecanyonc
+  (new 'static 'level-load-info
+    :index #x9e
+    :name 'firecanyonc
+    :visname 'firecanyonc-vis
+    :nickname 'fir
+    :dbname 'fir
+    :taskname 'default
+    :packages '()
+    :memory-mode (load-buffer-mode small-edge)
+    :music-bank #f
+    :ambient-sounds '()
+    :mood-func 'update-mood-default
+    :mood-init #f
+    :ocean #f
+    :sky #t
+    :use-camera-other #f
+    :part-engine-max 16
+    :continues '((new 'static 'continue-point
+        :name "firecanyon-start"
+        :level 'firecanyonc
+        :trans (new 'static 'vector :x -87377.1 :y 126444.75 :z -681697.25 :w 1.0)
+        :quat (new 'static 'vector :y 0.061 :w 0.9981)
+        :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
+        :camera-rot (new 'static 'inline-array vector3s 3
+          (new 'static 'vector3s :data (new 'static 'array float 3 1.0 0.0 0.0))
+          (new 'static 'vector3s :data (new 'static 'array float 3 0.0 1.0 0.0))
+          (new 'static 'vector3s :data (new 'static 'array float 3 0.0 0.0 1.0))
+          )
+        :on-goto #f
+        :vis-nick #f
+        :want (new 'static 'inline-array level-buffer-state 6
+          (new 'static 'level-buffer-state :name 'hub1 :display? 'display :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name 'firecanyonc :display? 'display :force-vis? #f :force-inside? #f)
+          ;;(new 'static 'level-buffer-state :name 'vi12 :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
@@ -16050,6 +16535,11 @@
   (cons! *level-load-list* 'test-zone)
   (cons! *level-load-list* 'lavatubea)
   (cons! *level-load-list* 'lavatubeb)
-  (cons! *level-load-list* 'lavatubec)
-
+  (cons! *level-load-list* 'hub1)
+  (cons! *level-load-list* 'vi12)
+  (cons! *level-load-list* 'beachc)
+  (cons! *level-load-list* 'junglec)
+  (cons! *level-load-list* 'mistyc)
+  (cons! *level-load-list* 'trainingc)
+  (cons! *level-load-list* 'firecanyonc)
   )

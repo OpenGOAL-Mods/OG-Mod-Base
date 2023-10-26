@@ -4,6 +4,6 @@
 ;; the actual file name still needs to be 8.3
 ("LTB.DGO"
  (
-  "prison-obs.o"
+  
   "lavatubeb.go"
   ))

@@ -67,17 +67,8 @@
       "lump": {
         "name": "test-eco"
       }
-    },
-
-    {
-      "trans": [-7.41, 13.5, 28.42], // translation
-      "etype": "prsn-torture",  // actor type
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat": [0, 0, 0, 1], // quaternion
-      "bsphere": [-7.41, 13.5, 28.42, 10], // bounding sphere
-      "lump": {
-        "name": "test-torture"
-      }
     }
+
+
   ]
 }
