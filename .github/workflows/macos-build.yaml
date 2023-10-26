@@ -38,7 +38,6 @@ jobs:
         uses: mikehardy/buildcache-action@v2.1.0
         with:
           cache_key: macos-11-${{ inputs.cachePrefix }}-${{ inputs.cmakePreset }}
-
           buildcache_tag: v0.28.1
 
       - name: CMake Generation
