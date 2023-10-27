@@ -12,6 +12,8 @@
 ;;---------------------------
 ;; pc menu extra stuff
 
+(define-extern *player-can-load* symbol)
+
 (defconstant PROGRESS_PC_PAGE_HEIGHT 7)
 (defconstant PROGRESS_SCROLL_DIR_UP -1)
 (defconstant PROGRESS_SCROLL_DIR_DOWN 1)
@@ -1083,7 +1085,10 @@
             (set! (-> obj last-option-index-change) (-> *display* real-frame-counter))
             (cond
               ((> (-> obj option-index) 0)
-               (1-! (-> obj option-index))
+                (if (and *enable-multiplayer-save-and-load* (or (= (-> obj display-state) (progress-screen load-game)) (= (-> obj display-state) (progress-screen save-game)) (= (-> obj display-state) (progress-screen save-game-title))))
+                  (set! (-> obj option-index) 0)
+                  (1-! (-> obj option-index))
+                  )
                (when (and (> (length options) PROGRESS_PC_PAGE_HEIGHT) (< (-> obj option-index) *progress-scroll-start*))
                  (progress-scroll-up!)
                  )
@@ -1104,7 +1109,10 @@
             (set! (-> obj last-option-index-change) (-> *display* real-frame-counter))
             (cond
               ((< (-> obj option-index) (1- (length options)))
-               (1+! (-> obj option-index))
+                (if (and *enable-multiplayer-save-and-load* (or (= (-> obj display-state) (progress-screen load-game)) (= (-> obj display-state) (progress-screen save-game)) (= (-> obj display-state) (progress-screen save-game-title))))
+                  (set! (-> obj option-index) (1- (length options)))
+                  (1+! (-> obj option-index))
+                  )
                (when (and (> (length options) PROGRESS_PC_PAGE_HEIGHT) (>= (-> obj option-index) *progress-scroll-end*))
                  (progress-scroll-down!)
                  )
@@ -1909,10 +1917,20 @@
           (((progress-screen load-game))
            (cond
              ((< (-> obj option-index) 4)
-              (when (nonzero? (-> s5-0 file (-> obj option-index) present))
-                (sound-play "start-options")
-                (set! (-> *progress-state* which) (-> obj option-index))
-                (set! (-> obj next-display-state) (progress-screen memcard-loading))
+              (cond 
+                ((and 
+                    (or (not *enable-multiplayer-save-and-load*) *player-can-load*) 
+                    (nonzero? (-> s5-0 file (-> obj option-index) present))
+                    )
+                  (sound-play "start-options")
+                  (set! (-> *progress-state* which) (-> obj option-index))
+                  (set! (-> obj next-display-state) (progress-screen memcard-loading))
+                  )
+                (else
+                  (sound-play "start-options")
+                  (set! (-> *progress-state* which) (-> obj option-index))
+                  (set! (-> obj next-display-state) (progress-screen memcard-data-exists))
+                  )
                 )
               )
              (else

@@ -5,6 +5,8 @@
 ;; name in dgo: progress-draw
 ;; dgos: GAME, ENGINE
 
+(define-extern *enable-multiplayer-save-and-load* symbol)
+
 ;; DECOMP BEGINS
 
 (defun adjust-pos ((arg0 int) (arg1 int))
@@ -650,9 +652,11 @@
         (set! s4-0 700)
         )
     (set! (-> obj particles 19 init-pos x) (the float (- (- 202 (adjust-pos s4-0 150)) (-> obj left-x-offset))))
-    (set! (-> obj particles 20 init-pos x) (the float (- (+ (adjust-pos s4-0 100) 202) (-> obj left-x-offset))))
-    (set! (-> obj particles 21 init-pos x) (the float (- (- 202 (adjust-pos s4-0 50)) (-> obj left-x-offset))))
-    (set! (-> obj particles 22 init-pos x) (the float (- (+ s4-0 202) (-> obj left-x-offset))))
+    (when (not *enable-multiplayer-save-and-load*)
+      (set! (-> obj particles 20 init-pos x) (the float (- (+ (adjust-pos s4-0 100) 202) (-> obj left-x-offset))))
+      (set! (-> obj particles 21 init-pos x) (the float (- (- 202 (adjust-pos s4-0 50)) (-> obj left-x-offset))))
+      (set! (-> obj particles 22 init-pos x) (the float (- (+ s4-0 202) (-> obj left-x-offset))))
+      )
     )
   (cond
     ((= (-> *setting-control* current video-mode) 'pal)
@@ -703,7 +707,7 @@
       (let ((s3-3 (-> obj card-info))
             (s2-0 23)
             )
-        (dotimes (s1-0 4)
+        (dotimes (s1-0 (if *enable-multiplayer-save-and-load* 1 4))
           (set! (-> arg0 origin x) (the float (- 41 (-> obj left-x-offset))))
           (set! (-> arg0 flags) (font-flags shadow kerning middle left large))
           (let ((a0-17 arg0))

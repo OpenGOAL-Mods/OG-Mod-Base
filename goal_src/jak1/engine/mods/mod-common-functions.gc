@@ -45,6 +45,10 @@
 (define *enable-remote-target-pvp-attacks* #f)
 (define *pvp-attack-sphere-size* 3000.0)
 
+;; multiplayer save and load
+(define *enable-multiplayer-save-and-load* #t)
+(define *player-can-load* #f)
+
 ;; pickup toggles for remote
 (define *enable-remote-target-eco-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that the physical target can't accidentally miss it
 (define *enable-remote-target-buzzer-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that cell fly can't drop two cells on pickup
