@@ -219,6 +219,23 @@
       (none)
       )
 
+    (defun add-fish-to-interaction-buffer ((total-amount float) (type interaction-type))
+      (dotimes (idx (-> *interaction-update-buffer* length))
+        (when (= (-> *interaction-update-buffer* idx has_update?) #f)
+
+          (set! (-> *interaction-update-buffer* idx type) type)
+          (set! (-> *interaction-update-buffer* idx amount) total-amount)
+          (set! (-> *interaction-update-buffer* idx ename) "fisher-1")
+          (set! (-> *interaction-update-buffer* idx level) "jungle")
+          (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
+            
+          (set! (-> *interaction-update-buffer* idx has_update?) #t)
+          (return #t)
+          )
+        )
+      (none)
+      )
+
     (defun check-set-interaction-from-buffer ()
       (dotimes (idx (-> *interaction-update-buffer* length))
         (when (= (-> *interaction-update-buffer* idx has_update?) #t)
@@ -394,6 +411,16 @@
           )
         )
 
+      (none)
+      )
+
+    (defun runs-on-fish-caught ((total-amount float))
+      (add-fish-to-interaction-buffer total-amount (interaction-type fish-caught))
+      (none)
+      )
+
+    (defun runs-on-fish-missed((total-amount float))
+      (add-fish-to-interaction-buffer total-amount (interaction-type fish-missed))
       (none)
       )
 

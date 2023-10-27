@@ -323,6 +323,23 @@
     (none)
     )
 
+  (defun set-fish-stats ((amount int) (type int))
+    (let ((fish-game (the-as fisher (process-by-ename "fisher-1"))))
+      (when fish-game
+        (format #t "found fisher ~%")
+        (let ((amount-diff (- amount (if (= (the-as interaction-type type) (interaction-type fish-caught)) (-> fish-game caught) (-> fish-game missed)))))  
+          (format #t "fisher amount ~d ~%" amount-diff)
+          (when (> amount-diff 0)
+            (if (= (the-as interaction-type type) (interaction-type fish-missed))
+              (send-event fish-game 'fisher-fish-die amount-diff)
+              (send-event fish-game 'fisher-fish-caught amount-diff)
+              )
+            )
+          )
+        )
+      )
+    )
+
 (defun color-target ((tgt process-drawable) (color tgt-color))
   (case color
     (((tgt-color normal))

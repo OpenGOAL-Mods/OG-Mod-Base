@@ -7,6 +7,9 @@
 
 (declare-type fisher-fish process-drawable)
 
+(define-extern runs-on-fish-caught (function float none))
+(define-extern runs-on-fish-missed (function float none))
+
 ;; DECOMP BEGINS
 
 
@@ -913,6 +916,7 @@
        (sound-play "caught-eel")
        (ambient-hint-spawn "sksp0a42" (-> self root trans) *entity-pool* 'ambient)
        (send-event (ppointer->process (-> self parent)) 'deadly)
+       (runs-on-fish-missed 20.0)
        )
       (('powerup)
        (process-spawn
@@ -928,6 +932,7 @@
          )
        (sound-play "get-big-fish")
        (send-event (ppointer->process (-> self parent)) 'fisher-fish-caught 5)
+       (runs-on-fish-caught (the float (-> (the-as fisher (ppointer->process (-> self parent))) caught)))
        )
       (else
         (process-spawn
@@ -943,6 +948,7 @@
           )
         (sound-play "get-small-fish")
         (send-event (ppointer->process (-> self parent)) 'fisher-fish-caught 1)
+        (runs-on-fish-caught (the float (-> (the-as fisher (ppointer->process (-> self parent))) caught)))
         )
       )
     (set! (-> self vel) (* 0.25 (-> self vel)))
@@ -978,6 +984,7 @@
              )
          )
        (send-event (ppointer->process (-> self parent)) 'fisher-fish-die 5)
+       (runs-on-fish-missed (the float (-> (the-as fisher (ppointer->process (-> self parent))) missed)))
        )
       (else
         (let ((f0-5 (rand-float-gen)))
@@ -1009,6 +1016,7 @@
             )
           )
         (send-event (ppointer->process (-> self parent)) 'fisher-fish-die 1)
+        (runs-on-fish-missed (the float (-> (the-as fisher (ppointer->process (-> self parent))) missed)))
         )
       )
     (none)

@@ -52,4 +52,6 @@
   (crate-iron)
   (crate-steel)
   (crate-darkeco)
+  (fish-caught)
+  (fish-missed)
   )
