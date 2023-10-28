@@ -339,6 +339,10 @@
 ;; the DGO file
 (custom-level-cgo "tra.dgo" "trainingc/trainingc.gd")
 
+(build-custom-level "sandoverc")
+;; the DGO file
+(custom-level-cgo "sdc.dgo" "sandoverc/sandoverc.gd")
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; ANIMATIONS
 ;;;;;;;;;;;;;;;;;;;;;

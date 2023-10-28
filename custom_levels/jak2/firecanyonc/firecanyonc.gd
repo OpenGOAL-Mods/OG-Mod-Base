@@ -4,6 +4,5 @@
 ;; the actual file name still needs to be 8.3
 ("fic.dgo"
  (
-  
   "firecanyonc.go"
   ))

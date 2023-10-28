@@ -1049,6 +1049,7 @@
   )
 
 (defbehavior target-standard-event-handler target ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
+  
   (local-vars (at-0 int) (s3-0 type))
   (rlet ((vf0 :class vf)
          (vf1 :class vf)
@@ -1128,7 +1129,9 @@
                                )
                            )
                        )
-                  (go target-load-wait)
+                       ;;Removed trip on loads
+                  ;; (go target-load-wait)
+                  (none)
                   )
               )
         (b! #t cfg-291 :delay (nop!))
