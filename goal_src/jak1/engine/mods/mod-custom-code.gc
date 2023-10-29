@@ -4,7 +4,7 @@
     ;; name: mod-custom-code.gc
     ;; name in dgo: mod-custom-code
     ;; dgos: TODO
-
+(define *chicken-home* #f)
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; What is this file for.
@@ -105,7 +105,7 @@
                                      (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks) 
                                      (current-chicks-following) 
                                      (get-saved-chicks-from-mem)
-                                      *close-to-portal?*
+                                      (chicken-portal?)
                                       (get-unlock-level)
                                      )
                       buf 400 (- 150 (* 8 16)) (font-color flat-yellow) (font-flags shadow kerning)))
@@ -206,10 +206,12 @@
               )
               (set! (-> (get-chick-from-flock (the int (-> current-custom-info current-chicks))) to-point-speed) 3.0)    
               (let ((current-timea (current-time)))
+              (set! *chicken-home* #t)
                     (until (time-elapsed? current-timea (seconds 0.35))
                     ;;(format #t "~S~%" "NOT ELAPSED")
                       (suspend)
                     )
+              (set! *chicken-home* #f)
               )
       )
     )
@@ -223,7 +225,15 @@
   (none)
 )
 
-
+(defun chicken-portal? ()
+ (dotimes (i NUM_FLOCKPOINTS)
+ (if (= (vector-vector-distance (-> (get-chick-from-flock 0)target-pos) (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans)) 0.0)
+  (return #t)
+  )
+  #f
+)
+#f
+)
 (defun unlock-level-func ((idx int))
 (set-unlock-level-val idx)
 (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
@@ -544,6 +554,8 @@ Temporary hardcoded hack so I can be sure how this works for release
  
 (none)
 )
+
+
 
 (defun run-mort-code? ()
 "When these are true, we dont want to run mort code."
@@ -917,10 +929,10 @@ Temporary hardcoded hack so I can be sure how this works for release
     
     (when #t
     ;;(format #t "~A" (-> *target* state name))
-      ;; (if (and (= (-> *target* state name) 'target-stance) (not (movie?)) (!= (level-get-target-inside *level*) #f) (!= (-> (level-get-target-inside *level*)name ) 'misty))
+      (if (and (= (-> *target* state name) 'target-stance) (not (movie?)) (!= (level-get-target-inside *level*) #f) (!= (-> (level-get-target-inside *level*)name ) 'misty))
 
-      ;; (have-all-chicks-safe)
-      ;; )
+      (have-all-chicks-safe)
+      )
 
     ;;This is kind of a hack to start up during the opening cutscene
     (when (and (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (>= *currentCutsceneFrame* 1649))

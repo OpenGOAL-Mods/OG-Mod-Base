@@ -91,14 +91,16 @@
 (defun-extern set-unlock-level none)
 (defun-extern reset-saved-chick-from-mem none)
 
+(defun-extern chick-going-portal? symbol)
+
 ;; this lets us use the portal, first thing we try to do is upgrade the unlock level if there are no cells and we cant get a chick as a softlock protection
 (defun have-all-chicks-safe ()
 
 (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
          (current-custom-info (-> *custom-level-info* data current-level-idx)))
 
-(when (or (and (= (get-loaded-cell-count) 0) (= (-> current-custom-info current-chicks) 0))
-(and (= (get-loaded-cell-count) 0) (> (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks) ))
+(when (or (and  (= (get-loaded-cell-count) 0) (= (-> current-custom-info current-chicks) 0) )
+(and (= (get-loaded-cell-count) 0) (> (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks)))
 )
 
 (if 
@@ -111,9 +113,9 @@
 
 
 (or 
-      (>= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks)) 
+      (and (>= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks) ) (not (chicken-portal?)))
       *cheat-mode*
-      (and (= (get-loaded-cell-count) 0) (= (-> current-custom-info current-chicks) 0))
+      (and (= (get-loaded-cell-count) 0) (= (-> current-custom-info current-chicks) 0) (not (chicken-portal?)) )
 )
 ))
 
