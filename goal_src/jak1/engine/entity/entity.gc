@@ -266,7 +266,7 @@
               (let ((v1-9 (-> s2-0 data s1-0 entity)))
                 (case arg0
                   (('vis)
-                   (if (is-object-visible? s3-0 (-> v1-9 extra vis-id)  v1-9)
+                   (if (is-object-visible? s3-0 (-> v1-9 extra vis-id))
                        (+! gp-0 1)
                        )
                    )
@@ -961,10 +961,9 @@
                       (set! sv-272 68)
                       (set! sv-288 (&+ v0-15 0))
                       (set! sv-304 (&+ v0-15 16))
-                      (let ((t0-10 (if (is-object-visible? s3-1 a1-16 s0-2)
+                      (let ((t0-10 (if (is-object-visible? s3-1 a1-16)
                                        (the-as uint #x80808000)
                                        (the-as uint #x80800080)
-                                      
                                        )
                                    )
                             )
@@ -1087,10 +1086,9 @@
                   (bucket-id debug-no-zbuf)
                   (the-as vector (&+ v0-35 0))
                   (the-as vector (&+ v0-35 16))
-                  (if (is-object-visible? (-> s5-3 extra level) a1-31 s5-3)
+                  (if (is-object-visible? (-> s5-3 extra level) a1-31)
                       (new 'static 'rgba :g #x80 :b #x80 :a #x80)
                       (new 'static 'rgba :r #x80 :b #x80 :a #x80)
-                      
                       )
                   )
                 )
@@ -1235,15 +1233,6 @@
   (none)
   )
 
-(deftype sage (process-taskable)
-  ((reminder-played basic   :offset-assert 380)
-   (assistant       handle  :offset-assert 384)
-   )
-  :heap-base #x120
-  :method-count-assert 53
-  :size-assert         #x188
-  :flag-assert         #x3501200188
-  )
 
 ;; TODO
 (define-extern birth-viewer (function process entity-actor object))
@@ -1269,23 +1258,6 @@
   
   ;;(birth-log "call to birth! on ~A~%" this)
 
-
-
-        (if (string= (the-as string (res-lump-struct this 'name basic)) "crate-3256")
-         (set!(-> this etype) sage)
-         )
-
-                 (if (string= (the-as string (res-lump-struct this 'name basic)) "crate-3258")
-         (set!(-> this etype) sage)
-         )
-
-        (if (string= (the-as string (res-lump-struct this 'name basic)) "crate-3259")
-         (set!(-> this etype) sage)
-         )
-
-                 (if (string= (the-as string (res-lump-struct this 'name basic)) "crate-3250")
-         (set!(-> this etype) sage)
-         )
   (let* ((entity-type (-> this etype))
          (info (entity-info-lookup entity-type))
          (entity-process (get-process *default-dead-pool* entity-type (if info
@@ -1301,9 +1273,6 @@
        )
       ((begin
          (set! (-> entity-process type) entity-type)
-
-
-
          (and entity-type
               (valid? entity-type type #f #f 0)
               (valid? (method-of-object entity-process init-from-entity!) function #f #f 0)
@@ -1322,13 +1291,6 @@
   this
   )
 
-(defun move-samos-butts ()
-(vector-copy! (-> (the sage (process-by-ename "crate-3256"))root trans) (new 'static 'vector :x (meters 3025.28) :y (meters 485.76) :z (meters -4821.85)))
-(vector-copy! (-> (the sage (process-by-ename "crate-3258"))root trans) (new 'static 'vector :x (meters 3065.19) :y (meters 485.76) :z (meters -4859.85)))
-(vector-copy! (-> (the sage (process-by-ename "crate-3259"))root trans) (new 'static 'vector :x (meters 2985.19) :y (meters 485.76) :z (meters -4859.85)))
-(vector-copy! (-> (the sage (process-by-ename "crate-3250"))root trans) (new 'static 'vector :x (meters 3017.5074) :y (meters 485.76) :z (meters -4896.85)))
-
-(none))
 (defun entity-deactivate-handler ((arg0 process) (arg1 entity-actor))
   "Handle a deactivation in the entity.
    The entity directly stores a process so it should remove that after deactivating."
@@ -1732,7 +1694,7 @@
                (dotimes (s1-0 s2-1)
                  (let ((s0-0 (-> s3-2 data s1-0)))
                    (cond
-                     ((and (logtest? (-> s0-0 perm status) (entity-perm-status bit-7)) (is-object-visible? s4-2 (-> s0-0 vis-id)(-> s0-0 entity)))
+                     ((and (logtest? (-> s0-0 perm status) (entity-perm-status bit-7)) (is-object-visible? s4-2 (-> s0-0 vis-id)))
                       (when (not (or (-> s0-0 process) (logtest? (-> s0-0 perm status) (entity-perm-status bit-0 dead))))
                         (birth! (-> s0-0 entity))
                         (set! sv-24 (+ sv-24 1))
@@ -1816,8 +1778,8 @@
                     (set! sv-32 (-> s3-5 data s1-2))
                     (cond
                       ((and (#if PC_PORT
-                                (or (with-pc (not (-> *pc-settings* ps2-actor-vis?))) (is-object-visible? s4-2 (-> sv-32 vis-id)(-> sv-32 entity)))
-                                (is-object-visible? s4-2 (-> sv-32 vis-id) (-> sv-32 entity))
+                                (or (with-pc (not (-> *pc-settings* ps2-actor-vis?))) (is-object-visible? s4-2 (-> sv-32 vis-id)))
+                                (is-object-visible? s4-2 (-> sv-32 vis-id))
                                 )
                             (zero? (logand (-> sv-32 perm status) (entity-perm-status bit-9 bit-10)))
                             )

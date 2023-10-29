@@ -800,21 +800,6 @@
     )
   )
 
-  (defun robo-movie-check ()
-  
-      (when (and (process-by-ename "robotboss-3") *target*)
-      (if  (and (= (-> (process-by-ename "robotboss-3") state name) 'robotboss-blue-wait) (!= (-> *target* state name) 'target-continue) )
-        (begin
-              (suspend)
-        (go-process  (process-by-ename "robotboss-3") robotboss-white-eco-movie)
-        (suspend)
-        )
-  
-      )
-
-      )
-      (none))
-
 (defstate robotboss-yellow-dark-bomb (robotboss)
   :enter (behavior ()
     (set! (-> self old-loc quad) (-> self desired-loc quad))
@@ -827,7 +812,7 @@
     )
   :trans (behavior ()
     (robotboss-always-trans (the-as (state robotboss) #f))
-    ;;mort  (spool-push *art-control* "finalbosscam-white-eco" 0 self (the-as float -1.0))
+    (spool-push *art-control* "finalbosscam-white-eco" 0 self (the-as float -1.0))
     (if (>= (-> self loc-t) 1.0)
         (go robotboss-white-eco-movie)
         )
