@@ -469,12 +469,13 @@
   :trans (behavior ()
     ((-> (method-of-type logo startup) trans))
     ;; og:preserve-this
-    (if (and (or *debug-segment* PC_PORT)
-              (cpad-pressed? 0 start circle x)
-              (member (level-status *level* 'village1) '(loaded active))
-              )
-        (set-setting! 'bg-a 'abs 1.0 0)
-        )
+    ;; (if (and (or *debug-segment* PC_PORT)
+    ;;           (cpad-pressed? 0 start circle x)
+    ;;           (member (level-status *level* 'village1) '(loaded active))
+    ;;           )
+    ;;     ;;(set-setting! 'bg-a 'abs 1.0 0)
+    ;;     (set! *in-mort-menu* #t)
+    ;;     )
     (when (and (= (-> *setting-control* current bg-a) 1.0)
                (and (member (level-status *level* 'village1) '(active loaded))
                     ;; og:preserve-this i think we can forgo the time check here...
@@ -645,6 +646,10 @@
   (set! (-> self camera) (the-as handle #f))
   (set! (-> self volumes) (the-as handle #f))
   (set! (-> self black) (the-as handle #f))
+
+        (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+        (init-title)
+      )
   (cond
     ((= arg2 'logo)
      (go-virtual startup)
@@ -813,6 +818,7 @@
        (deactivate (-> self manipy 0))
        )
       (else
+                         ;;(set! *in-mort-menu* #t)
         (target-generic-event-handler proc argc message block)
         )
       )

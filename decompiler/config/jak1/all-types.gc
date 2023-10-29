@@ -450,19 +450,6 @@
   (melt)
   )
 
-(defenum pickup-type
-  :type int32
-  (none)
-  (eco-yellow)
-  (eco-red)
-  (eco-blue)
-  (eco-green)
-  (money)
-  (fuel-cell)
-  (eco-pill)
-  (buzzer)
-  (eco-pill-random)
-  )
 
 (defenum load-msg-result
   :type uint16
@@ -1629,22 +1616,22 @@
   ;; (speedrun-full-game-all-flies #x150c)
   ;; (speedrun-full-game-all-orbs  #x150d)
   (speedrun-new-individual-level #x150e)
-  (speedrun-il-training          #x150f)
-  (speedrun-il-village1          #x1510)
-  (speedrun-il-beach             #x1511)
-  (speedrun-il-jungle            #x1512)
-  (speedrun-il-misty             #x1513)
-  (speedrun-il-firecanyon        #x1514)
-  (speedrun-il-village2          #x1515)
-  (speedrun-il-sunken            #x1516)
-  (speedrun-il-swamp             #x1517)
-  (speedrun-il-rolling           #x1518)
-  (speedrun-il-ogre              #x1519)
-  (speedrun-il-village3          #x151a)
-  (speedrun-il-snow              #x151b)
-  (speedrun-il-cave              #x151c)
-  (speedrun-il-lavatube          #x151d)
-  (speedrun-il-citadel           #x151e)
+  (speedrun-il-block-world          #x150f)
+  (speedrun-il-factory-cross          #x1510)
+  (speedrun-il-holly-wood             #x1511)
+  (speedrun-il-monument            #x1512)
+  (speedrun-il-cathedral             #x1513)
+  (speedrun-il-pyramid        #x1514)
+  (speedrun-il-ice-canyon          #x1515)
+  (speedrun-il-coins            #x1516)
+  (speedrun-il-villa-cube             #x1517)
+  (speedrun-il-ice-slide           #x1518)
+  (speedrun-il-islands              #x1519)
+  (speedrun-il-glass-towers          #x151a)
+  (speedrun-il-chemical-factory              #x151b)
+  (speedrun-il-space-bridge              #x151c)
+  (speedrun-il-chicks          #x151d)
+  (speedrun-il-garden           #x22520)
   (speedrun-new-cat-ext          #x151f)
   (speedrun-new-game-plus        #x1520)
   (speedrun-hub1-100             #x1521)
@@ -1677,6 +1664,28 @@
   (input-opts-binds-unknown #x1615)
   (progress-no-other-resolution-options #x1616)
   (input-opts-controller-led-reflect-heat #x1617)
+  
+  (blockworld-buzzer-task-name      #x2501)
+  (blockworld-level-name            #x20c4)
+  (factory-cross-level-name            #x2502)
+  (holly-world-level-name            #x2503)
+  (monument-level-name            #x2504)
+  (cathedral-level-name            #x2505)
+  (pyramid-level-name            #x2506)
+  (ice-canyon-level-name            #x2507)
+  (coins-level-name            #x2508)
+  (villa-cube-level-name            #x2509)
+  (ice-slide-level-name            #x2510)
+  (islands-level-name            #x2511)
+  (glass-towers-level-name            #x2512)
+  (chemical-factory-level-name            #x2513)
+  (space-bridge-level-name            #x2514)
+  (chicks-level-name            #x2515)
+  (garden-level-name            #x2516)
+  (cold-pipe-level-name            #x2517)
+  (block-man-level-name            #x2518)
+  (cube-face-level-name            #x2519)
+
 ;; GAME-TEXT-ID ENUM ENDS
   )
 
@@ -5628,9 +5637,10 @@
    (prev-level        basic     :offset-assert 104)
    (next-level        basic     :offset-assert 108)
    (wait-for-load     symbol    :offset-assert 112)
+
    )
   :method-count-assert 9
-  :size-assert         #x74
+    :size-assert         #x74
   :flag-assert         #x900000074
   )
 
@@ -8024,6 +8034,24 @@
   :flag-assert         #x900000030
   )
 
+(defenum pickup-type
+  :type int32
+  (none)
+  (eco-yellow)
+  (eco-red)
+  (eco-blue)
+  (eco-green)
+  (money)
+  (fuel-cell)
+  (eco-pill)
+  (buzzer)
+  (eco-pill-random)
+  (star)
+  (eco-gravity)
+  (eco-ice)
+  (eco-chicken)
+  )
+
 (deftype mood-fog-table (structure)
   ((data mood-fog 8 :inline :offset-assert 0)
    )
@@ -9878,6 +9906,7 @@
     )
   )
 
+  
 ;; - Symbols
 
 (define-extern *GAME-bank* game-bank)
@@ -22351,6 +22380,7 @@
 (define-extern *language-name-remap* (array text-id))
 (define-extern *task-egg-starting-x* (array int32))
 (define-extern *game-counts* game-count-info)
+
 (define-extern *level-task-data-remap* (array int32))
 (define-extern *level-task-data* (array level-tasks-info))
 

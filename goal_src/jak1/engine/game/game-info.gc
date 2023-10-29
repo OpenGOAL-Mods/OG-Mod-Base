@@ -9,11 +9,11 @@
 ;; The *game-info* object constains the "game state", like how many lives you have etc.
 
 ;; The "perm" data is saved to the memory card.
-
-
+(define-extern *mort-orb-total* int)
 (define-extern runs-on-jak-death (function symbol none))
 ;;Forward declaration Variable for mod base settings
 (define-extern startingDebugContinuePoint (string))
+(defun-extern demon-chicken-manager-start symbol none)
 ;; DECOMP BEGINS
 
 
@@ -228,7 +228,7 @@
                            "demo-start"
                            )
                           ((and *debug-segment* (not (string= startingDebugContinuePoint "village1-hut")))
-                            startingDebugContinuePoint
+                           startingDebugContinuePoint
                             )
                           (*debug-segment*
                             "village1-hut"
@@ -256,7 +256,7 @@
      (set-time! (-> this continue-time))
      (set-time! (-> this death-time))
      (set-time! (-> this hit-time))
-     (dotimes (v1-50 116)
+     (dotimes (v1-50 (the int (game-task max)))
        (set! (-> this fuel-cell-time 0) 0)
        (nop!)
        )
@@ -323,6 +323,11 @@
                                              )
                                            (suspend)
                                            (start arg0 arg2)
+                                            (when arg3
+                                            (if (task-complete? *game-info* (game-task training-gimmie))
+                                              (demon-chicken-manager-start #t)
+                                              )
+                                             )
                                            (none)
                                            )
                               (-> this mode) cause (get-or-create-continue! this) save-to-load
@@ -367,7 +372,7 @@
            ;; we have task data for this level!
            (when (>= (-> *level-task-data-remap* length) (-> proc entity extra level info index))
              ;; get the level index
-             (let ((level-idx (-> *level-task-data-remap* (+ (-> proc entity extra level info index) -1))))
+             (let ((level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))))
                ;; increment the level money count
                (+! (-> this money-per-level level-idx) (the int amount))
                ;; increment our total money in the game (out of the 2000 max orbs)
@@ -376,15 +381,63 @@
                (if (= (-> this money-per-level level-idx) (-> (get-game-count level-idx) money-count))
                    (activate-orb-all level-idx)
                    )
+
+               )
+     ;; increment our current money count
+     (+! (-> this money) amount)
                )
              )
            )
          )
        )
 
+
+
+
+
+
+     
+    (('star)
+     (if (and (< 0.0 amount) (= (+ (-> this money) amount) (-> *GAME-bank* money-task-inc)))
+         ;; got enough orbs to trade, display a hint
+         (level-hint-spawn
+           (text-id sidekick-reminder-money)
+           "sksp0014"
+           (the-as entity #f)
+           *entity-pool*
+           (game-task none)
+           )
+         )
+
+     ;; need to update the various orb counters
+     (when (< 0.0 amount)
+       (let ((proc (handle->process source)))
+         (when (and proc (-> proc entity))
+           ;; we have task data for this level!
+           (when (>= (-> *level-task-data-remap* length) (-> proc entity extra level info index))
+             ;; get the level index
+             (let ((level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))))
+               ;; increment the level money count
+               (+! (-> this money-per-level level-idx) (the int amount))
+               ;; increment our total money in the game (out of the 2000 max orbs)
+               (+! (-> this money-total) amount)
+               ;; if we have all the money in our level, display the all orbs graphic
+                 (if (>= (-> *game-info* money-total) *mort-orb-total*)
+               (activate-orb-all -1)
+               (if (= (-> this money-per-level level-idx) (-> (get-game-count level-idx) money-count))
+                   (activate-orb-all level-idx)
+                   )
+
+               )
+               )
+             )
+           )
+         )
+       )
      ;; increment our current money count
      (+! (-> this money) amount)
      )
+
     (('fuel-cell)
      ;; got a power cell!
      ;; in this case, the amount is actually the index of the power cell's task
@@ -625,6 +678,19 @@
        )
      (adjust (-> (the-as target (-> this process)) game) 'money amount source-handle)
      )
+    (((pickup-type star))
+     ;; get money.
+     (when (< 0.0 amount)
+       ;; play sound.
+       ;;hack
+       (set! amount 5.0)
+       (if (>= (- (-> *display* base-frame-counter) (-> this money-pickup-time)) (seconds 0.05))
+           (sound-play "money-pickup")
+           )
+       (set! (-> this money-pickup-time) (-> *display* base-frame-counter))
+       )
+     (adjust (-> (the-as target (-> this process)) game) 'star amount source-handle)
+     )
     (((pickup-type fuel-cell))
      ;; the amount is actually the index of the task.
      (let ((s4-2 (the int amount)))
@@ -657,7 +723,8 @@
        )
      (-> this buzzer)
      )
-    (((pickup-type eco-red) (pickup-type eco-blue) (pickup-type eco-yellow))
+     ;;tageco this handles picking up all eco with a timer
+    (((pickup-type eco-red) (pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-gravity) (pickup-type eco-ice) (pickup-type eco-chicken))
      ;; the green vent jumps here.
      (label cfg-80)
 
@@ -708,6 +775,7 @@
            (set! (-> this eco-level) 2.0)
            )
 
+      
 
        ;; sound and controller vibration.
        (when (not (and (= (handle->process source-handle) (handle->process (-> this eco-source)))
@@ -720,8 +788,18 @@
            (((pickup-type eco-blue))
             (sound-play "get-blue-eco")
             )
+            ;;tageco this is a sound
+           (((pickup-type eco-gravity))
+            (sound-play "get-yellow-eco")
+            )
            (((pickup-type eco-green))
             (sound-play "get-green-eco")
+            )
+           (((pickup-type eco-ice))
+            (sound-play "get-green-eco")
+            )
+           (((pickup-type eco-chicken))
+            (sound-play "get-green-eco") ;; add chicken noise
             )
            (((pickup-type eco-yellow))
             (sound-play "get-yellow-eco")
@@ -735,7 +813,7 @@
        (set! (-> this eco-source) source-handle)
        (set-time! (-> this eco-source-time))
 
-       ;; special case for blue eco magnet effect
+       ;; special case for blue eco magnet effect zednote come back to this
        (when (= kind (pickup-type eco-blue))
          (when (= eco-lev 0.0)
            (let ((s5-1 (-> this process)))
@@ -942,7 +1020,7 @@
   (inspect this)
   (when (or (not arg0) (= arg0 'game-task))
     (format #t "~Tgame-task:~%")
-    (dotimes (s4-0 116)
+    (dotimes (s4-0 (the int (game-task max)))
       (if (task-complete? this (the-as game-task s4-0))
           (format #t "~T~T~S~%" (game-task->string (the-as game-task s4-0)))
           )
@@ -970,7 +1048,7 @@
 
   ;; task perms
   (when (zero? (-> gp-0 task-perm-list))
-    (let ((v1-15 (new 'global 'entity-perm-array 116)))
+    (let ((v1-15 (new 'global 'entity-perm-array (the int (game-task max)))))
       (set! (-> gp-0 task-perm-list) v1-15)
       (dotimes (a0-24 (-> v1-15 length))
         (set! (-> v1-15 data a0-24 task) (the-as game-task a0-24))

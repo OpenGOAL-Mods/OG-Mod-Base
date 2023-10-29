@@ -3741,6 +3741,7 @@
            (function "Print Pos" #f ,(lambda ()
                                        (let ((v1-0 (target-pos 0)))
                                          (format #t "~6,,2m ~6,,2m ~6,,2m~%" (-> v1-0 x) (-> v1-0 y) (-> v1-0 z))
+                                         (format #t " (meters ~6,,2m) (meters ~6,,2m) (meters ~6,,2m)~%" (-> v1-0 x) (-> v1-0 y) (-> v1-0 z))
                                          )
                                        0
                                        (none)

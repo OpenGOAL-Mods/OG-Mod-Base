@@ -56,7 +56,10 @@
   :size-assert         #x80
   :flag-assert         #x900000080
   )
-
+(defmacro time-elapsed? (time duration)
+  `(>= (- (current-time) ,time) ,duration)
+  )
+  
 (defun put-draw-env ((packet (pointer gif-tag)))
   "Begin DMA transfer to the GIF/GS to send a draw env packet.
    The length of the transfer is taken from the nloop field of the tag."

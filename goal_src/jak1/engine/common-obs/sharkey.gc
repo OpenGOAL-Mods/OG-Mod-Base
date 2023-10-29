@@ -343,7 +343,7 @@ nav-enemy-default-event-handler
       (ja-no-eval :group! sharkey-chomp-ja :num! (seek! (ja-aframe 3.0 0) 2.0) :frame-num 0.0)
       (until (ja-done? 0)
         (sharkey-get-player-position s5-0)
-        (setup-from-to-duration! (-> self jump-trajectory) gp-0 s5-0 3.0 -291.27112)
+        (setup-from-to-duration! (-> self jump-trajectory) gp-0 s5-0 3.0 -291.27112 1.0)
         (set! (-> self attack-time) (ja-aframe-num 0))
         (sharkey-follow-trajectory (-> self attack-time))
         (suspend)

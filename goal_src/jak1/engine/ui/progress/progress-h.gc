@@ -194,13 +194,14 @@
 
 (deftype count-info (structure)
   ((money-count  int32  :offset-assert   0)
-   (buzzer-count int32  :offset-assert   4)
+   (buzzer-count int32  :offset-assert   4)   
    )
   :pack-me
   :method-count-assert 9
-  :size-assert         #x8
+    :size-assert         #x8
   :flag-assert         #x900000008
   )
+
 
 
 (deftype game-count-info (basic)
@@ -211,6 +212,7 @@
   :size-assert         #x8
   :flag-assert         #x900000008
   )
+
 
 
 (deftype task-info-data (basic)

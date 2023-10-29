@@ -36,6 +36,9 @@ struct DiscordInfo {
   u32 racer;      // are we driving the zoomer?
   u32 flutflut;   // are we riding on flut flut?
   u32 time_of_day;
+  u32 current_chicks;
+  u32 total_chicks;
+  u32 saved_chicks;
 };
 
 // To speedup finding the auto-splitter block in GOAL memory

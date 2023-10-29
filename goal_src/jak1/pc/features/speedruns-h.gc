@@ -13,22 +13,22 @@
   ;; (full-game-all-orbs 6)  ;; All Orbs
 
   ;; Individual Levels
-  (il-training    100) ;; Geyser Rock IL
-  (il-village1    101) ;; Sandover Village IL
-  (il-beach       102) ;; Sentinel Beach IL
-  (il-jungle      103) ;; Forbidden Jungle IL
-  (il-misty       104) ;; Misty Island IL
-  (il-firecanyon  105) ;; Fire Canyon IL
-  (il-village2    106) ;; Rock Village IL
-  (il-sunken      107) ;; Lost Precursor City IL
-  (il-swamp       108) ;; Boggy Swamp IL
-  (il-rolling     109) ;; Precursor Basin IL
-  (il-ogre        110) ;; Mountain Pass IL
-  (il-village3    111) ;; Volcanic Crater IL
-  (il-snow        112) ;; Snowy Mountain IL
-  (il-cave        113) ;; Spider Cave IL
-  (il-lavatube    114) ;; Lava Tube IL
-  (il-citadel     115) ;; Gol and Maia's Citadel IL
+  (il-block-world    100) ;; Geyser Rock IL
+  (il-factory-cross    101) ;; Sandover Village IL
+  (il-holly-wood       102) ;; Sentinel Beach IL
+  (il-monument      103) ;; Forbidden Jungle IL
+  (il-cathedral       104) ;; Misty Island IL
+  (il-pyramid  105) ;; Fire Canyon IL
+  (il-ice-canyon    106) ;; Rock Village IL
+  (il-coins      107) ;; Lost Precursor City IL
+  (il-villa-cube       108) ;; Boggy Swamp IL
+  (il-ice-slide     109) ;; Precursor Basin IL
+  (il-islands        110) ;; Mountain Pass IL
+  (il-glass-towers    111) ;; Volcanic Crater IL
+  (il-chemical-factory        112) ;; Snowy Mountain IL
+  (il-space-bridge        113) ;; Spider Cave IL
+  (il-chicks    114) ;; Lava Tube IL
+  (il-garden     115) ;; Gol and Maia's Citadel IL
 
   ;; Category Extensions
   (new-game-plus  116) ;; NG+
@@ -36,6 +36,7 @@
   (hub2-100       118) ;; Hub 2 100% (all of Hub 1 completed)
   (hub3-100       119) ;; Hub 3 100% (all of Hub 1+2 completed)
   (all-cutscenes  120) ;; All Cutscenes
+  (il-cold-pipe 121)
   )
 
 (deftype speedrun-info-jak1 (structure)

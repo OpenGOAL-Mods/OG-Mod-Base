@@ -5915,11 +5915,12 @@
    (fog-mult            float      :offset-assert 276)
    (ocean-alpha         float      :offset-assert 280)
    (extra-sound-bank    pair       :offset-assert 284)
+   (customname string)
+   (custom-orb-count int)
+   (custom-buzzer-count int)
    )
   :pack-me
-  :method-count-assert 9
-  :size-assert         #x120
-  :flag-assert         #x900000120
+
   )
 
 (declare-type drawable basic)

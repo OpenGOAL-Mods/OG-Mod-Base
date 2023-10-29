@@ -1193,7 +1193,7 @@
     0
     )
   (when (zero? (-> gp-0 task-perm-list))
-    (let ((v1-15 (new 'global 'entity-perm-array 116)))
+    (let ((v1-15 (new 'global 'entity-perm-array (the int (game-task max)))))
       (set! (-> gp-0 task-perm-list) v1-15)
       (dotimes (a0-24 (-> v1-15 length))
         (set! (-> v1-15 data a0-24 task) (the-as game-task a0-24))

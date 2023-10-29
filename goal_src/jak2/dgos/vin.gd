@@ -18,7 +18,7 @@
   "ecowell-c-ag.go"
   "ecowell-d-ag.go"
   "plasmitebox-ag.go"
-  "warp-gate-ag.go"
+  "warpgate-ag.go"
   "vin-door-ag.go"
   "vin-turbine-ag.go"
   "pow-mov-plat-ag.go"

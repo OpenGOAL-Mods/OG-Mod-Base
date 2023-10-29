@@ -105,12 +105,12 @@ class Merc2 {
     std::string to_string() const;
   };
   u32 alloc_bones(int count, ShaderMercMat* data);
-  static constexpr int MAX_SKEL_BONES = 128;
+  static constexpr int MAX_SKEL_BONES = 128 * 12;
   static constexpr int BONE_VECTORS_PER_BONE = 7;
-  static constexpr int MAX_SHADER_BONE_VECTORS = 1024 * 32;  // ??
+  static constexpr int MAX_SHADER_BONE_VECTORS = 1024 * 32 * 12;  // ??
 
   static constexpr int MAX_LEVELS = 3;
-  static constexpr int MAX_DRAWS_PER_LEVEL = 2048 * 2;
+  static constexpr int MAX_DRAWS_PER_LEVEL = 2048 * 12;
   static constexpr int MAX_ENVMAP_DRAWS_PER_LEVEL = MAX_DRAWS_PER_LEVEL;
 
   math::Vector4f m_shader_bone_vector_buffer[MAX_SHADER_BONE_VECTORS];

@@ -306,7 +306,7 @@
         )
       (let ((v1-0 (-> tag elt-type)))
         (if (or (= v1-0 (game-save-elt name)) (= v1-0 (game-save-elt continue)))
-            (format #t "= \"~G\"~%" (&+ (the-as pointer tag) 16))
+            (format #t "= \"~G\"~%" (&+ (the-as pointer tag) (the int (game-task max))))
             (format #t "~%")
             )
         )
@@ -334,7 +334,7 @@
                      #t
                      "                 ~-32S: ~D~%"
                      a2-14
-                     (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) 16) (* s2-2 8))))
+                     (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) (the int (game-task max))) (* s2-2 8))))
                      )
                    )
                )
@@ -348,7 +348,7 @@
                      #t
                      "                 ~-32S: ~D~%"
                      a2-15
-                     (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) 16) (* s2-3 8))))
+                     (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) (the int (game-task max))) (* s2-3 8))))
                      )
                    )
                )
@@ -362,7 +362,7 @@
                      #t
                      "                 ~-32S: ~D~%"
                      a2-16
-                     (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) 16) (* s2-4 8))))
+                     (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) (the int (game-task max))) (* s2-4 8))))
                      )
                    )
                )

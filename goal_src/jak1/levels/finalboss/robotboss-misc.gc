@@ -222,7 +222,7 @@
          (set! (-> self particles gp-0 tracker) (ppointer->handle (process-spawn
                                                                     part-tracker
                                                                     :init part-tracker-init
-                                                                    (-> self particles gp-0 kind)
+                                                                    (-> (the-as ecoclaw  (process-by-ename "ecoclaw-7")) particles gp-0 kind)
                                                                     -1
                                                                     ecoclaw-beam-particle-callback
                                                                     (-> self ppointer)

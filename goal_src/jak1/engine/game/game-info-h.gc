@@ -194,9 +194,11 @@
    (death-pos             vector-array                  :offset-assert 312)
    (dummy                 basic                         :offset-assert 316)
    (auto-save-count       int32                         :offset-assert 320)
+
    )
+   
   :method-count-assert 29
-  :size-assert         #x144
+    :size-assert         #x144
   :flag-assert         #x1d00000144
   (:methods
    (initialize! (_type_ symbol game-save string) _type_ 9)

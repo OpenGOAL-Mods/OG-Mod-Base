@@ -932,11 +932,12 @@
    (incomming-attack-id uint64                       :offset-assert 240)
    (ambients-played     int32                        :offset-assert 248)
    (ambient             ambient-control      :inline :offset-assert 256)
+   (num-hit   int32 )
+   (max-hp int32)
+   (eco-collectable int32)
+   (eco-quantity int32)
    )
-  :heap-base #xa0
-  :method-count-assert 21
-  :size-assert         #x110
-  :flag-assert         #x1500a00110
+
   (:methods
     (flutflutegg-method-20 (_type_ float float float) none 20)
     )
@@ -947,7 +948,6 @@
     flutflutegg-physics-fall
     )
   )
-
 
 (defskelgroup *flutflutegg-sg* flutflutegg flutflutegg-lod0-jg flutflutegg-idle-ja
               ((flutflutegg-lod0-mg (meters 20)) (flutflutegg-lod1-mg (meters 40)) (flutflutegg-lod2-mg (meters 999999)))
