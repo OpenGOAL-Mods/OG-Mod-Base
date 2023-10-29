@@ -16325,7 +16325,7 @@
           (new 'static 'level-buffer-state :name 'hub1 :display? 'display :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name 'junglec :display? 'display :force-vis? #f :force-inside? #f)
           ;;(new 'static 'level-buffer-state :name 'vi12 :display? #f :force-vis? #f :force-inside? #f)
-          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name 'sandoverc :display? 'display :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
@@ -16406,7 +16406,7 @@
           (new 'static 'level-buffer-state :name 'hub1 :display? 'display :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name 'mistyc :display? 'display :force-vis? #f :force-inside? #f)
           ;;(new 'static 'level-buffer-state :name 'vi12 :display? #f :force-vis? #f :force-inside? #f)
-          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name 'sandoverc :display? 'display :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
@@ -16487,7 +16487,7 @@
           (new 'static 'level-buffer-state :name 'hub1 :display? 'display :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name 'trainingc :display? 'display :force-vis? #f :force-inside? #f)
           ;;(new 'static 'level-buffer-state :name 'vi12 :display? #f :force-vis? #f :force-inside? #f)
-          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name 'sandoverc :display? 'display :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
@@ -16568,7 +16568,7 @@
           (new 'static 'level-buffer-state :name 'hub1 :display? 'display :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name 'firecanyonc :display? 'display :force-vis? #f :force-inside? #f)
           ;;(new 'static 'level-buffer-state :name 'vi12 :display? #f :force-vis? #f :force-inside? #f)
-          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name 'sandoverc :display? 'display :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
@@ -16614,11 +16614,11 @@
     )
   )
 
+  
 (#when PC_PORT
   (cons! *level-load-list* 'test-zone)
-  (cons! *level-load-list* 'lavatubea)
-  (cons! *level-load-list* 'lavatubeb)
-  (cons! *level-load-list* 'hub1)
+  
+  ;; HUB 1
   (cons! *level-load-list* 'vi12)
   (cons! *level-load-list* 'beachc)
   (cons! *level-load-list* 'junglec)
@@ -16626,4 +16626,29 @@
   (cons! *level-load-list* 'trainingc)
   (cons! *level-load-list* 'firecanyonc)
   (cons! *level-load-list* 'sandoverc)
+
+  #| ;;HUB 2
+  (cons! *level-load-list* 'firecanyonc2)
+  (cons! *level-load-list* 'hub2)
+  (cons! *level-load-list* 'rollingc)
+  (cons! *level-load-list* 'swampc)
+  (cons! *level-load-list* 'sunkenc)
+  (cons! *level-load-list* 'ogre2c)
+  (cons! *level-load-list* 'rockvic)
+
+  ;; HUB 3
+  (cons! *level-load-list* 'hub3)
+  (cons! *level-load-list* 'ogre3c)
+  (cons! *level-load-list* 'snowc)
+  (cons! *level-load-list* 'cavec)
+  (cons! *level-load-list* 'lavatubec3)
+
+  ;; HUB 4
+  (cons! *level-load-list* 'hub4)
+  (cons! *level-load-list* 'lavatubec4)
+  (cons! *level-load-list* 'citadelc)
+  |#
+
+  (cons! *level-load-list* 'lavatubea)
+  (cons! *level-load-list* 'lavatubeb)
   )
