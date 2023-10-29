@@ -2293,6 +2293,12 @@
     "finalbosscam-white-eco": [
       {
         "clear": false,
+        "frame_start": 49,
+        "offscreen": true,
+        "speaker": "SAMOS"
+      },
+      {
+        "clear": false,
         "frame_start": 163,
         "offscreen": true,
         "speaker": "GOL"

@@ -74,6 +74,15 @@ It type checks the arguments for the entry function.
      )
   )
 
+(defmacro go-virtual-process (proc next-state &rest args)
+  "Make another process go-virtual."
+  `(with-pp
+     (protect (pp)
+              (set! pp ,proc)
+              (go-hook pp (method-of-object ,proc ,next-state) ,@args)
+              )
+     )
+  )
 ;; run the given function in a process right now.
 ;; will return to here when:
 ;;  - you return

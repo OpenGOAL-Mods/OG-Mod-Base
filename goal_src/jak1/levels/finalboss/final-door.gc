@@ -217,7 +217,7 @@
     (sound-play "cell-prize")
     (let ((gp-1 (new 'stack 'trajectory)))
       (set! (-> self base y) (-> self jump-pos y))
-      (setup-from-to-duration! gp-1 (-> self root-override trans) (-> self jump-pos) 300.0 -2.2755556)
+      (setup-from-to-duration! gp-1 (-> self root-override trans) (-> self jump-pos) 300.0 -2.2755556 1.0)
       (set-time! (-> self state-time))
       (until (time-elapsed? (-> self state-time) (seconds 1))
         (let ((f0-2 (the float (- (current-time) (-> self state-time)))))

@@ -1,0 +1,40 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: factory-cross-code.gc
+;; name in dgo: factory-cross-code
+;; dgos: TODO
+#|
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define factory-cross-load-level-id 23)
+(define factory-cross-per-level-id 17)
+(define factory-cross-num-chicks 3)
+(define factory-cross-num-fuel 0)
+(define factory-cross-spawn-point 0)
+
+(define factory-cross-nextCheckpoint "holly-wood-start")
+
+;;money and buzzer are already set, but we need to add these to the levels count-info
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  factory-cross-load-level-id -1))fuel-count) factory-cross-num-fuel)
+(set! (-> *game-counts* data(-> *level-task-data-remap* (+  factory-cross-load-level-id -1))chicks-count) factory-cross-num-chicks)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun factory-cross-main-loop ()
+(if (and (= (-> (level-get-target-inside *level*) name) 'factory-cross )
+    (<= 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  factory-cross-load-level-id -1))money-count)
+        (-> *game-info* money-per-level factory-cross-per-level-id))
+    (= 
+        (-> *game-info* fuel-per-level factory-cross-per-level-id) 
+        (-> *game-counts* data(-> *level-task-data-remap* (+  factory-cross-load-level-id -1))fuel-count))) 
+    (start 'play (get-continue-by-name *game-info* factory-cross-nextCheckpoint))  
+)
+(none)
+)
+
+|#

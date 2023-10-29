@@ -1,0 +1,40 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: .mort-library.gc
+;; name in dgo: .mort-library
+;; dgos: TODO
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Level functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun level-load-info-by-index ((index int))
+  "Find level-load-info by index"
+  (let ((iter *level-load-list*))
+    (while (not (null? iter))
+      (let* ((sym (the symbol (car iter)))
+             (info (the level-load-info (-> sym value))))
+        (when (= (-> info index) index)
+          ;; match!
+          (return info)
+          )
+        )
+      (set! iter (cdr iter))
+      )
+    )
+  )
+  
+;;TODO
+
+;;function that takes in a starting checkpoint and final chick count, then if Jak is close it checks if you need
+;;more chicks, then display a message saying "Need more Chicks! 3/X" If you have all the chicks, then activate the 
+;;blue eco launcher to take you to next level
+
+
+;; function that takes in an actor, end point(vector), and time-unit. 
+;;Then starts at an actors trans and translates it to the end point and back during the provided cycle time
+
+#|(defun move-mort-enemy-to-point ((actor-name string)(end-location vector)(cycle-speed time-unit))
+
+(none))#|

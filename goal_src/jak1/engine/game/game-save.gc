@@ -228,7 +228,7 @@
         )
       (let ((v1-0 (-> tag elt-type)))
         (if (or (= v1-0 (game-save-elt name)) (= v1-0 (game-save-elt continue)))
-            (format #t "= \"~G\"~%" (&+ (the-as pointer tag) 16))
+            (format #t "= \"~G\"~%" (&+ (the-as pointer tag) (the int (game-task max))))
             (format #t "~%")
             )
         )
@@ -258,7 +258,7 @@
                      #t
                      "                 ~-32S: ~D~%"
                      a2-14
-                     (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) 16) (* s2-2 8))))
+                     (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) (the int (game-task max))) (* s2-2 8))))
                      )
                    )
                )
@@ -272,7 +272,7 @@
                      #t
                      "                 ~-32S: ~D~%"
                      a2-15
-                     (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) 16) (* s2-3 8))))
+                     (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) (the int (game-task max))) (* s2-3 8))))
                      )
                    )
                )
@@ -286,7 +286,7 @@
                      #t
                      "                 ~-32S: ~D~%"
                      a2-16
-                     (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) 16) (* s2-4 8))))
+                     (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) (the int (game-task max))) (* s2-4 8))))
                      )
                    )
                )
@@ -298,10 +298,10 @@
             (dotimes (i (-> tag elt-count))
               (awhen (text-id->string (-> *game-info* hint-control i id))
                 (format #t "                 ~-32S [~D]~%" it i)
-                (format #t "                 ~-32S: ~D~%" "start-time" (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) 16) (* i (-> tag elt-size)))) 0))
-                (format #t "                 ~-32S: ~D~%" "last-time-called" (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) 16) (* i (-> tag elt-size)))) 1))
-                (format #t "                 ~-32S: ~D~%" "num-attempts" (-> (the-as (pointer uint8) (&+ (&+ (the-as pointer tag) 16) (* i (-> tag elt-size)))) 16))
-                (format #t "                 ~-32S: ~D~%" "num-success" (-> (the-as (pointer uint8) (&+ (&+ (the-as pointer tag) 16) (* i (-> tag elt-size)))) 17))
+                (format #t "                 ~-32S: ~D~%" "start-time" (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) (the int (game-task max))) (* i (-> tag elt-size)))) 0))
+                (format #t "                 ~-32S: ~D~%" "last-time-called" (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer tag) (the int (game-task max))) (* i (-> tag elt-size)))) 1))
+                (format #t "                 ~-32S: ~D~%" "num-attempts" (-> (the-as (pointer uint8) (&+ (&+ (the-as pointer tag) (the int (game-task max))) (* i (-> tag elt-size)))) 16))
+                (format #t "                 ~-32S: ~D~%" "num-success" (-> (the-as (pointer uint8) (&+ (&+ (the-as pointer tag) (the int (game-task max))) (* i (-> tag elt-size)))) 17))
                 )
               )
             )
@@ -309,7 +309,7 @@
             (dotimes (i (* 8 (-> tag elt-count)))
               (awhen (text-id->string (the text-id i))
                 (unless (string= it "*unknown*")
-                  (format #t "                 ~-32S: ~A~%" it (logtest? (-> (the-as (pointer uint8) (&+ (the-as pointer tag) 16)) (/ i 8)) (ash 1 (mod i 8))))
+                  (format #t "                 ~-32S: ~A~%" it (logtest? (-> (the-as (pointer uint8) (&+ (the-as pointer tag) (the int (game-task max)))) (/ i 8)) (ash 1 (mod i 8))))
                   ))
               )
             )
@@ -603,12 +603,12 @@
                                                                     (let ((v1-95 (&+ v1-94 16)))
                                                                       (let ((a0-63 (the-as game-save-tag (&+ v1-95 0))))
                                                                         (set! (-> a0-63 elt-type) (game-save-elt fuel-cell-time))
-                                                                        (set! (-> a0-63 elt-count) 116)
+                                                                        (set! (-> a0-63 elt-count) (the int(game-task max)))
                                                                         (set! (-> a0-63 elt-size) (the-as uint 8))
                                                                         )
                                                                       (let ((v1-96 (&+ v1-95 16)))
                                                                         (let ((a0-64 (the-as object 0)))
-                                                                          (while (< (the-as int a0-64) 116)
+                                                                          (while (< (the-as int a0-64) (the int (game-task max)))
                                                                             (set! (-> (the-as (pointer int64) (&+ v1-96 (* (the-as int a0-64) 8))))
                                                                                   (-> this fuel-cell-time (the-as int a0-64))
                                                                                   )
@@ -1063,9 +1063,9 @@
     )
   ;; update tasks
   (let ((s5-1 2) ;; jungle eggtop
-        (s4-2 115) ;; max - 1
+        (s4-2 (the int (game-task max))) ;; max - 1
         )
-    (while (>= (the-as uint s4-2) (the-as uint s5-1))
+    (while (> (the-as uint s4-2) (the-as uint s5-1))
       ;; calling this will run the function to see if the task is done or not
       (get-task-status (the-as game-task s5-1))
       (+! s5-1 1)

@@ -964,6 +964,7 @@
           (if (and *cheat-mode* (cpad-pressed? 0 triangle))
               (set! s5-0 #t)
               )
+              (format #t "~D~%" f30-0)
           (cond
             ((paused?)
              )

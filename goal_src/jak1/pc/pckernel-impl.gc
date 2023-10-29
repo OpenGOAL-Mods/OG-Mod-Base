@@ -132,6 +132,9 @@
    (racer? symbol)
    (flutflut? symbol)
    (time-of-day (pointer float))
+   (current-chicks (pointer int32))
+   (total-chicks (pointer int32))
+   (saved-chicks (pointer int32))
    )
   )
 
@@ -160,7 +163,7 @@
   (set! (-> obj text-language) (the pc-language (scf-get-language)))
   (set! (-> obj subtitle-language) (the pc-language (scf-get-language)))
   (set! (-> obj skip-movies?) #t)
-  (set! (-> obj subtitles?) *debug-segment*)
+  (set! (-> obj subtitles?) #f)
   (cond
     ((and (= *default-territory* GAME_TERRITORY_SCEE) (= (-> obj text-language) (pc-language english)))
       (set! (-> obj text-language) (pc-language uk-english))

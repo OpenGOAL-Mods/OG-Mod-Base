@@ -461,7 +461,7 @@
     (logior! (-> self collide-info nav-flags) (nav-flags navf1))
     (set! (-> self nav extra-nav-sphere quad) (-> self appear-dest quad))
     (set! (-> self nav extra-nav-sphere w) 8192.0)
-    (setup-from-to-duration! (-> self traj) (-> self collide-info trans) (-> self appear-dest) 225.0 -9.102222)
+    (setup-from-to-duration! (-> self traj) (-> self collide-info trans) (-> self appear-dest) 225.0 -9.102222 1.0)
     (let ((gp-0 (new 'stack-no-clear 'vector)))
       (set! (-> gp-0 quad) (-> self collide-info trans quad))
       (+! (-> gp-0 y) 8192.0)

@@ -405,6 +405,7 @@
         (-> arg0 dest)
         (the float (-> arg0 duration))
         (the-as float -0.22755557)
+        1.0
         )
       (setup-from-to-xz-vel!
         (-> self trajectory)
