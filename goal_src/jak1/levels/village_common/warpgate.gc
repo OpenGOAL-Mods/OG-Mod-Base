@@ -260,7 +260,7 @@
     )
   )
 
-;; (defun print-level-name ((arg0 int) (arg1 font-context) (arg2 int) (arg3 int))
+;; (defun print-level-name-warpgate ((arg0 int) (arg1 font-context) (arg2 int) (arg3 int))
 ;;   (let ((s5-0 (if arg3
 ;;                   arg2
 ;;                   (- arg2)
@@ -282,7 +282,7 @@
 ;;   arg1
 ;;   )
 
-(defun print-level-name ((arg0 string) (arg1 font-context) (arg2 int) (arg3 int))
+(defun print-level-name-warpgate ((arg0 string) (arg1 font-context) (arg2 int) (arg3 int))
   (let ((s5-0 (if arg3
                   arg2
                   (- arg2)
@@ -421,7 +421,7 @@
             (let ((v1-40 s1-3))
               (set! (-> v1-40 height) (the float 55))
               )
-            (set! (-> s1-3 flags) (font-flags shadow kerning middle left large))
+            (set! (-> s1-3 flags) (font-flags shadow kerning middle middle-vert large))
             (print-game-text (lookup-text! *common-text* (text-id warp-gate-use-dpad) #f) s1-3 #f 128 22)
             (+! (-> s1-3 origin y) 35.0)
             (let ((v1-43 s1-3))
@@ -438,7 +438,7 @@
               (cond
                 (s4-0
                   (let ((a2-6 (- 300 (+ s2-0 150)))
-                        (t9-20 print-level-name)
+                        (t9-20 print-level-name-warpgate)
                         (a1-16 s1-3)
                         (a3-4 #f)
                         )                
@@ -447,11 +447,11 @@
                   (let ((a2-7 (+ s2-0 150)))
                     (cond
                       ((< a2-7 225)
-                       (print-level-name (-> *warp-info* s0-3) s1-3 a2-7 (the-as int #t))
+                       (print-level-name-warpgate (-> *warp-info* s0-3) s1-3 a2-7 (the-as int #t))
                        )
                       (else
                         (let ((a2-8 (- 300 s2-0))
-                              (t9-22 print-level-name)
+                              (t9-22 print-level-name-warpgate)
                               (a1-18 s1-3)
                               (a3-6 #f)
                               )
@@ -465,11 +465,11 @@
                   (let ((a2-9 (+ s2-0 150)))
                     (cond
                       ((< a2-9 225)
-                       (print-level-name (-> *warp-info* sv-112) s1-3 a2-9 (the-as int #f))
+                       (print-level-name-warpgate (-> *warp-info* sv-112) s1-3 a2-9 (the-as int #f))
                        )
                       (else
                         (let ((a2-10 (- 300 s2-0))
-                              (t9-24 print-level-name)
+                              (t9-24 print-level-name-warpgate)
                               (a1-20 s1-3)
                               (a3-8 #t)
                               )
@@ -479,7 +479,7 @@
                       )
                     )
                   (let ((a2-11 (- 300 (+ s2-0 150))))
-                    (print-level-name (-> *warp-info* s0-3) s1-3 a2-11 (the-as int #t))
+                    (print-level-name-warpgate (-> *warp-info* s0-3) s1-3 a2-11 (the-as int #t))
                     )
                   )
                 )
@@ -489,7 +489,7 @@
                 (set! (-> a0-47 color) (font-color progress-yellow))
                 )
               )
-            (print-level-name (-> *warp-info* gp-0) s1-3 s2-0 (the-as int s4-0))
+            (print-level-name-warpgate (-> *warp-info* gp-0) s1-3 s2-0 (the-as int s4-0))
             (+! (-> s1-3 origin y) 20.0)
             (print-game-text (lookup-text! *common-text* (text-id press-to-warp) #f) s1-3 #f 128 22)
             (+! (-> s1-3 origin y) 15.0)

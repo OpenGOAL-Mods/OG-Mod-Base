@@ -235,47 +235,47 @@
      )
      ;;tageco This determines the look, and sound of the new eco
     (((pickup-type eco-gravity))
-     (set! (-> obj eco-effect) (-> *part-group-id-table* 709))
-     (set! (-> obj collect-effect) (-> *part-group-id-table* 66))
-     (set! (-> obj collect-effect2) (-> *part-group-id-table* 43))
-     (set! (-> obj collect-effect-time) (seconds 0.5))
-     (set! (-> obj sound-name) (static-sound-spec "blue-eco-idle" :fo-max 15))
+     (set! (-> this eco-effect) (-> *part-group-id-table* 709))
+     (set! (-> this collect-effect) (-> *part-group-id-table* 66))
+     (set! (-> this collect-effect2) (-> *part-group-id-table* 43))
+     (set! (-> this collect-effect-time) (seconds 0.5))
+     (set! (-> this sound-name) (static-sound-spec "blue-eco-idle" :fo-max 15))
      )
     (((pickup-type eco-ice))
-     (set! (-> obj eco-effect) (-> *part-group-id-table* 48))
-     (set! (-> obj collect-effect) (-> *part-group-id-table* 69))
-     (set! (-> obj collect-effect2) (-> *part-group-id-table* 49))
-     (set! (-> obj collect-effect-time) (seconds 0.5))
-     (set! (-> obj sound-name) (static-sound-spec "red-eco-idle" :fo-max 15))
+     (set! (-> this eco-effect) (-> *part-group-id-table* 48))
+     (set! (-> this collect-effect) (-> *part-group-id-table* 69))
+     (set! (-> this collect-effect2) (-> *part-group-id-table* 49))
+     (set! (-> this collect-effect-time) (seconds 0.5))
+     (set! (-> this sound-name) (static-sound-spec "red-eco-idle" :fo-max 15))
      )
     (((pickup-type eco-chicken))
-     (set! (-> obj eco-effect) (-> *part-group-id-table* 756))
-     (set! (-> obj collect-effect) (-> *part-group-id-table* 66))
-     (set! (-> obj collect-effect2) (-> *part-group-id-table* 43))
-     (set! (-> obj collect-effect-time) (seconds 0.5))
-     (set! (-> obj sound-name) (static-sound-spec "blue-eco-idle" :fo-max 15))
+     (set! (-> this eco-effect) (-> *part-group-id-table* 756))
+     (set! (-> this collect-effect) (-> *part-group-id-table* 66))
+     (set! (-> this collect-effect2) (-> *part-group-id-table* 43))
+     (set! (-> this collect-effect-time) (seconds 0.5))
+     (set! (-> this sound-name) (static-sound-spec "blue-eco-idle" :fo-max 15))
      )
      ;;tageco This determines the look, and sound of the new eco
     (((pickup-type eco-gravity))
-     (set! (-> obj eco-effect) (-> *part-group-id-table* 709))
-     (set! (-> obj collect-effect) (-> *part-group-id-table* 66))
-     (set! (-> obj collect-effect2) (-> *part-group-id-table* 43))
-     (set! (-> obj collect-effect-time) (seconds 0.5))
-     (set! (-> obj sound-name) (static-sound-spec "blue-eco-idle" :fo-max 15))
+     (set! (-> this eco-effect) (-> *part-group-id-table* 709))
+     (set! (-> this collect-effect) (-> *part-group-id-table* 66))
+     (set! (-> this collect-effect2) (-> *part-group-id-table* 43))
+     (set! (-> this collect-effect-time) (seconds 0.5))
+     (set! (-> this sound-name) (static-sound-spec "blue-eco-idle" :fo-max 15))
      )
     (((pickup-type eco-ice))
-     (set! (-> obj eco-effect) (-> *part-group-id-table* 48))
-     (set! (-> obj collect-effect) (-> *part-group-id-table* 69))
-     (set! (-> obj collect-effect2) (-> *part-group-id-table* 49))
-     (set! (-> obj collect-effect-time) (seconds 0.5))
-     (set! (-> obj sound-name) (static-sound-spec "red-eco-idle" :fo-max 15))
+     (set! (-> this eco-effect) (-> *part-group-id-table* 48))
+     (set! (-> this collect-effect) (-> *part-group-id-table* 69))
+     (set! (-> this collect-effect2) (-> *part-group-id-table* 49))
+     (set! (-> this collect-effect-time) (seconds 0.5))
+     (set! (-> this sound-name) (static-sound-spec "red-eco-idle" :fo-max 15))
      )
     (((pickup-type eco-chicken))
-     (set! (-> obj eco-effect) (-> *part-group-id-table* 756))
-     (set! (-> obj collect-effect) (-> *part-group-id-table* 66))
-     (set! (-> obj collect-effect2) (-> *part-group-id-table* 43))
-     (set! (-> obj collect-effect-time) (seconds 0.5))
-     (set! (-> obj sound-name) (static-sound-spec "blue-eco-idle" :fo-max 15))
+     (set! (-> this eco-effect) (-> *part-group-id-table* 756))
+     (set! (-> this collect-effect) (-> *part-group-id-table* 66))
+     (set! (-> this collect-effect2) (-> *part-group-id-table* 43))
+     (set! (-> this collect-effect-time) (seconds 0.5))
+     (set! (-> this sound-name) (static-sound-spec "blue-eco-idle" :fo-max 15))
      )
     (((pickup-type eco-green))
      (set! (-> this eco-effect) (-> *part-group-id-table* 58))
@@ -1071,13 +1071,13 @@
   )
 
 
-(defmethod init-from-entity! eco-ice((obj eco-ice) (arg0 entity-actor))
-  (initialize-eco obj arg0 (pickup-type eco-ice) (-> *FACT-bank* eco-single-inc))
+(defmethod init-from-entity! eco-ice((this eco-ice) (arg0 entity-actor))
+  (initialize-eco this arg0 (pickup-type eco-ice) (-> *FACT-bank* eco-single-inc))
   (none)
   )
 
-(defmethod init-from-entity! eco-gravity ((obj eco-gravity) (arg0 entity-actor))
-  (initialize-eco obj arg0 (pickup-type eco-gravity) (-> *FACT-bank* eco-single-inc))
+(defmethod init-from-entity! eco-gravity ((this eco-gravity) (arg0 entity-actor))
+  (initialize-eco this arg0 (pickup-type eco-gravity) (-> *FACT-bank* eco-single-inc))
   (none)
   )
 
@@ -1090,8 +1090,8 @@
   )
 
 
-(defmethod init-from-entity! eco-chicken((obj eco-chicken) (arg0 entity-actor))
-  (initialize-eco obj arg0 (pickup-type eco-chicken) (-> *FACT-bank* eco-single-inc))
+(defmethod init-from-entity! eco-chicken((this eco-chicken) (arg0 entity-actor))
+  (initialize-eco this arg0 (pickup-type eco-chicken) (-> *FACT-bank* eco-single-inc))
   (none)
   )
 (deftype health (eco-collectable)
@@ -1418,12 +1418,12 @@
   )
 
 
-(defmethod run-logic? star ((obj star))
-  (or (zero? (logand (-> obj mask) (process-mask actor-pause)))
-      (or (and (nonzero? (-> obj draw))
-               (logtest? (-> obj draw status) (draw-status was-drawn))
-               (>= (+ (-> *ACTOR-bank* pause-dist) (-> obj root-override pause-adjust-distance))
-                   (vector-vector-distance (-> obj root-override trans) (math-camera-pos))
+(defmethod run-logic? star ((this star))
+  (or (zero? (logand (-> this mask) (process-mask actor-pause)))
+      (or (and (nonzero? (-> this draw))
+               (logtest? (-> this draw status) (draw-status was-drawn))
+               (>= (+ (-> *ACTOR-bank* pause-dist) (-> this root-override pause-adjust-distance))
+                   (vector-vector-distance (-> this root-override trans) (math-camera-pos))
                    )
                )
           (and (nonzero? (-> this skel)) (!= (-> this skel root-channel 0) (-> this skel channel)))
@@ -1432,9 +1432,9 @@
       )
   )
 
-(defmethod deactivate star ((obj star))
-  (when (= (-> obj next-state name) 'pickup)
-    (if (not (and (-> obj entity) (logtest? (-> obj entity extra perm status) (entity-perm-status dead))))
+(defmethod deactivate star ((this star))
+  (when (= (-> this next-state name) 'pickup)
+    (if (not (and (-> this entity) (logtest? (-> this entity extra perm status) (entity-perm-status dead))))
         (format #t "star ~A was killed in pickup~%")
         )
     (process-entity-status! this (entity-perm-status dead) #t)
@@ -1527,7 +1527,7 @@
 
 (defmethod initialize star ((this star))
   (stack-size-set! (-> this main-thread) 192) ;; hack increased from 128
-  (let ((s5-0 (new 'process 'collide-shape-moving obj (collide-list-enum hit-by-player))))
+  (let ((s5-0 (new 'process 'collide-shape-moving this (collide-list-enum hit-by-player))))
     (set! (-> s5-0 dynam) (copy *standard-dynamics* 'process))
     (set! (-> s5-0 reaction) default-collision-reaction)
     (set! (-> s5-0 no-reaction)
@@ -3237,23 +3237,23 @@
   (set! (-> this block-func) (the-as (function vent symbol) true-func))
   (case (-> this fact pickup-type)
     (((pickup-type eco-blue))
-     (set! (-> obj part) (create-launch-control (-> *part-group-id-table* 44) obj))
-     (set! (-> obj collect-effect) (-> *part-group-id-table* 67))
-     (set! (-> obj collect-effect2) (-> *part-group-id-table* 43))
-     (set! (-> obj sound) (new 'process 'ambient-sound 'eco-bg-blue (-> obj root-override trans)))
+     (set! (-> this part) (create-launch-control (-> *part-group-id-table* 44) this))
+     (set! (-> this collect-effect) (-> *part-group-id-table* 67))
+     (set! (-> this collect-effect2) (-> *part-group-id-table* 43))
+     (set! (-> this sound) (new 'process 'ambient-sound 'eco-bg-blue (-> this root-override trans)))
      )
      ;;tageco custom eco vents?
     (((pickup-type eco-gravity))
-     (set! (-> obj part) (create-launch-control (-> *part-group-id-table* 44) obj))
-     (set! (-> obj collect-effect) (-> *part-group-id-table* 67))
-     (set! (-> obj collect-effect2) (-> *part-group-id-table* 43))
-     (set! (-> obj sound) (new 'process 'ambient-sound 'eco-bg-blue (-> obj root-override trans)))
+     (set! (-> this part) (create-launch-control (-> *part-group-id-table* 44) this))
+     (set! (-> this collect-effect) (-> *part-group-id-table* 67))
+     (set! (-> this collect-effect2) (-> *part-group-id-table* 43))
+     (set! (-> this sound) (new 'process 'ambient-sound 'eco-bg-blue (-> this root-override trans)))
      )
     (((pickup-type eco-chicken))
-     (set! (-> obj part) (create-launch-control (-> *part-group-id-table* 44) obj))
-     (set! (-> obj collect-effect) (-> *part-group-id-table* 67))
-     (set! (-> obj collect-effect2) (-> *part-group-id-table* 43))
-     (set! (-> obj sound) (new 'process 'ambient-sound 'eco-bg-blue (-> obj root-override trans)))
+     (set! (-> this part) (create-launch-control (-> *part-group-id-table* 44) this))
+     (set! (-> this collect-effect) (-> *part-group-id-table* 67))
+     (set! (-> this collect-effect2) (-> *part-group-id-table* 43))
+     (set! (-> this sound) (new 'process 'ambient-sound 'eco-bg-blue (-> this root-override trans)))
      )
     (((pickup-type eco-ice))
      (set! (-> this part) (create-launch-control (-> *part-group-id-table* 44) this))
@@ -3490,8 +3490,8 @@
   )
 
 
-(defmethod init-from-entity! ventnew ((obj ventnew) (arg0 entity-actor))
-  (initialize obj arg0 (pickup-type eco-gravity))
+(defmethod init-from-entity! ventnew ((this ventnew) (arg0 entity-actor))
+  (initialize this arg0 (pickup-type eco-gravity))
   (none)
   )
 
@@ -3504,8 +3504,8 @@
   )
 
 
-  (defmethod init-from-entity! ventchicken ((obj ventchicken) (arg0 entity-actor))
-  (initialize obj arg0 (pickup-type eco-chicken))
+  (defmethod init-from-entity! ventchicken ((this ventchicken) (arg0 entity-actor))
+  (initialize this arg0 (pickup-type eco-chicken))
   (none)
   )
 
@@ -3517,52 +3517,13 @@
   :flag-assert         #x15007000d8
   )
 
-(defmethod init-from-entity! ventice ((obj ventice) (arg0 entity-actor))
-  (initialize obj arg0 (pickup-type eco-ice))
+(defmethod init-from-entity! ventice ((this ventice) (arg0 entity-actor))
+  (initialize this arg0 (pickup-type eco-ice))
   (none)
   )
 
-;;tageco vents need to be definied and have a init method
-(deftype ventnew (vent)
-  ()
-  :heap-base #x70
-  :method-count-assert 21
-  :size-assert         #xd8
-  :flag-assert         #x15007000d8
-  )
 
 
-(defmethod init-from-entity! ventnew ((obj ventnew) (arg0 entity-actor))
-  (initialize obj arg0 (pickup-type eco-gravity))
-  (none)
-  )
-
-  (deftype ventchicken (vent)
-  ()
-  :heap-base #x70
-  :method-count-assert 21
-  :size-assert         #xd8
-  :flag-assert         #x15007000d8
-  )
-
-
-  (defmethod init-from-entity! ventchicken ((obj ventchicken) (arg0 entity-actor))
-  (initialize obj arg0 (pickup-type eco-chicken))
-  (none)
-  )
-
-(deftype ventice (vent)
-  ()
-  :heap-base #x70
-  :method-count-assert 21
-  :size-assert         #xd8
-  :flag-assert         #x15007000d8
-  )
-
-(defmethod init-from-entity! ventice ((obj ventice) (arg0 entity-actor))
-  (initialize obj arg0 (pickup-type eco-ice))
-  (none)
-  )
 
 (deftype ecovent (vent)
   ()

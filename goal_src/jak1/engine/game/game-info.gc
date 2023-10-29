@@ -383,7 +383,8 @@
                    )
 
                )
-
+     ;; increment our current money count
+     (+! (-> this money) amount)
                )
              )
            )
@@ -394,11 +395,10 @@
 
 
 
-     ;; increment our current money count
-     (+! (-> this money) amount)
-     )
+
+     
     (('star)
-     (if (and (< 0.0 amount) (= (+ (-> obj money) amount) (-> *GAME-bank* money-task-inc)))
+     (if (and (< 0.0 amount) (= (+ (-> this money) amount) (-> *GAME-bank* money-task-inc)))
          ;; got enough orbs to trade, display a hint
          (level-hint-spawn
            (text-id sidekick-reminder-money)
@@ -424,7 +424,7 @@
                ;; if we have all the money in our level, display the all orbs graphic
                  (if (>= (-> *game-info* money-total) *mort-orb-total*)
                (activate-orb-all -1)
-               (if (= (-> obj money-per-level level-idx) (-> (get-game-count level-idx) money-count))
+               (if (= (-> this money-per-level level-idx) (-> (get-game-count level-idx) money-count))
                    (activate-orb-all level-idx)
                    )
 
@@ -689,7 +689,7 @@
            )
        (set! (-> this money-pickup-time) (-> *display* base-frame-counter))
        )
-     (adjust (-> (the-as target (-> obj process)) game) 'star amount source-handle)
+     (adjust (-> (the-as target (-> this process)) game) 'star amount source-handle)
      )
     (((pickup-type fuel-cell))
      ;; the amount is actually the index of the task.

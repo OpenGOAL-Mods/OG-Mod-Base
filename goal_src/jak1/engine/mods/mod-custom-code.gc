@@ -914,10 +914,10 @@ Temporary hardcoded hack so I can be sure how this works for release
     
     (when #t
     ;;(format #t "~A" (-> *target* state name))
-      (if (and (= (-> *target* state name) 'target-stance) (not (movie?)) (!= (level-get-target-inside *level*) #f) (!= (-> (level-get-target-inside *level*)name ) 'misty))
+      ;; (if (and (= (-> *target* state name) 'target-stance) (not (movie?)) (!= (level-get-target-inside *level*) #f) (!= (-> (level-get-target-inside *level*)name ) 'misty))
 
-      (have-all-chicks-safe)
-      )
+      ;; (have-all-chicks-safe)
+      ;; )
 
     ;;This is kind of a hack to start up during the opening cutscene
     (when (and (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (>= *currentCutsceneFrame* 1649))

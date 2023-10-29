@@ -44,7 +44,7 @@
     (* (* 0.5 duration) (-> this gravity))
     )
    )
-    (*! (-> obj initial-velocity y) to-point-speed)
+    (*! (-> this initial-velocity y) to-point-speed)
   (none)
   )
 

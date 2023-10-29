@@ -531,8 +531,8 @@
            (s4-1 (-> s3-0 base))
            )
 
-      (if (= (-> obj level-index) -1)
-      (set! (-> obj total-orbs) *mort-orb-total*)
+      (if (= (-> this level-index) -1)
+      (set! (-> this total-orbs) *mort-orb-total*)
       )
       (let ((s2-0 draw-string-xy))
         (format (clear *temp-string*) "~D/~D" (-> this total-orbs) (-> this total-orbs))
@@ -679,7 +679,7 @@
       )
       ;;override here
       ;;  (get-mort-orb-total)
-      ;;  (set! (-> obj total-orbs) *mort-orb-total*)
+      ;;  (set! (-> this total-orbs) *mort-orb-total*)
     )
   (set! (-> this start-time) (-> *display* base-frame-counter))
   (sound-play "get-all-orbs")
@@ -1203,7 +1203,7 @@
         (((hud-collectable-view original))
           ;; show original (cells collected across entire game)
           (draw-string-xy
-            (string-format "~D" (+  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)));;(-> obj value))
+            (string-format "~D" (+  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)));;(-> this value))
             buf
             string-x
             string-y
