@@ -22,7 +22,7 @@
               'shove
               )
           )
-    (set! (-> s5-0 mask) (attack-info-mask attacker shove-back shove-up angle))
+    (set! (-> s5-0 mask) (attack-mask attacker shove-back shove-up angle))
     (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.1))
     (go arg3 'shove s5-0)
     )
@@ -54,7 +54,7 @@
                            (arg3 touching-shapes-entry)
                            (arg4 (state symbol attack-info target))
                            )
-  (let ((s4-0 (if (logtest? (-> arg1 mask) (attack-info-mask mode))
+  (let ((s4-0 (if (logtest? (-> arg1 mask) (attack-mask mode))
                   (-> arg1 mode)
                   )
               )
@@ -105,7 +105,7 @@
       (mem-copy! (the-as pointer (-> self attack-info-rec)) (the-as pointer arg1) 160)
       (compute-intersect-info (-> self attack-info-rec) arg1 self arg2 arg3)
       (when (not (focus-test? self mech))
-        (if (and (not (target-log-attack (-> self attack-info-rec) (if (logtest? (attack-info-mask test) (-> arg1 mask))
+        (if (and (not (target-log-attack (-> self attack-info-rec) (if (logtest? (attack-mask test) (-> arg1 mask))
                                                                        'test
                                                                        'log
                                                                        )
@@ -116,12 +116,12 @@
             (return #f)
             )
         )
-      (if (logtest? (attack-info-mask test) (-> arg1 mask))
+      (if (logtest? (attack-mask test) (-> arg1 mask))
           (return #t)
           )
       (set! (-> self control attacked-by-id) (the-as int (-> self attack-info-rec id)))
       (cond
-        ((and (logtest? (-> self attack-info-rec mask) (attack-info-mask mode))
+        ((and (logtest? (-> self attack-info-rec mask) (attack-mask mode))
               (= (-> self attack-info-rec mode) 'damage)
               (not (and (= (-> self game mode) 'play)
                         (>= 0.0 (- (-> (the-as fact-info-target (-> self fact)) health) (-> self attack-info-rec damage)))
@@ -131,7 +131,7 @@
          (pickup-collectable!
            (-> self fact)
            (pickup-type health)
-           (if (logtest? (attack-info-mask damage) (-> self attack-info-rec mask))
+           (if (logtest? (attack-mask damage) (-> self attack-info-rec mask))
                (- (-> self attack-info-rec damage))
                (- (-> *FACT-bank* health-single-inc))
                )
@@ -153,7 +153,7 @@
                    (t3-0 *launch-matrix*)
                    )
                (set! (-> t3-0 trans quad)
-                     (-> (the-as vector (if (logtest? (-> self attack-info-rec mask) (attack-info-mask intersection))
+                     (-> (the-as vector (if (logtest? (-> self attack-info-rec mask) (attack-mask intersection))
                                             (-> self attack-info-rec intersection)
                                             (the-as vector (-> self control root-prim prim-core))
                                             )
@@ -176,7 +176,7 @@
              )
            )
          (target-timed-invulnerable
-           (the-as time-frame (if (logtest? (-> self attack-info-rec mask) (attack-info-mask invinc-time))
+           (the-as time-frame (if (logtest? (-> self attack-info-rec mask) (attack-mask invinc-time))
                                   (the-as int (-> self attack-info-rec invinc-time))
                                   (the-as int (-> *TARGET-bank* hit-invulnerable-timeout))
                                   )
@@ -209,7 +209,6 @@
     )
   )
 
-;; WARN: rewrite_to_get_var got a none typed variable. Is there unreachable code? [OP: 711]
 (defbehavior target-send-attack target ((arg0 process) (arg1 symbol) (arg2 touching-shapes-entry) (arg3 int) (arg4 int) (arg5 penetrate))
   (local-vars
     (sv-96 symbol)
@@ -256,24 +255,22 @@
                )
          (s3-1 (and s4-0 (focus-test? (the-as process-focusable s4-0) dead hit)))
          )
-    (let ((a1-2 (new 'stack-no-clear 'event-message-block)))
-      (set! (-> a1-2 from) (process->ppointer self))
-      (set! (-> a1-2 num-params) 2)
-      (set! (-> a1-2 message) 'attack)
-      (set! (-> a1-2 param 0) (the-as uint arg2))
-      (let ((v1-5 (new 'static 'attack-info :mask (attack-info-mask mode id count penetrate-using))))
-        (set! (-> v1-5 id) (the-as uint arg3))
-        (set! (-> v1-5 mode) arg1)
-        (set! (-> v1-5 count) (the-as uint arg4))
-        (set! (-> v1-5 penetrate-using) sv-224)
-        (set! (-> a1-2 param 1) (the-as uint v1-5))
-        )
-      (set! sv-96 (the-as symbol (send-event-function arg0 a1-2)))
-      )
+    (set! sv-96
+          (the-as
+            symbol
+            (send-event
+              arg0
+              'attack
+              arg2
+              (static-attack-info ((id (the-as uint arg3)) (mode arg1) (count (the-as uint arg4)) (penetrate-using sv-224)))
+              )
+            )
+          )
     (when sv-96
       (set! (-> self control send-attack-dest) (process->handle arg0))
-      (set! (-> self control send-attack-time) (current-time))
+      (set-time! (-> self control send-attack-time))
       (send-event self 'hit arg1 arg0 arg2)
+      ;; og:preserve-this process cast
       (set! arg0 (the process (and (and (focus-test? self dark)
                            (nonzero? (-> self darkjak))
                            (logtest? (-> self darkjak stage) (darkjak-stage active))
@@ -289,7 +286,8 @@
             (lambda :behavior target
               ((arg0 handle))
               (local-vars (sv-112 vector) (sv-128 matrix))
-              (stack-size-set! (-> self main-thread) 512) ;; added
+              ;; og:preserve-this added
+              (stack-size-set! (-> self main-thread) 512)
               (let ((gp-0 (-> self parent)))
                 (let ((s4-0 0)
                       (s3-0 (current-time))
@@ -325,7 +323,7 @@
                                            )
                                       )
                                     )
-                                (< (- (current-time) s3-0) (seconds 15))
+                                (not (time-elapsed? s3-0 (seconds 15)))
                                 (not (logtest? (-> (the-as process-focusable (-> gp-0 0)) draw status) (draw-control-status no-draw no-draw-temp))
                                      )
                                 )
@@ -354,10 +352,10 @@
                         )
                       )
                     (send-event (ppointer->process gp-0) 'color-effect 'dark (seconds 0.2))
-                    (when (>= (- (current-time) (the-as time-frame s4-0)) (seconds 0.05))
+                    (when (time-elapsed? (the-as time-frame s4-0) (seconds 0.05))
                       (set! s4-0 (the-as int (current-time)))
                       (cond
-                        ((and (< (- (current-time) s3-0) (seconds 0.5)) (handle->process arg0))
+                        ((and (not (time-elapsed? s3-0 (seconds 0.5))) (handle->process arg0))
                          (process-drawable2-shock-effect
                            (the-as process-drawable (handle->process arg0))
                            (the-as process-drawable (ppointer->process gp-0))
@@ -643,7 +641,7 @@
            (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.2))
            )
           ((= v1-37 'darkjak)
-           (set! (-> self darkjak attack-time) (current-time))
+           (set-time! (-> self darkjak attack-time))
            (let* ((v1-160 *game-info*)
                   (a0-102 (+ (-> v1-160 attack-id) 1))
                   )
@@ -659,7 +657,6 @@
   sv-96
   )
 
-;; WARN: Return type mismatch none vs object.
 (defbehavior target-generic-event-handler target ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (local-vars (v0-0 object))
   (the-as
@@ -1056,7 +1053,6 @@
     )
   )
 
-;; WARN: Return type mismatch none vs object.
 (defbehavior target-standard-event-handler target ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (local-vars (at-0 int) (s3-0 type))
   (rlet ((vf0 :class vf)
@@ -1087,9 +1083,9 @@
         (b! (!= v1-0 'shove) cfg-21 :delay (nop!))
         (set! v0-0 (when (not (and (-> self next-state) (= (-> self next-state name) 'target-hit)))
                      (mem-copy! (the-as pointer (-> self attack-info-rec)) (the-as pointer (-> arg3 param 1)) 160)
-                     (when (not (logtest? (-> self attack-info-rec mask) (attack-info-mask attacker)))
+                     (when (not (logtest? (-> self attack-info-rec mask) (attack-mask attacker)))
                        (set! (-> self attack-info-rec attacker) (process->handle arg0))
-                       (logior! (-> self attack-info-rec mask) (attack-info-mask attacker))
+                       (logior! (-> self attack-info-rec mask) (attack-mask attacker))
                        )
                      (go target-hit 'shove (-> self attack-info-rec))
                      )
@@ -1107,7 +1103,7 @@
           (.mul.x.vf vf1 vf1 vf2 :mask #b111)
           (.svf (&-> v1-15 quad) vf1)
           )
-        (set! (-> self control additional-decaying-velocity-end-time) (current-time))
+        (set-time! (-> self control additional-decaying-velocity-end-time))
         (set! (-> self control additional-decaying-velocity-decay-start-time)
               (+ (current-time) (the-as time-frame (-> arg3 param 1)))
               )
@@ -1116,7 +1112,7 @@
         (label cfg-23)
         (b! (!= v1-0 'push-transv) cfg-25 :delay (nop!))
         (set! (-> self control additional-decaying-velocity quad) (-> (the-as vector (-> arg3 param 0)) quad))
-        (set! (-> self control additional-decaying-velocity-end-time) (current-time))
+        (set-time! (-> self control additional-decaying-velocity-end-time))
         (set! (-> self control additional-decaying-velocity-decay-start-time)
               (+ (current-time) (the-as time-frame (-> arg3 param 1)))
               )
@@ -1239,7 +1235,7 @@
                    )
                   ((= v1-45 'gun)
                    (if (logtest? (-> self game features) (game-feature gun))
-                       (the-as object (target-gun-init (the-as int (-> arg3 param 2))))
+                       (target-gun-init (the-as pickup-type (-> arg3 param 2)))
                        )
                    )
                   ((= v1-45 'tube)
@@ -1305,7 +1301,7 @@
         (b! #t cfg-291 :delay (nop!))
         (label cfg-212)
         (b! (!= v1-0 'gun) cfg-214 :delay (nop!))
-        (set! v0-0 (the-as object (target-gun-fire (the-as pickup-type (-> arg3 param 0)))))
+        (set! v0-0 (target-gun-fire (the-as pickup-type (-> arg3 param 0))))
         (b! #t cfg-291 :delay (nop!))
         (label cfg-214)
         (b! (!= v1-0 'darkjak) cfg-225 :delay (nop!))
@@ -1349,7 +1345,7 @@
                         (-> self control)
                         (the-as uint 2)
                         )
-                       (-> self draw art-group data 104)
+                       jakb-pole-cycle-ja
                        )
                   (go target-pole-cycle (process->handle arg0))
                   )
@@ -1392,7 +1388,7 @@
         (label cfg-290)
         (set! v0-0 (target-generic-event-handler arg0 arg1 arg2 arg3))
         (label cfg-291)
-        (the-as object v0-0)
+        v0-0
         )
       )
     )

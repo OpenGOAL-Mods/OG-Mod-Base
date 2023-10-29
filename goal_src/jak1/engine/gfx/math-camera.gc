@@ -31,6 +31,8 @@
 ;; tells the GS how "foggy" the color should be. This should be proportional to how far away the vertex
 ;; is. There is a scaling factor applied so the fog intensity isn't affected by the field of view angle.
 
+;; DECOMP BEGINS
+
 ;; The fog-corrector stores a fog-end fog-start value that is corrected for the field of view.
 ;; the actual correction factor is computed in cam-update.gc
 (deftype fog-corrector (structure)
@@ -225,7 +227,7 @@
           (set! (-> math-cam guard z) 1.0)
           (set! (-> math-cam guard w) 1.0)
           (set! (-> math-cam isometric vector 3 z) (- 16777215.0 hvdf-z))
-          ;; PC HACK!
+          ;; og:preserve-this PC HACK!
           ;; for whatever reason, the font renderer ends up computing a depth #x1000000 instead of
           ;; #xffffffff, which overflows the 24-bit z buffer.
           ;; cheating this by 1 bit seems to fix it.

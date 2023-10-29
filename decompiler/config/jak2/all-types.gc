@@ -505,10 +505,10 @@
   )
 
 (deftype protect-frame (stack-frame)
-  ((exit (function none)  :offset-assert 12) ;; guessed by decompiler
+  ((exit (function object)  :offset-assert 12) ;; guessed by decompiler
    )
   (:methods
-    (new (symbol type (function none)) protect-frame)
+    (new (symbol type (function object)) protect-frame)
     )
   :method-count-assert 9
   :size-assert         #x10
@@ -526,16 +526,16 @@
 
 (deftype state (protect-frame)
   ((code  function                                                  :offset-assert 16) ;; guessed by decompiler
-   (trans (function none)                                           :offset-assert 20) ;; guessed by decompiler
+   (trans (function object)                                         :offset-assert 20) ;; guessed by decompiler
    (post  function                                                  :offset-assert 24) ;; guessed by decompiler
    (enter function                                                  :offset-assert 28) ;; guessed by decompiler
    (event (function process int symbol event-message-block object)  :offset-assert 32) ;; guessed by decompiler
    )
   (:methods
     (new (symbol type symbol function
-          (function none)
+          (function object)
           function
-          (function none)
+          (function object)
           (function process int symbol event-message-block object)) _type_ 0)
     )
   :method-count-assert 9
@@ -657,7 +657,7 @@
 (define-extern kill-not-type (function type process-tree symbol))
 (define-extern iterate-process-tree (function process-tree (function object object) kernel-context object))
 (define-extern execute-process-tree (function process-tree (function object object) kernel-context object))
-(define-extern search-process-tree (function process-tree (function process-tree object) process-tree))
+(define-extern search-process-tree (function process-tree (function process-tree object) process))
 (define-extern kernel-dispatcher (function object))
 (define-extern sync-dispatcher (function object))
 (define-extern inspect-process-tree (function process-tree int int symbol process-tree))
@@ -6382,7 +6382,7 @@
   (shadow 0)
   (kerning 1)
   (middle 2)
-  (left 3)
+  (middle-vert 3)
   (right 4)
   (large 5)
   (pc-hack 6)
@@ -6756,13 +6756,13 @@
   (progress-on #x10e)
   (progress-off #x10f)
   (progress-move-dpad #x110)
-  (text-x111 #x111)
-  (text-x112 #x112)
-  (text-x113 #x113)
-  (text-x114 #x114)
-  (text-x115 #x115)
-  (text-x116 #x116)
-  (text-x117 #x117)
+  (language-name-english #x111)
+  (language-name-french #x112)
+  (language-name-german #x113)
+  (language-name-spanish #x114)
+  (language-name-italian #x115)
+  (language-name-korean #x116)
+  (language-name-japanese #x117)
   (progress-aspect-ratio #x118)
   (progress-progressive-scan #x119)
   (progress-video-mode #x11a)
@@ -6801,6 +6801,26 @@
   (progress-highscores-6th #x13c)
   (progress-highscores-7th #x13d)
   (progress-highscores-8th #x13e)
+  (progress-highscores-header-race #x13f)
+  (progress-highscores-subheader-class1 #x140)
+  (progress-highscores-subheader-class2 #x141)
+  (progress-highscores-subheader-class3 #x142)
+  (progress-highscores-header-guncourse #x143)
+  (progress-highscores-subheader-scattergun #x144)
+  (progress-highscores-subheader-blaster #x145)
+  (progress-highscores-subheader-vulcan #x146)
+  (progress-highscores-subheader-peacemaker #x147)
+  (progress-highscores-header-onin #x148)
+  (progress-highscores-header-metalhead-mash #x149)
+  (progress-highscores-header-jetboard #x14a)
+  (progress-highscores-subheader-oninstent #x14b)
+  (progress-highscores-subheader-hiphog #x14c)
+  (progress-highscores-subheader-stadium #x14d)
+  (progress-highscores-subheader-class1-reverse #x14e)
+  (progress-highscores-subheader-class2-reverse #x14f)
+  (progress-highscores-subheader-class3-reverse #x150)
+  (progress-highscores-subheader-portrace #x151)
+  (progress-highscores-subheader-cityrace #x152)
   (progress-root-secrets #x153)
   (progress-secrets-unlocked #x154)
   (progress-secrets-toggle-beard #x0155)
@@ -7235,7 +7255,7 @@
   (scene-nest-boss-intro #x306)
   (scene-intro #x307)
   (scene-outro #x308)
-  (text-x30b #x30b)
+  (language-name-english-uk #x30b)
   (scene-subtitles-hint #x30c)
   (scene-subtitles-enabled #x30d)
   (scene-subtitles-disabled #x30e)
@@ -7354,7 +7374,6 @@
   (progress-camera-options-first-vert #x1282)
   (progress-camera-options-third-horz #x1283)
   (progress-camera-options-third-vert #x1284)
-  (progress-reset-to-default #x1285)
   (progress-normal #x1286)
   (progress-inverted #x1287)
   (progress-ps2-parts #x1288)
@@ -7363,6 +7382,48 @@
   (progress-lod-low #x128b)
   (progress-lod-high #x128c)
   (progress-credits #x128d)
+  (progress-frame-rate #x128e)
+  (progress-misc-game-options #x128f)
+  (progress-speedrunner-mode  #x1290)
+  (progress-menu-input-options #x1291)
+  (progress-restore-defaults #x1292)
+  (progress-menu-controller-options #x1293)
+  (progress-controller-options-select-controller #x1294)
+  (progress-controller-options-analog-deadzone #x1295)
+  (progress-controller-options-ignore-if-unfocused #x1296)
+  (progress-controller-options-led-hp #x1297)
+  (progress-controller-options-led-state #x1298)
+  (progress-input-options-enable-keyboard #x1299)
+  (progress-input-options-enable-mouse #x129a)
+  (progress-menu-mouse-options #x129b)
+  (progress-mouse-options-track-camera #x129c)
+  (progress-mouse-options-horz-sens #x129d)
+  (progress-mouse-options-vert-sens #x129e)
+  (progress-mouse-options-player-movement #x129f)
+  (progress-input-options-auto-hide-cursor #x1300)
+  (progress-menu-reassign-binds #x1301)
+  (progress-reassign-binds-controller #x1302)
+  (progress-reassign-binds-keyboard #x1303)
+  (progress-reassign-binds-mouse #x1304)
+  (progress-multiselect-no-items-found #x1305)
+  (progress-keybinds-waiting-for-bind #x1306)
+  (progress-keybinds-unset #x1307)
+  (progress-unknown-option #x1308)
+  (progress-hires-sky #x1309)
+  (progress-fast-airlock #x130a)
+  (progress-fast-elevator #x130b)
+  (progress-highscores-header-speedrun #x130c)
+  (progress-highscores-subheader-speedrun-any #x130d)
+  (progress-highscores-subheader-speedrun-anyhoverless #x130e)
+  (progress-highscores-subheader-speedrun-allmissions #x130f)
+  (progress-highscores-subheader-speedrun-100 #x1310)
+  (progress-highscores-subheader-speedrun-anyorbs #x1311)
+  (progress-highscores-subheader-speedrun-anyhero #x1312)
+  (progress-highscores-local-time #x1313)
+  (progress-fps-disclaimer-warning #x1314)
+  (progress-fps-disclaimer #x1315)
+  (progress-fps-disclaimer-1 #x1316)
+  (progress-fps-disclaimer-confirm #x1317)
 )
 ;; ---text-id-h:text-id
 
@@ -8082,7 +8143,7 @@
    (allow-pause symbol :offset-assert 104)
    (ocean-off symbol :offset-assert 108)
    (allow-look-around symbol :offset-assert 112)
-   (unknowng-symbol-00 symbol :offset-assert 116)
+   (camera-stick-dir symbol :offset-assert 116)
    (movie-name symbol :offset 120)
    (weather symbol :offset-assert 124)
    (mouse symbol :offset-assert 128)
@@ -8263,7 +8324,7 @@
    (butt-handle handle)
    (butt-angle float)
    (extra-follow-height float)
-   (1Tinterp-time-priority uint32)
+   (interp-time-priority uint32)
    (string-max-length-default symbol)
    (string-min-length-default symbol)
    (string-max-height-default symbol)
@@ -8274,8 +8335,8 @@
   :size-assert         #x30c
   :flag-assert         #xb0000030c
   (:methods
-    (cam-setting-data-method-9 (_type_ engine engine-pers engine) cam-setting-data 9)
-    (cam-setting-data-method-10 (_type_ object (pointer process) float int) none 10)
+    (cam-setting-data-method-9 (_type_ engine engine-pers engine) _type_ 9)
+    (cam-setting-data-method-10 (_type_ object (pointer process) float int) _type_ 10)
     )
   )
 
@@ -9277,7 +9338,8 @@
   )
 
 (deftype region-face-array (inline-array-class)
-  ((data region-face-data :dynamic :offset 20) ;; not sure what's going on here.
+  ((data drawable-region-face :inline :dynamic :offset 16)
+   (pad0 uint8 4)
    )
   :method-count-assert 9
   :size-assert         #x14
@@ -9290,8 +9352,6 @@
   :method-count-assert 20
   :size-assert         #x20
   :flag-assert         #x1400000020
-  (:methods
-    )
   )
 
 (deftype region-prim-list (structure)
@@ -13130,6 +13190,45 @@
 ;; game-info-h                    ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defenum pickup-type
+  :bitfield #f
+  :type int32
+  (none            0)
+  (eco-yellow      1)
+  (eco-red         2)
+  (eco-blue        3)
+  (eco-dark        4)
+  (eco-green       5)
+  (eco-pill-green  6)
+  (eco-pill-dark   7)
+  (eco-pill-random 8)
+  (money           9)
+  (fuel-cell      10)
+  (buzzer         11)
+  (darkjak        12)
+  (ammo-yellow    13)
+  (ammo-red       14)
+  (ammo-blue      15)
+  (ammo-dark      16)
+  (shield         17)
+  (health         18)
+  (trick-point    19)
+  (trick-judge    20)
+  (gem            21)
+  (skill          22)
+  (karma          23)
+  (gun-red        24)
+  (gun-yellow     25)
+  (gun-blue       26)
+  (gun-dark       27)
+  (board          28)
+  (pass-red       29)
+  (pass-green     30)
+  (pass-yellow    31)
+  (pass-blue      32)
+  (ammo-random    33)
+  )
+
 (deftype game-bank (basic)
   ((life-max-default   float  :offset-assert 4)
    (life-start-default float  :offset-assert 8)
@@ -13342,7 +13441,7 @@
    (unknown-pad1           uint32)
    (purchase-secrets       game-secrets         :offset-assert 152)
    (unknown-pad2           uint32               :offset-assert 156)
-   (gun-type               int32                :offset-assert 160)
+   (gun-type               pickup-type          :offset-assert 160)
    (gun-ammo               float            4   :offset-assert 164)
    (shield                 float                :offset-assert 180)
    (score                  float                :offset-assert 184)
@@ -14938,7 +15037,7 @@
   (deadly      1)
   (endlessfall 2)
   (burn        3)
-  (deadlup     4)
+  (deadlyup    4)
   (burnup      5)
   (melt        6)
   (slide       7)
@@ -15001,45 +15100,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; fact-h                         ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defenum pickup-type
-  :bitfield #f
-  :type int32
-  (none            0)
-  (eco-yellow      1)
-  (eco-red         2)
-  (eco-blue        3)
-  (eco-dark        4)
-  (eco-green       5)
-  (eco-pill-green  6)
-  (eco-pill-dark   7)
-  (eco-pill-random 8)
-  (money           9)
-  (fuel-cell      10)
-  (buzzer         11)
-  (darkjak        12)
-  (ammo-yellow    13)
-  (ammo-red       14)
-  (ammo-blue      15)
-  (ammo-dark      16)
-  (shield         17)
-  (health         18)
-  (trick-point    19)
-  (trick-judge    20)
-  (gem            21)
-  (skill          22)
-  (karma          23)
-  (gun-red        24)
-  (gun-yellow     25)
-  (gun-blue       26)
-  (gun-dark       27)
-  (board          28)
-  (pass-red       29)
-  (pass-green     30)
-  (pass-yellow    31)
-  (pass-blue      32)
-  (ammo-random    33)
-  )
 
 (deftype fact-bank (basic)
   ((eco-level-max              float    :offset-assert 4)
@@ -15674,7 +15734,7 @@
   :flag-assert         #x900000040
   )
 
-(defenum attack-info-mask
+(defenum attack-mask
   :bitfield #t
   :type uint32
   (trans        0) ;; 1
@@ -15712,7 +15772,7 @@
    (attacker          handle                   :offset-assert  64)
    (attack-time       time-frame               :offset-assert  72)
    (invinc-time       time-frame               :offset-assert  80)
-   (mask              attack-info-mask         :offset-assert  88)
+   (mask              attack-mask              :offset-assert  88)
    (mode              symbol                   :offset-assert  92)
    (shove-back        meters                   :offset-assert  96)
    (shove-up          meters                   :offset-assert 100)
@@ -17033,7 +17093,7 @@
   (:methods
     (new (symbol type process-drawable collide-list-enum) _type_ 0)
     (find-ground (_type_ collide-query collide-spec float float float) symbol 55)
-    (react-to-pat! (_type_ pat-surface) int 56)
+    (react-to-pat! (_type_ pat-surface) cshape-reaction-flags 56)
     (integrate-no-collide! (_type_ vector) none 57)
     (integrate-for-enemy-no-mtg (_type_ vector overlaps-others-params) symbol 58)
     (move-above-ground (_type_ vector move-above-ground-params) none 59)
@@ -18754,7 +18814,7 @@
     (target-board-jump meters meters symbol)
     target-board-jump-kick
     (target-board-pegasus handle)
-    (target-board-ride-edge symbol object object float)
+    (target-board-ride-edge symbol)
     target-board-stance
     (target-board-start object)
     (target-board-trickx float float symbol)
@@ -20368,23 +20428,23 @@
   )
 
 (deftype region-prim-area (structure)
-  ((region-prim-list        region-prim-list :inline :offset-assert 0)
-   (pos                     vector           :inline :offset-assert 1296)
-   (unknown-vector-uiyb1    vector           :inline :offset-assert 1312)
-   (ray                     vector           :inline :offset 1328)
-   (unknown-vector-t3edh    vector           :inline :offset-assert 1344)
-   (region-enter-count      int32                    :offset 1360)
-   (region-enter-list       region-prim-area          320     :offset-assert 1364)
-   (region-enter-prim-list  drawable-region-sphere          320     :offset-assert 2644)
-   (region-exit-count       int32                    :offset-assert 3924)
-   (region-exit-list        region-prim-area          320     :offset-assert 3928)
-   (region-exit-prim-list   drawable-region-sphere          320     :offset-assert 5208)
-   (region-inside-count     int32                    :offset-assert 6488)
-   (region-inside-list      region-prim-area          320     :offset-assert 6492)
-   (region-inside-prim-list drawable-region-sphere          320     :offset-assert 7772)
-   (region-start-count      int32                    :offset-assert 9052)
-   (region-start-list       region-prim-area          320     :offset-assert 9056)
-   (region-start-prim-list  drawable-region-sphere          320     :offset-assert 10336)
+  ((region-prim-list        region-prim-list    :inline :offset-assert 0)
+   (pos                     vector              :inline :offset-assert 1296)
+   (unknown-vector-uiyb1    vector              :inline :offset-assert 1312)
+   (ray                     vector              :inline :offset 1328)
+   (unknown-vector-t3edh    vector              :inline :offset-assert 1344)
+   (region-enter-count      int32                       :offset 1360)
+   (region-enter-list       region          320         :offset-assert 1364)
+   (region-enter-prim-list  drawable-region-sphere 320  :offset-assert 2644)
+   (region-exit-count       int32                       :offset-assert 3924)
+   (region-exit-list        region          320         :offset-assert 3928)
+   (region-exit-prim-list   drawable-region-sphere 320  :offset-assert 5208)
+   (region-inside-count     int32                       :offset-assert 6488)
+   (region-inside-list      region          320         :offset-assert 6492)
+   (region-inside-prim-list drawable-region-sphere 320  :offset-assert 7772)
+   (region-start-count      int32                       :offset-assert 9052)
+   (region-start-list       region          320         :offset-assert 9056)
+   (region-start-prim-list  drawable-region-sphere 320  :offset-assert 10336)
    )
   :method-count-assert 13
   :size-assert         #x2d60
@@ -23965,7 +24025,7 @@
 (define-extern joint-control-channel-group-eval! (function joint-control-channel art-joint-anim (function joint-control-channel float float float float) int))
 (define-extern joint-control-channel-group! (function joint-control-channel art-joint-anim (function joint-control-channel float float float float) int))
 (define-extern joint-control-copy! (function joint-control joint-control joint-control))
-(define-extern joint-control-remap! (function joint-control art-group art-group pair int string object))
+(define-extern joint-control-remap! (function joint-control art-group art-group pair int string symbol))
 (define-extern flatten-joint-control-to-spr (function joint-control int))
 (define-extern matrix-from-joint-anim-frame (function joint-anim-compressed-control int int matrix))
 (define-extern matrix-from-control-channel!  (function matrix joint joint-control-channel matrix))
@@ -25178,7 +25238,7 @@
   )
 
 (define-extern gen-font-12 (function string none))
-(define-extern draw-string-asm (function string dma-buffer font-context uint))
+(define-extern draw-string-asm (function string dma-buffer font-context draw-string-result))
 (define-extern draw-string (function string dma-buffer font-context draw-string-result))
 (define-extern get-string-length (function string font-context draw-string-result))
 (define-extern draw-string-xy (function string dma-buffer int int font-color font-flags draw-string-result))
@@ -27732,7 +27792,7 @@
 (define-extern cam-slave-init-vars (function none :behavior camera-slave))
 (define-extern cam-slave-go (function (state camera-slave) none :behavior camera-slave))
 (define-extern cam-slave-init (function (state camera-slave) entity none :behavior camera-slave))
-(define-extern cam-standard-event-handler (function process int symbol event-message-block none :behavior camera-slave))
+(define-extern cam-standard-event-handler (function process int symbol event-message-block object :behavior camera-slave))
 (define-extern cam-curve-pos (function vector vector curve symbol vector :behavior camera-slave))
 (define-extern cam-curve-setup (function vector none :behavior camera-slave))
 (define-extern cam-calc-follow! (function cam-rotation-tracker vector symbol vector))
@@ -28408,7 +28468,7 @@
 (define-extern ja-eval (function int :behavior process-drawable))
 (define-extern ja-blend-eval (function int :behavior process-drawable))
 (define-extern ja-post (function none :behavior process-drawable))
-(define-extern sleep-code (function symbol :behavior process-drawable))
+(define-extern sleep-code (function symbol :behavior process))
 (define-extern transform-and-sleep (function none :behavior process-drawable))
 (define-extern transform-and-sleep-code (function none :behavior process-drawable))
 (define-extern transform-post (function int :behavior process-drawable))
@@ -28446,7 +28506,7 @@
 
 (define-extern region-tree-execute (function symbol vector vector none))
 (define-extern region-execute (function none))
-(define-extern region-prim-lookup-by-id (function int symbol symbol drawable-region-prim))
+(define-extern region-prim-lookup-by-id (function int symbol int drawable-region-prim))
 (define-extern region-lookup-by-id (function int region))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -29555,7 +29615,7 @@
   )
 
 (define-extern task-arrow-init-by-other (function task-arrow-params task-arrow :behavior task-arrow))
-(define-extern task-arrow-spawn (function task-arrow-params task-arrow process))
+(define-extern task-arrow-spawn (function task-arrow-params process-tree process))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; projectile                     ;;
@@ -29571,7 +29631,7 @@
 (define-extern projectile-update-velocity-space-wars (function projectile none))
 (define-extern projectile-init-by-other (function projectile-init-by-other-params projectile :behavior projectile))
 (define-extern projectile-bounce-update-velocity (function projectile-bounce none :behavior projectile))
-(define-extern projectile-bounce-falling-post (function projectile-bounce none :behavior projectile-bounce))
+(define-extern projectile-bounce-falling-post (function none :behavior projectile-bounce))
 (define-extern projectile-bounce-move (function projectile-bounce none))
 (define-extern projectile-bounce-reaction (function control-info collide-query vector vector collide-status))
 
@@ -29704,12 +29764,12 @@
 (define-extern *gun-walk-mods* surface)
 (define-extern target-gun-event-handler (function process int symbol event-message-block object :behavior target))
 (define-extern target-gun-setup (function symbol none :behavior target))
-(define-extern target-gun-init (function int none :behavior target))
+(define-extern target-gun-init (function pickup-type none :behavior target))
 (define-extern target-gun-exit (function symbol))
 (define-extern target-gun-end-mode (function symbol symbol :behavior target))
 (define-extern quat<-gun! (function quaternion quaternion quaternion))
 (define-extern target-gun-ammo-out-pick (function int :behavior target))
-(define-extern target-gun-type-set! (function int none :behavior target))
+(define-extern target-gun-type-set! (function pickup-type none :behavior target))
 (define-extern target-gun-marking-menu (function target none))
 (define-extern target-gun-build-track-list (function none :behavior target))
 (define-extern target-gun-find-track (function none :behavior target))
@@ -31175,7 +31235,7 @@
    (stereo-mode-backup                   int32            :offset-assert 216)
    (secrets-unlocked                     symbol           :offset-assert 220)
    (missions-total-spacing               float            :offset-assert 224)
-   (clear-screen                         basic            :offset-assert 228)
+   (clear-screen                         symbol           :offset-assert 228)
    )
   :method-count-assert 9
   :size-assert         #xe8
@@ -31274,26 +31334,32 @@
 (define-extern draw-sound-options-decoration (function menu-slider-option font-context float text-id symbol pointer))
 (define-extern draw-decoration-secrets (function menu-option font-context float text-id pointer))
 (define-extern draw-decoration-load-save (function menu-option font-context float text-id pointer))
-(define-extern sort-task-node-result (function int none))
+(define-extern sort-task-node-result
+  "Sorts the [[*game-info*]]'s `mission-list` by if they are closed and their `closed-time`. Just bubble-sort and therefore O(n^2)"
+  (function int none))
 (define-extern find-mission-text-at-index (function int game-task-node-info))
 (define-extern draw-secret-list (function secret-item-option progress font-context int symbol float none))
-(define-extern draw-highscore-icon (function menu-highscores-option uint int int float pointer))
+(define-extern draw-highscore-icon (function menu-highscores-option texture-id int int float pointer))
 (define-extern draw-highscore-cup "First int is an enum" (function menu-highscores-option int int int float float pointer))
-(define-extern get-highscore-score "TODO - takes and returns an enum?" (function int int))
+(define-extern get-highscore-score (function int int))
 (define-extern eval-highscore (function print-highscore-obj int))
 (define-extern str-print-time (function float string))
 (define-extern print-highscore (function print-highscore-obj float))
-(define-extern get-highscore-text "TODO - takes an enum?" (function int text-id))
-(define-extern get-highscore-text-sub "TODO - takes an enum?" (function int text-id))
-(define-extern get-highscore-icon "TODO - Icon id enum perhaps?" (function int uint))
-(define-extern get-highscore-type "TODO - takes an enum?" (function int symbol))
+(define-extern get-highscore-text (function int text-id))
+(define-extern get-highscore-text-sub (function int text-id))
+(define-extern get-highscore-icon (function int texture-id))
+(define-extern get-highscore-type
+  "Given a highscore index, return it's type as a symbol
+   @param highscore-index-arg something
+   @returns The type, as as symbol.  Either `'game` or `'race`"
+  (function int symbol))
 (define-extern highscore-available? (function int symbol))
 (define-extern get-num-highscores (function int))
 (define-extern get-next-highscore (function int int))
 (define-extern get-prev-highscore (function int int))
-(define-extern get-highscore-icon-scale "TODO - takes an enum?" (function int float))
+(define-extern get-highscore-icon-scale (function int float))
 (define-extern get-highscore-icon-xoffset (function int int))
-(define-extern get-highscore-icon-yoffset "TODO - takes an enum?" (function int int))
+(define-extern get-highscore-icon-yoffset (function int int))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ocean                          ;;
@@ -31854,7 +31920,7 @@
    (locked    symbol   :offset-assert 8)
    (id        uint64  :offset-assert 16)
    (filter    editable-filter  :offset-assert 24)
-   (tree      string   :offset-assert 28)
+   (tree      symbol   :offset-assert 28)
    (level     string   :offset-assert 32)
    (on-enter  string   :offset-assert 36)
    (on-inside string   :offset-assert 40)
@@ -31944,8 +32010,8 @@
     (selection (array editable) :offset-assert 32)
     (filter editable-filter 2 :offset-assert 36)
     (target editable :offset-assert 44)
-    (target-mode uint32 :offset-assert 48) ;; enum?
-    (target-command basic :offset-assert 52) ;; editable-command?
+    (target-mode editable-command :offset-assert 48)
+    (target-command editable-command :offset-assert 52)
     (target-message string :offset-assert 56)
     (edit-plane editable-plane :offset-assert 60)
     (edit-plane-center vector :inline :offset-assert 64)
@@ -31961,12 +32027,12 @@
   :flag-assert         #x120000007c
   (:methods
     (new (symbol type int) _type_ 0)
-    (editable-array-method-9 (_type_ editable-command editable-array) symbol :behavior editable-player 9)
+    (editable-array-method-9 (_type_ editable-command mouse-info) symbol :behavior editable-player 9)
     (editable-array-method-10 (_type_ vector int) editable 10)
     (editable-array-method-11 (_type_) int 11)
     (editable-array-method-12 (_type_ editable-array) none 12)
-    (editable-array-method-13 (_type_ uint basic string) none 13)
-    (editable-array-method-14 (_type_ (function symbol) symbol) none 14)
+    (editable-array-method-13 (_type_ editable-command editable-command string) none 13)
+    (editable-array-method-14 (_type_ (function editable editable-region symbol) editable-region) (array editable) 14)
     (editable-array-method-15 (_type_ editable) none 15)
     (editable-array-method-16 (_type_) none 16)
     (editable-array-method-17 (_type_ vector vector) vector 17)
@@ -32047,7 +32113,7 @@
   :flag-assert         #x2000000028
   (:methods
     (new (symbol type editable-region) _type_ 0)
-    (editable-plane-method-30 (_type_ matrix) int 30)
+    (editable-plane-method-30 (_type_ (inline-array vector)) int 30)
     (editable-plane-method-31 (_type_ vector) vector 31)
     )
   )
@@ -32060,7 +32126,7 @@
    (left-handed       basic     :offset-assert 216)
    (light-names       basic     :offset-assert 220)
    (external-cam-mode symbol     :offset-assert 224)
-   (command           function 6 :offset-assert 228)
+   (command           editable-command 6 :offset-assert 228)
    (close-menu-time   time-frame    :offset-assert 256)
    )
   :method-count-assert 22
@@ -32106,9 +32172,9 @@
 
 (define-extern cleanup-selection (function editable-array none))
 (define-extern insert-box (function editable-array vector none))
-(define-extern execute-select (function editable-array editable-command editable-array symbol))
-(define-extern execute-mouse-move (function editable-array editable-command editable-array symbol))
-(define-extern execute-move (function editable-array editable-command editable-array symbol))
+(define-extern execute-select (function editable-array editable-command mouse-info symbol))
+(define-extern execute-mouse-move (function editable-array editable-command mouse-info symbol))
+(define-extern execute-move (function editable-array editable-command mouse-info symbol))
 (define-extern editable-player-init (function symbol none :behavior editable-player)) ;; TODO - return type not confirmed
 (define-extern *editable-menu-context* debug-menu-context)
 (define-extern editable-menu-command (function int none))
@@ -33294,15 +33360,15 @@
     (enemy-method-63 (_type_ process-focusable enemy-aware) symbol 63)
     (enemy-method-64 (_type_) none 64)
     (enemy-method-65 (_type_) none 65)
-    (go-ambush (_type_) none 66)
-    (go-stare (_type_) none 67)
-    (go-stare2 (_type_) none 68)
-    (go-directed (_type_) none 69)
-    (go-hostile (_type_) none 70)
-    (go-flee (_type_) none 71)
+    (go-ambush (_type_) object 66)
+    (go-stare (_type_) object 67)
+    (go-stare2 (_type_) object 68)
+    (go-directed (_type_) object 69)
+    (go-hostile (_type_) object 70)
+    (go-flee (_type_) object 71)
     (react-to-focus
       "@TODO - flesh out docs"
-      (_type_) none 72)
+      (_type_) object 72)
     (kill-prefer-falling
       "If available in `enemy-info`, [[go]] to the [[die-falling]] state, if not, [[die]]"
       (_type_) object 73)
@@ -33836,7 +33902,7 @@
 
 (define-extern *enemy-dummy-shadow-control* shadow-control)
 (define-extern get-penetrate-using-from-attack-event (function process-drawable event-message-block penetrate))
-(define-extern enemy-init-by-other (function process-drawable transformq none :behavior enemy))
+(define-extern enemy-init-by-other (function process-drawable enemy-init-by-other-params none :behavior enemy))
 (define-extern enemy-event-handler (function process int symbol event-message-block object :behavior enemy))
 (define-extern enemy-simple-post (function none :behavior enemy))
 (define-extern enemy-falling-post (function none :behavior enemy))
@@ -34624,7 +34690,7 @@
     )
   )
 
-(define-extern simple-nav-sphere-event-handler (function process int symbol event-message-block none :behavior simple-nav-sphere))
+(define-extern simple-nav-sphere-event-handler (function process int symbol event-message-block object :behavior simple-nav-sphere))
 (define-extern simple-nav-sphere-init-by-other (function float vector nav-mesh int none :behavior simple-nav-sphere))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -35190,7 +35256,7 @@
     (get-spawn-delay (_type_) int 35)
     (get-best-spawner (_type_) battle-spawner 36)
     (spawner-free? (_type_ battle-spawner) symbol 37)
-    (spawn-from-breed (_type_ battle-breed transformq) handle 38)
+    (spawn-from-breed (_type_ battle-breed enemy-init-by-other-params) handle 38)
     (spawn-from-spawner (_type_ battle-spawner symbol) none 39)
     (spawn-initial-creatures (_type_) none 40)
     (get-random-breed (_type_ battle-spawner) battle-breed 41)
@@ -36244,7 +36310,7 @@
   :flag-assert         #x13003000a8
   (:methods
     (idle () _type_ :state 14)
-    (spawning (object object process pointer) _type_ :state 15)
+    (spawning () _type_ :state 15)
     (die () _type_ :state 16)
     (hover-enemy-manager-init! "Initialize this [[hover-enemy-manager]]." (_type_ (array hover-enemy-battle-command)) none 17)
     (spawn-enemy (_type_ uint) none 18)
@@ -46503,27 +46569,17 @@
 (defenum simon-block-flags
   :type uint16
   :bitfield #t
-  (sbf0)
-  (sbf1)
-  (sbf2)
+  (blink)
+  (blink-on)
+  (ridden)
   (sbf3)
-  (sbf4)
-  (sbf5)
-  (sbf6)
-  (sbf7)
-  (sbf8)
-  (sbf9)
-  (sbf10)
-  (sbf11)
-  (sbf12)
-  (sbf13)
-  (sbf14)
-  (sbf15)
+  (dangerous)
+  (up-sound-played)
   )
 ;; ---tomb-water:simon-block-flags
 
 (deftype tomb-simon-block (base-plat)
-  ((sound-show  uint128         :offset-assert 272)
+  ((sound-show  sound-name      :offset-assert 272)
    (color       vector  :inline :offset-assert 288)
    (my-idx      int32           :offset-assert 304)
    (next-idx    int32           :offset-assert 308)
@@ -47041,8 +47097,8 @@
   )
 
 (define-extern tomb-boss-catwalk-init-by-other (function vector int none :behavior tomb-boss-catwalk))
-(define-extern widow-bomb-handler (function process int symbol event-message-block none :behavior widow-bomb))
-(define-extern widow-bomb-back-handler (function process int symbol event-message-block none :behavior widow-bomb))
+(define-extern widow-bomb-handler (function process int symbol event-message-block object :behavior widow-bomb))
+(define-extern widow-bomb-back-handler (function process int symbol event-message-block object :behavior widow-bomb))
 (define-extern widow-bomb-reaction (function control-info collide-query vector vector collide-status :behavior widow))
 (define-extern widow-bomb-init-by-other (function vector vector float float vector none :behavior widow-bomb))
 (define-extern heart-mar-init-by-other (function vector none :behavior heart-mar))
@@ -50339,7 +50395,7 @@
     )
   )
 
-(define-extern vehicle-rider-event-handler (function process int symbol event-message-block none :behavior vehicle-rider))
+(define-extern vehicle-rider-event-handler (function process int symbol event-message-block object :behavior vehicle-rider))
 (define-extern vehicle-rider-init-by-other (function traffic-object-spawn-params none :behavior vehicle-rider))
 (define-extern vehicle-rider-spawn (function vehicle type traffic-object-spawn-params process))
 
@@ -50493,7 +50549,7 @@
 ;; vehicle-states                 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-extern vehicle-event-handler (function process int symbol event-message-block none :behavior vehicle))
+(define-extern vehicle-event-handler (function process int symbol event-message-block object :behavior vehicle))
 (define-extern vehicle-explode-post (function none :behavior vehicle))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -51748,7 +51804,7 @@
     (move-to-vehicle () _type_ :state 209)
     (board-vehicle () _type_ :state 210)
     (ride () _type_ :state 211)
-    (exit-vehicle (object object int symbol event-message-block) _type_ :state 212)
+    (exit-vehicle () _type_ :state 212)
     (wait-at-dest () _type_ :state 213)
     (civilian-method-214 (_type_ nav-branch int vector float) float 214)
     (civilian-method-215 (_type_ vector) none 215)

@@ -244,7 +244,7 @@
   (set! (-> *setting-control* default auto-save) #t)
   (none)
   )
-  
+
 (defun setup-speedrun-post-blackout ()
   (when (and (-> *speedrun-info* needs-post-blackout-setup?) (>= (-> *display* base-frame-counter) (-> *game-info* blackout-time)))
     (set! (-> *speedrun-info* needs-post-blackout-setup?) #f)
@@ -454,6 +454,7 @@
   (start-speedrun (speedrun-category full-game))
   (none))
 
+(define-extern *mod-version-text* string)
 (defun speedrun-draw-settings ()
   "Draw speedrun related settings in the bottom left corner"
   (when (and (-> *pc-settings* speedrunner-mode?)
@@ -462,8 +463,8 @@
              (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
                                       (bucket-id subtitle))
-      (draw-string-xy (string-format "Speedrunner Mode ~%OpenGOAL Version: ~S ~%Category: ~S ~%Cutscene Skips ~A"
-                                     *pc-settings-built-sha*
+      (draw-string-xy (string-format "Speedrunner Mode ~%~S ~%Category: ~S ~%Cutscene Skips ~A"
+                                    *mod-version-text*
                                      (enum->string speedrun-category (-> *speedrun-info* category))
                                      (-> *pc-settings* skip-movies?))
                       buf 0 (- 220 (* 8 4)) (font-color flat-yellow) (font-flags shadow kerning))))

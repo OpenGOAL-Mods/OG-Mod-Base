@@ -32,7 +32,6 @@
       (logior! (-> self mask) (process-mask sleep))
       (suspend)
       )
-    (none)
     )
   )
 
