@@ -1,5 +1,6 @@
 ("TIT.DGO"
- ("static-screen.o"  "title-obs.o"
+ ("static-screen.o"
+  "title-obs.o"
   "tpage-1609.go"
   "tpage-416.go"
   "tpage-415.go"
