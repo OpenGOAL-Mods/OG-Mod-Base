@@ -422,6 +422,7 @@
   (initialize-skeleton this *flutflut-sg* '())
   (set! (-> this draw origin-joint-index) (the uint 6))
   (set! (-> this draw shadow-joint-index) (the uint 6))
+  (set! (-> this skel effect) (the effect-control #f))
   (logior! (-> this skel status) (janim-status eye))
   (set! (-> this draw shadow-ctrl) *target-shadow-control*)
   (let ((scale 0.25))

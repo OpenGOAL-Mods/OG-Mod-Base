@@ -131,8 +131,6 @@ void extract_art_groups_from_level(const ObjectFileDB& db,
   }
 }
 
-
-
 std::vector<level_tools::TextureRemap> extract_tex_remap(const ObjectFileDB& db,
                                                          const std::string& dgo_name) {
   auto bsp_rec = get_bsp_file(db.obj_files_by_dgo.at(dgo_name), dgo_name);
@@ -154,7 +152,6 @@ std::vector<level_tools::TextureRemap> extract_tex_remap(const ObjectFileDB& db,
 
   return bsp_header.texture_remap_table;
 }
-
 
 std::vector<level_tools::TextureRemap> extract_bsp_from_level(const ObjectFileDB& db,
                                                               const TextureDB& tex_db,
@@ -259,7 +256,7 @@ void extract_common(const ObjectFileDB& db,
                     const std::string& dgo_name,
                     bool dump_levels,
                     const fs::path& output_folder,
-                     const Config& config,
+                    const Config& config,
                     const std::vector<std::string>& dgo_names) {
   if (db.obj_files_by_dgo.count(dgo_name) == 0) {
     lg::warn("Skipping common extract for {} because the DGO was not part of the input", dgo_name);
@@ -276,10 +273,9 @@ void extract_common(const ObjectFileDB& db,
   tfrag3::Level tfrag_level;
   add_all_textures_from_level(tfrag_level, dgo_name, tex_db);
   extract_art_groups_from_level(db, tex_db, {}, dgo_name, tfrag_level);
- // hack in stuff from all levels into common
+  // hack in stuff from all levels into common
   for (const std::string& lvl_dgo_name : dgo_names) {
-    auto tex_remap =
-       extract_tex_remap(db, lvl_dgo_name);
+    auto tex_remap = extract_tex_remap(db, lvl_dgo_name);
     extract_art_groups_from_level(db, tex_db, tex_remap, lvl_dgo_name, tfrag_level);
   }
 
@@ -329,7 +325,7 @@ void extract_common(const ObjectFileDB& db,
   if (dump_levels) {
     auto file_path = file_util::get_jak_project_dir() / "glb_out" / "common.glb";
     file_util::create_dir_if_needed_for_file(file_path);
-    save_level_foreground_as_gltf(tfrag_level, file_path);
+    //save_level_foreground_as_gltf(tfrag_level, file_path);
   }
 }
 
@@ -352,22 +348,28 @@ void extract_from_level(const ObjectFileDB& db,
       extract_bsp_from_level(db, tex_db, dgo_name, config.hacks, extract_collision, level_data);
   extract_art_groups_from_level(db, tex_db, tex_remap, dgo_name, level_data);
 
-  //If the dgo is not snowy, then add snowy assets for flutflut
+  // If the dgo is not snowy, then add snowy assets for flutflut
   if (dgo_name != "SNO.DGO" && db.obj_files_by_dgo.count(dgo_name) == 0) {
     lg::warn("Skipping adding {} because we are in Jak 2 mode", dgo_name);
-    const std::string local_dgo_name = "SNO.DGO"; 
-    extract_art_groups_from_level(db, tex_db, extract_bsp_from_level(db, tex_db, local_dgo_name, config.hacks, extract_collision, level_data), local_dgo_name, level_data);
+    const std::string local_dgo_name = "SNO.DGO";
+    extract_art_groups_from_level(db, tex_db,
+                                  extract_bsp_from_level(db, tex_db, local_dgo_name, config.hacks,
+                                                         extract_collision, level_data),
+                                  local_dgo_name, level_data);
     return;
   }
-  
-  //If the dgo is not misty, then add misty assets for racer
+
+  // If the dgo is not misty, then add misty assets for racer
   if (dgo_name != "MIS.DGO" && db.obj_files_by_dgo.count(dgo_name) == 0) {
     lg::warn("Skipping adding {} because we are in Jak 2 mode", dgo_name);
-    const std::string local_dgo_name = "MIS.DGO"; 
-    extract_art_groups_from_level(db, tex_db, extract_bsp_from_level(db, tex_db, local_dgo_name, config.hacks, extract_collision, level_data), local_dgo_name, level_data);
+    const std::string local_dgo_name = "MIS.DGO";
+    extract_art_groups_from_level(db, tex_db,
+                                  extract_bsp_from_level(db, tex_db, local_dgo_name, config.hacks,
+                                                         extract_collision, level_data),
+                                  local_dgo_name, level_data);
     return;
   }
-  
+
   Serializer ser;
   level_data.serialize(ser);
   auto compressed =
@@ -388,7 +390,7 @@ void extract_from_level(const ObjectFileDB& db,
     auto fore_file_path = file_util::get_jak_project_dir() / "glb_out" /
                           fmt::format("{}_foreground.glb", level_data.level_name);
     file_util::create_dir_if_needed_for_file(fore_file_path);
-    save_level_foreground_as_gltf(level_data, fore_file_path);
+   // save_level_foreground_as_gltf(level_data, fore_file_path);
   }
 }
 

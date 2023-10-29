@@ -29,7 +29,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Package Dependencies
         run: brew install cmake nasm ninja
@@ -38,7 +38,6 @@ jobs:
         uses: mikehardy/buildcache-action@v2.1.0
         with:
           cache_key: macos-11-${{ inputs.cachePrefix }}-${{ inputs.cmakePreset }}
-
           buildcache_tag: v0.28.1
 
       - name: CMake Generation

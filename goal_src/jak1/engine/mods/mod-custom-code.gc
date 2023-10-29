@@ -513,7 +513,10 @@ Temporary hardcoded hack so I can be sure how this works for release
                                     (-> (get-chick-from-flock i) root trans)) (meters 0.1))
                                     )
                                     ;;Play portal effect on them
-                                    (effect-control-method-10  (-> (get-chick-from-flock i) skel effect) 'death-warp-in -1.0 -1 )
+                                    (if (!=  (-> (get-chick-from-flock i) skel effect) #f)
+                                         (effect-control-method-10  (-> (get-chick-from-flock i) skel effect) 'death-warp-in -1.0 -1 )
+                                    )
+                               
                                     ;;set their target to 1,1,1
                                     (vector-identity! (-> (get-chick-from-flock i) target-pos))
                                     (auto-save-command 'auto-save 0 0 *default-pool*)
@@ -914,10 +917,10 @@ Temporary hardcoded hack so I can be sure how this works for release
     
     (when #t
     ;;(format #t "~A" (-> *target* state name))
-      (if (and (= (-> *target* state name) 'target-stance) (not (movie?)) (!= (level-get-target-inside *level*) #f) (!= (-> (level-get-target-inside *level*)name ) 'misty))
+      ;; (if (and (= (-> *target* state name) 'target-stance) (not (movie?)) (!= (level-get-target-inside *level*) #f) (!= (-> (level-get-target-inside *level*)name ) 'misty))
 
-      (have-all-chicks-safe)
-      )
+      ;; (have-all-chicks-safe)
+      ;; )
 
     ;;This is kind of a hack to start up during the opening cutscene
     (when (and (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (>= *currentCutsceneFrame* 1649))

@@ -50,11 +50,11 @@
   )
 
 
-(defmethod print-def hosehead-fake ((obj hosehead-fake))
-  (let ((s5-0 (-> obj root)))
+(defmethod print-def hosehead-fake ((this hosehead-fake))
+  (let ((s5-0 (-> this root)))
     (format #t "~%")
     (format #t "(def-hosehead-fake~%")
-    (format #t "   :id ~d~%" (-> obj id))
+    (format #t "   :id ~d~%" (-> this id))
     (format #t "   :trans-x ~M~%" (-> s5-0 trans x))
     (format #t "   :trans-y ~M~%" (-> s5-0 trans y))
     (format #t "   :trans-z ~M~%" (-> s5-0 trans z))
@@ -63,7 +63,7 @@
     (format #t "   :quat-z ~f~%" (-> s5-0 quat z))
     (format #t "   :quat-w ~f~%" (-> s5-0 quat w))
     )
-  (let ((a0-11 (-> obj info)))
+  (let ((a0-11 (-> this info)))
     (when a0-11
       (let ((f0-7 (-> a0-11 walk-dist)))
         (if (!= f0-7 0.0)
@@ -78,15 +78,15 @@
   )
 
 ;; WARN: Return type mismatch symbol vs none.
-(defmethod debug-draw hosehead-fake ((obj hosehead-fake))
-  (let ((a2-0 (-> obj info)))
+(defmethod debug-draw hosehead-fake ((this hosehead-fake))
+  (let ((a2-0 (-> this info)))
     (when a2-0
       (if (!= (-> a2-0 walk-dist) 0.0)
           (add-debug-line
             #t
             (bucket-id debug-no-zbuf1)
             (-> a2-0 trans)
-            (-> obj walk-dest)
+            (-> this walk-dest)
             (new 'static 'rgba :r #xff :g #xff :a #x80)
             #f
             (the-as rgba -1)
@@ -177,14 +177,11 @@
         (cond
           ((zero? v1-0)
            (let ((v1-3 (ja-group)))
-             (if (not (and v1-3 (= v1-3 (-> self draw art-group data 15))))
+             (if (not (and v1-3 (= v1-3 hosehead-idle0-ja)))
                  (ja-channel-push! 1 (seconds 0.17))
                  )
              )
-           (ja-no-eval :group! (-> self draw art-group data 15)
-                       :num! (seek! (the float (+ (-> (the-as art-joint-anim (-> self draw art-group data 15)) frames num-frames) -1)))
-                       :frame-num 0.0
-                       )
+           (ja-no-eval :group! hosehead-idle0-ja :num! (seek!) :frame-num 0.0)
            (until (ja-done? 0)
              (suspend)
              (ja :num! (seek!))
@@ -192,14 +189,11 @@
            )
           ((= v1-0 1)
            (let ((v1-34 (ja-group)))
-             (if (not (and v1-34 (= v1-34 (-> self draw art-group data 15))))
+             (if (not (and v1-34 (= v1-34 hosehead-idle0-ja)))
                  (ja-channel-push! 1 (seconds 0.17))
                  )
              )
-           (ja-no-eval :group! (-> self draw art-group data 37)
-                       :num! (seek! (the float (+ (-> (the-as art-joint-anim (-> self draw art-group data 37)) frames num-frames) -1)))
-                       :frame-num 0.0
-                       )
+           (ja-no-eval :group! hosehead-idle1-ja :num! (seek!) :frame-num 0.0)
            (until (ja-done? 0)
              (suspend)
              (ja :num! (seek!))
@@ -207,10 +201,7 @@
            )
           ((= v1-0 2)
            (ja-channel-push! 1 (seconds 0.17))
-           (ja-no-eval :group! (-> self draw art-group data 13)
-                       :num! (seek! (the float (+ (-> (the-as art-joint-anim (-> self draw art-group data 13)) frames num-frames) -1)))
-                       :frame-num 0.0
-                       )
+           (ja-no-eval :group! hosehead-attack0-ja :num! (seek!) :frame-num 0.0)
            (until (ja-done? 0)
              (suspend)
              (ja :num! (seek!))
@@ -218,10 +209,7 @@
            )
           ((= v1-0 3)
            (ja-channel-push! 1 (seconds 0.17))
-           (ja-no-eval :group! (-> self draw art-group data 14)
-                       :num! (seek! (the float (+ (-> (the-as art-joint-anim (-> self draw art-group data 14)) frames num-frames) -1)))
-                       :frame-num 0.0
-                       )
+           (ja-no-eval :group! hosehead-attack1-ja :num! (seek!) :frame-num 0.0)
            (until (ja-done? 0)
              (suspend)
              (ja :num! (seek!))
@@ -229,10 +217,7 @@
            )
           ((= v1-0 4)
            (ja-channel-push! 1 (seconds 0.17))
-           (ja-no-eval :group! (-> self draw art-group data 21)
-                       :num! (seek! (the float (+ (-> (the-as art-joint-anim (-> self draw art-group data 21)) frames num-frames) -1)))
-                       :frame-num 0.0
-                       )
+           (ja-no-eval :group! hosehead-attack-left-ja :num! (seek!) :frame-num 0.0)
            (until (ja-done? 0)
              (suspend)
              (ja :num! (seek!))
@@ -240,10 +225,7 @@
            )
           ((= v1-0 5)
            (ja-channel-push! 1 (seconds 0.17))
-           (ja-no-eval :group! (-> self draw art-group data 35)
-                       :num! (seek! (the float (+ (-> (the-as art-joint-anim (-> self draw art-group data 35)) frames num-frames) -1)))
-                       :frame-num 0.0
-                       )
+           (ja-no-eval :group! hosehead-knocked-land2-ja :num! (seek!) :frame-num 0.0)
            (until (ja-done? 0)
              (suspend)
              (ja :num! (seek!))
@@ -251,10 +233,7 @@
            )
           (else
             (ja-channel-push! 1 (seconds 0.17))
-            (ja-no-eval :group! (-> self draw art-group data 10)
-                        :num! (seek! (the float (+ (-> (the-as art-joint-anim (-> self draw art-group data 10)) frames num-frames) -1)))
-                        :frame-num 0.0
-                        )
+            (ja-no-eval :group! hosehead-shoot-start-ja :num! (seek!) :frame-num 0.0)
             (until (ja-done? 0)
               (suspend)
               (ja :num! (seek!))
@@ -264,12 +243,10 @@
         )
       )
     #f
-    (none)
     )
   :post (behavior ()
     (ja-post)
     0
-    (none)
     )
   )
 
@@ -277,18 +254,12 @@
   :virtual #t
   :event hosehead-fake-event-handler
   :trans (behavior ()
-    (vector-seek-3d-smooth!
-      (-> self root trans)
-      (-> self walk-dest)
-      (* 24576.0 (-> self clock seconds-per-frame))
-      0.8
-      )
+    (vector-seek-3d-smooth! (-> self root trans) (-> self walk-dest) (* 24576.0 (seconds-per-frame)) 0.8)
     (let ((f0-2 409.6))
       (if (>= (* f0-2 f0-2) (vector-vector-distance-squared (-> self root trans) (-> self walk-dest)))
           (go-virtual idle)
           )
       )
-    (none)
     )
   :code (behavior ()
     (ja-channel-push! 1 (seconds 0.1))
@@ -300,10 +271,7 @@
                 )
           )
       (until #f
-        (ja-no-eval :group! gp-0
-                    :num! (seek! (the float (+ (-> (the-as art-joint-anim gp-0) frames num-frames) -1)))
-                    :frame-num 0.0
-                    )
+        (ja-no-eval :group! gp-0 :num! (seek!) :frame-num 0.0)
         (until (ja-done? 0)
           (suspend)
           (ja :num! (seek!))
@@ -311,14 +279,13 @@
         )
       )
     #f
-    (none)
     )
   :post (-> (method-of-type hosehead-fake idle) post)
   )
 
 (defstate die-fast (hosehead-fake)
   :virtual #t
-  :code (the-as (function none :behavior hosehead-fake) nothing)
+  :code nothing
   )
 
 ;; WARN: Return type mismatch object vs none.
@@ -357,7 +324,7 @@
     )
   (set! (-> self draw light-index) (the-as uint 10))
   (ja-channel-push! 1 0)
-  (ja :group! (-> self draw art-group data 5) :num! min)
+  (ja :group! hosehead-walk-ja :num! min)
   (ja-post)
   (set! (-> self event-hook) hosehead-fake-event-handler)
   (go-virtual idle)

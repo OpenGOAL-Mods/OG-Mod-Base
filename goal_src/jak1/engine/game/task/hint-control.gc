@@ -249,7 +249,7 @@
                (zero? (-> *game-info* hint-control v1-0 start-time))
                (!= (-> *game-info* hint-control v1-0 num-attempts-before-playing) 1)
                )
-      (set! (-> *game-info* hint-control v1-0 start-time) (-> *display* base-frame-counter))
+      (set-time! (-> *game-info* hint-control v1-0 start-time))
       0
       )
     )
@@ -347,9 +347,10 @@
   ;;     (else
   ;;       #f
   ;;       )
-   ;;   )
-  ;;  )
-  #f)
+        #f
+      )
+    
+  
 
 (defun reset-all-hint-controls ()
   ;; (let ((v1-2 (length (-> *game-info* hint-control))))
@@ -398,6 +399,3 @@
   0
   (none)
   )
-
-
-
