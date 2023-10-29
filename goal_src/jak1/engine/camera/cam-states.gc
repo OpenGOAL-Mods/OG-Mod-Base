@@ -386,7 +386,7 @@
   :flag-assert         #x900000014
   )
 
-;; modified to not rotate.
+
 (define *CAM_EYE-bank*
   (new 'static 'cam-eye-bank :rot-speed 364.0889 :max-degrees 12743.111 :max-fov 11650.845 :min-fov 6189.511)
   )

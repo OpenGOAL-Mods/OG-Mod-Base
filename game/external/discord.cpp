@@ -13,9 +13,8 @@ int gDiscordRpcEnabled;
 int64_t gStartTime;
 
 static const std::map<GameVersion, std::string> rpc_client_ids = {
-    {GameVersion::Jak1, "1149903917946249236"},
+    {GameVersion::Jak1, "938876425585434654"},
     {GameVersion::Jak2, "1060390251694149703"}};
-    
 
 void handleDiscordReady(const DiscordUser* user) {
   lg::info("Discord: connected to user {}#{} - {}", user->username, user->discriminator,
@@ -67,7 +66,7 @@ const char* get_full_level_name(const std::map<std::string, std::string>& level_
   if (nice_name != level_names.end()) {
     return nice_name->second.c_str();
   }
-  return level_name;
+  return "unknown";
 }
 
 // convert time of day float to a 24-hour hh:mm format string

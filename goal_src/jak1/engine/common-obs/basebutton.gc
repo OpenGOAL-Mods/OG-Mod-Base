@@ -427,28 +427,14 @@
   )
 
 (define *warp-info* (new 'static 'boxed-array :type string
-                      "block-world-warp" ;;-done
-                      "factory-cross-warp"
-                      "holly-wood-warp"
-                      "monument-warp"
-                      "cathedral-warp"
-                      "pyramid-warp"
-                      "ice-canyon-warp"
-                      "coins-warp"
-                      "villa-cube-warp"
-                      "ice-slide-warp"
-                      "islands-warp"
-                      "glass-towers-warp"
-                      "chemical-factory-warp"
-                      "space-bridge-warp"
-                      "chicks-warp"
-                      "garden-warp"
-                      "cold-pipe-warp"
-                    ;;"block-man-warp"
-                    ;;"cube-face-warp"
+                      "training-warp"
+                      "village1-warp"
+                      "village2-warp"
+                      "village3-warp"
+                      "citadel-warp"
                       )
         )
-;;Handle these warps in target-death.gc
+
 (deftype warp-gate (process-drawable)
   ((level      symbol  :offset-assert 176)
    (level-slot int32   :offset-assert 180)
@@ -467,9 +453,6 @@
     )
   )
 
-(defun-extern portal-mort-gate warp-gate)
-(defun-extern portal-mort-trans vector)
-;;(defun-extern portal-mort-switch warp-gate-switch)
 
 (defstate use (warp-gate)
   :virtual #t
@@ -488,9 +471,6 @@
       (set! (-> s4-0 message) 'change-state)
       (set! (-> s4-0 param 0) (the-as uint target-warp-out))
       (let ((v1-9 (new 'static 'vector)))
-          (if (portal-mort-gate)
-        (vector-copy! (-> self root trans) (portal-mort-trans))
-        )
         (set! (-> v1-9 quad) (-> self root trans quad))
         (set! (-> s4-0 param 1) (the-as uint v1-9))
         )
@@ -506,10 +486,8 @@
     ;; since the citadel warp gate is located in both levels at once (visually lavatube, technically citadel)
     ;; we add "training" to the list here so that the training warp gate waits until it's safe to
     ;; dispose the old code from memory.
-     
     (case (-> self level)
-    ;;Tagmort
-      (('citadel 'lavatube 'training 'block-world 'factory-cross 'blockworld)
+      (('citadel 'lavatube 'training)
        (while (and *target* (not (logtest? (-> *target* draw status) (draw-status hidden))))
          (suspend)
          )
@@ -526,8 +504,7 @@
     (set-blackout-frames (seconds 0.05))
     (start 'play (get-continue-by-name *game-info* (-> *warp-info* arg0)))
     (logior! (-> self mask) (process-mask sleep))
-    
-
+    (suspend)
     0
     )
   )
@@ -671,7 +648,6 @@
       (suspend)
       (ja :num! (seek! (ja-aframe 40.0 0)))
       )
-           
     (anim-loop)
     )
   :post target-no-stick-post
