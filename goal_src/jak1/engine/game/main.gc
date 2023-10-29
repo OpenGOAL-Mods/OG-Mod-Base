@@ -1,6 +1,6 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(define-extern *in-mort-menu* symbol)
+
 ;; name: main.gc
 ;; name in dgo: main
 ;; dgos: GAME, ENGINE
@@ -88,12 +88,9 @@
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Pause/Master Mode
 ;;;;;;;;;;;;;;;;;;;;;
-(defun-extern mort-chicks-text none)
-(defun-extern run-mort-code? basic)
+
 (defun paused? ()
   "Are we paused? True if *master-mode* = pause, progress is not hidden, or *master-mode* = menu"
-
-
   (the-as symbol
           (or (= *master-mode* 'pause)
               (or (and *progress-process* (not (hidden? (-> *progress-process* 0))))
@@ -177,21 +174,11 @@
   0
   (none)
   )
-(define-extern *currentSpoolName* string)
+
 (define *last-master-mode* 'game)
-(define-extern *warp-info* (array string))
+
 (defun toggle-pause ()
   "Do pause/menu/progress transitions"
- ;;Ban pausing in these cutscenes so the custom audio doesnt desync
- (if (or  (string= *currentSpoolName* "sage-intro-sequence-a")
-                        (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
-                        (string= *currentSpoolName* "sidekick-human-intro-sequence-c")
-                        (string= *currentSpoolName* "finalbosscam-white-eco")
-                        (string= *currentSpoolName* "green-sagecage-daxter-sacrifice")
-                        (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a"))
-                        (return 0)
-                  )
-
   (case *master-mode*
     (('game)
      ;; coming from normal gameplay
@@ -243,16 +230,6 @@
 
                  ;; pushing start.
                  ((cpad-hold? 0 start)
-                 ;;Tagmort This is where the game checks for pause, we can hijack here and have different results based on level etc
-                     (if (= (-> (level-get-target-inside *level*)name) 'mort-title)
-                        (begin
-                        (set! *in-mort-menu* #f)
-                        ;; replace with mort menu eventually
-                        (sound-play "select-menu")
-                        (send-event *target* 'continue (get-continue-by-name *game-info* (-> *warp-info* 0)))
-                        (return 0)
-                        )
-                        )
                   ;; toggle between progress/game
                   (if *progress-process*
                       'game
@@ -397,20 +374,21 @@
     (check-cheat-code (-> *cheat-temp* 0) 0
         (up up down down left right left right x x square circle square circle)
           (cpad-clear! 0 r1)
-          ;;Mort softlock backup hack
-      (+! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 1)
-     (play-rand-sound "snd/chickendance.mp3" (the int (-> *setting-control* default sfx-volume)))
+          ;; toggle!
+          (not! *cheat-mode*)
+          (cheats-sound-play *cheat-mode*)
         )
 
     ;; debug mode
-    (when #t
+    (when *cheat-mode*
       (check-cheat-code (-> *cheat-temp* 1) 0
           (circle square circle square x x right left right left down down up up)
             (cpad-clear! 0 r1)
             ;; toggle between #t and debug.
-            (set! *cheat-mode* 
+            (set! *cheat-mode* (if (= *cheat-mode* 'debug)
+                                        #t
                                         'debug
-                                        )
+                                        ))
             (cheats-sound-play *cheat-mode*)
           )
       )
@@ -570,8 +548,7 @@
     )
   0
   )
-(defun-extern zero-volume? (symbol))
-(defun-extern mort-chicks-text none)
+
 (defbehavior display-loop process ()
   "the main 'display loop' in GOAL. v-sync is done in this function, so all frames start and end here."
 
@@ -598,11 +575,8 @@
 
     (while *run*
    
-     ;; (runs-every-frame) ;; trigger hook for mod base
-
-
-              (if (zero-volume?)  (pause-main-music)  (resume-main-music))  
-              ;;We need to run this check in here, if we spawn a process for it processes are paused while in the menu
+      (runs-every-frame) ;; trigger hook for mod base
+      
       ;; start immediately after all process updates finish.
       (profiler-instant-event "display-loop-top")
 
