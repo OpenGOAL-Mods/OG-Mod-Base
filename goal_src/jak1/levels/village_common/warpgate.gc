@@ -91,7 +91,7 @@
 (defun-extern set-unlock-level none)
 (defun-extern reset-saved-chick-from-mem none)
 
-(defun-extern chick-going-portal? symbol)
+(defun-extern chicken-portal? symbol)
 
 ;; this lets us use the portal, first thing we try to do is upgrade the unlock level if there are no cells and we cant get a chick as a softlock protection
 (defun have-all-chicks-safe ()
