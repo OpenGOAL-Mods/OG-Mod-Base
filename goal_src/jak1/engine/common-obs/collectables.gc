@@ -21,6 +21,8 @@
 (defun-extern get-current-chicks int)
 (defun-extern get-saved-chicks int)
 (defun-extern get-total-chicks int)
+(defun-extern update-saved-chicks int none)
+(defun-extern update-current-chicks int none)
 
 
 ;; This is a stupid hack

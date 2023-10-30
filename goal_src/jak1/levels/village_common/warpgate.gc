@@ -96,16 +96,20 @@
 ;; this lets us use the portal, first thing we try to do is upgrade the unlock level if there are no cells and we cant get a chick as a softlock protection
 (defun have-all-chicks-safe ()
 
-(let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
-         (current-custom-info (-> *custom-level-info* data current-level-idx)))
 
-(when (or (and  (= (get-loaded-cell-count) 0) (= (-> current-custom-info current-chicks) 0) )
-(and (= (get-loaded-cell-count) 0) (> (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks)))
+
+(let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
+         )
+
+(when (or (and  (= (get-loaded-cell-count) 0) (= (get-current-chicks) 0) (not (chicken-portal?)))
+(and (= (get-loaded-cell-count) 0) (> (get-saved-chicks) (get-total-chicks)) (not (chicken-portal?)))
 )
 
 (if 
-(= (-> (level-get-target-inside *level*)name) (->  (get-continue-by-name *game-info* (-> *warp-info* (get-unlock-level))) level))
-(begin (set-unlock-level)
+(and (= (-> (level-get-target-inside *level*)name) (->  (get-continue-by-name *game-info* (-> *warp-info* (get-unlock-level))) level)) (!= (-> (level-get-target-inside *level*)name) 'block-world))
+(begin 
+ (play-rand-sound "snd/nosoftlock.mp3" 100)
+(set-unlock-level)
 ;;TEST THIS
 )
 )
@@ -113,9 +117,9 @@
 
 
 (or 
-      (and (>= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks) ) (not (chicken-portal?)))
-      *cheat-mode*
-      (and (= (get-loaded-cell-count) 0) (= (-> current-custom-info current-chicks) 0) (not (chicken-portal?)) )
+      (and (>= (get-saved-chicks) (get-total-chicks)) (not (chicken-portal?)))
+      (and *cheat-mode* (cpad-hold? 0 l3))
+      (and (= (get-loaded-cell-count) 0) (= (get-current-chicks) 0) (not (chicken-portal?)) )
 )
 ))
 
