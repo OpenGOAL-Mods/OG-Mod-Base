@@ -18,6 +18,12 @@
 (declare-type eco eco-collectable)
 (define *MAXCURRENTCHICKS* 11)
 
+(defun-extern get-current-chicks int)
+(defun-extern get-saved-chicks int)
+(defun-extern get-total-chicks int)
+(defun-extern update-saved-chicks int none)
+(defun-extern update-current-chicks int none)
+
 
 ;; This is a stupid hack
 (deftype demon-chicken (process-drawable)
@@ -1866,7 +1872,7 @@
 (defstate pickup (fuel-cell)
   :virtual #t
   :enter (behavior ((arg0 object) (arg1 handle))
-  (if (< *MAXCURRENTCHICKS*  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))
+  (if (< *MAXCURRENTCHICKS*  (get-current-chicks))
   (return #f)
   )
     (set-time! (-> self state-time))
@@ -1878,7 +1884,7 @@
       )
     )
   :trans (behavior ()
-    (if (< *MAXCURRENTCHICKS*  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))
+    (if (< *MAXCURRENTCHICKS*  (get-current-chicks))
   (return #f)
   )
     (let ((f30-0 (the-as float (cond
@@ -1938,7 +1944,7 @@
     )
    :code (behavior ((arg0 object) (arg1 handle))
     (local-vars (sv-96 res-tag))
-      (if (< *MAXCURRENTCHICKS*  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))
+      (if (< *MAXCURRENTCHICKS*  (get-current-chicks))
   (return #f)
   )
     (sound-play "pu-powercell")
@@ -1951,28 +1957,28 @@
     ;;Tagmort
 
     ;;check to see the saved chickens stored and maybe restore it
-    (if (and (= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 0) 
-    (= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) 0) )
+    (if (and (= (get-current-chicks) 0) 
+    (= (get-saved-chicks) 0) )
     (begin
     (format #t "picked up a chick and its first in the level~%")
-    (if (> (get-saved-chicks-from-mem) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks))
+    (if (> (get-saved-chicks-from-mem) (get-saved-chicks))
     (begin 
     (format #t "Found saved chick data that was non zero, updating saved chicks in level to ~D~%" (get-saved-chicks-from-mem))
-    (set! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (get-saved-chicks-from-mem))
+    (update-saved-chicks (get-saved-chicks-from-mem))
     )
     )
     )
     )
-
-    (set! (-> (get-chick-from-flock (the int (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))) parent-cell-name) 
-    (the string(-> self name)))
+    ;; Set the chick with the highest index as this cell
+    (set! (-> (get-chick-from-flock (the int (get-current-chicks))) parent-cell-name) 
+        (the string (-> self name))
+    )
     ;; Increment after setting name
-    (+! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 1)
+    (update-current-chicks (+ (get-current-chicks) 1))
     (play-rand-sound "snd/ChickPickup1.mp3" (the int (-> *setting-control* default sfx-volume)))
-    (if (= (+  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks)
-    
-    )  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks))
-
+    (if (= (+  (get-current-chicks)  (get-saved-chicks)) 
+           (get-total-chicks)
+        )
    (play-rand-sound "snd/coin1.wav" (the int (-> *setting-control* default sfx-volume)))
     )
     (if #f
@@ -2347,7 +2353,7 @@
     (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* fuel-cell))))
     )
   :post (behavior ()
-    (if (< *MAXCURRENTCHICKS*  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks))
+    (if (< *MAXCURRENTCHICKS*  (get-current-chicks))
   (return #f)
   )
     (transform-post)

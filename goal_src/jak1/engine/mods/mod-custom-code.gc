@@ -4,7 +4,7 @@
     ;; name: mod-custom-code.gc
     ;; name in dgo: mod-custom-code
     ;; dgos: TODO
-
+(define *chicken-home* #f)
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; What is this file for.
@@ -69,16 +69,7 @@
 (set! (-> *custom-level-info* data 34 total-chicks) 12)
 
 ;;getters
-(define init-done? #f)
-(defun get-current-chicks ()
- (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)
-)
-(defun get-saved-chicks()
- (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks)
-)
-(defun get-total-chicks()
- (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks)
-)
+
 (defun check-portal-distance ()
     (cond
       ((< (vector-vector-distance (-> *target* root trans) (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans)) (meters 12))
@@ -102,15 +93,38 @@
                                       (bucket-id subtitle))
       (draw-string-xy (string-format "Mort Debug info ~%Level inside: ~D ~%Total Chicks is is ~D~%Current Chicks is is ~D~%saved Chicks is is ~D~%Close to portal? ~A~%Unlock lvl is ~D~%"
                                      (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))
-                                     (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks) 
-                                     (current-chicks-following) 
+                                     (get-total-chicks)
+                                     (get-current-chicks)
                                      (get-saved-chicks-from-mem)
-                                      *close-to-portal?*
+                                      (chicken-portal?)
                                       (get-unlock-level)
                                      )
                       buf 400 (- 150 (* 8 16)) (font-color flat-yellow) (font-flags shadow kerning)))
           )
     )
+(none)
+)
+
+
+(defun mort-rewrite-text ()
+ ;;mort debugging
+   
+      (when (and
+            (portal-mort-switch)
+             (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
+    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
+                                      (bucket-id subtitle))
+      (draw-string-xy (string-format "Will Remove soon!~%Mort Rewrite info ~%Chicks in memory card: ~D ~%Total Chicks is is ~D~%Current Chicks is is ~D~%saved Chicks is is ~D~%Chicken going to portal? ~A~%Unlock lvl is ~D~%"
+                                     (get-saved-chicks-from-mem)
+                                     (get-total-chicks)
+                                     (get-current-chicks)
+                                     (get-saved-chicks)
+                                      (chicken-portal?)
+                                      (get-unlock-level)
+                                     )
+                      buf (- 400 70) (- 150 (* 8 16)) (font-color flat-yellow) (font-flags shadow kerning)))
+          )
+    
 (none)
 )
 
@@ -127,8 +141,8 @@
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
                                       (bucket-id subtitle))
       (draw-string-xy (string-format "Mort Chicken info ~%Chickens Saved: ~D ~%Chickens Following ~D~%Remaining Cells ~D~%"
-                                     (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks)
-                                     (current-chicks-following)
+                                     (get-saved-chicks)
+                                     (get-current-chicks)
                                      *loaded-cell-pause*
                                      )
                       buf 15 (- 150 (* 8 4)) (font-color green) (font-flags shadow kerning)))
@@ -206,10 +220,12 @@
               )
               (set! (-> (get-chick-from-flock (the int (-> current-custom-info current-chicks))) to-point-speed) 3.0)    
               (let ((current-timea (current-time)))
+              (set! *chicken-home* #t)
                     (until (time-elapsed? current-timea (seconds 0.35))
                     ;;(format #t "~S~%" "NOT ELAPSED")
                       (suspend)
                     )
+              (set! *chicken-home* #f)
               )
       )
     )
@@ -223,7 +239,15 @@
   (none)
 )
 
-
+(defun chicken-portal? ()
+ (dotimes (i NUM_FLOCKPOINTS)
+ (if (= (vector-vector-distance (-> (get-chick-from-flock i)target-pos) (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans)) 0.0)
+  (return #t)
+  )
+  #f
+)
+#f
+)
 (defun unlock-level-func ((idx int))
 (set-unlock-level-val idx)
 (play-rand-sound "snd/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
@@ -234,6 +258,9 @@
 
 (defun set-unlock-level ()
 "adds to the unlock level"
+(if (chicken-portal?)
+(return #f)
+)
   ;; (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))
   ;; (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks) 
  (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
@@ -362,9 +389,9 @@ Temporary hardcoded hack so I can be sure how this works for release
   (the int (-> *game-info* money-per-level 3) )
 )
 
-(defun update-saved-chicks ((arg1 int))
+(defun update-saved-chicks-in-mem ((arg1 int))
 "adds to the unlock level"
-  (when (>= (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks)
+  (when (>= (get-saved-chicks) (get-total-chicks)
    )
     (reset-saved-chick-from-mem)
     (when *debug-segment* 
@@ -387,9 +414,45 @@ Temporary hardcoded hack so I can be sure how this works for release
 )
 
 (defun reset-saved-chick-from-mem()
+(when (nonzero? (get-saved-chicks-from-mem))
 (format #t "All chicks in this level are safe, setting saved chicks mem to 0")
 (set! (-> *game-info* money-per-level 5) 0)
+)
 (none))
+
+(defun restore-saved-chicks-from-mem()
+"This function runs on jak spawn, and checks if the stored memory card value is nonzero, and saved chicks is zero if so it updates it."
+(if (and (nonzero? (get-saved-chicks-from-mem)) (= (get-saved-chicks) 0))
+(update-saved-chicks (get-saved-chicks-from-mem))
+)
+)
+(defun get-total-chicks ()
+(-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks) 
+)
+
+(defun  update-total-chicks ((amount int))
+(set! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks) amount)
+(none)
+)
+
+(defun get-saved-chicks ()
+(-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) 
+)
+
+(defun  update-saved-chicks ((amount int))
+(set! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) amount)
+(none)
+)
+(defun get-current-chicks ()
+(-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 
+)
+
+(defun  update-current-chicks ((amount int))
+(set! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) amount)
+(none)
+)
+
+
 
 (defbehavior josh-suprise-sound-25 process ()
             (let ((current-timea (current-time)))
@@ -501,8 +564,7 @@ Temporary hardcoded hack so I can be sure how this works for release
 
 
 (dotimes (i NUM_FLOCKPOINTS) 
-  (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
-         (current-custom-info (-> *custom-level-info* data current-level-idx))
+  (let* (
          (warpgate-pos (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans))
          )
 ;;If they are close to the portal
@@ -520,11 +582,10 @@ Temporary hardcoded hack so I can be sure how this works for release
                                     ;;set their target to 1,1,1
                                     (vector-identity! (-> (get-chick-from-flock i) target-pos))
                                     (auto-save-command 'auto-save 0 0 *default-pool*)
-
-    (set! (-> current-custom-info saved-chicks) (+ (-> current-custom-info saved-chicks) 1))
-    (update-saved-chicks 1)
+    (update-saved-chicks (+ (get-saved-chicks) 1))
+    (update-saved-chicks-in-mem 1)
     
-                                    (if (>= (-> current-custom-info saved-chicks) (-> current-custom-info total-chicks))
+                                    (if (>= (get-saved-chicks) (get-total-chicks))
     (begin
       (set-unlock-level)
     
@@ -544,6 +605,8 @@ Temporary hardcoded hack so I can be sure how this works for release
  
 (none)
 )
+
+
 
 (defun run-mort-code? ()
 "When these are true, we dont want to run mort code."
@@ -845,7 +908,7 @@ Temporary hardcoded hack so I can be sure how this works for release
 (defun restore-cells ()
 
 ;;Loop the flock and restore all the Cells
-(dotimes (i (current-chicks-following))
+(dotimes (i (get-current-chicks))
 (set-or-clear-status! (the entity-actor (entity-by-name (-> (get-chick-from-flock i) parent-cell-name))) (entity-perm-status dead) #f)
 )
 
@@ -917,7 +980,19 @@ Temporary hardcoded hack so I can be sure how this works for release
     
     (when #t
     ;;(format #t "~A" (-> *target* state name))
-      ;; (if (and (= (-> *target* state name) 'target-stance) (not (movie?)) (!= (level-get-target-inside *level*) #f) (!= (-> (level-get-target-inside *level*)name ) 'misty))
+
+      (if (and *target* 
+          (= (-> *target* state name) 'target-stance) 
+          (not (movie?)) 
+          (!= (level-get-target-inside *level*) #f) 
+          (!= (-> (level-get-target-inside *level*)name) 'misty)
+          (!= (-> (level-get-target-inside *level*)name) 'village1)
+          (!= (-> (level-get-target-inside *level*)name) 'beach)
+          (!= (-> (level-get-target-inside *level*)name) 'mort-title)
+          (!= (-> (level-get-target-inside *level*)name) 'citadel)
+          (!= (-> (level-get-target-inside *level*)name) 'finalboss)
+          )
+
 
       ;; (have-all-chicks-safe)
       ;; )
@@ -1017,9 +1092,9 @@ Temporary hardcoded hack so I can be sure how this works for release
 "This process ONLY spawns when debug mode is on and shows some extra info"
 "I have no idea why the close-to-portal check is needed but it works."
     (update-mort-vars)
-    (when (and run-mort-code? (not *close-to-portal?*))
+    (when (and run-mort-code? #t)
      (draw-beta-flock-points)
-     (mort-debug-text)
+     (mort-rewrite-text)
     )
     
 (none))
@@ -1284,7 +1359,8 @@ Temporary hardcoded hack so I can be sure how this works for release
       
       (format #t  "RUNNING MUSIC PROC~%")
       (process-spawn-function process music-manager-proc)
-      (restore-cells)
+      (restore-cells) 
+      (restore-saved-chicks-from-mem)
       (none)
       )
 
