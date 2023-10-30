@@ -229,18 +229,17 @@
       )
 
 (defun find-hint-control-index ((arg0 text-id))
-  ;; (let ((gp-0 -1))
-  ;;   (let ((v1-2 (length (-> *game-info* hint-control))))
-  ;;     (dotimes (a0-2 v1-2)
-  ;;       (when (= (-> *game-info* hint-control a0-2 id) arg0)
-  ;;         (set! gp-0 a0-2)
-  ;;         (set! a0-2 v1-2)
-  ;;         )
-  ;;       )
-  ;;     )
-  ;;   gp-0
-  ;;   )
-  0
+  (let ((gp-0 -1))
+    (let ((v1-2 (length (-> *game-info* hint-control))))
+      (dotimes (a0-2 v1-2)
+        (when (= (-> *game-info* hint-control a0-2 id) arg0)
+          (set! gp-0 a0-2)
+          (set! a0-2 v1-2)
+          )
+        )
+      )
+    gp-0
+    )
   )
 
 (defun start-hint-timer ((arg0 text-id))
@@ -270,100 +269,99 @@
 
 ;; WARN: disable def twice: 139. This may happen when a cond (no else) is nested inside of another conditional, but it should be rare.
 (defun can-hint-be-played? ((arg0 text-id) (arg1 entity) (arg2 string))
-  ;; (let ((v1-0 (not (str-is-playing?))))
-  ;;   (if (and v1-0 (nonzero? arg0))
-  ;;       (set! v1-0 (not (seen-text? *game-info* arg0)))
-  ;;       )
-  ;;   (when v1-0
-  ;;     (when *hint-semaphore*
-  ;;       (set! v1-0 (appeared-for-long-enough? (the-as level-hint (ppointer->process *hint-semaphore*))))
-  ;;       0
-  ;;       )
-  ;;     (when (and v1-0 (< (- (-> *display* base-frame-counter) (-> *game-info* hint-play-time)) (seconds 0.1)))
-  ;;       (set! v1-0 #f)
-  ;;       0
-  ;;       )
-  ;;     (set! v1-0 (and v1-0
-  ;;                     (not (-> *setting-control* current talking))
-  ;;                     (not (-> *setting-control* current spooling))
-  ;;                     (not (-> *setting-control* current hint))
-  ;;                     (not (-> *setting-control* current ambient))
-  ;;                     (>= (-> *display* base-frame-counter) (-> *game-info* blackout-time))
-  ;;                     )
-  ;;           )
-  ;;     0
-  ;;     )
-  ;;   (cond
-  ;;     (v1-0
-  ;;       (let ((v1-16 (find-hint-control-index arg0)))
-  ;;         (cond
-  ;;           ((< v1-16 0)
-  ;;            #t
-  ;;            )
-  ;;           (else
-  ;;             (let ((gp-1 (-> *game-info* hint-control v1-16))
-  ;;                   (a0-24 (- (-> *display* base-frame-counter) (-> *game-info* hint-control v1-16 last-time-called)))
-  ;;                   (v1-21 #t)
-  ;;                   )
-  ;;               (if (and (= (-> gp-1 num-attempts-before-playing) 1) (< a0-24 (seconds 0.1)))
-  ;;                   (+! (-> gp-1 start-time) a0-24)
-  ;;                   )
-  ;;               (cond
-  ;;                 ((and (!= (-> gp-1 num-attempts-before-playing) 1)
-  ;;                       (nonzero? (-> gp-1 last-time-called))
-  ;;                       (< (- (-> *display* base-frame-counter) (-> gp-1 last-time-called)) (seconds 0.5))
-  ;;                       )
-  ;;                  (set! (-> gp-1 last-time-called) (-> *display* base-frame-counter))
-  ;;                  #f
-  ;;                  )
-  ;;                 (else
-  ;;                   (set! (-> gp-1 last-time-called) (-> *display* base-frame-counter))
-  ;;                   (when (nonzero? (-> gp-1 delay-before-playing))
-  ;;                     (if (< (-> gp-1 start-time) (-> gp-1 delay-before-playing))
-  ;;                         (set! v1-21 #f)
-  ;;                         )
-  ;;                     0
-  ;;                     )
-  ;;                   (cond
-  ;;                     (v1-21
-  ;;                       (seekl! (-> gp-1 num-attempts) 127 1)
-  ;;                       (and (>= (-> gp-1 num-attempts) (-> gp-1 num-attempts-before-playing))
-  ;;                            (or (= (-> gp-1 num-success-before-killing) -1)
-  ;;                                (< (-> gp-1 num-success) (-> gp-1 num-success-before-killing))
-  ;;                                )
-  ;;                            )
-  ;;                       )
-  ;;                     (else
-  ;;                       #f
-  ;;                       )
-  ;;                     )
-  ;;                   )
-  ;;                 )
-  ;;               )
-  ;;             )
-  ;;           )
-  ;;         )
-  ;;       )
-  ;;     (else
-  ;;       #f
-  ;;       )
-        #f
+  (let ((v1-0 (not (str-is-playing?))))
+    (if (and v1-0 (nonzero? arg0))
+        (set! v1-0 (not (seen-text? *game-info* arg0)))
+        )
+    (when v1-0
+      (when *hint-semaphore*
+        (set! v1-0 (appeared-for-long-enough? (the-as level-hint (ppointer->process *hint-semaphore*))))
+        0
+        )
+      (when (and v1-0 (not (time-elapsed? (-> *game-info* hint-play-time) (seconds 0.1))))
+        (set! v1-0 #f)
+        0
+        )
+      (set! v1-0 (and v1-0
+                      (not (-> *setting-control* current talking))
+                      (not (-> *setting-control* current spooling))
+                      (not (-> *setting-control* current hint))
+                      (not (-> *setting-control* current ambient))
+                      (>= (current-time) (-> *game-info* blackout-time))
+                      )
+            )
+      0
       )
-    
-  
+    (cond
+      (v1-0
+        (let ((v1-16 (find-hint-control-index arg0)))
+          (cond
+            ((< v1-16 0)
+             #t
+             )
+            (else
+              (let ((gp-1 (-> *game-info* hint-control v1-16))
+                    (a0-24 (- (current-time) (-> *game-info* hint-control v1-16 last-time-called)))
+                    (v1-21 #t)
+                    )
+                (if (and (= (-> gp-1 num-attempts-before-playing) 1) (< a0-24 (seconds 0.1)))
+                    (+! (-> gp-1 start-time) a0-24)
+                    )
+                (cond
+                  ((and (!= (-> gp-1 num-attempts-before-playing) 1)
+                        (nonzero? (-> gp-1 last-time-called))
+                        (not (time-elapsed? (-> gp-1 last-time-called) (seconds 0.5)))
+                        )
+                   (set-time! (-> gp-1 last-time-called))
+                   #f
+                   )
+                  (else
+                    (set-time! (-> gp-1 last-time-called))
+                    (when (nonzero? (-> gp-1 delay-before-playing))
+                      (if (< (-> gp-1 start-time) (-> gp-1 delay-before-playing))
+                          (set! v1-21 #f)
+                          )
+                      0
+                      )
+                    (cond
+                      (v1-21
+                        (seekl! (-> gp-1 num-attempts) 127 1)
+                        (and (>= (-> gp-1 num-attempts) (-> gp-1 num-attempts-before-playing))
+                             (or (= (-> gp-1 num-success-before-killing) -1)
+                                 (< (-> gp-1 num-success) (-> gp-1 num-success-before-killing))
+                                 )
+                             )
+                        )
+                      (else
+                        #f
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      (else
+        #f
+        )
+      )
+    )
+  )
 
 (defun reset-all-hint-controls ()
-  ;; (let ((v1-2 (length (-> *game-info* hint-control))))
-  ;;   (dotimes (a0-1 v1-2)
-  ;;     (let ((a1-2 (-> *game-info* hint-control a0-1)))
-  ;;       (set! (-> a1-2 start-time) 0)
-  ;;       (set! (-> a1-2 last-time-called) 0)
-  ;;       (set! (-> a1-2 num-attempts) 0)
-  ;;       (set! (-> a1-2 num-success) 0)
-  ;;       )
-  ;;     0
-  ;;     )
-  ;;   )
+  (let ((v1-2 (length (-> *game-info* hint-control))))
+    (dotimes (a0-1 v1-2)
+      (let ((a1-2 (-> *game-info* hint-control a0-1)))
+        (set! (-> a1-2 start-time) 0)
+        (set! (-> a1-2 last-time-called) 0)
+        (set! (-> a1-2 num-attempts) 0)
+        (set! (-> a1-2 num-success) 0)
+        )
+      0
+      )
+    )
   0
   (none)
   )

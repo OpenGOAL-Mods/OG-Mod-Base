@@ -7,8 +7,7 @@
 ;; note: changed for high fps
 
 ;; DECOMP BEGINS
-(defun-extern get-mort-orb-total none)
-(define-extern *mort-orb-total* int)
+
 
 (defpartgroup group-part-hud-pickup
   :id 75
@@ -530,10 +529,6 @@
            (s3-0 (-> *display* frames (-> *display* on-screen) frame global-buf))
            (s4-1 (-> s3-0 base))
            )
-
-      (if (= (-> this level-index) -1)
-      (set! (-> this total-orbs) *mort-orb-total*)
-      )
       (let ((s2-0 draw-string-xy))
         (format (clear *temp-string*) "~D/~D" (-> this total-orbs) (-> this total-orbs))
         (s2-0
@@ -658,7 +653,7 @@
                 (set! s2-2 (the-as int (-> *game-info* money-per-level s1-0)))
                 )
             (+! s3-2 (-> *game-info* money-per-level s1-0))
-            (+! s4-4 *mort-orb-total*)
+            (+! s4-4 (-> (get-game-count s1-0) money-count))
             )
           )
         )
@@ -666,8 +661,7 @@
     (cond
       ((= s3-2 s4-4)
        (set! (-> this total-orbs) s4-4)
-     
-       (set! (-> this total-orbs) *mort-orb-total*)
+       (set! (-> this total-orbs) s4-4)
        (set! (-> this level-index) -1)
        )
       ((begin (set! (-> this total-orbs) s2-2) (< arg0 (length *level-task-data*)))
@@ -677,9 +671,6 @@
         (set! (-> this level-index) -1)
         )
       )
-      ;;override here
-      ;;  (get-mort-orb-total)
-      ;;  (set! (-> this total-orbs) *mort-orb-total*)
     )
   (set! (-> this start-time) (-> *display* base-frame-counter))
   (sound-play "get-all-orbs")
@@ -758,13 +749,11 @@
       (case *hud-collectable-view*
         (((hud-collectable-view game-totals))
           ;; show orbs collected/total across entire game
-                ;;override here
-          (get-mort-orb-total)
           (draw-string-xy-scaled
             (string-format 
               "~D~%/~D"
               (the int (-> *game-info* money-total))
-              *mort-orb-total* ;;(-> (the progress (-> *progress-process* 0)) total-nb-of-orbs)
+              2000  ;;(-> (the progress (-> *progress-process* 0)) total-nb-of-orbs)
               )
             buf
             string-x
@@ -1203,7 +1192,7 @@
         (((hud-collectable-view original))
           ;; show original (cells collected across entire game)
           (draw-string-xy
-            (string-format "~D" (+  (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks) (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)));;(-> this value))
+            (string-format "~D" (-> this value))
             buf
             string-x
             string-y

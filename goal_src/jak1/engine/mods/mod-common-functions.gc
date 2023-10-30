@@ -49,21 +49,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   `(-> *game-info* fuel)
   )
 
-(defmacro current-chicks-following ()
-  `(-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)
-  )
-
-;;All the ones under here are placeholder
-
-(defmacro current-chicks-saved ()
-  `(-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)
-  )
-
-(defmacro current-chicks-total ()
-  `(-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)
-  )
-
-
 (defmacro set-current-cell-count (count)
   `(set! (-> *game-info* fuel) ,count)
   )
@@ -381,9 +366,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 ;;This returns true or false if jak is within a bubble defined by coordiantes and width
 (defun in-bubble? ((x float) (y float) (z float) (w float))
-  (if *cheat-mode* 
-    (add-debug-sphere #t (bucket-id debug-no-zbuf) (set-vector! (new-stack-vector0) x y z 1.0) (meters w) *color-black*)
-  )
   (<= 
     (vector-vector-distance 
       (target-pos 0) 
@@ -393,56 +375,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     )
   )
 
- ;; Simple Tomato Pasta Sauce
-(defun is-in-chem-fac-silo ()
-(when  (= (-> (level-get-target-inside *level*)name ) 'chemical-factory) 
-  (if (in-bubble? (meters 131.51) (meters 310.37) (meters 200.12) (meters 29.0))
-    (return #t) 
-  )
-  (if (in-bubble? (meters 131.51) (meters 315.37) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-  (if (in-bubble? (meters 131.51) (meters 320.57) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-  (if (in-bubble? (meters 131.51) (meters 325.37) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-  (if (in-bubble? (meters 131.51) (meters 330.37) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-  (if (in-bubble? (meters 131.51) (meters 335.37) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-  (if (in-bubble? (meters 131.51) (meters 340.37) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-  (if (in-bubble? (meters 131.51) (meters 345.37) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-)
-  #f
-)
-(define *heard-chem-hint* #f)
-(defun-extern music-manager none)
-(defun play-chem-hint ()
-
-
-
-(when (is-in-chem-fac-silo)
-(if (not *heard-chem-hint*)
-(begin
-(set! *heard-chem-hint* #t)
-(play-rand-sound "snd/dax/daxter_for_zed.mp3" (the int (-> *setting-control* default dialog-volume)))
-)
-)
-
-
-
-
-)
-(none)
-)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jak Color functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
