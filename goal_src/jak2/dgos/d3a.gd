@@ -35,7 +35,7 @@
   "dig-spikey-sphere-ag.go"
   "dig-totem-ag.go"
   "dig-wheel-step-ag.go"
-  "warpgate-ag.go"
+  "warp-gate-ag.go"
   "dig-spikey-step-ag.go"
   "dig-stomp-block-ag.go"
   "dig-totem-fish-ag.go"

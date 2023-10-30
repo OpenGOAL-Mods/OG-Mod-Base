@@ -23,7 +23,7 @@
   "mtn-shard-ag.go"
   "mtn-gate-ag.go"
   "mtn-lens-base-ag.go"
-  "warpgate-ag.go"
+  "warp-gate-ag.go"
   "mtn-plat-long-ag.go"
   "mtn-iris-door-ag.go"
   "mtn-plat-elevator-ag.go"

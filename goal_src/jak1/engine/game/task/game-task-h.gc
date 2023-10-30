@@ -127,11 +127,5 @@
   (plunger-lurker-hit 113)
   (leaving-misty 114)
   (assistant-village3 115)
-   ;; TAGMORT
-  (dummy 116)
-  (blockworld-gimmie 117)
-  (blockworld-secondtask 118)
-  (blockworld-buzzer 119)
-  (max 120)
-
+  (max 116)
   )
