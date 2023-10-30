@@ -992,9 +992,9 @@ Temporary hardcoded hack so I can be sure how this works for release
           (!= (-> (level-get-target-inside *level*)name) 'citadel)
           (!= (-> (level-get-target-inside *level*)name) 'finalboss)
           )
-
-
-      ;; (have-all-chicks-safe)
+      (have-all-chicks-safe)
+      )
+      ;; 
       ;; )
 
     ;;This is kind of a hack to start up during the opening cutscene
