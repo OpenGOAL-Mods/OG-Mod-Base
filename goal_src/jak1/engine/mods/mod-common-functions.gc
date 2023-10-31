@@ -375,6 +375,27 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     )
   )
 
+(defun music-manager ()
+  (stop-main-music)
+      (case (-> (level-get-target-inside *level*) name)
+         (('test-zone)
+         (if (> (knuth-rand-int-range 0 15) (+ 8 5))
+          (play-main-music "SND/music-test-zone.mp3" (the int (-> *setting-control* default music-volume)))
+          (play-main-music "SND/music-test-zone-track2.mp3" (the int (-> *setting-control* default music-volume))))
+         )
+         ;;Add more cases here for each level
+         (else
+          (play-main-music "" (the int (-> *setting-control* default music-volume)))
+          ;;(stop-main-music) This function is broken but playing a invalid sound does the same thing
+         )
+      )
+(none)
+)
+
+(defbehavior music-manager-proc process ()
+  (music-manager)
+  (none)
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jak Color functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
