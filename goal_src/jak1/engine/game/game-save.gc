@@ -18,7 +18,7 @@
 
 ;; version identifier
 (defconstant SAVE_VERSION 1)
-
+(defun-extern reset-custom-info none)
 ;; the C++ memory card functions also use these codes.
 (defenum mc-status-code
   :type uint32

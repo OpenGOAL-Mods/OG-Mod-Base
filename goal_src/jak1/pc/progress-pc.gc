@@ -17,7 +17,7 @@
 (defconstant PROGRESS_SCROLL_DIR_DOWN 1)
 
 (defconstant GAME_MIN_RES_MULT 0.5)
-
+(defun-extern reset-custom-info none)
 
 (deftype progress-scroll (structure)
   ((transition float)

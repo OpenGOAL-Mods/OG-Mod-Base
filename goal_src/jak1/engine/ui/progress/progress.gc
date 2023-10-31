@@ -6,7 +6,7 @@
 ;; dgos: GAME, ENGINE
 
 ;; DECOMP BEGINS
-
+(defun-extern reset-custom-info none)
 (deftype progress-global-state (basic)
   ((aspect-ratio-choice symbol           :offset-assert   4)
    (video-mode-choice   symbol           :offset-assert   8)
