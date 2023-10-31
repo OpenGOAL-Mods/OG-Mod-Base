@@ -40,6 +40,7 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; At first set everything to its index - its not null and doesnt crash and is nice when finding what level is what.
 (defun reset-custom-info ()
+(reset-saved-chick-from-mem)
 (set! *custom-level-info* (new 'static 'custom-level-info))
 (dotimes (i 40)
   (set! (-> *custom-level-info* data i total-chicks) 1)

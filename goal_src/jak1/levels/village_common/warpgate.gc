@@ -191,15 +191,13 @@
                      )
                    (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.1))
                    )
-          (if (and (cpad-pressed? 0 circle) (process-grab? *target*) (have-all-chicks-safe))
+          (if (and (have-all-chicks-safe) (cpad-pressed? 0 circle) (process-grab? *target*))
               (go-virtual active)
               (process-release? *target*)
               )
           (if (and *cheat-mode* (cpad-pressed? 0 l3))
               (set! (-> self max-slot) 4)
               )
-          
-      
               (set! (-> self max-slot) (get-unlock-level))
               
 
@@ -317,12 +315,12 @@
     (apply-settings *setting-control*)
     (sound-play "start-options")
     (set! (-> self state-time) (-> *display* base-frame-counter))
-      ;;(reset-saved-chick-from-mem)
+      ;;(reset-saved-chick-from-mem) s
     (none)
     )
   :trans (behavior ()
     (when (or (and (cpad-pressed? 0 triangle)
-                   (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.1))
+                   (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.01))
                    (process-release? *target*)
                    )
               (not *target*)
