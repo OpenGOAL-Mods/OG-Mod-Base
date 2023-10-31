@@ -1831,7 +1831,7 @@
   0
   (none)
   )
-
+(defun-extern progress-fast-save-and-start-speedrun speedrun-category none)
 (defstate progress-normal (progress)
   :event (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
     (local-vars (v0-0 object))
