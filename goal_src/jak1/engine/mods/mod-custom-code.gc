@@ -4,7 +4,6 @@
     ;; name: mod-custom-code.gc
     ;; name in dgo: mod-custom-code
     ;; dgos: TODO
-(define *chicken-home* #f)
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; What is this file for.
@@ -220,12 +219,10 @@
               )
               (set! (-> (get-chick-from-flock (the int (-> current-custom-info current-chicks))) to-point-speed) 3.0)    
               (let ((current-timea (current-time)))
-              (set! *chicken-home* #t)
                     (until (time-elapsed? current-timea (seconds 0.35))
                     ;;(format #t "~S~%" "NOT ELAPSED")
                       (suspend)
                     )
-              (set! *chicken-home* #f)
               )
       )
     )
