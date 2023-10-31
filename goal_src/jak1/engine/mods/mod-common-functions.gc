@@ -375,6 +375,29 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     )
   )
 
+(defbehavior music-manager-proc process ()
+  (music-manager)
+  (none)
+)
+
+(defun-extern stop-main-music (none))
+(defun music-manager ()
+(stop-main-music)
+        ;; Some of the alt sounds only play if you stay in a level for a very long time, so its nice to give them a rare chance to get a spotlight
+        (case (-> (level-get-target-inside *level*) name)
+         (('test-zone)
+         (if (> (knuth-rand-int-range 0 15) (+ 8 5))
+          (play-main-music "SND/music-test-zone.mp3" (the int (-> *setting-control* default music-volume)))
+          (play-main-music "SND/music-test-zone.mp3" (the int (-> *setting-control* default music-volume))))
+         )
+          (else
+          (play-main-music "" (the int (-> *setting-control* default music-volume)))
+          ;;(stop-main-music) This function is broken but playing a invalid sound does the same thing
+          )
+         )
+        
+(none))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jak Color functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
