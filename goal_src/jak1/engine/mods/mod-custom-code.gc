@@ -39,6 +39,8 @@
     ;; Setup total money/chicks per level
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; At first set everything to its index - its not null and doesnt crash and is nice when finding what level is what.
+(defun reset-custom-info ()
+(set! *custom-level-info* (new 'static 'custom-level-info))
 (dotimes (i 40)
   (set! (-> *custom-level-info* data i total-chicks) 1)
 )
@@ -69,6 +71,9 @@
 
 ;;getters
 
+(none))
+
+(reset-custom-info)
 (defun check-portal-distance ()
     (cond
       ((< (vector-vector-distance (-> *target* root trans) (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans)) (meters 12))

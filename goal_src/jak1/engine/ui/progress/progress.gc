@@ -1848,14 +1848,22 @@
                ((= (-> self display-state-stack 0) (progress-screen title))
                 (let ((gp-1 (-> *setting-control* default auto-save)))
                   (sound-volume-off)
+                  (set! *custom-level-info* (new 'static 'custom-level-info))
                   (set! (-> *game-info* mode) 'play)
                    ;;  (set! *in-mort-menu* #t)
                                ;;TODO ;;tagmort tagmort Skip this intro if a savefile is in a custom level
+                                       (if (-> *pc-settings* speedrunner-mode?)
+                                       (progress-fast-save-and-start-speedrun (speedrun-category full-game))
+                                       (begin
                                        (initialize! *game-info* 'game (the-as game-save #f) "intro-start")
+                                       (reset-custom-info)
+                                       )
+                                    
+                                       )
                   (cond
                     ;; Start a new game differently if speedrunning mode is active
                     ((= (-> *pc-settings* speedrunner-mode?) #t)
-                      (speedrun-start-full-game-run))
+                      (progress-fast-save-and-start-speedrun (speedrun-category full-game)))
                     ;; start the game normally
                     (else
                       (initialize! *game-info* 'game (the-as game-save #f) "intro-start")

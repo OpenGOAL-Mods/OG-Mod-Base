@@ -52,6 +52,7 @@
     (1+! (-> *progress-scroll* start-index))))
 (defun progress-fast-save-and-start-speedrun ((category speedrun-category))
   "saves to first slot, updates last-slot-saved for cursor, then starts speedrun"
+  (reset-custom-info)
   (set! (-> *progress-state* last-slot-saved) 0)
   (auto-save-command 'save 0 0 *default-pool*)
   (start-speedrun category)
