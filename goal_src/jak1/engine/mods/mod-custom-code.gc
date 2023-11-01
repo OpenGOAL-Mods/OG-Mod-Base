@@ -100,7 +100,9 @@
     )
   (none)
 )
-
+#|
+ (>= (/ (-> *game-info* enter-level-time (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))) 300) (+ (/ (current-time) 300) 5))
+|#
 (defun mort-debug-text ()
  ;;mort debugging
     (if *cheat-mode*
@@ -228,6 +230,7 @@
     
       (when (and 
             *close-to-portal?*   
+            (>= (/ (current-time) 300) (+ (/ (-> *game-info* enter-level-time (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))) 300) 6))
             (> (-> current-custom-info current-chicks) 0)
             )
               ;;Remove a chick that is following, and incrment saved chick for the level. This should be moved to when the chicken uses portal imo  
