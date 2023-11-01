@@ -38,6 +38,18 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Setup total money/chicks per level
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun get-saved-chicks-from-mem ()
+  ;;(format #t "getting unlock level it is ~D~%" (-> *game-info* money-per-level 3))
+  (the int (-> *game-info* money-per-level 5) )
+)
+
+(defun reset-saved-chick-from-mem()
+(when (nonzero? (get-saved-chicks-from-mem))
+(format #t "All chicks in this level are safe, setting saved chicks mem to 0")
+(set! (-> *game-info* money-per-level 5) 0)
+)
+(none))
+
 ;; At first set everything to its index - its not null and doesnt crash and is nice when finding what level is what.
 (defun reset-custom-info ()
 (reset-saved-chick-from-mem)
@@ -410,18 +422,6 @@ Temporary hardcoded hack so I can be sure how this works for release
 
   (none)
 )
-
-(defun get-saved-chicks-from-mem ()
-  ;;(format #t "getting unlock level it is ~D~%" (-> *game-info* money-per-level 3))
-  (the int (-> *game-info* money-per-level 5) )
-)
-
-(defun reset-saved-chick-from-mem()
-(when (nonzero? (get-saved-chicks-from-mem))
-(format #t "All chicks in this level are safe, setting saved chicks mem to 0")
-(set! (-> *game-info* money-per-level 5) 0)
-)
-(none))
 
 (defun restore-saved-chicks-from-mem()
 "This function runs on jak spawn, and checks if the stored memory card value is nonzero, and saved chicks is zero if so it updates it."
