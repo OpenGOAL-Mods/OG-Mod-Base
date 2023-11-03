@@ -1,0 +1,107 @@
+    ;;-*-Lisp-*-
+    (in-package goal)
+
+    ;; name: mod-text-render.gc
+    ;; name in dgo: mod-text-render
+    ;; dgos: TODO
+
+
+
+(defun get-text-3d ()
+  "Allocate a debug text 3d from the list."
+  (cond
+   ((< (-> *debug-text-3d-trk* length) (-> *debug-text-3d-trk* allocated-length))
+    (+! (-> *debug-text-3d-trk* length) 1)
+    (-> *debug-text-3ds* (+ (-> *debug-text-3d-trk* length) -1))
+    )
+   (else
+    (the-as debug-text-3d #f)
+    )
+   )
+  )
+  
+
+(defun internal-draw-text-3d ((bucket bucket-id) (str string) (location vector) (font-color-id font-color) (offset vector2h))
+  "Draw text at the given location (in 3D), with a 2D offset."
+  (let ((s2-0 (new 'stack-no-clear 'vector4w)))
+    (set! (-> s2-0 quad) (the-as uint128 0))
+    (when (transform-point-qword! (the-as vector4w s2-0) location)
+      
+      (with-dma-buffer-add-bucket ((s3-0 (-> (current-frame) debug-buf)) bucket)
+        
+        (let ((a2-2 (new 'stack 'font-context *font-default-matrix*
+                         (+ (+ (-> offset x) -1792) (/ (-> s2-0 x) 16))
+                         (- (+ (+ (-> offset y) -8) (/ (-> s2-0 y) 16))
+                            (-> *video-parms* screen-miny)
+                            )
+                         0.0
+                         font-color-id
+                         (font-flags shadow kerning)
+                         )))
+          (let ((v1-9 a2-2))
+            (set! (-> v1-9 origin z) (the float (/ (-> s2-0 z) 16)))
+            )
+          (draw-string str s3-0 a2-2)
+          )
+        )
+      )
+    )
+  )
+
+(defun add-text-3d ((arg0 symbol) (arg1 bucket-id) (arg2 string) (arg3 vector) (arg4 font-color) (arg5 vector2h))
+  "Draw text at the given point. arg4 is the font-color index. arg5 is an offset and can be #f."
+  (when arg0
+    (#when PC_PORT
+      ;; Check to see if the string should be filtered or not
+      (when (pc-filter-debug-string? arg2 (vector-vector-distance arg3 (target-pos 0)))
+      ;;(format #t "got: ~S~%" arg2)
+        ;; no-op the function!
+        (return #f)
+        )
+      )
+   (cond
+    (*debug-draw-pauseable*
+     (let ((v1-2 (get-text-3d)))
+      (when v1-2
+       (set! (-> v1-2 flags) 0)
+       (set! (-> v1-2 bucket) arg1)
+       (set! (-> v1-2 pos quad) (-> arg3 quad))
+       (cond
+        (arg5
+         (set! (-> v1-2 offset x) (-> arg5 x))
+         (set! (-> v1-2 offset y) (-> arg5 y))
+         )
+        (else
+         (set! (-> v1-2 offset x) 0)
+         (set! (-> v1-2 offset y) 0)
+         0
+         )
+        )
+       (set! (-> v1-2 color) arg4)
+       (let ((a0-6 0)
+             (a1-2 (-> arg2 data))
+             (v1-4 (-> v1-2 str data))
+             )
+        (while (and (nonzero? (-> a1-2 0)) (< a0-6 79))
+         (set! (-> v1-4 0) (-> a1-2 0))
+         (set! a1-2 (&-> a1-2 1))
+         (set! v1-4 (&-> v1-4 1))
+         (+! a0-6 1)
+         )
+        (set! (-> v1-4 0) (the-as uint 0))
+        )
+       0
+       )
+      )
+     )
+    (else
+     (internal-draw-text-3d arg1 arg2 arg3 arg4 (if arg5
+                                                       arg5
+                                                       (new 'static 'vector2h)
+                                                       )
+      )
+     )
+    )
+   )
+  #f
+  )

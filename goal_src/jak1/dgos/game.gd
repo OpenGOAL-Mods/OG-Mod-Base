@@ -348,6 +348,7 @@
   "ticky.o"
   "hud-classes-pc.o" ;; added
   "mod-settings.o" ;; added
+  "mod-text-render.o" ;; added
   "mod-common-functions.o" ;; added
   "mod-custom-code.o" ;; added
   ;; keep zoomer stuff loaded

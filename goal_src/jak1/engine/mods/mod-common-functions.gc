@@ -706,7 +706,7 @@
           )
 
         ;; draw usernames for all players
-        (add-debug-text-3d
+        (add-text-3d
                       #t
                       (bucket-id subtitle)
                       (-> p username)
