@@ -339,10 +339,12 @@
       )
 
     (defun runs-on-pickup ((kind pickup-type) (amount float) (proc process))
-      (if (and (-> proc parent) (not (name= (-> proc name) "display"))) ;; prevent pickups given over REPL
+      (if (and (-> proc parent)
+        (not (name= (-> proc name) "display")) ;; prevent pickups given over REPL
+        (not (and (= kind (pickup-type money)) (<= amount -90))) ;; prevent orb buys to avoid dupe deductions on buy
+          )
         (add-pickup-to-interaction-buffer kind amount proc)
         )
-
       (none)
       )
 
