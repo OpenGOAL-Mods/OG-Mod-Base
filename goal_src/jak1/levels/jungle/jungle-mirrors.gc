@@ -530,6 +530,9 @@
     )
   )
 
+(define-extern runs-on-periscope-activate (function string none))
+(define-extern runs-on-last-periscope-power-up (function none))
+
 
 (defmethod relocate periscope ((obj periscope) (arg0 int))
   (if (nonzero? (-> obj grips))
@@ -1247,7 +1250,8 @@
     (update-transforms! (-> self root-override))
     (set! (-> self y-offset) (-> self height))
     (loop
-      (if (periscope-has-power-input?)
+      (when (periscope-has-power-input?)
+          (runs-on-periscope-activate (the-as string (-> self name)))
           (go periscope-wait-for-player)
           )
       (suspend)
@@ -1269,6 +1273,7 @@
                                      (not (logtest? (-> *target* control status) (cshape-moving-flags onsurf)))
                                      )
                                 )
+                                (= proc *target*)
                   )
          (when ((method-of-type touching-shapes-entry prims-touching?)
                 (the-as touching-shapes-entry (-> event param 0))
@@ -1523,7 +1528,7 @@
           )
       (periscope-crosshair)
       (when (or (cpad-pressed? 0 triangle x)
-                (and (-> self aligned?) (>= (- (-> *display* base-frame-counter) (-> self lock-time)) (seconds 3)))
+                (and (-> self aligned?) (>= (- (-> *display* base-frame-counter) (-> self lock-time)) (if *enable-ingame-cutscenes?* (seconds 3) (seconds 0.5))))
                 )
         (sound-stop (-> self sound-id))
         (if (periscope-test-task-complete?)
@@ -1624,6 +1629,9 @@
   :trans periscope-debug-trans
   :code (behavior ()
     (logclear! (-> self mask) (process-mask actor-pause))
+    (if (name= (-> self name) "periscope-15")
+      (runs-on-last-periscope-power-up)
+      )
     (set! (-> self y-offset) (-> self height))
     (link-to-next-and-prev-actor (-> self link))
     (periscope-find-reflection-angles)

@@ -236,6 +236,23 @@
       (none)
       )
 
+    (defun add-periscope-to-interaction-buffer ((periscope-name string))
+      (dotimes (idx (-> *interaction-update-buffer* length))
+        (when (= (-> *interaction-update-buffer* idx has_update?) #f)
+
+          (set! (-> *interaction-update-buffer* idx type) (interaction-type periscope))
+          (set! (-> *interaction-update-buffer* idx amount) 1.0)
+          (set! (-> *interaction-update-buffer* idx ename) periscope-name)
+          (set! (-> *interaction-update-buffer* idx level) "jungle")
+          (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
+            
+          (set! (-> *interaction-update-buffer* idx has_update?) #t)
+          (return #t)
+          )
+        )
+      (none)
+      )
+
     (defun check-set-interaction-from-buffer ()
       (dotimes (idx (-> *interaction-update-buffer* length))
         (when (= (-> *interaction-update-buffer* idx has_update?) #t)
@@ -421,6 +438,16 @@
 
     (defun runs-on-fish-missed((total-amount float))
       (add-fish-to-interaction-buffer total-amount (interaction-type fish-missed))
+      (none)
+      )
+
+    (defun runs-on-periscope-activate ((periscope-name string))
+      (add-periscope-to-interaction-buffer periscope-name)
+      (none)
+      )
+
+    (defun runs-on-last-periscope-power-up ()
+      (add-periscope-to-interaction-buffer "periscope-16")
       (none)
       )
 
