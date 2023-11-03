@@ -61,6 +61,14 @@
 ;; Define Custom Functions to call in mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun clean-up-interaction-data ((target remote-player-info)) ;; needs to be done in game in case we skip frames when transfering position data
+  (set! (-> target inter_type) (interaction-type none))
+  (set! (-> target inter_amount) 0.0)
+  (set! (-> target inter_name) "")
+  (set! (-> target inter_parent) "")
+  (set! (-> target inter_level) "")
+  )
+
 (defun color-target-rgb ((tgt process-drawable) (r float) (g float) (b float))
   (set! (-> tgt draw color-mult r) r)
   (set! (-> tgt draw color-mult g) g)
@@ -587,7 +595,7 @@
 
 
     ;; other
-    (('target-clone-anim) (if (and (-> t state name) (!= (-> t state name) 'target-stance)) (run-target-fuel-cell-pickup t)))
+    (('target-clone-anim) (run-target-fuel-cell-pickup t))
     (('target-fishing) (send-event t 'change-mode 'fishing #f))
     (('target-periscope) (send-event t 'change-mode 'periscope #f))
     (('target-grab) (go-process t target-grab)) ;; process-grab animation while in cutscenes
@@ -718,11 +726,14 @@
           
         ;; sync target state
         (when (and (-> t state name) (!= (-> t state name) (-> p tgt_state)) 
-        (or (!= (-> p tgt_state) 'target-clone-anim) (= (-> p inter_type) (interaction-type game-task))) ;; only allow fuel cells from 'target-clone-anim
+        (or (!= (-> p tgt_state) 'target-clone-anim) (and (= (-> p inter_type) (interaction-type game-task)) (= (-> p inter_amount) 7))) ;; only allow fuel cells from 'target-clone-anim
         )
           (target-sync-state (-> p tgt_state) t)
           )
         )
+        (when (!= (-> p inter_type) (interaction-type none))
+          (clean-up-interaction-data p)
+          )
       )
     ((money)
       (let ((m (the money obj)))

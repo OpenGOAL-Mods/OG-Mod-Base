@@ -312,11 +312,7 @@
               (set! *has-none-position-update?* #f)
 
               ;; target pickup data
-              (set! (-> *self-player-info* inter_type) (interaction-type none))
-              (set! (-> *self-player-info* inter_amount) 0.0)
-              (set! (-> *self-player-info* inter_name) "")
-              (set! (-> *self-player-info* inter_parent) "")
-              (set! (-> *self-player-info* inter_level) "")
+              (clean-up-interaction-data *self-player-info*)
               
               ;; update flags
               (set! (-> *teamrun-info* has_state_update?) 0)
