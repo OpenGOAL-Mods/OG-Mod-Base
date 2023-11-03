@@ -3070,6 +3070,24 @@
   (none)
   )
 
+(defun dm-give-cell-from-remote ((arg0 game-task))
+    (let ((task-id (the int arg0)))
+      (when (or (task-complete? (-> *target* game) arg0) (>= (the-as uint 1) (the-as uint task-id)))
+        ;; rerun task close!
+        (handle-remote-task-update arg0 (task-status need-resolution))
+        )
+      (when (not (or (task-complete? (-> *target* game) arg0) (>= (the-as uint 1) (the-as uint task-id))))
+        ;; increment power cells!
+        (+! (-> *target* game fuel) 1.0)
+        ;; mark as completed
+        (logior! (-> *target* game task-perm-list data task-id status) (entity-perm-status real-complete))
+        ;; close the task!
+        (close-specific-task-from-remote! arg0 (task-status need-resolution))
+        )
+      )
+  (none)
+  )
+
 (defun dm-levitator-ready ((arg0 int) (arg1 debug-menu-msg))
   (when (= arg1 (debug-menu-msg press))
     (close-specific-task! (game-task village2-levitator) (task-status need-introduction))

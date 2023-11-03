@@ -6,6 +6,7 @@
 ;; dgos: GAME, ENGINE
 
 (define-extern add-task-to-interaction-buffer (function game-task task-status none))
+(define-extern handle-remote-task-update (function game-task task-status none))
 (define-extern runs-on-warp-gate-open (function game-task none))
 
 ;; DECOMP BEGINS
@@ -4135,6 +4136,30 @@
           (if (and (= arg1 (task-status need-hint)) (or (or (= arg0 (game-task village2-levitator)) (= arg0 (game-task village3-button)) (= arg0 (game-task village4-button)))))
             (runs-on-warp-gate-open arg0)
           )
+          (return (first-any gp-0 #t))
+          )
+        )
+      (format
+        0
+        "ERROR<GMJ>: close-specific! received non-existent task-cstage(~S ~S)--returning #t.~%"
+        (game-task->string arg0)
+        (task-status->string arg1)
+        )
+      )
+    )
+  (game-task none)
+  )
+
+(defun close-specific-task-from-remote! ((arg0 game-task) (arg1 task-status))
+  "Close a cstage for a game-task without adding to interaction buffers"
+
+  (let ((gp-0 (get-task-control arg0)))
+    (when gp-0
+      (dotimes (v1-1 (-> gp-0 stage length))
+        (when (and (= arg0 (-> gp-0 stage v1-1 game-task)) (= arg1 (-> gp-0 stage v1-1 status)))
+          (close-task! (-> gp-0 stage v1-1))
+
+          (handle-remote-task-update arg0 arg1)
           (return (first-any gp-0 #t))
           )
         )

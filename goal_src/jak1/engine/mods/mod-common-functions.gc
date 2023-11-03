@@ -233,11 +233,6 @@
         (none)
       )
 
-    (defun safe-kill-fuel-cell ((cell-name string))
-      (process-entity-status! (the-as fuel-cell (process-by-ename cell-name)) (entity-perm-status dead) #t)
-      (kill-by-name cell-name *active-pool*)
-      )
-
     (defun safe-pickup-crate-eco ((crate-name string))
       (let* ((obj-crate (process-by-ename crate-name)))
 

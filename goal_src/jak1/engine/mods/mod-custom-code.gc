@@ -125,16 +125,6 @@
       (none)
       )
 
-    (defun reset-specific-actor ((actor-name string))
-      (let* ((actor-obj (process-by-ename actor-name)))
-        (when (-> actor-obj entity)
-          (kill! (-> actor-obj entity))
-          (update-perm! (-> actor-obj entity extra perm) 'life (the-as entity-perm-status 623))
-          )
-        )
-        (none)
-      )
-
     (defun add-pickup-to-interaction-buffer ((kind pickup-type) (amount float) (proc process))
       (dotimes (idx (-> *interaction-update-buffer* length))
         (when (= (-> *interaction-update-buffer* idx has_update?) #f)

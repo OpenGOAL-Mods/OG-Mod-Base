@@ -1,0 +1,397 @@
+
+    ;; name: mod-remote-interaction.gc
+    ;; name in dgo: mod-remote-interaction
+    ;; dgos: TODO
+
+
+
+(defun reset-specific-actor ((actor-name string))
+  (let* ((actor-obj (process-by-ename actor-name)))
+    (when (-> actor-obj entity)
+      (kill! (-> actor-obj entity))
+      (update-perm! (-> actor-obj entity extra perm) 'life (the-as entity-perm-status 623))
+      )
+    )
+    (none)
+  )
+
+(defun safe-kill-fuel-cell ((cell-name string))
+  (process-entity-status! (the-as fuel-cell (process-by-ename cell-name)) (entity-perm-status dead) #t)
+  (kill-by-name cell-name *active-pool*)
+  )
+
+(defun safe-remove-oracle-eye ((ename string) (first-eye symbol))
+  (let ((oracle-statue (the-as oracle (process-by-ename ename))))
+    (cond
+      ((not first-eye)
+        (let ((a0-25 (handle->process (-> oracle-statue right-eye-cell))))
+          (if a0-25
+              (deactivate a0-25)
+              )
+          )
+        )
+      (else
+        (let ((a0-29 (handle->process (-> oracle-statue left-eye-cell))))
+          (if a0-29
+              (deactivate a0-29)
+              )
+          )
+        )
+      )
+    )
+  )
+
+(defun handle-remote-task-update ((task game-task) (status task-status))
+  (when (= status (task-status need-resolution))
+    (cond
+      ((= task (game-task jungle-eggtop))
+        (let ((task-process (process-by-ename "eggtop-6")))
+          (when task-process
+            (save-reminder (get-task-control (-> task-process entity extra perm task)) 1 0)
+            (go-process task-process eggtop-close #f)
+            )
+          )
+        )
+      ((= task (game-task jungle-lurkerm))
+      
+        )
+      ((= task (game-task jungle-tower))
+        (safe-kill-fuel-cell "fuel-cell-1")
+        )
+      ((= task (game-task jungle-fishgame))
+      
+        )
+      ((= task (game-task jungle-plant))
+        (process-entity-status! (process-by-ename "plant-boss-3") (entity-perm-status complete) #t)
+        (reset-specific-actor "plant-boss-3")
+        )
+      ((= task (game-task jungle-buzzer))
+        (safe-kill-fuel-cell "jungle-buzzer")
+        )
+      ((= task (game-task jungle-canyon-end))
+        (safe-kill-fuel-cell "fuel-cell-46")
+        )
+      ((= task (game-task jungle-temple-door))
+        (safe-kill-fuel-cell "fuel-cell-49")
+        )
+      ((= task (game-task village1-yakow))
+      
+        )
+      ((= task (game-task village1-mayor-money))
+      
+        )
+      ((= task (game-task village1-uncle-money))
+      
+        )
+      ((= task (game-task village1-oracle-money1))
+        (safe-remove-oracle-eye "oracle-1" #f)
+        )
+      ((= task (game-task village1-oracle-money2))
+        (safe-remove-oracle-eye "oracle-1" #t)
+        )
+      ((= task (game-task beach-ecorocks))
+      
+        )
+      ((= task (game-task beach-pelican))
+      
+        )
+      ((= task (game-task beach-flutflut))
+      
+        )
+      ((= task (game-task beach-seagull))
+      
+        )
+      ((= task (game-task beach-cannon))
+      
+        )
+      ((= task (game-task beach-buzzer))
+      
+        )
+      ((= task (game-task beach-gimmie))
+      
+        )
+      ((= task (game-task beach-sentinel))
+      
+        )
+      ((= task (game-task misty-muse))
+      
+        )
+      ((= task (game-task misty-boat))
+      
+        )
+      ((= task (game-task misty-warehouse))
+      
+        )
+      ((= task (game-task misty-cannon))
+      
+        )
+      ((= task (game-task misty-bike))
+      
+        )
+      ((= task (game-task misty-buzzer))
+      
+        )
+      ((= task (game-task misty-bike-jump))
+      
+        )
+      ((= task (game-task misty-eco-challenge))
+      
+        )
+      ((= task (game-task village2-gambler-money))
+      
+        )
+      ((= task (game-task village2-geologist-money))
+      
+        )
+      ((= task (game-task village2-warrior-money))
+      
+        )
+      ((= task (game-task village2-oracle-money1))
+      (safe-remove-oracle-eye "oracle-2" #f)
+        )
+      ((= task (game-task village2-oracle-money2))
+      (safe-remove-oracle-eye "oracle-2" #t)
+        )
+      ((= task (game-task swamp-billy))
+      
+        )
+      ((= task (game-task swamp-flutflut))
+      
+        )
+      ((= task (game-task swamp-battle))
+      
+        )
+      ((= task (game-task swamp-tether-1))
+      
+        )
+      ((= task (game-task swamp-tether-2))
+      
+        )
+      ((= task (game-task swamp-tether-3))
+      
+        )
+      ((= task (game-task swamp-tether-4))
+      
+        )
+      ((= task (game-task swamp-buzzer))
+      
+        )
+      ((= task (game-task sunken-platforms))
+      
+        )
+      ((= task (game-task sunken-pipe))
+      
+        )
+      ((= task (game-task sunken-slide))
+      
+        )
+      ((= task (game-task sunken-room))
+      
+        )
+      ((= task (game-task sunken-sharks))
+      
+        )
+      ((= task (game-task sunken-buzzer))
+      
+        )
+      ((= task (game-task sunken-top-of-helix))
+      
+        )
+      ((= task (game-task sunken-spinning-room))
+      
+        )
+      ((= task (game-task rolling-race))
+      
+        )
+      ((= task (game-task rolling-robbers))
+      
+        )
+      ((= task (game-task rolling-moles))
+      
+        )
+      ((= task (game-task rolling-plants))
+      
+        )
+      ((= task (game-task rolling-lake))
+      
+        )
+      ((= task (game-task rolling-buzzer))
+      
+        )
+      ((= task (game-task rolling-ring-chase-1))
+      
+        )
+      ((= task (game-task rolling-ring-chase-2))
+      
+        )
+      ((= task (game-task snow-eggtop))
+      
+        )
+      ((= task (game-task snow-ram))
+      
+        )
+      ((= task (game-task snow-fort))
+      
+        )
+      ((= task (game-task snow-ball))
+      
+        )
+      ((= task (game-task snow-bunnies))
+      
+        )
+      ((= task (game-task snow-buzzer))
+      
+        )
+      ((= task (game-task snow-bumpers))
+      
+        )
+      ((= task (game-task snow-cage))
+      
+        )
+      ((= task (game-task firecanyon-buzzer))
+      
+        )
+      ((= task (game-task firecanyon-end))
+      
+        )
+      ((= task (game-task citadel-sage-green))
+      
+        )
+      ((= task (game-task citadel-sage-blue))
+      
+        )
+      ((= task (game-task citadel-sage-red))
+      
+        )
+      ((= task (game-task citadel-sage-yellow))
+      
+        )
+      ((= task (game-task village3-extra1))
+      
+        )
+      ((= task (game-task village1-buzzer))
+      
+        )
+      ((= task (game-task village2-buzzer))
+      
+        )
+      ((= task (game-task village3-buzzer))
+      
+        )
+      ((= task (game-task cave-gnawers))
+      
+        )
+      ((= task (game-task cave-dark-crystals))
+      
+        )
+      ((= task (game-task cave-dark-climb))
+      
+        )
+      ((= task (game-task cave-robot-climb))
+      
+        )
+      ((= task (game-task cave-swing-poles))
+      
+        )
+      ((= task (game-task cave-spider-tunnel))
+      
+        )
+      ((= task (game-task cave-platforms))
+      
+        )
+      ((= task (game-task cave-buzzer))
+      
+        )
+      ((= task (game-task ogre-boss))
+      
+        )
+      ((= task (game-task ogre-end))
+      
+        )
+      ((= task (game-task ogre-buzzer))
+      
+        )
+      ((= task (game-task lavatube-end))
+      
+        )
+      ((= task (game-task lavatube-buzzer))
+      
+        )
+      ((= task (game-task citadel-buzzer))
+      
+        )
+      ((= task (game-task training-gimmie))
+      
+        )
+      ((= task (game-task training-door))
+      
+        )
+      ((= task (game-task training-climb))
+      
+        )
+      ((= task (game-task training-buzzer))
+        (safe-kill-fuel-cell "training-buzzer")
+        )
+      ((= task (game-task village3-miner-money1))
+      
+        )
+      ((= task (game-task village3-miner-money2))
+      
+        )
+      ((= task (game-task village3-miner-money3))
+      
+        )
+      ((= task (game-task village3-miner-money4))
+      
+        )
+      ((= task (game-task village3-oracle-money1))
+        (safe-remove-oracle-eye "oracle-3" #f)
+        )
+      ((= task (game-task village3-oracle-money2))
+        (safe-remove-oracle-eye "oracle-3" #t)
+        )
+      ((= task (game-task firecanyon-assistant))
+      
+        )
+      ((= task (game-task village2-levitator))
+      
+        )
+      ((= task (game-task swamp-arm))
+      
+        )
+      ((= task (game-task village3-button))
+      
+        )
+      ((= task (game-task red-eggtop))
+      
+        )
+      ((= task (game-task lavatube-balls))
+      
+        )
+      ((= task (game-task lavatube-start))
+      
+        )
+      ((= task (game-task intro))
+      
+        )
+      ((= task (game-task ogre-secret))
+      
+        )
+      ((= task (game-task village4-button))
+      
+        )
+      ((= task (game-task finalboss-movies))
+      
+        )
+      ((= task (game-task plunger-lurker-hit))
+      
+        )
+      ((= task (game-task leaving-misty))
+      
+        )
+      ((= task (game-task assistant-village3))
+      
+        )
+      )
+    )
+  )
