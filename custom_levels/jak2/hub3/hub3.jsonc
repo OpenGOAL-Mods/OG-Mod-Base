@@ -1,0 +1,51 @@
+{
+  // The "in-game" name of the level. Should be lower case, with dashes (GOAL symbol name)
+  // the name of this file, and the folder this file is in must have the same name.
+  "long_name": "hub3",
+  // The file name, should be upper case and 8 characters or less.
+  "iso_name": "HUB3",
+  // The nickname, should be exactly 3 characters
+  "nickname": "hb3", // 3 char name, all lowercase
+  // Background mesh file.
+  // Must have vertex colors. Use the blender cycles renderer, bake, diffuse, uncheck color,
+  // and bake to vertex colors. For now, only the first vertex color group is used, so make sure you
+  // only have 1.
+  "gltf_file": "custom_levels/jak2/hub3/hub3.glb",
+
+  // automatically set wall vs. ground based on angle. Useful if you don't want to assign this yourself
+  "automatic_wall_detection": true,
+  "automatic_wall_angle": 45.0,
+
+  // if your mesh has triangles with incorrect orientation, set this to make all collision mesh triangles double sided
+  // this makes collision 2x slower and bigger, so only use if really needed
+  "double_sided_collide": false,
+
+  // available res-lump tag data types:
+  // int32, float, meters, vector, vector4m (meters)
+  //
+  // examples:
+  //
+  // adds a float tag 'spring-height' with value of 200 meters (1 meter = 4096.0 units):
+  // "spring-height": ["meters", 200.0]
+  //
+  // adds a vector tag 'movie-pos':
+  // "movie-pos": ["vector", [4096000.0, -176128.0, 1353973.76, 1.0]]
+
+   // The base actor id for your custom level. If you have multiple levels, this should be unique!
+   "base_id": 100,
+
+  // All art groups you want to use in your custom level. Will add their models and corresponding textures to the FR3 file.
+  "art_groups": ["prsn-torture-ag"],
+
+   // Any textures you want to include in your custom level.
+   // This is mainly useful for textures which are not in the common level files and have no art group associated with them.
+   // To get a list of all the textures, you can extract all of the game's textures
+   // by setting "save_texture_pngs" to true in the decompiler config.
+   "textures": [],
+
+  "actors" : [
+
+
+
+  ]
+}
