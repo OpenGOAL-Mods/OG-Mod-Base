@@ -749,10 +749,9 @@
   (progress-highscores-local-time #x1313)
   (progress-fps-disclaimer-warning #x1314)
   (progress-fps-disclaimer #x1315)
-  (progress-fps-disclaimer-1 #x1316)
-  (progress-fps-disclaimer-confirm #x1317)
 
-    ;; mod text
+  
+  ;; mod text
   (pad-triangle #x2000)
   (pad-circle #x2001)
   (pad-x #x2002)

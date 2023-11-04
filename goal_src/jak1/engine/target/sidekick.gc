@@ -7,7 +7,6 @@
 
 ;; DECOMP BEGINS
 
-
 (define *sidekick-remap* '(("run-to-stance-left" "run-to-stance")
                            ("run-to-stance-loop-left" "run-to-stance-loop")
                            ("stance-loop-left" "stance-loop")
