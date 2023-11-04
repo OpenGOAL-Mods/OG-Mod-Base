@@ -5,5 +5,5 @@
 ("rlc.dgo"
  (
   
-  "rolingc.go"
+  "rollingc.go"
   ))

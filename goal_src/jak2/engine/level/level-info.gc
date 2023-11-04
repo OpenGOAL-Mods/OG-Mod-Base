@@ -16608,7 +16608,7 @@
     )
   )
 
-  #|
+  
 (define hub2
   (new 'static 'level-load-info
     :index #x9e
@@ -16688,9 +16688,9 @@
     :extra-sound-bank #f
     )
   )
-  |#
+  
 
-  #|
+  
 (define rollingc
   (new 'static 'level-load-info
     :index #x9e
@@ -16770,9 +16770,9 @@
     :extra-sound-bank #f
     )
   )
-  |#
+  
 
-  #|
+  
 (define swampc
   (new 'static 'level-load-info
     :index #x9e
@@ -16852,9 +16852,9 @@
     :extra-sound-bank #f
     )
   )
-  |#
+  
 
-  #|
+  
 (define sunkenc
   (new 'static 'level-load-info
     :index #x9e
@@ -16934,9 +16934,9 @@
     :extra-sound-bank #f
     )
   )
-  |#
+  
 
-  #|
+  
 (define ogrec
   (new 'static 'level-load-info
     :index #x9e
@@ -17016,9 +17016,9 @@
     :extra-sound-bank #f
     )
   )
-  |#
+  
 
-  #|
+  
 (define rockvic
   (new 'static 'level-load-info
     :index #x9e
@@ -17098,9 +17098,9 @@
     :extra-sound-bank #f
     )
   )
-  |#
+  
 
-#|
+
 (define hub3
   (new 'static 'level-load-info
     :index #x9e
@@ -17180,9 +17180,9 @@
     :extra-sound-bank #f
     )
   )
-  |#
+  
 
-#|
+
 (define snowc
   (new 'static 'level-load-info
     :index #x9e
@@ -17262,9 +17262,8 @@
     :extra-sound-bank #f
     )
   )
-  |#
 
-#|
+
 (define cavec
   (new 'static 'level-load-info
     :index #x9e
@@ -17344,9 +17343,9 @@
     :extra-sound-bank #f
     )
   )
-  |#
+  
 
-  #|
+  
 (define volcanc
   (new 'static 'level-load-info
     :index #x9e
@@ -17426,9 +17425,9 @@
     :extra-sound-bank #f
     )
   )
-  |#
+  
 
-  #|
+  
 (define hub4
   (new 'static 'level-load-info
     :index #x9e
@@ -17508,9 +17507,9 @@
     :extra-sound-bank #f
     )
   )
-  |#
+  
 
-  #|
+  
 (define citadelc
   (new 'static 'level-load-info
     :index #x9e
@@ -17590,7 +17589,7 @@
     :extra-sound-bank #f
     )
   )
-  |#
+  
 
   
 (#when PC_PORT
@@ -17598,6 +17597,7 @@
   
   ;; HUB 1
   (cons! *level-load-list* 'vi12)
+  (cons! *level-load-list* 'hub1)
   (cons! *level-load-list* 'beachc)
   (cons! *level-load-list* 'junglec)
   (cons! *level-load-list* 'mistyc)
@@ -17605,7 +17605,7 @@
   (cons! *level-load-list* 'firecanyonc)
   (cons! *level-load-list* 'sandoverc)
 
-  #| ;;HUB 2
+  ;; ;;HUB 2
   (cons! *level-load-list* 'hub2)
   (cons! *level-load-list* 'rollingc)
   (cons! *level-load-list* 'swampc)
@@ -17613,16 +17613,16 @@
   (cons! *level-load-list* 'ogrec)
   (cons! *level-load-list* 'rockvic)
 
-  ;; HUB 3
+  ;; ;; HUB 3
   (cons! *level-load-list* 'hub3)
   (cons! *level-load-list* 'snowc)
-  (cons! *level-load-list* 'cavec)|#
+  (cons! *level-load-list* 'cavec)
   (cons! *level-load-list* 'lavatubea)
-  ;;(cons! *level-load-list* 'volcanc)
+  (cons! *level-load-list* 'volcanc)
 
-  ;; HUB 4
-  ;;(cons! *level-load-list* 'hub4)
+  ;; ;; HUB 4
+  (cons! *level-load-list* 'hub4)
   (cons! *level-load-list* 'lavatubeb)
-  ;;(cons! *level-load-list* 'citadelc)
+  (cons! *level-load-list* 'citadelc)
   
   )

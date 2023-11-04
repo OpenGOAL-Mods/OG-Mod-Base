@@ -343,6 +343,55 @@
 ;; the DGO file
 (custom-level-cgo "sdc.dgo" "sandoverc/sandoverc.gd")
 
+(build-custom-level "hub2")
+;; the DGO file
+(custom-level-cgo "hb2.dgo" "hub2/hub2.gd")
+
+(build-custom-level "rollingc")
+;; the DGO file
+(custom-level-cgo "rlc.dgo" "rollingc/rollingc.gd")
+
+(build-custom-level "swampc")
+;; the DGO file
+(custom-level-cgo "swc.dgo" "swampc/swampc.gd")
+
+(build-custom-level "sunkenc")
+;; the DGO file
+(custom-level-cgo "suc.dgo" "sunkenc/sunkenc.gd")
+
+(build-custom-level "ogrec")
+;; the DGO file
+(custom-level-cgo "ogc.dgo" "ogrec/ogrec.gd")
+
+(build-custom-level "rockvic")
+;; the DGO file
+(custom-level-cgo "rvc.dgo" "rockvic/rockvic.gd")
+
+(build-custom-level "hub3")
+;; the DGO file
+(custom-level-cgo "hb3.dgo" "hub3/hub3.gd")
+
+(build-custom-level "snowc")
+;; the DGO file
+(custom-level-cgo "snc.dgo" "snowc/snowc.gd")
+
+(build-custom-level "cavec")
+;; the DGO file
+(custom-level-cgo "cvc.dgo" "cavec/cavec.gd")
+
+(build-custom-level "volcanc")
+;; the DGO file
+(custom-level-cgo "vcc.dgo" "volcanc/volcanc.gd")
+
+(build-custom-level "hub4")
+;; the DGO file
+(custom-level-cgo "hub4.dgo" "hub4/hub4.gd")
+
+;; (build-custom-level "citadelc")
+;; ;; the DGO file
+;; (custom-level-cgo "ctc.dgo" "citadelc/citadelc.gd")
+
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; ANIMATIONS
 ;;;;;;;;;;;;;;;;;;;;;
