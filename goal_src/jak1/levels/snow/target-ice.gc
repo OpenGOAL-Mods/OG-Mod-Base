@@ -297,7 +297,7 @@
              (gp-6 (vector-float*!
                      (new 'stack-no-clear 'vector)
                      (-> self control unknown-vector00)
-
+                     ;; og:preserve-this
                      (/ 1.0 (if (= vector01-len 0) 0.001 vector01-len)) ;; added the .001 case here.
                      )
                    )

@@ -17,6 +17,14 @@
       )
   )
 
+(defmacro mda (file &rest path)
+  "Make Debug Asm Only: make + print disassembly (asm-only mode) for a file"
+  (if (null? path)
+      `(asm-file ,file :color :write :disassemble :disasm-code-only)
+      `(asm-file ,file :color :write :disassemble ,(first path) :disasm-code-only)
+      )
+  )
+
 (defmacro ml (file)
   "Make Load: make and load the file through the listener"
   `(asm-file ,file :color :load :write)
@@ -284,6 +292,22 @@
        )
   )
 
+(defmacro defun-debug-recursive (name return-type bindings &rest body)
+  `(begin
+    (define-extern ,name
+        (function ,@(apply (lambda (x)
+                             (if (pair? x)
+                                 (second x)
+                                 'object)
+                             )
+                           bindings)
+                  ,return-type))
+    (if *debug-segment*
+        (defun-debug ,name ,bindings ,@body)
+        (define :no-typecheck #t ,name nothing))
+    )
+  )
+
 (defmacro define-once (name value)
   "define once. Does not set the symbol if it already has a value. It must have been at least forward-declared first!"
   `(begin
@@ -519,7 +543,6 @@
     )
   )
 
-
 (defmacro eq-any? (val &rest pred)
   "is val equal to any of the values in pred? evaluated using or, so it short circuits."
   (with-gensyms (val-var)
@@ -527,7 +550,6 @@
     (or ,@(apply (lambda (x) `(= ,val-var ,x)) pred)))
     )
   )
-
 
 
 
