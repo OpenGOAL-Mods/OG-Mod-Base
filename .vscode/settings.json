@@ -10,7 +10,7 @@
   },
   "python.formatting.provider": "black",
   "files.associations": {
-    "random": "cpp",
+    "optional": "cpp",
     "algorithm": "cpp",
     "any": "cpp",
     "array": "cpp",
@@ -27,7 +27,6 @@
     "compare": "cpp",
     "concepts": "cpp",
     "condition_variable": "cpp",
-    "coroutine": "cpp",
     "cstdarg": "cpp",
     "cstddef": "cpp",
     "cstdint": "cpp",
@@ -36,6 +35,7 @@
     "cstring": "cpp",
     "ctime": "cpp",
     "cwchar": "cpp",
+    "cwctype": "cpp",
     "deque": "cpp",
     "exception": "cpp",
     "filesystem": "cpp",
@@ -59,13 +59,14 @@
     "mutex": "cpp",
     "new": "cpp",
     "numeric": "cpp",
-    "optional": "cpp",
     "ostream": "cpp",
     "queue": "cpp",
+    "random": "cpp",
     "ranges": "cpp",
     "ratio": "cpp",
     "regex": "cpp",
     "set": "cpp",
+    "shared_mutex": "cpp",
     "span": "cpp",
     "sstream": "cpp",
     "stack": "cpp",
@@ -99,7 +100,6 @@
     "xstring": "cpp",
     "xtr1common": "cpp",
     "xtree": "cpp",
-    "xutility": "cpp",
-    "cwctype": "cpp"
+    "xutility": "cpp"
   }
 }
