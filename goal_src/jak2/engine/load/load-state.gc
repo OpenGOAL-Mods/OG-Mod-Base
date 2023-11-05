@@ -57,7 +57,7 @@
       (dotimes (a2-13 LEVEL_MAX)
         (when (not (-> this want a2-13 name))
           (set! (-> this want a2-13 name) (-> arg0 v1-3))
-          (set! (-> this want a2-13 display?) #f)
+          (set! (-> this want a2-13 display?) #t)
           (set! (-> this want a2-13 force-vis?) #f)
           (set! (-> this want a2-13 force-inside?) #f)
           (goto cfg-19)

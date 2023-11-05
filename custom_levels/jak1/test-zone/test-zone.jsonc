@@ -20,7 +20,7 @@
   // this makes collision 2x slower and bigger, so only use if really needed
   "double_sided_collide": false,
 
-  // available res-lump tag data types:
+  // available res-lump tag data types: bump
   // int32, float, meters, vector, vector4m (meters)
   //
   // examples:
