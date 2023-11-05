@@ -299,6 +299,36 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     )
   )
 
+
+(defun music-manager ()
+  (stop-main-music)
+      (case *wanted-level*
+         (('beach)
+          (play-main-music "SND/beachmain.mp3" 100)
+          )
+                   (('jungle)
+          (play-main-music "SND/junglemain.mp3" 100)
+          )
+                             (('firecanyon)
+          (play-main-music "SND/firecanyonmain.mp3" 100)
+          )
+          
+          
+          
+         ;;Add more cases here for each level
+         (else
+          (play-main-music "" 100)
+          ;;(stop-main-music) This function is broken but playing a invalid sound does the same thing
+         )
+      )
+(none)
+)
+
+(defbehavior music-manager-proc process ()
+  (music-manager)
+  (none)
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jak Color functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;

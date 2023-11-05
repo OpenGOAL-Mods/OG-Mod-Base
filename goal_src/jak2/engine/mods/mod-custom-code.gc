@@ -469,8 +469,24 @@
 
 (none))
 
+(define old-level #f)
+
     (defun runs-every-frame ()
       ;; (increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
+    
+
+
+    (if (!= old-level *wanted-level*)
+        (process-spawn-function process music-manager-proc)
+    )
+
+    (when *target*
+    (if *wanted-level*
+     (set! old-level *wanted-level*) 
+     
+    )
+    )
+    
     
     (when *target*
         (find-closest-sphere-jak)
@@ -551,7 +567,7 @@
 
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
-
+        (process-spawn-function process music-manager-proc)
       (none)
       )
 

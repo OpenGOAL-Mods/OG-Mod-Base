@@ -370,7 +370,7 @@
           "demo-start"
           )
          (*debug-segment*
-           "game-start"
+           "beach-start"
            )
          (else
            "title-start"
