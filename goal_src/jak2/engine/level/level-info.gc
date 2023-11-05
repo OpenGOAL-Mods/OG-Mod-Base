@@ -16712,7 +16712,7 @@
     :continues '((new 'static 'continue-point
         :name "rolling-start"
         :level 'rollingc
-        :trans (new 'static 'vector :x 0.0 :y 0.0 :z 0.0 :w 1.0)
+         :trans (new 'static 'vector :x 1592492.9 :y 91648.0 :z -6328677.0 :w 1.0)
         :quat (new 'static 'vector :y 0.061 :w 0.9981)
         :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
         :camera-rot (new 'static 'inline-array vector3s 3
@@ -16794,7 +16794,7 @@
     :continues '((new 'static 'continue-point
         :name "swamp-start"
         :level 'swampc
-        :trans (new 'static 'vector :x 0.0 :y 0.0 :z 0.0 :w 1.0)
+         :trans (new 'static 'vector :x 1592492.9 :y 91648.0 :z -6328677.0 :w 1.0)
         :quat (new 'static 'vector :y 0.061 :w 0.9981)
         :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
         :camera-rot (new 'static 'inline-array vector3s 3
@@ -16876,7 +16876,7 @@
     :continues '((new 'static 'continue-point
         :name "sunken-start"
         :level 'sunkenc
-        :trans (new 'static 'vector :x 0.0 :y 0.0 :z 0.0 :w 1.0)
+         :trans (new 'static 'vector :x 1592492.9 :y 91648.0 :z -6328677.0 :w 1.0)
         :quat (new 'static 'vector :y 0.061 :w 0.9981)
         :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
         :camera-rot (new 'static 'inline-array vector3s 3
@@ -16958,7 +16958,7 @@
     :continues '((new 'static 'continue-point
         :name "ogre-start"
         :level 'ogrec
-        :trans (new 'static 'vector :x 0.0 :y 0.0 :z 0.0 :w 1.0)
+         :trans (new 'static 'vector :x 1592492.9 :y 91648.0 :z -6328677.0 :w 1.0)
         :quat (new 'static 'vector :y 0.061 :w 0.9981)
         :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
         :camera-rot (new 'static 'inline-array vector3s 3
@@ -17040,7 +17040,7 @@
     :continues '((new 'static 'continue-point
         :name "village2-start"
         :level 'rockvic
-        :trans (new 'static 'vector :x 0.0 :y 0.0 :z 0.0 :w 1.0)
+         :trans (new 'static 'vector :x 1592492.9 :y 91648.0 :z -6328677.0 :w 1.0)
         :quat (new 'static 'vector :y 0.061 :w 0.9981)
         :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
         :camera-rot (new 'static 'inline-array vector3s 3
@@ -17204,7 +17204,7 @@
     :continues '((new 'static 'continue-point
         :name "snow-start"
         :level 'snowc
-        :trans (new 'static 'vector :x 0.0 :y 0.0 :z 0.0 :w 1.0)
+         :trans (new 'static 'vector :x 1592492.9 :y 91648.0 :z -6328677.0 :w 1.0)
         :quat (new 'static 'vector :y 0.061 :w 0.9981)
         :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
         :camera-rot (new 'static 'inline-array vector3s 3
@@ -17285,7 +17285,7 @@
     :continues '((new 'static 'continue-point
         :name "cave-start"
         :level 'cavec
-        :trans (new 'static 'vector :x 0.0 :y 0.0 :z 0.0 :w 1.0)
+         :trans (new 'static 'vector :x 1592492.9 :y 91648.0 :z -6328677.0 :w 1.0)
         :quat (new 'static 'vector :y 0.061 :w 0.9981)
         :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
         :camera-rot (new 'static 'inline-array vector3s 3
@@ -17367,7 +17367,7 @@
     :continues '((new 'static 'continue-point
         :name "village3-start"
         :level 'volcanc
-        :trans (new 'static 'vector :x 0.0 :y 0.0 :z 0.0 :w 1.0)
+         :trans (new 'static 'vector :x 1592492.9 :y 91648.0 :z -6328677.0 :w 1.0)
         :quat (new 'static 'vector :y 0.061 :w 0.9981)
         :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
         :camera-rot (new 'static 'inline-array vector3s 3
@@ -17531,7 +17531,7 @@
     :continues '((new 'static 'continue-point
         :name "citadel-start"
         :level 'citadelc
-        :trans (new 'static 'vector :x 0.0 :y 0.0 :z 0.0 :w 1.0)
+         :trans (new 'static 'vector :x 1592492.9 :y 91648.0 :z -6328677.0 :w 1.0)
         :quat (new 'static 'vector :y 0.061 :w 0.9981)
         :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
         :camera-rot (new 'static 'inline-array vector3s 3

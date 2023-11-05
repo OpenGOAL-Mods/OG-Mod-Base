@@ -430,6 +430,42 @@
 (load-lvl 'hub1 'mistyc 'sandoverc #f #f #f)
 )
 
+(if (= *wanted-level* 'swamp)
+(load-lvl 'hub2 'swampc 'rockvic #f #f #f)
+)
+
+(if (= *wanted-level* 'rolling)
+(load-lvl 'hub2 'rollingc 'rockvic #f #f #f)
+)
+
+(if (= *wanted-level* 'sunken)
+(load-lvl 'hub2 'sunkenc 'rockvic #f #f #f)
+)
+
+(if (= *wanted-level* 'ogre)
+(load-lvl 'hub2 'rockvic 'ogrec #f #f #f)
+)
+
+(if (= *wanted-level* 'cave)
+(load-lvl 'hub3 'volcanc 'cavec #f #f #f)
+)
+
+(if (= *wanted-level* 'snow)
+(load-lvl 'hub3 'volcanc 'snowc #f #f #f)
+)
+
+(if (= *wanted-level* 'lavatube)
+(load-lvl 'lavatubea 'lavatubeb 'lavatubec #f #f #f)
+)
+
+(if (= *wanted-level* 'citadel)
+(load-lvl #f #f #f #f #f #f)
+)
+
+(if (= *wanted-level* 'final)
+(load-lvl #f #f #f #f #f #f)
+)
+
 
 (none))
 
