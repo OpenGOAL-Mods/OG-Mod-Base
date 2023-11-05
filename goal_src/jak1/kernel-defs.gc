@@ -278,12 +278,12 @@
    )
 
   (:methods
-   (new (symbol type basic) _type_ 0)
-   (activate (_type_ process-tree basic pointer) process-tree 9)
-   (deactivate  (_type_) none 10)
-    (init-from-entity! (_type_ entity-actor) none 11)
-   (run-logic? (_type_) symbol 12)
-   (process-tree-method-13 () none 13)
+   (new (symbol type basic) _type_)
+   (activate (_type_ process-tree basic pointer) process-tree) ;; 9
+   (deactivate  (_type_) none) ;; 10
+    (init-from-entity! (_type_ entity-actor) none) ;; 11
+   (run-logic? (_type_) symbol) ;; 12
+   (process-tree-method-13 () none) ;; 13
    )
 
   :size-assert #x20
@@ -384,7 +384,16 @@
 (define-extern pc-discord-rpc-set (function int none))
 
 
-(define-extern play-rand-sound (function string int none))
+;;main music start
+(define-extern play-main-music (function string int none))
+(define-extern pause-main-music (function none))
+(define-extern stop-main-music (function none))
+(define-extern resume-main-music (function none))
+(define-extern main-music-volume (function int none))
+;;main music end
+
+(define-extern play-sound-file (function string int none))
+(define-extern stop-sound-file (function none))
 (define-extern pc-filepath-exists? (function string symbol))
 (define-extern pc-mkdir-file-path (function string none))
 (define-extern pc-sound-set-flava-hack (function int none))
