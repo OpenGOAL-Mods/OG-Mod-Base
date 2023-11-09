@@ -28,5 +28,8 @@ jobs:
       metadataAuthors: "barg,vaser"
       metadataTags: "rng,gameplay-mod"
       metadataWebsiteUrl: "https://www.example.com/this/is/optional"
+      skipMacOS: true
+      skipLinux: true
+      toolingBinaryDir: "out/build/Release/bin"
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
