@@ -461,6 +461,11 @@
       (none)
       )
 
+    (defun runs-on-dark-crystal-explode ((crystal-name string) (level-name string))
+      (add-level-objective-to-interaction-buffer crystal-name (interaction-type dark-crystal) level-name)
+      (none)
+      )
+
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
       (set! (-> *teamrun-info* on_zoomer?) 0)

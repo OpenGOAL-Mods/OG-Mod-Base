@@ -5,6 +5,7 @@
 ;; name in dgo: dark-crystal
 ;; dgos: L1, MAI, MAINCAVE
 
+(define-extern runs-on-dark-crystal-explode (function string string none))
 
 ;; DECOMP BEGINS
 
@@ -468,6 +469,7 @@
 
 (defstate dark-crystal-explode (dark-crystal)
   :code (behavior ()
+    (runs-on-dark-crystal-explode (the-as string (-> self name)) (symbol->string (-> *level* level (-> self draw level-index) name)))
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (logclear! (-> self mask) (process-mask actor-pause))
     (clear-collide-with-as (-> self root-override))
