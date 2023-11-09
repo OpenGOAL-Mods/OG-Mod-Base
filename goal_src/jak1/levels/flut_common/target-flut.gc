@@ -1243,8 +1243,9 @@
                     (>= (-> self fact-info-target eco-level) 1.0)
                     )
                (>= (- (-> *display* base-frame-counter) (-> self control unknown-dword82)) (seconds 0.25))
-               )
-              (and *enable-remote-target-yellow-eco-blasts* (is-interactive? (the int (-> self saved-owner)))))
+               *enable-remote-target-yellow-eco-blasts* 
+               (is-interactive? (the int (-> self saved-owner)))
+               ))
       (let ((gp-0 (vector-z-quaternion! (new 'stack-no-clear 'vector) (-> self control quat)))
             (s5-0 (vector<-cspace! (new 'stack-no-clear 'vector) (-> self manipy 0 node-list data 32)))
             )
