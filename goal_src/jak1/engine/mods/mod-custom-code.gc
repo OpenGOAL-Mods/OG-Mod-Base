@@ -456,6 +456,11 @@
       (none)
       )
 
+    (defun runs-on-bumper-deactivate ((bumper-name string))
+      (add-level-objective-to-interaction-buffer bumper-name (interaction-type snow-bumper) "snow")
+      (none)
+      )
+
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
       (set! (-> *teamrun-info* on_zoomer?) 0)
