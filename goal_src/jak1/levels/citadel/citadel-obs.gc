@@ -1325,7 +1325,7 @@
     (update-transforms! (-> self root-override))
     (cond
       ((-> self birth-fuel-cell)
-       (process-drawable-birth-fuel-cell (the-as entity #f) (the-as vector #f) #t)
+       (process-drawable-birth-fuel-cell (the-as entity #f) (the-as vector #f) *enable-ingame-cutscenes?*)
        (when (-> self child)
          (while (-> self child)
            (suspend)
@@ -1498,14 +1498,16 @@
           )
         )
       )
-    (let ((gp-2
-            (ppointer->handle
-              (process-spawn pov-camera (-> self root trans) *citadelcam-sg* "citadelcam-stair-plats" 0 #f '() :to self)
+    (if *enable-ingame-cutscenes?*
+      (let ((gp-2
+              (ppointer->handle
+                (process-spawn pov-camera (-> self root trans) *citadelcam-sg* "citadelcam-stair-plats" 0 #f '() :to self)
+                )
               )
             )
+        (while (handle->process (the-as handle gp-2))
+          (suspend)
           )
-      (while (handle->process (the-as handle gp-2))
-        (suspend)
         )
       )
     (level-hint-spawn (text-id citadel-plat) "sksp0387" (the-as entity #f) *entity-pool* (game-task none))
