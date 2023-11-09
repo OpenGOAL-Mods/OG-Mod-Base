@@ -6,6 +6,8 @@
 ;; dgos: L1, ROL
 ;; note: changed for high fps
 
+(define-extern add-death-to-interaction-buffer (function string none))
+
 ;; DECOMP BEGINS
 
 
@@ -359,30 +361,44 @@
     process-drawable-death-event-handler
     )
   :code (behavior ()
+    (add-death-to-interaction-buffer (the-as string (-> self name)))
     (let ((gp-0 #t))
       (when (robber-task-complete?)
         (let ((v1-3 (-> self entity extra perm)))
-          (logior! (-> v1-3 status) (entity-perm-status user-set-from-cstage))
           (cond
             ((zero? (-> v1-3 user-object 1))
              (set! (-> v1-3 user-object 1) 1)
              (set! (-> v1-3 user-object 0) (-> self curve-position))
-             (let ((f30-0 (if (>= (-> self speed) 0.0)
-                              163840.0
-                              -163840.0
-                              )
-                          )
-                   )
-               (process-spawn
-                 fuel-cell
-                 :init fuel-cell-init-as-spline-slider
-                 (process->handle self)
-                 (-> self curve-position)
-                 f30-0
-                 (-> self entity extra perm task)
-                 :to self
-                 )
-               )
+             (if *enable-ingame-cutscenes?*
+              (let ((f30-0 (if (>= (-> self speed) 0.0)
+                                163840.0
+                                -163840.0
+                                )
+                            )
+                    )
+                (process-spawn
+                  fuel-cell
+                  :init fuel-cell-init-as-spline-slider
+                  (process->handle self)
+                  (-> self curve-position)
+                  f30-0
+                  (-> self entity extra perm task)
+                  :to self
+                  )
+                )
+              (let ((s5-1 (new 'stack-no-clear 'vector)))
+                (eval-path-curve! (-> self path) s5-1 (the-as float (-> v1-3 user-object 0)) 'interp)
+                (+! (-> s5-1 y) 8192.0)
+                (birth-pickup-at-point
+                  s5-1
+                  (pickup-type fuel-cell)
+                  (the float (-> self entity extra perm task))
+                  #f
+                  self
+                  (the-as fact-info #f)
+                  )
+                )
+              )
              )
             (else
               (set! gp-0 #f)

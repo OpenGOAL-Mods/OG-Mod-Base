@@ -46,7 +46,7 @@
   (eco-green)
   (money)
   (game-task)
-  (enemy-death) ;; unused
+  (enemy-death)
   (buzzer)
   (crate-normal)
   (crate-iron)

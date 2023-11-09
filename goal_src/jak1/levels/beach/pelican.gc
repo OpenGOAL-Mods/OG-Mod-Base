@@ -5,6 +5,8 @@
 ;; name in dgo: pelican
 ;; dgos: BEA, L1
 
+(define-extern add-death-to-interaction-buffer (function string none))
+
 ;; DECOMP BEGINS
 
 
@@ -739,6 +741,7 @@
                     )
             )
           )
+        (set! (-> gp-3 name) "beach-pelican")
         )
       )
     (go pelican-from-nest)
@@ -838,6 +841,7 @@
 
 (defstate pelican-explode (pelican)
   :code (behavior ((arg0 symbol))
+    (add-death-to-interaction-buffer (the-as string (-> self name)))
     (let ((v1-2 (-> self entity extra perm)))
       (logior! (-> v1-2 status) (entity-perm-status user-set-from-cstage))
       (set! (-> v1-2 user-int8 0) 5)

@@ -7,6 +7,8 @@
 
 (declare-type ram-boss nav-enemy)
 
+(define-extern add-death-to-interaction-buffer (function string none))
+
 ;; DECOMP BEGINS
 
 
@@ -1889,6 +1891,9 @@
 (defstate nav-enemy-die (ram-boss)
   :virtual #t
   :code (behavior ()
+    (when (and (-> self parent-override) (-> self parent-override 0))
+      (add-death-to-interaction-buffer (the-as string (-> self parent-override 0 name)))
+      )
     (ja-channel-push! 1 (seconds 0.075))
     (clear-collide-with-as (-> self collide-info))
     (nav-enemy-fall-and-play-death-anim
