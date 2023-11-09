@@ -580,7 +580,8 @@
        (and (logtest? (-> (the-as collide-shape (-> obj process root)) root-prim prim-core action) 
                       (collide-action racer)
                       )
-            (type-type? (-> (handle->process source-handle) type) vent)
+            (or (type-type? (-> (handle->process source-handle) type) vent)
+                (= amount 5))
             )
        cfg-80
        :delay (nop!)
