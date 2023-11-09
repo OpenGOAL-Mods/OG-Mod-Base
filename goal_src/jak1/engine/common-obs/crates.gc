@@ -9,6 +9,7 @@
 (declare-type crate-buzzer crate)
 
 (define-extern runs-on-crate-break (function interaction-type float process none))
+(define-extern get-closest-interactive-target (function process-drawable target))
 
 ;; DECOMP BEGINS
 
@@ -839,7 +840,7 @@
     (if (nonzero? (-> self sound))
         (stop! (-> self sound))
         )
-    (if (and *target* (and (logtest? (-> *target* control root-prim prim-core action)
+    (if (and *target* (or (!= (-> self look) 'iron) (= (get-closest-interactive-target self) *target*)) (and (logtest? (-> *target* control root-prim prim-core action)
                                      (collide-action racer snowball tube flut)
                                      )
                            (!= (-> self fact pickup-type) 6)

@@ -10,6 +10,7 @@
 (define-extern runs-on-fly-pickup (function float none))
 (define-extern runs-on-cell-pickup (function symbol none))
 (define-extern runs-on-eco-pickup (function pickup-type process-tree none))
+(define-extern get-closest-interactive-target (function process-drawable target))
 (define-extern process-close? (function process-drawable float basic))
 (define-extern *allow-cell-pickup?* symbol)
 (define-extern *enable-remote-target-buzzer-pickup* symbol)
@@ -1345,13 +1346,15 @@
       (set! v1-7 (mod (+ v1-7 1) a1-1))
       )
     (when *target*
-      (cond
-        ((logtest? (-> *target* control root-prim prim-core action) (collide-action racer))
-         (set! v1-7 16)
-         )
-        ((logtest? (-> *target* control root-prim prim-core action) (collide-action flut))
-         (set! v1-7 32)
-         )
+      (let ((target (get-closest-interactive-target arg0)))
+        (cond
+          ((logtest? (-> target control root-prim prim-core action) (collide-action racer))
+          (set! v1-7 16)
+          )
+          ((logtest? (-> target control root-prim prim-core action) (collide-action flut))
+          (set! v1-7 32)
+          )
+          )
         )
       )
     (cond
@@ -2256,34 +2259,36 @@
       (when (and (= (get-reminder s4-1 0) 127)
                  (and (-> self entity) (not (task-complete? *game-info* (the-as game-task s5-2))))
                  )
-        (if (and *target*
-                 (logtest? (-> *target* control root-prim prim-core action) (collide-action racer snowball tube flut))
-                 (not arg0)
-                 )
-            (logior! (-> self fact options) (fact-options instant-collect skip-jump-anim))
+        (let* ((target (the-as target (handle->process arg1))))
+          (if (and *target*(or (= target *target*) (not target))
+                  (logtest? (-> *target* control root-prim prim-core action) (collide-action racer snowball tube flut))
+                  (not arg0)
+                  )
+              (logior! (-> self fact options) (fact-options instant-collect skip-jump-anim))
             )
-        (let ((v1-47
-                (birth-pickup-at-point
-                  (vector+! (new 'stack-no-clear 'vector) (-> self root-override trans) (new 'static 'vector :y 4096.0 :w 1.0))
-                  (pickup-type fuel-cell)
-                  (the float s5-2)
-                  #f
-                  self
-                  (-> self fact)
+          (let ((v1-47
+                  (birth-pickup-at-point
+                    (vector+! (new 'stack-no-clear 'vector) (-> self root-override trans) (new 'static 'vector :y 4096.0 :w 1.0))
+                    (pickup-type fuel-cell)
+                    (the float s5-2)
+                    #f
+                    self
+                    (-> self fact)
+                    )
                   )
                 )
-              )
-          (when v1-47
-            (send-event (ppointer->process v1-47) 'movie-pos (-> self movie-pos-index))
-            (ja-channel-set! 0)
-            (clear-collide-with-as (-> self root-override))
-            (ja-post)
-            (let
-              ((task-name (game-task->string (the-as game-task (logand (the int (-> self fact pickup-amount)) #xffff)))))
-              (set! (-> (the-as fuel-cell (ppointer->process v1-47)) name) task-name)
-              )
-            (while (-> self child)
-              (suspend)
+            (when v1-47
+              (send-event (ppointer->process v1-47) 'movie-pos (-> self movie-pos-index))
+              (ja-channel-set! 0)
+              (clear-collide-with-as (-> self root-override))
+              (ja-post)
+              (let
+                ((task-name (game-task->string (the-as game-task (logand (the int (-> self fact pickup-amount)) #xffff)))))
+                (set! (-> (the-as fuel-cell (ppointer->process v1-47)) name) task-name)
+                )
+              (while (-> self child)
+                (suspend)
+                )
               )
             )
           )

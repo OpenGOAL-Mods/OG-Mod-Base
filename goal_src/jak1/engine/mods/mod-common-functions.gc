@@ -900,11 +900,24 @@
     )
   )
 
+(defun get-closest-interactive-target ((proc process-drawable))
+  (let ((closest-target *target*))
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (let ((target (get-interactive-target tgt-idx)))
+        (if (and target proc (<= (vector-vector-distance (remote-target-pos 0 target) (-> proc root trans)) (vector-vector-distance (remote-target-pos 0 closest-target) (-> proc root trans))))
+            (set! closest-target target)
+          )
+        )
+      )
+      closest-target
+    )
+  )
+
 ;;This returns true or false depending on if all jaks are within a provided distance from an actor
 (defun any-interactive-targets-close? ((proc process-drawable) (dist float))
   (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
     (let ((target (get-interactive-target tgt-idx)))
-      (if (and target (and proc (<= (vector-vector-distance (remote-target-pos 0 target) (-> proc root trans)) dist)))
+      (if (and target proc (<= (vector-vector-distance (remote-target-pos 0 target) (-> proc root trans)) dist))
           (return #t)
         )
       )
