@@ -367,7 +367,7 @@
   :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
     (the-as object (case event-type
                      (('touch 'attack)
-                      (when (= (-> proc type) target)
+                      (when (and (= (-> proc type) target) (= proc *target*))
                         (do-push-aways! (-> self root-override))
                         (when (>= (- (-> *display* base-frame-counter) (-> self hit-player-time)) (seconds 0.5))
                           (set! (-> self hit-player-time) (-> *display* base-frame-counter))
