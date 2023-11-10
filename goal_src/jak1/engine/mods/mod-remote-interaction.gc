@@ -175,6 +175,20 @@
     (none)
   )
 
+(defun safe-kill-plant-boss-orb ()
+  (let ((boss (the-as plant-boss (process-by-ename "plant-boss-3"))))
+    (when boss
+      (if (handle->process (-> boss money))
+        (deactivate (handle->process (-> boss money)))
+        )
+      (if (< (-> boss entity extra perm user-int8 1) 5)
+        (+! (-> boss entity extra perm user-int8 1) 1)
+        )
+      )
+    )
+    (none)
+  )
+
 (defun safe-kill-gnawer-orb ((gnawer-name string))
   (let ((gnawer (the-as gnawer (process-by-ename gnawer-name))))
     (when gnawer
