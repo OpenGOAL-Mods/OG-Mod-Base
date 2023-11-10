@@ -50,8 +50,9 @@
 (define *player-can-load* #f)
 
 ;; pickup toggles for remote
-(define *enable-remote-target-eco-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that the physical target can't accidentally miss it
 (define *enable-remote-target-buzzer-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that cell fly can't drop two cells on pickup
+(define *enable-remote-target-money-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions to prevent orbs pickups to count as current user pickups
+(define *enable-remote-target-eco-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that the physical target can't accidentally miss it
 
 ;; multiplayer self
 (define *self-player-info* (the-as remote-player-info #f))

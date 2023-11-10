@@ -14,6 +14,7 @@
 (define-extern process-close? (function process-drawable float basic))
 (define-extern *allow-cell-pickup?* symbol)
 (define-extern *enable-remote-target-buzzer-pickup* symbol)
+(define-extern *enable-remote-target-money-pickup* symbol)
 (define-extern *enable-remote-target-eco-pickup* symbol)
 
 (declare-type vent process-drawable)
@@ -465,6 +466,7 @@
                                   (!= (-> self fact pickup-type) (pickup-type eco-yellow)))
                                   ) 
                                 (or *enable-remote-target-buzzer-pickup* (!= (-> self fact pickup-type) (pickup-type buzzer)))
+                                (or *enable-remote-target-money-pickup* (!= (-> self fact pickup-type) (pickup-type money)))
                               )
                             )
                       (send-event proc 'get-pickup (-> self fact pickup-type) (-> self fact pickup-amount))
@@ -472,6 +474,7 @@
                     )
                )
       (logclear! (-> self mask) (process-mask actor-pause))
+      (format #t "here ~%")
       (go-virtual pickup #f (process->handle proc))
       )
     (the-as
