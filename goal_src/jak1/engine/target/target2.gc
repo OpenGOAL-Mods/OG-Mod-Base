@@ -1411,7 +1411,7 @@
                    (>= (-> self fact-info-target eco-level) 1.0)
                    (= self *target*)
                    ) 
-                   (and *enable-remote-target-yellow-eco-blasts* (is-interactive? (the int (-> self saved-owner))))) ;; give free pass to shoot for remotes
+                   (and *enable-remote-target-yellow-eco-blasts* (!= self *target*) (is-interactive? (the int (-> self saved-owner))))) ;; give free pass to shoot for remotes
           (let ((gp-1 (get-process *default-dead-pool* projectile-yellow #x4000)))
             (set! gp-0 (ppointer->handle
                          (when gp-1
@@ -1541,7 +1541,7 @@
         )
       )
     (ja :num! (seek!))
-    (when (or (= self *target*) (and *enable-remote-target-yellow-eco-blasts* (is-interactive? (the int (-> self saved-owner)))))
+    (when (or (= self *target*) (and *enable-remote-target-yellow-eco-blasts* (!= self *target*) (is-interactive? (the int (-> self saved-owner)))))
       (process-spawn
         projectile-yellow
         :init projectile-init-by-other
