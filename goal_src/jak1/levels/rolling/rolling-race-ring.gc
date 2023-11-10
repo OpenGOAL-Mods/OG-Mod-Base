@@ -796,7 +796,6 @@
               (set! (-> self old-hips quad) (-> (remote-target-pos 26 target) quad))
               (vector-! gp-0 gp-0 (-> self old-hips))
               (when (>= (ray-flat-cyl-intersect (-> self cyl) (-> self old-hips) gp-0) 0.0)
-                (format #t "here ~%")
                 (level-hint-spawn
                   (text-id rolling-ring-chase-1-hint)
                   "sksp0119"

@@ -5,7 +5,7 @@
 ;; name in dgo: balloonlurker
 ;; dgos: L1, MIS
 
-(define-extern add-death-to-interaction-buffer (function string none))
+(define-extern add-death-to-interaction-buffer (function string float none))
 
 ;; DECOMP BEGINS
 
@@ -756,7 +756,7 @@
     (none)
     )
   :code (behavior ()
-    (add-death-to-interaction-buffer (the-as string (-> self name)))
+    (add-death-to-interaction-buffer (the-as string (-> self name)) 0.0)
     (local-vars (v1-27 symbol) (sv-16 symbol) (sv-20 (pointer process-tree)) (sv-24 entity-actor))
     (process-entity-status! self (entity-perm-status bit-4) #t)
     (process-entity-status! self (entity-perm-status dead) #t)

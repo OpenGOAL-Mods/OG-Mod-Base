@@ -192,12 +192,12 @@
       (none)
       )
 
-    (defun add-death-to-interaction-buffer ((name string))
+    (defun add-death-to-interaction-buffer ((name string) (amount float))
       (dotimes (idx (-> *interaction-update-buffer* length))
         (when (= (-> *interaction-update-buffer* idx has_update?) #f)
 
           (set! (-> *interaction-update-buffer* idx type) (interaction-type enemy-death))
-          (set! (-> *interaction-update-buffer* idx amount) 1.0)
+          (set! (-> *interaction-update-buffer* idx amount) amount)
           (set! (-> *interaction-update-buffer* idx ename) name)
           (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> (level-get-target-inside *level*) name)))
           (set! (-> *interaction-update-buffer* idx parent) "entity-pool")

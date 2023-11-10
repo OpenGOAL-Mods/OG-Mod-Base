@@ -10,7 +10,7 @@
 
 (define-extern gnawer-joint-callback (function gnawer none))
 
-(define-extern add-death-to-interaction-buffer (function string none))
+(define-extern add-death-to-interaction-buffer (function string float none))
 
 ;; DECOMP BEGINS
 
@@ -1090,7 +1090,7 @@
     (none)
     )
   :code (behavior ()
-    (add-death-to-interaction-buffer (the-as string (-> self name)))
+    (add-death-to-interaction-buffer (the-as string (-> self name)) (the float (-> self total-money)))
     (logclear! (-> self mask) (process-mask actor-pause))
     (process-entity-status! self (entity-perm-status bit-3) #t)
     (ja-channel-push! 1 (seconds 0.1))

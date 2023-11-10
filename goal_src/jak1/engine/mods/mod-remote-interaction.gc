@@ -175,6 +175,25 @@
     (none)
   )
 
+(defun safe-kill-gnawer-orb ((gnawer-name string))
+  (let ((gnawer (the-as gnawer (process-by-ename gnawer-name))))
+    (when gnawer
+      ;; kill if alive
+      (when (not (or (= (-> gnawer state) gnawer-dying-give-pickups) (= (-> gnawer state) gnawer-put-items-at-dest) (= (-> gnawer state) gnawer-give-fuel-cell)))
+        (process-entity-status! gnawer (entity-perm-status bit-3) #t)
+        (process-entity-status! gnawer (entity-perm-status complete) #t)
+        (logior! (-> gnawer entity extra perm status) (entity-perm-status user-set-from-cstage))
+        (set! (-> gnawer entity extra perm user-int16 0) (the-as int (-> gnawer money-mask)))
+        )
+      (when (nonzero? (-> gnawer entity extra perm user-uint16 0))
+        (gnawer-method-30 gnawer (the-as process-drawable (-> gnawer child 0)))
+        (reset-specific-actor gnawer-name)
+        )
+      )
+    )
+    (none)
+  )
+
 (defun safe-kill-crate-orb ((crate-name string))
   (let* ((obj-crate (process-by-ename crate-name)))
 

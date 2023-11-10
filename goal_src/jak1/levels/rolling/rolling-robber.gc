@@ -6,7 +6,7 @@
 ;; dgos: L1, ROL
 ;; note: changed for high fps
 
-(define-extern add-death-to-interaction-buffer (function string none))
+(define-extern add-death-to-interaction-buffer (function string float none))
 
 ;; DECOMP BEGINS
 
@@ -361,7 +361,7 @@
     process-drawable-death-event-handler
     )
   :code (behavior ()
-    (add-death-to-interaction-buffer (the-as string (-> self name)))
+    (add-death-to-interaction-buffer (the-as string (-> self name)) 0.0)
     (let ((gp-0 #t))
       (when (robber-task-complete?)
         (let ((v1-3 (-> self entity extra perm)))
