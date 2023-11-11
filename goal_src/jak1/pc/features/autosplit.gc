@@ -19,6 +19,28 @@
   (set! (-> *autosplit-info-jak1* num-scout-flies) (the int (-> *game-info* buzzer-total)))
 
   ;; per-level orb/fly counts
+  (set! (-> *autosplit-info-jak1* block-world-num-orbs) (-> *game-info* money-per-level (level-task-data-index blockworld)))
+  (set! (-> *autosplit-info-jak1* factory-cross-num-orbs) (-> *game-info* money-per-level (level-task-data-index factorycross)))
+  (set! (-> *autosplit-info-jak1* holly-wood-num-orbs) (-> *game-info* money-per-level (level-task-data-index hollyworld)))
+  (set! (-> *autosplit-info-jak1* monument-num-orbs) (-> *game-info* money-per-level (level-task-data-index monument)))
+  (set! (-> *autosplit-info-jak1* cathedral-num-orbs) (-> *game-info* money-per-level (level-task-data-index cathedral)))
+  (set! (-> *autosplit-info-jak1* pyramid-num-orbs) (-> *game-info* money-per-level (level-task-data-index pyramid)))
+  (set! (-> *autosplit-info-jak1* ice-canyon-num-orbs) (-> *game-info* money-per-level (level-task-data-index icecanyon)))
+  (set! (-> *autosplit-info-jak1* coins-num-orbs) (-> *game-info* money-per-level (level-task-data-index coins)))
+  (set! (-> *autosplit-info-jak1* villa-cuba-num-orbs) (-> *game-info* money-per-level (level-task-data-index villacube)))
+  (set! (-> *autosplit-info-jak1* ice-slide-num-orbs) (-> *game-info* money-per-level (level-task-data-index iceslide)))
+  (set! (-> *autosplit-info-jak1* islands-num-orbs) (-> *game-info* money-per-level (level-task-data-index islands)))
+  (set! (-> *autosplit-info-jak1* glass-towers-num-orbs) (-> *game-info* money-per-level (level-task-data-index glasstowers)))
+  (set! (-> *autosplit-info-jak1* chemical-factory-num-orbs) (-> *game-info* money-per-level (level-task-data-index chemicalfactory)))
+  (set! (-> *autosplit-info-jak1* space-bridge-num-orbs) (-> *game-info* money-per-level (level-task-data-index spacebridge)))
+  (set! (-> *autosplit-info-jak1* chicks-num-orbs) (-> *game-info* money-per-level (level-task-data-index chicks)))
+  (set! (-> *autosplit-info-jak1* garden-num-orbs) (-> *game-info* money-per-level (level-task-data-index garden)))
+  (set! (-> *autosplit-info-jak1* cold-pipe-num-orbs) (-> *game-info* money-per-level (level-task-data-index coldpipe)))
+  (set! (-> *autosplit-info-jak1* block-man-num-orbs) (-> *game-info* money-per-level (level-task-data-index blockman)))
+  (set! (-> *autosplit-info-jak1* cube-face-num-orbs) (-> *game-info* money-per-level (level-task-data-index cubeface)))
+
+
+
   (set! (-> *autosplit-info-jak1* training-num-orbs) (-> *game-info* money-per-level (level-task-data-index training)))
   (set! (-> *autosplit-info-jak1* village1-num-orbs) (-> *game-info* money-per-level (level-task-data-index village1)))
   (set! (-> *autosplit-info-jak1* beach-num-orbs) (-> *game-info* money-per-level (level-task-data-index beach)))
@@ -167,6 +189,10 @@
   (set! (-> *autosplit-info-jak1* int-finalboss-movies) (if (task-closed? (game-task finalboss-movies) (task-status need-introduction)) 1 0))
   (set! (-> *autosplit-info-jak1* unk-finalboss-movies) (if (task-closed? (game-task finalboss-movies) (task-status unknown)) 1 0))
   (set! (-> *autosplit-info-jak1* int-jungle-fishgame) (if (task-closed? (game-task jungle-fishgame) (task-status need-introduction)) 1 0))
+
+  ;;mort flags
+
+  
 
   ;; end
   (none))
