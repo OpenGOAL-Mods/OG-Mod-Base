@@ -125,6 +125,7 @@
 
 (defun start-speedrun ((category speedrun-category))
   ;; randomize game id so the autosplitter knows to restart
+  (reset-mort-struct)
   (update-autosplit-jak1-new-game)
   ;; disable hints (turned back on later for all-cutscenes category)
   (set! (-> *setting-control* default play-hints) #f)
