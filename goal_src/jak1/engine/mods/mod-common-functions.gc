@@ -914,6 +914,12 @@
     )
   )
 
+(defun remote-target-fake-cpad-circle-pressed? ((remote-target target))
+  (when remote-target
+    (= (-> remote-target state name) 'target-attack)
+    )
+  )
+
 ;;This returns true or false depending on if all jaks are within a provided distance from an actor
 (defun any-interactive-targets-close? ((proc process-drawable) (dist float))
   (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
@@ -924,6 +930,16 @@
       )
     )
     #f
+  )
+
+(defun target-in-level-sphere? ((level-name string))
+  (if (and (-> *level* level0) (name= (-> *level* level0 name) level-name) (-> *level* level0 inside-sphere?))
+    (return #t)
+    )
+  (if (and (-> *level* level1) (name= (-> *level* level1 name) level-name) (-> *level* level1 inside-sphere?))
+    (return #t)
+    )
+  #f
   )
 
 
