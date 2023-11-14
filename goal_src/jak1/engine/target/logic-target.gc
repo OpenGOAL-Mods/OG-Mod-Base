@@ -1343,7 +1343,9 @@
           (vector+! v1-8 s3-0 s2-0)
           (vector-float*! v1-8 v1-8 0.5)
           (+! (-> v1-8 y) -6144.0)
-          (send-event *camera* 'ease-in 0.5 v1-8)
+          (when (= self *target*)
+            (send-event *camera* 'ease-in 0.5 v1-8)
+            )
           )
         (vector-segment-distance-point! (-> self control unknown-vector90) s3-0 s2-0 s5-0)
         (when *display-edge-collision-marks*
