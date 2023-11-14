@@ -917,6 +917,19 @@
     )
   )
 
+(defun get-closest-interactive-target-to-vector ((vect vector))
+  (let ((closest-target *target*))
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (let ((target (get-interactive-target tgt-idx)))
+        (if (and target vect (<= (vector-vector-distance (remote-target-pos 0 target) vect) (vector-vector-distance (remote-target-pos 0 closest-target) vect)))
+            (set! closest-target target)
+          )
+        )
+      )
+      closest-target
+    )
+  )
+
 (defun remote-target-fake-cpad-circle-pressed? ((remote-target target))
   (when remote-target
     (= (-> remote-target state name) 'target-attack)
@@ -954,6 +967,10 @@
     (return #t)
     )
   #f
+  )
+
+(defun has-camera-type? ((camera-type string))
+  (-> *camera* child 0) (name= (-> (the-as camera-slave (-> *camera* child 0)) state name) camera-type)
   )
 
 

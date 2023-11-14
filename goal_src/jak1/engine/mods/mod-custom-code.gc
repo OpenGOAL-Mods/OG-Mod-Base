@@ -466,6 +466,11 @@
       (none)
       )
 
+    (defun runs-on-lpc-chamber-stop ((stop-number int))
+      (add-level-objective-to-interaction-buffer "exit-chamber-1" (interaction-type lpc-chamber) (if (= stop-number 1) "sunkenb" "village2"))
+      (none)
+      )
+
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
       (set! (-> *teamrun-info* on_zoomer?) 0)

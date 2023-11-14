@@ -8,6 +8,10 @@
 (declare-type blue-eco-charger process-drawable)
 (declare-type exit-chamber-button basebutton)
 
+(define-extern get-closest-interactive-target-to-vector (function vector target))
+(define-extern runs-on-lpc-chamber-stop (function int none))
+(define-extern has-camera-type? (function string basic))
+
 ;; DECOMP BEGINS
 
 
@@ -612,7 +616,7 @@
     (if (-> obj button)
         (send-event (ppointer->process (-> obj button)) 'move-to (-> s5-1 button-pos) (-> s5-1 button-quat))
         )
-    (when (and *target* (-> obj move-player?))
+    (when (and *target* *enable-ingame-cutscenes?* (-> obj move-player?))
       (let ((a1-6 (new 'stack-no-clear 'vector)))
         (set! (-> a1-6 quad) (-> s5-1 button-pos quad))
         (+! (-> a1-6 y) 2662.4)
@@ -656,6 +660,7 @@
               (set! (-> self chargers-active) v1-5)
               (when (= v1-5 62)
                 (save-reminder (get-task-control (game-task sunken-room)) 1 0)
+                (runs-on-lpc-chamber-stop 1)
                 (go exit-chamber-charger-puzzle-beaten)
                 (return #t)
                 v0-0
@@ -771,12 +776,19 @@
     (none)
     )
   :trans (behavior ()
-    (if (not (-> self move-player?))
+    (if (or (not *enable-ingame-cutscenes?*) (not (-> self move-player?)))
         (rider-trans)
         )
     (none)
     )
   :code (behavior ()
+    (when (not *enable-ingame-cutscenes?*)
+      (let ((gp-0 (-> *display* base-frame-counter)))
+        (until (>= (- (-> *display* base-frame-counter) gp-0) (seconds 1.0))
+          (suspend)
+          )
+        )
+      )
     (aybabtu 2)
     (let ((v1-1 (handle->process (-> self fcell-handle))))
       (if v1-1
@@ -784,31 +796,33 @@
           )
       )
     (close-specific-task! (game-task sunken-room) (task-status need-reminder))
-    (send-event *target* 'reset-pickup 'eco)
-    (let ((gp-0 (get-process *default-dead-pool* sunkencam #x4000)))
-      (set! (-> (the-as sunkencam (-> (when gp-0
-                                        (let ((t9-5 (method-of-type sunkencam activate)))
-                                          (t9-5 (the-as sunkencam gp-0) self 'sunkencam (the-as pointer #x70004000))
+    (when *enable-ingame-cutscenes?*
+      (send-event *target* 'reset-pickup 'eco)
+      (let ((gp-0 (get-process *default-dead-pool* sunkencam #x4000)))
+        (set! (-> (the-as sunkencam (-> (when gp-0
+                                          (let ((t9-5 (method-of-type sunkencam activate)))
+                                            (t9-5 (the-as sunkencam gp-0) self 'sunkencam (the-as pointer #x70004000))
+                                            )
+                                          (run-now-in-process
+                                            gp-0
+                                            pov-camera-init-by-other
+                                            (-> self root-override trans)
+                                            *sunkencam-sg*
+                                            "qbert-show-door-open"
+                                            0
+                                            #f
+                                            '()
+                                            )
+                                          (-> gp-0 ppointer)
                                           )
-                                        (run-now-in-process
-                                          gp-0
-                                          pov-camera-init-by-other
-                                          (-> self root-override trans)
-                                          *sunkencam-sg*
-                                          "qbert-show-door-open"
-                                          0
-                                          #f
-                                          '()
-                                          )
-                                        (-> gp-0 ppointer)
+                                        0
                                         )
-                                      0
-                                      )
-                        )
-                seq
-                )
-            (the-as uint 0)
-            )
+                          )
+                  seq
+                  )
+              (the-as uint 0)
+              )
+        )
       )
     0
     (suspend)
@@ -816,6 +830,17 @@
     (let ((gp-1 #f))
       (ja-no-eval :group! (-> self draw art-group data 3) :num! (seek!) :frame-num 0.0)
       (until (ja-done? 0)
+        (when (and (not *enable-ingame-cutscenes?*)
+          (not (has-camera-type? "cam-stick")) 
+          (not (has-camera-type? "cam-decel")) 
+          (or (!= (-> self root-override riders num-riders) 0) ;; as rider spot is only allowed for main jak
+              (!= (-> (the-as exit-chamber-button (ppointer->process (-> self button))) root-override riders num-riders) 0)
+              )
+            )
+          (logior! (-> *target* state-flags) (state-flags prevent-jump))
+          (send-event *target* 'no-look-around (seconds 17.5))
+          (camera-change-to (the-as string 'cam-stick) 300 #f)
+          )
         (when (and (not gp-1) (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.75)) (-> self door))
           (set! gp-1 #t)
           (send-event (ppointer->process (-> self door)) 'untrigger)
@@ -824,13 +849,21 @@
         (ja :num! (seek!))
         )
       )
-    (set! (-> self move-player?) #t)
+    (if *enable-ingame-cutscenes?*
+      (set! (-> self move-player?) #t)
+      )
     (ja-no-eval :group! (-> self draw art-group data 4) :num! (seek!) :frame-num 0.0)
     (until (ja-done? 0)
       (suspend)
       (ja :num! (seek!))
       )
-    (load-state-want-levels 'sunken 'village2)
+    (when (or *enable-ingame-cutscenes?*
+          (has-camera-type? "cam-stick")
+          (!= (-> self root-override riders num-riders) 0) ;; as rider spot is only allowed for main jak
+          (!= (-> (the-as exit-chamber-button (ppointer->process (-> self button))) root-override riders num-riders) 0)
+        )
+      (load-state-want-levels 'sunken 'village2)
+      )
     (ja-no-eval :group! (-> self draw art-group data 5) :num! (seek!) :frame-num 0.0)
     (until (ja-done? 0)
       (exit-chamber-method-24 self 51200.0)
@@ -840,8 +873,14 @@
       (ja :num! (seek!))
       )
     (stop! (-> self sound))
-    (load-state-want-display-level 'village2 'display)
-    (load-state-want-display-level 'sunken 'special)
+    (when (or *enable-ingame-cutscenes?*
+          (has-camera-type? "cam-stick")
+          (!= (-> self root-override riders num-riders) 0) ;; as rider spot is only allowed for main jak
+          (!= (-> (the-as exit-chamber-button (ppointer->process (-> self button))) root-override riders num-riders) 0)
+        )
+      (load-state-want-display-level 'village2 'display)
+      (load-state-want-display-level 'sunken 'special)
+      )
     (let ((gp-2 #f))
       (ja-no-eval :group! (-> self draw art-group data 6) :num! (seek!) :frame-num 0.0)
       (until (ja-done? 0)
@@ -854,8 +893,18 @@
           (set! (-> a0-36 quad) (-> self last-pos quad))
           (+! (-> a0-36 y) 51814.4)
           (when (>= (-> a0-36 y) (ocean-get-height a0-36))
-            (if (not gp-2)
+            (when (not gp-2)
                 (set! gp-2 #t)
+                (when (or (not *enable-ingame-cutscenes?*)
+                      (has-camera-type? "cam-stick")
+                      (!= (-> self root-override riders num-riders) 0) ;; as rider spot is only allowed for main jak
+                      (!= (-> (the-as exit-chamber-button (ppointer->process (-> self button))) root-override riders num-riders) 0)
+                    )
+                  (camera-change-to (the-as string 'base) 600 #f)
+                  (load-state-want-vis 'vi2)
+                  (send-event *target* 'dry)
+                  (logclear! (-> *target* state-flags) (state-flags prevent-jump))
+                  )
                 )
             (spawn (-> self part) (-> self last-pos))
             (spawn (-> self part) (-> self last-pos))
@@ -867,8 +916,10 @@
         )
       )
     (kill-and-free-particles (-> self part))
-    (load-state-want-vis 'vi2)
-    (send-event *target* 'dry)
+    (when *enable-ingame-cutscenes?*
+      (load-state-want-vis 'vi2)
+      (send-event *target* 'dry)
+      )
     (let ((v1-143 (handle->process (-> self fcell-handle))))
       (if v1-143
           (restore-collide-with-as (-> (the-as fuel-cell v1-143) root-override))
@@ -880,6 +931,7 @@
       (exit-chamber-method-20 self (-> self wave-scale))
       (suspend)
       )
+    (runs-on-lpc-chamber-stop 2)
     (if (-> self door)
         (send-event (ppointer->process (-> self door)) 'trigger)
         )
@@ -893,7 +945,7 @@
     (none)
     )
   :post (behavior ()
-    (if (-> self move-player?)
+    (if (and *enable-ingame-cutscenes?* (-> self move-player?))
         (transform-post)
         (rider-post)
         )
@@ -935,9 +987,10 @@
   :trans (behavior ()
     (rider-trans)
     (when *target*
-      (let ((f30-0 (vector-vector-xz-distance (target-pos 0) (-> self last-pos))))
+      (let* ((closest-target (get-closest-interactive-target-to-vector (-> self last-pos)))
+        (f30-0 (vector-vector-xz-distance (remote-target-pos 0 closest-target) (-> self last-pos))))
         (when (-> self door)
-          (if (and *target* (>= 114688.0 f30-0))
+          (if (and closest-target (>= 114688.0 f30-0))
               (send-event (ppointer->process (-> self door)) 'trigger)
               (send-event (ppointer->process (-> self door)) 'untrigger)
               )
@@ -978,7 +1031,7 @@
   :post (behavior ()
     (rider-post)
     (exit-chamber-method-23 self #t)
-    (if (and *target* (>= (vector-vector-xz-distance (target-pos 0) (-> self last-pos)) 40960.0))
+    (if (and *target* (>= (vector-vector-xz-distance (remote-target-pos 0 (get-closest-interactive-target-to-vector (-> self last-pos))) (-> self last-pos)) 40960.0))
         (spawn (-> self part) (-> self last-pos))
         )
     (none)
@@ -996,7 +1049,7 @@
     (none)
     )
   :trans (behavior ()
-    (if (not (-> self move-player?))
+    (if (or (not *enable-ingame-cutscenes?*) (not (-> self move-player?)))
         (rider-trans)
         )
     (seek! (-> self wave-scale) 0.0 0.0016666667)
@@ -1004,20 +1057,29 @@
     (none)
     )
   :code (behavior ()
-    (let ((v1-1 (process-spawn
-                  sunkencam
-                  :init pov-camera-init-by-other
-                  (-> self root-override trans)
-                  *sunkencam-sg*
-                  "qbert-show-door-open"
-                  0
-                  #f
-                  '()
-                  :to self
-                  )
-                )
+    (when (not *enable-ingame-cutscenes?*)
+      (let ((gp-0 (-> *display* base-frame-counter)))
+        (until (>= (- (-> *display* base-frame-counter) gp-0) (seconds 1.0))
+          (suspend)
           )
-      (set! (-> (the-as sunkencam (-> v1-1 0)) seq) (the-as uint 1))
+        )
+      )
+    (when *enable-ingame-cutscenes?*
+      (let ((v1-1 (process-spawn
+                    sunkencam
+                    :init pov-camera-init-by-other
+                    (-> self root-override trans)
+                    *sunkencam-sg*
+                    "qbert-show-door-open"
+                    0
+                    #f
+                    '()
+                    :to self
+                    )
+                  )
+            )
+        (set! (-> (the-as sunkencam (-> v1-1 0)) seq) (the-as uint 1))
+        )
       )
     (load-state-want-display-level 'sunken 'display)
     (suspend)
@@ -1027,6 +1089,18 @@
           )
       (ja-no-eval :group! (-> self draw art-group data 7) :num! (seek!) :frame-num 0.0)
       (until (ja-done? 0)
+        (when (and (not *enable-ingame-cutscenes?*)
+          (not (has-camera-type? "cam-stick")) 
+          (not (has-camera-type? "cam-decel")) 
+          (or (!= (-> self root-override riders num-riders) 0) ;; as rider spot is only allowed for main jak
+              (!= (-> (the-as exit-chamber-button (ppointer->process (-> self button))) root-override riders num-riders) 0)
+              )
+            )
+          (logior! (-> *target* state-flags) (state-flags prevent-jump))
+          (send-event *target* 'no-look-around (seconds 12.5))
+          (camera-change-to (the-as string 'cam-stick) 300 #f)
+          (load-state-want-levels 'sunken 'sunkenb)
+          )
         (when (and (not gp-1) (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.25)) (-> self door))
           (set! gp-1 #t)
           (send-event (ppointer->process (-> self door)) 'untrigger)
@@ -1047,7 +1121,9 @@
         (ja :num! (seek!))
         )
       )
-    (load-state-want-levels 'sunken 'sunkenb)
+    (if *enable-ingame-cutscenes?*
+      (load-state-want-levels 'sunken 'sunkenb)
+      )
     (kill-and-free-particles (-> self part))
     (ja-no-eval :group! (-> self draw art-group data 8) :num! (seek!) :frame-num 0.0)
     (until (ja-done? 0)
@@ -1066,6 +1142,16 @@
       (ja :num! (seek!))
       )
     (set! (-> self move-player?) #f)
+    (when (and (not *enable-ingame-cutscenes?*)
+      (has-camera-type? "cam-stick")
+      (or (!= (-> self root-override riders num-riders) 0) ;; as rider spot is only allowed for main jak
+          (!= (-> (the-as exit-chamber-button (ppointer->process (-> self button))) root-override riders num-riders) 0)
+          )
+        )
+      (logclear! (-> *target* state-flags) (state-flags prevent-jump))
+      (camera-change-to (the-as string 'base) 300 #f)
+      )
+    (runs-on-lpc-chamber-stop 1)
     (if (-> self door)
         (send-event (ppointer->process (-> self door)) 'trigger)
         )
@@ -1078,12 +1164,14 @@
     (until (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 3))
       (suspend)
       )
-    (set-continue! *game-info* "sunkenb-start")
+    (if *enable-ingame-cutscenes?*
+      (set-continue! *game-info* "sunkenb-start")
+      )
     (go exit-chamber-idle-in-sunken)
     (none)
     )
   :post (behavior ()
-    (if (-> self move-player?)
+    (if (and *enable-ingame-cutscenes?* (-> self move-player?))
         (transform-post)
         (rider-post)
         )
@@ -1182,7 +1270,7 @@
              (set! s1-3 #f)
              )
             ((= v1-64 2)
-             (if (or (not *target*) (< 114688.0 (vector-vector-xz-distance (target-pos 0) (-> obj last-pos))))
+             (if (or (not *target*) (< 114688.0 (vector-vector-xz-distance (remote-target-pos 0 (get-closest-interactive-target-to-vector (-> obj last-pos))) (-> obj last-pos))))
                  (set! s1-3 #f)
                  )
              )
