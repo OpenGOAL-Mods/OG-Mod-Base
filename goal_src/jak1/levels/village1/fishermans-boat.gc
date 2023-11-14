@@ -9,6 +9,7 @@
 
 (define-extern remote-target-fake-cpad-circle-pressed? (function target basic))
 (define-extern target-in-level-sphere? (function string basic))
+(define-extern has-camera-type? (function string basic))
 
 ;; DECOMP BEGINS
 
@@ -1515,7 +1516,7 @@
   :trans (behavior ()
     (when (not *enable-ingame-cutscenes?*)
       (rider-trans)
-      (when (and (target-in-level-sphere? "misty") (-> *camera* child 0) (name= (-> (the-as camera-slave (-> *camera* child 0)) state name) "cam-stick")) 
+      (when (and (target-in-level-sphere? "misty") (has-camera-type? "cam-stick")) 
         (camera-change-to (the-as string 'base) 300 #f) ;; loading once currently depends on this camera state, take this into account if swapping
         (load-state-want-vis 'mis)
         )
@@ -1530,7 +1531,8 @@
           (suspend)
           )
         )
-      (if (!= (-> self root-overlay riders num-riders) 0) ;; rider spot is only allowed for main jak
+      (when (!= (-> self root-overlay riders num-riders) 0) ;; rider spot is only allowed for main jak
+        (send-event *target* 'no-look-around (seconds 17.5))
         (camera-change-to (the-as string 'cam-stick) 300 #f)
         )
       )
@@ -1629,7 +1631,7 @@
   :trans (behavior ()
     (when (not *enable-ingame-cutscenes?*)
       (rider-trans)
-      (when (and (target-in-level-sphere? "village1") (-> *camera* child 0) (name= (-> (the-as camera-slave (-> *camera* child 0)) state name) "cam-stick")) 
+      (when (and (target-in-level-sphere? "village1") (has-camera-type? "cam-stick")) 
         (camera-change-to (the-as string 'base) 600 #f) ;; loading once currently depends on this camera state, take this into account if swapping
         (load-state-want-vis 'vi1)
         )
@@ -1689,7 +1691,8 @@
           (suspend)
           )
         )
-      (if (!= (-> self root-overlay riders num-riders) 0) ;; rider spot is only allowed for main jak
+      (when (!= (-> self root-overlay riders num-riders) 0) ;; rider spot is only allowed for main jak
+        (send-event *target* 'no-look-around (seconds 15.5))
         (camera-change-to (the-as string 'cam-stick) 600 #f)
         )
       )
