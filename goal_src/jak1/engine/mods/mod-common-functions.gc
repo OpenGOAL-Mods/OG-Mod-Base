@@ -366,8 +366,8 @@
           (('target-racing-smack) (go-process t target-racing-smack (-> t control unknown-float01) #t))
           (('target-racing-grab) (go-process t target-racing-grab))
           (('target-racing-falling) (go-process t target-racing-falling))
+          (('target-racing-clone-anim) (run-target-fuel-cell-pickup t))
           ;; (('target-racing-hit))
-          ;; (('target-racing-clone-anim))
           )
         )
       )
@@ -400,7 +400,7 @@
           (('target-flut-grab) (go-process t target-flut-grab))
           (('target-flut-hit) (go-process t target-flut-hit 'shove (-> t attack-info-rec)))
           (('target-flut-hit-ground) (go-process t target-flut-hit-ground ))
-          ;; (('target-flut-clone-anim))
+          (('target-flut-clone-anim) (run-target-fuel-cell-pickup t))
           )
       )
       )
@@ -458,8 +458,11 @@
           
         ;; sync target state
         (when (and (-> t state name) (!= (-> t state name) (-> p tgt_state)) 
-        (or (!= (-> p tgt_state) 'target-clone-anim) (and (= (-> p inter_type) (interaction-type game-task)) (= (-> p inter_amount) 7))) ;; only allow fuel cells from 'target-clone-anim
-        )
+                (or 
+                  (and (!= (-> p tgt_state) 'target-clone-anim) (!= (-> p tgt_state) 'target-racing-clone-anim) (!= (-> p tgt_state) 'target-flut-clone-anim)) 
+                  (and (= (-> p inter_type) (interaction-type game-task)) (= (-> p inter_amount) 7)) ;; only allow fuel cells from 'target-clone-anim
+                )
+              )
           (target-sync-state (-> p tgt_state) t)
           )
         )
