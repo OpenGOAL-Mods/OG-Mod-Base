@@ -88,6 +88,10 @@
   (logtest? (-> t control root-prim prim-core action) (collide-action flut))
 )
 
+(defun target-on-tube? ((t target))
+  (logtest? (-> t control root-prim prim-core action) (collide-action tube))
+)
+
 (defun target-on-foot? ((t target))
   (not (or 
         (logtest? (-> t control root-prim prim-core action) (collide-action racer)) 
@@ -296,12 +300,6 @@
     (('target-hit-ground) (go-process t target-hit-ground #f))
     (('target-hit-ground-hard) (go-process t target-hit-ground-hard 0.0)) ;;toggle to 1.0 to flash invuln frames)
 
-    ;; tube slide
-    (('target-tube-start) (send-event t 'change-mode 'tube #f))
-    (('target-tube) (go-process t target-tube))
-    (('target-tube-jump) (go-process t target-tube-jump (-> *TARGET-bank* tube-jump-height-min) (-> *TARGET-bank* tube-jump-height-max)))
-    ;;(('target-tube-hit) (go-process t target-hit-ground #f)
-
     ;; poles !TODO: crashes if *target* is in another level so the remote level isn't loaded
     ;; (('target-pole-cycle) (go-process t target-pole-flip-up 28672.0 28672.0 6000.0))
     ;; (('target-pole-flip-forward) (go-process t target-pole-flip-forward (the-as float 14336.0) (the-as float 14336.0) (the-as float 57344.0)))
@@ -350,13 +348,26 @@
     ;; (('target-final-door))
 
 
+    ;; tube slide !DONE!
+    (('target-tube-start 'target-tube 'target-tube-jump 'target-tube-hit)
+
+      (if (not (target-on-tube? t)) (send-event t 'change-mode 'tube #f)) ;; ensure on tube state
+
+      (when (target-on-tube? t) 
+        (case tgt-state
+          (('target-tube) (go-process t target-tube))
+          (('target-tube-jump) (go-process t target-tube-jump (-> *TARGET-bank* tube-jump-height-min) (-> *TARGET-bank* tube-jump-height-max)))
+          ;; (('target-tube-start) (send-event t 'change-mode 'tube #f))
+          ;; (('target-tube-hit) (go-process t target-hit-ground #f)
+          )
+        )
+      )
+
     ;; zoomer !DONE!
     (('target-racing 'target-racing-start 'target-racing-get-on 'target-racing-bounce 'target-racing-clone-anim 
       'target-racing-falling 'target-racing-grab 'target-racing-hit 'target-racing-jump  'target-racing-smack)
-      
-      (if (not (target-on-racer? t))
-        (send-event t 'change-mode 'racing #f)
-        )
+
+      (if (not (target-on-racer? t)) (send-event t 'change-mode 'racing #f)) ;; ensure on racer state
       
       (when (target-on-racer? t) 
         (case tgt-state
@@ -383,9 +394,7 @@
       'target-flut-double-jump 'target-flut-falling 'target-flut-get-on 'target-flut-grab 'target-flut-hit 'target-flut-hit-ground 
       'target-flut-jump 'target-flut-running-attack 'target-flut-stance 'target-flut-start 'target-flut-walk)
       
-      (if (not (target-on-flut? t))
-        (send-event t 'change-mode 'flut #f)
-        )
+      (if (not (target-on-flut? t)) (send-event t 'change-mode 'flut #f)) ;; ensure on flut state
 
       (when (target-on-flut? t) 
         (case tgt-state
