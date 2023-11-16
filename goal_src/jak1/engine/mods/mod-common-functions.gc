@@ -250,7 +250,7 @@
   )
 
 
-(defun target-sync-state ((tgt-state symbol) (t target))
+(defun target-sync-state ((tgt-state symbol) (t target) (inter-name string))
   (case tgt-state
     ;; normal attacks (and relevant jumps) !DONE!
     (('target-running-attack) (go-process t target-running-attack))
@@ -282,7 +282,7 @@
     (('target-edge-grab-jump) (go-process t target-edge-grab-jump (-> *TARGET-bank* edge-grab-jump-height-min) (-> *TARGET-bank* edge-grab-jump-height-max)))
     (('target-jump-forward) (go-process t target-jump-forward (-> *TARGET-bank* edge-grab-jump-height-min) (-> *TARGET-bank* edge-grab-jump-height-max)))
 
-    ;; normal movement
+    ;; normal movement !DONE!
     (('target-stance) (go-process t target-stance))
     (('target-stance-ambient) (go-process t target-stance-ambient))
     (('target-walk) (go-process t target-walk))
@@ -300,14 +300,7 @@
     (('target-hit-ground) (go-process t target-hit-ground #f))
     (('target-hit-ground-hard) (go-process t target-hit-ground-hard 0.0)) ;;toggle to 1.0 to flash invuln frames)
 
-    ;; poles !TODO: crashes if *target* is in another level so the remote level isn't loaded
-    ;; (('target-pole-cycle) (go-process t target-pole-flip-up 28672.0 28672.0 6000.0))
-    ;; (('target-pole-flip-forward) (go-process t target-pole-flip-forward (the-as float 14336.0) (the-as float 14336.0) (the-as float 57344.0)))
-    ;; (('target-pole-flip-forward-jump) (go-process t target-pole-flip-forward-jump (the-as float 14336.0) (the-as float 14336.0)))
-    ;; (('target-pole-flip-up) (go-process t target-pole-flip-up 28672.0 28672.0 6000.0))
-    ;; (('target-pole-flip-up-jump) (go-process t target-pole-flip-up-jump 28672.0 28672.0))
-
-    ;; swiming & water
+    ;; swiming & water !TODO: swiming underwater has incorrect rotation on body
     (('target-swim-stance) (send-event t 'change-mode 'swim) (go-process t target-swim-stance))
     (('target-swim-walk) (send-event t 'change-mode 'swim) (go-process t target-swim-walk))
     (('target-swim-down) (go-process t target-swim-down))
@@ -324,7 +317,7 @@
     (('target-warp-in) (if (and (-> t state name) (!= (-> t state name) 'target-duck-high-jump) (!= (-> t state name) 'target-duck-high-jump-jump))(go-process t target-duck-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'duck)))
 
 
-    ;; other
+    ;; other !DONE!
     (('target-clone-anim) (run-target-fuel-cell-pickup t))
     (('target-fishing) (send-event t 'change-mode 'fishing #f))
     (('target-periscope) (send-event t 'change-mode 'periscope #f))
@@ -334,7 +327,6 @@
     ;; (('target-death) (go-process t target-hit-ground-hard 0.0))
     ;; (('target-look-around) (go-process t target-look-around)) ;; first person enter
     ;; (('target-stance-look-around) (go-process t target-stance-look-around)) ;; first person exit
-    ;; (('target-tube-death))
     ;; (('target-billy-game)) ;; will only put you in first person
     ;; (('target-play-anim))
     ;; (('target-snowball))
@@ -346,6 +338,24 @@
     ;; (('target-demo))
     ;; (('target-startup))
     ;; (('target-final-door))
+
+    ;; poles !DONE!
+    (('target-pole-cycle) 
+      (let* ((swingpole_proc (process-by-ename inter-name))
+            (swingpole (process->handle swingpole_proc))
+          ) 
+        (when (or swingpole_proc (and (-> t state name) (!= (-> t state name) 'target-pole-flip-up-jump)))
+          (if swingpole_proc
+            (go-process t target-pole-cycle swingpole)
+            (go-process t target-pole-flip-up-jump 28672.0 28672.0)
+            )
+          )
+        )
+      )
+    (('target-pole-flip-forward) (if (and (-> t state name) (!= (-> t state name) 'target-pole-flip-up-jump)) (go-process t target-pole-flip-up-jump 28672.0 28672.0)))
+    (('target-pole-flip-forward-jump) (go-process t target-pole-flip-forward-jump (the-as float 14336.0) (the-as float 14336.0)))
+    (('target-pole-flip-up) (if (and (-> t state name) (!= (-> t state name) 'target-pole-flip-up-jump)) (go-process t target-pole-flip-up-jump 28672.0 28672.0)))
+    (('target-pole-flip-up-jump) (go-process t target-pole-flip-up-jump 28672.0 28672.0))
 
 
     ;; tube slide !DONE!
@@ -359,9 +369,11 @@
           (('target-tube-jump) (go-process t target-tube-jump (-> *TARGET-bank* tube-jump-height-min) (-> *TARGET-bank* tube-jump-height-max)))
           ;; (('target-tube-start) (send-event t 'change-mode 'tube #f))
           ;; (('target-tube-hit) (go-process t target-hit-ground #f)
+          ;; (('target-tube-death))
           )
         )
       )
+
 
     ;; zoomer !DONE!
     (('target-racing 'target-racing-start 'target-racing-get-on 'target-racing-bounce 'target-racing-clone-anim 
@@ -383,9 +395,7 @@
         )
       )
     (('target-racing-get-off 'target-racing-get-off-hit-ground 'target-racing-get-off-jump 'target-racing-death)
-      (if (target-on-racer? t)
-          (send-event t 'end-mode)
-        )
+      (if (target-on-racer? t) (send-event t 'end-mode))
       )
 
 
@@ -414,9 +424,7 @@
       )
       )
     (('target-flut-get-off 'target-flut-get-off-hit-ground 'target-flut-get-off-jump 'target-flut-death)
-      (if (target-on-flut? t)
-          (send-event t 'end-mode)
-        )
+      (if (target-on-flut? t) (send-event t 'end-mode))
       )
 
     )
@@ -472,7 +480,7 @@
                   (and (= (-> p inter_type) (interaction-type game-task)) (= (-> p inter_amount) 7)) ;; only allow fuel cells from 'target-clone-anim
                 )
               )
-          (target-sync-state (-> p tgt_state) t)
+          (target-sync-state (-> p tgt_state) t (-> p inter_name))
           )
         )
         (when (!= (-> p inter_type) (interaction-type none))

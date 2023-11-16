@@ -471,6 +471,11 @@
       (none)
       )
 
+    (defun runs-on-swingpole-grab ((pole-name string) (level-name string))
+      (add-level-objective-to-interaction-buffer pole-name (interaction-type swingpole) level-name)
+      (none)
+      )
+
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
       (set! (-> *teamrun-info* on_zoomer?) 0)

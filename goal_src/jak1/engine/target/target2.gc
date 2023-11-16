@@ -8,6 +8,7 @@
 (declare-type first-person-hud process)
 
 (define-extern is-interactive? (function int symbol))
+(define-extern runs-on-swingpole-grab (function string string none))
 (define-extern *enable-remote-target-attacks* symbol)
 (define-extern *enable-remote-target-yellow-eco-blasts* symbol)
 
@@ -930,6 +931,11 @@
         )
     )
   :enter (behavior ((arg0 handle))
+    (let ((pole (handle->process arg0)))
+      (when pole
+        (runs-on-swingpole-grab (the-as string (-> pole name)) (symbol->string (-> *level* level (-> self draw level-index) name)))
+        )
+      )
     (set! (-> self control unknown-handle10) arg0)
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (set! (-> self control unknown-surface00) *pole-mods*)
