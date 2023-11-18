@@ -474,7 +474,6 @@
                     )
                )
       (logclear! (-> self mask) (process-mask actor-pause))
-      (format #t "here ~%")
       (go-virtual pickup #f (process->handle proc))
       )
     (the-as

@@ -369,9 +369,7 @@
 (defun set-fish-stats ((amount int) (type int))
   (let ((fish-game (the-as fisher (process-by-ename "fisher-1"))))
     (when fish-game
-      (format #t "found fisher ~%")
       (let ((amount-diff (- amount (if (= (the-as interaction-type type) (interaction-type fish-caught)) (-> fish-game caught) (-> fish-game missed)))))  
-        (format #t "fisher amount ~d ~%" amount-diff)
         (when (> amount-diff 0)
           (if (= (the-as interaction-type type) (interaction-type fish-missed))
             (send-event fish-game 'fisher-fish-die amount-diff)
@@ -573,7 +571,6 @@
           )
         )
       ((= task (game-task rolling-robbers))
-        (format #t "got a ~%")
         (safe-kill-enemy "robber-2")
         (safe-kill-enemy "robber-3")
         (safe-kill-enemy "robber-4")
@@ -800,7 +797,6 @@
       
         )
       ((= task (game-task rolling-robbers))
-        (format #t "got b ~%")
         (safe-kill-fuel-cell-child "robber-2")
         (safe-kill-fuel-cell-child "robber-3")
         (safe-kill-fuel-cell-child "robber-4")
