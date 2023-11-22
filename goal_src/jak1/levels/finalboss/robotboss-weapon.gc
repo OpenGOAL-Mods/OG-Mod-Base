@@ -283,6 +283,13 @@
         (send-event (ppointer->process (-> self parent)) 'bomb-done)
         )
       )
+    (when (not *enable-ingame-cutscenes?*)
+      (let ((vent (process-by-ename "ecovent-274")))
+        (if vent
+          (go-process vent vent-blocked)
+          )
+        )
+      )
     (deactivate self)
     (none)
     )

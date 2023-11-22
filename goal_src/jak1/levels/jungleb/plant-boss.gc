@@ -7,6 +7,8 @@
 
 (declare-type plant-boss-leaf process-drawable)
 
+(define-extern add-boss-phase-to-interaction-buffer (function string float string none))
+
 ;; DECOMP BEGINS
 
 
@@ -1257,6 +1259,7 @@
            (-> event param 0)
            (static-attack-info ((shove-up (meters 2)) (shove-back (meters 6))))
            )
+         (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) (- (-> self health) 1.0) (symbol->string (-> *level* level (-> self draw level-index) name)))
          (go plant-boss-hit (the-as symbol (-> event param 1)))
          )
        )

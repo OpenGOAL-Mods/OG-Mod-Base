@@ -32,7 +32,7 @@
 (define *has-none-position-update?* #f)
 
 ;; game settings
-(define *enable-ingame-cutscenes?* #f)
+(define *enable-ingame-cutscenes?* #f) ;; should always be #f in multiplayer, some multiplayer stuff that isn't entirely cutscene related uses this as well !TODO: fix that maybe (see robotboss/sage-finalboss/boat? as example)
 
 ;; game fixes
 (define *target-on-active-gondola?* #f)
@@ -51,6 +51,9 @@
 ;; multiplayer save and load
 (define *enable-multiplayer-save-and-load* #t)
 (define *player-can-load* #f)
+
+;; multiplayer fixes
+(define *in-finalboss-cutscene?* #f)
 
 ;; pickup toggles for remote
 (define *enable-remote-target-buzzer-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that cell fly can't drop two cells on pickup
@@ -313,8 +316,8 @@
     (('target-duck-walk) (go-process t target-duck-walk))
 
     ;; warp gates !DONE!
-    (('target-warp-out) (if (and (-> t state name) (!= (-> t state name) 'target-duck-high-jump) (!= (-> t state name) 'target-duck-high-jump-jump))(go-process t target-duck-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'duck)))
-    (('target-warp-in) (if (and (-> t state name) (!= (-> t state name) 'target-duck-high-jump) (!= (-> t state name) 'target-duck-high-jump-jump))(go-process t target-duck-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'duck)))
+    (('target-warp-out) (if (and (-> t state name) (!= (-> t state name) 'target-duck-high-jump) (!= (-> t state name) 'target-duck-high-jump-jump)) (go-process t target-duck-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'duck)))
+    (('target-warp-in) (if (and (-> t state name) (!= (-> t state name) 'target-duck-high-jump) (!= (-> t state name) 'target-duck-high-jump-jump)) (go-process t target-duck-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'duck)))
 
 
     ;; other !DONE!

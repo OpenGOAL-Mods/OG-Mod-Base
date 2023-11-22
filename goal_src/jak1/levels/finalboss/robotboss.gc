@@ -5,6 +5,9 @@
 ;; name in dgo: robotboss
 ;; dgos: FIN, L1
 
+(define-extern add-boss-phase-to-interaction-buffer (function string float string none))
+(define-extern *in-finalboss-cutscene?* symbol)
+
 ;; DECOMP BEGINS
 
 
@@ -459,6 +462,7 @@
     (none)
     )
   :exit (behavior ()
+    (set! *in-finalboss-cutscene?* #t)
     (set! (-> self des-cam-entity) #f)
     (let ((a1-0 (new 'stack-no-clear 'event-message-block)))
       (set! (-> a1-0 from) self)
@@ -788,9 +792,11 @@
       )
     (let ((gp-1 (ppointer->handle (process-spawn finalbosscam (-> self entity) :to self))))
       (send-event (handle->process gp-1) 'play-anim)
-      (suspend)
-      (while (movie?)
+      (when *enable-ingame-cutscenes?*
         (suspend)
+        (while (movie?)
+          (suspend)
+          )
         )
       (#when PC_PORT
         (-! (-> self state-time) (seconds 0.95))
@@ -804,7 +810,10 @@
       )
     (case (get-task-status (game-task finalboss-movies))
       (((task-status unknown))
-       (go robotboss-daxter-sacrifice-movie)
+       (if *enable-ingame-cutscenes?*
+        (go robotboss-daxter-sacrifice-movie)
+        (go robotboss-yellow-dark-bomb-wait)
+        )
        )
       (else
         (go robotboss-yellow-dark-bomb-wait)
@@ -1156,6 +1165,7 @@
           (suspend)
           (ja :num! (seek!))
           )
+        (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) 0.0 (symbol->string (-> *level* level (-> self draw level-index) name)))
         (go robotboss-yellow-dark-bomb)
         )
       )
@@ -1243,9 +1253,10 @@
     )
   :trans (behavior ()
     (robotboss-always-trans robotboss-yellow)
-    (if (and (< (-> self children-spawned) 0)
+    (when (and (< (-> self children-spawned) 0)
              (or (not *target*) (!= (-> *target* control unknown-surface00 name) 'launch-jump))
              )
+        (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) 1.0 (symbol->string (-> *level* level (-> self draw level-index) name)))
         (go robotboss-yellow)
         )
     (robotboss-position)
@@ -1742,6 +1753,7 @@
           (suspend)
           (ja :num! (seek!))
           )
+        (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) 2.0 (symbol->string (-> *level* level (-> self draw level-index) name)))
         (go robotboss-red-dark-bomb)
         )
       )
@@ -1813,9 +1825,10 @@
     )
   :trans (behavior ()
     (robotboss-always-trans robotboss-red)
-    (if (and (< (-> self children-spawned) 0)
+    (when (and (< (-> self children-spawned) 0)
              (or (not *target*) (!= (-> *target* control unknown-surface00 name) 'launch-jump))
              )
+        (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) 3.0 (symbol->string (-> *level* level (-> self draw level-index) name)))
         (go robotboss-red)
         )
     (robotboss-position)
@@ -2140,6 +2153,7 @@
       (cond
         ((ja-group? robotboss-green-roar-ja)
          (go robotboss-green-dark-bomb)
+         (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) 4.0 (symbol->string (-> *level* level (-> self draw level-index) name)))
          )
         ((not (ja-group? robotboss-idle-hover-no-blue-ja))
          (ja-channel-push! 1 (seconds 0.2))
@@ -2221,9 +2235,10 @@
     )
   :trans (behavior ()
     (robotboss-always-trans robotboss-green)
-    (if (and (< (-> self children-spawned) 0)
+    (when (and (< (-> self children-spawned) 0)
              (or (not *target*) (!= (-> *target* control unknown-surface00 name) 'launch-jump))
              )
+        (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) 5.0 (symbol->string (-> *level* level (-> self draw level-index) name)))
         (go robotboss-green)
         )
     (robotboss-position)
@@ -2557,7 +2572,10 @@
           )
     (set! (-> self use-interesting) #f)
     (send-event *camera* 'point-of-interest #f)
-    (robotboss-blue-done)
+    (if *enable-ingame-cutscenes?*
+      (robotboss-blue-done)
+      (robotboss-yellow-eco-off)
+      )
     (if (nonzero? (-> self looping-sound 0))
         (stop! (-> self looping-sound 0))
         )
@@ -2688,6 +2706,7 @@
           (suspend)
           (ja :num! (seek!))
           )
+        (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) 6.0 (symbol->string (-> *level* level (-> self draw level-index) name)))
         (go robotboss-blue-dark-bomb)
         )
       )

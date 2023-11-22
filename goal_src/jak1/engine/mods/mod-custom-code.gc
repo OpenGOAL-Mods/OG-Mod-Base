@@ -260,6 +260,23 @@
       (none)
       )
 
+    (defun add-boss-phase-to-interaction-buffer ((name string) (phase float) (level string))
+      (dotimes (idx (-> *interaction-update-buffer* length))
+        (when (= (-> *interaction-update-buffer* idx has_update?) #f)
+
+          (set! (-> *interaction-update-buffer* idx type) (interaction-type boss-phase))
+          (set! (-> *interaction-update-buffer* idx amount) phase)
+          (set! (-> *interaction-update-buffer* idx ename) name)
+          (set! (-> *interaction-update-buffer* idx level) level)
+          (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
+            
+          (set! (-> *interaction-update-buffer* idx has_update?) #t)
+          (return #t)
+          )
+        )
+      (none)
+      )
+
     (defun check-set-interaction-from-buffer ()
       (dotimes (idx (-> *interaction-update-buffer* length))
         (when (= (-> *interaction-update-buffer* idx has_update?) #t)
@@ -301,11 +318,14 @@
         (check-set-interaction-from-buffer)
 
         ;; on player movement
-        (when (or (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
-        (!= (-> *self-player-info* trans_y) (-> *target* root trans y))
-        (!= (-> *self-player-info* trans_z) (-> *target* root trans z))
-        (!= (-> *self-player-info* tgt_state) (-> *target* state name))
-        (= *has-none-position-update?* #t))
+        (when (and (not *in-finalboss-cutscene?*)
+          (or *has-none-position-update?*
+          (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
+          (!= (-> *self-player-info* trans_y) (-> *target* root trans y))
+          (!= (-> *self-player-info* trans_z) (-> *target* root trans z))
+          (!= (-> *self-player-info* tgt_state) (-> *target* state name))
+        ))
+
             ;; update this player's position
             (update-self-multiplayer-info)
             ;; (update-debug-self-multiplayer-info)
@@ -315,7 +335,7 @@
 
 
             ;; clean none position updates
-            (when (= *has-none-position-update?* #t)
+            (when *has-none-position-update?*
               (set! *has-none-position-update?* #f)
 
               ;; target pickup data

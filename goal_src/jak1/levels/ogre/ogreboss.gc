@@ -8,6 +8,9 @@
 (declare-type ogreboss process-drawable)
 (define-extern *ogreboss* ogreboss)
 
+(define-extern get-orgre-boss-phase (function int float float))
+(define-extern add-boss-phase-to-interaction-buffer (function string float string none))
+
 ;; DECOMP BEGINS
 
 
@@ -1034,7 +1037,14 @@
   )
 
 (defbehavior ogreboss-player-inside-range? ogreboss ((arg0 float))
-  (< (vector-vector-distance (-> self far-pos) (target-pos 0)) arg0)
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (let ((target (get-interactive-target tgt-idx)))
+      (if (< (vector-vector-distance (-> self far-pos) (remote-target-pos 0 target)) arg0)
+        (return #t)
+        )
+      )
+    )
+    #f
   )
 
 (defun ogreboss-set-stage1-camera ()
@@ -1489,6 +1499,7 @@
     (none)
     )
   :code (behavior ()
+    (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) (get-orgre-boss-phase 1 (-> self level)) (symbol->string (-> *level* level (-> self draw level-index) name)))
     (logior! (-> self mask) (process-mask enemy))
     (ogreboss-set-stage1-camera)
     (ogreboss-move-near (seconds 3) (the-as float 1.0))
@@ -1698,6 +1709,7 @@
     (none)
     )
   :code (behavior ()
+    (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) (get-orgre-boss-phase 2 (-> self level)) (symbol->string (-> *level* level (-> self draw level-index) name)))
     (ogreboss-set-stage2-camera)
     (ogreboss-move-far (seconds 0.1) (the-as float 2.0))
     (let ((f30-0 (* 0.75 (-> self difficulty))))
@@ -1902,6 +1914,7 @@
 
 (defstate ogreboss-stage3-hit (ogreboss)
   :code (behavior ()
+    (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) (get-orgre-boss-phase 3 (-> self level)) (symbol->string (-> *level* level (-> self draw level-index) name)))
     (+! (-> self level) 1.0)
     (if (< 2.0 (-> self level))
         (go ogreboss-die)
