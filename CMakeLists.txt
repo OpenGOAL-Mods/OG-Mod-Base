@@ -31,12 +31,6 @@ if (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json" )
         "${PROJECT_SOURCE_DIR}/build/compile_commands.json")
 endif()
 
-# For clangd
-if (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json" )
-    configure_file(
-        "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json"
-        "${PROJECT_SOURCE_DIR}/build/compile_commands.json")
-endif()
 
 # Setup compiler flags
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -202,6 +196,9 @@ if(WIN32)
 elseif(APPLE)
     set(CURL_USE_SECTRANSP ON) # native macOS SSL support
 else()
+    if(STATICALLY_LINK)
+        set(OPENSSL_USE_STATIC_LIBS TRUE)
+    endif()
     set(CURL_USE_OPENSSL ON) # not native, but seems to be the best choice for linux
 endif()
 include_directories(third-party/curl/include)

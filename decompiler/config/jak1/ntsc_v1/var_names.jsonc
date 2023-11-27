@@ -1,8 +1,6 @@
 {
   "identity": {
-    "args": [
-      "this"
-    ]
+    "args": ["this"]
   },
   "1/": {
     "args": [
@@ -98,20 +96,14 @@
     ]
   },
   "basic-type?": {
-    "args": [
-      "this",
-      "parent-type"
-    ],
+    "args": ["this", "parent-type"],
     "vars": {
       "v1-0": "obj-type",
       "a0-1": "end-type"
     }
   },
   "type-type?": {
-    "args": [
-      "child-type",
-      "parent-type"
-    ],
+    "args": ["child-type", "parent-type"],
     "vars": {
       "v1-0": "end-type"
     }
@@ -128,10 +120,7 @@
     }
   },
   "ref": {
-    "args": [
-      "lst",
-      "index"
-    ],
+    "args": ["lst", "index"],
     "vars": {
       "v1-0": "count"
     }
@@ -143,98 +132,66 @@
     }
   },
   "last": {
-    "args": [
-      "lst"
-    ],
+    "args": ["lst"],
     "vars": {
       "v0-0": "iter"
     }
   },
   "member": {
-    "args": [
-      "this",
-      "lst"
-    ],
+    "args": ["this", "lst"],
     "vars": {
       "v1-0": "iter"
     }
   },
   "nmember": {
-    "args": [
-      "this",
-      "lst"
-    ]
+    "args": ["this", "lst"]
   },
   "assoc": {
-    "args": [
-      "item",
-      "alist"
-    ],
+    "args": ["item", "alist"],
     "vars": {
       "v1-0": "iter"
     }
   },
   "assoce": {
-    "args": [
-      "item",
-      "alist"
-    ],
+    "args": ["item", "alist"],
     "vars": {
       "v1-0": "iter"
     }
   },
   "nassoc": {
-    "args": [
-      "item-name",
-      "alist"
-    ],
+    "args": ["item-name", "alist"],
     "vars": {
       "a1-1": "key"
     }
   },
   "nassoce": {
-    "args": [
-      "item-name",
-      "alist"
-    ],
+    "args": ["item-name", "alist"],
     "vars": {
       "s4-0": "key"
     }
   },
   "append!": {
-    "args": [
-      "front",
-      "back"
-    ],
+    "args": ["front", "back"],
     "vars": {
       "v1-1": "iter"
     }
   },
   "delete!": {
-    "args": [
-      "item",
-      "lst"
-    ],
+    "args": ["item", "lst"],
     "vars": {
       "a2-0": "iter",
       "v1-1": "iter-prev"
     }
   },
   "delete-car!": {
-    "args": [
-      "item",
-      "lst"
-    ],
+    "args": ["item", "lst"],
     "vars": {
       "a2-0": "iter",
       "v1-2": "iter-prev"
     }
   },
   "insert-cons!": {
-    "args": [
-      "kv",
-      "alist"
-    ],
+    "args": ["kv", "alist"],
     "vars": {
       "a3-0": "updated-list"
     }
@@ -253,22 +210,13 @@
     }
   },
   "(method 0 inline-array-class)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "size"
-    ],
+    "args": ["allocation", "type-to-make", "size"],
     "vars": {
       "v0-0": "this"
     }
   },
   "(method 0 array)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "content-type",
-      "len"
-    ],
+    "args": ["allocation", "type-to-make", "content-type", "len"],
     "vars": {
       "v0-1": "this"
     }
@@ -284,22 +232,14 @@
     }
   },
   "mem-copy!": {
-    "args": [
-      "dst",
-      "src",
-      "size"
-    ],
+    "args": ["dst", "src", "size"],
     "vars": {
       "v0-0": "result",
       "v1-0": "i"
     }
   },
   "qmem-copy<-!": {
-    "args": [
-      "dst",
-      "src",
-      "size"
-    ],
+    "args": ["dst", "src", "size"],
     "vars": {
       "v0-0": "result",
       "v1-1": "qwc",
@@ -321,22 +261,14 @@
     }
   },
   "mem-set32!": {
-    "args": [
-      "dst",
-      "size",
-      "value"
-    ],
+    "args": ["dst", "size", "value"],
     "vars": {
       "v0-0": "result",
       "v1-0": "i"
     }
   },
   "mem-or!": {
-    "args": [
-      "dst",
-      "src",
-      "size"
-    ],
+    "args": ["dst", "src", "size"],
     "vars": {
       "v0-0": "result",
       "v1-0": "i"
@@ -348,49 +280,31 @@
     ]
   },
   "mem-print": {
-    "args": [
-      "data",
-      "word-count"
-    ],
+    "args": ["data", "word-count"],
     "vars": {
       "s4-0": "current-qword"
     }
   },
   "print-tree-bitmask": {
-    "args": [
-      "bits",
-      "count"
-    ],
+    "args": ["bits", "count"],
     "vars": {
       "s4-0": "i"
     }
   },
   "valid?": {
-    "args": [
-      "this",
-      "expected-type",
-      "name",
-      "allow-false",
-      "print-dest"
-    ],
+    "args": ["this", "expected-type", "name", "allow-false", "print-dest"],
     "vars": {
       "v1-1": "in-goal-mem"
     }
   },
   "(method 0 cpu-thread)": {
     "vars": {
-      "v0-0": [
-        "this",
-        "cpu-thread"
-      ]
+      "v0-0": ["this", "cpu-thread"]
     }
   },
   "inspect-process-heap": {
     "vars": {
-      "s5-0": [
-        "this",
-        "pointer"
-      ]
+      "s5-0": ["this", "pointer"]
     }
   },
   "(method 23 dead-pool-heap)": {
@@ -401,18 +315,11 @@
   },
   "(method 0 dead-pool-heap)": {
     "vars": {
-      "v0-0": [
-        "this",
-        "dead-pool-heap"
-      ]
+      "v0-0": ["this", "dead-pool-heap"]
     }
   },
   "seek": {
-    "args": [
-      "x",
-      "target",
-      "diff"
-    ],
+    "args": ["x", "target", "diff"],
     "vars": {
       "f2-0": "err"
     }
@@ -425,13 +332,7 @@
     ]
   },
   "lerp-scale": {
-    "args": [
-      "min-out",
-      "max-out",
-      "in",
-      "min-in",
-      "max-in"
-    ],
+    "args": ["min-out", "max-out", "in", "min-in", "max-in"],
     "vars": {
       "f0-1": "scale"
     }
@@ -444,20 +345,13 @@
     ]
   },
   "rand-vu-int-range": {
-    "args": [
-      "first",
-      "second"
-    ],
+    "args": ["first", "second"],
     "vars": {
       "f0-4": "float-in-range"
     }
   },
   "(method 0 bit-array)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "length"
-    ],
+    "args": ["allocation", "type-to-make", "length"],
     "vars": {
       "v0-0": "this"
     }
@@ -480,49 +374,33 @@
     ]
   },
   "string=": {
-    "args": [
-      "str-a",
-      "str-b"
-    ],
+    "args": ["str-a", "str-b"],
     "vars": {
       "a2-0": "a-ptr",
       "v1-0": "b-ptr"
     }
   },
   "string-charp=": {
-    "args": [
-      "str",
-      "charp"
-    ],
+    "args": ["str", "charp"],
     "vars": {
       "v1-0": "str-ptr"
     }
   },
   "copyn-string<-charp": {
-    "args": [
-      "str",
-      "charp",
-      "len"
-    ],
+    "args": ["str", "charp", "len"],
     "vars": {
       "a3-0": "i",
       "v1-0": "str-ptr"
     }
   },
   "string<-charp": {
-    "args": [
-      "str",
-      "charp"
-    ],
+    "args": ["str", "charp"],
     "vars": {
       "v1-0": "str-ptr"
     }
   },
   "charp<-string": {
-    "args": [
-      "charp",
-      "str"
-    ],
+    "args": ["charp", "str"],
     "vars": {
       "v1-0": "str-ptr"
     }
@@ -534,127 +412,87 @@
     ]
   },
   "cat-string<-string": {
-    "args": [
-      "a",
-      "b"
-    ],
+    "args": ["a", "b"],
     "vars": {
       "v1-0": "a-ptr",
       "a1-1": "b-ptr"
     }
   },
   "catn-string<-charp": {
-    "args": [
-      "a",
-      "b",
-      "len"
-    ],
+    "args": ["a", "b", "len"],
     "vars": {
       "v1-0": "a-ptr",
       "a3-2": "i"
     }
   },
   "cat-string<-string_to_charp": {
-    "args": [
-      "a",
-      "b",
-      "end-ptr"
-    ],
+    "args": ["a", "b", "end-ptr"],
     "vars": {
       "v1-0": "b-ptr",
       "v0-0": "a-ptr"
     }
   },
   "append-character-to-string": {
-    "args": [
-      "str",
-      "char"
-    ],
+    "args": ["str", "char"],
     "vars": {
       "v1-0": "str-ptr"
     }
   },
   "charp-basename": {
-    "args": [
-      "charp"
-    ],
+    "args": ["charp"],
     "vars": {
       "v1-0": "ptr"
     }
   },
   "string<?": {
-    "args": [
-      "a",
-      "b"
-    ],
+    "args": ["a", "b"],
     "vars": {
       "s4-1": "len",
       "v1-4": "i"
     }
   },
   "string>?": {
-    "args": [
-      "a",
-      "b"
-    ],
+    "args": ["a", "b"],
     "vars": {
       "s4-1": "len",
       "v1-4": "i"
     }
   },
   "string<=?": {
-    "args": [
-      "a",
-      "b"
-    ],
+    "args": ["a", "b"],
     "vars": {
       "s4-1": "len",
       "v1-4": "i"
     }
   },
   "string>=?": {
-    "args": [
-      "a",
-      "b"
-    ],
+    "args": ["a", "b"],
     "vars": {
       "s4-1": "len",
       "v1-4": "i"
     }
   },
   "string-cat-to-last-char": {
-    "args": [
-      "base-str",
-      "append-str",
-      "char"
-    ],
+    "args": ["base-str", "append-str", "char"],
     "vars": {
       "s4-0": "end-of-append",
       "v1-0": "location-of-char"
     }
   },
   "string-suck-up!": {
-    "args": [
-      "str",
-      "location"
-    ],
+    "args": ["str", "location"],
     "vars": {
       "v1-2": "str-ptr"
     }
   },
   "string-strip-trailing-whitespace!": {
-    "args": [
-      "str"
-    ],
+    "args": ["str"],
     "vars": {
       "v1-6": "ptr"
     }
   },
   "string-get-arg!!": {
-    "args": [
-      "a-str",
-      "arg"
-    ],
+    "args": ["a-str", "arg"],
     "vars": {
       "s4-0": "arg-word-start",
       "s4-1": "arg-end",
@@ -697,38 +535,26 @@
     }
   },
   "previous-brother": {
-    "args": [
-      "proc"
-    ],
+    "args": ["proc"],
     "vars": {
       "v1-0": "parent",
       "v1-2": "child"
     }
   },
   "matrix-identity": {
-    "args": [
-      "mat"
-    ],
+    "args": ["mat"],
     "vars": {
       "f0-0": "one"
     }
   },
   "matrix+!": {
-    "args": [
-      "dst",
-      "src1",
-      "src2"
-    ],
+    "args": ["dst", "src1", "src2"],
     "vars": {
       "v1-0": "i"
     }
   },
   "matrix-!": {
-    "args": [
-      "dst",
-      "src1",
-      "src2"
-    ],
+    "args": ["dst", "src1", "src2"],
     "vars": {
       "v1-0": "i"
     }
@@ -741,11 +567,7 @@
     ]
   },
   "matrixp*!": {
-    "args": [
-      "dst",
-      "src1",
-      "src2"
-    ],
+    "args": ["dst", "src1", "src2"],
     "vars": {
       "s5-0": "temp-mat"
     }
@@ -765,21 +587,13 @@
     ]
   },
   "vector3s-matrix*!": {
-    "args": [
-      "dst",
-      "vec",
-      "mat"
-    ],
+    "args": ["dst", "vec", "mat"],
     "vars": {
       "s5-0": "temp-vec3"
     }
   },
   "vector3s-rotate*!": {
-    "args": [
-      "dst",
-      "vec",
-      "mat"
-    ],
+    "args": ["dst", "vec", "mat"],
     "vars": {
       "s5-0": "temp-vec3"
     }
@@ -842,80 +656,56 @@
     ]
   },
   "matrix-rotate-x!": {
-    "args": [
-      "dst",
-      "rot-deg"
-    ],
+    "args": ["dst", "rot-deg"],
     "vars": {
       "f30-0": "rot-sin",
       "f0-0": "rot-cos"
     }
   },
   "matrix-rotate-y!": {
-    "args": [
-      "dst",
-      "rot-deg"
-    ],
+    "args": ["dst", "rot-deg"],
     "vars": {
       "f30-0": "rot-sin",
       "f0-0": "rot-cos"
     }
   },
   "matrix-rotate-z!": {
-    "args": [
-      "dst",
-      "rot-deg"
-    ],
+    "args": ["dst", "rot-deg"],
     "vars": {
       "f30-0": "rot-sin",
       "f0-0": "rot-cos"
     }
   },
   "matrix-rotate-zyx!": {
-    "args": [
-      "dst",
-      "rot-xyz-deg"
-    ],
+    "args": ["dst", "rot-xyz-deg"],
     "vars": {
       "gp-0": "temp-mat",
       "s5-0": "rot-mat"
     }
   },
   "matrix-rotate-xyz!": {
-    "args": [
-      "dst",
-      "rot-xyz-deg"
-    ],
+    "args": ["dst", "rot-xyz-deg"],
     "vars": {
       "gp-0": "temp-mat",
       "s5-0": "rot-mat"
     }
   },
   "matrix-rotate-zxy!": {
-    "args": [
-      "dst",
-      "rot-xyz-deg"
-    ],
+    "args": ["dst", "rot-xyz-deg"],
     "vars": {
       "gp-0": "temp-mat",
       "s5-0": "rot-mat"
     }
   },
   "matrix-rotate-yxz!": {
-    "args": [
-      "dst",
-      "rot-xyz-deg"
-    ],
+    "args": ["dst", "rot-xyz-deg"],
     "vars": {
       "gp-0": "temp-mat",
       "s5-0": "rot-mat"
     }
   },
   "matrix-rotate-yzx!": {
-    "args": [
-      "dst",
-      "rot-xyz-deg"
-    ],
+    "args": ["dst", "rot-xyz-deg"],
     "vars": {
       "gp-0": "temp-mat",
       "s5-0": "rot-mat"
@@ -996,9 +786,7 @@
     ]
   },
   "matrix-y-angle": {
-    "args": [
-      "mat"
-    ],
+    "args": ["mat"],
     "vars": {
       "v1-0": "z-row"
     }
@@ -1093,12 +881,7 @@
     }
   },
   "deg-seek-smooth": {
-    "args": [
-      "in",
-      "target",
-      "max-diff",
-      "amount"
-    ],
+    "args": ["in", "target", "max-diff", "amount"],
     "vars": {
       "f0-1": "step"
     }
@@ -1220,45 +1003,26 @@
     }
   },
   "dma-buffer-add-buckets": {
-    "args": [
-      "dma-buf",
-      "count"
-    ],
+    "args": ["dma-buf", "count"],
     "vars": {
       "a2-0": "i",
-      "v1-0": [
-        "current-bucket",
-        "dma-bucket"
-      ]
+      "v1-0": ["current-bucket", "dma-bucket"]
     }
   },
   "dma-buffer-patch-buckets": {
-    "args": [
-      "bucket",
-      "count"
-    ],
+    "args": ["bucket", "count"],
     "vars": {
       "v1-1": "i"
     }
   },
   "dma-bucket-insert-tag": {
-    "args": [
-      "base",
-      "idx",
-      "tag-start",
-      "tag-end"
-    ],
+    "args": ["base", "idx", "tag-start", "tag-end"],
     "vars": {
       "v1-1": "bucket"
     }
   },
   "disasm-vif-details": {
-    "args": [
-      "stream",
-      "data",
-      "kind",
-      "count"
-    ],
+    "args": ["stream", "data", "kind", "count"],
     "vars": {
       "s4-0": "count2",
       "s3-0": "data-ptr",
@@ -1319,11 +1083,7 @@
     ]
   },
   "(method 0 cpad-info)": {
-    "args": [
-      "alloction",
-      "type-to-make",
-      "idx"
-    ],
+    "args": ["alloction", "type-to-make", "idx"],
     "vars": {
       "s5-0": "this"
     }
@@ -1393,81 +1153,43 @@
     }
   },
   "add-reg-gif-packet": {
-    "args": [
-      "packet",
-      "reg-idx",
-      "reg-val"
-    ],
+    "args": ["packet", "reg-idx", "reg-val"],
     "vars": {
       "v1-0": "tag"
     }
   },
   "(method 9 font-context)": {
-    "args": [
-      "this",
-      "mat"
-    ]
+    "args": ["this", "mat"]
   },
   "(method 10 font-context)": {
-    "args": [
-      "this",
-      "x",
-      "y"
-    ]
+    "args": ["this", "x", "y"]
   },
   "(method 11 font-context)": {
-    "args": [
-      "this",
-      "z"
-    ]
+    "args": ["this", "z"]
   },
   "(method 12 font-context)": {
-    "args": [
-      "this",
-      "w"
-    ]
+    "args": ["this", "w"]
   },
   "(method 13 font-context)": {
-    "args": [
-      "this",
-      "width"
-    ]
+    "args": ["this", "width"]
   },
   "(method 14 font-context)": {
-    "args": [
-      "this",
-      "height"
-    ]
+    "args": ["this", "height"]
   },
   "(method 15 font-context)": {
-    "args": [
-      "this",
-      "proj"
-    ]
+    "args": ["this", "proj"]
   },
   "(method 16 font-context)": {
-    "args": [
-      "this",
-      "color"
-    ]
+    "args": ["this", "color"]
   },
   "(method 17 font-context)": {
-    "args": [
-      "this",
-      "flags"
-    ]
+    "args": ["this", "flags"]
   },
   "(method 18 font-context)": {
-    "args": [
-      "this",
-      "start-line"
-    ]
+    "args": ["this", "start-line"]
   },
   "(method 19 font-context)": {
-    "args": [
-      "this",
-      "scale"
-    ]
+    "args": ["this", "scale"]
   },
   "(method 0 font-context)": {
     "args": [
@@ -1513,15 +1235,7 @@
     }
   },
   "(method 0 display)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "psm",
-      "w",
-      "h",
-      "ztest",
-      "zpsm"
-    ],
+    "args": ["allocation", "type-to-make", "psm", "w", "h", "ztest", "zpsm"],
     "vars": {
       "gp-0": "this"
     }
@@ -1581,13 +1295,7 @@
     }
   },
   "seek-with-smooth": {
-    "args": [
-      "value",
-      "target",
-      "max-step",
-      "alpha",
-      "deadband"
-    ],
+    "args": ["value", "target", "max-step", "alpha", "deadband"],
     "vars": {
       "f0-1": "diff",
       "f0-2": "step",
@@ -1683,44 +1391,26 @@
     ]
   },
   "file-info-correct-version?": {
-    "args": [
-      "info",
-      "kind",
-      "version-override"
-    ],
+    "args": ["info", "kind", "version-override"],
     "vars": {
       "s5-0": "expected-version",
       "s4-0": "kind-name"
     }
   },
   "(method 0 load-dir)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "length",
-      "unk"
-    ],
+    "args": ["allocation", "type-to-make", "length", "unk"],
     "vars": {
       "s4-0": "this"
     }
   },
   "(method 0 load-dir-art-group)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "length",
-      "unk"
-    ],
+    "args": ["allocation", "type-to-make", "length", "unk"],
     "vars": {
       "v0-0": "this"
     }
   },
   "(method 0 external-art-buffer)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "idx"
-    ],
+    "args": ["allocation", "type-to-make", "idx"],
     "vars": {
       "v0-0": "this"
     }
@@ -1733,10 +1423,7 @@
     }
   },
   "(method 9 display)": {
-    "args": [
-      "this",
-      "slowdown"
-    ],
+    "args": ["this", "slowdown"],
     "vars": {
       "gp-0": "this",
       "s5-0": "ratio"
@@ -1792,21 +1479,13 @@
     ]
   },
   "(method 11 profile-bar)": {
-    "args": [
-      "this",
-      "name",
-      "color"
-    ],
+    "args": ["this", "name", "color"],
     "vars": {
       "s5-0": "new-frame"
     }
   },
   "(method 12 profile-bar)": {
-    "args": [
-      "this",
-      "name",
-      "color"
-    ],
+    "args": ["this", "name", "color"],
     "vars": {
       "v0-0": "new-frame"
     }
@@ -1922,65 +1601,34 @@
     }
   },
   "(method 15 texture-pool)": {
-    "args": [
-      "this",
-      "word-count"
-    ]
+    "args": ["this", "word-count"]
   },
   "(method 22 texture-pool)": {
-    "args": [
-      "this",
-      "tpage-id"
-    ]
+    "args": ["this", "tpage-id"]
   },
   "(method 10 texture-page)": {
-    "args": [
-      "this",
-      "segment-count",
-      "additional-size"
-    ]
+    "args": ["this", "segment-count", "additional-size"]
   },
   "(method 16 texture-pool)": {
-    "args": [
-      "this",
-      "segment",
-      "size"
-    ]
+    "args": ["this", "segment", "size"]
   },
   "(method 9 texture-page)": {
-    "args": [
-      "this",
-      "seg"
-    ]
+    "args": ["this", "seg"]
   },
   "texture-page-default-allocate": {
-    "args": [
-      "pool",
-      "page",
-      "seg",
-      "tpage-id"
-    ],
+    "args": ["pool", "page", "seg", "tpage-id"],
     "vars": {
       "s3-0": "seg-id"
     }
   },
   "texture-page-common-allocate": {
-    "args": [
-      "pool",
-      "page",
-      "seg",
-      "tpage-id"
-    ],
+    "args": ["pool", "page", "seg", "tpage-id"],
     "vars": {
       "s4-0": "seg-id"
     }
   },
   "(method 12 texture-page)": {
-    "args": [
-      "this",
-      "new-dest",
-      "seg-id"
-    ],
+    "args": ["this", "new-dest", "seg-id"],
     "vars": {
       "a3-4": "dst-block",
       "t0-1": "tex-id",
@@ -1990,12 +1638,7 @@
     }
   },
   "texture-page-common-boot-allocate": {
-    "args": [
-      "pool",
-      "page",
-      "heap",
-      "tpage-id"
-    ],
+    "args": ["pool", "page", "heap", "tpage-id"],
     "vars": {
       "s2-0": "tex-id"
     }
@@ -2179,12 +1822,7 @@
     }
   },
   "(method 13 texture-pool)": {
-    "args": [
-      "this",
-      "level",
-      "max-page-kind",
-      "id-array"
-    ],
+    "args": ["this", "level", "max-page-kind", "id-array"],
     "vars": {
       "v1-0": "page-idx",
       "v1-5": "tfrag-dir-entry",
@@ -2196,11 +1834,7 @@
     }
   },
   "(method 14 texture-pool)": {
-    "args": [
-      "this",
-      "level",
-      "tex-page-kind"
-    ],
+    "args": ["this", "level", "tex-page-kind"],
     "vars": {
       "s3-0": "tfrag-page",
       "s2-0": "tfrag-bucket",
@@ -2221,11 +1855,7 @@
     }
   },
   "(method 13 texture-page)": {
-    "args": [
-      "this",
-      "dma-buff",
-      "mode"
-    ],
+    "args": ["this", "dma-buff", "mode"],
     "vars": {
       "sv-16": "total-size",
       "v1-7": "start-segment",
@@ -2293,10 +1923,7 @@
     }
   },
   "(method 9 texture-page-dir)": {
-    "args": [
-      "this",
-      "heap"
-    ],
+    "args": ["this", "heap"],
     "vars": {
       "v1-0": "mem-start",
       "a1-1": "mem-end",
@@ -2350,12 +1977,7 @@
     }
   },
   "(method 9 __assert-info-private-struct)": {
-    "args": [
-      "this",
-      "filename",
-      "line-num",
-      "column-num"
-    ]
+    "args": ["this", "filename", "line-num", "column-num"]
   },
   "__assert": {
     "args": [
@@ -2479,11 +2101,7 @@
     }
   },
   "(method 13 profile-bar)": {
-    "args": [
-      "this",
-      "buf",
-      "bar-pos"
-    ],
+    "args": ["this", "buf", "bar-pos"],
     "vars": {
       "v1-1": "height",
       "a1-4": "block-idx",
@@ -2631,12 +2249,7 @@
     }
   },
   "(method 0 engine)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "name",
-      "length"
-    ],
+    "args": ["allocation", "type-to-make", "name", "length"],
     "vars": {
       "v0-0": "this",
       "v1-11": "idx-to-link",
@@ -2644,79 +2257,51 @@
     }
   },
   "(method 10 engine)": {
-    "args": [
-      "this",
-      "f"
-    ],
+    "args": ["this", "f"],
     "vars": {
       "a0-1": "current",
       "s4-0": "next"
     }
   },
   "(method 11 engine)": {
-    "args": [
-      "this",
-      "f"
-    ],
+    "args": ["this", "f"],
     "vars": {
       "s4-0": "iter"
     }
   },
   "(method 12 engine)": {
     "vars": {
-      "s4-0": [
-        "ct",
-        "connection"
-      ]
+      "s4-0": ["ct", "connection"]
     }
   },
   "(method 13 engine)": {
     "vars": {
-      "s4-0": [
-        "ct",
-        "connection"
-      ],
+      "s4-0": ["ct", "connection"],
       "v1-2": "result"
     }
   },
   "(method 19 engine)": {
-    "args": [
-      "this",
-      "p1-value"
-    ],
+    "args": ["this", "p1-value"],
     "vars": {
       "a0-1": "current",
       "s4-0": "next"
     }
   },
   "(method 20 engine)": {
-    "args": [
-      "this",
-      "p2-value"
-    ],
+    "args": ["this", "p2-value"],
     "vars": {
       "a0-1": "current",
       "s4-0": "next"
     }
   },
   "connection-process-apply": {
-    "args": [
-      "proc",
-      "func"
-    ],
+    "args": ["proc", "func"],
     "vars": {
       "s5-0": "iter"
     }
   },
   "(method 15 engine)": {
-    "args": [
-      "this",
-      "proc",
-      "func",
-      "p1",
-      "p2",
-      "p3"
-    ],
+    "args": ["this", "proc", "func", "p1", "p2", "p3"],
     "vars": {
       "v1-0": "con"
     }
@@ -2746,47 +2331,21 @@
     ]
   },
   "(method 0 collide-shape-prim-sphere)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "cshape",
-      "prim-id"
-    ],
+    "args": ["allocation", "type-to-make", "cshape", "prim-id"],
     "vars": {
-      "v0-0": [
-        "this",
-        "collide-shape-prim-sphere"
-      ]
+      "v0-0": ["this", "collide-shape-prim-sphere"]
     }
   },
   "(method 0 collide-shape-prim-mesh)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "cshape",
-      "mesh-id",
-      "prim-id"
-    ],
+    "args": ["allocation", "type-to-make", "cshape", "mesh-id", "prim-id"],
     "vars": {
-      "v0-0": [
-        "this",
-        "collide-shape-prim-mesh"
-      ]
+      "v0-0": ["this", "collide-shape-prim-mesh"]
     }
   },
   "(method 0 collide-shape-prim-group)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "cshape",
-      "elt-count",
-      "prim-id"
-    ],
+    "args": ["allocation", "type-to-make", "cshape", "elt-count", "prim-id"],
     "vars": {
-      "v0-0": [
-        "this",
-        "collide-shape-prim-group"
-      ]
+      "v0-0": ["this", "collide-shape-prim-group"]
     }
   },
   "(method 0 collide-shape)": {
@@ -2797,6 +2356,42 @@
       "collide-list-kind",
       "prim-id"
     ],
+    "vars": {
+      "s5-0": "this"
+    }
+  },
+  "(method 0 collide-sticky-rider-group)": {
+    "vars": {
+      "v0-0": "this"
+    }
+  },
+  "(method 11 touching-prims-entry-pool)": {
+    "vars": {
+      "a1-0": "current",
+      "v1-0": "prev",
+      "a2-0": "next"
+    }
+  },
+  "(method 0 touching-list)": {
+    "vars": {
+      "v0-0": ["this", "touching-list"]
+    }
+  },
+  "cspace-by-name-no-fail": {
+    "vars": {
+      "v0-0": ["result", "cspace"]
+    }
+  },
+  "num-func-loop!": {
+    "args": ["chan", "inc"],
+    "vars": {
+      "f0-1": "duration",
+      "f1-2": "after-inc",
+      "f0-3": "wrapped"
+    }
+  },
+  "shrubbery-login-post-texture": {
+    "args": ["this"],
     "vars": {
       "s5-0": "this"
     }
@@ -2873,10 +2468,7 @@
     }
   },
   "(method 20 actor-link-info)": {
-    "args": [
-      "this",
-      "message"
-    ],
+    "args": ["this", "message"],
     "vars": {
       "s4-0": "iter",
       "s5-0": "result",
@@ -2898,11 +2490,7 @@
     }
   },
   "(method 21 level-group)": {
-    "args": [
-      "this",
-      "name",
-      "cmd-idx"
-    ],
+    "args": ["this", "name", "cmd-idx"],
     "vars": {
       "v1-1": "cmd-lst"
     }
@@ -2922,23 +2510,13 @@
     }
   },
   "(method 0 res-lump)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "data-count",
-      "data-size"
-    ],
+    "args": ["allocation", "type-to-make", "data-count", "data-size"],
     "vars": {
       "v0-0": "this"
     }
   },
   "(method 20 res-lump)": {
-    "args": [
-      "this",
-      "time",
-      "result",
-      "buf"
-    ],
+    "args": ["this", "time", "result", "buf"],
     "vars": {
       "t0-2": "tag-lo",
       "t1-2": "tag-hi",
@@ -2954,44 +2532,20 @@
     }
   },
   "(method 9 res-lump)": {
-    "args": [
-      "this",
-      "name",
-      "mode",
-      "time",
-      "default",
-      "tag-addr",
-      "buf-addr"
-    ],
+    "args": ["this", "name", "mode", "time", "default", "tag-addr", "buf-addr"],
     "vars": {
       "s3-0": "tag-pair"
     }
   },
   "(method 10 res-lump)": {
-    "args": [
-      "this",
-      "name",
-      "mode",
-      "time",
-      "default",
-      "tag-addr",
-      "buf-addr"
-    ],
+    "args": ["this", "name", "mode", "time", "default", "tag-addr", "buf-addr"],
     "vars": {
       "s3-0": "tag-pair",
       "v1-4": "tag"
     }
   },
   "(method 11 res-lump)": {
-    "args": [
-      "this",
-      "name",
-      "mode",
-      "time",
-      "default",
-      "tag-addr",
-      "buf-addr"
-    ],
+    "args": ["this", "name", "mode", "time", "default", "tag-addr", "buf-addr"],
     "vars": {
       "a2-1": "tag-pair",
       "s1-0": "tag",
@@ -3000,15 +2554,7 @@
     }
   },
   "(method 12 res-lump)": {
-    "args": [
-      "this",
-      "name",
-      "mode",
-      "time",
-      "default",
-      "tag-addr",
-      "buf-addr"
-    ],
+    "args": ["this", "name", "mode", "time", "default", "tag-addr", "buf-addr"],
     "vars": {
       "a2-1": "tag-pair",
       "s1-0": "tag",
@@ -3045,11 +2591,7 @@
     }
   },
   "(method 8 res-lump)": {
-    "args": [
-      "this",
-      "block",
-      "flags"
-    ],
+    "args": ["this", "block", "flags"],
     "vars": {
       "s3-0": "mem-use-id",
       "s2-0": "mem-use-name",
@@ -3078,81 +2620,54 @@
       "pkup-amount"
     ],
     "vars": {
-      "gp-0": [
-        "this",
-        "fact-info"
-      ],
+      "gp-0": ["this", "fact-info"],
       "s5-0": "ent",
       "sv-16": "tag"
     }
   },
   "(method 0 align-control)": {
     "vars": {
-      "v0-0": [
-        "this",
-        "align-control"
-      ]
+      "v0-0": ["this", "align-control"]
     }
   },
   "str-load": {
-    "args": [
-      "name",
-      "chunk-id",
-      "address",
-      "len"
-    ],
+    "args": ["name", "chunk-id", "address", "len"],
     "vars": {
-      "s2-0": [
-        "cmd",
-        "load-chunk-msg"
-      ]
+      "s2-0": ["cmd", "load-chunk-msg"]
     }
   },
   "str-load-status": {
-    "args": [
-      "length-out"
-    ],
+    "args": ["length-out"],
     "vars": {
       "v1-7": "response"
     }
   },
   "str-play-async": {
-    "args": [
-      "name",
-      "addr"
-    ],
+    "args": ["name", "addr"],
     "vars": {
       "s4-0": "cmd"
     }
   },
   "str-play-stop": {
-    "args": [
-      "name"
-    ],
+    "args": ["name"],
     "vars": {
       "s5-0": "cmd"
     }
   },
   "str-play-queue": {
-    "args": [
-      "name"
-    ],
+    "args": ["name"],
     "vars": {
       "s5-0": "cmd"
     }
   },
   "str-ambient-play": {
-    "args": [
-      "name"
-    ],
+    "args": ["name"],
     "vars": {
       "s5-0": "cmd"
     }
   },
   "str-ambient-stop": {
-    "args": [
-      "name"
-    ],
+    "args": ["name"],
     "vars": {
       "s5-0": "cmd"
     }
@@ -3171,32 +2686,20 @@
     }
   },
   "dgo-load-begin": {
-    "args": [
-      "name",
-      "buffer1",
-      "buffer2",
-      "current-heap"
-    ],
+    "args": ["name", "buffer1", "buffer2", "current-heap"],
     "vars": {
       "s2-0": "cmd"
     }
   },
   "dgo-load-get-next": {
-    "args": [
-      "last-object"
-    ],
+    "args": ["last-object"],
     "vars": {
-      "gp-0": [
-        "load-location",
-        "pointer"
-      ],
+      "gp-0": ["load-location", "pointer"],
       "v1-5": "response"
     }
   },
   "dgo-load-continue": {
-    "args": [
-      "current-heap"
-    ],
+    "args": ["current-heap"],
     "vars": {
       "gp-0": "cmd"
     }
@@ -3207,51 +2710,32 @@
     }
   },
   "find-temp-buffer": {
-    "args": [
-      "size"
-    ],
+    "args": ["size"],
     "vars": {
       "gp-0": "qwc"
     }
   },
   "dgo-load-link": {
-    "args": [
-      "obj-file",
-      "heap",
-      "print-login",
-      "last-object"
-    ],
+    "args": ["obj-file", "heap", "print-login", "last-object"],
     "vars": {
       "s4-0": "obj-data"
     }
   },
   "ramdisk-load": {
-    "args": [
-      "file-id",
-      "offset",
-      "length",
-      "buffer"
-    ],
+    "args": ["file-id", "offset", "length", "buffer"],
     "vars": {
       "v1-1": "cmd"
     }
   },
   "show-mc-info": {
-    "args": [
-      "dma-buf"
-    ],
+    "args": ["dma-buf"],
     "vars": {
       "s5-0": "info",
       "s4-0": "slot-idx"
     }
   },
   "(method 19 res-lump)": {
-    "args": [
-      "this",
-      "name-sym",
-      "mode",
-      "time"
-    ],
+    "args": ["this", "name-sym", "mode", "time"],
     "vars": {
       "t2-4": "type-chars",
       "t3-1": "max-search",
@@ -3294,47 +2778,26 @@
     ]
   },
   "(method 9 joint-mod)": {
-    "args": [
-      "this",
-      "handler-mode"
-    ],
+    "args": ["this", "handler-mode"],
     "vars": {
       "v1-0": "joint",
       "a0-1": "mode"
     }
   },
   "(method 10 joint-mod)": {
-    "args": [
-      "this",
-      "target-trans"
-    ],
+    "args": ["this", "target-trans"],
     "vars": {
       "f0-0": "distance"
     }
   },
   "(method 13 joint-mod)": {
-    "args": [
-      "this",
-      "x",
-      "y",
-      "z"
-    ]
+    "args": ["this", "x", "y", "z"]
   },
   "(method 14 joint-mod)": {
-    "args": [
-      "this",
-      "trans",
-      "rot",
-      "scale"
-    ]
+    "args": ["this", "trans", "rot", "scale"]
   },
   "(method 11 joint-mod)": {
-    "args": [
-      "this",
-      "target-trans",
-      "option",
-      "proc"
-    ],
+    "args": ["this", "target-trans", "option", "proc"],
     "vars": {
       "s1-0": "proc-drawable",
       "s3-1": [
@@ -3345,27 +2808,14 @@
     }
   },
   "joint-mod-look-at-handler": {
-    "args": [
-      "csp",
-      "xform",
-      "mat"
-    ]
+    "args": ["csp", "xform", "mat"]
   },
   "(method 9 collide-history)": {
-    "args": [
-      "this",
-      "cshape",
-      "xs",
-      "transv",
-      "transv-out"
-    ]
+    "args": ["this", "cshape", "xs", "transv", "transv-out"]
   },
   "add-debug-sphere-from-table": {
     "vars": {
-      "s1-0": [
-        "points",
-        "(inline-array vector)"
-      ]
+      "s1-0": ["points", "(inline-array vector)"]
     }
   },
   "entity-actor-lookup": {
@@ -3376,11 +2826,7 @@
     ]
   },
   "(method 0 actor-link-info)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "proc"
-    ],
+    "args": ["allocation", "type-to-make", "proc"],
     "vars": {
       "s5-0": "this",
       "a0-1": "ent"
@@ -3393,10 +2839,7 @@
     }
   },
   "(method 9 actor-link-info)": {
-    "args": [
-      "this",
-      "matching-type"
-    ],
+    "args": ["this", "matching-type"],
     "vars": {
       "s3-0": "actor",
       "s5-0": "mask",
@@ -3419,90 +2862,57 @@
   },
   "check-irx-version": {
     "vars": {
-      "gp-0": [
-        "cmd",
-        "sound-rpc-get-irx-version"
-      ]
+      "gp-0": ["cmd", "sound-rpc-get-irx-version"]
     }
   },
   "sound-bank-load": {
     "vars": {
-      "v1-1": [
-        "cmd",
-        "sound-rpc-load-bank"
-      ]
+      "v1-1": ["cmd", "sound-rpc-load-bank"]
     }
   },
   "sound-bank-unload": {
     "vars": {
-      "v1-1": [
-        "cmd",
-        "sound-rpc-unload-bank"
-      ]
+      "v1-1": ["cmd", "sound-rpc-unload-bank"]
     }
   },
   "sound-music-load": {
     "vars": {
-      "v1-1": [
-        "cmd",
-        "sound-rpc-load-music"
-      ]
+      "v1-1": ["cmd", "sound-rpc-load-music"]
     }
   },
   "sound-music-unload": {
     "vars": {
-      "v1-1": [
-        "cmd",
-        "sound-rpc-unload-music"
-      ]
+      "v1-1": ["cmd", "sound-rpc-unload-music"]
     }
   },
   "sound-reload-info": {
     "vars": {
-      "v1-1": [
-        "cmd",
-        "sound-rpc-reload-info"
-      ]
+      "v1-1": ["cmd", "sound-rpc-reload-info"]
     }
   },
   "set-language": {
     "vars": {
-      "v1-1": [
-        "cmd",
-        "sound-rpc-set-language"
-      ]
+      "v1-1": ["cmd", "sound-rpc-set-language"]
     }
   },
   "list-sounds": {
     "vars": {
-      "v1-1": [
-        "cmd",
-        "sound-rpc-list-sounds"
-      ]
+      "v1-1": ["cmd", "sound-rpc-list-sounds"]
     }
   },
   "sound-set-volume": {
     "vars": {
-      "v1-0": [
-        "cmd",
-        "sound-rpc-set-master-volume"
-      ]
+      "v1-0": ["cmd", "sound-rpc-set-master-volume"]
     }
   },
   "sound-set-reverb": {
     "vars": {
-      "v1-0": [
-        "cmd",
-        "sound-rpc-set-reverb"
-      ]
+      "v1-0": ["cmd", "sound-rpc-set-reverb"]
     }
   },
   "sound-set-ear-trans": {
     "vars": {
-      "gp-0": [
-        "cmd",
-        "sound-rpc-set-ear-trans"
-      ]
+      "gp-0": ["cmd", "sound-rpc-set-ear-trans"]
     }
   },
   "sound-play-by-name": {
@@ -3546,82 +2956,52 @@
   },
   "sound-pause": {
     "vars": {
-      "v1-0": [
-        "cmd",
-        "sound-rpc-pause-sound"
-      ]
+      "v1-0": ["cmd", "sound-rpc-pause-sound"]
     }
   },
   "sound-stop": {
     "vars": {
-      "v1-0": [
-        "cmd",
-        "sound-rpc-stop-sound"
-      ]
+      "v1-0": ["cmd", "sound-rpc-stop-sound"]
     }
   },
   "sound-continue": {
     "vars": {
-      "v1-0": [
-        "cmd",
-        "sound-rpc-continue-sound"
-      ]
+      "v1-0": ["cmd", "sound-rpc-continue-sound"]
     }
   },
   "sound-group-pause": {
     "vars": {
-      "v1-0": [
-        "cmd",
-        "sound-rpc-pause-group"
-      ]
+      "v1-0": ["cmd", "sound-rpc-pause-group"]
     }
   },
   "sound-group-stop": {
     "vars": {
-      "v1-0": [
-        "cmd",
-        "sound-rpc-stop-group"
-      ]
+      "v1-0": ["cmd", "sound-rpc-stop-group"]
     }
   },
   "sound-group-continue": {
     "vars": {
-      "v1-0": [
-        "cmd",
-        "sound-rpc-continue-group"
-      ]
+      "v1-0": ["cmd", "sound-rpc-continue-group"]
     }
   },
   "sound-set-falloff-curve": {
     "vars": {
-      "v1-0": [
-        "cmd",
-        "sound-rpc-set-falloff-curve"
-      ]
+      "v1-0": ["cmd", "sound-rpc-set-falloff-curve"]
     }
   },
   "sound-set-sound-falloff": {
     "vars": {
-      "v1-0": [
-        "cmd",
-        "sound-rpc-set-sound-falloff"
-      ]
+      "v1-0": ["cmd", "sound-rpc-set-sound-falloff"]
     }
   },
   "sound-set-flava": {
     "vars": {
-      "v1-0": [
-        "cmd",
-        "sound-rpc-set-flava"
-      ]
+      "v1-0": ["cmd", "sound-rpc-set-flava"]
     }
   },
   "(method 0 ambient-sound)": {
     "vars": {
-      "s5-1": [
-        "this",
-        "ambient-sound"
-      ],
+      "s5-1": ["this", "ambient-sound"],
       "v1-2": "bc"
     }
   },
@@ -3633,41 +3013,23 @@
   },
   "(method 11 ambient-sound)": {
     "vars": {
-      "gp-0": [
-        "cmd",
-        "sound-rpc-set-param"
-      ]
+      "gp-0": ["cmd", "sound-rpc-set-param"]
     }
   },
   "(method 12 ambient-sound)": {
     "vars": {
-      "v1-2": [
-        "cmd",
-        "sound-rpc-set-param"
-      ]
+      "v1-2": ["cmd", "sound-rpc-set-param"]
     }
   },
   "sound-buffer-dump": {
     "vars": {
-      "s3-0": [
-        "cmd",
-        "sound-rpc-play"
-      ]
+      "s3-0": ["cmd", "sound-rpc-play"]
     }
   },
   "(method 0 path-control)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "proc",
-      "name",
-      "time"
-    ],
+    "args": ["allocation", "type-to-make", "proc", "name", "time"],
     "vars": {
-      "gp-0": [
-        "this",
-        "path-control"
-      ],
+      "gp-0": ["this", "path-control"],
       "s3-1": "ent",
       "v1-7": "lookup-entity",
       "sv-16": "tag",
@@ -3675,13 +3037,7 @@
     }
   },
   "(method 0 curve-control)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "proc",
-      "name",
-      "time"
-    ],
+    "args": ["allocation", "type-to-make", "proc", "name", "time"],
     "vars": {
       "gp-0": "this",
       "s3-1": "ent",
@@ -3708,6 +3064,13 @@
       "sphere-count",
       "nearest-y-threshold-default"
     ],
+    "vars": {
+      "s5-0": ["this", "nav-control"],
+      "a0-3": "ent"
+    }
+  },
+  "add-debug-point": {
+    "args": ["enable-draw", "bucket", "pt"],
     "vars": {
       "s5-0": [
         "this",
@@ -3941,24 +3304,14 @@
     }
   },
   "(method 9 game-info)": {
-    "args": [
-      "this",
-      "cause",
-      "save-to-load",
-      "continue-point-override"
-    ],
+    "args": ["this", "cause", "save-to-load", "continue-point-override"],
     "vars": {
       "v1-0": "selected-cause",
       "s4-1": "lev-info"
     }
   },
   "(method 10 game-info)": {
-    "args": [
-      "this",
-      "item",
-      "amount",
-      "source"
-    ],
+    "args": ["this", "item", "amount", "source"],
     "vars": {
       "v1-10": "proc",
       "s4-1": "level-idx",
@@ -3970,10 +3323,7 @@
     }
   },
   "(method 14 game-info)": {
-    "args": [
-      "this",
-      "lev"
-    ],
+    "args": ["this", "lev"],
     "vars": {
       "s5-0": "perms",
       "s4-0": "lev-entities",
@@ -3983,10 +3333,7 @@
     }
   },
   "(method 15 game-info)": {
-    "args": [
-      "this",
-      "lev"
-    ],
+    "args": ["this", "lev"],
     "vars": {
       "s5-0": "lev-entities",
       "s4-0": "lev-entity-idx",
@@ -3995,10 +3342,7 @@
     }
   },
   "(method 25 game-info)": {
-    "args": [
-      "this",
-      "save"
-    ],
+    "args": ["this", "save"],
     "vars": {
       "v1-0": [
         "save-data",
@@ -4013,10 +3357,7 @@
     }
   },
   "(method 10 game-save)": {
-    "args": [
-      "this",
-      "filename"
-    ],
+    "args": ["this", "filename"],
     "vars": {
       "s5-0": "stream",
       "s3-0": "in-size",
@@ -4024,10 +3365,7 @@
     }
   },
   "(method 11 game-save)": {
-    "args": [
-      "this",
-      "detail"
-    ],
+    "args": ["this", "detail"],
     "vars": {
       "s4-0": [
         "tag",
@@ -4066,9 +3404,7 @@
     }
   },
   "set-master-mode": {
-    "args": [
-      "new-mode"
-    ],
+    "args": ["new-mode"],
     "vars": {
       "v1-3": "mode"
     }
@@ -4128,10 +3464,7 @@
     }
   },
   "(method 11 cam-float-seeker)": {
-    "args": [
-      "this",
-      "offset"
-    ],
+    "args": ["this", "offset"],
     "vars": {
       "f1-2": "pos-error",
       "f0-5": "partial-velocity-limit",
@@ -4142,12 +3475,7 @@
     }
   },
   "(method 9 trsqv)": {
-    "args": [
-      "this",
-      "dir",
-      "vel",
-      "frame-count"
-    ],
+    "args": ["this", "dir", "vel", "frame-count"],
     "vars": {
       "f0-0": "yaw-error",
       "f1-2": "yaw-limit",
@@ -4157,12 +3485,7 @@
     }
   },
   "(method 13 trsqv)": {
-    "args": [
-      "this",
-      "yaw",
-      "vel",
-      "frame-count"
-    ]
+    "args": ["this", "yaw", "vel", "frame-count"]
   },
   "(method 16 trsqv)": {
     "vars": {
@@ -4184,12 +3507,7 @@
     }
   },
   "(method 17 trsqv)": {
-    "args": [
-      "this",
-      "target",
-      "y-rate",
-      "z-rate"
-    ],
+    "args": ["this", "target", "y-rate", "z-rate"],
     "vars": {
       "gp-0": "quat",
       "s5-0": "temp-quat"
@@ -4234,11 +3552,7 @@
     ]
   },
   "(method 10 cylinder)": {
-    "args": [
-      "this",
-      "probe-origin",
-      "probe-dir"
-    ],
+    "args": ["this", "probe-origin", "probe-dir"],
     "vars": {
       "f30-0": "result",
       "f0-5": "u-origin-sph",
@@ -4247,11 +3561,7 @@
     }
   },
   "(method 10 cylinder-flat)": {
-    "args": [
-      "this",
-      "probe-origin",
-      "probe-dir"
-    ],
+    "args": ["this", "probe-origin", "probe-dir"],
     "vars": {
       "f30-0": "result",
       "f0-5": "u-origin-circle",
@@ -4323,18 +3633,9 @@
   },
   "anim-test-obj-remove-invalid": {
     "vars": {
-      "v1-31": [
-        "v1-31",
-        "anim-test-sequence"
-      ],
-      "s3-0": [
-        "s3-0",
-        "anim-test-seq-item"
-      ],
-      "s2-0": [
-        "s2-0",
-        "anim-test-seq-item"
-      ]
+      "v1-31": ["v1-31", "anim-test-sequence"],
+      "s3-0": ["s3-0", "anim-test-seq-item"],
+      "s2-0": ["s2-0", "anim-test-seq-item"]
     }
   },
   "anim-tester-reset": {
@@ -4614,18 +3915,10 @@
     ]
   },
   "(method 8 bsp-header)": {
-    "args": [
-      "this",
-      "mem-use",
-      "flags"
-    ]
+    "args": ["this", "mem-use", "flags"]
   },
   "(method 10 bsp-header)": {
-    "args": [
-      "this",
-      "other-draw",
-      "disp-frame"
-    ],
+    "args": ["this", "other-draw", "disp-frame"],
     "vars": {
       "s4-0": "lev",
       "a2-3": "vis-list-qwc",
@@ -4734,24 +4027,14 @@
     }
   },
   "(method 14 sync-info)": {
-    "args": [
-      "this",
-      "period",
-      "phase"
-    ],
+    "args": ["this", "period", "phase"],
     "vars": {
       "f0-1": "period-float",
       "f1-1": "value"
     }
   },
   "(method 14 sync-info-eased)": {
-    "args": [
-      "this",
-      "period",
-      "phase",
-      "out-param",
-      "in-param"
-    ],
+    "args": ["this", "period", "phase", "out-param", "in-param"],
     "vars": {
       "f0-9": "total-easing-phase",
       "f1-11": "total-normal-phase",
@@ -4761,13 +4044,7 @@
     }
   },
   "(method 14 sync-info-paused)": {
-    "args": [
-      "this",
-      "period",
-      "phase",
-      "out-param",
-      "in-param"
-    ]
+    "args": ["this", "period", "phase", "out-param", "in-param"]
   },
   "(method 15 sync-info)": {
     "args": [
@@ -4807,10 +4084,7 @@
     }
   },
   "(method 16 sync-info)": {
-    "args": [
-      "this",
-      "user-time-offset"
-    ],
+    "args": ["this", "user-time-offset"],
     "vars": {
       "a2-0": "period",
       "f0-1": "period-float",
@@ -4837,10 +4111,7 @@
     }
   },
   "(method 9 sync-info)": {
-    "args": [
-      "this",
-      "max-val"
-    ],
+    "args": ["this", "max-val"],
     "vars": {
       "v1-0": "period",
       "f0-1": "period-float",
@@ -4848,9 +4119,7 @@
     }
   },
   "(method 13 sync-info)": {
-    "args": [
-      "this"
-    ],
+    "args": ["this"],
     "vars": {
       "v1-0": "period",
       "f1-0": "period-float",
@@ -4860,9 +4129,7 @@
     }
   },
   "(method 13 sync-info-eased)": {
-    "args": [
-      "this"
-    ],
+    "args": ["this"],
     "vars": {
       "v1-0": "period",
       "f1-0": "period-float",
@@ -4875,10 +4142,7 @@
     }
   },
   "(method 12 sync-info)": {
-    "args": [
-      "this",
-      "max-out-val"
-    ],
+    "args": ["this", "max-out-val"],
     "vars": {
       "v1-0": "period",
       "f1-0": "period-float",
@@ -4888,42 +4152,22 @@
     }
   },
   "(method 12 sync-info-eased)": {
-    "args": [
-      "this",
-      "max-out-val"
-    ]
+    "args": ["this", "max-out-val"]
   },
   "(method 12 sync-info-paused)": {
-    "args": [
-      "this",
-      "max-out-val"
-    ]
+    "args": ["this", "max-out-val"]
   },
   "(method 9 delayed-rand-float)": {
-    "args": [
-      "this",
-      "min-tim",
-      "max-time",
-      "max-times-two"
-    ]
+    "args": ["this", "min-tim", "max-time", "max-times-two"]
   },
   "(method 10 oscillating-float)": {
-    "args": [
-      "this",
-      "target-offset"
-    ],
+    "args": ["this", "target-offset"],
     "vars": {
       "f0-3": "acc"
     }
   },
   "(method 9 oscillating-float)": {
-    "args": [
-      "this",
-      "init-val",
-      "accel",
-      "max-vel",
-      "damping"
-    ]
+    "args": ["this", "init-val", "accel", "max-vel", "damping"]
   },
   "(method 9 bouncing-float)": {
     "args": [
@@ -4938,78 +4182,37 @@
     ]
   },
   "(method 9 delayed-rand-vector)": {
-    "args": [
-      "this",
-      "min-time",
-      "max-time",
-      "xz-range",
-      "y-range"
-    ]
+    "args": ["this", "min-time", "max-time", "xz-range", "y-range"]
   },
   "(method 9 oscillating-vector)": {
-    "args": [
-      "this",
-      "init-val",
-      "accel",
-      "max-vel",
-      "damping"
-    ]
+    "args": ["this", "init-val", "accel", "max-vel", "damping"]
   },
   "(method 10 oscillating-vector)": {
-    "args": [
-      "this",
-      "target-offset"
-    ],
+    "args": ["this", "target-offset"],
     "vars": {
       "f0-2": "vel"
     }
   },
   "(method 9 trajectory)": {
-    "args": [
-      "this",
-      "time",
-      "result"
-    ]
+    "args": ["this", "time", "result"]
   },
   "(method 10 trajectory)": {
-    "args": [
-      "this",
-      "time",
-      "result"
-    ]
+    "args": ["this", "time", "result"]
   },
   "(method 11 trajectory)": {
-    "args": [
-      "this",
-      "from",
-      "to",
-      "duration",
-      "grav"
-    ],
+    "args": ["this", "from", "to", "duration", "grav"],
     "vars": {
       "f0-3": "xz-vel"
     }
   },
   "(method 12 trajectory)": {
-    "args": [
-      "this",
-      "from",
-      "to",
-      "xz-vel",
-      "grav"
-    ],
+    "args": ["this", "from", "to", "xz-vel", "grav"],
     "vars": {
       "f0-1": "duration"
     }
   },
   "(method 13 trajectory)": {
-    "args": [
-      "this",
-      "from",
-      "to",
-      "y-vel",
-      "grav"
-    ]
+    "args": ["this", "from", "to", "y-vel", "grav"]
   },
   "(method 15 trajectory)": {
     "vars": {
@@ -5145,10 +4348,7 @@
     }
   },
   "(method 16 level)": {
-    "args": [
-      "this",
-      "vis-info"
-    ],
+    "args": ["this", "vis-info"],
     "vars": {
       "a0-1": "cam-leaf-idx",
       "v1-1": "curr-vis-str",
@@ -5257,12 +4457,7 @@
     }
   },
   "(method 11 fact-info-target)": {
-    "args": [
-      "this",
-      "kind",
-      "amount",
-      "source-handle"
-    ],
+    "args": ["this", "kind", "amount", "source-handle"],
     "vars": {
       "f0-29": "buzz-count",
       "f30-0": "eco-lev"
@@ -5308,11 +4503,7 @@
     ]
   },
   "debug-menu-context-grab-joypad": {
-    "args": [
-      "ctxt",
-      "callback-arg",
-      "callback-func"
-    ]
+    "args": ["ctxt", "callback-arg", "callback-func"]
   },
   "debug-menu-context-default-selection": {
     "args": [
@@ -5356,41 +4547,22 @@
   },
   "(anon-function 82 default-menu)": {
     "vars": {
-      "s4-0": [
-        "s4-0",
-        "texture-id"
-      ]
+      "s4-0": ["s4-0", "texture-id"]
     }
   },
   "process-status-bits": {
     "vars": {
-      "s3-0": [
-        "proc-draw",
-        "process-drawable"
-      ]
+      "s3-0": ["proc-draw", "process-drawable"]
     }
   },
   "(method 29 entity-actor)": {
-    "args": [
-      "this",
-      "mode",
-      "expected-type"
-    ]
+    "args": ["this", "mode", "expected-type"]
   },
   "(method 13 level-group)": {
-    "args": [
-      "this",
-      "mode",
-      "expected-type"
-    ]
+    "args": ["this", "mode", "expected-type"]
   },
   "(method 24 entity)": {
-    "args": [
-      "this",
-      "lev-group",
-      "lev",
-      "aid"
-    ],
+    "args": ["this", "lev-group", "lev", "aid"],
     "vars": {
       "v1-4": "level-link",
       "t0-5": "other-prev",
@@ -5398,11 +4570,7 @@
     }
   },
   "update-actor-vis-box": {
-    "args": [
-      "proc",
-      "min-pt",
-      "max-pt"
-    ],
+    "args": ["proc", "min-pt", "max-pt"],
     "vars": {
       "v1-4": "world-bounds-origin",
       "f0-0": "radius"
@@ -5515,11 +4683,7 @@
     }
   },
   "(method 48 progress)": {
-    "args": [
-      "this",
-      "screen",
-      "option"
-    ]
+    "args": ["this", "screen", "option"]
   },
   "activate-progress": {
     "args": [
@@ -5528,11 +4692,7 @@
     ]
   },
   "(method 23 progress)": {
-    "args": [
-      "this",
-      "aspect",
-      "video-mode"
-    ]
+    "args": ["this", "aspect", "video-mode"]
   },
   "(method 35 progress)": {
     "vars": {
@@ -5737,13 +4897,7 @@
     }
   },
   "(method 9 load-dir-art-group)": {
-    "args": [
-      "this",
-      "art-name",
-      "do-reload",
-      "heap",
-      "version"
-    ]
+    "args": ["this", "art-name", "do-reload", "heap", "version"]
   },
   "(method 15 hud-money)": {
     "vars": {
@@ -6526,13 +5680,7 @@
     }
   },
   "debug-menu-item-render": {
-    "args": [
-      "item",
-      "x",
-      "y",
-      "submenus",
-      "selected"
-    ]
+    "args": ["item", "x", "y", "submenus", "selected"]
   },
   "sprite-distorter-generate-tables": {
     "vars": {
@@ -6557,12 +5705,7 @@
     }
   },
   "(method 9 rpc-buffer-pair)": {
-    "args": [
-      "obj",
-      "fno",
-      "recv-buff",
-      "recv-size"
-    ],
+    "args": ["obj", "fno", "recv-buff", "recv-size"],
     "vars": {
       "s2-0": "active-buffer",
       "s1-0": "current-buffer"
@@ -6572,10 +5715,7 @@
     "vars": {
       "s5-0": "active-buffer"
     },
-    "args": [
-      "obj",
-      "print-stall-warning"
-    ]
+    "args": ["obj", "print-stall-warning"]
   },
   "(method 13 rpc-buffer-pair)": {
     "vars": {

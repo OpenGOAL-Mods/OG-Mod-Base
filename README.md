@@ -68,24 +68,6 @@ Additionally, you can find further documentation and answers to **frequently ask
   - [`goal_src/`](#goal_src)
   - [`game` runtime](#game-runtime)
 
-## Please read first
-
-> [!IMPORTANT]
-> Our repositories on GitHub are primarily for development of the project and tracking active issues. Most of the information you will find here pertains to setting up the project for development purposes and is not relevant to the end-user.
-
-For questions or additional information pertaining to the project, we have a Discord for discussion here: https://discord.gg/VZbXMHXzWv
-
-Additionally, you can find further documentation and answers to **frequently asked questions** on the project's main website: https://opengoal.dev
-
-> [!WARNING]
-> **Do not use this decompilation project without providing your own legally purchased copy of the game.**
-
-### Quick Start
-
-If you just want to play the game, you can follow the steps in this video: https://www.youtube.com/watch?v=p8I9NfuZOgE
-
-We do not distribute any assets from the game - you must use your own legitimately obtained PS2 copy of the game. We support every retail PAL, NTSC, and NTSC-J build, including Greatest Hits copies. 
-
 ## Project Description
 
 This project is to port the original Jak and Daxter and Jak II to PC. Over 98% of the games are written in GOAL, a custom Lisp language developed by Naughty Dog. Our strategy is:

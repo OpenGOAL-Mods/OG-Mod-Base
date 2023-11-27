@@ -11,8 +11,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-                                            ;; version: 0.1.5.2
-(defconstant PC_KERNEL_VERSION (static-pckernel-version 0 1 5 2))
+                                            ;; version: 0.1.6.2
+(defconstant PC_KERNEL_VERSION (static-pckernel-version 0 1 6 2))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; types and enums
@@ -44,7 +44,6 @@
   (weather-bad)
   (weather-good)
   )
-  
 ;; pc enum for languages. this is the game's languages + custom ones.
 (defenum pc-language
   :type uint16
@@ -68,6 +67,8 @@
   (catalan 16)
   (icelandic 17)
   (russian 18)
+  (polish 19)
+  (lithuanian 19)
 
   (custom 999) ;; temp
   )
@@ -78,6 +79,7 @@
    (cheats            pc-cheats)
    (cheats-revealed   pc-cheats)
    (cheats-purchased  pc-cheats)
+   (cheats-backup     pc-cheats) ;; backup for 'cheats', persisted to disk to be restored when disabling speedrunner mode
    ;; music
    (music-unlocked  bit-array)
    (flava-unlocked  symbol 6)
@@ -93,13 +95,12 @@
 
    ;; other
    (controller-led-status?    symbol)
-   
    (text-language pc-language) ;; language for game text
 
    ;; debug
    (jetboard-trick-text? symbol) ;; enable rendering jetboard trick combo during minigame
 	 )
-  
+
   (:methods
     (eligible-for-fast-elevator? (_type_ process) symbol)
     (get-airlock-speed (_type_) float)
@@ -140,7 +141,7 @@
   (true! (-> obj fast-elevator?))
   (false! (-> obj fast-progress?))
   (true! (-> obj smooth-minimap?))
-  (true! (-> obj hires-clouds?))
+  (false! (-> obj hires-clouds?))
   0)
 
 (defmethod reset-extra ((obj pc-settings-jak2) (call-handlers symbol))
