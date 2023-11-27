@@ -62,6 +62,14 @@
   (uk-english)
   )
 
+(defenum runtime-exit-status
+  :type uint32
+  (running)
+  (restart-runtime)
+  (exit)
+  (restart-in-debug)
+  )
+
 (define-extern *debug-segment* symbol)
 (define-extern nothing (function none))
 (define-extern _format (function _varargs_ object))
@@ -92,7 +100,7 @@
 (define-extern file-stream-write (function file-stream pointer uint uint))
 (define-extern file-stream-close (function file-stream file-stream))
 (define-extern new-dynamic-structure (function symbol type int structure))
-(define-extern kernel-shutdown (function none))
+(define-extern kernel-shutdown (function runtime-exit-status none))
 (define-extern scf-get-timeout (function int))
 (define-extern scf-get-inactive-timeout (function int))
 (define-extern syncv (function int int))
@@ -7404,6 +7412,9 @@
   (progress-mouse-options-horz-sens #x129d)
   (progress-mouse-options-vert-sens #x129e)
   (progress-mouse-options-player-movement #x129f)
+  (progress-shadows #x12a0)
+  (progress-shadows-normal #x12a1)
+  (progress-shadows-extended #x12a2)
   (progress-input-options-auto-hide-cursor #x1300)
   (progress-menu-reassign-binds #x1301)
   (progress-reassign-binds-controller #x1302)
@@ -7426,6 +7437,32 @@
   (progress-highscores-local-time #x1313)
   (progress-fps-disclaimer-warning #x1314)
   (progress-fps-disclaimer #x1315)
+  (trick-board-none #x1320)
+  (trick-board-spin #x1321)
+  (trick-board-boost #x1322)
+  (trick-board-flip #x1323)
+  (trick-board-rail #x1324)
+  (trick-board-rail-jump #x1325)
+  (trick-board-nosegrab #x1326)
+  (trick-board-method #x1327)
+  (trick-board-board-spin #x1328)
+  (trick-board-board-flip #x1329)
+  (trick-board-noseflip #x132a)
+  (trick-board-kickflip #x132b)
+  (trick-board-jump #x132c)
+  (trick-board-duck-jump #x132d)
+  (trick-board-quick-jump #x132e)
+  (trick-darkjak #x132f)
+  (trick-darkjak-bomb0 #x1330)
+  (trick-darkjak-bomb1 #x1331)
+  (trick-darkjak-giant #x1332)
+  (progress-graphics-ps2 #x1333)
+  (progress-graphics-actor-culling #x1334)
+  (progress-graphics-force-envmap #x1335)
+  (progress-fast-progress #x1336)
+  (progress-graphics-ps2-lod-dist #x1337)
+  (progress-graphics-msaa-off #x1338)
+  (progress-graphics-display #x1339)
 )
 ;; ---text-id-h:text-id
 
@@ -12903,11 +12940,11 @@
   :flag-assert         #xf00000060
   (:methods
     (new (symbol type float float float shadow-flags float) _type_) ;; 0
-    (clear-offset-bit (shadow-control) int) ;; 9
-    (set-offset-bit (shadow-control) int) ;; 10
+    (enable-draw (shadow-control) int) ;; 9
+    (disable-draw (shadow-control) int) ;; 10
     (set-top-plane-offset (shadow-control float) int) ;; 11
     (set-bottom-plane-offset (shadow-control float) int) ;; 12
-    (shadow-control-method-13 (_type_ vector float float float) none) ;; 13 ;; (unused-13 (_type_) none) ;; 13
+    (probe-line-for-shadow (_type_ vector float float float) none) ;; 13 ;; (unused-13 (_type_) none) ;; 13
     (shadow-control-method-14 (_type_ vector vector float float float) none) ;; 14 ;; (update-direction-from-time-of-day (_type_) none) ;; 14
     )
   )
@@ -33034,10 +33071,10 @@
    (actor-group                 (pointer actor-group)       :offset-assert 480)
    (actor-group-count           int32                       :offset-assert 484)
    (neck                        joint-mod                       :offset-assert 488)
-   (on-notice                   symbol                      :offset-assert 492)
-   (on-active                   symbol                      :offset-assert 496)
-   (on-hostile                  symbol                      :offset-assert 500)
-   (on-death                    symbol                      :offset-assert 504)
+   (on-notice                   pair                        :offset-assert 492)
+   (on-active                   pair                        :offset-assert 496)
+   (on-hostile                  pair                        :offset-assert 500)
+   (on-death                    pair                        :offset-assert 504)
    (idle-anim-player            idle-control :inline        :offset-assert 512)
    (rand-gen                    symbol                      :offset-assert 528)
   )
@@ -35222,18 +35259,6 @@
   :method-count-assert 40
   :size-assert         #x1f0
   :flag-assert         #x28017001f0
-  )
-
-(defenum spyder-flags
-  :bitfield #t
-  (spflags-0)
-  (spflags-1)
-  (spflags-2)
-  (spflags-3)
-  (spflags-4)
-  (spflags-5)
-  (spflags-6)
-  (spflags-7)
   )
 
 (defenum spyder-flags
@@ -38691,15 +38716,6 @@
   (mtpflags-3)
   )
 
-(defenum mtn-plat-flags
-  :bitfield #t
-  :type uint16
-  (mtpflags-0)
-  (mtpflags-1)
-  (mtpflags-2)
-  (mtpflags-3)
-  )
-
 (deftype mtn-plat-return (base-plat)
   (
     (ride-timer time-frame :offset-assert 272)
@@ -40830,19 +40846,6 @@
   :method-count-assert 40
   :size-assert         #x1f0
   :flag-assert         #x28017001f0
-  )
-
-(defenum gun-buoy-flags
-  :bitfield #t
-  :type uint16
-  (gubflags-0)
-  (gubflags-1)
-  (gubflags-2)
-  (gubflags-3)
-  (gubflags-4)
-  (gubflags-5)
-  (gubflags-6)
-  (gubflags-7)
   )
 
 (defenum gun-buoy-flags
@@ -50009,8 +50012,8 @@
     (vehicle-method-99 (_type_ float) none) ;; 99
     (vehicle-method-100 (_type_ float vehicle-physics-work) none) ;; 100
     (vehicle-method-101 (_type_) none) ;; 101
-    (vehicle-method-102 (_type_) none) ;; 102
-    (vehicle-method-103 (_type_) none) ;; 103
+    (shadow-enable (_type_) none) ;; 102
+    (shadow-disable (_type_) none) ;; 103
     (vehicle-method-104 (_type_) none) ;; 104
     (vehicle-method-105 (_type_) symbol) ;; 105
     (vehicle-method-106 (_type_) none) ;; 106

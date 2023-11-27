@@ -543,11 +543,13 @@
     )
   )
 
-(defmacro eq-any? (val &rest pred)
-  "is val equal to any of the values in pred? evaluated using or, so it short circuits."
-  (with-gensyms (val-var)
-  `(let ((,val-var ,val))
-    (or ,@(apply (lambda (x) `(= ,val-var ,x)) pred)))
+(defmacro symbol-member? (sym lst)
+  "is sym present in lst? uses or, so it short circuits."
+  (with-gensyms (sym-var)
+  (fmt #t "{}" lst)
+  `(let ((,sym-var ,sym))
+                                                      ;; TODO fix this bug
+    (or ,@(apply (lambda (x) `(= ,sym-var (quote ,x))) (second lst))))
     )
   )
 
@@ -715,7 +717,7 @@
   )
 
 (defmacro /-0-guard (a b)
-  "same as divide but returns -1 when divisor is zero (EE-like)."
+  "same as divide but returns -1 when divisor is zero (EE-like, DIVU)."
   `(let ((divisor ,b))
       (if (zero? divisor)
           -1
@@ -723,12 +725,44 @@
       )
   )
 
+(defmacro /-signed-0-guard (a b)
+  "same as divide but handles overflow and divide by zero like the EE's DIV instruction."
+  `(let ((divisor ,b)
+         (dividend ,a))
+      (cond
+        ((and (= dividend -2147483648) (= divisor -1))
+          ;; overflow case
+          -2147483648)
+        ((zero? divisor)
+          (if (< dividend 0) 1 -1))
+        (else
+          (/ dividend divisor))
+        )
+      )
+  )
+
 (defmacro mod-0-guard (a b)
-  "same as modulo but returns the dividend when divisor is zero (EE-like)."
+  "same as modulo but returns the dividend when divisor is zero (EE-like, DIVU)."
   `(let ((divisor ,b))
       (if (zero? divisor)
           ,a
           (mod ,a divisor))
+      )
+  )
+
+(defmacro mod-signed-0-guard (a b)
+  "same as modulo but handles overflow and divide by zero like the EE's DIV instruction."
+  `(let ((divisor ,b)
+         (dividend ,a))
+      (cond
+        ((and (= dividend -2147483648) (= divisor -1))
+          ;; overflow case
+          0)
+        ((zero? divisor)
+          dividend)
+        (else
+          (mod dividend divisor))
+        )
       )
   )
 

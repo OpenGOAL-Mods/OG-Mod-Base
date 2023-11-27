@@ -885,6 +885,7 @@
          (menu "PS2 settings"
             ;(flag "PS2 Load speed" #f ,(dm-lambda-boolean-flag (-> *pc-settings* ps2-read-speed?)))
             (flag "PS2 Particles" #f ,(dm-lambda-boolean-flag (-> *pc-settings* ps2-parts?)))
+            (flag "PS2 Shadows" #f ,(dm-lambda-boolean-flag (-> *pc-settings* ps2-shadow?)))
             ;(flag "PS2 Music" #f ,(dm-lambda-boolean-flag (-> *pc-settings* ps2-music?)))
             ;(flag "PS2 Sound effects" #f ,(dm-lambda-boolean-flag (-> *pc-settings* ps2-se?)))
             ;(flag "PS2 Hints" #f ,(dm-lambda-boolean-flag (-> *pc-settings* ps2-hints?)))
@@ -920,7 +921,7 @@
            (flag "144" 144 dm-frame-rate-pick-func)
            (flag "165" 165 dm-frame-rate-pick-func)
            (flag "240" 240 dm-frame-rate-pick-func)
-           (flag "disclaimer" #f ,(dm-lambda-boolean-flag (-> *progress-state-pc* frame-rate-disclaimer-seen?)))
+           (flag "disclaimer" #f ,(dm-lambda-boolean-flag *frame-rate-disclaimer-seen?*))
            )
          (menu "MSAA"
             (flag "Off" 1 dm-msaa-pick-func)
