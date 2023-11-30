@@ -551,7 +551,6 @@
     (#when PC_PORT
       ;; Check to see if the string should be filtered or not
       (when (pc-filter-debug-string? arg2 (vector-vector-distance arg3 (target-pos 0)))
-      ;;(format #t "got: ~S~%" arg2)
         ;; no-op the function!
         (return #f)
         )
