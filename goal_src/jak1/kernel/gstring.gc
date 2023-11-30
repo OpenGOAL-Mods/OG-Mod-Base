@@ -129,6 +129,27 @@
     )
   )
 
+(defun string-starts-with= ((str-a string) (str-b string))
+  "Does str-a start with str-b?.
+   If either string is null, returns #f."
+  (let ((a-ptr (-> str-a data))
+        (b-ptr (-> str-b data))
+        )
+    (if (or (zero? str-a) (zero? str-b))
+        (return #f)
+        )
+    (while (and (nonzero? (-> a-ptr 0)) (nonzero? (-> b-ptr 0)))
+      (if (!= (-> a-ptr 0) (-> b-ptr 0))
+          (return #f)
+          )
+      (set! a-ptr (&-> a-ptr 1))
+      (set! b-ptr (&-> b-ptr 1))
+      )
+    ;; only equal if str-b end here.
+    (zero? (-> b-ptr 0))
+    )
+  )
+
 (defun string-charp= ((str string) (charp (pointer uint8)))
   "Is the data in str equal to the C string charp?"
   (let ((str-ptr (-> str data)))

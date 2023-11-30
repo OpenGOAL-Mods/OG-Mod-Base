@@ -9,7 +9,7 @@
 (declare-type exit-chamber-button basebutton)
 
 (define-extern get-closest-interactive-target-to-vector (function vector target))
-(define-extern runs-on-lpc-chamber-stop (function int none))
+(define-extern runs-on-lpc-chamber-stop (function float none))
 (define-extern has-camera-type? (function string basic))
 
 ;; DECOMP BEGINS
@@ -660,7 +660,7 @@
               (set! (-> self chargers-active) v1-5)
               (when (= v1-5 62)
                 (save-reminder (get-task-control (game-task sunken-room)) 1 0)
-                (runs-on-lpc-chamber-stop 1)
+                (runs-on-lpc-chamber-stop 1.0)
                 (go exit-chamber-charger-puzzle-beaten)
                 (return #t)
                 v0-0
@@ -931,7 +931,7 @@
       (exit-chamber-method-20 self (-> self wave-scale))
       (suspend)
       )
-    (runs-on-lpc-chamber-stop 2)
+    (runs-on-lpc-chamber-stop 2.0)
     (if (-> self door)
         (send-event (ppointer->process (-> self door)) 'trigger)
         )
@@ -1151,7 +1151,7 @@
       (logclear! (-> *target* state-flags) (state-flags prevent-jump))
       (camera-change-to (the-as string 'base) 300 #f)
       )
-    (runs-on-lpc-chamber-stop 1)
+    (runs-on-lpc-chamber-stop 1.0)
     (if (-> self door)
         (send-event (ppointer->process (-> self door)) 'trigger)
         )

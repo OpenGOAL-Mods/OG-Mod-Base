@@ -107,7 +107,7 @@
       ;; this could/should be improved to some more dynamic structure
       ;; especially if we want to support multiplayer in jak 2 in the future as well
 
-      (when (and (!= *target* #f) (!= (-> (level-get-target-inside *level*) name) 'title))
+      (when (and *target* (!= (-> (level-get-target-inside *level*) name) 'title))
         (when (-> *level* level 0)
           (set! (-> *teamrun-levels-info* level0_name) (symbol->string (-> *level* level 0 name)))
           (set! (-> *teamrun-levels-info* level0_status) (symbol->string (-> *level* level 0 status)))
@@ -131,6 +131,7 @@
 
           (set! (-> *interaction-update-buffer* idx type) (the-as interaction-type kind))
           (set! (-> *interaction-update-buffer* idx amount) amount)
+          (set! (-> *interaction-update-buffer* idx status) 0.0)
 
           (case kind
             (((pickup-type money) (pickup-type buzzer) (pickup-type fuel-cell))
@@ -178,7 +179,8 @@
             (set! *last-task-status* status)
 
             (set! (-> *interaction-update-buffer* idx type) (interaction-type game-task))
-            (set! (-> *interaction-update-buffer* idx amount) (the float status))
+            (set! (-> *interaction-update-buffer* idx amount) (the float task))
+            (set! (-> *interaction-update-buffer* idx status) (the float status))
             (set! (-> *interaction-update-buffer* idx ename) (game-task->string task))
             (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> (level-get-target-inside *level*) name)))
             (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
@@ -198,6 +200,7 @@
 
           (set! (-> *interaction-update-buffer* idx type) (interaction-type enemy-death))
           (set! (-> *interaction-update-buffer* idx amount) amount)
+          (set! (-> *interaction-update-buffer* idx status) 0.0)
           (set! (-> *interaction-update-buffer* idx ename) name)
           (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> (level-get-target-inside *level*) name)))
           (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
@@ -215,6 +218,7 @@
 
           (set! (-> *interaction-update-buffer* idx type) type)
           (set! (-> *interaction-update-buffer* idx amount) amount)
+          (set! (-> *interaction-update-buffer* idx status) 0.0)
           (set! (-> *interaction-update-buffer* idx ename) (the-as string (-> proc name)))
           (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> *level* level (-> (the-as process-drawable proc) draw level-index) name)))
           (set! (-> *interaction-update-buffer* idx parent) (symbol->string (-> (ppointer->process (-> proc parent)) name)))
@@ -226,12 +230,14 @@
       (none)
       )
 
+    ;; name type level
     (defun add-fish-to-interaction-buffer ((total-amount float) (type interaction-type))
       (dotimes (idx (-> *interaction-update-buffer* length))
         (when (= (-> *interaction-update-buffer* idx has_update?) #f)
 
           (set! (-> *interaction-update-buffer* idx type) type)
           (set! (-> *interaction-update-buffer* idx amount) total-amount)
+          (set! (-> *interaction-update-buffer* idx status) 0.0)
           (set! (-> *interaction-update-buffer* idx ename) "fisher-1")
           (set! (-> *interaction-update-buffer* idx level) "jungle")
           (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
@@ -243,12 +249,14 @@
       (none)
       )
 
+    ;; name type level
     (defun add-level-objective-to-interaction-buffer ((name string) (type interaction-type) (level string))
       (dotimes (idx (-> *interaction-update-buffer* length))
         (when (= (-> *interaction-update-buffer* idx has_update?) #f)
 
           (set! (-> *interaction-update-buffer* idx type) type)
           (set! (-> *interaction-update-buffer* idx amount) 1.0)
+          (set! (-> *interaction-update-buffer* idx status) 0.0)
           (set! (-> *interaction-update-buffer* idx ename) name)
           (set! (-> *interaction-update-buffer* idx level) level)
           (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
@@ -260,12 +268,33 @@
       (none)
       )
 
+    ;; status level
+    (defun add-lpc-chamber-to-interaction-buffer ((stop-point float) (level string))
+      (dotimes (idx (-> *interaction-update-buffer* length))
+        (when (= (-> *interaction-update-buffer* idx has_update?) #f)
+
+          (set! (-> *interaction-update-buffer* idx type) (interaction-type lpc-chamber))
+          (set! (-> *interaction-update-buffer* idx amount) 1.0)
+          (set! (-> *interaction-update-buffer* idx status) stop-point)
+          (set! (-> *interaction-update-buffer* idx ename) "exit-chamber-1")
+          (set! (-> *interaction-update-buffer* idx level) level)
+          (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
+            
+          (set! (-> *interaction-update-buffer* idx has_update?) #t)
+          (return #t)
+          )
+        )
+      (none)
+      )
+
+    ;; name amount level
     (defun add-boss-phase-to-interaction-buffer ((name string) (phase float) (level string))
       (dotimes (idx (-> *interaction-update-buffer* length))
         (when (= (-> *interaction-update-buffer* idx has_update?) #f)
 
           (set! (-> *interaction-update-buffer* idx type) (interaction-type boss-phase))
           (set! (-> *interaction-update-buffer* idx amount) phase)
+          (set! (-> *interaction-update-buffer* idx status) 0.0)
           (set! (-> *interaction-update-buffer* idx ename) name)
           (set! (-> *interaction-update-buffer* idx level) level)
           (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
@@ -283,6 +312,7 @@
 
           (set! (-> *self-player-info* inter_type) (-> *interaction-update-buffer* idx type))
           (set! (-> *self-player-info* inter_amount) (-> *interaction-update-buffer* idx amount))
+          (set! (-> *self-player-info* inter_status) (-> *interaction-update-buffer* idx status))
           (set! (-> *self-player-info* inter_name) (-> *interaction-update-buffer* idx ename))
           (set! (-> *self-player-info* inter_parent) (-> *interaction-update-buffer* idx parent))
           (set! (-> *self-player-info* inter_level) (-> *interaction-update-buffer* idx level))
@@ -486,8 +516,8 @@
       (none)
       )
 
-    (defun runs-on-lpc-chamber-stop ((stop-number int))
-      (add-level-objective-to-interaction-buffer "exit-chamber-1" (interaction-type lpc-chamber) (if (= stop-number 1) "sunkenb" "village2"))
+    (defun runs-on-lpc-chamber-stop ((stop-point float))
+      (add-lpc-chamber-to-interaction-buffer stop-point (if (= stop-point 1.0) "sunkenb" "village2"))
       (none)
       )
 

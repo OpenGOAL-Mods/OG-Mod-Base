@@ -70,10 +70,15 @@
 
 (defun clean-up-interaction-data ((target remote-player-info)) ;; needs to be done in game in case we skip frames when transfering position data
   (set! (-> target inter_type) (interaction-type none))
-  (set! (-> target inter_amount) 0.0)
-  (set! (-> target inter_name) "")
-  (set! (-> target inter_parent) "")
-  (set! (-> target inter_level) "")
+  ;; should be enough to clean up type
+  ;; (set! (-> target inter_amount) 0.0)
+  ;; (set! (-> target inter_status) 0.0)
+  ;; (set! (-> target inter_name) (new 'global 'string INTERACTION_STRING_LEN ""))
+  ;; (set! (-> target inter_parent) (new 'global 'string INTERACTION_STRING_LEN ""))
+  ;; (set! (-> target inter_level) (new 'global 'string INTERACTION_STRING_LEN ""))
+  ;; (set! (-> target inter_cleanup) 0)
+  
+  (none)
   )
 
 (defun color-target-rgb ((tgt process-drawable) (r float) (g float) (b float))
@@ -107,7 +112,7 @@
   )
 
 (defun safe-deactivate-remote-target ((idx int))
-  (let* ((remote-target (-> *remote-targets* idx)))
+  (let ((remote-target (-> *remote-targets* idx)))
     (when (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (handle->process (-> *remote-targets* idx)))
       (set! (-> *multiplayer-info* players idx mp_state) (mp-tgt-state mp-tgt-disconnected))
       (deactivate (handle->process remote-target))
@@ -229,6 +234,7 @@
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) tgt_state)  (-> *target* state name))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_type)     (-> *self-player-info* inter_type))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_amount)   (-> *self-player-info* inter_amount))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_status)   (-> *self-player-info* inter_status))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_name)     (-> *self-player-info* inter_name))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_parent)   (-> *self-player-info* inter_parent))
   (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_level)   (-> *self-player-info* inter_level))
@@ -475,12 +481,12 @@
 
         ;; finalize rotation
         (quaternion-copy! (-> t control dir-targ) (-> t root quat))
-          
+
         ;; sync target state
         (when (and (-> t state name) (!= (-> t state name) (-> p tgt_state)) 
                 (or 
                   (and (!= (-> p tgt_state) 'target-clone-anim) (!= (-> p tgt_state) 'target-racing-clone-anim) (!= (-> p tgt_state) 'target-flut-clone-anim)) 
-                  (and (= (-> p inter_type) (interaction-type game-task)) (= (-> p inter_amount) 7)) ;; only allow fuel cells from 'target-clone-anim
+                  (and (= (-> p inter_type) (interaction-type game-task)) (= (-> p inter_status) 7)) ;; only allow fuel cells from 'target-clone-anim
                 )
               )
           (target-sync-state (-> p tgt_state) t (-> p inter_name))
@@ -527,6 +533,7 @@
           (let ((p (-> *multiplayer-info* players idx))
                 (obj (the process-drawable (handle->process (-> *remote-targets* idx)))))
             (when obj
+              (handle-remote-interaction p idx)
               (update-actor-position obj p)
               )
             )

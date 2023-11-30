@@ -82,23 +82,39 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
           player->quat_w = field.value().get<float>();
         } else if (field.key().compare("rotY") == 0) {
           player->zoomer_rot_y = field.value().get<float>();
-        } else if (field.key().compare("interType") == 0) {
-          player->inter_type = field.value().get<float>();
-        } else if (field.key().compare("interAmount") == 0) {
-          player->inter_amount = field.value().get<float>();
-        } else if (field.key().compare("interName") == 0) {
-          std::string ename = field.value();
-          strncpy(Ptr<String>(player->inter_name).c()->data(), ename.c_str(), INTERACTION_STRING_LEN);
-        } else if (field.key().compare("interParent") == 0) {
-          std::string parent = field.value();
-          strncpy(Ptr<String>(player->inter_parent).c()->data(), parent.c_str(), INTERACTION_STRING_LEN);
-        } else if (field.key().compare("interLevel") == 0) {
-          std::string level = field.value();
-          strncpy(Ptr<String>(player->inter_level).c()->data(), level.c_str(), INTERACTION_STRING_LEN);
-        } else if (field.key().compare("tgtState") == 0) {
+        }else if (field.key().compare("tgtState") == 0) {
           player->tgt_state = field.value();
         } else if (field.key().compare("mpState") == 0) {
           player->mp_state = field.value().get<float>();
+        } else if (field.key().compare("interaction") == 0) {
+
+          //check if interaction available
+          if (player->inter_type == 0) {
+            for (const auto& interaction : field.value().items()) {
+              if (interaction.key().compare("interType") == 0) {
+                player->inter_type = interaction.value();
+              } else if (interaction.key().compare("interAmount") == 0) {
+                player->inter_amount = interaction.value().get<float>();
+              } else if (interaction.key().compare("interStatus") == 0) {
+                player->inter_status = interaction.value().get<float>();
+              } else if (interaction.key().compare("interName") == 0) {
+                std::string ename = interaction.value();
+                strncpy(Ptr<String>(player->inter_name).c()->data(), ename.c_str(), INTERACTION_STRING_LEN);
+              } else if (interaction.key().compare("interParent") == 0) {
+                std::string parent = interaction.value();
+                strncpy(Ptr<String>(player->inter_parent).c()->data(), parent.c_str(), INTERACTION_STRING_LEN);
+              } else if (interaction.key().compare("interLevel") == 0) {
+                std::string level = interaction.value();
+                //inter_level is somehow the issue alone, assigning level to inter_name works as normal
+                strncpy(Ptr<String>(player->inter_level).c()->data(), level.c_str(), INTERACTION_STRING_LEN);
+              } else if (interaction.key().compare("interCleanup") == 0) {
+                player->inter_cleanup = interaction.value();
+              }
+            }
+          } else {
+            lg::warn("skipped interaction!! !TODO: Add buffer in cpp");
+          }
+
         }
       }
     }
@@ -180,6 +196,7 @@ void send_position_update() {
       {"tgtState", gSelfPlayerInfo->tgt_state},
       {"interType", gSelfPlayerInfo->inter_type},
       {"interAmount", gSelfPlayerInfo->inter_amount},
+      {"interStatus", gSelfPlayerInfo->inter_status},
       {"interName", Ptr<String>(gSelfPlayerInfo->inter_name).c()->data()},
       {"interParent", Ptr<String>(gSelfPlayerInfo->inter_parent).c()->data()},
       {"interLevel", Ptr<String>(gSelfPlayerInfo->inter_level).c()->data()}

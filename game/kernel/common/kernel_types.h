@@ -61,9 +61,11 @@ struct RemotePlayerInfo {
 
   u32 inter_type;
   float inter_amount;
+  float inter_status;
   u32 inter_name;         // string (basic)
   u32 inter_parent;       // string (basic)
   u32 inter_level;        // string (basic)
+  s32 inter_cleanup;        // 0 or 1 (bool)
 
   u32 tgt_state;
   u32 mp_state;           // mp-tgt-state enum
