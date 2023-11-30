@@ -937,7 +937,7 @@
   (none)
   )
 
-(defun-debug game-task->string ((arg0 game-task))
+(defun game-task->string ((arg0 game-task))
   (enum->string game-task arg0)
   )
 
