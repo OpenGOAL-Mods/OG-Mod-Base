@@ -65,18 +65,20 @@ struct RemotePlayerInfo {
   u32 inter_name;         // string (basic)
   u32 inter_parent;       // string (basic)
   u32 inter_level;        // string (basic)
-  s32 inter_cleanup;        // 0 or 1 (bool)
+  s32 inter_cleanup;      // 0 or 1 (bool)
 
+  u32 current_level;      // string (basic)
   u32 tgt_state;
   u32 mp_state;           // mp-tgt-state enum
+  
+  int cells_collected;
+  int player_index;
+  int team_id;
 };
 
 struct TeamrunPlayerInfo {
   s32 has_state_update;
   s32 debug_mode_active;
-  u32 current_level;       // string (basic)
-  u32 current_checkpoint;  // string (basic)
-  s32 on_zoomer;
   s32 just_spawned;
   int cell_count;
   int buzzer_count;
@@ -94,9 +96,23 @@ struct TeamrunLevelInfo {
   u32 level1_status;  // string (basic)
 };
 
+struct GameMode {
+  u32 category;
+  u32 mode;
+  int require_same_level;
+  int allow_solo_hub_zoomers;
+  int no_lts;
+  int citadel_skip_version;
+  int free_for_all;
+  int enable_pvp;
+};
+
 const int MAX_MULTIPLAYER_COUNT = 20;
+const int MAX_COMMAND_COUNT = 3;
 
 struct MultiplayerInfo {
+  u32 teamrun_command;
   s32 player_num;
   RemotePlayerInfo players[MAX_MULTIPLAYER_COUNT];
+  GameMode game;
 };

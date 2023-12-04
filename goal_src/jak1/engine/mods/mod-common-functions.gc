@@ -19,49 +19,6 @@
 ;; Define Custom Variables to use in mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; teamrun
-(define *teamrun-info* (new 'global 'teamrun-player-info))
-(define *teamrun-levels-info* (new 'global 'game-levels-info))
-
-(define *interaction-update-buffer* (new 'global 'boxed-array interaction-info MAX_INTERACTION_BUFFER_COUNT))
-(define *last-task* (game-task none)) ;; tasks get closed twice in a row sometimes, this is used to prevent it from sending multiple of same close over socket
-(define *last-task-status* (task-status invalid))
-
-(define *allow-cell-pickup?* #t)
-(define *allow-final-boss?* #t)
-(define *has-none-position-update?* #f)
-
-;; game settings
-(define *enable-ingame-cutscenes?* #f) ;; should always be #f in multiplayer, some multiplayer stuff that isn't entirely cutscene related uses this as well !TODO: fix that maybe (see robotboss/sage-finalboss/boat? as example)
-
-;; game fixes
-(define *target-on-active-gondola?* #f)
-
-;; multiplayer
-(define *multiplayer-info* (new 'global 'multiplayer-info))
-(define *remote-targets* (new 'global 'boxed-array handle MAX_MULTIPLAYER_COUNT))
-(define *remote-target-active-count* 0)
-
-;; multiplayer settings
-(define *enable-remote-target-attacks* #t)
-(define *enable-remote-target-yellow-eco-blasts* #t)
-(define *enable-remote-target-pvp-attacks* #f)
-(define *pvp-attack-sphere-size* 3000.0)
-
-;; multiplayer save and load
-(define *enable-multiplayer-save-and-load* #t)
-(define *player-can-load* #f)
-
-;; multiplayer fixes
-(define *in-finalboss-cutscene?* #f)
-
-;; pickup toggles for remote
-(define *enable-remote-target-buzzer-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that cell fly can't drop two cells on pickup
-(define *enable-remote-target-money-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions to prevent orbs pickups to count as current user pickups
-(define *enable-remote-target-eco-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that the physical target can't accidentally miss it
-
-;; multiplayer self
-(define *self-player-info* (the-as remote-player-info #f))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -88,27 +45,41 @@
   (none)
   )
 
-(defun target-on-racer? ((t target))
-  (logtest? (-> t control root-prim prim-core action) (collide-action racer))
-)
 
-(defun target-on-flut? ((t target))
-  (logtest? (-> t control root-prim prim-core action) (collide-action flut))
-)
-
-(defun target-on-tube? ((t target))
-  (logtest? (-> t control root-prim prim-core action) (collide-action tube))
-)
-
-(defun target-on-foot? ((t target))
-  (not (or 
-        (logtest? (-> t control root-prim prim-core action) (collide-action racer)) 
-        (logtest? (-> t control root-prim prim-core action) (collide-action flut)))
+(defun set-zoomer-wait-mode ()
+  (set! (-> *racer-mods* target-speed) 13840.0)
+  (set! (-> *racer-air-mods* target-speed) 13840.0)
+  (none)
   )
-)
+(defun set-zoomer-full-mode ()
+  (set! (-> *racer-mods* target-speed) 163840.0)
+  (set! (-> *racer-air-mods* target-speed) 163840.0)
+  (none)
+  )
 
-(defun is-interactive? ((tgt-idx int))
-  (= (-> *multiplayer-info* players tgt-idx mp_state) (mp-tgt-state mp-tgt-interactive))
+(defun runs-on-zoomer-entry ()
+  ;; handle zoomer unlock
+  (let ((level-name (symbol->string (-> (level-get-target-inside *level*) name))))
+    (if (or (all-teammates-on-level-racer?)
+          (and (string= level-name "firecanyon") (task-closed? (game-task firecanyon-end) (task-status need-resolution)))
+          (and (string= level-name "ogre") (task-closed? (game-task ogre-end) (task-status need-resolution)))
+          (and (string= level-name "lavatube") (task-closed? (game-task lavatube-balls) (task-status need-resolution)))
+        )
+      (unlock-zoomer-in-current-level)
+      )
+    )
+
+
+  (if (or (= (-> *multiplayer-info* game allow_solo_hub_zoomers) 1) (= (-> *multiplayer-info* game free_for_all) 1) (not (current-level-is-zoomer-restricted?)))
+    (set-zoomer-full-mode)
+    (set-zoomer-wait-mode)
+    )
+
+  (none)
+  )
+
+(defun runs-on-zoomer-exit ()
+  (none)
   )
 
 (defun safe-deactivate-remote-target ((idx int))
@@ -198,13 +169,6 @@
   (none)
 )
 
-(defun mark-repl-connected ()
-    (send-event *target* 'loading)
-    (set! (-> *self-player-info* color)  (tgt-color normal))
-    (set! (-> *pc-settings* ps2-actor-vis?) #f)
-    (pc-acknowledge-repl-connection)
-  )
-
 (defun update-self-multiplayer-info ()
   (set! (-> *self-player-info* trans_x)    (-> *target* root trans x))
   (set! (-> *self-player-info* trans_y)    (-> *target* root trans y))
@@ -221,23 +185,17 @@
 
   (set! (-> *self-player-info* tgt_state)  (-> *target* state name))
 
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) username)   (-> *self-player-info* username))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) color)      (-> *self-player-info* color))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) trans_x)    (-> *target* root trans x))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) trans_y)    (-> *target* root trans y))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) trans_z)    (-> *target* root trans z))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_x)     (-> *target* root quat x))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_y)     (-> *target* root quat y))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_z)     (-> *target* root quat z))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_w)     (-> *target* root quat w))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) zoomer_rot_y)     (-> *self-player-info* zoomer_rot_y))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) tgt_state)  (-> *target* state name))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_type)     (-> *self-player-info* inter_type))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_amount)   (-> *self-player-info* inter_amount))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_status)   (-> *self-player-info* inter_status))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_name)     (-> *self-player-info* inter_name))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_parent)   (-> *self-player-info* inter_parent))
-  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_level)   (-> *self-player-info* inter_level))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) username)       (-> *self-player-info* username))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) color)          (-> *self-player-info* color))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) trans_x)        (-> *target* root trans x))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) trans_y)        (-> *target* root trans y))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) trans_z)        (-> *target* root trans z))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_x)         (-> *target* root quat x))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_y)         (-> *target* root quat y))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_z)         (-> *target* root quat z))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) quat_w)         (-> *target* root quat w))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) zoomer_rot_y)   (-> *self-player-info* zoomer_rot_y))
+  (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) tgt_state)      (-> *target* state name))
   (none)
   )
 
@@ -533,7 +491,9 @@
           (let ((p (-> *multiplayer-info* players idx))
                 (obj (the process-drawable (handle->process (-> *remote-targets* idx)))))
             (when obj
-              (handle-remote-interaction p idx)
+              (if (and (is-interactive? idx) (or (= (-> p team_id) (-> *self-player-info* team_id)) (= (-> *multiplayer-info* game free_for_all) 1)))
+                (handle-remote-interaction p idx)
+                )
               (update-actor-position obj p)
               )
             )
@@ -581,7 +541,7 @@
       )
     (if (= (-> *multiplayer-info* player_num) idx)
       *target*
-      (if (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (= (-> *multiplayer-info* players idx mp_state) (mp-tgt-state mp-tgt-interactive)) (handle->process (-> *remote-targets* idx)))
+      (if (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (is-interactive? idx) (handle->process (-> *remote-targets* idx)))
         (the target (handle->process (-> *remote-targets* idx)))
         (the-as target #f)
         )

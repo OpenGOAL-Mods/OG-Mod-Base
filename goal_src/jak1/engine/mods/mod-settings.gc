@@ -75,8 +75,14 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (inter_level   string)
   (inter_cleanup   int32) ;; marks level cleanup interaction from entering level
 
+  (current_level string)
   (tgt_state  symbol)
   (mp_state   mp-tgt-state) 
+  
+  ;; set from teamrun side
+  (cells_collected int32)
+  (player_index    int32)
+  (team_id         int32)
   )
   :pack-me
   (:methods
@@ -105,7 +111,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> obj inter_parent) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
     (set! (-> obj inter_level) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
     (set! (-> obj inter_cleanup) 0)
+    (set! (-> obj current_level) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
     (set! (-> obj tgt_state) 'invalid)
+    (set! (-> obj cells_collected) 0)
+    (set! (-> obj team_id) -1)
     obj
     )
   )
@@ -145,9 +154,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   ;; state updates
   (has_state_update?    int32)
   (debug_mode_active?    int32)
-  (current_level   string)
-  (current_checkpoint      string)
-  (on_zoomer?    int32)
   (just_spawned?    int32)
   (cell_count    int32)
   (buzzer_count    int32)
@@ -161,17 +167,65 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defmethod new teamrun-player-info ((allocation symbol) (type-to-make type))
   (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
-  ;; state update
     (set! (-> obj has_state_update?) 0)
     (set! (-> obj debug_mode_active?) 0)
-    (set! (-> obj current_level) (new 'global 'string 32 (new 'global 'string 32 "")))
-    (set! (-> obj current_checkpoint) (new 'global 'string 32 (new 'global 'string 32 "")))
-    (set! (-> obj on_zoomer?) 0)
     (set! (-> obj just_spawned?) 0)
     (set! (-> obj cell_count) 0)
     (set! (-> obj buzzer_count) 0)
     (set! (-> obj money_count) 0)
     (set! (-> obj death_count) 0)
+    obj
+    )
+  )
+
+(deftype game-mode (structure)
+ (
+  (category               run-category)
+  (mode                   run-mode)
+  (require_same_level     int32)
+  (allow_solo_hub_zoomers int32)
+  (no_lts                 int32)
+  (citadel_skip_version   citadel-skip-version)
+  (free_for_all           int32)
+  (enable_pvp             int32)
+  )
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+
+(defmethod new game-mode ((allocation symbol) (type-to-make type))
+  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+    (set! (-> obj mode) (run-mode speedrun))
+    (set! (-> obj category) (run-category no-lts))
+    (set! (-> obj require_same_level) 0)
+    (set! (-> obj allow_solo_hub_zoomers) 1)
+    (set! (-> obj no_lts) 0)
+    (set! (-> obj citadel_skip_version) (citadel-skip-version normal))
+    (set! (-> obj free_for_all) 0)
+    (set! (-> obj enable_pvp) 0)
+    obj
+    )
+  )
+
+
+(deftype zoomer-level-unlocks (structure)
+ (
+  ;; state updates
+  (fire-canyon    symbol)
+  (mountain-pass  symbol)
+  (lava-tube      symbol)
+  )
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+
+(defmethod new zoomer-level-unlocks ((allocation symbol) (type-to-make type))
+  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+    (set! (-> obj fire-canyon) #f)
+    (set! (-> obj mountain-pass) #f)
+    (set! (-> obj lava-tube) #f)
     obj
     )
   )
@@ -206,8 +260,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 
 (deftype multiplayer-info (structure)
- ((player_num           int32)
+ ((teamrun_command      teamrun-command)
+  (player_num           int32)
   (players    remote-player-info MAX_MULTIPLAYER_COUNT :inline)
+  (game                 game-mode :inline)
   )
   (:methods
     (new (symbol type) _type_ 0)
@@ -216,13 +272,23 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defmethod new multiplayer-info ((allocation symbol) (type-to-make type))
   (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+    (set! (-> obj teamrun_command) (teamrun-command none))
     (set! (-> obj player_num) -1)
     (dotimes (idx MAX_MULTIPLAYER_COUNT)
       (set! (-> obj players idx username) (new 'global 'string MAX_USERNAME_LEN ""))
       (set! (-> obj players idx inter_name) (new 'global 'string INTERACTION_STRING_LEN ""))
       (set! (-> obj players idx inter_parent) (new 'global 'string INTERACTION_STRING_LEN ""))
       (set! (-> obj players idx inter_level) (new 'global 'string INTERACTION_STRING_LEN ""))
+      (set! (-> obj players idx current_level) (new 'global 'string INTERACTION_STRING_LEN ""))
       )
+    (set! (-> obj game mode) (run-mode speedrun))
+    (set! (-> obj game category) (run-category no-lts))
+    (set! (-> obj game require_same_level) 1)
+    (set! (-> obj game allow_solo_hub_zoomers) 1)
+    (set! (-> obj game no_lts) 0)
+    (set! (-> obj game citadel_skip_version) (citadel-skip-version normal))
+    (set! (-> obj game free_for_all) 0)
+    (set! (-> obj game enable_pvp) 0)
     obj
     )
   )

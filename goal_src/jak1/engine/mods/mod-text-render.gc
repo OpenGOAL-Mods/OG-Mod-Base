@@ -6,6 +6,9 @@
     ;; dgos: TODO
 
 
+(define *team-ui-option* (team-ui-option own-team))
+(define *player-ui-option* (player-ui-option minimal))
+(define *ui-text* (new 'global 'string 128 ""))
 
 (defun get-text-3d ()
   "Allocate a debug text 3d from the list."
@@ -103,4 +106,90 @@
     )
    )
   #f
+  )
+
+(defun level-name->display-name ((level-name string))
+  (cond
+    ((string= level-name "lavatube") "Lava Tube")
+    ((string= level-name "beach") "Beach")
+    ((string= level-name "citadel") "Citadel")
+    ((string= level-name "darkcave") "Dark Cave")
+    ((string= level-name "finalboss") "Final Boss")
+    ((string= level-name "firecanyon") "Fire Canyon")
+    ((string= level-name "jungle") "FJ")
+    ((string= level-name "jungleb") "FJ Temple")
+    ((string= level-name "maincave") "Spider Cave")
+    ((string= level-name "misty") "Misty")
+    ((string= level-name "ogre") "MP")
+    ((string= level-name "robocave") "Robot Cave")
+    ((string= level-name "rolling") "Basin")
+    ((string= level-name "snowy") "Snowy")
+    ((string= level-name "sunken") "LPC Top")
+    ((string= level-name "sunkenb") "LPC Bottom")
+    ((string= level-name "swamp") "Boggy")
+    ((string= level-name "training") "Geyser")
+    ((string= level-name "village1") "Sandover")
+    ((string= level-name "village2") "Rock Village")
+    ((string= level-name "village3") "Volcano")
+    )
+  )
+
+(defun render-player-ui ((dma-buf dma-buffer))
+  (clear *ui-text*)
+  (case *team-ui-option*
+    (((team-ui-option own-team))
+      (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+        (when (and
+              (is-interactive? tgt-idx)
+              (is-teammate? tgt-idx)
+            )
+          (case *player-ui-option*
+            (((player-ui-option minimal))
+              (format *ui-text* "~S (~S)~%" 
+                (-> *multiplayer-info* players tgt-idx username)
+                (level-name->display-name (-> *multiplayer-info* players tgt-idx current_level))
+                )
+              )
+            (((player-ui-option full))
+              (format *ui-text* "~S (~S) Cells: ~d~%" 
+                (-> *multiplayer-info* players tgt-idx username)
+                (level-name->display-name (-> *multiplayer-info* players tgt-idx current_level))
+                (-> *multiplayer-info* players tgt-idx cells_collected)
+                )
+              )
+            )
+          )
+        )
+      (draw-string-xy *ui-text* dma-buf 5 48 (font-color white) (font-flags shadow kerning))
+      )
+    (((team-ui-option all-teams))
+      (dotimes (team-id MAX_TEAM_COUNT)
+        (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+          (when (and
+                (is-interactive? tgt-idx)
+                (= (-> *multiplayer-info* players tgt-idx team_id) team-id)
+              )
+            (case *player-ui-option*
+              (((player-ui-option minimal))
+                (format *ui-text* "~S (~S)~%" 
+                  (-> *multiplayer-info* players tgt-idx username)
+                  (level-name->display-name (-> *multiplayer-info* players tgt-idx current_level))
+                  )
+                )
+              (((player-ui-option full))
+                (format *ui-text* "~S (~S) Cells: ~d~%" 
+                  (-> *multiplayer-info* players tgt-idx username)
+                  (level-name->display-name (-> *multiplayer-info* players tgt-idx current_level))
+                  (-> *multiplayer-info* players tgt-idx cells_collected)
+                  )
+                )
+              )
+            )
+          )
+        (format *ui-text* "~%")
+        )
+      (draw-string-xy *ui-text* dma-buf 5 48 (font-color white) (font-flags shadow kerning))
+      )
+    )
+  (none) 
   )

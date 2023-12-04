@@ -1,0 +1,402 @@
+    ;;-*-Lisp-*-
+    (in-package goal)
+
+    ;; name: mod-game-handler.gc
+    ;; name in dgo: mod-game-handler
+    ;; dgos: TODO
+
+
+;; teamrun
+(define *teamrun-info* (new 'global 'teamrun-player-info))
+(define *teamrun-levels-info* (new 'global 'game-levels-info))
+(define *zoomer-level-unlocks* (new 'global 'zoomer-level-unlocks))
+
+(define *interaction-update-buffer* (new 'global 'boxed-array interaction-info MAX_INTERACTION_BUFFER_COUNT))
+(define *last-task* (game-task none)) ;; tasks get closed twice in a row sometimes, this is used to prevent it from sending multiple of same close over socket
+(define *last-task-status* (task-status invalid))
+
+(define *allow-cell-pickup?* #t)
+(define *allow-final-boss?* #t)
+(define *allow-one-time-citadel-skip?* #t)
+(define *has-none-position-update?* #f)
+
+
+;; game settings
+(define *enable-ingame-cutscenes?* #f) ;; should always be #f in multiplayer, some multiplayer stuff that isn't entirely cutscene related uses this as well !TODO: fix that maybe (see robotboss/sage-finalboss/boat? as example)
+
+;; game fixes
+(define *target-on-active-gondola?* #f)
+
+;; multiplayer
+(define *multiplayer-info* (new 'global 'multiplayer-info))
+(define *remote-targets* (new 'global 'boxed-array handle MAX_MULTIPLAYER_COUNT))
+(define *remote-target-active-count* 0)
+
+;; multiplayer settings
+(define *enable-remote-target-attacks* #t)
+(define *enable-remote-target-yellow-eco-blasts* #t)
+(define *enable-remote-target-pvp-attacks* #f)
+(define *pvp-attack-sphere-size* 3000.0)
+
+;; multiplayer save and load
+(define *enable-multiplayer-save-and-load* #t)
+(define *player-can-load* #f)
+
+;; multiplayer fixes
+(define *in-finalboss-cutscene?* #f)
+
+;; pickup toggles for remote
+(define *enable-remote-target-buzzer-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that cell fly can't drop two cells on pickup
+(define *enable-remote-target-money-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions to prevent orbs pickups to count as current user pickups
+(define *enable-remote-target-eco-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that the physical target can't accidentally miss it
+
+;; multiplayer self
+(define *self-player-info* (the-as remote-player-info #f))
+
+
+(defun reset-run-variables ()
+  (set! (-> *zoomer-level-unlocks* fire-canyon) #f)
+  (set! (-> *zoomer-level-unlocks* mountain-pass) #f)
+  (set! (-> *zoomer-level-unlocks* lava-tube) #f)
+  (set! *allow-one-time-citadel-skip?* #t)
+)
+
+(defun target-on-racer? ((t target))
+  (logtest? (-> t control root-prim prim-core action) (collide-action racer))
+)
+
+(defun target-on-flut? ((t target))
+  (logtest? (-> t control root-prim prim-core action) (collide-action flut))
+)
+
+(defun target-on-tube? ((t target))
+  (logtest? (-> t control root-prim prim-core action) (collide-action tube))
+)
+
+(defun target-on-foot? ((t target))
+  (not (or 
+        (target-on-racer? t)
+        (target-on-flut? t))
+  )
+)
+
+(defun is-interactive? ((tgt-idx int))
+  (= (-> *multiplayer-info* players tgt-idx mp_state) (mp-tgt-state mp-tgt-interactive))
+  )
+
+(defun is-teammate? ((tgt-idx int))
+  (= (-> *multiplayer-info* players tgt-idx team_id) (-> *self-player-info* team_id))
+  )
+
+(defun has-all-citadel-cells? ()
+  (and 
+    (task-closed? (game-task citadel-sage-green) (task-status need-resolution))
+    (task-closed? (game-task citadel-sage-blue) (task-status need-resolution))
+    (task-closed? (game-task citadel-sage-red) (task-status need-resolution))
+    (task-closed? (game-task citadel-sage-yellow) (task-status need-resolution))
+    )
+  )
+
+(defun current-level-is-zoomer-restricted? ()
+  (let ((level-name (symbol->string (-> (level-get-target-inside *level*) name))))
+    (case level-name
+      ((string= level-name "firecanyon")
+        (not (-> *zoomer-level-unlocks* fire-canyon))
+        )
+      ((string= level-name "ogre")
+        (not (-> *zoomer-level-unlocks* mountain-pass))
+        )
+      ((string= level-name "lavatube")
+        (not (-> *zoomer-level-unlocks* lava-tube))
+        )
+      (else
+        #f
+        )
+      )
+    )
+  )
+
+(defun unlock-zoomer-in-current-level ()
+  (let ((level-name (symbol->string (-> (level-get-target-inside *level*) name))))
+    (case level-name
+      ((string= level-name "firecanyon")
+        (set! (-> *zoomer-level-unlocks* fire-canyon) #t)
+        )
+      ((string= level-name "ogre")
+        (set! (-> *zoomer-level-unlocks* mountain-pass) #t)
+        )
+      ((string= level-name "lavatube")
+        (set! (-> *zoomer-level-unlocks* lava-tube) #t)
+        )
+      (else
+        #f
+        )
+      )
+    )
+  )
+
+(defun get-team-cell-count ()
+  (let ((team-cell-count 0))
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (if (and
+            (is-interactive? tgt-idx)
+            (is-teammate? tgt-idx)
+          )
+          (set! team-cell-count (+ team-cell-count (-> *multiplayer-info* players tgt-idx cells_collected)))
+        )
+      )
+    team-cell-count
+    )
+  )
+
+(defun get-team-count ()
+  (let ((team-count 0))
+    (dotimes (team-id MAX_TEAM_COUNT)
+      (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+        (when (and
+              (!= (-> *multiplayer-info* players tgt-idx mp_state) (mp-tgt-state mp-tgt-disconnected))
+              (= (-> *multiplayer-info* players tgt-idx team_id) team-id)
+            )
+            (set! team-count (+ team-count 1))
+            (goto player-count-end)
+          )
+        )
+        (label player-count-end)
+      )
+    team-count
+    )
+  )
+
+(defun team-has-most-cells? ()
+  (if (= -1 (-> *self-player-info* team_id))
+    (return #t)
+    )
+  (if (= (-> *multiplayer-info* game free_for_all) 1)
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (if (and
+            (is-interactive? tgt-idx)
+            (> (-> *multiplayer-info* players tgt-idx cells_collected) (-> *self-player-info* cells_collected))
+          )
+        (return #f)
+        )
+      )
+    (let ((team-cell-count (get-team-cell-count)))
+      (dotimes (team-id MAX_TEAM_COUNT)
+        (if (!= team-id (-> *self-player-info* team_id))
+          (let ((other-team-cell-count 0))
+            (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+              (when (and
+                    (is-interactive? tgt-idx)
+                    (= (-> *multiplayer-info* players tgt-idx team_id) team-id)
+                  )
+                  (set! other-team-cell-count (+ other-team-cell-count (-> *multiplayer-info* players tgt-idx cells_collected)))
+                  (if (> other-team-cell-count team-cell-count)
+                    (return #f)
+                    )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+    #t
+  )
+
+(defun is-same-level? ((level-name1 string) (level-name2 string))
+  (cond
+    ((or (string= level-name1 "maincave") (string= level-name1 "robocave") (string= level-name1 "darkcave"))
+      (or (string= level-name2 "maincave") (string= level-name2 "robocave") (string= level-name2 "darkcave"))
+      )
+    ((or (string= level-name1 "sunken") (string= level-name1 "sunkenb"))
+      (or (string= level-name2 "sunken") (string= level-name2 "sunkenb"))
+      )
+    ((or (string= level-name1 "jungle") (string= level-name1 "jungleb"))
+      (or (string= level-name2 "jungleb") (string= level-name2 "jungle"))
+      )
+    (else
+      (string= level-name1 level-name2)
+      )
+    )
+  )
+
+(defun all-teammates-in-same-level? ()
+  (let ((level-name (symbol->string (-> (level-get-target-inside *level*) name))))
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (if (and
+            (is-interactive? tgt-idx)
+            (is-teammate? tgt-idx)
+            (not (is-same-level? level-name (-> *multiplayer-info* players tgt-idx current_level)))
+          )
+        (return #f)
+        )
+      )
+    )
+  #t
+  )
+
+(defun all-teammates-on-level-racer? ()
+  (let ((level-name (symbol->string (-> (level-get-target-inside *level*) name))))
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (let ((target (get-interactive-target tgt-idx)))
+        (if (and
+              (is-interactive? tgt-idx)
+              (is-teammate? tgt-idx)
+              (or (not (is-same-level? level-name (-> *multiplayer-info* players tgt-idx current_level)))
+                (not (target-on-racer? target))
+              )
+            )
+          (return #f)
+          )
+        )
+      )
+    )
+  #t
+  )
+
+(defun check-lockout-restrictions ()
+  (let ((level-name (symbol->string (-> (level-get-target-inside *level*) name)))
+        (has-most-cells (team-has-most-cells?))
+      )
+    (set! *allow-final-boss?* has-most-cells)
+    (when (string= level-name "finalboss")
+      (when has-most-cells 
+        (set! (-> (the-as plat-eco-finalboss (process-by-ename "plat-eco-finalboss-1")) speed) 0.1)
+        )
+      (when (not has-most-cells)
+        (set-continue! *game-info* "finalboss-start")
+        (set! (-> (the-as plat-eco-finalboss (process-by-ename "plat-eco-finalboss-1")) speed) 0.0)
+        )
+      )
+    )
+  )
+
+(defun check-citadel-skip ()
+  (when (and (= (-> *multiplayer-info* game citadel_skip_version) (citadel-skip-version patched)) (not (has-all-citadel-cells?)))
+    (if (name= (-> *game-info* current-continue name) "citadel-elevator")
+      (set-continue! *game-info* "citadel-start")
+      )
+    (if (name= (-> (level-get-target-inside *level*) name) "finalboss")
+      (start 'play (get-continue-by-name *game-info* "citadel-elevator"))
+      )
+    )
+
+  (when (and *allow-one-time-citadel-skip?* 
+        (= (-> *multiplayer-info* game citadel_skip_version) (citadel-skip-version shared)) 
+        (name= (-> *game-info* current-continue name) "citadel-start")
+        (task-closed? (game-task citadel-sage-green) (task-status need-resolution))
+      )
+      (set-continue! *game-info* "citadel-elevator")
+    )
+  )
+
+
+
+;; Custom checkpoint storage
+(define *tmp-continue-point* (new 'static 'continue-point
+  :name "tmp"
+  :level #f
+  :trans (new 'static 'vector :w 1.0)
+  :quat (new 'static 'quaternion :w 1.0)
+  :camera-trans (new 'static 'vector :w 1.0)
+  :camera-rot (new 'static 'array float 9)
+  :load-commands '()
+  :vis-nick #f
+  :lev0 #f
+  :disp0 #f
+  :lev1 #f
+  :disp1 #f
+  )
+  )
+  
+(define *tmp-flut?* #f)
+(define *tmp-zoomer?* #f)
+(define *full-hp?* #f)
+(define *last-real-continue-point* (the-as continue-point #f))
+
+(defun continue-point-copy! ((dst continue-point) (src continue-point))
+  (set! (-> dst level) (-> src level))
+  (set! (-> dst quat y) 0.0)
+  (set! (-> dst quat w) 1.0)
+  (set! (-> dst load-commands) (-> src load-commands))
+  (set! (-> dst vis-nick) (-> src vis-nick))
+  (when (-> *level* level0)
+    (set! (-> dst lev0) (-> *level* level0 name))
+    (set! (-> dst lev0) (-> *level* level0 name))
+    (set! (-> dst disp0) (-> *level* level0 display?))
+    )
+  (when (-> *level* level1)
+    (set! (-> dst lev1) (-> *level* level1 name))
+    (set! (-> dst disp1) (-> *level* level1 display?))
+    )
+  (none)
+  )
+
+
+(defun camera-rot-copy! ((dst continue-point) (src matrix))
+  (set! (-> dst camera-rot 0) (-> src vector 0 x))
+  (set! (-> dst camera-rot 1) (-> src vector 0 y))
+  (set! (-> dst camera-rot 2) (-> src vector 0 z))
+  (set! (-> dst camera-rot 3) (-> src vector 1 x))
+  (set! (-> dst camera-rot 4) (-> src vector 1 y))
+  (set! (-> dst camera-rot 5) (-> src vector 1 z))
+  (set! (-> dst camera-rot 6) (-> src vector 2 x))
+  (set! (-> dst camera-rot 7) (-> src vector 2 y))
+  (set! (-> dst camera-rot 8) (-> src vector 2 z))
+  (none)
+  )
+
+
+(defun speedrun-reset-common-settings ()
+  ;; disable hints (this seems to be overriden by your slot 1 save though)
+  (set! (-> *setting-control* default play-hints) #f)
+  ;; ensure `force actors` is not enabled
+  ;; (set! (-> *pc-settings* ps2-actor-vis?) #t)
+  ;; force FPS to `60`
+  ;; (set-frame-rate! *pc-settings* 60 #t)
+  ;; skip intro cutscene
+  (close-specific-task! (game-task intro) (task-status need-resolution))
+  (none)
+  )
+
+
+(defun spawn-temp-checkpoint ()
+  (when (-> *tmp-continue-point* level)
+    ;; store last real checkpoint to restore later
+    (when (not (string= (-> *game-info* current-continue name) "tmp"))
+      (set! *last-real-continue-point* (-> *game-info* current-continue))
+      )
+    (set! (-> *game-info* current-continue) *tmp-continue-point*)
+    (initialize! *game-info* 'dead (the-as game-save #f) (the-as string #f))
+    (speedrun-reset-common-settings)
+    )
+  (none)
+  )
+
+(defun store-temp-checkpoint ()
+  ;; outside of bsp breaks shit
+  (when (or (-> *level* level0 inside-boxes?) (-> *level* level1 inside-boxes?))
+    ;; assume current continue is good enough for the current location
+    (continue-point-copy! *tmp-continue-point* (-> *game-info* current-continue))
+    (vector-copy! (-> *tmp-continue-point* trans) (-> *target* root trans))
+    (quaternion-copy! (-> *tmp-continue-point* quat) (-> *target* control unknown-quaternion00))
+    (vector-copy! (-> *tmp-continue-point* camera-trans) (-> *camera-combiner* trans))
+    (camera-rot-copy! *tmp-continue-point* (-> *camera-combiner* inv-camera-rot))
+
+    (set! *full-hp?* (and (!= *target* #f)
+                  (= (-> *target* fact-info-target health) 3.0)
+                  (= (-> *target* fact-info-target eco-pill) 50.0)
+                  ))
+    (set! *tmp-flut?* #f)
+    (set! *tmp-zoomer?* #f)
+    (case (-> *target* state)
+      ((target-flut-stance)
+        (set! *tmp-flut?* #t)
+        )
+      ((target-racing)
+        (set! *tmp-zoomer?* #t)
+        )
+      )
+    )
+  (none)
+  )

@@ -15,12 +15,14 @@ RemotePlayerInfo* gSelfPlayerInfo;
 TeamrunPlayerInfo* gTeamrunInfo;
 TeamrunLevelInfo* gTeamrunLevelInfo;
 
+int commandBuffer[MAX_COMMAND_COUNT] = { 0, 0, 0 };
+
 // Create a server endpoint
 server ogSocket;
 websocketpp::connection_hdl connection;
 bool isConnectedOverSocket = false;
 bool isConnectedToGame = false;
-bool sendReplConnectedUpdate = false;
+bool sendConnectionAcknowledgement = true;
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 
@@ -35,8 +37,12 @@ void on_open(websocketpp::connection_hdl hdl) {
   isConnectedOverSocket = true;
   lg::warn("Client connected");
 
-  if (sendReplConnectedUpdate)
+  if (isConnectedToGame) {
+    gMultiplayerInfo->teamrun_command = 1;
+    sendConnectionAcknowledgement = true;
     send_position_update();
+  }
+
 }
 
 void on_close(websocketpp::connection_hdl) {
@@ -53,72 +59,146 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
     return;
 
   json response_json = json::parse(msg->get_payload());
+  
+  for (const auto& section : response_json.items()) {
+    if (section.key().compare("command") == 0) {
+      for (int i = 0; i < MAX_COMMAND_COUNT; i++) {
+        if (commandBuffer[i] == 0) {
+          commandBuffer[i] = section.value();
+          break;
+        }
+      }
+    } else if (section.key().compare("gameSettings") == 0) {
+      GameMode* gameSetting = &(gMultiplayerInfo->game);
+      for (const auto& gameField : section.value().items()) {
+        if (gameField.key().compare("category") == 0) {
+          gameSetting->category = gameField.value();
+        } else if (gameField.key().compare("mode") == 0) {
+          gameSetting->mode = gameField.value();
+        } else if (gameField.key().compare("requireSameLevel") == 0) {
+          gameSetting->require_same_level = gameField.value();
+        } else if (gameField.key().compare("allowSoloHubZoomers") == 0) {
+          gameSetting->allow_solo_hub_zoomers = gameField.value();
+        } else if (gameField.key().compare("noLTS") == 0) {
+          gameSetting->no_lts = gameField.value();
+        } else if (gameField.key().compare("citadelSkip") == 0) {
+          gameSetting->citadel_skip_version = gameField.value();
+        } else if (gameField.key().compare("freeForAll") == 0) {
+          gameSetting->free_for_all = gameField.value();
+        } else if (gameField.key().compare("enablePvp") == 0) {
+          gameSetting->enable_pvp = gameField.value();
+        }
+      }
+    } else if (section.key().compare("selfInfo") == 0) {
+      for (const auto& infoField : section.value().items()) {
+        if (infoField.key().compare("teamId") == 0) {
+          gSelfPlayerInfo->team_id = infoField.value();
+          RemotePlayerInfo* player = &(gMultiplayerInfo->players[gMultiplayerInfo->player_num]);
+          player->team_id = infoField.value();
+        } else if (infoField.key().compare("playerIndex") == 0) {
+          gSelfPlayerInfo->player_index = infoField.value();
+          RemotePlayerInfo* player = &(gMultiplayerInfo->players[gMultiplayerInfo->player_num]);
+          player->player_index = infoField.value();
+        } else if (infoField.key().compare("cellsCollected") == 0) {
+          gSelfPlayerInfo->cells_collected = infoField.value();
+          RemotePlayerInfo* player = &(gMultiplayerInfo->players[gMultiplayerInfo->player_num]);
+          player->cells_collected = infoField.value();
+        }
+      }
+    } else if (section.key().compare("username") == 0) {
+      std::string username = section.value();
+      strncpy(Ptr<String>(gSelfPlayerInfo->username).c()->data(), username.c_str(), MAX_USERNAME_LEN);
+    } else if (section.key().compare("players") == 0) {
+      // update player positions
+      for (const auto& item : section.value().items()) {
+        int playerId = stoi(item.key()) + 1; //current player not included which 0 is reserved for
+        if (playerId < MAX_MULTIPLAYER_COUNT && playerId != gMultiplayerInfo->player_num) {
+          RemotePlayerInfo* player = &(gMultiplayerInfo->players[playerId]);
 
-  // update player positions
-  for (const auto& item : response_json.items()) {
-    int playerId = stoi(item.key()) + 1; //current player not included which 0 is reserved for
-    if (playerId < MAX_MULTIPLAYER_COUNT && playerId != gMultiplayerInfo->player_num) {
-      RemotePlayerInfo* player = &(gMultiplayerInfo->players[playerId]);
+          for (const auto& field : item.value().items()) {
+            if (field.key().compare("username") == 0) {
+              std::string username = field.value();
+              strncpy(Ptr<String>(player->username).c()->data(), username.c_str(), MAX_USERNAME_LEN);
+            } else if (field.key().compare("color") == 0) {
+              player->color = field.value().get<float>();
+            } else if (field.key().compare("transX") == 0) {
+              player->trans_x = field.value().get<float>();
+            } else if (field.key().compare("transY") == 0) {
+              player->trans_y = field.value().get<float>();
+            } else if (field.key().compare("transZ") == 0) {
+              player->trans_z = field.value().get<float>();
+            } else if (field.key().compare("quatX") == 0) {
+              player->quat_x = field.value().get<float>();
+            } else if (field.key().compare("quatY") == 0) {
+              player->quat_y = field.value().get<float>();
+            } else if (field.key().compare("quatZ") == 0) {
+              player->quat_z = field.value().get<float>();
+            } else if (field.key().compare("quatW") == 0) {
+              player->quat_w = field.value().get<float>();
+            } else if (field.key().compare("rotY") == 0) {
+              player->zoomer_rot_y = field.value().get<float>();
+            } else if (field.key().compare("tgtState") == 0) {
+              player->tgt_state = field.value();
+            } else if (field.key().compare("mpState") == 0) {
+              player->mp_state = field.value().get<float>();
+            } else if (field.key().compare("currentLevel") == 0) {
+              std::string levelName = field.value();
+              strncpy(Ptr<String>(player->current_level).c()->data(), levelName.c_str(), INTERACTION_STRING_LEN);
+            } else if (field.key().compare("interaction") == 0) {
 
-      for (const auto& field : item.value().items()) {
-        if (field.key().compare("username") == 0) {
-          std::string username = field.value();
-          strncpy(Ptr<String>(player->username).c()->data(), username.c_str(), MAX_USERNAME_LEN);
-        } else if (field.key().compare("color") == 0) {
-          player->color = field.value().get<float>();
-        } else if (field.key().compare("transX") == 0) {
-          player->trans_x = field.value().get<float>();
-        } else if (field.key().compare("transY") == 0) {
-          player->trans_y = field.value().get<float>();
-        } else if (field.key().compare("transZ") == 0) {
-          player->trans_z = field.value().get<float>();
-        } else if (field.key().compare("quatX") == 0) {
-          player->quat_x = field.value().get<float>();
-        } else if (field.key().compare("quatY") == 0) {
-          player->quat_y = field.value().get<float>();
-        } else if (field.key().compare("quatZ") == 0) {
-          player->quat_z = field.value().get<float>();
-        } else if (field.key().compare("quatW") == 0) {
-          player->quat_w = field.value().get<float>();
-        } else if (field.key().compare("rotY") == 0) {
-          player->zoomer_rot_y = field.value().get<float>();
-        }else if (field.key().compare("tgtState") == 0) {
-          player->tgt_state = field.value();
-        } else if (field.key().compare("mpState") == 0) {
-          player->mp_state = field.value().get<float>();
-        } else if (field.key().compare("interaction") == 0) {
-
-          //check if interaction available
-          if (player->inter_type == 0) {
-            for (const auto& interaction : field.value().items()) {
-              if (interaction.key().compare("interType") == 0) {
-                player->inter_type = interaction.value();
-              } else if (interaction.key().compare("interAmount") == 0) {
-                player->inter_amount = interaction.value().get<float>();
-              } else if (interaction.key().compare("interStatus") == 0) {
-                player->inter_status = interaction.value().get<float>();
-              } else if (interaction.key().compare("interName") == 0) {
-                std::string ename = interaction.value();
-                strncpy(Ptr<String>(player->inter_name).c()->data(), ename.c_str(), INTERACTION_STRING_LEN);
-              } else if (interaction.key().compare("interParent") == 0) {
-                std::string parent = interaction.value();
-                strncpy(Ptr<String>(player->inter_parent).c()->data(), parent.c_str(), INTERACTION_STRING_LEN);
-              } else if (interaction.key().compare("interLevel") == 0) {
-                std::string level = interaction.value();
-                //inter_level is somehow the issue alone, assigning level to inter_name works as normal
-                strncpy(Ptr<String>(player->inter_level).c()->data(), level.c_str(), INTERACTION_STRING_LEN);
-              } else if (interaction.key().compare("interCleanup") == 0) {
-                player->inter_cleanup = interaction.value();
+              //check if interaction available
+              if (player->inter_type == 0) {
+                for (const auto& interaction : field.value().items()) {
+                  if (interaction.key().compare("interType") == 0) {
+                    player->inter_type = interaction.value();
+                  } else if (interaction.key().compare("interAmount") == 0) {
+                    player->inter_amount = interaction.value().get<float>();
+                  } else if (interaction.key().compare("interStatus") == 0) {
+                    player->inter_status = interaction.value().get<float>();
+                  } else if (interaction.key().compare("interName") == 0) {
+                    std::string ename = interaction.value();
+                    strncpy(Ptr<String>(player->inter_name).c()->data(), ename.c_str(), INTERACTION_STRING_LEN);
+                  } else if (interaction.key().compare("interParent") == 0) {
+                    std::string parent = interaction.value();
+                    strncpy(Ptr<String>(player->inter_parent).c()->data(), parent.c_str(), INTERACTION_STRING_LEN);
+                  } else if (interaction.key().compare("interLevel") == 0) {
+                    std::string level = interaction.value();
+                    //inter_level is somehow the issue alone, assigning level to inter_name works as normal
+                    strncpy(Ptr<String>(player->inter_level).c()->data(), level.c_str(), INTERACTION_STRING_LEN);
+                  } else if (interaction.key().compare("interCleanup") == 0) {
+                    player->inter_cleanup = interaction.value();
+                  }
+                }
+              } else {
+                lg::warn("skipped interaction!! !TODO: Add buffer in cpp");
+              }
+            } else if (field.key().compare("playerInfo") == 0) {
+              for (const auto& infoField : field.value().items()) {
+                if (infoField.key().compare("teamId") == 0) {
+                  player->team_id = infoField.value();
+                } else if (infoField.key().compare("playerIndex") == 0) {
+                  player->player_index = infoField.value();
+                } else if (infoField.key().compare("cellsCollected") == 0) {
+                  player->cells_collected = infoField.value();
+                }
               }
             }
-          } else {
-            lg::warn("skipped interaction!! !TODO: Add buffer in cpp");
           }
-
         }
       }
     }
   }
+
+  //check and fill command slot if any
+  if (gMultiplayerInfo->teamrun_command == 0) {
+    for (int i = 0; i < MAX_COMMAND_COUNT; i++) {
+      if (commandBuffer[i] != 0) {
+        gMultiplayerInfo->teamrun_command = commandBuffer[i];
+        break;
+      }
+    }
+  }
+
 }
 
 
@@ -173,8 +253,21 @@ void connect_mp_info(u64 mpInfo, u64 selfPlayerInfo, u64 teamrunInfo, u64 teamru
   lg::info("Multiplayer ready");
   isConnectedToGame = true;
 
-  if (isConnectedOverSocket)
+  if (isConnectedOverSocket) {
+    gMultiplayerInfo->teamrun_command = 1;
+    sendConnectionAcknowledgement = true;
     send_position_update();
+  }
+}
+
+void clear_mp_command() {
+  for (int i = 0; i < MAX_COMMAND_COUNT; i++) {
+    if (commandBuffer[i] == gMultiplayerInfo->teamrun_command) {
+      commandBuffer[i] = 0;
+      break;
+    }
+  }
+  gMultiplayerInfo->teamrun_command = 0;
 }
 
 
@@ -199,7 +292,8 @@ void send_position_update() {
       {"interStatus", gSelfPlayerInfo->inter_status},
       {"interName", Ptr<String>(gSelfPlayerInfo->inter_name).c()->data()},
       {"interParent", Ptr<String>(gSelfPlayerInfo->inter_parent).c()->data()},
-      {"interLevel", Ptr<String>(gSelfPlayerInfo->inter_level).c()->data()}
+      {"interLevel", Ptr<String>(gSelfPlayerInfo->inter_level).c()->data()},
+      {"currentLevel", Ptr<String>(gSelfPlayerInfo->current_level).c()->data()}
       }
     }
   };
@@ -207,9 +301,6 @@ void send_position_update() {
   if (gTeamrunInfo->has_state_update) {
     json_payload["state"] = {
         {"debugModeActive", gTeamrunInfo->debug_mode_active},
-        {"currentLevel", Ptr<String>(gTeamrunInfo->current_level).c()->data()},
-        {"currentCheckpoint", Ptr<String>(gTeamrunInfo->current_checkpoint).c()->data()},
-        {"onZoomer", gTeamrunInfo->on_zoomer},
         {"justSpawned", gTeamrunInfo->just_spawned},
         {"cellCount", gTeamrunInfo->cell_count},
         {"buzzerCount", gTeamrunInfo->buzzer_count},
@@ -231,9 +322,9 @@ void send_position_update() {
     });
   }
 
-  if (sendReplConnectedUpdate) {
+  if (sendConnectionAcknowledgement) {
     json_payload["connected"] = true;
-    sendReplConnectedUpdate = false;
+    sendConnectionAcknowledgement = false;
   }
 
   try {
@@ -241,12 +332,4 @@ void send_position_update() {
   } catch (websocketpp::exception const& e) {
     lg::warn("position update failed");
   }
-}
-
-
-void send_repl_connection_acknowledgement() {
-  sendReplConnectedUpdate = true;
-
-  if (isConnectedOverSocket)
-    send_position_update();
 }

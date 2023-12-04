@@ -42,11 +42,10 @@
     )
 
     (defun runs-on-level-enter ()
-      (when (and (!= *target* #f) (!= (-> (level-get-target-inside *level*) name) 'title))
-        (set! (-> *teamrun-info* current_level) (symbol->string (-> (level-get-target-inside *level*) name)))
-        (if (!= (-> *game-info* current-continue level) (-> *teamrun-info* current_level))
-          (update-state)
-          )
+      (when (and *target* (!= (-> (level-get-target-inside *level*) name) 'title))
+        (set! (-> *self-player-info* current_level) (symbol->string (-> (level-get-target-inside *level*) name)))
+        (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) current_level) (-> *self-player-info* current_level))
+        (set! *allow-cell-pickup?* (or (= (-> *multiplayer-info* game require_same_level) 0) (all-teammates-in-same-level?)))
         )
       (none)
       )
@@ -61,30 +60,6 @@
       (none)
     )
 
-
-    (defun set-zoomer-wait-mode ()
-      (set! (-> *racer-mods* target-speed) 13840.0)
-      (set! (-> *racer-air-mods* target-speed) 13840.0)
-      (none)
-      )
-    (defun set-zoomer-full-mode ()
-      (set! (-> *racer-mods* target-speed) 163840.0)
-      (set! (-> *racer-air-mods* target-speed) 163840.0)
-      (none)
-      )
-
-    (defun runs-on-zoomer-entry ()
-      (set! (-> *teamrun-info* on_zoomer?) 1)
-      (update-state)
-      (none)
-      )
-
-    (defun runs-on-zoomer-exit ()
-      (set! (-> *teamrun-info* on_zoomer?) 0)
-      (update-state)
-      (none)
-      )
-
     (defun runs-on-debug-toggle ()
       (update-state)
       (none)
@@ -95,10 +70,15 @@
       )
 
     (defun runs-on-new-checkpoint ()
-      (when (and (!= *target* #f) (!= (-> (level-get-target-inside *level*) name) 'title))
-        (set! (-> *teamrun-info* current_checkpoint) (-> *game-info* current-continue name))
+      (when (and *target* (!= (-> (level-get-target-inside *level*) name) 'title))
         (update-state)
         (set! *player-can-load* #f)
+
+        (if (and (= (-> *multiplayer-info* game no_lts) 1) (name= (-> *game-info* current-continue name) "lavatube-after-ribbon") (< (get-team-cell-count) 72))
+          (start 'play (get-continue-by-name *game-info* "lavatube-start"))
+          )
+
+        (check-citadel-skip)
       )
       (none)
       ) 
@@ -316,6 +296,14 @@
           (set! (-> *self-player-info* inter_name) (-> *interaction-update-buffer* idx ename))
           (set! (-> *self-player-info* inter_parent) (-> *interaction-update-buffer* idx parent))
           (set! (-> *self-player-info* inter_level) (-> *interaction-update-buffer* idx level))
+          
+          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_type)   (-> *self-player-info* inter_type))
+          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_amount) (-> *self-player-info* inter_amount))
+          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_status) (-> *self-player-info* inter_status))
+          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_name)   (-> *self-player-info* inter_name))
+          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_parent) (-> *self-player-info* inter_parent))
+          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_level)  (-> *self-player-info* inter_level))
+          
           (set! *has-none-position-update?* #t)
 
           (set! (-> *interaction-update-buffer* idx has_update?) #f)
@@ -336,6 +324,51 @@
       (none)
       )
 
+    (defun execute-teamrun-command ()
+      (case (-> *multiplayer-info* teamrun_command)
+        (((teamrun-command mark-connected))
+          (set! *cheat-mode* #f)
+          (set! (-> *pc-settings* speedrunner-mode?) #t)
+          (set! (-> *self-player-info* color)  (tgt-color normal))
+          (set! (-> *pc-settings* ps2-actor-vis?) #f)
+          )
+        (((teamrun-command setup-run)) 
+          (initialize! *game-info* 'game (the-as game-save #f) (the-as string #f))
+          (set! *enable-remote-target-pvp-attacks* (= (-> *multiplayer-info* game enable_pvp) 1))
+          (set! *debug-segment* #f)
+          (set! *cheat-mode* #f)
+          (set! (-> *pc-settings* speedrunner-mode?) #t)
+          (start 'play (get-continue-by-name *game-info* "village1-hut"))
+          )
+        (((teamrun-command start-run))
+          (safe-release-from-grab)
+          (reset-run-variables)
+          (progress-fast-save-and-start-speedrun (speedrun-category full-game))
+          (set! (-> *pc-settings* ps2-actor-vis?) #f)
+          (set! *allow-cell-pickup?* #t)
+          (set! *allow-final-boss?* #t)
+          )
+        (((teamrun-command reset-game)) (initialize! *game-info* 'game (the-as game-save #f) (the-as string #f)))
+        (((teamrun-command reset-actors)) (reset-actors 'life))
+        (((teamrun-command trip)) (send-event *target* 'loading))
+        (((teamrun-command target-grab)) (process-grab? *target*))
+        (((teamrun-command target-release)) (safe-release-from-grab))
+        (((teamrun-command temp-checkpoint-store)) (store-temp-checkpoint))
+        (((teamrun-command temp-checkpoint-load)) (spawn-temp-checkpoint))
+        (((teamrun-command free-cam-enter))
+          (send-event *camera* 'change-state cam-free-floating 0)
+          (process-grab? *target*)
+          )
+        (((teamrun-command free-cam-exit))
+          (send-event *camera* 'change-state cam-string 0)
+          (safe-release-from-grab)
+          )
+        (((teamrun-command on-remote-level-update)) (runs-on-level-enter))
+        )
+      (pc-clear-mp-command)
+      (none)
+      )
+
 
     (defun runs-every-frame ()
       (when (and (!= *target* #f) (!= (-> (level-get-target-inside *level*) name) 'title))
@@ -346,6 +379,8 @@
       (when (and *target* (>= (-> *multiplayer-info* player_num) 0) (!= (-> *self-player-info* mp_state) (mp-tgt-state mp-tgt-disconnected)))
 
         (check-set-interaction-from-buffer)
+
+        (if (!= (-> *multiplayer-info* teamrun_command) (teamrun-command none)) (execute-teamrun-command))
 
         ;; on player movement
         (when (and (not *in-finalboss-cutscene?*)
@@ -385,13 +420,57 @@
           )
 
         (render-targets)
+        (if (and (not (paused?)) (!= *team-ui-option* (team-ui-option none))) ;; render teamrun UI
+          (with-dma-buffer-add-bucket ((textbuf (-> (current-frame) global-buf)) (bucket-id subtitle))
+            (render-player-ui textbuf)
+            )
+        )
 
         
         ;; color ourselves
         (color-target *target* (-> *self-player-info* color))
 
         )
+
+        ;; UI toggling
+        (when (cpad-hold? 0 l2)
+          (cond
+            ((cpad-pressed? 0 up)
+              (if (= *team-ui-option* (team-ui-option none))
+                (set! *team-ui-option* (team-ui-option all-teams))
+                (if (<= (get-team-count) 2)
+                  (set! *team-ui-option* (team-ui-option none))
+                  (set! *team-ui-option* (the-as team-ui-option (- (the int *team-ui-option*) 1)))
+                  )
+                )
+              )
+            ((cpad-pressed? 0 down)
+              (if (= *team-ui-option* (team-ui-option all-teams))
+                (set! *team-ui-option* (team-ui-option none))
+                (if (<= (get-team-count) 2)
+                  (set! *team-ui-option* (team-ui-option all-teams))
+                  (set! *team-ui-option* (the-as team-ui-option (+ (the int *team-ui-option*) 1)))
+                  )
+                )
+              )
+            ((or (cpad-pressed? 0 left) (cpad-pressed? 0 right))
+              (if (= *player-ui-option* (player-ui-option minimal))
+                (set! *player-ui-option* (player-ui-option full))
+                (set! *player-ui-option* (player-ui-option minimal))
+                )
+              )
+            )
+          )
       )
+      (none)
+      )
+
+    (defun runs-on-task-update ((task game-task) (status task-status))
+      (add-task-to-interaction-buffer task status)
+      
+      (if (and (= (-> *multiplayer-info* game mode) (run-mode lockout)) (= status (task-status need-resolution)))
+        (check-lockout-restrictions)
+        )
       (none)
       )
 
@@ -527,18 +606,26 @@
       )
 
     (defun runs-on-jak-spawn ()
-      ;; Code here runs every time jak spawns (loading a file new game or death)   
-      (set! (-> *teamrun-info* on_zoomer?) 0)
+      ;; Code here runs every time jak spawns (loading a file new game or death)
       (set! (-> *teamrun-info* just_spawned?) 1)
       (update-state)
 
-      (when (and (string= (-> *game-info* current-continue name) "finalboss-fight") (= *allow-final-boss?* #f))
+      (when (and (not *allow-final-boss?*) (name= (-> *game-info* current-continue name) "finalboss-fight"))
         (set-continue! *game-info* "finalboss-start")
         (+! (-> *target* root trans x) (meters -161.0))
         (+! (-> *target* root trans z) (meters 120.0))
         (+! (-> *target* root trans y) (meters 90.0))
         (send-event *camera* 'change-state cam-string 0)
       )
+
+      (if (string= (symbol->string (-> (level-get-target-inside *level*) name)) "citadel")
+        (send-event (process-by-name "citb-exit-plat-4" *active-pool*) 'trigger)
+        )
+
+      
+      (if (and *allow-one-time-citadel-skip?* (name= (-> *game-info* current-continue name) "citadel-elevator"))
+        (set! *allow-one-time-citadel-skip?* #f)
+        )
       
       (none)
       )
@@ -555,116 +642,6 @@
           )
         )
       
-      (none)
-      )
-
-
-    ;; Custom checkpoint storage
-    (define *tmp-continue-point* (new 'static 'continue-point
-      :name "tmp"
-      :level #f
-      :trans (new 'static 'vector :w 1.0)
-      :quat (new 'static 'quaternion :w 1.0)
-      :camera-trans (new 'static 'vector :w 1.0)
-      :camera-rot (new 'static 'array float 9)
-      :load-commands '()
-      :vis-nick #f
-      :lev0 #f
-      :disp0 #f
-      :lev1 #f
-      :disp1 #f
-      )
-      )
-      
-    (define *tmp-flut?* #f)
-    (define *tmp-zoomer?* #f)
-    (define *full-hp?* #f)
-    (define *last-real-continue-point* (the-as continue-point #f))
-    
-    (defun continue-point-copy! ((dst continue-point) (src continue-point))
-      (set! (-> dst level) (-> src level))
-      (set! (-> dst quat y) 0.0)
-      (set! (-> dst quat w) 1.0)
-      (set! (-> dst load-commands) (-> src load-commands))
-      (set! (-> dst vis-nick) (-> src vis-nick))
-      (when (-> *level* level0)
-        (set! (-> dst lev0) (-> *level* level0 name))
-        (set! (-> dst lev0) (-> *level* level0 name))
-        (set! (-> dst disp0) (-> *level* level0 display?))
-        )
-      (when (-> *level* level1)
-        (set! (-> dst lev1) (-> *level* level1 name))
-        (set! (-> dst disp1) (-> *level* level1 display?))
-        )
-      (none)
-      )
-
-    
-    (defun camera-rot-copy! ((dst continue-point) (src matrix))
-      (set! (-> dst camera-rot 0) (-> src vector 0 x))
-      (set! (-> dst camera-rot 1) (-> src vector 0 y))
-      (set! (-> dst camera-rot 2) (-> src vector 0 z))
-      (set! (-> dst camera-rot 3) (-> src vector 1 x))
-      (set! (-> dst camera-rot 4) (-> src vector 1 y))
-      (set! (-> dst camera-rot 5) (-> src vector 1 z))
-      (set! (-> dst camera-rot 6) (-> src vector 2 x))
-      (set! (-> dst camera-rot 7) (-> src vector 2 y))
-      (set! (-> dst camera-rot 8) (-> src vector 2 z))
-      (none)
-      )
-
-
-    (defun speedrun-reset-common-settings ()
-      ;; disable hints (this seems to be overriden by your slot 1 save though)
-      (set! (-> *setting-control* default play-hints) #f)
-      ;; ensure `force actors` is not enabled
-      ;; (set! (-> *pc-settings* ps2-actor-vis?) #t)
-      ;; force FPS to `60`
-      ;; (set-frame-rate! *pc-settings* 60 #t)
-      ;; skip intro cutscene
-      (close-specific-task! (game-task intro) (task-status need-resolution))
-      (none)
-      )
-
-    
-    (defun spawn-temp-checkpoint ()
-      (when (-> *tmp-continue-point* level)
-        ;; store last real checkpoint to restore later
-        (when (not (string= (-> *game-info* current-continue name) "tmp"))
-          (set! *last-real-continue-point* (-> *game-info* current-continue))
-          )
-        (set! (-> *game-info* current-continue) *tmp-continue-point*)
-        (initialize! *game-info* 'dead (the-as game-save #f) (the-as string #f))
-        (speedrun-reset-common-settings)
-        )
-      (none)
-      )
-
-    (defun store-temp-checkpoint ()
-      ;; outside of bsp breaks shit
-      (when (or (-> *level* level0 inside-boxes?) (-> *level* level1 inside-boxes?))
-        ;; assume current continue is good enough for the current location
-        (continue-point-copy! *tmp-continue-point* (-> *game-info* current-continue))
-        (vector-copy! (-> *tmp-continue-point* trans) (-> *target* root trans))
-        (quaternion-copy! (-> *tmp-continue-point* quat) (-> *target* control unknown-quaternion00))
-        (vector-copy! (-> *tmp-continue-point* camera-trans) (-> *camera-combiner* trans))
-        (camera-rot-copy! *tmp-continue-point* (-> *camera-combiner* inv-camera-rot))
-
-        (set! *full-hp?* (and (!= *target* #f)
-                      (= (-> *target* fact-info-target health) 3.0)
-                      (= (-> *target* fact-info-target eco-pill) 50.0)
-                      ))
-        (set! *tmp-flut?* #f)
-        (set! *tmp-zoomer?* #f)
-        (case (-> *target* state)
-          ((target-flut-stance)
-            (set! *tmp-flut?* #t)
-            )
-          ((target-racing)
-            (set! *tmp-zoomer?* #t)
-            )
-          )
-        )
       (none)
       )
 

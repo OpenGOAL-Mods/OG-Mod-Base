@@ -559,8 +559,8 @@ void InitMachine_PCPort() {
 
   // websocket
   make_function_symbol_from_c("pc-connect-mp-info", (void*)connect_mp_info);
-  make_function_symbol_from_c("pc-update-position", (void*)send_position_update);
-  make_function_symbol_from_c("pc-acknowledge-repl-connection", (void*)send_repl_connection_acknowledgement);
+  make_function_symbol_from_c("pc-clear-mp-command", (void*)clear_mp_command);
+  make_function_symbol_from_c("pc-update-position", (void*)send_position_update);;
   
 
   // setup string constants

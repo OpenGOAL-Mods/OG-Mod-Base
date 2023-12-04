@@ -61,3 +61,59 @@
   (swingpole)
   (boss-phase)
   )
+  
+(defenum run-category
+  :type int32
+  (custom)
+  (no-lts)
+  (all-cells)
+  (hundo)
+  (orbless)
+  (all-flies)
+  (all-orbs)
+  )
+  
+(defenum run-mode
+  :type int32
+  (speedrun)
+  (lockout)
+  )
+  
+(defenum citadel-skip-version
+  :type int32
+  (patched)
+  (normal)
+  (shared)
+  )
+
+
+(defenum team-ui-option
+  :type int32
+  (none)
+  (own-team)
+  (all-teams)
+  )
+
+(defenum player-ui-option
+  :type int32
+  (minimal)
+  (full)
+  )
+
+(defenum teamrun-command
+  :type int32
+  (none)
+  (mark-connected)
+  (setup-run)
+  (start-run)
+  (reset-game)
+  (reset-actors)
+  (trip)
+  (target-grab)
+  (target-release)
+  (temp-checkpoint-store)
+  (temp-checkpoint-load)
+  (free-cam-enter)
+  (free-cam-exit)
+  (on-remote-level-update)
+)
