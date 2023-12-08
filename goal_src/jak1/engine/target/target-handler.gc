@@ -27,6 +27,8 @@
                 (!= (the-as pickup-type s4-0) (pickup-type eco-pill-random))
                 (!= (the-as pickup-type s4-0) (pickup-type eco-pill))
                 (!= (the-as pickup-type s4-0) (pickup-type fuel-cell)) ;; is instead taken from task-control
+                ;; makes sure eco vents only runs on enter and not every frame after, can/will cause bugs with remotes standing inside and shooting yellow eco shots as they'll run out eventually with this
+                (or (not (type-type? (-> arg0 type) vent)) (< 50 (the int (- (-> *display* game-frame-counter) (- (+ (-> self fact-info-target eco-pickup-time) (-> self fact-info-target eco-timeout)) (-> *FACT-bank* eco-full-timeout))))))
                 )
               (runs-on-pickup (the-as pickup-type s4-0) f28-0 arg0)
               )
