@@ -809,7 +809,7 @@
   :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
     (case event-type
       (('touch 'attack)
-       (when (= (-> proc type) target)
+       (when (and (= (-> proc type) target) (= proc *target*))
          (send-event *target* 'attack (-> event param 0) (static-attack-info ((mode 'generic))))
          (send-event (ppointer->process (-> self parent)) 'hit-jak)
          )

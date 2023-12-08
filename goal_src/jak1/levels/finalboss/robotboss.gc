@@ -5,6 +5,7 @@
 ;; name in dgo: robotboss
 ;; dgos: FIN, L1
 
+(define-extern get-closest-interactive-target-to-vector (function vector target))
 (define-extern add-boss-phase-to-interaction-buffer (function string float string none))
 (define-extern *in-finalboss-cutscene?* symbol)
 
@@ -2364,7 +2365,7 @@
                  (a2-0 (new 'stack-no-clear 'vector))
                  )
              (vector-! a2-0 gp-0 s4-0)
-             (if (>= (fill-and-probe-using-line-sphere
+             (if (and (>= (fill-and-probe-using-line-sphere
                        *collide-cache*
                        s4-0
                        a2-0
@@ -2375,6 +2376,8 @@
                        (new 'static 'pat-surface :noentity #x1)
                        )
                      0.0
+                     )
+                     (= (get-closest-interactive-target-to-vector gp-0) *target*)
                      )
                  (send-event *target* 'attack #f (static-attack-info ((shove-up (meters 2.5)) (shove-back (meters 7.5)))))
                  )
