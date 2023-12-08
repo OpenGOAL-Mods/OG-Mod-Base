@@ -257,7 +257,7 @@
      (set-time! (-> this continue-time))
      (set-time! (-> this death-time))
      (set-time! (-> this hit-time))
-     (dotimes (v1-50 (the int (game-task max))) ;; changed from hard-coded 116 to (game-task max)
+     (dotimes (v1-50 116)
        (set! (-> this fuel-cell-time 0) 0)
        (nop!)
        )
@@ -943,7 +943,7 @@
   (inspect this)
   (when (or (not arg0) (= arg0 'game-task))
     (format #t "~Tgame-task:~%")
-    (dotimes (s4-0 (the int (game-task max))) ;; changed from hard-coded 116 to (game-task max)
+    (dotimes (s4-0 116)
       (if (task-complete? this (the-as game-task s4-0))
           (format #t "~T~T~S~%" (game-task->string (the-as game-task s4-0)))
           )
@@ -971,7 +971,7 @@
 
   ;; task perms
   (when (zero? (-> gp-0 task-perm-list))
-    (let ((v1-15 (new 'global 'entity-perm-array (the int (game-task max))))) ;; changed from hard-coded 116 to (game-task max)
+    (let ((v1-15 (new 'global 'entity-perm-array 116)))
       (set! (-> gp-0 task-perm-list) v1-15)
       (dotimes (a0-24 (-> v1-15 length))
         (set! (-> v1-15 data a0-24 task) (the-as game-task a0-24))
