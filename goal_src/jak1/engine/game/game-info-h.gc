@@ -210,7 +210,7 @@
 (define-extern *game-info* game-info)
 (when (or (not *game-info*) (zero? *game-info*))
   (let ((temp (new 'static 'game-info :mode 'debug :current-continue #f)))
-    (set! (-> temp fuel-cell-time) (new 'global 'boxed-array time-frame 116))
+    (set! (-> temp fuel-cell-time) (new 'global 'boxed-array time-frame (the int (game-task max)))) ;; changed from hard-coded 116 to (game-task max)
     (set! (-> temp enter-level-time) (new 'global 'boxed-array time-frame 32))
     (set! (-> temp in-level-time) (new 'global 'boxed-array time-frame 32))
     (set! *game-info* temp)
