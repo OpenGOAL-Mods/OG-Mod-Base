@@ -430,6 +430,7 @@
       (the-as object (cond
                        ((= v1-0 'white-eco-picked-up)
                         (close-specific-task! (game-task finalboss-movies) (task-status unknown))
+                        (set! *in-finalboss-cutscene?* #t)
                         (entity-birth-no-kill (-> self alts 5))
                         (let ((a1-2 (new 'stack-no-clear 'event-message-block)))
                           (set! (-> a1-2 from) self)
@@ -463,7 +464,6 @@
     (none)
     )
   :exit (behavior ()
-    (set! *in-finalboss-cutscene?* #t)
     (set! (-> self des-cam-entity) #f)
     (let ((a1-0 (new 'stack-no-clear 'event-message-block)))
       (set! (-> a1-0 from) self)
