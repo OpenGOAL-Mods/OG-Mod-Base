@@ -9,7 +9,7 @@
 (define-extern *ogreboss* ogreboss)
 
 (define-extern get-orgre-boss-phase (function int float float))
-(define-extern add-boss-phase-to-interaction-buffer (function string float string none))
+(define-extern add-boss-phase-to-interaction-buffer (function string float string float none))
 
 ;; DECOMP BEGINS
 
@@ -1499,7 +1499,7 @@
     (none)
     )
   :code (behavior ()
-    (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) (get-orgre-boss-phase 1 (-> self level)) (symbol->string (-> *level* level (-> self draw level-index) name)))
+    (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) (get-orgre-boss-phase 1 (-> self level)) (symbol->string (-> *level* level (-> self draw level-index) name)) 0.0)
     (logior! (-> self mask) (process-mask enemy))
     (ogreboss-set-stage1-camera)
     (ogreboss-move-near (seconds 3) (the-as float 1.0))
@@ -1709,7 +1709,7 @@
     (none)
     )
   :code (behavior ()
-    (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) (get-orgre-boss-phase 2 (-> self level)) (symbol->string (-> *level* level (-> self draw level-index) name)))
+    (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) (get-orgre-boss-phase 2 (-> self level)) (symbol->string (-> *level* level (-> self draw level-index) name)) 0.0)
     (ogreboss-set-stage2-camera)
     (ogreboss-move-far (seconds 0.1) (the-as float 2.0))
     (let ((f30-0 (* 0.75 (-> self difficulty))))
@@ -1914,7 +1914,7 @@
 
 (defstate ogreboss-stage3-hit (ogreboss)
   :code (behavior ()
-    (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) (get-orgre-boss-phase 3 (-> self level)) (symbol->string (-> *level* level (-> self draw level-index) name)))
+    (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) (get-orgre-boss-phase 3 (-> self level)) (symbol->string (-> *level* level (-> self draw level-index) name)) 0.0)
     (+! (-> self level) 1.0)
     (if (< 2.0 (-> self level))
         (go ogreboss-die)

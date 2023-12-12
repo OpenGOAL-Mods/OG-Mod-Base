@@ -44,6 +44,7 @@
 
 ;; multiplayer fixes
 (define *in-finalboss-cutscene?* #f)
+(define *current-boss-phase* 10)
 
 ;; pickup toggles for remote
 (define *enable-remote-target-buzzer-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that cell fly can't drop two cells on pickup

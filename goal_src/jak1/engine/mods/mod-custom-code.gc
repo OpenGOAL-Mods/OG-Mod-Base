@@ -43,8 +43,11 @@
 
     (defun runs-on-level-enter ()
       (when (and *target* (!= (-> (level-get-target-inside *level*) name) 'title))
-        (set! (-> *self-player-info* current_level) (symbol->string (-> (level-get-target-inside *level*) name)))
-        (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) current_level) (-> *self-player-info* current_level))
+        (when (!= (-> *self-player-info* current_level) (symbol->string (-> (level-get-target-inside *level*) name)))
+          (set! (-> *self-player-info* current_level) (symbol->string (-> (level-get-target-inside *level*) name)))
+          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) current_level) (-> *self-player-info* current_level))
+          (set! *current-boss-phase* -1)
+          )
         (set! *allow-cell-pickup?* (or (= (-> *multiplayer-info* game require_same_level) 0) (all-teammates-in-same-level?)))
         )
       (none)
@@ -103,6 +106,54 @@
         (set! *has-none-position-update?* #t)
         )
       (none)
+      )
+
+    ;; fixes issues where you can't TP jak because he isn't fully spawned in yet
+    (defun runs-after-jak-spawn ()
+      ;; makes sure citadel elevator always spawns in
+      (if (string= (symbol->string (-> (level-get-target-inside *level*) name)) "citadel")
+        (send-event (process-by-name "citb-exit-plat-4" *active-pool*) 'trigger)
+        )
+
+
+      (cond
+        ((name= (-> *game-info* current-continue name) "finalboss-fight")
+          (when (not *allow-final-boss?*) 
+            (+! (-> *target* root trans x) (meters -161.0))
+            (+! (-> *target* root trans z) (meters 120.0))
+            (+! (-> *target* root trans y) (meters 90.0))
+            (send-event *camera* 'change-state cam-string 0)
+            )
+          (let ((boss (process-by-ename "robotboss-3")))
+            (if (and boss (any-remote-interactive-targets-close? (the-as process-drawable boss) (meters 300.0)))
+              (safe-boss-up-to-phase "robotboss-3" *current-boss-phase* #f)
+              (set! *current-boss-phase* -1)
+              )
+            )
+          )
+        ((name= (-> *game-info* current-continue name) "citadel-elevator")
+          (if *allow-one-time-citadel-skip?*
+            (set! *allow-one-time-citadel-skip?* #f)
+            )
+          )
+        ((name= (-> *game-info* current-continue name) "ogre-start")
+          (let ((bridge (process-by-ename "ogre-bridge-1")))
+            (if (and bridge (any-remote-interactive-targets-close? (the-as process-drawable bridge) (meters 100.0)))
+              (safe-boss-up-to-phase "ogreboss-1" *current-boss-phase* #f)
+              (set! *current-boss-phase* -1)
+              )
+            )
+          )
+        ((name= (-> *game-info* current-continue name) "jungle-tower")
+          (let ((boss (process-by-ename "plant-boss-3")))
+            (if (and boss (any-remote-interactive-targets-close? (the-as process-drawable boss) (meters 40.0)))
+              (safe-boss-up-to-phase "plant-boss-3" *current-boss-phase* #f)
+              (set! *current-boss-phase* -1)
+              )
+            )
+          )
+        )
+        (none)
       )
 
     (defun add-pickup-to-interaction-buffer ((kind pickup-type) (amount float) (proc process))
@@ -268,18 +319,21 @@
       )
 
     ;; name amount level
-    (defun add-boss-phase-to-interaction-buffer ((name string) (phase float) (level string))
+    (defun add-boss-phase-to-interaction-buffer ((name string) (phase float) (level string) (force-phase float))
       (dotimes (idx (-> *interaction-update-buffer* length))
         (when (= (-> *interaction-update-buffer* idx has_update?) #f)
 
           (set! (-> *interaction-update-buffer* idx type) (interaction-type boss-phase))
           (set! (-> *interaction-update-buffer* idx amount) phase)
-          (set! (-> *interaction-update-buffer* idx status) 0.0)
+          (set! (-> *interaction-update-buffer* idx status) force-phase)
           (set! (-> *interaction-update-buffer* idx ename) name)
           (set! (-> *interaction-update-buffer* idx level) level)
           (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
             
           (set! (-> *interaction-update-buffer* idx has_update?) #t)
+
+          (set! *current-boss-phase* (the int phase))
+
           (return #t)
           )
         )
@@ -408,9 +462,11 @@
               
               ;; update flags
               (set! (-> *teamrun-info* has_state_update?) 0)
-              (set! (-> *teamrun-info* just_spawned?) 0)
-
               (set! (-> *teamrun-levels-info* has_level_update?) 0)
+              (when (!= (-> *teamrun-info* just_spawned?) 0)
+                (set! (-> *teamrun-info* just_spawned?) 0)
+                (runs-after-jak-spawn)
+                )
               )
 
 
@@ -610,23 +666,6 @@
       (set! (-> *teamrun-info* just_spawned?) 1)
       (update-state)
 
-      (when (and (not *allow-final-boss?*) (name= (-> *game-info* current-continue name) "finalboss-fight"))
-        (set-continue! *game-info* "finalboss-start")
-        (+! (-> *target* root trans x) (meters -161.0))
-        (+! (-> *target* root trans z) (meters 120.0))
-        (+! (-> *target* root trans y) (meters 90.0))
-        (send-event *camera* 'change-state cam-string 0)
-      )
-
-      (if (string= (symbol->string (-> (level-get-target-inside *level*) name)) "citadel")
-        (send-event (process-by-name "citb-exit-plat-4" *active-pool*) 'trigger)
-        )
-
-      
-      (if (and *allow-one-time-citadel-skip?* (name= (-> *game-info* current-continue name) "citadel-elevator"))
-        (set! *allow-one-time-citadel-skip?* #f)
-        )
-      
       (none)
       )
 
@@ -635,6 +674,38 @@
         (('dying)
           ;; Code here runs immediately every time jak dies, before any death animation or death cutscene
           
+          (cond
+            ((name= (-> *game-info* current-continue name) "jungle-tower")
+              (if (< *current-boss-phase* 2)
+                (set! *current-boss-phase* (+ *current-boss-phase* 1))
+                )
+              (add-boss-phase-to-interaction-buffer "plant-boss-3" (the float *current-boss-phase*) "jungleb" 1.0)
+              )
+            ((name= (-> *game-info* current-continue name) "ogre-start")
+              (when (< *current-boss-phase* 6)
+                (set! *current-boss-phase* (+ *current-boss-phase* 3))
+                (add-boss-phase-to-interaction-buffer "ogreboss-1" (the float *current-boss-phase*) "ogre" 1.0)
+                )
+              )
+            ((name= (-> *game-info* current-continue name) "finalboss-fight")
+              (case *current-boss-phase*
+                ((0)
+                  (set! *current-boss-phase* 1)
+                  )
+                ((1 2)
+                  (set! *current-boss-phase* 3)
+                  )
+                ((3 4)
+                  (set! *current-boss-phase* 5)
+                  )
+                ((5 6)
+                  (set! *current-boss-phase* 6)
+                  )
+                )
+              (add-boss-phase-to-interaction-buffer "robotboss-3" (the float *current-boss-phase*) "finalboss" 1.0)
+              )
+            )
+
           )
         (('blackout)
           ;; Code here runs after jak dies (and any death cutscene finishes), during the blackout before he spawns

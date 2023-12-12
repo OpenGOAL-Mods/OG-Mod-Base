@@ -949,6 +949,17 @@
     #f
   )
 
+(defun any-remote-interactive-targets-close? ((proc process-drawable) (dist float))
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (let ((target (get-interactive-target tgt-idx)))
+      (if (and target (!= target *target*) proc (<= (vector-vector-distance (remote-target-pos 0 target) (-> proc root trans)) dist))
+          (return #t)
+        )
+      )
+    )
+    #f
+  )
+
 (defun target-in-level-sphere? ((level-name string))
   (if (and (-> *level* level0) (name= (-> *level* level0 name) level-name) (-> *level* level0 inside-sphere?))
     (return #t)
