@@ -2153,8 +2153,8 @@
     (loop
       (cond
         ((ja-group? robotboss-green-roar-ja)
-         (go robotboss-green-dark-bomb)
          (add-boss-phase-to-interaction-buffer (the-as string (-> self name)) 4.0 (symbol->string (-> *level* level (-> self draw level-index) name)) 0.0)
+         (go robotboss-green-dark-bomb)
          )
         ((not (ja-group? robotboss-idle-hover-no-blue-ja))
          (ja-channel-push! 1 (seconds 0.2))
