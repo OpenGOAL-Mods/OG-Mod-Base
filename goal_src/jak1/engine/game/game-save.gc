@@ -1057,7 +1057,8 @@
     )
   ;; update tasks
   (let ((s5-1 2) ;; jungle eggtop
-        (s4-2 115) ;; max - 1
+        ;; changed to use enum
+        (s4-2 (- (the int (game-task max)) 1)) ;; max - 1
         )
     (while (>= (the-as uint s4-2) (the-as uint s5-1))
       ;; calling this will run the function to see if the task is done or not
