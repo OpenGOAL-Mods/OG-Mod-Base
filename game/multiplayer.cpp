@@ -16,6 +16,8 @@ TeamrunPlayerInfo* gTeamrunInfo;
 TeamrunLevelInfo* gTeamrunLevelInfo;
 
 int commandBuffer[MAX_COMMAND_COUNT] = { 0, 0, 0 };
+InteractionInfo interactionBuffer[MAX_INTERACTION_BUFFER_COUNT];
+bool hasInteractionsBuffered = false;
 
 // Create a server endpoint
 server ogSocket;
@@ -163,14 +165,43 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
                     strncpy(Ptr<String>(player->inter_parent).c()->data(), parent.c_str(), INTERACTION_STRING_LEN);
                   } else if (interaction.key().compare("interLevel") == 0) {
                     std::string level = interaction.value();
-                    //inter_level is somehow the issue alone, assigning level to inter_name works as normal
                     strncpy(Ptr<String>(player->inter_level).c()->data(), level.c_str(), INTERACTION_STRING_LEN);
                   } else if (interaction.key().compare("interCleanup") == 0) {
                     player->inter_cleanup = interaction.value();
                   }
                 }
               } else {
-                lg::warn("skipped interaction!! !TODO: Add buffer in cpp");
+                lg::warn("skipped interaction, adding to buffer");
+                bool hasOverflow = true;
+                for (int i = 0; i < MAX_INTERACTION_BUFFER_COUNT; i++) {
+                  if (!interactionBuffer[i].buffered) {
+                    for (const auto& interaction : field.value().items()) {
+                      if (interaction.key().compare("interType") == 0) {
+                        interactionBuffer[i].inter_type = interaction.value();
+                      } else if (interaction.key().compare("interAmount") == 0) {
+                        interactionBuffer[i].inter_amount = interaction.value().get<float>();
+                      } else if (interaction.key().compare("interStatus") == 0) {
+                        interactionBuffer[i].inter_status = interaction.value().get<float>();
+                      } else if (interaction.key().compare("interName") == 0) {
+                        interactionBuffer[i].inter_name = interaction.value();
+                      } else if (interaction.key().compare("interParent") == 0) {
+                        interactionBuffer[i].inter_parent = interaction.value();
+                      } else if (interaction.key().compare("interLevel") == 0) {
+                        interactionBuffer[i].inter_level = interaction.value();
+                      } else if (interaction.key().compare("interCleanup") == 0) {
+                        interactionBuffer[i].inter_cleanup = interaction.value();
+                      }
+                    }
+                    interactionBuffer[i].player_id = playerId;
+                    interactionBuffer[i].buffered = true;
+                    hasInteractionsBuffered = true;
+                    hasOverflow = false;
+                    break;
+                  }
+                }
+                if (hasOverflow) {
+                  lg::warn("Interaction buffer overflow!");
+                }
               }
             } else if (field.key().compare("playerInfo") == 0) {
               for (const auto& infoField : field.value().items()) {
@@ -187,6 +218,30 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
         }
       }
     }
+  }
+
+  //check and fill interactions from buffer if any
+  if (hasInteractionsBuffered) {
+    bool hasUnclearedInteraction = false;
+    for (int i = 0; i < MAX_INTERACTION_BUFFER_COUNT; i++) {
+      if (interactionBuffer[i].buffered) {
+        RemotePlayerInfo* player = &(gMultiplayerInfo->players[interactionBuffer[i].player_id]);
+        if (player->inter_type != 0) {
+          hasUnclearedInteraction = true;
+        }
+        else {
+          player->inter_type = interactionBuffer[i].inter_type;
+          player->inter_amount = interactionBuffer[i].inter_amount;
+          player->inter_status = interactionBuffer[i].inter_status;
+          strncpy(Ptr<String>(player->inter_name).c()->data(), interactionBuffer[i].inter_name.c_str(), INTERACTION_STRING_LEN);
+          strncpy(Ptr<String>(player->inter_parent).c()->data(), interactionBuffer[i].inter_parent.c_str(), INTERACTION_STRING_LEN);
+          strncpy(Ptr<String>(player->inter_level).c()->data(), interactionBuffer[i].inter_level.c_str(), INTERACTION_STRING_LEN);
+          player->inter_cleanup = interactionBuffer[i].inter_cleanup;
+          interactionBuffer[i].buffered = false;
+        }
+      }
+    }
+    hasInteractionsBuffered = hasUnclearedInteraction;
   }
 
   //check and fill command slot if any
