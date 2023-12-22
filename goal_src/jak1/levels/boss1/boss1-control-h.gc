@@ -1,0 +1,20 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; This file will contain the main control actor for the boss, which will control the battle timeline
+
+(deftype boss1-control (process-drawable)
+  (
+    (cshape                       collide-shape :overlay-at root)
+    (current-attack-element-dark? symbol) ;; our convention will be that dark is #t and light is #f
+    (timeline-flag-1?             symbol)
+    (timeline-flag-2?             symbol)
+    (timeline-flag-3?             symbol)
+    (timeline-flag-4?             symbol)
+    (rand-attack-element-dark?    symbol) ;; our convention will be that dark is #t and light is #f
+  )
+  (:states
+    boss1-control-active
+    ;;boss1-control-inactive
+  )
+)

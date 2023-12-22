@@ -2100,9 +2100,11 @@
 (goal-src-sequence
   "levels/boss1/"
   :deps ("$OUT/obj/ticky.o")
+  "boss1-control-h.gc"
+  "boss1-attack-h.gc"
   "boss1-attack.gc"
-  "boss1-part.gc"
   "boss1-control.gc"
+  "boss1-part.gc"
 )
 
 (group-list "all-code"

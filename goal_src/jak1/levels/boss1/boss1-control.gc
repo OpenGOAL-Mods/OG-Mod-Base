@@ -3,19 +3,6 @@
 
 ;; This file will contain the main control actor for the boss, which will control the battle timeline
 
-(deftype boss1-control (process-drawable)
-  (
-    (cshape                     collide-shape :overlay-at root)
-    (timeline-flag-1?           symbol)
-    (timeline-flag-2?           symbol)
-    (rand-attack-element-dark?  symbol) ;; our convention will be that dark is #t and light is #f
-  )
-  (:states
-    boss1-control-active
-    ;;boss1-control-inactive
-  )
-)
-
 (defstate boss1-control-active (boss1-control)
   :enter (behavior ()
     (set-state-time)
@@ -25,7 +12,9 @@
       (if (time-passed? (seconds 5))
         (begin
           (attack-all-dark-squares) ;; If condition true
+          (set! (-> self rand-attack-element-dark?) #t)
           (set! (-> self timeline-flag-1?) #t)
+          (format 0 "attack 1 started!~%")
         )
         (suspend)                 ;; If condition false
       ) 
@@ -35,10 +24,39 @@
         (begin
           (stop-attack-all-dark-squares) ;; If condition true
           (set! (-> self timeline-flag-2?) #t)
+          (format 0 "attack 1 stopped!~%")
         )
         (suspend)                 ;; If condition false
       )
     )
+
+    (if (not (-> self timeline-flag-3?))
+      (if (time-passed? (seconds 10))
+        (begin
+          (if (-> self rand-attack-element-dark?)
+            (attack-all-light-squares) ;; If it was dark last time
+            (attack-all-dark-squares)  ;; If it was light last time
+          )
+          (set! (-> self timeline-flag-3?) #t)
+          (format 0 "attack 2 started!~%")
+        )
+        (suspend)                 ;; If condition false
+      )
+    )
+    (if (not (-> self timeline-flag-4?))
+      (if (time-passed? (seconds 12))
+        (begin
+          (if (-> self rand-attack-element-dark?)
+            (stop-attack-all-light-squares) ;; If it was dark last time
+            (stop-attack-all-dark-squares)  ;; If it was light last time
+          )
+          (set! (-> self timeline-flag-4?) #t)
+          (format 0 "attack 2 stopped!~%")
+        )
+        (suspend)                 ;; If condition false
+      )
+    )
+
     (suspend)
   )
   :code (behavior ()
@@ -51,8 +69,11 @@
 
 (defmethod init-from-entity! boss1-control ((this boss1-control) (arg0 entity-actor))
   ;;(format 0 "1~%1~%1~%1~%1~%")
+  (set! (-> this current-attack-element-dark?) #f)
   (set! (-> this timeline-flag-1?) #f)
   (set! (-> this timeline-flag-2?) #f)
+  (set! (-> this timeline-flag-3?) #f)
+  (set! (-> this timeline-flag-4?) #f)
   (set! (-> this rand-attack-element-dark?) #f)
   (let ((s4-0 (new 'process 'collide-shape this (collide-list-enum hit-by-player))))
     (let ((s3-0 (new 'process 'collide-shape-prim-group s4-0 (the-as uint 4) 0)))

@@ -130,7 +130,7 @@
     // ###########################################################################
     // ###########################################################################
     // ###########################################################################
-    // CUSTOM ACTORS: ATTACK-DARK ################################################
+    // CUSTOM ACTORS: ATTACK-SQUARE ##############################################
     // ###########################################################################
     // ###########################################################################
     // ###########################################################################
@@ -138,12 +138,12 @@
 
     {
       "trans": [950.0, 1010.0, 950.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [950.0, 1000.0, 950.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-1-1",
+        "name":"boss1-attack-square-1-1",
         "path":["vector4m",
           [939.0, 1010.0, 939.0, 1.0],
           [961.0, 1010.0, 939.0, 1.0],
@@ -153,15 +153,33 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [970.0, 1010.0, 950.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [970.0, 1000.0, 950.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-1-2",
+        "path":["vector4m",
+          [959.0, 1010.0, 939.0, 1.0],
+          [981.0, 1010.0, 939.0, 1.0],
+          [981.0, 1010.0, 961.0, 1.0],
+          [959.0, 1010.0, 961.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
     
     {
       "trans": [990.0, 1010.0, 950.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [990.0, 1000.0, 950.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-1-3",
+        "name":"boss1-attack-square-1-3",
         "path":["vector4m",
           [979.0, 1010.0, 939.0, 1.0],
           [1001.0, 1010.0, 939.0, 1.0],
@@ -171,15 +189,33 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [1010.0, 1010.0, 950.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [1010.0, 1000.0, 950.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-1-4",
+        "path":["vector4m",
+          [999.0, 1010.0, 939.0, 1.0],
+          [1021.0, 1010.0, 939.0, 1.0],
+          [1021.0, 1010.0, 961.0, 1.0],
+          [999.0, 1010.0, 961.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
 
     {
       "trans": [1030.0, 1010.0, 950.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [1030.0, 1000.0, 950.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-1-5",
+        "name":"boss1-attack-square-1-5",
         "path":["vector4m",
           [1019.0, 1010.0, 939.0, 1.0],
           [1041.0, 1010.0, 939.0, 1.0],
@@ -189,15 +225,51 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [1050.0, 1010.0, 950.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [1050.0, 1000.0, 950.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-1-6",
+        "path":["vector4m",
+          [1039.0, 1010.0, 939.0, 1.0],
+          [1061.0, 1010.0, 939.0, 1.0],
+          [1061.0, 1010.0, 961.0, 1.0],
+          [1039.0, 1010.0, 961.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
     
     {
+      "trans": [950.0, 1010.0, 970.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [950.0, 1000.0, 970.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-2-1",
+        "path":["vector4m",
+          [939.0, 1010.0, 959.0, 1.0],
+          [961.0, 1010.0, 959.0, 1.0],
+          [961.0, 1010.0, 981.0, 1.0],
+          [939.0, 1010.0, 981.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
+	
+	{
       "trans": [970.0, 1010.0, 970.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [970.0, 1000.0, 970.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-2-2",
+        "name":"boss1-attack-square-2-2",
         "path":["vector4m",
           [959.0, 1010.0, 959.0, 1.0],
           [981.0, 1010.0, 959.0, 1.0],
@@ -207,15 +279,33 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [990.0, 1010.0, 970.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [990.0, 1000.0, 970.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-2-3",
+        "path":["vector4m",
+          [979.0, 1010.0, 959.0, 1.0],
+          [1001.0, 1010.0, 959.0, 1.0],
+          [1001.0, 1010.0, 981.0, 1.0],
+          [979.0, 1010.0, 981.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
 
     {
       "trans": [1010.0, 1010.0, 970.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [1010.0, 1000.0, 970.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-2-4",
+        "name":"boss1-attack-square-2-4",
         "path":["vector4m",
           [999.0, 1010.0, 959.0, 1.0],
           [1021.0, 1010.0, 959.0, 1.0],
@@ -225,15 +315,33 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [1030.0, 1010.0, 970.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [1030.0, 1000.0, 970.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-2-5",
+        "path":["vector4m",
+          [1019.0, 1010.0, 959.0, 1.0],
+          [1041.0, 1010.0, 959.0, 1.0],
+          [1041.0, 1010.0, 981.0, 1.0],
+          [1019.0, 1010.0, 981.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
 
     {
       "trans": [1050.0, 1010.0, 970.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [1050.0, 1000.0, 970.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-2-6",
+        "name":"boss1-attack-square-2-6",
         "path":["vector4m",
           [1039.0, 1010.0, 959.0, 1.0],
           [1061.0, 1010.0, 959.0, 1.0],
@@ -246,12 +354,12 @@
 
     {
       "trans": [950.0, 1010.0, 990.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [950.0, 1000.0, 990.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-3-1",
+        "name":"boss1-attack-square-3-1",
         "path":["vector4m",
           [939.0, 1010.0, 979.0, 1.0],
           [961.0, 1010.0, 979.0, 1.0],
@@ -261,15 +369,33 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [970.0, 1010.0, 990.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [970.0, 1000.0, 990.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-3-2",
+        "path":["vector4m",
+          [959.0, 1010.0, 979.0, 1.0],
+          [981.0, 1010.0, 979.0, 1.0],
+          [981.0, 1010.0, 1001.0, 1.0],
+          [959.0, 1010.0, 1001.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
     
     {
       "trans": [990.0, 1010.0, 990.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [990.0, 1000.0, 990.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-3-3",
+        "name":"boss1-attack-square-3-3",
         "path":["vector4m",
           [979.0, 1010.0, 979.0, 1.0],
           [1001.0, 1010.0, 979.0, 1.0],
@@ -279,15 +405,33 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [1010.0, 1010.0, 990.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [1010.0, 1000.0, 990.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-3-4",
+        "path":["vector4m",
+          [999.0, 1010.0, 979.0, 1.0],
+          [1021.0, 1010.0, 979.0, 1.0],
+          [1021.0, 1010.0, 1001.0, 1.0],
+          [999.0, 1010.0, 1001.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
 
     {
       "trans": [1030.0, 1010.0, 990.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [1030.0, 1000.0, 990.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-3-5",
+        "name":"boss1-attack-square-3-5",
         "path":["vector4m",
           [1019.0, 1010.0, 979.0, 1.0],
           [1041.0, 1010.0, 979.0, 1.0],
@@ -297,15 +441,51 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [1050.0, 1010.0, 990.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [1050.0, 1000.0, 990.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-3-6",
+        "path":["vector4m",
+          [1039.0, 1010.0, 979.0, 1.0],
+          [1061.0, 1010.0, 979.0, 1.0],
+          [1061.0, 1010.0, 1001.0, 1.0],
+          [1039.0, 1010.0, 1001.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
     
+	{
+      "trans": [950.0, 1010.0, 1010.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [950.0, 1000.0, 1010.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-4-1",
+        "path":["vector4m",
+          [939.0, 1010.0, 999.0, 1.0],
+          [961.0, 1010.0, 999.0, 1.0],
+          [961.0, 1010.0, 1021.0, 1.0],
+          [939.0, 1010.0, 1021.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
+	
     {
       "trans": [970.0, 1010.0, 1010.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [970.0, 1000.0, 1010.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-4-2",
+        "name":"boss1-attack-square-4-2",
         "path":["vector4m",
           [959.0, 1010.0, 999.0, 1.0],
           [981.0, 1010.0, 999.0, 1.0],
@@ -315,15 +495,33 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [990.0, 1010.0, 1010.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [990.0, 1000.0, 1010.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-4-3",
+        "path":["vector4m",
+          [979.0, 1010.0, 999.0, 1.0],
+          [1001.0, 1010.0, 999.0, 1.0],
+          [1001.0, 1010.0, 1021.0, 1.0],
+          [979.0, 1010.0, 1021.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
 
     {
       "trans": [1010.0, 1010.0, 1010.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [1010.0, 1000.0, 1010.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-4-4",
+        "name":"boss1-attack-square-4-4",
         "path":["vector4m",
           [999.0, 1010.0, 999.0, 1.0],
           [1021.0, 1010.0, 999.0, 1.0],
@@ -333,15 +531,33 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [1030.0, 1010.0, 1010.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [1030.0, 1000.0, 1010.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-4-5",
+        "path":["vector4m",
+          [1019.0, 1010.0, 999.0, 1.0],
+          [1041.0, 1010.0, 999.0, 1.0],
+          [1041.0, 1010.0, 1021.0, 1.0],
+          [1019.0, 1010.0, 1021.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
 
     {
       "trans": [1050.0, 1010.0, 1010.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [1050.0, 1000.0, 1010.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-4-6",
+        "name":"boss1-attack-square-4-6",
         "path":["vector4m",
           [1039.0, 1010.0, 999.0, 1.0],
           [1061.0, 1010.0, 999.0, 1.0],
@@ -354,12 +570,12 @@
 
     {
       "trans": [950.0, 1010.0, 1030.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [950.0, 1000.0, 1030.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-5-1",
+        "name":"boss1-attack-square-5-1",
         "path":["vector4m",
           [939.0, 1010.0, 1019.0, 1.0],
           [961.0, 1010.0, 1019.0, 1.0],
@@ -369,15 +585,33 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [970.0, 1010.0, 1030.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [970.0, 1000.0, 1030.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-5-2",
+        "path":["vector4m",
+          [959.0, 1010.0, 1019.0, 1.0],
+          [981.0, 1010.0, 1019.0, 1.0],
+          [981.0, 1010.0, 1041.0, 1.0],
+          [959.0, 1010.0, 1041.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
     
     {
       "trans": [990.0, 1010.0, 1030.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [990.0, 1000.0, 1030.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-5-3",
+        "name":"boss1-attack-square-5-3",
         "path":["vector4m",
           [979.0, 1010.0, 1019.0, 1.0],
           [1001.0, 1010.0, 1019.0, 1.0],
@@ -387,15 +621,33 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [1010.0, 1010.0, 1030.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [1010.0, 1000.0, 1030.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-5-4",
+        "path":["vector4m",
+          [999.0, 1010.0, 1019.0, 1.0],
+          [1021.0, 1010.0, 1019.0, 1.0],
+          [1021.0, 1010.0, 1041.0, 1.0],
+          [999.0, 1010.0, 1041.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
 
     {
       "trans": [1030.0, 1010.0, 1030.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [1030.0, 1000.0, 1030.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-5-5",
+        "name":"boss1-attack-square-5-5",
         "path":["vector4m",
           [1019.0, 1010.0, 1019.0, 1.0],
           [1041.0, 1010.0, 1019.0, 1.0],
@@ -405,15 +657,51 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [1050.0, 1010.0, 1030.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [1050.0, 1000.0, 1030.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-5-6",
+        "path":["vector4m",
+          [1039.0, 1010.0, 1019.0, 1.0],
+          [1061.0, 1010.0, 1019.0, 1.0],
+          [1061.0, 1010.0, 1041.0, 1.0],
+          [1039.0, 1010.0, 1041.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
     
+	{
+      "trans": [950.0, 1010.0, 1050.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [950.0, 1000.0, 1050.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-6-1",
+        "path":["vector4m",
+          [939.0, 1010.0, 1039.0, 1.0],
+          [961.0, 1010.0, 1039.0, 1.0],
+          [961.0, 1010.0, 1061.0, 1.0],
+          [939.0, 1010.0, 1061.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
+	
     {
       "trans": [970.0, 1010.0, 1050.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [970.0, 1000.0, 1050.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-6-2",
+        "name":"boss1-attack-square-6-2",
         "path":["vector4m",
           [959.0, 1010.0, 1039.0, 1.0],
           [981.0, 1010.0, 1039.0, 1.0],
@@ -423,15 +711,33 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [990.0, 1010.0, 1050.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [990.0, 1000.0, 1050.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-6-3",
+        "path":["vector4m",
+          [979.0, 1010.0, 1039.0, 1.0],
+          [1001.0, 1010.0, 1039.0, 1.0],
+          [1001.0, 1010.0, 1061.0, 1.0],
+          [979.0, 1010.0, 1061.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
 
     {
       "trans": [1010.0, 1010.0, 1050.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [1010.0, 1000.0, 1050.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-6-4",
+        "name":"boss1-attack-square-6-4",
         "path":["vector4m",
           [999.0, 1010.0, 1039.0, 1.0],
           [1021.0, 1010.0, 1039.0, 1.0],
@@ -441,15 +747,33 @@
         "cycle-speed":["float", 4.0, 0.75, 2.0]
       }
     },
+	
+	{
+      "trans": [1030.0, 1010.0, 1050.0], // translation
+      "etype": "attack-square",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat" : [0, 0, 0, 1], // quaternion
+      "bsphere": [1030.0, 1000.0, 1050.0, 50], // bounding sphere
+      "lump": {
+        "name":"boss1-attack-square-6-5",
+        "path":["vector4m",
+          [1019.0, 1010.0, 1039.0, 1.0],
+          [1041.0, 1010.0, 1039.0, 1.0],
+          [1041.0, 1010.0, 1061.0, 1.0],
+          [1019.0, 1010.0, 1061.0, 1.0]
+          ],
+        "cycle-speed":["float", 4.0, 0.75, 2.0]
+      }
+    },
 
     {
       "trans": [1050.0, 1010.0, 1050.0], // translation
-      "etype": "attack-dark",  // actor type
+      "etype": "attack-square",  // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat" : [0, 0, 0, 1], // quaternion
       "bsphere": [1050.0, 1000.0, 1050.0, 50], // bounding sphere
       "lump": {
-        "name":"boss1-attack-dark-6-6",
+        "name":"boss1-attack-square-6-6",
         "path":["vector4m",
           [1039.0, 1010.0, 1039.0, 1.0],
           [1061.0, 1010.0, 1039.0, 1.0],

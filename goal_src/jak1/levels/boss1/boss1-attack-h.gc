@@ -1,0 +1,32 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; This file will define attacks to be used by the boss
+
+;; ##########################################################
+;; ##########################################################
+;; ##########################################################
+;; ATTACK-SQUARE ############################################
+;; ##########################################################
+;; ##########################################################
+;; ##########################################################
+;; attack-square is a heavily modified copy of caveflamepots from maincave-obs.gc
+;; It is the attack type that covers an entire square.
+
+(deftype attack-square (process-drawable)
+  (
+    (cshape              collide-shape :overlay-at root)
+    (shove-up            float)
+    (cycle-speed         int32)
+    (cycle-pause         int32)
+    (cycle-offset        uint32)
+    (was-deadly?         symbol)
+    (should-play-sound?  symbol)
+	(is-dark?			 symbol)  
+    (launch-pos          vector         2 :inline)
+  )
+  (:states
+    attack-square-active
+    attack-square-inactive
+  )
+)
