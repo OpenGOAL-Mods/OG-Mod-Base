@@ -1642,6 +1642,10 @@
 ;; the DGO file
 (custom-level-cgo "TSZ.DGO" "test-zone/testzone.gd")
 
+(build-custom-level "boss1")
+(custom-level-cgo "BO1.DGO" "boss1/boss1.gd")
+
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Game Engine Code
 ;;;;;;;;;;;;;;;;;;;;;
@@ -2089,6 +2093,16 @@
  "mods/mod-settings.gc"
  "mods/mod-common-functions.gc"
  "mods/mod-custom-code.gc"
+)
+
+;; boss1 custom files
+
+(goal-src-sequence
+  "levels/boss1/"
+  :deps ("$OUT/obj/ticky.o")
+  "boss1-attack.gc"
+  "boss1-part.gc"
+  "boss1-control.gc"
 )
 
 (group-list "all-code"

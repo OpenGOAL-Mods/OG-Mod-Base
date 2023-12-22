@@ -1,0 +1,80 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; This file will contain the main control actor for the boss, which will control the battle timeline
+
+(deftype boss1-control (process-drawable)
+  (
+    (cshape                     collide-shape :overlay-at root)
+    (timeline-flag-1?           symbol)
+    (timeline-flag-2?           symbol)
+    (rand-attack-element-dark?  symbol) ;; our convention will be that dark is #t and light is #f
+  )
+  (:states
+    boss1-control-active
+    ;;boss1-control-inactive
+  )
+)
+
+(defstate boss1-control-active (boss1-control)
+  :enter (behavior ()
+    (set-state-time)
+  )
+  :trans (behavior ()
+    (if (not (-> self timeline-flag-1?))
+      (if (time-passed? (seconds 5))
+        (begin
+          (attack-all-dark-squares) ;; If condition true
+          (set! (-> self timeline-flag-1?) #t)
+        )
+        (suspend)                 ;; If condition false
+      ) 
+    )
+    (if (not (-> self timeline-flag-2?))
+      (if (time-passed? (seconds 7))
+        (begin
+          (stop-attack-all-dark-squares) ;; If condition true
+          (set! (-> self timeline-flag-2?) #t)
+        )
+        (suspend)                 ;; If condition false
+      )
+    )
+    (suspend)
+  )
+  :code (behavior ()
+    (loop
+      (logior! (-> self mask) (process-mask sleep-code))
+      (suspend)
+    )
+  )
+)
+
+(defmethod init-from-entity! boss1-control ((this boss1-control) (arg0 entity-actor))
+  ;;(format 0 "1~%1~%1~%1~%1~%")
+  (set! (-> this timeline-flag-1?) #f)
+  (set! (-> this timeline-flag-2?) #f)
+  (set! (-> this rand-attack-element-dark?) #f)
+  (let ((s4-0 (new 'process 'collide-shape this (collide-list-enum hit-by-player))))
+    (let ((s3-0 (new 'process 'collide-shape-prim-group s4-0 (the-as uint 4) 0)))
+      (set! (-> s3-0 prim-core collide-as) (collide-kind enemy))
+      (set! (-> s3-0 collide-with) (collide-kind target))
+      (set! (-> s3-0 prim-core offense) (collide-offense no-offense))
+      (set-vector! (-> s3-0 local-sphere) 0.0 8192.0 0.0 40960.0)
+      (set-root-prim! s4-0 s3-0)
+    )
+    (set! (-> s4-0 nav-radius) (* 0.75 (-> s4-0 root-prim local-sphere w)))
+    (backup-collide-with-as s4-0)
+    (set! (-> this cshape) s4-0)
+    )
+  (process-drawable-from-entity! this arg0)
+  ;;(format 0 "2~%2~%2~%2~%2~%")
+  (go boss1-control-active)
+  (none)
+)
+
+
+
+  ;;(local-vars (sv-16 res-tag) (sv-32 res-tag) (sv-48 res-tag))
+  ;;(logclear! (-> this mask) (process-mask enemy))
+  ;;(logclear! (-> this mask) (process-mask attackable))
+  ;;(logior! (-> this mask) (process-mask actor-pause))
