@@ -364,7 +364,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   )
 
 
-;;This returns true or false if jak is within a bubble defined by coordiantes and width
+;; This returns true or false if jak is within a bubble defined by coordinates and width
 (defun in-bubble? ((x float) (y float) (z float) (w float))
   (<= 
     (vector-vector-distance 
@@ -379,9 +379,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (stop-main-music)
       (case (-> (level-get-target-inside *level*) name)
          (('test-zone)
-         (if (> (knuth-rand-int-range 0 15) (+ 8 5))
-          (play-main-music "SND/music-test-zone.mp3" (the int (-> *setting-control* default music-volume)))
-          (play-main-music "SND/music-test-zone-track2.mp3" (the int (-> *setting-control* default music-volume))))
+        ;;  (if (> (knuth-rand-int-range 0 15) (+ 8 5))
+        ;;   (play-main-music "SND/music-test-zone.mp3" (the int (-> *setting-control* default music-volume)))
+        ;;   (play-main-music "SND/music-test-zone-track2.mp3" (the int (-> *setting-control* default music-volume))))
          )
          ;;Add more cases here for each level
          (else
