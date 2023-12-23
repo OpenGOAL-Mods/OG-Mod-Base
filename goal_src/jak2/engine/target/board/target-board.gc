@@ -2936,6 +2936,7 @@
         (end-combo! *board-trick-tracker*))
       )
     )
+  (set! *target-board-hold-tricks* 0)
   (set! (-> this trick-count) 0)
   0
   0
