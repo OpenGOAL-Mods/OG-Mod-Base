@@ -2914,6 +2914,7 @@
   (none)
   )
 
+(define-extern *target-board-hold-tricks* int)
 (defmethod flush-trick-list ((this board-info))
   "Flush trick list and give out points."
   (let ((f30-0 0.0))
