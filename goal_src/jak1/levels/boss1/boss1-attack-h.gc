@@ -17,13 +17,12 @@
   (
     (cshape              collide-shape :overlay-at root)
     (shove-up            float)
-    (cycle-speed         int32)
-    (cycle-pause         int32)
-    (cycle-offset        uint32)
     (was-deadly?         symbol)
     (should-play-sound?  symbol)
-	(is-dark?			 symbol)  
-    (launch-pos          vector         2 :inline)
+    (launch-pos          vector :inline)
+    (launch-pos-2        vector :inline)
+    (launch-pos-3        vector :inline)
+    (launch-pos-4        vector :inline)
   )
   (:states
     attack-square-active
