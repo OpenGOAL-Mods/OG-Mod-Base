@@ -29,3 +29,20 @@
     attack-square-inactive
   )
 )
+
+(deftype eco-orb (process-drawable)
+  (
+    (cshape              collide-shape :overlay-at root)
+    (shove-up            float)
+    (was-deadly?         symbol)
+    (should-play-sound?  symbol)
+    (eco-type            uint32) ;; 1: yellow, 2: red, 3: blue
+    (orb-sated?          symbol)
+    (orb-engorged?       symbol)
+  )
+  (:states
+    eco-orb-inactive
+    eco-orb-active
+    eco-orb-exploding
+  )
+)

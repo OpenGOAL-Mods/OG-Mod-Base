@@ -8,54 +8,84 @@
     (set-state-time)
   )
   :trans (behavior ()
-    (if (not (-> self timeline-flag-1?))
+    (if (= (-> self timeline-flag) 0)
       (if (time-passed? (seconds 5))
         (begin
           (attack-all-dark-squares) ;; If condition true
           (set! (-> self rand-attack-element-dark?) #t)
-          (set! (-> self timeline-flag-1?) #t)
+          (1+! (-> self timeline-flag))
           (format 0 "attack 1 started!~%")
         )
         (suspend)                 ;; If condition false
       ) 
     )
-    (if (not (-> self timeline-flag-2?))
+    (if (= (-> self timeline-flag) 1)
       (if (time-passed? (seconds 7))
         (begin
           (stop-attack-all-dark-squares) ;; If condition true
-          (set! (-> self timeline-flag-2?) #t)
+          (1+! (-> self timeline-flag))
           (format 0 "attack 1 stopped!~%")
         )
         (suspend)                 ;; If condition false
       )
     )
-
-    (if (not (-> self timeline-flag-3?))
+    (if (= (-> self timeline-flag) 2)
       (if (time-passed? (seconds 10))
         (begin
           (if (-> self rand-attack-element-dark?)
             (attack-all-light-squares) ;; If it was dark last time
             (attack-all-dark-squares)  ;; If it was light last time
           )
-          (set! (-> self timeline-flag-3?) #t)
+          (1+! (-> self timeline-flag))
           (format 0 "attack 2 started!~%")
         )
         (suspend)                 ;; If condition false
       )
     )
-    (if (not (-> self timeline-flag-4?))
+    (if (= (-> self timeline-flag) 3)
       (if (time-passed? (seconds 12))
         (begin
           (if (-> self rand-attack-element-dark?)
             (stop-attack-all-light-squares) ;; If it was dark last time
             (stop-attack-all-dark-squares)  ;; If it was light last time
           )
-          (set! (-> self timeline-flag-4?) #t)
+          (1+! (-> self timeline-flag))
           (format 0 "attack 2 stopped!~%")
         )
         (suspend)                 ;; If condition false
       )
     )
+    (if (= (-> self timeline-flag) 4)
+      (if (time-passed? (seconds 18))
+        (begin
+          (start-orbs)
+          (1+! (-> self timeline-flag))
+          (format 0 "attack 3 started!~%")
+        )
+        (suspend)                 ;; If condition false
+      )
+    )
+    (if (= (-> self timeline-flag) 5)
+      (if (time-passed? (seconds 38))
+        (begin
+          (engorge-orbs)
+          (1+! (-> self timeline-flag))
+          (format 0 "attack 3 continued!~%")
+        )
+        (suspend)                 ;; If condition false
+      )
+    )
+    (if (= (-> self timeline-flag) 6)
+      (if (time-passed? (seconds 58))
+        (begin
+          (explode-orbs)
+          (1+! (-> self timeline-flag))
+          (format 0 "attack 3 stopped!~%")
+        )
+        (suspend)                 ;; If condition false
+      )
+    )
+
 
     (suspend)
   )
@@ -68,12 +98,8 @@
 )
 
 (defmethod init-from-entity! boss1-control ((this boss1-control) (arg0 entity-actor))
-  ;;(format 0 "1~%1~%1~%1~%1~%")
   (set! (-> this current-attack-element-dark?) #f)
-  (set! (-> this timeline-flag-1?) #f)
-  (set! (-> this timeline-flag-2?) #f)
-  (set! (-> this timeline-flag-3?) #f)
-  (set! (-> this timeline-flag-4?) #f)
+  (set! (-> this timeline-flag) 0)
   (set! (-> this rand-attack-element-dark?) #f)
   (let ((s4-0 (new 'process 'collide-shape this (collide-list-enum hit-by-player))))
     (let ((s3-0 (new 'process 'collide-shape-prim-group s4-0 (the-as uint 4) 0)))
@@ -88,14 +114,6 @@
     (set! (-> this cshape) s4-0)
     )
   (process-drawable-from-entity! this arg0)
-  ;;(format 0 "2~%2~%2~%2~%2~%")
   (go boss1-control-active)
   (none)
 )
-
-
-
-  ;;(local-vars (sv-16 res-tag) (sv-32 res-tag) (sv-48 res-tag))
-  ;;(logclear! (-> this mask) (process-mask enemy))
-  ;;(logclear! (-> this mask) (process-mask attackable))
-  ;;(logior! (-> this mask) (process-mask actor-pause))

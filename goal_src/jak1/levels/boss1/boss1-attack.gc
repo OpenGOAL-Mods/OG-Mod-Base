@@ -53,9 +53,9 @@
     (loop
       (logior! (-> self mask) (process-mask sleep-code))
       (suspend)
-      )
     )
   )
+)
 
 (defstate attack-square-inactive (attack-square) ;; do literally nothing if inactive
   :enter (behavior ()
@@ -230,4 +230,202 @@
   (go-process (process-by-ename "boss1-attack-square-6-1") attack-square-inactive)
   (go-process (process-by-ename "boss1-attack-square-6-3") attack-square-inactive)
   (go-process (process-by-ename "boss1-attack-square-6-5") attack-square-inactive)
+)
+
+;; ##########################################################
+;; ##########################################################
+;; ##########################################################
+;; ECO-ORB ##################################################
+;; ##########################################################
+;; ##########################################################
+;; ##########################################################
+;; eco-orb is a glowing orb which is deactivated by touching it with the corresponding eco colour.
+;; If left active for too long, it will explode.
+
+(defstate eco-orb-inactive (eco-orb) ;; do literally nothing if inactive
+  :enter (behavior ()
+    
+  )
+  :exit (behavior ()
+    
+  )
+  :trans (behavior ()
+    
+  )
+  :code (behavior ()
+    (loop
+      (logior! (-> self mask) (process-mask sleep-code))
+      (suspend)
+    )
+  )
+)
+
+(defstate eco-orb-active (eco-orb)
+  :trans (behavior ()
+    (let (
+      (trans-x-lo (- (-> self root trans x) (meters 10.0))) ;; coordinates aligning with the corners of the square
+      (trans-x-hi (+ (-> self root trans x) (meters 10.0)))
+      (trans-z-lo (- (-> self root trans z) (meters 10.0)))
+      (trans-z-hi (+ (-> self root trans z) (meters 10.0)))
+      (eco-type-1 (-> self eco-type))
+      )
+      #|(let (
+        (particle-id-orbs (+ (-> self eco-type) 500102))
+        )
+        (launch-particles (-> *part-id-table* particle-id-orbs) (the-as vector (-> self root trans)))
+      )|#
+      (if (-> self orb-engorged?)
+        (case (-> self eco-type)
+          ((1)
+            (launch-particles (-> *part-id-table* 500106) (the-as vector (-> self root trans)))
+          )
+          ((2)
+            (launch-particles (-> *part-id-table* 500107) (the-as vector (-> self root trans)))
+          )
+          ((3)
+            (launch-particles (-> *part-id-table* 500108) (the-as vector (-> self root trans)))
+          )
+        )
+        (case (-> self eco-type)
+          ((1)
+            (launch-particles (-> *part-id-table* 500103) (the-as vector (-> self root trans)))
+            ;;(launch-particles :system *sp-particle-system-3d* (-> *part-id-table* 500103) (the-as vector (-> self root trans)))
+          )
+          ((2)
+            (launch-particles (-> *part-id-table* 500104) (the-as vector (-> self root trans)))
+          )
+          ((3)
+            (launch-particles (-> *part-id-table* 500105) (the-as vector (-> self root trans)))
+          )
+        )
+      )
+      
+      (if (and (> (-> *target* root trans x) trans-x-lo) (< (-> *target* root trans x) trans-x-hi) (> (-> *target* root trans z) trans-z-lo) (< (-> *target* root trans z) trans-z-hi))
+        (if (or (and (send-event *target* 'query 'powerup (pickup-type eco-yellow)) (= eco-type-1 1)) (and (send-event *target* 'query 'powerup (pickup-type eco-red)) (= eco-type-1 2)) (and (send-event *target* 'query 'powerup (pickup-type eco-blue)) (= eco-type-1 3)))
+          (begin
+            (set! (-> self orb-sated?) #t)
+            (go-process self eco-orb-inactive)
+            ;; If the eco type the player has matches the orb
+          )
+          (send-event *target* 'attack #t (new 'static 'attack-info :mask #xe0 :shove-up (meters 10) :shove-back (meters 10) :mode 'burn)) ;; Otherwise it does damage
+        )
+      )
+    )
+    (when (-> self should-play-sound?)
+      (set! (-> self should-play-sound?) #f)
+      (sound-play "hot-flame")
+    )
+    (when (-> self was-deadly?)
+      (set! (-> self was-deadly?) #f)
+      (clear-collide-with-as (-> self cshape))
+    )
+  )
+  :code (behavior ()
+    (loop
+      (logior! (-> self mask) (process-mask sleep-code))
+      (suspend)
+    )
+  )
+)
+
+(defstate eco-orb-exploding (eco-orb)
+  :trans (behavior ()
+    (send-event *target* 'attack #t (new 'static 'attack-info :mask #xe0 :mode 'melt))
+
+    (when (-> self should-play-sound?)
+      (set! (-> self should-play-sound?) #f)
+      (sound-play "hot-flame")
+    )
+    (when (-> self was-deadly?)
+      (set! (-> self was-deadly?) #f)
+      (clear-collide-with-as (-> self cshape))
+    )
+    (go eco-orb-inactive)
+  )
+  :code (behavior ()
+    (loop
+      (logior! (-> self mask) (process-mask sleep-code))
+      (suspend)
+    )
+  )
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(defmethod init-from-entity! eco-orb ((this eco-orb) (arg0 entity-actor))
+  (set! (-> this shove-up) (res-lump-float arg0 'shove :default 81920.0))
+  (set! (-> this eco-type) 0)
+  (set! (-> this orb-engorged?) #f)
+  (set! (-> this orb-sated?) #t)
+  (logclear! (-> this mask) (process-mask enemy))
+  (logclear! (-> this mask) (process-mask attackable))
+  (logior! (-> this mask) (process-mask actor-pause))
+  (let ((s4-0 (new 'process 'collide-shape this (collide-list-enum hit-by-player))))
+    (let ((s3-0 (new 'process 'collide-shape-prim-group s4-0 (the-as uint 4) 0)))
+      (set! (-> s3-0 prim-core collide-as) (collide-kind enemy))
+      (set! (-> s3-0 collide-with) (collide-kind target))
+      (set! (-> s3-0 prim-core offense) (collide-offense no-offense))
+      (set-vector! (-> s3-0 local-sphere) 0.0 8192.0 0.0 40960.0)
+      (set-root-prim! s4-0 s3-0)
+    )
+    (set! (-> s4-0 nav-radius) (* 0.75 (-> s4-0 root-prim local-sphere w)))
+    (backup-collide-with-as s4-0)
+    (set! (-> this cshape) s4-0)
+  )
+  (process-drawable-from-entity! this arg0)  
+  (go eco-orb-inactive)
+  (none)
+)
+
+(defun start-orbs ()
+  (set! (-> (the eco-orb (process-by-ename "boss1-eco-orb-01")) orb-sated?) #f)
+  (set! (-> (the eco-orb (process-by-ename "boss1-eco-orb-02")) orb-sated?) #f)
+  (set! (-> (the eco-orb (process-by-ename "boss1-eco-orb-03")) orb-sated?) #f)
+  (set! (-> (the eco-orb (process-by-ename "boss1-eco-orb-04")) orb-sated?) #f)
+  (set! (-> (the eco-orb (process-by-ename "boss1-eco-orb-01")) eco-type) (rand-vu-int-range 1 3))
+  (set! (-> (the eco-orb (process-by-ename "boss1-eco-orb-02")) eco-type) (rand-vu-int-range 1 3))
+  (set! (-> (the eco-orb (process-by-ename "boss1-eco-orb-03")) eco-type) (rand-vu-int-range 1 3))
+  (set! (-> (the eco-orb (process-by-ename "boss1-eco-orb-04")) eco-type) (rand-vu-int-range 1 3))
+  (go-process (process-by-ename "boss1-eco-orb-01") eco-orb-active)
+  (go-process (process-by-ename "boss1-eco-orb-02") eco-orb-active)
+  (go-process (process-by-ename "boss1-eco-orb-03") eco-orb-active)
+  (go-process (process-by-ename "boss1-eco-orb-04") eco-orb-active)
+)
+
+(defun engorge-orbs ()
+  (set! (-> (the eco-orb (process-by-ename "boss1-eco-orb-01")) orb-engorged?) #t)
+  (set! (-> (the eco-orb (process-by-ename "boss1-eco-orb-02")) orb-engorged?) #t)
+  (set! (-> (the eco-orb (process-by-ename "boss1-eco-orb-03")) orb-engorged?) #t)
+  (set! (-> (the eco-orb (process-by-ename "boss1-eco-orb-04")) orb-engorged?) #t)
+)
+
+(defun explode-orbs ()
+  (if (not (-> (the eco-orb (process-by-ename "boss1-eco-orb-01")) orb-sated?))
+    (go-process (process-by-ename "boss1-eco-orb-01") eco-orb-exploding)
+  )
+  (if (not (-> (the eco-orb (process-by-ename "boss1-eco-orb-02")) orb-sated?))
+    (go-process (process-by-ename "boss1-eco-orb-02") eco-orb-exploding)
+  )
+  (if (not (-> (the eco-orb (process-by-ename "boss1-eco-orb-03")) orb-sated?))
+    (go-process (process-by-ename "boss1-eco-orb-03") eco-orb-exploding)
+  )
+  (if (not (-> (the eco-orb (process-by-ename "boss1-eco-orb-04")) orb-sated?))
+    (go-process (process-by-ename "boss1-eco-orb-04") eco-orb-exploding)
+  )
 )
