@@ -208,6 +208,20 @@ std::optional<fs::path> try_get_data_dir() {
   }
 }
 
+//Get this iso_data path
+std::optional<fs::path> try_get_iso_dir(const std::string& game_Name) {
+    fs::path my_path = get_user_home_dir() / "openGOAL" / "iso_data" / game_Name;
+    
+    if (fs::exists(my_path)) {
+        lg::info("Found existing iso data at - {}", my_path.string());
+        return my_path;
+    }
+
+    auto iso_dir = file_util::get_jak_project_dir() / "iso_data" / game_Name;  
+    lg::info("Oh crud we didn't find iso data, looking in the mods iso_data folder now - {}", iso_dir.string());
+    return iso_dir;
+}
+
 bool setup_project_path(std::optional<fs::path> project_path_override) {
   if (gFilePathInfo.initialized) {
     return true;

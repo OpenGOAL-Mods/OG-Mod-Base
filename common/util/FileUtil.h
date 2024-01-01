@@ -66,6 +66,7 @@ std::vector<fs::path> find_files_in_dir(const fs::path& dir, const std::regex& p
 std::vector<fs::path> find_files_recursively(const fs::path& base_dir, const std::regex& pattern);
 std::vector<fs::path> find_directories_in_dir(const fs::path& base_dir);
 std::vector<fs::path> sort_filepaths(const std::vector<fs::path>& paths, const bool aescending);
+std::optional<fs::path> try_get_iso_dir(const std::string& game_Name);
 /// Will overwrite the destination if it exists
 void copy_file(const fs::path& src, const fs::path& dst);
 std::string make_screenshot_filepath(const GameVersion game_version, const std::string& name = "");

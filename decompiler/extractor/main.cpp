@@ -374,7 +374,7 @@ int main(int argc, char** argv) {
         // We know the version since we just extracted it, so the user didn't need to provide this
         // explicitly
         data_subfolder = data_subfolders.at(version_info->game_name);
-        iso_data_path = file_util::get_jak_project_dir() / "iso_data" / data_subfolder;
+        iso_data_path = file_util::try_get_iso_dir(data_subfolder);
         if (fs::exists(iso_data_path)) {
           fs::remove_all(iso_data_path);
         }
