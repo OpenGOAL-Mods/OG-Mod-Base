@@ -83,10 +83,7 @@ fs::path get_user_settings_dir(GameVersion game_version) {
   return get_user_config_dir() / game_version_name / "settings";
 }
 
-fs::path get_user_memcard_dir(GameVersion game_version) {
-  auto game_version_name = game_version_names[game_version];
-  return get_user_config_dir() / game_version_name / "saves";
-}
+
 
 fs::path get_user_misc_dir(GameVersion game_version) {
   auto game_version_name = game_version_names[game_version];
@@ -130,6 +127,17 @@ std::string get_current_executable_path() {
 #endif
 }
 
+std::string get_mod_name() {
+  //Returns the name of the folder that gk is in, useful for detecting name of mod for unique saves and other implmentations.
+    std::string executablePath = get_current_executable_path();
+    size_t lastSeparator = executablePath.find_last_of("/\\");
+    if (lastSeparator != std::string::npos) {
+        return executablePath.substr(0, lastSeparator);
+    } else {
+        return "error_unknown_mod";
+    }
+}
+
 std::string get_parent_directory(const std::string& path) {
   // Find the last occurrence of ".github" in the path.
   size_t github_index = path.rfind(".github");
@@ -145,7 +153,10 @@ std::string get_parent_directory(const std::string& path) {
   return parent_directory;
 }
 
-
+fs::path get_user_memcard_dir(GameVersion game_version) {
+  auto game_version_name = game_version_names[game_version];
+  return get_user_config_dir() / game_version_name / "saves" / get_mod_name();
+}
 
 std::optional<std::string> try_get_project_path_from_path(const std::string& path) {
   // std::string::size_type pos =
