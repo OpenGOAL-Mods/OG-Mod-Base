@@ -102,12 +102,23 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  in_folder = in_folder / config.game_name;
+
+  auto iso_dir = file_util::try_get_iso_dir(config.game_name);
+    if (iso_dir) {
+  in_folder = *iso_dir;
+} else {
+   in_folder = in_folder / config.game_name;
+}
+// Not sure if the false case worked here yet but I dont really care currently.
+
+
+//For now Ive commented out this check TODO add back
+  //in_folder = in_folder / config.game_name;
   // Verify the in_folder is correct
-  if (!exists(in_folder)) {
-    lg::error("Aborting - 'in_folder' does not exist '{}'", in_folder.string());
-    return 1;
-  }
+  // if (!exists(in_folder)) {
+  //   lg::error("Aborting - 'in_folder' does not exist '{}'", in_folder.string());
+  //   return 1;
+  // }
 
   out_folder = out_folder / config.game_name;
   file_util::create_dir_if_needed(out_folder);

@@ -441,6 +441,8 @@ void print_input(const std::vector<std::string>& in, char end) {
 bool MakeSystem::make(const std::string& target_in, bool force, bool verbose) {
   std::string target = m_path_map.apply_remaps(target_in);
   auto deps = get_dependencies(target);
+    lg::info("Target value in Makesystem is - {}", target_in);
+  
   //  lg::print("All deps:\n");
   //  for (auto& dep : deps) {
   //    lg::print("{}\n", dep);

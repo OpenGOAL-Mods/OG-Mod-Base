@@ -6,6 +6,7 @@
 #include "common/util/FileUtil.h"
 
 #include "third-party/fmt/core.h"
+#include "common/log/log.h"
 
 Tool::Tool(const std::string& name) : m_name(name) {}
 
@@ -13,6 +14,7 @@ bool Tool::needs_run(const ToolInput& task, const PathMap& path_map) {
   // for this to return false, all outputs need to be newer than all inputs.
 
   for (auto& in : task.input) {
+    lg::info("Value of in in needs_run is - {}", in);
     auto in_file = fs::path(file_util::get_file_path({in}));
 
     if (!fs::exists(in_file)) {

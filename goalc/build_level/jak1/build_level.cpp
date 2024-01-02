@@ -99,8 +99,17 @@ bool run_build_level(const std::string& input_file,
     fs::path iso_folder = "";
     lg::info("Looking for ISO path...");
     // TODO - add to file_util
+
+//Havent gotten this far yet
+    auto iso_dir = file_util::try_get_iso_dir("");
+    if (iso_dir) {
+  iso_folder = *iso_dir;
+} else {
+ iso_folder = file_util::get_jak_project_dir() / "iso_data" ;
+}
+
     for (const auto& entry :
-         fs::directory_iterator(file_util::get_jak_project_dir() / "iso_data")) {
+         fs::directory_iterator(iso_folder)) {
       // TODO - hard-coded to jak 1
       if (entry.is_directory() &&
           entry.path().filename().string().find("jak1") != std::string::npos) {

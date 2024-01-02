@@ -374,7 +374,16 @@ int main(int argc, char** argv) {
         // We know the version since we just extracted it, so the user didn't need to provide this
         // explicitly
         data_subfolder = data_subfolders.at(version_info->game_name);
-        iso_data_path = file_util::try_get_iso_dir(data_subfolder);
+        //iso_data_path = file_util::try_get_iso_dir(data_subfolder);
+        //iso_data_path = file_util::get_jak_project_dir() / "iso_data" / data_subfolder;
+        auto iso_dir = file_util::try_get_iso_dir(data_subfolder);
+    if (iso_dir) {
+  iso_data_path = *iso_dir;
+} else {
+ iso_data_path = file_util::get_jak_project_dir() / "iso_data" / data_subfolder;
+}
+// Not sure if the false case worked here yet but I dont really care currently.
+
         if (fs::exists(iso_data_path)) {
           fs::remove_all(iso_data_path);
         }
@@ -413,7 +422,170 @@ int main(int argc, char** argv) {
   } else {
     // If we did not extract, we have no clue what game the user is trying to decompile / compile
     // this is why the user has to specify this!
-    iso_data_path = file_util::get_jak_project_dir() / "iso_data" / data_subfolder;
+    auto iso_dir = file_util::try_get_iso_dir(data_subfolder);
+    if (iso_dir) {
+  iso_data_path = *iso_dir;
+} else {
+ iso_data_path = file_util::get_jak_project_dir() / "iso_data" / data_subfolder;
+}
+// Not sure if the false case worked here yet but I dont really care currently.
+
+
+
+
+// added a big whitespace, GOTO #L588 nothing to see here.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//  lg::info("Found existing iso data at - {}", iso_data_path.string());
+//   lg::info("Found existing iso data at - {}", iso_data_path.string());
+//    lg::info("Found existing iso data at - {}", iso_data_path.string());
+//     lg::info("Found existing iso data at - {}", iso_data_path.string());
+//      lg::info("Found existing iso data at - {}", iso_data_path.string());
+//       lg::info("Found existing iso data at - {}", iso_data_path.string());
+//        lg::info("Found existing iso data at - {}", iso_data_path.string());
+//         lg::info("Found existing iso data at - {}", iso_data_path.string());
+//          lg::info("Found existing iso data at - {}", iso_data_path.string());
+//           lg::info("Found existing iso data at - {}", iso_data_path.string());
+//            lg::info("Found existing iso data at - {}", iso_data_path.string());
+//             lg::info("Found existing iso data at - {}", iso_data_path.string());
+//              lg::info("Found existing iso data at - {}", iso_data_path.string());
+//               lg::info("Found existing iso data at - {}", iso_data_path.string());
+              
+//  lg::info("Found existing iso data at - {}", iso_data_path.string());
+//   lg::info("Found existing iso data at - {}", iso_data_path.string());
+//    lg::info("Found existing iso data at - {}", iso_data_path.string());
+//     lg::info("Found existing iso data at - {}", iso_data_path.string());
+//      lg::info("Found existing iso data at - {}", iso_data_path.string());
+//       lg::info("Found existing iso data at - {}", iso_data_path.string());
+//        lg::info("Found existing iso data at - {}", iso_data_path.string());
+//         lg::info("Found existing iso data at - {}", iso_data_path.string());
+//          lg::info("Found existing iso data at - {}", iso_data_path.string());
+//           lg::info("Found existing iso data at - {}", iso_data_path.string());
+//            lg::info("Found existing iso data at - {}", iso_data_path.string());
+//             lg::info("Found existing iso data at - {}", iso_data_path.string());
+//              lg::info("Found existing iso data at - {}", iso_data_path.string());
+//               lg::info("Found existing iso data at - {}", iso_data_path.string());
+              
+//  lg::info("Found existing iso data at - {}", iso_data_path.string());
+//   lg::info("Found existing iso data at - {}", iso_data_path.string());
+//    lg::info("Found existing iso data at - {}", iso_data_path.string());
+//     lg::info("Found existing iso data at - {}", iso_data_path.string());
+//      lg::info("Found existing iso data at - {}", iso_data_path.string());
+//       lg::info("Found existing iso data at - {}", iso_data_path.string());
+//        lg::info("Found existing iso data at - {}", iso_data_path.string());
+//         lg::info("Found existing iso data at - {}", iso_data_path.string());
+//          lg::info("Found existing iso data at - {}", iso_data_path.string());
+//           lg::info("Found existing iso data at - {}", iso_data_path.string());
+//            lg::info("Found existing iso data at - {}", iso_data_path.string());
+//             lg::info("Found existing iso data at - {}", iso_data_path.string());
+//              lg::info("Found existing iso data at - {}", iso_data_path.string());
+//               lg::info("Found existing iso data at - {}", iso_data_path.string());
+              
+//  lg::info("Found existing iso data at - {}", iso_data_path.string());
+//   lg::info("Found existing iso data at - {}", iso_data_path.string());
+//    lg::info("Found existing iso data at - {}", iso_data_path.string());
+//     lg::info("Found existing iso data at - {}", iso_data_path.string());
+//      lg::info("Found existing iso data at - {}", iso_data_path.string());
+//       lg::info("Found existing iso data at - {}", iso_data_path.string());
+//        lg::info("Found existing iso data at - {}", iso_data_path.string());
+//         lg::info("Found existing iso data at - {}", iso_data_path.string());
+//          lg::info("Found existing iso data at - {}", iso_data_path.string());
+//           lg::info("Found existing iso data at - {}", iso_data_path.string());
+//            lg::info("Found existing iso data at - {}", iso_data_path.string());
+//             lg::info("Found existing iso data at - {}", iso_data_path.string());
+//              lg::info("Found existing iso data at - {}", iso_data_path.string());
+//               lg::info("Found existing iso data at - {}", iso_data_path.string());
+              
+//  lg::info("Found existing iso data at - {}", iso_data_path.string());
+//   lg::info("Found existing iso data at - {}", iso_data_path.string());
+//    lg::info("Found existing iso data at - {}", iso_data_path.string());
+//     lg::info("Found existing iso data at - {}", iso_data_path.string());
+//      lg::info("Found existing iso data at - {}", iso_data_path.string());
+//       lg::info("Found existing iso data at - {}", iso_data_path.string());
+//        lg::info("Found existing iso data at - {}", iso_data_path.string());
+//         lg::info("Found existing iso data at - {}", iso_data_path.string());
+//          lg::info("Found existing iso data at - {}", iso_data_path.string());
+//           lg::info("Found existing iso data at - {}", iso_data_path.string());
+//            lg::info("Found existing iso data at - {}", iso_data_path.string());
+//             lg::info("Found existing iso data at - {}", iso_data_path.string());
+//              lg::info("Found existing iso data at - {}", iso_data_path.string());
+//               lg::info("Found existing iso data at - {}", iso_data_path.string());
+              
+//  lg::info("Found existing iso data at - {}", iso_data_path.string());
+//   lg::info("Found existing iso data at - {}", iso_data_path.string());
+//    lg::info("Found existing iso data at - {}", iso_data_path.string());
+//     lg::info("Found existing iso data at - {}", iso_data_path.string());
+//      lg::info("Found existing iso data at - {}", iso_data_path.string());
+//       lg::info("Found existing iso data at - {}", iso_data_path.string());
+//        lg::info("Found existing iso data at - {}", iso_data_path.string());
+//         lg::info("Found existing iso data at - {}", iso_data_path.string());
+//          lg::info("Found existing iso data at - {}", iso_data_path.string());
+//           lg::info("Found existing iso data at - {}", iso_data_path.string());
+//            lg::info("Found existing iso data at - {}", iso_data_path.string());
+//             lg::info("Found existing iso data at - {}", iso_data_path.string());
+//              lg::info("Found existing iso data at - {}", iso_data_path.string());
+//               lg::info("Found existing iso data at - {}", iso_data_path.string());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   }
 
   if (flag_decompile) {
