@@ -8,29 +8,68 @@
     (set-state-time)
   )
   :trans (behavior ()
+
+    ;; Mechanic 1: Random light/dark
     (if (= (-> self timeline-flag) 0)
-      (if (time-passed? (seconds 5))
+      (if (time-passed? (seconds 3))
         (begin
-          (attack-all-dark-squares) ;; If condition true
-          (set! (-> self rand-attack-element-dark?) #t)
+          (case (rand-vu-int-range 0 1)
+            ((0)
+              (set! (-> self rand-attack-element-dark?) #t)
+              (play-sound-file "custom_levels/jak1/boss1/boss1-attack-dark.mp3" (the int 50))
+            )
+            ((1)
+              (set! (-> self rand-attack-element-dark?) #f)
+              (play-sound-file "custom_levels/jak1/boss1/boss1-attack-light.mp3" (the int 50))
+            )
+          )
           (1+! (-> self timeline-flag))
-          (format 0 "attack 1 started!~%")
+          (format 0 "attack 1 telegraphed!~%")
         )
         (suspend)                 ;; If condition false
       ) 
     )
     (if (= (-> self timeline-flag) 1)
-      (if (time-passed? (seconds 7))
+      (if (time-passed? (seconds 5))
         (begin
-          (stop-attack-all-dark-squares) ;; If condition true
+          (if (-> self rand-attack-element-dark?)
+            (attack-all-dark-squares)
+            (attack-all-light-squares)
+          )
           (1+! (-> self timeline-flag))
-          (format 0 "attack 1 stopped!~%")
+          (format 0 "attack 1 started!~%")
         )
-        (suspend)                 ;; If condition false
+        (suspend)                 
       )
     )
     (if (= (-> self timeline-flag) 2)
+      (if (time-passed? (seconds 7))
+        (begin
+          (stop-attack-all-dark-squares)
+          (stop-attack-all-light-squares) 
+          (1+! (-> self timeline-flag))
+          (format 0 "attack 1 stopped!~%")
+        )
+        (suspend)                 
+      )
+    )
+
+    ;; Mechanic 2: Opposite of mechanic 1
+    (if (= (-> self timeline-flag) 3)
       (if (time-passed? (seconds 10))
+        (begin
+          (if (-> self rand-attack-element-dark?)
+            (play-sound-file "custom_levels/jak1/boss1/boss1-attack-light.mp3" (the int 50)) ;; If it was dark last time
+            (play-sound-file "custom_levels/jak1/boss1/boss1-attack-dark.mp3" (the int 50))  ;; If it was light last time
+          )
+          (1+! (-> self timeline-flag))
+          (format 0 "attack 2 telegraphed!~%")
+        )
+        (suspend)                 
+      )
+    )
+    (if (= (-> self timeline-flag) 4)
+      (if (time-passed? (seconds 12))
         (begin
           (if (-> self rand-attack-element-dark?)
             (attack-all-light-squares) ;; If it was dark last time
@@ -39,23 +78,23 @@
           (1+! (-> self timeline-flag))
           (format 0 "attack 2 started!~%")
         )
-        (suspend)                 ;; If condition false
+        (suspend)                 
       )
     )
-    (if (= (-> self timeline-flag) 3)
-      (if (time-passed? (seconds 12))
+    (if (= (-> self timeline-flag) 5)
+      (if (time-passed? (seconds 14))
         (begin
-          (if (-> self rand-attack-element-dark?)
-            (stop-attack-all-light-squares) ;; If it was dark last time
-            (stop-attack-all-dark-squares)  ;; If it was light last time
-          )
+          (stop-attack-all-light-squares)
+          (stop-attack-all-dark-squares)
           (1+! (-> self timeline-flag))
           (format 0 "attack 2 stopped!~%")
         )
-        (suspend)                 ;; If condition false
+        (suspend)                 
       )
     )
-    (if (= (-> self timeline-flag) 4)
+
+    ;; Mechanic 3: Orbs
+    (if (= (-> self timeline-flag) 6)
       (if (time-passed? (seconds 18))
         (begin
           (start-orbs)
@@ -65,7 +104,7 @@
         (suspend)                 ;; If condition false
       )
     )
-    (if (= (-> self timeline-flag) 5)
+    (if (= (-> self timeline-flag) 7)
       (if (time-passed? (seconds 38))
         (begin
           (engorge-orbs)
@@ -75,7 +114,7 @@
         (suspend)                 ;; If condition false
       )
     )
-    (if (= (-> self timeline-flag) 6)
+    (if (= (-> self timeline-flag) 8)
       (if (time-passed? (seconds 58))
         (begin
           (explode-orbs)
