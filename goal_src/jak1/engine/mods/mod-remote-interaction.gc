@@ -620,7 +620,7 @@
 (defun periscope-activate-by-name ((periscope-name string))
   (if (string= periscope-name "periscope-16") ;; periscope-16 doesn't exist but is used to check if it's the last mirror activated
     (let ((last-periscope (the-as periscope (process-by-ename "periscope-15"))))
-      (when last-periscope
+      (when (and last-periscope (!= (-> (the-as periscope last-periscope) entity extra perm status) (entity-perm-status complete)))
         (set! (-> (the-as periscope last-periscope) entity extra perm status) (entity-perm-status complete))
         (check-release-from-periscope last-periscope)
         (go-process (the-as periscope last-periscope) periscope-power-on)
@@ -632,10 +632,12 @@
           (when current-periscope
             (cond
               ((type-type? (-> current-periscope type) periscope)
-              (set! (-> (the-as periscope current-periscope) entity extra perm status) (entity-perm-status complete))
-              (go-process next-periscope periscope-activate)
-              (check-release-from-periscope (the-as periscope current-periscope))
-              (go-process (the-as periscope current-periscope) periscope-power-on)
+                (when (!= (-> (the-as periscope current-periscope) entity extra perm status) (entity-perm-status complete))
+                  (set! (-> (the-as periscope current-periscope) entity extra perm status) (entity-perm-status complete))
+                  (go-process next-periscope periscope-activate)
+                  (check-release-from-periscope (the-as periscope current-periscope))
+                  (go-process (the-as periscope current-periscope) periscope-power-on)
+                  )
                 )
               ((type-type? (-> current-periscope type) fuel-cell)
                 (let ((mirror (the-as reflector-mirror (process-by-ename "reflector-mirror-2"))))
