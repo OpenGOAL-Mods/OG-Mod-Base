@@ -90,8 +90,6 @@ std::string game_arg_documentation() {
 int main(int argc, char** argv) {
   ArgumentGuard u8_guard(argc, argv);
 
-  start_socket();
-
   // CLI flags
   bool show_version = false;
   std::string game_name = "jak1";
@@ -103,6 +101,7 @@ int main(int argc, char** argv) {
   std::string gpu_test = "";
   std::string gpu_test_out_path = "";
   int port_number = -1;
+  int socket_port = 8111;
   fs::path project_path_override;
   std::vector<std::string> game_args;
   CLI::App app{"OpenGOAL Game Runtime"};
@@ -112,6 +111,8 @@ int main(int argc, char** argv) {
   app.add_flag(
       "--port", port_number,
       "Specify port number for listener connection (default is 8112 for Jak 1 and 8113 for Jak 2)");
+  app.add_option("--socketport", socket_port,
+                 "Specify socket port.  Defaults to 8111");
   app.add_flag("--no-avx2", verbose_logging, "Disable AVX2 for testing");
   app.add_flag("--no-display", disable_display, "Disable video display");
   app.add_flag("--vm", enable_debug_vm, "Enable debug PS2 VM (defaulted to off)");
@@ -128,6 +129,8 @@ int main(int argc, char** argv) {
   define_common_cli_arguments(app);
   app.allow_extras();
   CLI11_PARSE(app, argc, argv);
+
+  start_socket(socket_port);
 
   if (show_version) {
     lg::print(build_revision());
