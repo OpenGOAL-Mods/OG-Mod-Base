@@ -360,6 +360,7 @@ void send_position_update() {
     json_payload["state"] = {
         {"debugModeActive", gTeamrunInfo->debug_mode_active},
         {"justSpawned", gTeamrunInfo->just_spawned},
+        {"justLoaded", gTeamrunInfo->just_loaded},
         {"cellCount", gTeamrunInfo->cell_count},
         {"buzzerCount", gTeamrunInfo->buzzer_count},
         {"orbCount", gTeamrunInfo->money_count},
