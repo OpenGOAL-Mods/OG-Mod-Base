@@ -112,6 +112,8 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
     } else if (section.key().compare("username") == 0) {
       std::string username = section.value();
       strncpy(Ptr<String>(gSelfPlayerInfo->username).c()->data(), username.c_str(), MAX_USERNAME_LEN);
+    } else if (section.key().compare("controllerPort") == 0) {
+      pc_get_controller(section.value(), 0);
     } else if (section.key().compare("players") == 0) {
       // update player positions
       for (const auto& item : section.value().items()) {
