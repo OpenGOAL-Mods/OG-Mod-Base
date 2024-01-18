@@ -237,6 +237,7 @@ set(RUNTIME_SOURCE
         system/vm/dmac.cpp
         system/vm/vm.cpp
         tools/filter_menu/filter_menu.cpp
+        tools/input_text_menu/input_text_menu.cpp
         tools/subtitle_editor/subtitle_editor_db.cpp
         tools/subtitle_editor/subtitle_editor_repl_client.cpp
         tools/subtitle_editor/subtitle_editor.cpp

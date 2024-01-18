@@ -6,6 +6,7 @@
 #include "game/system/hid/input_bindings.h"
 #include "game/system/hid/sdl_util.h"
 #include "game/tools/filter_menu/filter_menu.h"
+#include "game/tools/input_text_menu/input_text_menu.cpp"
 
 namespace game_settings {
 struct DebugSettings {

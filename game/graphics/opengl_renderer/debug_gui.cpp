@@ -101,6 +101,7 @@ void OpenGlDebugGui::draw(const DmaStats& dma_stats) {
     if (ImGui::BeginMenu("Debugging")) {
       ImGui::MenuItem("Frame Time Plot", nullptr, &m_draw_frame_time);
       ImGui::MenuItem("Render Debug", nullptr, &m_draw_debug);
+      ImGui::MenuItem("Render Input", nullptr, &m_draw_input_text_menu);
       ImGui::MenuItem("Profiler", nullptr, &m_draw_profiler);
       ImGui::MenuItem("Small Profiler", nullptr, &small_profiler);
       ImGui::MenuItem("Loader", nullptr, &m_draw_loader);

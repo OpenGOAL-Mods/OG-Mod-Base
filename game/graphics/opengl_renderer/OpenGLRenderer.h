@@ -15,6 +15,7 @@
 #include "game/graphics/opengl_renderer/foreground/Merc2.h"
 #include "game/graphics/opengl_renderer/opengl_utils.h"
 #include "game/tools/filter_menu/filter_menu.h"
+#include "game/tools/input_text_menu/input_text_menu.h"
 #include "game/tools/subtitle_editor/subtitle_editor.h"
 
 struct RenderOptions {
@@ -24,6 +25,7 @@ struct RenderOptions {
   bool draw_small_profiler_window = false;
   bool draw_subtitle_editor_window = false;
   bool draw_filters_window = false;
+  bool draw_input_text_menu = false;
 
   // internal rendering settings - The OpenGLRenderer will internally use this resolution/format.
   int msaa_samples = 2;
@@ -107,6 +109,7 @@ class OpenGLRenderer {
   SmallProfiler m_small_profiler;
   SubtitleEditor* m_subtitle_editor = nullptr;
   FiltersMenu m_filters_menu;
+  InputTextMenu m_input_text_menu;
 
   std::shared_ptr<Merc2> m_merc2;
   std::shared_ptr<Generic2> m_generic2;

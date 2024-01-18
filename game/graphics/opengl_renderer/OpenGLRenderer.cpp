@@ -795,6 +795,12 @@ void OpenGLRenderer::render(DmaFollower dma, const RenderOptions& settings) {
     m_filters_menu.draw_window();
   }
 
+
+  if (settings.draw_input_text_menu) {
+    g_current_renderer = "draw-iput-text-window";
+    m_input_text_menu.draw_window();
+  }
+
   if (settings.gpu_sync) {
     g_current_renderer = "gpu-sync";
     glFinish();
