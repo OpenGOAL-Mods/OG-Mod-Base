@@ -23,7 +23,12 @@
 
     (defun runs-every-frame ()
       ;; (increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
-
+      (when *target* 
+          (when (not (focus-test? *target* board))
+              (logior! (-> *game-info* features) (game-feature board))
+              (send-event *target* 'change-mode 'board #f)
+          )
+      )
       ;; Sample code to turn jak pink whenever he's doing the jetboard hover glitch
       ;; (when *target* 
       ;;   (if (board-hovering?)
