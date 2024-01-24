@@ -1019,6 +1019,7 @@
       (new 'static 'continue-point
         :name "ogre-race"
         :level 'ogre
+        :flags (continue-flags ignore-closest-search) ;; PATCHED - prevent klaww skip (thru idle deload)
         :trans (new 'static 'vector :x 841424.9 :y 163801.1 :z -8205419.5 :w 1.0)
         :quat (new 'static 'quaternion :y -0.9857 :w 0.168)
         :camera-trans (new 'static 'vector :x 860479.9 :y 183815.38 :z -8162368.0 :w 1.0)
@@ -1483,6 +1484,7 @@
       (new 'static 'continue-point
         :name "lavatube-middle"
         :level 'lavatube
+        :flags (continue-flags ignore-closest-search) ;; PATCHED - prevent LTS (thru idle deload)
         :trans (new 'static 'vector :x 9081441.0 :y -3935.8464 :z -14056285.0 :w 1.0)
         :quat (new 'static 'quaternion :y -0.7002 :w -0.7139)
         :camera-trans (new 'static 'vector :x 9055362.0 :y 10606.592 :z -14050822.0 :w 1.0)
@@ -1596,6 +1598,7 @@
       (new 'static 'continue-point
         :name "citadel-launch-start"
         :level 'citadel
+        :flags (continue-flags ignore-closest-search) ;; PATCHED - prevent all orbs deload into citadel
         :trans (new 'static 'vector :x 10827551.0 :y -94047.02 :z -18946718.0 :w 1.0)
         :quat (new 'static 'quaternion :y 0.8377 :w -0.546)
         :camera-trans (new 'static 'vector :x 10862150.0 :y -75343.875 :z -18922316.0 :w 1.0)

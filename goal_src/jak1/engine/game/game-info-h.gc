@@ -108,6 +108,7 @@
   (contf09)
   (game-start)
   (sage-ecorocks)
+  (ignore-closest-search) ;; PATCHED - added this to block certain continue points from being considered for idle deload
   )
 
 ;; static data for a continue point

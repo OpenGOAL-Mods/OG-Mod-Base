@@ -117,7 +117,8 @@
     (if (or (cpad-hold? (-> self control unknown-cpad-info00 number) start l1 r1 triangle circle x square)
             *progress-process*
             )
-        (go target-stance)
+        (suspend) ;; PATCHED - don't abort idle animation if holding face button or pause (buffered)
+        ;; (go target-stance)
         )
     )
   :code (behavior ()

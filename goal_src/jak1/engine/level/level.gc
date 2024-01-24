@@ -1920,7 +1920,7 @@
                    )
               (while (not (null? s4-2))
                 (if (and (< (vector-vector-distance s2-0 (-> s1-0 trans)) (vector-vector-distance s2-0 (-> s3-0 trans)))
-                    (zero? (-> s1-0 flags))
+                    (zero? (-> s1-0 flags)) ;; PATCHED - we added flags to certain continue points to prevent skips using idle deload
                     )
                   (set! s3-0 s1-0)
                   )
