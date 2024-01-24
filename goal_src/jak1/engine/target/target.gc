@@ -97,7 +97,9 @@
   )
 
 (defbehavior target-falling-trans target ((arg0 basic) (arg1 time-frame))
-  (if (and (cpad-pressed? (-> self control unknown-cpad-info00 number) circle) (can-feet?))
+  (when (and (cpad-pressed? (-> self control unknown-cpad-info00 number) circle) (can-feet?)
+           (not (logtest? (-> self control unknown-surface00 flags) (surface-flags prevent-attacks-during-launch-jump surf08))) ;; PATCHED - prevent 1 frames
+           )
       (go target-attack-air #f)
       )
   (when (= arg0 'target-eco-powerup)
