@@ -73,24 +73,24 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
         }
       }
     } else if (section.key().compare("gameSettings") == 0) {
-      GameMode* gameSetting = &(gMultiplayerInfo->game);
       for (const auto& gameField : section.value().items()) {
         if (gameField.key().compare("category") == 0) {
-          gameSetting->category = gameField.value();
+          gMultiplayerInfo->game.category = gameField.value();
         } else if (gameField.key().compare("mode") == 0) {
-          gameSetting->mode = gameField.value();
+          gMultiplayerInfo->game.mode = gameField.value();
         } else if (gameField.key().compare("requireSameLevel") == 0) {
-          gameSetting->require_same_level = gameField.value();
+          gMultiplayerInfo->game.require_same_level = gameField.value();
+          lg::warn("set require same level {}", gameField.value());
         } else if (gameField.key().compare("allowSoloHubZoomers") == 0) {
-          gameSetting->allow_solo_hub_zoomers = gameField.value();
+          gMultiplayerInfo->game.allow_solo_hub_zoomers = gameField.value();
         } else if (gameField.key().compare("noLTS") == 0) {
-          gameSetting->no_lts = gameField.value();
+          gMultiplayerInfo->game.no_lts = gameField.value();
         } else if (gameField.key().compare("citadelSkip") == 0) {
-          gameSetting->citadel_skip_version = gameField.value();
+          gMultiplayerInfo->game.citadel_skip_version = gameField.value();
         } else if (gameField.key().compare("freeForAll") == 0) {
-          gameSetting->free_for_all = gameField.value();
+          gMultiplayerInfo->game.free_for_all = gameField.value();
         } else if (gameField.key().compare("enablePvp") == 0) {
-          gameSetting->enable_pvp = gameField.value();
+          gMultiplayerInfo->game.enable_pvp = gameField.value();
         }
       }
     } else if (section.key().compare("selfInfo") == 0) {
