@@ -27,13 +27,12 @@
 
 (defun clean-up-interaction-data ((target remote-player-info)) ;; needs to be done in game in case we skip frames when transfering position data
   (set! (-> target inter_type) (interaction-type none))
-  ;; should be enough to clean up type
-  ;; (set! (-> target inter_amount) 0.0)
-  ;; (set! (-> target inter_status) 0.0)
-  ;; (set! (-> target inter_name) (new 'global 'string INTERACTION_STRING_LEN ""))
-  ;; (set! (-> target inter_parent) (new 'global 'string INTERACTION_STRING_LEN ""))
-  ;; (set! (-> target inter_level) (new 'global 'string INTERACTION_STRING_LEN ""))
-  ;; (set! (-> target inter_cleanup) 0)
+  (set! (-> target inter_amount) 0.0)
+  (set! (-> target inter_status) 0.0)
+  (set! (-> target inter_name) "")
+  (set! (-> target inter_parent) "")
+  (set! (-> target inter_level) "")
+  (set! (-> target inter_cleanup) 0)
   
   (none)
   )
