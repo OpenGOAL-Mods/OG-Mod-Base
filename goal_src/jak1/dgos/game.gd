@@ -365,4 +365,7 @@
   "target-flut.o"
   "flut-saddle-ag.go"
   "eichar-flut+0-ag.go"
+  ;; keep blocking-plane stuff loaded
+  "blocking-plane.o"
+  "ef-plane-ag.go"
  ))
