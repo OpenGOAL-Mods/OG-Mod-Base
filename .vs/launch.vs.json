@@ -72,6 +72,18 @@
       "type": "default",
       "project": "CMakeLists.txt",
       "projectTarget": "offline-test.exe (bin\\offline-test.exe)",
+      "name": "Tests - Offline Tests - Jak 3",
+      "args": [
+        "--iso_data_path",
+        "${workspaceRoot}/iso_data/jak3",
+        "--game",
+        "jak3"
+      ]
+    },
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "offline-test.exe (bin\\offline-test.exe)",
       "name": "Tests - Offline Tests - Jak 1 - Specific File",
       "args": [
         "--iso_data_path",
@@ -216,6 +228,19 @@
         "--version",
         "ntsc_v1",
         "--config-override \"{\\\"decompile_code\\\": false, \\\"levels_extract\\\": true, \\\"allowed_objects\\\": []}\""
+      ]
+    },
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "decompiler.exe (bin\\decompiler.exe)",
+      "name": "Decompiler - Jak 3",
+      "args": [
+        "${workspaceRoot}/decompiler/config/jak3/jak3_config.jsonc",
+        "${workspaceRoot}/iso_data",
+        "${workspaceRoot}/decompiler_out",
+        "--version",
+        "ntsc_v1"
       ]
     },
     {
