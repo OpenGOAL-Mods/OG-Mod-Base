@@ -21,25 +21,32 @@
               )
 
 (defstate blocking-plane-idle (blocking-plane)
+  :trans (behavior ()
+    (if (and *debug-segment* *display-path-marks*)
+      (logclear! (-> self draw status) (draw-status skip-bones))  ;; in debug, show blocking planes when path marks on
+      (logior! (-> self draw status) (draw-status skip-bones))
+      )
+    )
   :code (behavior ()
     (transform-post)
     (loop
-      (logior! (-> self mask) (process-mask sleep))
+      (when (not *debug-segment*)
+        (logior! (-> self mask) (process-mask sleep))
+        )
       (suspend)
       )
     )
   )
 
-(defbehavior blocking-plane-init-by-other blocking-plane ((arg0 curve-control) (arg1 int))
-  (if (or (not arg0) (logtest? (-> arg0 flags) (path-control-flag not-found)))
+(defbehavior blocking-plane-init-by-other blocking-plane ((vec-pair (inline-array vector)) (height float))
+  "Rewritten based on Jak II implementation - sets up plane given 2 vectors and a height"
+  (if (not vec-pair)
       (deactivate self)
       )
-  (let ((s5-0 (new 'static 'vector))
-        (gp-0 (new 'static 'vector))
+  (let ((s5-0 (-> vec-pair 0))
+        (gp-0 (-> vec-pair 1))
         )
     0.0
-    (eval-path-curve-div! arg0 s5-0 (the float arg1) 'exact)
-    (eval-path-curve-div! arg0 gp-0 (+ 1.0 (the float arg1)) 'exact)
     (let ((f30-1 (* 0.5 (vector-vector-distance s5-0 gp-0)))
           (s4-1 (new 'process 'collide-shape self (collide-list-enum usually-hit-by-player)))
           )
@@ -49,7 +56,7 @@
         (set! (-> s3-1 prim-core action) (collide-action solid))
         (set! (-> s3-1 prim-core offense) (collide-offense indestructible))
         (set! (-> s3-1 transform-index) 3)
-        (set-vector! (-> s3-1 local-sphere) 0.0 0.0 0.0 (fmax 122880.0 f30-1))
+        (set-vector! (-> s3-1 local-sphere) 0.0 (* 0.00024414062 (* 0.5 height)) 0.0 (fmax height f30-1))
         (set-root-prim! s4-1 s3-1)
         )
       (set! (-> s4-1 nav-radius) (* 0.75 (-> s4-1 root-prim local-sphere w)))
@@ -59,12 +66,12 @@
     (let ((s4-2 (new-stack-matrix0)))
       (vector+! (-> self root trans) s5-0 gp-0)
       (vector-float*! (-> self root trans) (-> self root trans) 0.5)
-      (+! (-> self root trans y) 61440.0)
+      (+! (-> self root trans y) (* 0.5 height))
       (vector-! (the-as vector (-> s4-2 vector)) gp-0 s5-0)
       (set! (-> self root scale x)
             (* 0.00024414062 (vector-normalize-ret-len! (the-as vector (-> s4-2 vector)) 1.0))
             )
-      (set! (-> self root scale y) 30.0)
+      (set! (-> self root scale y) (* 0.00024414062 height))
       (set! (-> self root scale z) 0.0)
       (set! (-> s4-2 vector 1 quad) (-> (new 'static 'vector :y 1.0 :w 1.0) quad))
       (vector-cross! (-> s4-2 vector 2) (the-as vector (-> s4-2 vector)) (-> s4-2 vector 1))
@@ -78,16 +85,40 @@
   (none)
   )
 
+;; Use the below function to spawn a blocking-plane between 2 vectors with a given height.
+;; 
+;; Example (spawn):
+;;
+;; (when (not (process-by-name "test-blocking-plane-1" *active-pool*))
+;;   (let ((verts (new 'stack-no-clear 'inline-array 'vector 2)))
+;;     (set-vector-meters! (-> verts 0) 194.39  10.62 -1587.11) ;; near geologist
+;;     (set-vector-meters! (-> verts 1) 214.60  10.31 -1590.41)
+;;     (blocking-plane-spawn-simple verts (meters 30.0) "test-blocking-plane-1")
+;;     )
+;;   )
+;; 
+;; Example (despawn):
+;;
+;; (let ((plane (process-by-name "test-blocking-plane-1" *active-pool*)))
+;;   (when plane (deactivate plane))
+;;   )
+(defun blocking-plane-spawn-simple ((verts (inline-array vector)) (height float) (name string))
+  (process-spawn blocking-plane verts height :to *active-pool* :name name)
+  )
+  
 (defbehavior blocking-plane-spawn process ((arg0 curve-control))
   (cond
     ((or (not arg0) (logtest? (-> arg0 flags) (path-control-flag not-found)))
      )
     (else
       (let ((s5-0 (the int (the float (+ (-> arg0 curve num-cverts) -1))))
+            (s2-0 (new 'stack-no-clear 'inline-array 'vector 2))
             (s4-0 0)
             )
         (while (< s4-0 s5-0)
-          (process-spawn blocking-plane arg0 s4-0 :to self)
+          (eval-path-curve-div! arg0 (-> s2-0 0) (the float s4-0) 'exact)
+          (eval-path-curve-div! arg0 (-> s2-0 1) (+ 1.0 (the float s4-0)) 'exact)
+          (process-spawn blocking-plane s2-0 122880.0 :to self)
           (+! s4-0 2)
           )
         )
