@@ -158,7 +158,7 @@
         "idle-distance": ["meters", 50.0],
         "cam-vert": ["meters", 8.0],
         "cam-horz": ["meters", 20.0],
-        "path": ["vector3m", // The enemy will patrol a path, if it has one.
+        "path": ["vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
             [-7.3159, 1.0468, 20.3499],
             [-2.3607, 1.0468, 12.8255],
             [-9.7266, 1.0468, 14.4445],
