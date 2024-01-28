@@ -7,5 +7,6 @@
   "test-zone-obs.o"
   "plat-ag.go"
   "test-actor-ag.go"
+  "babak-ag.go"
   "test-zone.go"
  ))
