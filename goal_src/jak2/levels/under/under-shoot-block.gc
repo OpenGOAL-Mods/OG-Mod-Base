@@ -710,7 +710,7 @@
                    )
                )
              (set! (-> self prev-attack-id) (-> gp-0 id))
-             (if (logtest? s5-0 (penetrate punch))
+             (if (logtest? s5-0 (penetrate punch board)) ;; OG:Jetboard/No OoJ added board so that the Jetboard could hit and interact with the Block Puzzle Blocks
                  (set! (-> self puzzle prev-special-attack-id) (-> gp-0 id))
                  )
              )

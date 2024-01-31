@@ -374,7 +374,7 @@ This commonly includes things such as:
       )
     (cond
       ((and (logtest? (-> this flags) (rigid-body-object-flag player-driving)) *target* (!= (-> this crash-level) 3))
-       (when (focus-test? *target* pilot-riding)
+       (when (focus-test? *target* pilot-riding board)
          (vehicle-controller-method-11 (-> this controller))
          (vehicle-method-138 this)
          )

@@ -7,6 +7,18 @@
 
 ;; DECOMP BEGINS
 
+;;OG: Jetboard/No OoJ Definining Jak's Speed
+(defun get-jak-speed ()
+  (let ((f0-16 (vector-length (let ((v1-180 (new-stack-vector0)))
+          (vector-! v1-180 (-> *target* control transv)
+          (vector-float*! v1-180 (-> *target* control dynam gravity-normal) 
+          (vector-dot (-> *target* control dynam gravity-normal) 
+          (-> *target* control transv)))))))
+      )
+        (return (/ f0-16 4096)))
+  0.0
+)
+
 (deftype ruins-pillar-collapse (process-drawable)
   ((root              collide-shape-moving :override)
    (player-attack-id  int32)
@@ -95,6 +107,9 @@
        #t
        )
       )
+      (when (>= (get-jak-speed) 25) ;; OG:Jetboard/No OoJ added 'board to allow jetboard to attack walls
+            (go-virtual hit)
+            )
     )
   :enter (behavior ()
     (let ((s5-0 (matrix<-transformq! (new 'stack-no-clear 'matrix) (the-as transformq (-> self root trans)))))

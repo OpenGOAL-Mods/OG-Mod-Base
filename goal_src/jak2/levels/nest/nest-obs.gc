@@ -33,7 +33,7 @@
     (case message
       (('attack)
        (let ((v1-1 (the-as attack-info (-> block param 1))))
-         (when (or (= (-> v1-1 mode) 'spin) (= (-> v1-1 mode) 'spin-air))
+         (when  (or (= (-> v1-1 mode) 'spin) (= (-> v1-1 mode) 'spin-air) (= (-> v1-1 mode) 'board)) ;; OG:Jetboard/No OoJ Added 'board so Jetboard can interact with switch/valve
            (let ((a1-3 (new 'stack-no-clear 'event-message-block)))
              (set! (-> a1-3 from) (process->ppointer self))
              (set! (-> a1-3 num-params) 0)

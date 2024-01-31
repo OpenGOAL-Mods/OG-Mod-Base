@@ -7,6 +7,18 @@
 
 ;; DECOMP BEGINS
 
+;; OG:Jetboard/No OoJ Definining Jak's Speed
+(defun get-jak-speed ()
+  (let ((f0-16 (vector-length (let ((v1-180 (new-stack-vector0)))
+          (vector-! v1-180 (-> *target* control transv)
+          (vector-float*! v1-180 (-> *target* control dynam gravity-normal) 
+          (vector-dot (-> *target* control dynam gravity-normal) 
+          (-> *target* control transv)))))))
+      )
+        (return (/ f0-16 4096)))
+  0.0
+)
+
 (defpartgroup group-bubbler-streams
   :id 500
   :bounds (static-bspherem 0 8 0 16)
@@ -662,7 +674,7 @@ This commonly includes things such as:
     (case message
       (('attack)
        (case (-> (the-as attack-info (-> block param 1)) mode)
-         (('mech-punch 'crush)
+         (('mech-punch 'crush 'board) ;;OG:Jetboard/No OoJ Added 'board so jetboard can interact with buoys
           (let ((a0-5 (ppointer->process (-> self parent))))
             (send-event a0-5 'base-hit)
             )
@@ -981,7 +993,7 @@ This commonly includes things such as:
     (case message
       (('attack)
        (case (-> (the-as attack-info (-> block param 1)) mode)
-         (('mech-punch 'crush)
+         (('mech-punch 'crush 'board) ;; OG:Jetboard/No OoJ Added 'board so jetboard can interact with buoys 
           (go-virtual running)
           )
          )
@@ -1612,8 +1624,8 @@ For example for an elevator pre-compute the distance between the first and last 
        (go-virtual hit #f)
        )
       (('attack)
-       (case (-> (the-as attack-info (-> block param 1)) mode)
-         (('mech-punch 'crush)
+       (case (-> (the-as attack-info (-> block param 1)) mode) 
+         (('mech-punch 'crush) 
           (go-virtual hit #f)
           )
          )
@@ -1622,6 +1634,9 @@ For example for an elevator pre-compute the distance between the first and last 
        #t
        )
       )
+      (when (>= (get-jak-speed) 25) ;; OG:Jetboard/No OoJ added 'board to allow jetboard to attack walls
+            (go-virtual hit #f)
+            )
     )
   :code (behavior ()
     (add-process
@@ -1711,7 +1726,7 @@ This commonly includes things such as:
       (let ((v1-8 (new 'process 'collide-shape-prim-mesh s2-0 (the-as uint 0) (the-as uint 0))))
         (set! (-> v1-8 prim-core collide-as) (collide-spec obstacle))
         (set! (-> v1-8 prim-core collide-with) (collide-spec jak player-list))
-        (set! (-> v1-8 prim-core action) (collide-action solid))
+        (set! (-> v1-8 prim-core action) (collide-action solid ))
         (set! (-> v1-8 transform-index) 3)
         (set-vector! (-> v1-8 local-sphere) 0.0 0.0 0.0 57344.0)
         (set! (-> s2-0 total-prims) (the-as uint 1))

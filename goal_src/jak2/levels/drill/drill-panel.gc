@@ -635,7 +635,7 @@
     (case message
       (('attack)
        (case (-> (the-as attack-info (-> block param 1)) mode)
-         (('mech-punch 'crush)
+         (('mech-punch 'crush 'board) ;; OG:Jetboard/No OoJ Added so 'board so the jetboard can destroy the computers
           (go-virtual hit #f)
           )
          )

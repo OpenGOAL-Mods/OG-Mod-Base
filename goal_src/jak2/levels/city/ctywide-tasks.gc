@@ -453,7 +453,7 @@
     ()
     (local-vars (v1-7 symbol))
     (send-event *traffic-manager* 'set-target-level 1.0)
-    (until (or v1-7 (and *target* (focus-test? *target* pilot)))
+    (until (or v1-7 (and *target* (focus-test? *target* pilot board))) ;; OG:Jetboard/No OoJ Allows Keira Delivery on Jetboard
       (suspend)
       (let ((f0-0 122880.0))
         (set! v1-7 (< (* f0-0 f0-0) (vector-vector-distance-squared (-> self begin-pos) (target-pos 0))))
@@ -474,7 +474,7 @@
     (send-event *traffic-manager* 'decrease-alert-level 0)
     (send-event *traffic-manager* 'set-alert-duration (seconds 30))
     (send-event *target* 'end-mode)
-    (set-setting! 'pilot #f 0.0 0)
+    (set-setting! 'board #f 0.0 0) ;; OG:Jetboard No OoJ Allows Keira Delivery on Jetboard
     (set-time! (-> self state-time))
     (while (not (time-elapsed? (-> self state-time) (seconds 2)))
       (suspend)

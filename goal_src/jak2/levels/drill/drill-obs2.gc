@@ -235,7 +235,7 @@ This commonly includes things such as:
     (('attack)
      (let ((s4-0 (the-as object (-> arg3 param 1))))
        (case (-> (the-as attack-info s4-0) mode)
-         (('mech-punch 'crush)
+         (('mech-punch 'crush 'board) ;; OG:Jetboard/No OoJ added 'board so the jetboard could break titansuit doors 
           ((method-of-type attack-info compute-intersect-info)
            (the-as attack-info (mem-copy! (the-as pointer (new 'stack-no-clear 'attack-info)) (the-as pointer s4-0) 160))
            (the-as uint s4-0)

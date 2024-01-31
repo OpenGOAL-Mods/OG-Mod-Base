@@ -42,7 +42,7 @@
       (the-as pair 0)
       )
     (set! (-> this scale) 1.0)
-    (set! (-> this draw lod-set lod 0 dist) 81920.0)
+    (set! (-> this draw lod-set lod 0 dist) 40960.0)
     (set! (-> this draw lod-set lod 1 dist) 204800.0)
     (set! (-> this draw lod-set lod 1 dist) 327680.0)
     (logior! (-> this skel status) (joint-control-status sync-math))
@@ -64,9 +64,12 @@
                 (go-virtual die)
                 )
             )
-          (set! (-> self draw color-mult quad) (-> (the-as process-focusable gp-0) draw color-mult quad))
-          (set! (-> self root trans quad) (-> (the-as process-focusable gp-0) root trans quad))
-          (quaternion-copy! (-> self root quat) (-> (the-as process-focusable gp-0) root quat))
+          (set! (-> self draw color-mult quad) (-> (the-as process-focusable *target*) draw color-mult quad))
+          (set! (-> self root trans quad) (-> (the-as process-focusable *target*) root trans quad))
+          (quaternion-copy! (-> self root quat) (-> (the-as process-focusable *target*) root quat))
+          (+! (-> self root trans x) (meters -2.0))
+          (+! (-> self root trans y) (meters 0.5))
+          (+! (-> self root trans z) (meters 2.5))
           )
         (else
           )
@@ -135,11 +138,11 @@ This commonly includes things such as:
     (set-setting! 'minimap 'clear 0.0 (minimap-flag task-graph))
     (let ((gp-1 *traffic-manager*))
       (let ((s5-0 (new 'stack 'traffic-object-spawn-params)))
-        (set! (-> s5-0 position quad) (-> (new 'static 'vector :x 4698112.0 :y 45875.2 :z 81920.0 :w 1.0) quad))
+        (set! (-> s5-0 position quad) (-> (new 'static 'vector :x 4698112.0 :y 45875.2 :z 40960.0 :w 1.0) quad))
         (quaternion-axis-angle! (-> s5-0 rotation) 0.0 1.0 0.0 32768.0)
-        (set! (-> s5-0 object-type) (traffic-type bikea))
-        (set! (-> s5-0 behavior) (the-as uint 0))
-        (set! (-> s5-0 id) (the-as uint 0))
+        (set! (-> s5-0 object-type) (traffic-type citizen-fat)) ;; OG:Jetboard/No Changed bikea to citizen-fat to remove zoomer
+        (set! (-> s5-0 behavior) (the-as uint 0)) 
+        (set! (-> s5-0 id) (the-as uint 0)) 
         (set! (-> s5-0 proc) #f)
         (send-event gp-1 'spawn-object s5-0)
         (when (-> s5-0 proc)
@@ -147,11 +150,7 @@ This commonly includes things such as:
           (let ((v1-20 (-> s5-0 proc)))
             (set! (-> (the-as vehicle v1-20) damage-factor) 2.0)
             )
-          (let ((v1-22 (krew-package-spawn (-> s5-0 proc) (-> s5-0 proc))))
-            (if v1-22
-                (set! (-> self slave 1) (process->handle (-> v1-22 0)))
-                )
-            )
+            
           )
         (let ((s4-0 (new 'stack-no-clear 'task-arrow-params)))
           (set! (-> s4-0 pos quad) (-> s5-0 position quad))
@@ -160,11 +159,7 @@ This commonly includes things such as:
           (set! (-> s4-0 map-icon) (the-as uint 15))
           (label cfg-21)
           (let ((a0-30 (task-arrow-spawn s4-0 self)))
-            (when (not a0-30)
-              (format #t "waiting for task-arrow~%")
-              (suspend)
-              (goto cfg-21)
-              )
+            
             (set! (-> self arrow) (process->handle a0-30))
             )
           )
@@ -178,8 +173,10 @@ This commonly includes things such as:
     (set! (-> self data-int8 1) 0)
     0
     (none)
+    (krew-package-spawn *target* *target*) ;; OG:Jetboard/No OoJ Spawns package on Jak
     )
   )
+
 
 (set-subtask-hook!
   *game-info*
@@ -380,12 +377,12 @@ This commonly includes things such as:
                  (f1-0 12288.0)
                  )
              (cond
-               ((and (< f0-0 (* f1-0 f1-0)) *target* (focus-test? *target* pilot))
-                (when (nonzero? (-> self sub-state))
+               ((and (>= f0-0 (* f1-0 f1-0)) *target* (focus-test? *target* board)) ;; OG:Jetboard/No OoJ Added board and changed < into >=
+                (when (!= (-> self sub-state) 0)
                   (send-event (handle->process (-> self arrow)) 'set-position (-> self end-pos))
                   (send-event (handle->process (-> self arrow)) 'modify-flags 1 0)
                   (send-event (handle->process (-> self arrow)) 'map-icon 8)
-                  (set! (-> self sub-state) (the-as uint 0))
+                  (set! (-> self sub-state) (the-as uint 0)) 
                   0
                   )
                 )
@@ -416,7 +413,7 @@ This commonly includes things such as:
                )
              )
            (let ((f30-0 49152.0)
-                 (f0-6 (vector-vector-distance-squared (-> (the-as process-drawable gp-0) root trans) (-> self end-pos)))
+                 (f0-6 (vector-vector-distance-squared (-> (the-as process-drawable (ppointer->process (-> *target* board board))) root trans) (-> self end-pos))) ;; OG:Jetboard/No OoJ Changed gp-0 to *target*
                  )
              (if (>= (* f30-0 f30-0) f0-6)
                  (go-virtual complete)
@@ -513,10 +510,10 @@ This commonly includes things such as:
     ()
     (send-event *traffic-manager* 'decrease-alert-level 0)
     (send-event *traffic-manager* 'set-alert-duration (seconds 30))
-    (if (and *target* (focus-test? *target* pilot))
+    (if (and *target* (focus-test? *target* pilot board)) ;; OG:Jetboard/No OoJ Added Board for now
         (send-event *target* 'change-mode 'normal)
         )
-    (set-setting! 'pilot #f 0.0 0)
+    (set-setting! 'pilot 'board #f 0.0 0) ;; OG:Jetboard/No OoJ Added Board for now
     (set-time! (-> self state-time))
     (while (not (time-elapsed? (-> self state-time) (seconds 2)))
       (suspend)

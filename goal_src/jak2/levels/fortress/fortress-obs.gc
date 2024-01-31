@@ -58,7 +58,7 @@
   :event (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
     (case message
       (('attack)
-       (when (logtest? (-> (the-as attack-info (-> block param 1)) penetrate-using) (penetrate flop))
+       (when (logtest? (-> (the-as attack-info (-> block param 1)) penetrate-using) (penetrate  flop board)) ;; OG:Jetboard/No OoJ added board so Jak can break through floor grates on the jetboard
          (go-virtual die)
          #f
          )

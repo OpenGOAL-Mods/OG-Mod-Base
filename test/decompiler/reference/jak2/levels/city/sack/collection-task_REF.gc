@@ -354,7 +354,7 @@
   (lambda :behavior task-manager
     ()
     (local-vars (moved-beyond-start? symbol))
-    (until (or moved-beyond-start? (and *target* (focus-test? *target* pilot)))
+    (until (or moved-beyond-start? (and *target* (focus-test? *target* pilot board)))
       (suspend)
       (let ((min-start-distance 122880.0))
         (set! moved-beyond-start?

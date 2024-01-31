@@ -237,7 +237,7 @@ For example for an elevator pre-compute the distance between the first and last 
     (case message
       (('attack)
        (case (-> (the-as attack-info (-> block param 1)) mode)
-         (('spin 'punch 'flop 'uppercut)
+         (('spin 'punch 'flop 'uppercut 'board) ;; OG:Jetboard/No OoJ Added ;board so jetboard can interact with sewer valves
           (if (!= (-> self water-height) (get-base-height *ocean-map-sewer*))
               (go-virtual turn)
               )

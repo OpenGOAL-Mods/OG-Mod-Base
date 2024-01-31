@@ -463,7 +463,7 @@ otherwise, [[plat::34]]
   :event (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
     (case message
       (('attack)
-       (when (logtest? (-> (the-as attack-info (-> block param 1)) penetrate-using) (penetrate flop))
+       (when (logtest? (-> (the-as attack-info (-> block param 1)) penetrate-using) (penetrate flop board)) ;; OG:Jetboard/No OoJ Added board so jetboard can break through floor grates
          (go-virtual die)
          #f
          )
@@ -565,7 +565,7 @@ This commonly includes things such as:
       )
     (set! (-> this root) (the-as collide-shape-moving s4-0))
     )
-  (set! (-> this root penetrated-by) (penetrate flop))
+  (set! (-> this root penetrated-by) (penetrate flop board)) ;; OG:Jetboard/No OoJ Added board so jetboard can break through floor grates 
   (process-drawable-from-entity! this arg0)
   (initialize-skeleton
     this

@@ -87,7 +87,7 @@
       (('attack)
        (let ((attack (the-as attack-info (-> block param 1))))
          (case (-> attack mode)
-           (('flop 'spin 'punch 'eco-yellow 'eco-red 'eco-blue 'eco-dark)
+           (('flop 'spin 'punch 'eco-yellow 'eco-red 'eco-blue 'eco-dark 'board) ;; OG:Jetboard/No OoJ added 'board so jetboard can press buttons and intereact with switches and levels that use the basebutton code
             (when (or (not (or (= (-> attack mode) 'spin) (= (-> attack mode) 'punch)))
                       (logtest? (-> self button-status) (button-status button-status-3))
                       )
@@ -108,6 +108,7 @@
          (go-virtual going-down)
          )
        )
+       
       (('move-to)
        (move-to! self (the-as vector (-> block param 0)) (the-as quaternion (-> block param 1)))
        )

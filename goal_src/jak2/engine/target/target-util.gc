@@ -1862,7 +1862,7 @@
          (cond
            ((and (logtest? (water-flags touch-water) a1-2)
                  (logtest? (water-flags under-water swimming) a1-2)
-                 (not (logtest? (focus-status mech) (-> this focus-status)))
+                 (not (logtest? (focus-status mech board) (-> this focus-status))) ;; OG:Jetboard/No OoJ Added Board. Shoutouts to Barg for this one! Allows the Jetboard to have the Air Supply HUD and an Air Supply.
                  )
             (set! v0-0 (new 'static 'vector :w 1.0))
             (set! (-> v0-0 quad) (-> this control trans quad))
