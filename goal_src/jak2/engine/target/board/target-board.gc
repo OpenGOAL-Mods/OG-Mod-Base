@@ -129,7 +129,7 @@
     :turnvv 131072.0
     :tiltv 131072.0
     :tiltvv 2621440.0
-    :transv-max 409600.0
+    :transv-max 409600.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
     :target-speed 102400.0
     :seek0 0.5
     :seek90 0.5
