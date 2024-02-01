@@ -42,7 +42,7 @@
       (the-as pair 0)
       )
     (set! (-> this scale) 1.0)
-    (set! (-> this draw lod-set lod 0 dist) 40960.0)
+    (set! (-> this draw lod-set lod 0 dist) 81920.0)
     (set! (-> this draw lod-set lod 1 dist) 204800.0)
     (set! (-> this draw lod-set lod 1 dist) 327680.0)
     (logior! (-> this skel status) (joint-control-status sync-math))
@@ -64,12 +64,12 @@
                 (go-virtual die)
                 )
             )
-          (set! (-> self draw color-mult quad) (-> (the-as process-focusable gp-0) draw color-mult quad))
+           (set! (-> self draw color-mult quad) (-> (the-as process-focusable gp-0) draw color-mult quad))
           (set! (-> self root trans quad) (-> (the-as process-focusable gp-0) root trans quad))
           (quaternion-copy! (-> self root quat) (-> (the-as process-focusable gp-0) root quat))
           ;; OG-jetboard added this next bit to make package follow jetboard more closely
           (let ((dir (new-stack-vector0)) ;; direction vector
-                (off (static-vectorm 0 -0.5 2)) ;; offset vector
+                (off (static-vectorm 0 -0.5 2.0)) ;; offset vector
                 (board (the board (aif (ppointer->process (-> *target* board board)) it #f)))
                 )
             (vector-matrix*! dir off (-> *target* control c-R-w)) ;; multiply offset vector by target's rotation matrix
@@ -91,7 +91,7 @@
     (ja-post)
     )
   )
-
+          
 (defstate die (krew-package)
   :virtual #t
   :code (behavior ()
@@ -153,6 +153,7 @@ This commonly includes things such as:
       (when package
         (set! (-> self slave 0) (process->handle *target*))
         (set! (-> self slave 1) (process->handle (-> package 0)))
+            
           )
       (let ((s4-0 (new 'stack-no-clear 'task-arrow-params)))
         (vector-copy! (-> s4-0 pos) (new 'static 'vector :x 4698112.0 :y 45875.2 :z 81920.0 :w 1.0))
@@ -165,9 +166,8 @@ This commonly includes things such as:
             (format #t "waiting for task-arrow~%")
             (suspend)
             (goto cfg-21)
-            )
-          (set! (-> self arrow) (process->handle a0-30))
           )
+          (set! (-> self arrow) (process->handle a0-30))
         )
       (send-event gp-1 'set-target-level 1.0)
       (send-event gp-1 'set-guard-target-count-range 4 0 1)
@@ -180,7 +180,7 @@ This commonly includes things such as:
     (none)
     )
   )
-
+)
 
 (set-subtask-hook!
   *game-info*
@@ -381,7 +381,7 @@ This commonly includes things such as:
                  (f1-0 12288.0)
                  )
              (cond
-               ((and (>= f0-0 (* f1-0 f1-0)) *target* (focus-test? *target* board)) ;; OG:Jetboard/No OoJ Added board and changed < into >=
+               ((and (< f0-0 (* f1-0 f1-0)) *target* (focus-test? *target* board)) ;; OG:Jetboard/No OoJ Added board and changed < into >=
                 (when (!= (-> self sub-state) 0)
                   (send-event (handle->process (-> self arrow)) 'set-position (-> self end-pos))
                   (send-event (handle->process (-> self arrow)) 'modify-flags 1 0)
