@@ -7,18 +7,6 @@
 
 ;; DECOMP BEGINS
 
-;; OG:Jetboard/No OoJ Definining Jak's Speed
-(defun get-jak-speed ()
-  (let ((f0-16 (vector-length (let ((v1-180 (new-stack-vector0)))
-          (vector-! v1-180 (-> *target* control transv)
-          (vector-float*! v1-180 (-> *target* control dynam gravity-normal) 
-          (vector-dot (-> *target* control dynam gravity-normal) 
-          (-> *target* control transv)))))))
-      )
-        (return (/ f0-16 4096)))
-  0.0
-)
-
 (defpartgroup group-bubbler-streams
   :id 500
   :bounds (static-bspherem 0 8 0 16)
@@ -1634,7 +1622,7 @@ For example for an elevator pre-compute the distance between the first and last 
        #t
        )
       )
-      (when (>= (get-jak-speed) 25) ;; OG:Jetboard/No OoJ added 'board to allow jetboard to attack walls
+      (when (>= (get-jak-speed-meters) 25) ;; OG:Jetboard/No OoJ added 'board to allow jetboard to attack walls
             (go-virtual hit #f)
             )
     )

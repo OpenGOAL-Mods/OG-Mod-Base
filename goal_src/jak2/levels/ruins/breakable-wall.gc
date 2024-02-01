@@ -7,19 +7,6 @@
 
 ;; DECOMP BEGINS
 
-
-;; OG:Jetboard/No OoJ Definining Jaks Speed
-(defun get-jak-speed ()
-  (let ((f0-16 (vector-length (let ((v1-180 (new-stack-vector0)))
-          (vector-! v1-180 (-> *target* control transv)
-          (vector-float*! v1-180 (-> *target* control dynam gravity-normal) 
-          (vector-dot (-> *target* control dynam gravity-normal) 
-          (-> *target* control transv)))))))
-      )
-        (return (/ f0-16 4096)))
-  0.0
-)
-
 (defskelgroup skel-ruins-breakable-wall-1 ruins-breakable-wall ruins-breakable-wall-1-lod0-jg ruins-breakable-wall-1-idle-ja
               ((ruins-breakable-wall-1-lod1-mg (meters 20))
                (ruins-breakable-wall-1-lod2-mg (meters 40))
@@ -308,7 +295,7 @@
        #t
        )
       )
-      (when (>= (get-jak-speed) 25) ;; OG:Jetboard/No OoJ added 'board to allow jetboard to attack walls
+      (when (>= (get-jak-speed-meters) 25) ;; OG:Jetboard/No OoJ added 'board to allow jetboard to attack walls
             (go-virtual hit)
             )
     )

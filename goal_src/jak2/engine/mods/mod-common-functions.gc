@@ -65,6 +65,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   `(and (logtest? (focus-status board) (-> *target* focus-status)) (> *target-board-hold-tricks* 1))
   )
 
+(defun get-jak-speed-meters ()
+  (/ (vector-length (get-transv *target*)) 4096.0)
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Approved Custom Functions/Macros to call in all mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;

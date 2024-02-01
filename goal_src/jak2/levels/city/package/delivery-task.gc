@@ -64,12 +64,22 @@
                 (go-virtual die)
                 )
             )
-          (set! (-> self draw color-mult quad) (-> (the-as process-focusable *target*) draw color-mult quad))
-          (set! (-> self root trans quad) (-> (the-as process-focusable *target*) root trans quad))
-          (quaternion-copy! (-> self root quat) (-> (the-as process-focusable *target*) root quat))
-          (+! (-> self root trans x) (meters -2.0))
-          (+! (-> self root trans y) (meters 0.5))
-          (+! (-> self root trans z) (meters 2.5))
+          (set! (-> self draw color-mult quad) (-> (the-as process-focusable gp-0) draw color-mult quad))
+          (set! (-> self root trans quad) (-> (the-as process-focusable gp-0) root trans quad))
+          (quaternion-copy! (-> self root quat) (-> (the-as process-focusable gp-0) root quat))
+          ;; OG-jetboard added this next bit to make package follow jetboard more closely
+          (let ((dir (new-stack-vector0)) ;; direction vector
+                (off (static-vectorm 0 -0.5 2)) ;; offset vector
+                (board (the board (aif (ppointer->process (-> *target* board board)) it #f)))
+                )
+            (vector-matrix*! dir off (-> *target* control c-R-w)) ;; multiply offset vector by target's rotation matrix
+            (if board
+              ;; if board exists, attach to board
+              (vector-copy! (-> self root trans) (vector+! dir dir (vector<-cspace! (new-stack-vector0) (-> board node-list data 8))))
+              ;; otherwise just attach to target
+              (vector-copy! (-> self root trans) (vector+! dir dir (vector<-cspace! (new-stack-vector0) (-> *target* node-list data 5))))
+              )
+            )
           )
         (else
           )
@@ -136,32 +146,27 @@ This commonly includes things such as:
       )
     (set! (-> self end-pos quad) (-> (new 'static 'vector :x -282624.0 :y 45056.0 :z 5464064.0 :w 1.0) quad))
     (set-setting! 'minimap 'clear 0.0 (minimap-flag task-graph))
-    (let ((gp-1 *traffic-manager*))
-      (let ((s5-0 (new 'stack 'traffic-object-spawn-params)))
-        (set! (-> s5-0 position quad) (-> (new 'static 'vector :x 4698112.0 :y 45875.2 :z 40960.0 :w 1.0) quad))
-        (quaternion-axis-angle! (-> s5-0 rotation) 0.0 1.0 0.0 32768.0)
-        (set! (-> s5-0 object-type) (traffic-type citizen-fat)) ;; OG:Jetboard/No Changed bikea to citizen-fat to remove zoomer
-        (set! (-> s5-0 behavior) (the-as uint 0)) 
-        (set! (-> s5-0 id) (the-as uint 0)) 
-        (set! (-> s5-0 proc) #f)
-        (send-event gp-1 'spawn-object s5-0)
-        (when (-> s5-0 proc)
-          (set! (-> self slave 0) (process->handle (-> s5-0 proc)))
-          (let ((v1-20 (-> s5-0 proc)))
-            (set! (-> (the-as vehicle v1-20) damage-factor) 2.0)
-            )
-            
+    ;; OG:jetboard reworked this section to spawn package on jak
+    (let ((gp-1 *traffic-manager*)
+          (package (the (pointer process-drawable) (krew-package-spawn *target* *target*)))
           )
-        (let ((s4-0 (new 'stack-no-clear 'task-arrow-params)))
-          (set! (-> s4-0 pos quad) (-> s5-0 position quad))
-          (quaternion-identity! (-> s4-0 quat))
-          (set! (-> s4-0 flags) (task-arrow-flags task-arrow-flag-03))
-          (set! (-> s4-0 map-icon) (the-as uint 15))
-          (label cfg-21)
-          (let ((a0-30 (task-arrow-spawn s4-0 self)))
-            
-            (set! (-> self arrow) (process->handle a0-30))
+      (when package
+        (set! (-> self slave 0) (process->handle *target*))
+        (set! (-> self slave 1) (process->handle (-> package 0)))
+          )
+      (let ((s4-0 (new 'stack-no-clear 'task-arrow-params)))
+        (vector-copy! (-> s4-0 pos) (new 'static 'vector :x 4698112.0 :y 45875.2 :z 81920.0 :w 1.0))
+        (quaternion-identity! (-> s4-0 quat))
+        (set! (-> s4-0 flags) (task-arrow-flags task-arrow-flag-03))
+        (set! (-> s4-0 map-icon) (the-as uint 15))
+        (label cfg-21)
+        (let ((a0-30 (task-arrow-spawn s4-0 self)))
+          (when (not a0-30)
+            (format #t "waiting for task-arrow~%")
+            (suspend)
+            (goto cfg-21)
             )
+          (set! (-> self arrow) (process->handle a0-30))
           )
         )
       (send-event gp-1 'set-target-level 1.0)
@@ -173,7 +178,6 @@ This commonly includes things such as:
     (set! (-> self data-int8 1) 0)
     0
     (none)
-    (krew-package-spawn *target* *target*) ;; OG:Jetboard/No OoJ Spawns package on Jak
     )
   )
 
@@ -413,7 +417,7 @@ This commonly includes things such as:
                )
              )
            (let ((f30-0 49152.0)
-                 (f0-6 (vector-vector-distance-squared (-> (the-as process-drawable (ppointer->process (-> *target* board board))) root trans) (-> self end-pos))) ;; OG:Jetboard/No OoJ Changed gp-0 to *target*
+                 (f0-6 (vector-vector-distance-squared (-> (the-as process-drawable gp-0) root trans) (-> self end-pos)))
                  )
              (if (>= (* f30-0 f30-0) f0-6)
                  (go-virtual complete)
