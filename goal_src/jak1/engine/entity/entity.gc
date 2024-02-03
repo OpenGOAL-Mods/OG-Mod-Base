@@ -833,6 +833,7 @@
           :custom-hacky? #t ;; Our hack. This will neutralize the function that caused trouble.
           :origin (new 'static 'vector :x (meters -7.2681) :y (meters 1.0468) :z (meters 16.3255) :w 1.0000) ;; Location of the navmesh.
           :bounds (new 'static 'sphere :x (meters -7.2681) :y (meters 1.0468) :z (meters 16.3255) :w (meters 20.0)) ;; Some kind of boundary. It should cover the whole navmesh. Enemies won't go to parts it doesn't cover.
+          :vertex-count 4 ;; If this is missing, then debug drawing of the vertexes will not be possible.
           :vertex (new 'static 'inline-array nav-vertex 4 ;; The vertexes, we can use these to form our triangles.
                   (new 'static 'nav-vertex :x (meters 5.8046) :y (meters 0.1945) :z (meters 6.6462) :w 1.0000) ;; All coordinates are relative to the origin of the navmesh...
                   (new 'static 'nav-vertex :x (meters 5.5363) :y (meters 0.4561) :z (meters -6.1448) :w 1.0000) ;; ...which is good news for us, we can easily copy navmeshes and just change the origin (and bounds).
