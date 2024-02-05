@@ -123,7 +123,7 @@
     ((string= level-name "ogre") "MP")
     ((string= level-name "robocave") "Robot Cave")
     ((string= level-name "rolling") "Basin")
-    ((string= level-name "snowy") "Snowy")
+    ((string= level-name "snow") "Snowy")
     ((string= level-name "sunken") "LPC Top")
     ((string= level-name "sunkenb") "LPC Bottom")
     ((string= level-name "swamp") "Boggy")
