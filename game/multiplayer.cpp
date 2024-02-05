@@ -109,6 +109,28 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
           player->cells_collected = infoField.value();
         }
       }
+    } else if (section.key().compare("selfInteraction") == 0) {
+      RemotePlayerInfo* selfPlayer = &(gMultiplayerInfo->players[gMultiplayerInfo->player_num]);
+      for (const auto& interactionField : section.value().items()) {
+        if (interactionField.key().compare("interType") == 0) {
+          selfPlayer->inter_type = interactionField.value();
+        } else if (interactionField.key().compare("interAmount") == 0) {
+          selfPlayer->inter_amount = interactionField.value().get<float>();
+        } else if (interactionField.key().compare("interStatus") == 0) {
+          selfPlayer->inter_status = interactionField.value().get<float>();
+        } else if (interactionField.key().compare("interName") == 0) {
+          std::string ename = interactionField.value();
+          strncpy(Ptr<String>(selfPlayer->inter_name).c()->data(), ename.c_str(), INTERACTION_STRING_LEN);
+        } else if (interactionField.key().compare("interParent") == 0) {
+          std::string parent = interactionField.value();
+          strncpy(Ptr<String>(selfPlayer->inter_parent).c()->data(), parent.c_str(), INTERACTION_STRING_LEN);
+        } else if (interactionField.key().compare("interLevel") == 0) {
+          std::string level = interactionField.value();
+          strncpy(Ptr<String>(selfPlayer->inter_level).c()->data(), level.c_str(), INTERACTION_STRING_LEN);
+        } else if (interactionField.key().compare("interCleanup") == 0) {
+          selfPlayer->inter_cleanup = interactionField.value();
+        }
+      }
     } else if (section.key().compare("username") == 0) {
       std::string username = section.value();
       strncpy(Ptr<String>(gSelfPlayerInfo->username).c()->data(), username.c_str(), MAX_USERNAME_LEN);

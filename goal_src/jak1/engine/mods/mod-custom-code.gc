@@ -351,19 +351,14 @@
       (dotimes (idx (-> *interaction-update-buffer* length))
         (when (= (-> *interaction-update-buffer* idx has_update?) #t)
 
+          ;; self-player-info holds data going out
+          ;; (-> *multiplayer-info* player_num) holds data coming in (orb reduction)
           (set! (-> *self-player-info* inter_type) (-> *interaction-update-buffer* idx type))
           (set! (-> *self-player-info* inter_amount) (-> *interaction-update-buffer* idx amount))
           (set! (-> *self-player-info* inter_status) (-> *interaction-update-buffer* idx status))
           (set! (-> *self-player-info* inter_name) (-> *interaction-update-buffer* idx ename))
           (set! (-> *self-player-info* inter_parent) (-> *interaction-update-buffer* idx parent))
           (set! (-> *self-player-info* inter_level) (-> *interaction-update-buffer* idx level))
-          
-          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_type)   (-> *self-player-info* inter_type))
-          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_amount) (-> *self-player-info* inter_amount))
-          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_status) (-> *self-player-info* inter_status))
-          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_name)   (-> *self-player-info* inter_name))
-          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_parent) (-> *self-player-info* inter_parent))
-          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) inter_level)  (-> *self-player-info* inter_level))
           
           (set! *has-none-position-update?* #t)
 

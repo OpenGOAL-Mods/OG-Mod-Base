@@ -477,26 +477,32 @@
 (defun render-targets ()
  (let ((target-count 0))
     (dotimes (idx MAX_MULTIPLAYER_COUNT)
-      (when (!= (-> *multiplayer-info* player_num) idx)
-        (when (!= (-> *multiplayer-info* players idx mp_state) (mp-tgt-state mp-tgt-disconnected))
-          ;; see if we need to spawn any remote targets
-          (when (or (zero? (-> *remote-targets* idx)) (not (handle->process (-> *remote-targets* idx))))
-            (set! (-> *remote-targets* idx) (start-extra-target))
-            (set! (-> (the-as target (handle->process (-> *remote-targets* idx))) saved-owner) idx) ;; used to identify remote index from target
-            )
-          ;; assume target spawned at this point 
-
-          ;; position/color remote targets
-          (let ((p (-> *multiplayer-info* players idx))
-                (obj (the process-drawable (handle->process (-> *remote-targets* idx)))))
-            (when obj
-              (if (and (is-interactive? idx) (or (= (-> p team_id) (-> *self-player-info* team_id)) (= (-> *multiplayer-info* game free_for_all) 1)))
-                (handle-remote-interaction p idx)
-                )
-              (update-actor-position obj p)
+      (cond
+        ((!= (-> *multiplayer-info* player_num) idx)
+          (when (!= (-> *multiplayer-info* players idx mp_state) (mp-tgt-state mp-tgt-disconnected))
+            ;; see if we need to spawn any remote targets
+            (when (or (zero? (-> *remote-targets* idx)) (not (handle->process (-> *remote-targets* idx))))
+              (set! (-> *remote-targets* idx) (start-extra-target))
+              (set! (-> (the-as target (handle->process (-> *remote-targets* idx))) saved-owner) idx) ;; used to identify remote index from target
               )
+            ;; assume target spawned at this point 
+
+            ;; position/color remote targets
+            (let ((p (-> *multiplayer-info* players idx))
+                  (obj (the process-drawable (handle->process (-> *remote-targets* idx)))))
+              (when obj
+                (if (and (is-interactive? idx) (or (= (-> p team_id) (-> *self-player-info* team_id)) (= (-> *multiplayer-info* game free_for_all) 1)))
+                  (handle-remote-interaction p idx)
+                  )
+                (update-actor-position obj p)
+                )
+              )
+              (set! target-count (+ target-count 1))
             )
-            (set! target-count (+ target-count 1))
+          )
+        ((and (is-interactive? idx) (!= (-> *multiplayer-info* players idx inter_type) (interaction-type none)))
+          (handle-remote-interaction (-> *multiplayer-info* players idx) idx)
+          (clean-up-interaction-data (-> *multiplayer-info* players idx))
           )
         )
       )
