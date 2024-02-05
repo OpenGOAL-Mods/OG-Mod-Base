@@ -26,6 +26,7 @@
 
 ;; game fixes
 (define *target-on-active-gondola?* #f)
+(define *move-by-index-on-spawn* #f)
 
 ;; multiplayer
 (define *multiplayer-info* (new 'global 'multiplayer-info))

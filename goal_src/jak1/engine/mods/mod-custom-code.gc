@@ -116,6 +116,12 @@
         (send-event (process-by-name "citb-exit-plat-4" *active-pool*) 'trigger)
         )
 
+      (when *move-by-index-on-spawn*
+        (set! *move-by-index-on-spawn* #f)
+        (+! (-> *target* root trans x) (meters (* (the float (-> *self-player-info* player_index)) 2.8)))
+        (+! (-> *target* root trans z) (meters (* (the float (-> *self-player-info* player_index)) 0.5)))
+        )
+
 
       (cond
         ((name= (-> *game-info* current-continue name) "finalboss-fight")
@@ -393,6 +399,7 @@
           ;;(set! *debug-segment* #f)
           (set! *cheat-mode* #f)
           (set! (-> *pc-settings* speedrunner-mode?) #t)
+          (set! *move-by-index-on-spawn* #t)
           (start 'play (get-continue-by-name *game-info* "village1-hut"))
           )
         (((teamrun-command start-run))
