@@ -29,9 +29,9 @@
   (set! (-> target inter_type) (interaction-type none))
   (set! (-> target inter_amount) 0.0)
   (set! (-> target inter_status) 0.0)
-  (set! (-> target inter_name) "")
-  (set! (-> target inter_parent) "")
-  (set! (-> target inter_level) "")
+  (set! (-> target inter_name) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+  (set! (-> target inter_parent) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+  (set! (-> target inter_level) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
   (set! (-> target inter_cleanup) 0)
   
   (none)
