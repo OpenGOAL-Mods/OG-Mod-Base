@@ -1391,8 +1391,12 @@
         )
       (((interaction-type money))
         (cond
-          ((= (-> remote-player inter_amount) -1) (remove-money-dupe-from-level (-> remote-player inter_level)))
-          ((< (-> remote-player inter_amount) -1) (send-event *target* 'get-pickup 5 (-> remote-player inter_amount)))
+          ((or (< (-> remote-player inter_amount) -1) (string= (-> remote-player inter_level) "none")) 
+            (send-event *target* 'get-pickup 5 (-> remote-player inter_amount))
+            )
+          ((= (-> remote-player inter_amount) -1) 
+            (remove-money-dupe-from-level (-> remote-player inter_level))
+            )
           (else
             (if (= (-> remote-player inter_cleanup) 0)
               (give-money-from-level (-> remote-player inter_level))
