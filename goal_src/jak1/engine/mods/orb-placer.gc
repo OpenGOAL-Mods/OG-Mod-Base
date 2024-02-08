@@ -1,0 +1,131 @@
+;; controls whether the orb-placer process will run
+(define *orb-placer-enabled?* #f)
+
+;; number of orbs orb-placer has placed
+(define *orb-placer-count* 0)
+
+;; max number of orbs
+(defconstant ORB_PLACER_MAX 1000)
+
+;; index of currently selected orb for placing
+(define *orb-placer-selected-idx* -1)
+
+;; array of handles to orbs that have been spawned by orb-placer
+(define *orb-placer-orbs* (new 'global 'boxed-array handle ORB_PLACER_MAX))
+
+(defun orb-placer-highlight ((orb money) (highlight? symbol))
+  (cond 
+    (highlight?
+      (set-vector! (-> orb draw color-mult) 0.8 0.8 0.0 1.0)
+      (set-vector! (-> orb draw color-emissive) 0.0 1.0 0.2 1.0)
+      )
+    (else
+      (set-vector! (-> orb draw color-mult) 0.8 0.8 0.8 1.0)
+      (set-vector! (-> orb draw color-emissive) 0.2 0.2 0.2 1.0)
+      )
+    )
+  (none)
+  )
+
+(defun orb-placer-add ()
+  (when (and *target* (< *orb-placer-count* ORB_PLACER_MAX))
+    ;; if another orb was selected, un-highlight it because we'll select this new orb
+    (when (and (>= *orb-placer-selected-idx* 0) (nonzero? (-> *orb-placer-orbs* *orb-placer-selected-idx*)))
+      (let ((orb (the money (handle->process (-> *orb-placer-orbs* *orb-placer-selected-idx*)))))
+        (when orb 
+          (orb-placer-highlight orb #f)
+          )
+        )
+      )
+
+    (let ((vec (new 'stack-no-clear 'vector)))
+      (vector-copy! vec (-> *target* root trans))
+      (+! (-> vec x) (meters 3.0))  ;; cheap offset TODO use jak's rotation
+      (let ((orb-handle (spawn-money vec 1.0)))
+        (when (nonzero? orb-handle)
+          (set! (-> *orb-placer-orbs* *orb-placer-count*) orb-handle)
+          (set! *orb-placer-selected-idx* *orb-placer-count*)
+          (orb-placer-highlight (the money (handle->process orb-handle)) #t)
+          (+! *orb-placer-count* 1)
+          )
+        )
+      )
+    )
+  (none)
+  )
+
+;; called from run-every-frame to ensure orb-placer is spawned/killed
+(defun orb-placer-spawn-check ()
+  (cond
+    ((process-by-name 'orb-placer *active-pool*)
+      ;; orb-placer exists
+      ;; if its not enabled, kill it
+      (when (not *orb-placer-enabled?*)
+        (format 0 "killing orb-placer~%")
+        (kill-by-name 'orb-placer *active-pool*)
+
+        ;; make sure target is ungrabbed
+        (when (and *target* (= (-> *target* next-state name) 'target-grab))
+          (send-event *target* 'end-mode)
+          )
+        )
+      )
+    (else
+      ;; orb-placer doesn't exist
+      ;; if its enabled, spawn it
+      (when *orb-placer-enabled?*
+        (format 0 "spawning orb-placer~%")
+        ;; process-spawn-function, spawns a process that runs the function you give it
+        (process-spawn-function process :name 'orb-placer
+          (lambda :behavior process ()
+            ;; Code before the loop runs once on process spawn
+
+            (loop
+              ;; Loop runs once per frame while process is active
+
+              ;; make sure target is grabbed
+              (when (and *target* (!= (-> *target* next-state name) 'target-grab))
+                (send-event *target* 'change-mode 'grab)
+                )
+
+              ;; if we have an orb selected and the handle is nonzero...
+              (when (and (>= *orb-placer-selected-idx* 0) (nonzero? (-> *orb-placer-orbs* *orb-placer-selected-idx*)))
+                (let ((orb (the money (handle->process (-> *orb-placer-orbs* *orb-placer-selected-idx*)))))
+                  (when orb
+                    ;; highlight it
+                    (orb-placer-highlight orb #t)
+
+                    ;; respond to controller input
+
+                    ;; X/Z TODO math based on camera
+
+
+                    ;; Y (up/down)
+                    (cond
+                      ((cpad-hold? 0 l2)
+                        (+! (-> orb root trans y) (meters 0.05))
+                        )
+                      ((cpad-hold? 0 r2)
+                        (+! (-> orb root trans y) (meters -0.05))
+                        )
+                      ((cpad-pressed? 0 l1)
+                        (+! (-> orb root trans y) (meters 2.0))
+                        )
+                      ((cpad-pressed? 0 r1)
+                        (+! (-> orb root trans y) (meters -2.0))
+                        )
+                      )
+                    )
+                  )
+                )
+
+              ;; Processes should suspend themselves, the loop will resume next frame
+              (suspend)
+              )
+            )
+          )
+        )
+      )
+    )
+  (none)
+  )
