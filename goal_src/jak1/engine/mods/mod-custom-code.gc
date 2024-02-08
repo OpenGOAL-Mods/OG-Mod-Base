@@ -29,6 +29,9 @@
         (input-display-off)
         )
 
+      ;; ensure orb-placer is spawned/killed as requested
+      (orb-placer-spawn-check)
+
       (none)
       )
 
@@ -137,3 +140,30 @@
 
     #| these are no longer recommended/supported however we include them anyways to not break anyones mods.
     |#
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Additional debug menu(s)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(when (-> *debug-menu-context* root-menu)
+  (debug-menu-append-item (-> *debug-menu-context* root-menu)
+    (debug-menu-make-from-template *debug-menu-context*
+      '(menu "Modding Tools"
+         (menu "Orb Placer"
+            (flag "Enable" #f ,(dm-lambda-boolean-flag *orb-placer-enabled?*))
+            (function "Add Orb" #f ,(lambda () (orb-placer-add)))
+            ;; (menu "Select Orb"
+              
+            ;;   )
+            )
+        ;;  (flag "Debug" #f ,(dm-lambda-boolean-flag (-> *pc-settings* debug?)))
+        ;;  (menu "Fullscreen"
+        ;;     (function "Windowed" #f ,(lambda () (set-display-mode! *pc-settings* 'windowed #t)))
+        ;;     (function "Fullscreen" #f ,(lambda () (set-display-mode! *pc-settings* 'fullscreen #t)))
+        ;;     (function "Borderless" #f ,(lambda () (set-display-mode! *pc-settings* 'borderless #t)))
+        ;;     )
+        )
+      )
+    )
+  )
