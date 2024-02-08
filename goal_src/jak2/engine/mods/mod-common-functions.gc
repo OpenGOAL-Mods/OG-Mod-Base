@@ -95,6 +95,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defmacro current-cutscene ()
   `(-> *art-control* active-stream)
   )
+  (defun test-boop()
+  (when *debug-segment*
+  (play-sound-file "SND/Boop.mp3" 100)
+  )
+  )
 
 ;;This function moves an actor to the given coordinates
 ;;example (move-actor farmer-3 3.0 74.0 -120.0)

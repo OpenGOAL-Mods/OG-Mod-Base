@@ -360,7 +360,7 @@
   (none)
   )
 
-(defmethod begin-race ((this race-state))
+(defmethod begin-race ((this race-state)) ;; OG:Jetboard Might be important for races
   (format #t "begin-race~%")
   (when (not (logtest? (-> this flags) (race-flags begun)))
     (logior! (-> this flags) (race-flags begun))
@@ -519,7 +519,7 @@
   (none)
   )
 
-(defmethod setup-race ((this race-state))
+(defmethod setup-race ((this race-state)) ;; OG:Jetboard May be important for races
   (set-setting! 'allow-progress #f 0.0 0)
   (send-event (handle->process (-> this arrow)) 'leave)
   (when (logtest? (-> this info flags) (race-info-flags borrow))

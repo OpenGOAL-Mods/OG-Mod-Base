@@ -764,6 +764,7 @@
            (if (and (-> a0-1 0 data 0 actor)
                     (focus-test? v1-1 mech board) ;; OG:Jetboard/No OoJ Added board so jetboard would be detected by airlocks
                     (send-event (ppointer->process *underb-master*) 'request 'mech 'board #t) ;; OG:Jetboard/No OoJ Added 'board so jetboard would be detected by airlocks
+                    (and (time-elapsed? (-> self state-time) (seconds 15))) ;; OG:Jetboard/No OoJ Added so now there's a 15 second delay before the Airlocks fill with Water
                     )
                (set! (-> self mode) (under-locking-mode want-fill))
                )
@@ -772,6 +773,7 @@
        )
       (((under-locking-mode want-fill))
        (if (not (logtest? (-> self actor-group 0 data 0 actor extra perm status) (entity-perm-status subtask-complete)))
+       
            (go-virtual filling)
            )
        )

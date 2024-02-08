@@ -205,10 +205,10 @@
       :ai-min-speed-factor 0.75
       :ai-max-speed-factor 1.0
       :ai-spread-factor 0.007
-      :start-sphere (new 'static 'sphere :x -237117.44 :y 40509.44 :z 5523169.5 :r 122880.0)
+      :start-sphere (new 'static 'sphere :x -237117.44 :y 40509.44 :z 5523169.5 :r 122880.0) ;; OG:Jetboard x: -57.9 meters y: 9.89 meters z: 1348.4 meters r: 30 meters 
       :start-dir (new 'static 'vector :x 0.9396926 :z 0.34202015 :w 1.0)
       :finish-dir (new 'static 'vector :z 1.0 :w 1.0)
-      :player-intro-pos (new 'static 'vector :x -209592.31 :y 42639.36 :z 5495972.0 :w 1.0)
+      :player-intro-pos (new 'static 'vector :x -209592.31 :y 42639.36 :z 5495972.0 :w 1.0) ;; OG:Jetboard x: -51.17 meters y: 10.41 meters z: 1341 meters
       :flags (race-info-flags city-race complete-immediately)
       :score #xf
       :lap-count 1

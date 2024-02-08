@@ -536,7 +536,7 @@
                            )
                       )
                  (and (-> self continue)
-                      (not (focus-test? *target* in-head edge-grab pole flut tube board pilot mech indax))
+                      (not (focus-test? *target* in-head edge-grab pole flut tube pilot mech indax)) ;; OG:Jetboard/No OoJ removed board so you can use warp gates on jetboard
                       (-> *setting-control* user-current airlock)
                       ;; og:preserve-this
                       ;; For speedrunner mode, always allow warp-gates to be used

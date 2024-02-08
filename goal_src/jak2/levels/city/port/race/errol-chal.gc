@@ -7,6 +7,7 @@
 
 ;; DECOMP BEGINS
 
+;; Code for Custom Bikes Begin Here
 (define *race-bike-a-constants*
   (new 'static 'rigid-body-vehicle-constants
     :info (new 'static 'rigid-body-info
@@ -389,6 +390,8 @@
 
 (set! (-> *race-bike-b-constants* explosion) *bike-explosion-info*)
 
+;; Code for Custom Bikes ends here
+
 (deftype errol-racer (vehicle-rider)
   ((minimap  connection-minimap)
    )
@@ -518,13 +521,13 @@
      )
     (else
       (let ((f0-6 (-> this player-dist2))
-            (f1-2 348160.0)
+            (f1-2 348160.0) ;; OG:Jetboard equal to 85 meters 
             )
-        (if (and (< f0-6 (* f1-2 f1-2))
+        (if (and (< f0-6 (* f1-2 f1-2)) ;; OG:Jetboard tests if player distance is less than 7225 meters
                  (let ((f0-7 (-> this player-dist2))
-                       (f1-5 81920.0)
+                       (f1-5 81920.0) ;; OG:Jetboard equal to 20 meters
                        )
-                   (or (< f0-7 (* f1-5 f1-5)) (logtest? (-> this draw status) (draw-control-status on-screen)))
+                   (or (< f0-7 (* f1-5 f1-5)) (logtest? (-> this draw status) (draw-control-status on-screen))) ;; OG:Jetboard tests if player distance is less than 400 meters
                    )
                  )
             (rigid-body-object-method-38 this)
@@ -1114,15 +1117,17 @@
     (set! (-> self sub-state) (the-as uint 0))
     (set! (-> self count) 0)
     (set! (-> self max-count) -1)
-    (race-start (-> self info index) self #f)
+    (race-start (-> self info index) self #f) ;; OG:Jetboard No OoJ Changed to true
+    (set-setting! 'gun #f 0.0 0)
     (set! (-> self begin-pos quad)
-          (-> (new 'static 'vector :x -326041.6 :y 36454.4 :z 5391565.0 :w 266240.0) quad)
+          (-> (new 'static 'vector :x -326041.6 :y 36454.4 :z 5391565.0 :w 266240.0) quad) ;; OG:Jetboard coordinates in meters x:-79.6 y:8.9 z:1316.3 w:65
           )
     (set-setting! 'attack #f 0.0 0)
-    (set-setting! 'board #f 0.0 0)
+    (set-setting! 'board #t 0.0 0) ;; OG:Jetboard No OoJ Changed to true
     (set-setting! 'gun #f 0.0 0)
     (set-setting! 'vehicle-hijacking #f 0.0 0)
     (none)
+    
     )
   )
 
@@ -1177,7 +1182,7 @@
           (set! (-> self max-count) (-> s5-0 length))
           )
       (set! (-> gp-0 0 quad) (-> (target-pos 0) quad))
-      (let* ((s4-1 (new 'static 'vector :x 1305804.8 :y 102400.0 :z 3180544.0 :w 163840.0))
+      (let* ((s4-1 (new 'static 'vector :x 1305804.8 :y 102400.0 :z 3180544.0 :w 163840.0)) ;; OG:Jetboard coordinates in meters x: 318.8 y:25 z:776.5 w:40
              (f0-0 (vector-vector-distance-squared s4-1 (-> gp-0 0)))
              (f1-0 (-> s4-1 w))
              )
@@ -1217,6 +1222,8 @@
             (go-virtual fail)
             )
         )
+        
+      ;(set! (-> *race-state* flags) (race-flags ready)) ;; OG:Jetboard  
       (suspend)
       )
     (set-setting! 'exclusive-load 'lerlchal 0.0 0)
@@ -1368,12 +1375,12 @@
           )
         )
       )
-    (race-start (-> self info index) self #f)
+    (race-start (-> self info index) self #f) ;; OG:Jetboard No OoJ changed to #t 
     (set! (-> self begin-pos quad)
-          (-> (new 'static 'vector :x 2519040.0 :y 40960.0 :z 6545408.0 :w 184320.0) quad)
+          (-> (new 'static 'vector :x 2519040.0 :y 40960.0 :z 6545408.0 :w 184320.0) quad) ;; OG:Jetboard coordinates in meters x: 615 y:10 z:1598 w:45
           )
     (set-setting! 'attack #f 0.0 0)
-    (set-setting! 'board #f 0.0 0)
+    (set-setting! 'board #t 0.0 0) ;; OG:Jetboard No OoJ changed to #t 
     (set-setting! 'gun #f 0.0 0)
     (set-setting! 'vehicle-hijacking #f 0.0 0)
     (none)
@@ -1430,9 +1437,9 @@
   (lambda :behavior task-manager
     ()
     (when (zero? (-> self sub-state))
-      (let ((v1-2 (-> *target* pilot)))
+      (let ((v1-2 (-> *target* board))) ;; OG:Jetboard Changed pilot to board
         (when (nonzero? v1-2)
-          (let ((v1-4 (handle->process (-> v1-2 vehicle))))
+          (let ((v1-4 (handle->process (-> v1-2 board)))) ;; OG:Jetboard Replaced vehicle 
             (when v1-4
               (if (< (-> (the-as process-drawable v1-4) root trans y) 16384.0)
                   (go-virtual fail)

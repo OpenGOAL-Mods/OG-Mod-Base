@@ -490,6 +490,7 @@
   TASK_MANAGER_INIT_HOOK
   (lambda :behavior task-manager
     ()
+    (vector-copy! (-> *target* root trans) (-> *race-info-array* 0 start-sphere))
     (set-setting! 'minimap 'clear 0.0 (minimap-flag task-graph))
     (set! (-> self minimap 0) (add-icon! *minimap* self (the-as uint 39) (the-as int #f) (the-as vector #f) 0))
     (set! (-> self sub-state) (the-as uint 0))
