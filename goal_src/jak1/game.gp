@@ -2090,6 +2090,7 @@
  "mods/mod-settings.gc"
  "mods/mod-common-functions.gc"
  "mods/mod-custom-code.gc"
+ "mods/mod-debug.gc"
 )
 
 (group-list "all-code"
