@@ -250,11 +250,8 @@
     (when (and (not (paused?)) *orb-placer-enabled?*)
       (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
                                         (bucket-id subtitle))
-        (draw-string-xy (string-format "Orb Placer Edit Mode"
-                                      *mod-version-text*
-                                      (enum->string speedrun-category (-> *speedrun-info* category))
-                                      (-> *pc-settings* skip-movies?))
-                        buf 512 212 (font-color red) (font-flags right shadow kerning))))
+        (draw-string-xy "Orb Placer Edit Mode"
+                        buf 510 2 (font-color red) (font-flags right shadow kerning))))
 
     (cond
       ((process-by-name 'orb-placer *active-pool*)
