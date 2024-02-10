@@ -432,7 +432,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (draw-xyz jak 0.0 3.0 3.0)
 )
 
-;; Helper functions for debug stuff
+;; Helper functions for spawning orbs (used by orb placer in debug mode)
 
 (defun spawn-money ((vec vector) (amount float) (bob? symbol))
   (let ((fax (new 'static 'fact-info)))
