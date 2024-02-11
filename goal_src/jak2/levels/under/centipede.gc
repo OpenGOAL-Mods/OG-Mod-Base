@@ -774,7 +774,7 @@
     (set-setting! 'interp-time 'abs 0.0 0)
     (when (not (-> self set-camera-mode?))
       (set! (-> self set-camera-mode?) #t)
-      (set-setting-by-param *setting-control* 'mode-name 'cam-fixed 0 0)
+      (set-setting-by-param *setting-control* 'mode-name 'cam-string 0 0)
       )
     (set-setting! 'allow-look-around #f 0.0 0)
     (suspend)

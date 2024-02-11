@@ -259,7 +259,7 @@ This commonly includes things such as:
     (let ((v1-12 (new 'process 'collide-shape-prim-mesh s5-0 (the-as uint 0) (the-as uint 0))))
       (set! (-> v1-12 prim-core collide-as) (collide-spec obstacle))
       (set! (-> v1-12 prim-core collide-with) (collide-spec jak bot player-list))
-      (set! (-> v1-12 prim-core action) (collide-action solid))
+      (set! (-> v1-12 prim-core action) (collide-action solid rideable))
       (set! (-> v1-12 transform-index) 4)
       (set-vector! (-> v1-12 local-sphere) 0.0 0.0 0.0 28672.0)
       )
@@ -519,7 +519,7 @@ For example for an elevator pre-compute the distance between the first and last 
     (when (logtest? (-> self elevator-status) (elevator-status waiting-to-descend))
       (let ((v1-9 *target*))
         (when v1-9
-          (if (not (focus-test? v1-9 board)) ;; OG:Jetboard
+          (if (not (focus-test? v1-9 mech board)) ;; OG:Jetboard/No OoJ 
               (set-setting! 'pilot #f 0.0 0)
               )
           (set-setting! 'pilot-exit #f 0.0 0)
@@ -545,7 +545,7 @@ For example for an elevator pre-compute the distance between the first and last 
                      )
                  )
            )
-      (when (and a0-2 (focus-test? a0-2 board) (not (logtest? (-> a0-2 focus-status) (focus-status dead ignore)))) ;; OG:Jetboard
+      (when (and a0-2 (focus-test? a0-2 mech board) (not (logtest? (-> a0-2 focus-status) (focus-status dead ignore)))) ;; OG:Jetboard/No OoJ 
         (let* ((v1-5 (get-trans a0-2 0))
                (s5-2 (vector-! (new 'stack-no-clear 'vector) v1-5 (-> this root trans)))
                )

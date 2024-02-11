@@ -721,11 +721,11 @@
     :turn-anim 3
     :run-anim 5
     :taunt-anim -1
-    :run-travel-speed (meters 12)
-    :run-acceleration (meters 2)
+    :run-travel-speed (meters 12000)
+    :run-acceleration (meters 2000)
     :run-turning-acceleration (meters 30)
-    :walk-travel-speed (meters 3)
-    :walk-acceleration (meters 1)
+    :walk-travel-speed (meters 3000)
+    :walk-acceleration (meters 1000)
     :walk-turning-acceleration (meters 30)
     :maximum-rotation-rate (degrees 720)
     :notice-nav-radius (meters 10)
@@ -1059,8 +1059,8 @@
                  (gp-0 (rigid-body-method-22 (-> v1-30 state) a1-10 a2-1))
                  )
             (vector-inv-orient-by-quat! gp-0 gp-0 (-> self root quat))
-            (seek! (-> self v-speed x) (-> gp-0 x) (* 81920.0 (seconds-per-frame)))
-            (seek! (-> self v-speed z) (-> gp-0 z) (* 49152.0 (seconds-per-frame)))
+            (seek! (-> self v-speed x) (-> gp-0 x) (* 819200.0 (seconds-per-frame)))
+            (seek! (-> self v-speed z) (-> gp-0 z) (* 491520.0 (seconds-per-frame)))
             (set! (-> self left-right-interp)
                   (fmax
                     0.0
@@ -1992,7 +1992,7 @@
   (init-enemy-behaviour-and-stats! this *city-lurker-nav-enemy-info*)
   (set! (-> this info) *city-lurker-global-info*)
   (let ((v1-6 (-> this nav)))
-    (set! (-> v1-6 speed-scale) 1.0)
+    (set! (-> v1-6 speed-scale) 5.0)
     )
   0
   (set! (-> this draw lod-set lod 0 dist) 409600.0)

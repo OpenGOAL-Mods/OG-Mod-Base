@@ -906,7 +906,7 @@
                         )
                    (and (not (task-node-closed? (game-task-node drill-ship-resolution)))
                         (can-display-query? self (the-as string #f) -99.0)
-                        (not (focus-test? *target* in-head board mech dark))
+                        (not (focus-test? *target* in-head mech dark)) ;; OG:Jetboard/No OoJ Removed board to allow Turrets
                         (let ((f28-0 24576.0)
                               (s4-0 (-> self root))
                               (s5-0 (target-pos 0))

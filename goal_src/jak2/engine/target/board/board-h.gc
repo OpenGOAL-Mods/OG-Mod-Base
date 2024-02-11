@@ -209,6 +209,7 @@
    (trick-points-array      float              16      :offset 3272)
    (trick-list              board-tricks       16      :offset 3336)
    (pad                     uint8                      :offset 3399)
+   (last-circle-attack      time-frame)
    )
   (:methods
     (add-to-trick-list (_type_ board-tricks float) none)

@@ -105,12 +105,12 @@
                                                  crate
                                                  civilian
                                                  enemy
-                                                 obstacle
+                                                 ;obstacle ;; OG:Jetboard
                                                  vehicle-sphere
-                                                 hit-by-player-list
+                                                 ;hit-by-player-list ;; OG:Jetboard
                                                  hit-by-others-list
                                                  collectable
-                                                 pusher
+                                                 ;pusher ;; OG:Jetboard
                                                  )
               )
         (set! (-> v1-3 prim-core collide-as) (collide-spec vehicle-sphere))

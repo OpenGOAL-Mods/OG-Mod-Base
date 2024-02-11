@@ -1828,7 +1828,7 @@ This commonly includes things such as:
       (case message
         (('attack)
          (case (-> (the-as attack-info (-> block param 1)) mode)
-           (('flop 'spin 'punch)
+           (('flop 'spin 'punch 'board) ;; OG:Jetboard Added Board
             (cond
               ((and (= (-> v1-0 0) (-> self pat-tbl (-> self pat-index))) (!= (-> gp-0 0) (process->handle self)))
                (send-event (handle->process (-> gp-0 0)) 'interrupt)

@@ -129,8 +129,8 @@
     :turnvv 131072.0
     :tiltv 131072.0
     :tiltvv 2621440.0
-    :transv-max 409600.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
-    :target-speed 102400.0
+    :transv-max 266240.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
+    :target-speed 204800.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
     :seek0 0.5
     :seek90 0.5
     :seek180 0.5
@@ -246,8 +246,8 @@
                            :turnvv 131072.0
                            :tiltv 16384.0
                            :tiltvv 131072.0
-                           :transv-max 409600.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
-                           :target-speed 102400.0
+                           :transv-max 266240.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
+                           :target-speed 204800.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
                            :seek0 0.8
                            :seek90 0.8
                            :seek180 0.8
@@ -280,8 +280,8 @@
                             :turnvv 524288.0
                             :tiltv 32768.0
                             :tiltvv 131072.0
-                            :transv-max 409600.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
-                            :target-speed 102400.0
+                            :transv-max 266240.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
+                            :target-speed 204800.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
                             :fric 0.2
                             :nonlin-fric-dist 1.0
                             :slip-factor 1.0
@@ -309,8 +309,8 @@
     :turnvv 32768.0
     :tiltv 32768.0
     :tiltvv 131072.0
-    :transv-max 409600.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
-    :target-speed 102400.0
+    :transv-max 266240.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
+    :target-speed 204800.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
     :nonlin-fric-dist 1.0
     :slip-factor 1.0
     :slide-factor 1.0
@@ -387,8 +387,8 @@
                                  :name 'jump
                                  :tiltv 65536.0
                                  :tiltvv 262144.0
-                                 :transv-max 409600.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
-                                 :target-speed 102400.0
+                                 :transv-max 266240.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
+                                 :target-speed 204800.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
                                  :seek180 0.8
                                  :fric 0.2
                                  :nonlin-fric-dist 1.0
@@ -426,8 +426,8 @@
                                 :turnvv 524288.0
                                 :tiltv 16384.0
                                 :tiltvv 131072.0
-                                :transv-max 409600.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
-                                :target-speed 102400.0
+                                :transv-max 266240.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
+                                :target-speed 204800.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
                                 :fric 0.2
                                 :nonlin-fric-dist 1.0
                                 :slip-factor 1.0
@@ -452,8 +452,8 @@
                                :turnv 524288.0
                                :tiltv 131072.0
                                :tiltvv 2621440.0
-                               :transv-max 409600.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
-                               :target-speed 102400.0
+                               :transv-max 266240.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
+                              :target-speed 204800.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
                                :seek0 0.5
                                :seek90 0.5
                                :seek180 0.5
@@ -486,8 +486,8 @@
                             :turnvv 131072.0
                             :tiltv 131072.0
                             :tiltvv 262144.0
-                            :transv-max 409600.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
-                            :target-speed 40960.0
+                            :transv-max 266240.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
+                            :target-speed 204800.0 ;; OG:Jetboard/No OoJ Changed Max Jetboard Speed to 100 meters
                             :seek0 0.5
                             :seek90 0.5
                             :seek180 0.5
@@ -629,11 +629,24 @@
          )
         (('touched)
          (cond
-           ((and (-> self control danger-mode) ((method-of-type touching-shapes-entry prims-touching?)
-                                                (the-as touching-shapes-entry (-> arg3 param 0))
-                                                (-> self control)
-                                                (the-as uint 1920)
-                                                )
+           ;; og:jetboard circle attack should actually send attack if touching
+           ((and (not (time-elapsed? (-> self board last-circle-attack) (seconds 0.3)))
+                 (cpad-hold? 0 circle))
+            (target-send-attack
+              arg0
+              (-> self control danger-mode)
+              (the-as touching-shapes-entry (-> arg3 param 0))
+              (the-as int (-> self control target-attack-id))
+              (the-as int (-> self control attack-count))
+              (-> self control penetrate-using)
+              )
+            )
+           ((and (-> self control danger-mode)
+                 ((method-of-type touching-shapes-entry prims-touching?)
+                  (the-as touching-shapes-entry (-> arg3 param 0))
+                  (-> self control)
+                  (the-as uint 1920)
+                  )
                  )
             (when (target-send-attack
                     arg0
@@ -795,7 +808,7 @@
   (set! (-> self control reaction) target-collision-reaction)
   (set! (-> self control pat-ignore-mask) (new 'static 'pat-surface :noentity #x1 :noboard #x1 :probe #x1))
   (logior! (-> self focus-status) (focus-status board))
-  (logclear! (-> self control root-prim prim-core action) (collide-action can-ride))
+  ;(logclear! (-> self control root-prim prim-core action) (collide-action can-ride))
   (set! (-> self control bend-target) 1.0)
   (let ((v1-82 (-> self node-list data)))
     (set! (-> v1-82 0 param0) (the-as (function cspace transformq none) cspace<-transformq+world-trans!))
@@ -867,7 +880,7 @@
       )
     (logclear! (-> self focus-status) (focus-status board))
     (logclear! (-> self control root-prim prim-core action) (collide-action stuck-wall-escape no-normal-reset))
-    (logior! (-> self control root-prim prim-core action) (collide-action can-ride))
+    ;(logior! (-> self control root-prim prim-core action) (collide-action can-ride))
     (set! (-> self control mod-surface) *walk-mods*)
     (logclear! (-> self state-flags) (state-flags sf6))
     (remove-setting! 'string-spline-max-move)
@@ -2024,6 +2037,15 @@
         )
       )
     0
+    )
+    ;; og:jetboard circle attack start (if its been 1s since last one)
+  (when (and (time-elapsed? (-> self board last-circle-attack) (seconds 1.0)) (cpad-pressed? 0 circle))
+    (set-time! (-> self board last-circle-attack))
+    (target-start-attack)
+    (target-danger-set! 'board-spin #f)
+    (sound-play "board-impact")
+    (process-spawn part-tracker :init part-tracker-init (-> *part-group-id-table* 117) 0 #f #f self 25 :to self)
+    (target-timed-invulnerable (seconds 0.3) self 2)
     )
   (ja-post)
   (when *debug-segment*

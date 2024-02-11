@@ -76,7 +76,7 @@
       :ai-min-speed-factor 0.85
       :ai-max-speed-factor 1.0
       :ai-spread-factor 0.03
-      :start-sphere (new 'static 'sphere :x -80691.2 :y -22528.0 :z -2711142.5 :r 122880.0)
+      :start-sphere (new 'static 'sphere :x -343490.5 :y -22528.0 :z -2692915.2 :r 122880.0)
       :start-dir (new 'static 'vector :x 1.0 :z -0.00000004371139 :w 1.0)
       :finish-dir (new 'static 'vector :z 1.0 :w 1.0)
       :player-intro-pos (new 'static 'vector :x -347750.4 :y 46284.8 :z -2706227.2 :w 1.0)

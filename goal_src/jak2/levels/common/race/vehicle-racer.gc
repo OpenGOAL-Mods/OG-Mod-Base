@@ -434,9 +434,12 @@
      (send-event (ppointer->process (-> this child)) 'unhide)
      )
     (('race-pass)
-     (if (or (logtest? (-> this flags) (rigid-body-object-flag player-driving))
-            (logtest? (-> *target* focus-status) (focus-status board))) ;; OG:Jetboard
-
+     (if (logtest? (-> this flags) (rigid-body-object-flag player-driving))
+         (speech-control-method-12 *speech-control* this (if (-> *target* pilot as-daxter?)
+                                                             (speech-type speech-type-45)
+                                                             (speech-type speech-type-36)
+                                                             )
+                                   )
          (send-event (ppointer->process (-> this child)) 'race-pass)
          )
      )
@@ -909,12 +912,12 @@
                                                  crate
                                                  civilian
                                                  enemy
-                                                 obstacle
+                                                 ;obstacle ;; OG:Jetboard
                                                  vehicle-sphere
-                                                 hit-by-player-list
+                                                 ;hit-by-player-list ;; OG:Jetboard
                                                  hit-by-others-list
                                                  collectable
-                                                 pusher
+                                                 ;pusher ;; OG:Jetboard
                                                  )
               )
         (set! (-> v1-4 prim-core collide-as) (collide-spec vehicle-sphere))
@@ -924,14 +927,20 @@
   :trans #f
   :code sleep-code
   :post (behavior ()
-    (when (logtest? (-> self flags) (rigid-body-object-flag waiting-for-player))
+    (let ((self-position (-> self root trans)) (target-position (-> *target* root trans))) ;; OG:Jetboard 927 through 931 Allows Jetboard to do races
+  (let ((dist-diff (vector-vector-distance self-position target-position)))
+  (when (>= dist-diff 0.0) 
+  (vector-copy! (-> self root trans) (-> *target* root trans))
+  )))
+   (quaternion-copy! (-> self root quat) (-> (the board (ppointer->process (-> *target* board board))) root quat)) ;; OG:Jetboard Makes race zoomers rotate with the Jetboard
+    (when (logtest? (-> self flags) (rigid-body-object-flag waiting-for-player)) 
       (set! (-> self camera-dist2) (vector-vector-distance-squared (-> self root trans) (camera-pos)))
       (set! (-> self player-dist2) (vector-vector-distance-squared (-> self root trans) (target-pos 0)))
       (check-player-get-on self)
       )
-    (vector-reset! (-> self target-acceleration))
+    ;(vector-reset! (-> self target-acceleration))
     (vehicle-method-120 self)
-    (update-transforms (-> self root))
+    ;(update-transforms (-> self root))
     (vehicle-method-119 self)
     (rigid-body-object-method-39 self)
     )
@@ -980,12 +989,12 @@
                                                  crate
                                                  civilian
                                                  enemy
-                                                 obstacle
+                                                 ;obstacle ;; OG:Jetboard
                                                  vehicle-sphere
-                                                 hit-by-player-list
+                                                 ;hit-by-player-list ;; OG:Jetboard
                                                  hit-by-others-list
                                                  collectable
-                                                 pusher
+                                                 ;pusher ;; OG:Jetboard
                                                  )
               )
         (set! (-> v1-3 prim-core collide-as) (collide-spec vehicle-sphere))

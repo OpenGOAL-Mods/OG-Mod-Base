@@ -7,6 +7,7 @@
 
 ;; DECOMP BEGINS
 
+
 (deftype turret (base-turret)
   ((hover-battle    handle           :offset-assert 568)
    (hover-formation hover-formation  :offset-assert 576)
