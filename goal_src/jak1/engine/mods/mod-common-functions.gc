@@ -265,7 +265,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defmacro pd-pos-m (procname)
   `(let* ((obj (the process-drawable (process-by-ename ,procname)))
           (vec (-> obj root trans)))
-    (format 0 "~m ~m ~m~%" (-> vec x) (-> vec y) (-> vec z) 4096.0)
+    (format 0 "~m ~m ~m~%" (-> vec x) (-> vec y) (-> vec z))
     (none)
     )
   )

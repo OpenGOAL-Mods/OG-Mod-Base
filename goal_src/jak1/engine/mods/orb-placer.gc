@@ -242,6 +242,32 @@
   (none)
   )
 
+(defun orb-placer-print-selected ()
+  (when (and (>= *orb-placer-selected-idx* 0) (nonzero? (-> *orb-placer-orbs* *orb-placer-selected-idx*)))
+    (let ((orb (the money (handle->process (-> *orb-placer-orbs* *orb-placer-selected-idx*)))))
+      (when orb
+        (format 0 " ~m ~m ~m~%" (-> orb base x) (-> orb base y) (-> orb base z))
+        )
+      )
+    )
+  (none)
+  )
+
+(defun orb-placer-print-all ()
+  (format 0 "|------------orba start------------|~%")
+  (dotimes (i *orb-placer-count*)
+    (let ((orb-handle (-> *orb-placer-orbs* i)))
+      (when (and (nonzero? orb-handle) (handle->process orb-handle))
+        (let ((orb (the money (handle->process orb-handle))))
+          (format 0 " ~m ~m ~m~%" (-> orb base x) (-> orb base y) (-> orb base z))
+          )
+        )
+      )
+    )
+  (format 0 "|-------------orba end-------------|~%")
+  (none)
+  )
+
 ;; called from run-every-frame to ensure orb-placer is spawned/killed
 (defun orb-placer-maintenance ()
   (when *debug-segment*
