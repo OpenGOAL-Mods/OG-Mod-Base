@@ -20,6 +20,8 @@
         ;; populated on orb add
         (debug-menu-append-item orb-placer-menu (new-dm-submenu "Select Orb" select-orb-menu))
         )
+      (debug-menu-append-item orb-placer-menu (new-dm-func "Print Selected Orb Position" #f orb-placer-print-selected))
+      (debug-menu-append-item orb-placer-menu (new-dm-func "Print All Orb Positions" #f orb-placer-print-all))
 
       (debug-menu-append-item modding-tools-menu (new-dm-submenu "Orb Placer" orb-placer-menu))
       )
