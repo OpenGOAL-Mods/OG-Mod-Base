@@ -368,7 +368,8 @@
           (set! (-> this flags)
                 (the-as rigid-body-object-flag (logclear (-> this flags) (rigid-body-object-flag player-grabbed)))
                 )
-          (go (method-of-object this player-control))
+          ;; OG-jetboard keep vehicle-racer in waiting state
+          ;; (go (method-of-object this player-control))
           )
          (else
            (go (method-of-object this racing))
@@ -882,6 +883,36 @@
   (none)
   )
 
+;; OG-jetboard added for syncing position/rotation/turbo between vehicle and board
+(defun vehicle-board-sync ((this vehicle))
+  (when (type-type? (-> this type) vehicle-racer)
+    (let* ((self-position (-> this root trans))
+            (target-position (-> *target* root trans))
+            (dist-diff (vector-vector-distance self-position target-position)))
+      (when (>= dist-diff 0.0) 
+        (vector-copy! (-> this root trans) (-> *target* root trans))
+        )
+      )
+    (quaternion-copy! (-> this root quat) (-> (the board (ppointer->process (-> *target* board board))) root quat)) ;; OG:Jetboard Makes race zoomers rotate with the Jetboard
+    
+    (cond
+      ((logtest? (rigid-body-object-flag turbo-boost) (-> this flags))
+        ;; turbo active
+        (set-target-board-mods-speed 
+          (* 5.0 266240.0) 
+          (* 5.0 409600.0)
+          )
+        )
+      (else
+        ;; turbo over
+        (set-target-board-mods-speed 266240.0 409600.0)
+        )
+      )
+    )
+  
+  (none)
+  )
+
 (defstate waiting-race (vehicle-racer)
   :virtual #t
   :event vehicle-event-handler
@@ -927,12 +958,19 @@
   :trans #f
   :code sleep-code
   :post (behavior ()
-    (let ((self-position (-> self root trans)) (target-position (-> *target* root trans))) ;; OG:Jetboard 927 through 931 Allows Jetboard to do races
-  (let ((dist-diff (vector-vector-distance self-position target-position)))
-  (when (>= dist-diff 0.0) 
-  (vector-copy! (-> self root trans) (-> *target* root trans))
-  )))
-   (quaternion-copy! (-> self root quat) (-> (the board (ppointer->process (-> *target* board board))) root quat)) ;; OG:Jetboard Makes race zoomers rotate with the Jetboard
+    ;; OG-jetboard borrowed turbo logic (normally you get this during player-control state)
+    (when (logtest? (rigid-body-object-flag turbo-boost) (-> self flags))
+      (if (or (time-elapsed? (-> self turbo-boost-time) (the-as time-frame (-> self turbo-boost-duration)))
+              (and (time-elapsed? (-> self turbo-boost-time) (seconds 0.1)) (>= (-> self controls brake) 0.75))
+              )
+        (logclear! (-> self flags) (rigid-body-object-flag turbo-boost))
+        )
+      )
+    (if (cpad-pressed? 0 circle)
+      (vehicle-method-66 self)
+      )
+    ;; OG-jetboard helper function to sync position/rotation/turbo between board and vehicle
+    (vehicle-board-sync self)
     (when (logtest? (-> self flags) (rigid-body-object-flag waiting-for-player)) 
       (set! (-> self camera-dist2) (vector-vector-distance-squared (-> self root trans) (camera-pos)))
       (set! (-> self player-dist2) (vector-vector-distance-squared (-> self root trans) (target-pos 0)))

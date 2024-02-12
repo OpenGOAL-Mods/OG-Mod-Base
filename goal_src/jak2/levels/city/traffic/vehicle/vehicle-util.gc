@@ -338,13 +338,14 @@ This commonly includes things such as:
                         (set! (-> v1-99 scale) 0.9)
                         )
                       (set! (-> s3-1 flags) (font-flags shadow kerning large))
-                      (print-game-text
-                        (lookup-text! *common-text* (text-id press-triangle-to-use) #f)
-                        s3-1
-                        #f
-                        44
-                        (bucket-id progress)
-                        )
+                      ;; OG-jetboard disable triangle-to-use prompts
+                      ;; (print-game-text
+                      ;;   (lookup-text! *common-text* (text-id press-triangle-to-use) #f)
+                      ;;   s3-1
+                      ;;   #f
+                      ;;   44
+                      ;;   (bucket-id progress)
+                      ;;   )
                       )
                     (when (cpad-pressed? 0 triangle)
                       (cond
@@ -376,7 +377,8 @@ This commonly includes things such as:
       ((and (logtest? (-> this flags) (rigid-body-object-flag player-driving)) *target* (!= (-> this crash-level) 3))
        (when (focus-test? *target* pilot-riding board)
          (vehicle-controller-method-11 (-> this controller))
-         (vehicle-method-138 this)
+        ;; OG-jetboard keep vehicle out of player-control state
+        ;;  (vehicle-method-138 this)
          )
        )
       (else
