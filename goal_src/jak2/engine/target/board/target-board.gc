@@ -554,6 +554,7 @@
                                              )
         )
 
+;; OG-jetboard added turbo-pickup for races
 (define-extern race-manager-turbo-from-board (function none))
 (defbehavior target-board-handler target ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (local-vars (v0-0 object) (a0-10 uint))
@@ -563,6 +564,7 @@
      )
     (else
       (case arg2
+        ;; OG-jetboard added turbo-pickup for races
         (('turbo-pickup)
           (race-manager-turbo-from-board)
           )
