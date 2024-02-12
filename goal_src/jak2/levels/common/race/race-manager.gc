@@ -1565,6 +1565,21 @@
 
 (define *race-manager* (the-as (pointer race-manager) #f))
 
+(defun race-manager-turbo-from-board ()
+  (when *race-manager*
+    (let* ((race-mgr-proc (the race-manager (ppointer->process *race-manager*)))
+            (rcr-state (-> race-mgr-proc race-state racer-array (-> race-mgr-proc race-state i-player)))
+            (rcr (the vehicle (handle->process (-> rcr-state racer))))
+            )
+      (when rcr
+        (logior! (-> rcr flags) (rigid-body-object-flag player-driving)) ;; fake like player is driving
+        (send-event rcr 'turbo-pickup)
+        )
+      )
+    )
+  (none)
+  )
+
 (defmethod deactivate ((this race-manager))
   (persist-with-delay *setting-control* 'music-volume (seconds 3) 'music-volume 'abs 0.0 0)
   (send-event *traffic-manager* 'restore-default-settings)

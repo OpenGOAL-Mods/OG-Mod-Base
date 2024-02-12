@@ -69,6 +69,28 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (/ (vector-length (get-transv *target*)) 4096.0)
   )
 
+(defun set-target-board-mods-speed ((target-speed float) (transv-max float))
+  (set! (-> *board-walk-mods* target-speed) target-speed)
+  (set! (-> *board-walk-mods* transv-max) transv-max)  
+  (set! (-> *board-air-mods* target-speed) target-speed)
+  (set! (-> *board-air-mods* transv-max) transv-max) 
+  (set! (-> *board-jump-mods* target-speed) target-speed)
+  (set! (-> *board-jump-mods* transv-max) transv-max)
+  (set! (-> *board-ride-jump-mods* target-speed) target-speed)
+  (set! (-> *board-ride-jump-mods* transv-max) transv-max) 
+  (set! (-> *board-spin-mods* target-speed) target-speed)
+  (set! (-> *board-spin-mods* transv-max) transv-max) 
+  (set! (-> *board-wall-kick-mods* target-speed) target-speed)
+  (set! (-> *board-wall-kick-mods* transv-max) transv-max) 
+  (set! (-> *board-halfpipe-mods* target-speed) target-speed)
+  (set! (-> *board-halfpipe-mods* transv-max) transv-max)
+  (set! (-> *board-turn-to-mods* target-speed) target-speed)
+  (set! (-> *board-turn-to-mods* transv-max) transv-max) 
+  (set! (-> *board-ride-mods* target-speed) target-speed)
+  (set! (-> *board-ride-mods* transv-max) transv-max)
+  (none)
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Approved Custom Functions/Macros to call in all mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;

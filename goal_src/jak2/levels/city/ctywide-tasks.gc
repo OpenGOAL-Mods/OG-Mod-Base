@@ -465,6 +465,8 @@
     )
   )
 
+(define-extern set-target-board-mods-speed (function float float none))
+
 (set-subtask-hook!
   *game-info*
   (game-task-node city-keira-delivery-delivery)
@@ -490,24 +492,8 @@
   TASK_MANAGER_INIT_HOOK
   (lambda :behavior task-manager
     ()
-    (set! (-> *board-walk-mods* target-speed) 266240.0) ;; OG:Jetboard set new speed for races 
-    (set! (-> *board-walk-mods* transv-max) 409600.0)  
-    (set! (-> *board-air-mods* target-speed) 266240.0)
-    (set! (-> *board-air-mods* transv-max) 409600.0) 
-    (set! (-> *board-jump-mods* target-speed) 266240.0)
-    (set! (-> *board-jump-mods* transv-max) 409600.0)
-    (set! (-> *board-ride-jump-mods* target-speed) 266240.0)
-    (set! (-> *board-ride-jump-mods* transv-max) 409600.0) 
-    (set! (-> *board-spin-mods* target-speed) 266240.0)
-    (set! (-> *board-spin-mods* transv-max) 409600.0) 
-    (set! (-> *board-wall-kick-mods* target-speed) 266240.0)
-    (set! (-> *board-wall-kick-mods* transv-max) 409600.0) 
-    (set! (-> *board-halfpipe-mods* target-speed) 266240.0)
-    (set! (-> *board-halfpipe-mods* transv-max) 409600.0)
-    (set! (-> *board-turn-to-mods* target-speed) 266240.0)
-    (set! (-> *board-turn-to-mods* transv-max) 409600.0) 
-    (set! (-> *board-ride-mods*  target-speed) 266240.0)
-    (set! (-> *board-ride-mods*  transv-max) 409600.0) ;; OG:Jetboard set new speed for races 
+    ;; OG:Jetboard set new speed for races 
+    (set-target-board-mods-speed 266240.0 409600.0)
 
     ;(vector-copy! (-> *target* root trans) (-> *race-info-array* 0 start-sphere)) ;; OG:Jetboard 
     (set-setting! 'minimap 'clear 0.0 (minimap-flag task-graph))
@@ -576,24 +562,9 @@
   TASK_MANAGER_COMPLETE_HOOK
   (lambda :behavior task-manager
     ()
-    (set! (-> *board-walk-mods* target-speed) 102400.0) ;; OG:Jetboard reset jetboard speed to normal
-    (set! (-> *board-walk-mods* transv-max) 143360.0)  
-    (set! (-> *board-air-mods* target-speed) 102400.0)
-    (set! (-> *board-air-mods* transv-max) 143360.0) 
-    (set! (-> *board-jump-mods* target-speed) 102400.0)
-    (set! (-> *board-jump-mods* transv-max) 143360.0)
-    (set! (-> *board-ride-jump-mods* target-speed) 102400.0)
-    (set! (-> *board-ride-jump-mods* transv-max) 143360.0) 
-    (set! (-> *board-spin-mods* target-speed) 102400.0)
-    (set! (-> *board-spin-mods* transv-max) 143360.0) 
-    (set! (-> *board-wall-kick-mods* target-speed) 102400.0)
-    (set! (-> *board-wall-kick-mods* transv-max) 143360.0) 
-    (set! (-> *board-halfpipe-mods* target-speed) 102400.0)
-    (set! (-> *board-halfpipe-mods* transv-max) 143360.0)
-    (set! (-> *board-turn-to-mods* target-speed) 102400.0)
-    (set! (-> *board-turn-to-mods* transv-max) 143360.0) 
-    (set! (-> *board-ride-mods*  target-speed) 102400.0)
-    (set! (-> *board-ride-mods*  transv-max) 143360.0) ;; OG:Jetboard reset jetboard speed to normal
+    ;; OG:Jetboard reset jetboard speed to normal
+    (set-target-board-mods-speed 102400.0 143360.0)
+
     (logclear! (-> (the board (ppointer->process (-> *target* board board))) draw status) (draw-control-status no-draw-bounds2)) ;; OG:Jetboard
     (logclear! (-> *target* draw status) (draw-control-status no-draw-bounds2)) ;; OG:Jetboard 
     (case (-> self info index)
