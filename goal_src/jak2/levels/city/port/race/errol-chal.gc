@@ -775,7 +775,7 @@
   :code sleep-code
   :post (behavior ()
     (if (and (-> self player-got)
-             (time-elapsed? (-> self touch-time) (seconds 3))
+             (time-elapsed? (-> self touch-time) (seconds 0.1))
              (or (not *target*) (or (< 204800.0 (vector-vector-distance (-> self root trans) (-> *target* control trans)))
                                     (focus-test? *target* teleporting)
                                     )
@@ -1087,13 +1087,14 @@
       )
     )
   )
-
+(define-extern set-target-board-mods-speed (function float float none))
 (set-subtask-hook!
   *game-info*
   (game-task-node city-errol-challenge-race)
   TASK_MANAGER_INIT_HOOK
   (lambda :behavior task-manager
     ()
+    (set-target-board-mods-speed 204800.0 409600.0)
     (set-setting! 'minimap 'clear 0.0 (minimap-flag task-graph))
     (set-setting! 'exclusive-task #f 0.0 (-> self node-info task))
     (let ((gp-0 *traffic-manager*))
@@ -1245,8 +1246,11 @@
   (game-task-node city-errol-challenge-race)
   TASK_MANAGER_COMPLETE_HOOK
   (lambda :behavior task-manager ()
+  (set-target-board-mods-speed 102400.0 143360.0)
   (logclear! (-> (the board (ppointer->process (-> *target* board board))) draw status) (draw-control-status no-draw-bounds2)) ;; OG:Jetboard 
-  (send-event *traffic-manager* 'decrease-alert-level 0) (none))
+  (send-event *traffic-manager* 'decrease-alert-level 0)
+  (set-target-board-mods-speed 102400.0 143360.0)
+   (none))
   )
 
 (copy-hooks!
@@ -1332,6 +1336,7 @@
                                    )
                                  )
         )
+        
 
 (set-subtask-hook!
   *game-info*
@@ -1432,6 +1437,7 @@
     (none)
     )
   )
+  
 
 (set-subtask-hook!
   *game-info*

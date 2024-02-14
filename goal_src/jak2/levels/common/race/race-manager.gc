@@ -1565,7 +1565,7 @@
 
 (define *race-manager* (the-as (pointer race-manager) #f))
 
-(defun race-manager-turbo-from-board ((turbo-event symbol)
+(defun race-manager-turbo-from-board ((turbo-event symbol))
   (when *race-manager*
     (let* ((race-mgr-proc (the race-manager (ppointer->process *race-manager*)))
             (rcr-state (-> race-mgr-proc race-state racer-array (-> race-mgr-proc race-state i-player)))

@@ -436,7 +436,7 @@
      )
     (('race-pass)
      (if (logtest? (-> this flags) (rigid-body-object-flag player-driving))
-         (speech-control-method-12 *speech-control* this (if (-> *target* pilot as-daxter?)
+         (speech-control-method-12 *speech-control* this (if  *target*
                                                              (speech-type speech-type-45)
                                                              (speech-type speech-type-36)
                                                              )
@@ -899,13 +899,13 @@
       ((logtest? (rigid-body-object-flag turbo-boost) (-> this flags))
         ;; turbo active
         (set-target-board-mods-speed 
-          (* 5.0 266240.0) 
+          (* 5.0 204800.0) 
           (* 5.0 409600.0)
           )
         )
       (else
         ;; turbo over
-        (set-target-board-mods-speed 266240.0 409600.0)
+        (set-target-board-mods-speed 204800.0 409600.0)
         )
       )
     )

@@ -601,72 +601,72 @@
     :default-hit-points 1
     :gnd-collide-with (collide-spec backgnd)
     :overlaps-others-collide-with-filter (collide-spec jak bot player-list)
-    :penetrate-knocked (penetrate
-      touch
-      generic-attack
-      lunge
-      flop
-      punch
-      spin
-      roll
-      uppercut
-      bonk
-      tube
-      vehicle
-      flut-attack
-      board
-      mech
-      mech-punch
-      mech-bonk
-      dark-skin
-      dark-punch
-      dark-bomb
-      dark-giant
-      shield
-      explode
-      jak-yellow-shot
-      jak-red-shot
-      jak-blue-shot
-      jak-dark-shot
-      enemy-yellow-shot
-      enemy-dark-shot
-      eco-yellow
-      eco-red
-      eco-blue
-      eco-green
-      knocked
-      penetrate-33
-      penetrate-34
-      penetrate-35
-      penetrate-36
-      penetrate-37
-      penetrate-38
-      penetrate-39
-      penetrate-40
-      penetrate-41
-      penetrate-42
-      penetrate-43
-      penetrate-44
-      penetrate-45
-      penetrate-46
-      penetrate-47
-      penetrate-48
-      penetrate-49
-      penetrate-50
-      penetrate-51
-      penetrate-52
-      penetrate-53
-      penetrate-54
-      penetrate-55
-      penetrate-56
-      penetrate-57
-      penetrate-58
-      penetrate-59
-      penetrate-60
-      penetrate-61
-      penetrate-62
-      penetrate-63
-      )
+    ;; :penetrate-knocked (penetrate
+    ;;   touch
+    ;;   generic-attack
+    ;;   lunge
+    ;;   flop
+    ;;   punch
+    ;;   spin
+    ;;   roll
+    ;;   uppercut
+    ;;   bonk
+    ;;   tube
+    ;;   vehicle
+    ;;   flut-attack
+    ;;   board
+    ;;   mech
+    ;;   mech-punch
+    ;;   mech-bonk
+    ;;   dark-skin
+    ;;   dark-punch
+    ;;   dark-bomb
+    ;;   dark-giant
+    ;;   shield
+    ;;   explode
+    ;;   jak-yellow-shot
+    ;;   jak-red-shot
+    ;;   jak-blue-shot
+    ;;   jak-dark-shot
+    ;;   enemy-yellow-shot
+    ;;   enemy-dark-shot
+    ;;   eco-yellow
+    ;;   eco-red
+    ;;   eco-blue
+    ;;   eco-green
+    ;;   knocked
+    ;;   penetrate-33
+    ;;   penetrate-34
+    ;;   penetrate-35
+    ;;   penetrate-36
+    ;;   penetrate-37
+    ;;   penetrate-38
+    ;;   penetrate-39
+    ;;   penetrate-40
+    ;;   penetrate-41
+    ;;   penetrate-42
+    ;;   penetrate-43
+    ;;   penetrate-44
+    ;;   penetrate-45
+    ;;   penetrate-46
+    ;;   penetrate-47
+    ;;   penetrate-48
+    ;;   penetrate-49
+    ;;   penetrate-50
+    ;;   penetrate-51
+    ;;   penetrate-52
+    ;;   penetrate-53
+    ;;   penetrate-54
+    ;;   penetrate-55
+    ;;   penetrate-56
+    ;;   penetrate-57
+    ;;   penetrate-58
+    ;;   penetrate-59
+    ;;   penetrate-60
+    ;;   penetrate-61
+    ;;   penetrate-62
+    ;;   penetrate-63
+    ;;   )
     :movement-gravity (meters -100)
     :friction 0.8
     :attack-shove-back (meters 3)
@@ -721,11 +721,11 @@
     :turn-anim 3
     :run-anim 5
     :taunt-anim -1
-    :run-travel-speed (meters 12000)
-    :run-acceleration (meters 2000)
+    :run-travel-speed (meters 12)
+    :run-acceleration (meters 2)
     :run-turning-acceleration (meters 30)
-    :walk-travel-speed (meters 3000)
-    :walk-acceleration (meters 1000)
+    :walk-travel-speed (meters 3)
+    :walk-acceleration (meters 1)
     :walk-turning-acceleration (meters 30)
     :maximum-rotation-rate (degrees 720)
     :notice-nav-radius (meters 10)
@@ -855,6 +855,20 @@
         (vector-normalize! s5-2 1.0)
         (quaternion-from-two-vectors! gp-1 s5-2 *up-vector*)
         (quaternion*! (-> self root quat) gp-1 (-> self root quat))
+        (let* ((self-position (-> self root trans))
+            (target-position (-> *target* root trans))
+            (dist-diff (vector-vector-distance self-position target-position)))
+      (when (>= dist-diff 0.0) 
+        (vector-copy! (-> self root trans) (-> *target* root trans))
+        )
+      )
+    (quaternion-copy! (-> self root quat) (-> (the board (ppointer->process (-> *target* board board))) root quat))
+    (when (< (vector-vector-xz-distance (-> self root trans) (-> self end-pos)) 163840.0)
+      
+          (go-virtual go-at-pipe)
+          (go-virtual go-at-end)
+          
+      )
         )
       )
     )
@@ -1059,8 +1073,8 @@
                  (gp-0 (rigid-body-method-22 (-> v1-30 state) a1-10 a2-1))
                  )
             (vector-inv-orient-by-quat! gp-0 gp-0 (-> self root quat))
-            (seek! (-> self v-speed x) (-> gp-0 x) (* 819200.0 (seconds-per-frame)))
-            (seek! (-> self v-speed z) (-> gp-0 z) (* 491520.0 (seconds-per-frame)))
+            (seek! (-> self v-speed x) (-> gp-0 x) (* 81920.0 (seconds-per-frame)))
+            (seek! (-> self v-speed z) (-> gp-0 z) (* 49152.0 (seconds-per-frame)))
             (set! (-> self left-right-interp)
                   (fmax
                     0.0
@@ -1284,11 +1298,11 @@
 (defstate wait-for-ride (city-lurker)
   :virtual #t
   :enter (behavior ()
-    (when (-> self task-done?)
-      (if (-> self jump-in-pipe?)
+    (when (< (vector-vector-xz-distance (-> self root trans) (-> self end-pos)) 163840.0)
+      
           (go-virtual go-at-pipe)
           (go-virtual go-at-end)
-          )
+          
       )
     (logior! (-> self flags) (citizen-flag persistent))
     (set-time! (-> self state-time))
@@ -1315,16 +1329,24 @@
     (logclear! (-> self flags) (citizen-flag persistent))
     )
   :trans (behavior ()
+  (let* ((self-position (-> self root trans))
+            (target-position (-> *target* root trans))
+            (dist-diff (vector-vector-distance self-position target-position)))
+      (when (>= dist-diff 0.0) 
+        (vector-copy! (-> self root trans) (-> *target* root trans))
+        )
+      )
+    (quaternion-copy! (-> self root quat) (-> (the board (ppointer->process (-> *target* board board))) root quat))
     (let ((t9-0 (-> (method-of-type civilian wait-for-ride) trans)))
       (if t9-0
           (t9-0)
           )
       )
     (when (< (vector-vector-xz-distance (-> self root trans) (-> self end-pos)) 163840.0)
-      (if (-> self jump-in-pipe?)
+      
           (go-virtual go-at-pipe)
           (go-virtual go-at-end)
-          )
+          
       )
     )
   :code (behavior ()
@@ -1927,18 +1949,18 @@
           (the-as (function collide-shape-moving collide-query vector vector object) nothing)
           )
     (set! (-> s5-0 penetrated-by) (penetrate
-                                    generic-attack
+                                    ;generic-attack
                                     lunge
                                     flop
                                     punch
                                     spin
                                     roll
                                     uppercut
-                                    bonk
+                                    ;bonk
                                     tube
                                     vehicle
                                     flut-attack
-                                    board
+                                    ;board
                                     mech-punch
                                     dark-punch
                                     dark-giant
@@ -1950,7 +1972,7 @@
       (set! (-> s4-0 prim-core collide-with)
             (collide-spec backgnd jak civilian enemy hit-by-others-list player-list)
             )
-      (set! (-> s4-0 prim-core action) (collide-action solid no-standon))
+      (set! (-> s4-0 prim-core action) (collide-action semi-solid no-standon))
       (set-vector! (-> s4-0 local-sphere) 0.0 8192.0 0.0 12288.0)
       (set! (-> s5-0 root-prim) s4-0)
       )
@@ -1959,7 +1981,7 @@
       (set! (-> v1-13 prim-core collide-with)
             (collide-spec backgnd jak civilian enemy hit-by-others-list player-list)
             )
-      (set! (-> v1-13 prim-core action) (collide-action solid))
+      (set! (-> v1-13 prim-core action) (collide-action semi-solid))
       (set-vector! (-> v1-13 local-sphere) 0.0 4096.0 0.0 4096.0)
       )
     (let ((v1-15 (new 'process 'collide-shape-prim-sphere s5-0 (the-as uint 0))))
@@ -1967,7 +1989,7 @@
       (set! (-> v1-15 prim-core collide-with)
             (collide-spec backgnd jak civilian enemy hit-by-others-list player-list)
             )
-      (set! (-> v1-15 prim-core action) (collide-action solid no-standon))
+      (set! (-> v1-15 prim-core action) (collide-action semi-solid no-standon))
       (set-vector! (-> v1-15 local-sphere) 0.0 9830.4 0.0 4096.0)
       )
     (set! (-> s5-0 nav-radius) 7372.8)
@@ -1992,7 +2014,7 @@
   (init-enemy-behaviour-and-stats! this *city-lurker-nav-enemy-info*)
   (set! (-> this info) *city-lurker-global-info*)
   (let ((v1-6 (-> this nav)))
-    (set! (-> v1-6 speed-scale) 5.0)
+    (set! (-> v1-6 speed-scale) 1.0)
     )
   0
   (set! (-> this draw lod-set lod 0 dist) 409600.0)
@@ -2063,9 +2085,9 @@
     (('traffic-on)
      #f
      )
-    (('hit 'hit-flinch 'hit-knocked)
-     ((method-of-type citizen general-event-handler) this arg0 arg1 arg2 arg3)
-     )
+    ;; (('hit 'hit-flinch 'hit-knocked)
+    ;;  ((method-of-type citizen general-event-handler) this arg0 arg1 arg2 arg3)
+    ;;  )
     (else
       ((method-of-type civilian general-event-handler) this arg0 arg1 arg2 arg3)
       )
