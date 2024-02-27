@@ -163,7 +163,7 @@ std::optional<std::string> try_get_project_path_from_path(const fs::path& path) 
   fs::path current_path = path;
   do {
     lg::info("Current path in loop - {}", current_path);
-    if (fs::exists(current_path + "/.github")) {
+    if (fs::exists(current_path / ".github")) {
       lg::info("Project path found - {}", current_path);
       return current_path;
     }
