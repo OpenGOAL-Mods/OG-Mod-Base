@@ -38,7 +38,8 @@ jobs:
             clang gcc g++ lcov make nasm libxrandr-dev \
             libxinerama-dev libxcursor-dev libpulse-dev \
             libxi-dev zip ninja-build libgl1-mesa-dev libssl-dev \
-            libopenal-dev
+            libfreetype6-dev libx11-dev libxrandr-dev libgl1-mesa-dev \
+            libudev-dev libopenal-dev libflac-dev libogg-dev libvorbis-dev
 
 
       - name: Setup Buildcache
