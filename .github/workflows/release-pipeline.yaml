@@ -97,7 +97,7 @@ jobs:
 
       - name: Publish Release
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG_VAL=$(echo ${{ github.REF }} | awk -F'refs/tags/' '{print $2}')
           gh release edit ${TAG_VAL} --draft=false --repo ${{ github.repository }}
