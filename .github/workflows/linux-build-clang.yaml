@@ -63,7 +63,7 @@ jobs:
 #      - name: Run Tests
 #        env:
 #          GTEST_OUTPUT: "xml:opengoal-test-report.xml"
-#        run: ./test.sh --proj-path=${{ github.workspace }}
+#        run: ./test.sh
 
       - name: Prepare artifacts
         if: ${{ inputs.uploadArtifacts }}
