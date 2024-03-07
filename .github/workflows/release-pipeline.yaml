@@ -26,23 +26,22 @@ jobs:
       uploadArtifacts: true
     secrets: inherit
 
-  # macOS
-  build_macos_intel:
-    name: "🍎 MacOS"
-    uses: ./.github/workflows/macos-build.yaml
-    with:
-      cmakePreset: "Release-macos-clang-static"
-      cachePrefix: "static"
-      uploadArtifacts: true
-    secrets: inherit
+#  # macOS
+#  build_macos_intel:
+#    name: "🍎 MacOS"
+#    uses: ./.github/workflows/macos-build.yaml
+#    with:
+#      cmakePreset: "Release-macos-clang-static"
+#      cachePrefix: "static"
+#      uploadArtifacts: true
+#    secrets: inherit
 
   # Upload the Artifacts
   upload_artifacts:
-    if: github.repository == 'open-goal/jak-project'
     needs:
       - build_windows_clang
       - build_linux_clang
-      - build_macos_intel
+#      - build_macos_intel
     name: "Upload Artifacts"
     runs-on: ubuntu-latest
     steps:
@@ -78,27 +77,27 @@ jobs:
           7z a -tzip ./ci-artifacts/final/opengoal-windows-${TAG_VAL}.zip ./ci-artifacts/windows/*
           cp ./ci-artifacts/opengoal-windows-static/lsp.exe ./ci-artifacts/final/opengoal-lsp-windows-${TAG_VAL}.exe
 
-      - name: Prepare macOS Build Assets
-        run: |
-          mkdir -p ./ci-artifacts/macos
-          ./.github/scripts/releases/extract_build_unix.sh ./ci-artifacts/macos ./ci-artifacts/opengoal-macos-static ./
-          pushd ci-artifacts/macos
-          TAG_VAL=$(echo ${{ github.REF }} | awk -F'refs/tags/' '{print $2}')
-          tar czf ../final/opengoal-macos-intel-${TAG_VAL}.tar.gz .
-          popd
-          chmod +x ./ci-artifacts/opengoal-macos-static/lsp/lsp
-          cp ./ci-artifacts/opengoal-macos-static/lsp/lsp ./ci-artifacts/final/opengoal-lsp-macos-intel-${TAG_VAL}.bin
+#      - name: Prepare macOS Build Assets
+#        run: |
+#          mkdir -p ./ci-artifacts/macos
+#          ./.github/scripts/releases/extract_build_unix.sh ./ci-artifacts/macos ./ci-artifacts/opengoal-macos-static ./
+#          pushd ci-artifacts/macos
+#          TAG_VAL=$(echo ${{ github.REF }} | awk -F'refs/tags/' '{print $2}')
+#          tar czf ../final/opengoal-macos-intel-${TAG_VAL}.tar.gz .
+#          popd
+#          chmod +x ./ci-artifacts/opengoal-macos-static/lsp/lsp
+#          cp ./ci-artifacts/opengoal-macos-static/lsp/lsp ./ci-artifacts/final/opengoal-lsp-macos-intel-${TAG_VAL}.bin
 
       - name: Upload Assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG_VAL=$(echo ${{ github.REF }} | awk -F'refs/tags/' '{print $2}')
-          gh release upload "${TAG_VAL}" ${{ github.WORKSPACE }}/ci-artifacts/final/* --repo open-goal/jak-project --clobber
+          gh release upload "${TAG_VAL}" ${{ github.WORKSPACE }}/ci-artifacts/final/* --repo ${{ github.repository }} --clobber
 
       - name: Publish Release
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG_VAL=$(echo ${{ github.REF }} | awk -F'refs/tags/' '{print $2}')
-          gh release edit ${TAG_VAL} --draft=false --repo open-goal/jak-project
+          gh release edit ${TAG_VAL} --draft=false --repo ${{ github.repository }}

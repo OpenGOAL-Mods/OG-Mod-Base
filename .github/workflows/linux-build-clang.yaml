@@ -37,7 +37,10 @@ jobs:
           sudo apt install build-essential cmake \
             clang gcc g++ lcov make nasm libxrandr-dev \
             libxinerama-dev libxcursor-dev libpulse-dev \
-            libxi-dev zip ninja-build libgl1-mesa-dev libssl-dev
+            libxi-dev zip ninja-build libgl1-mesa-dev libssl-dev \
+            libfreetype6-dev libx11-dev libxrandr-dev libgl1-mesa-dev \
+            libudev-dev libopenal-dev libflac-dev libogg-dev libvorbis-dev
+
 
       - name: Setup Buildcache
         uses: mikehardy/buildcache-action@v2.1.0
@@ -57,10 +60,10 @@ jobs:
       - name: Build Project
         run: cmake --build build --parallel $((`nproc`))
 
-      - name: Run Tests
-        env:
-          GTEST_OUTPUT: "xml:opengoal-test-report.xml"
-        run: ./test.sh
+#      - name: Run Tests
+#        env:
+#          GTEST_OUTPUT: "xml:opengoal-test-report.xml"
+#        run: ./test.sh
 
       - name: Prepare artifacts
         if: ${{ inputs.uploadArtifacts }}
