@@ -390,7 +390,6 @@
           )
         (((teamrun-command setup-run)) 
           (initialize! *game-info* 'game (the-as game-save #f) (the-as string #f))
-          (set! *enable-remote-target-pvp-attacks* (= (-> *multiplayer-info* game enable_pvp) 1))
           ;;(set! *debug-segment* #f)
           (set! *cheat-mode* #f)
           (set! (-> *pc-settings* speedrunner-mode?) #t)

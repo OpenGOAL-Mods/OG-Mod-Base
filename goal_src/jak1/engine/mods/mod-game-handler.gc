@@ -36,7 +36,6 @@
 ;; multiplayer settings
 (define *enable-remote-target-attacks* #t)
 (define *enable-remote-target-yellow-eco-blasts* #t)
-(define *enable-remote-target-pvp-attacks* #f)
 (define *pvp-attack-sphere-size* 3000.0)
 
 ;; multiplayer save and load

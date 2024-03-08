@@ -6,9 +6,9 @@
 ;; dgos: L1, SNO, SWA
 
 (define-extern is-interactive? (function int symbol))
+(define-extern *multiplayer-info* multiplayer-info)
 (define-extern *enable-remote-target-attacks* symbol)
 (define-extern *enable-remote-target-yellow-eco-blasts* symbol)
-(define-extern *enable-remote-target-pvp-attacks* symbol)
 (define-extern *pvp-attack-sphere-size* float)
 
 ;; DECOMP BEGINS
@@ -1228,7 +1228,7 @@
       (target-start-attack)
       (target-danger-set! 'flut-attack #f)
       )
-    (when (= *enable-remote-target-pvp-attacks* #t)
+    (when (= (-> *multiplayer-info* game enable_pvp) #t)
       (let ((gp-2 (process-spawn touch-tracker :init touch-tracker-init (-> self control trans) 4096.0 30 :to self)))
         (send-event (ppointer->process gp-2) 'event 'attack)
         (send-event (ppointer->process gp-2) 'function (lambda ((arg0 target)) 
@@ -1472,7 +1472,7 @@
       (target-start-attack)
       (target-danger-set! 'flut-attack #f)
       )
-    (when (= *enable-remote-target-pvp-attacks* #t)
+    (when (= (-> *multiplayer-info* game enable_pvp) #t)
       (let ((gp-2 (process-spawn touch-tracker :init touch-tracker-init (-> self control trans) 4096.0 30 :to self)))
         (send-event (ppointer->process gp-2) 'event 'attack)
         (send-event (ppointer->process gp-2) 'function (lambda ((arg0 target)) 
@@ -1601,7 +1601,7 @@
     (set! (-> self control unknown-surface00) *flut-air-attack-mods*)
     (sound-play "flop-land" :pitch -0.4)
     (effect-control-method-10 (-> self skel effect) 'group-flut-attack-strike-ground (ja-frame-num 0) 0)
-    (when (or (= self *target*) *enable-remote-target-pvp-attacks*)
+    (when (or (= self *target*) (-> *multiplayer-info* game enable_pvp))
       (let ((gp-2 (process-spawn touch-tracker :init touch-tracker-init (-> self control trans) 4096.0 30 :to self)))
         (send-event (ppointer->process gp-2) 'event 'attack 'flut-attack)
         (send-event (ppointer->process gp-2) 'function (lambda :behavior target
