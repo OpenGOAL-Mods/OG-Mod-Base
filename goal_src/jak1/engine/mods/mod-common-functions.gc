@@ -154,7 +154,7 @@
 (defun set-up-self-remote-if-null ()
   (when (not *self-player-info*)
     (set! *self-player-info* (new 'global 'remote-player-info))
-    (set! (-> *self-player-info* username) "local_player") 
+    (set! (-> *self-player-info* username) (new 'global 'string MAX_USERNAME_LEN "local_player")) 
     (set! (-> *self-player-info* color)  (tgt-color red))
     (set! (-> *self-player-info* mp_state)  (mp-tgt-state mp-tgt-interactive))
     (set! (-> *multiplayer-info* player_num) 0)
