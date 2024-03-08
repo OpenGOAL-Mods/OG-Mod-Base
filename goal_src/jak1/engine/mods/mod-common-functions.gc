@@ -157,6 +157,7 @@
     (set! (-> *self-player-info* username) (new 'global 'string MAX_USERNAME_LEN "local_player")) 
     (set! (-> *self-player-info* color)  (tgt-color red))
     (set! (-> *self-player-info* mp_state)  (mp-tgt-state mp-tgt-interactive))
+    (set! (-> *multiplayer-info* client_version) (new 'global 'string INTERACTION_STRING_LEN "Not Connected"))
     (set! (-> *multiplayer-info* player_num) 0)
 
     (dotimes (idx (-> *interaction-update-buffer* length))

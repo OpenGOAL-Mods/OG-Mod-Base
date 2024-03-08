@@ -117,3 +117,69 @@
   (free-cam-exit)
   (on-remote-level-update)
 )
+
+(deftype remote-player-info (structure)
+ ((username   string)
+  (color      tgt-color)
+  (trans_x    float)
+  (trans_y    float)
+  (trans_z    float)
+  (quat_x     float)
+  (quat_y     float)
+  (quat_z     float)
+  (quat_w     float)
+
+  (zoomer_rot_y   float)
+
+  (inter_type    interaction-type)
+  (inter_amount  float)
+  (inter_status  float)
+  (inter_name    string)
+  (inter_parent  string)
+  (inter_level   string)
+  (inter_cleanup   int32) ;; marks level cleanup interaction from entering level
+
+  (current_level string)
+  (tgt_state  symbol)
+  (mp_state   mp-tgt-state) 
+  
+  ;; set from teamrun side
+  (cells_collected int32)
+  (player_index    int32)
+  (team_id         int32)
+  )
+  :pack-me
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+
+(deftype game-mode (structure)
+ (
+  (category               run-category)
+  (mode                   run-mode)
+  (require_same_level     int32)
+  (allow_solo_hub_zoomers int32)
+  (no_lts                 int32)
+  (citadel_skip_version   citadel-skip-version)
+  (free_for_all           int32)
+  (enable_pvp             int32)
+  )
+  :pack-me
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+  
+(deftype multiplayer-info (structure)
+ ((teamrun_command      teamrun-command)
+  (client_version       string)
+  (game_version         string)
+  (player_num           int32)
+  (players              remote-player-info MAX_MULTIPLAYER_COUNT :inline)
+  (game                 game-mode :inline)
+  )
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )

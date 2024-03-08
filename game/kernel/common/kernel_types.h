@@ -103,11 +103,11 @@ struct TeamrunPlayerInfo {
 struct TeamrunLevelInfo {
   s32 has_level_update;
   
-  u32 level0_name;       // string (basic)
-  u32 level0_status;  // string (basic)
+  u32 level0_name;      // string (basic)
+  u32 level0_status;    // string (basic)
 
-  u32 level1_name;       // string (basic)
-  u32 level1_status;  // string (basic)
+  u32 level1_name;      // string (basic)
+  u32 level1_status;    // string (basic)
 };
 
 struct GameMode {
@@ -127,6 +127,8 @@ const int MAX_INTERACTION_BUFFER_COUNT = 10;
 
 struct MultiplayerInfo {
   u32 teamrun_command;
+  u32 client_version;       // string (basic)
+  u32 game_version;         // string (basic)
   s32 player_num;
   RemotePlayerInfo players[MAX_MULTIPLAYER_COUNT];
   GameMode game;

@@ -1,6 +1,8 @@
 ;;-*-Lisp-*-
 (in-package goal)
 
+(define-extern *multiplayer-info* multiplayer-info)
+
 (define *speedrun-info* (new 'static 'speedrun-info-jak1 :should-display? #t :needs-post-blackout-setup? #f))
 
 (define *hub1-cell-list* (new 'static 'boxed-array :type game-task
@@ -449,9 +451,11 @@
              (-> *speedrun-info* should-display?))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
                                       (bucket-id subtitle))
-      (draw-string-xy (string-format "Speedrunner Mode ~%OpenGOAL Version: ~S ~%Category: ~S ~%Cutscene Skips ~A"
+      (draw-string-xy (string-format "Speedrunner Mode ~%OpenGOAL Version: ~S ~%TR Client Version: ~S ~%TR Game Version: ~S ~%Category: ~S ~%Cutscene Skips ~A"
                                      *pc-settings-built-sha*
+                                     (-> *multiplayer-info* client_version)
+                                     (-> *multiplayer-info* game_version)
                                      (enum->string speedrun-category (-> *speedrun-info* category))
                                      (-> *pc-settings* skip-movies?))
-                      buf 0 (- 220 (* 8 4)) (font-color flat-yellow) (font-flags shadow kerning))))
+                      buf 0 (- 205 (* 8 4)) (font-color flat-yellow) (font-flags shadow kerning))))
   (none))

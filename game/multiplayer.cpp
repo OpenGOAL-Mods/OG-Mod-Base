@@ -80,7 +80,6 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
           gMultiplayerInfo->game.mode = gameField.value();
         } else if (gameField.key().compare("requireSameLevel") == 0) {
           gMultiplayerInfo->game.require_same_level = gameField.value();
-          lg::warn("set require same level {}", gameField.value());
         } else if (gameField.key().compare("allowSoloHubZoomers") == 0) {
           gMultiplayerInfo->game.allow_solo_hub_zoomers = gameField.value();
         } else if (gameField.key().compare("noLTS") == 0) {
@@ -165,6 +164,9 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
           lg::warn("Interaction buffer overflow!");
         }
       }
+    } else if (section.key().compare("version") == 0) {
+      std::string buildVersion = section.value();
+      strncpy(Ptr<String>(gMultiplayerInfo->client_version).c()->data(), buildVersion.c_str(), INTERACTION_STRING_LEN);
     } else if (section.key().compare("username") == 0) {
       std::string username = section.value();
       strncpy(Ptr<String>(gSelfPlayerInfo->username).c()->data(), username.c_str(), MAX_USERNAME_LEN);
