@@ -21,7 +21,7 @@
   :size-assert         #xcc
   :flag-assert         #x15006000cc
   (:methods
-    (whirlpool-method-20 (_type_ float) cshape-moving-flags 20)
+    (whirlpool-method-20 (_type_ float target) cshape-moving-flags 20)
     )
   (:states
     whirlpool-idle
@@ -286,8 +286,8 @@
     )
   )
 
-(defmethod whirlpool-method-20 whirlpool ((obj whirlpool) (arg0 float))
-  (let* ((gp-0 (target-pos 0))
+(defmethod whirlpool-method-20 whirlpool ((obj whirlpool) (arg0 float) (tgt target))
+  (let* ((gp-0 (remote-target-pos 0 tgt))
          (f28-0 (vector-vector-xz-distance (-> obj root-override trans) gp-0))
          )
     (when (< f28-0 40960.0)
@@ -304,17 +304,13 @@
         (set! (-> s4-1 x) (* (- (-> s4-1 x) (-> gp-0 x)) (-> *display* frames-per-second)))
         (set! (-> s4-1 y) 0.0)
         (set! (-> s4-1 z) (* (- (-> s4-1 z) (-> gp-0 z)) (-> *display* frames-per-second)))
-        (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-          (when (get-target tgt-idx)
-            (let ((gp-1 (-> (get-target tgt-idx) control)))
-              (send-event (-> gp-1 process) 'rotate-y-angle f30-0)
-              (fill-cache-for-shape! gp-1 8192.0 (-> gp-1 root-prim collide-with) *collide-cache* *collide-work*) ;; TODO: split by player?
-              (let ((s3-0 (-> gp-1 status)))
-                (integrate-and-collide! gp-1 s4-1)
-                (set! (-> gp-1 status) s3-0)
-                s3-0
-                )
-              )
+        (let ((gp-1 (-> tgt control)))
+          (send-event (-> gp-1 process) 'rotate-y-angle f30-0)
+          (fill-cache-for-shape! gp-1 8192.0 (-> gp-1 root-prim collide-with) *collide-cache* *collide-work*) ;; TODO: split by player?
+          (let ((s3-0 (-> gp-1 status)))
+            (integrate-and-collide! gp-1 s4-1)
+            (set! (-> gp-1 status) s3-0)
+            s3-0
             )
           )
         )
@@ -341,7 +337,7 @@
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
         (let ((tgt (get-target tgt-idx)))
           (if (and tgt (logtest? (-> tgt water flags) (water-flags wt09)))
-            (whirlpool-method-20 self f30-0)
+            (whirlpool-method-20 self f30-0 tgt)
             )
           )
         )
