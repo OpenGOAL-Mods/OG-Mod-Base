@@ -5,6 +5,7 @@
 ;; name in dgo: basebutton
 ;; dgos: GAME, COMMON, L1
 
+(define-extern target-is-interactive? (function target symbol))
 
 ;; DECOMP BEGINS
 
@@ -79,11 +80,13 @@
   :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
     (case event-type
       (('attack)
-       (case (-> event param 1)
-         (('flop)
-          (basebutton-method-29 self (-> self event-going-down) (-> self notify-actor))
-          (sound-play "silo-button")
-          (go-virtual basebutton-going-down)
+       (when (or (!= (-> proc type) target) (= (the-as target proc) target) (target-is-interactive? (the-as target proc)))
+        (case (-> event param 1)
+          (('flop)
+           (basebutton-method-29 self (-> self event-going-down) (-> self notify-actor))
+           (sound-play "silo-button")
+           (go-virtual basebutton-going-down)
+           )
           )
          )
        )

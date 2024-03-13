@@ -81,6 +81,10 @@
   )
 )
 
+(defun target-is-interactive? ((remote-target target))
+  (if (and remote-target (is-interactive? (the int (-> remote-target saved-owner)))) #t #f)
+  )
+
 (defun is-interactive? ((tgt-idx int))
   (= (-> *multiplayer-info* players tgt-idx mp_state) (mp-tgt-state mp-tgt-interactive))
   )
