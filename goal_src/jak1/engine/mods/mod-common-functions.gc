@@ -172,6 +172,15 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none)
   )
 
+(defun process-by-aid ((arg0 uint))
+  "Get the process for the entity with the given aid. If there is no entity or process, #f."
+  (let ((v1-0 (entity-by-aid arg0)))
+    (if v1-0
+      (-> v1-0 extra process)
+    )
+  )
+)
+
 (defun spawn-actor-by-name ((name string))
   ;; Takes in the string of name of a actor, and spawns a new process based on the entity.
     (let* ((entity-actor (the entity-actor (entity-by-name name)))
