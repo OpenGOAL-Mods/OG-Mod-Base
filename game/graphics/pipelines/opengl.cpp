@@ -29,8 +29,8 @@
 #include "game/system/hid/input_manager.h"
 #include "game/system/hid/sdl_util.h"
 
+#include "fmt/core.h"
 #include "third-party/SDL/include/SDL.h"
-#include "third-party/fmt/core.h"
 #include "third-party/imgui/imgui.h"
 #include "third-party/imgui/imgui_impl_opengl3.h"
 #include "third-party/imgui/imgui_impl_sdl.h"
@@ -100,7 +100,7 @@ static int gl_init(GfxGlobalSettings& settings) {
     auto p = scoped_prof("startup::sdl::init_sdl");
     // remove SDL garbage from hooking signal handler.
     SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
       sdl_util::log_error("Could not initialize SDL, exiting");
       dialogs::create_error_message_dialog("Critical Error Encountered",
                                            "Could not initialize SDL, exiting");
@@ -492,8 +492,8 @@ void GLDisplay::render() {
   // Before we process the current frames SDL events we for keyboard/mouse button inputs.
   //
   // This technically means that keyboard/mouse button inputs will be a frame behind but the
-  // event-based code is buggy and frankly not worth stressing over.  Leaving this as a note incase
-  // someone complains. Binding handling is still taken care of by the event code though.
+  // event-based code is limiting (there aren't enough events to achieve a totally stateless
+  // approach). Binding handling is still taken care of by the event code though.
   {
     auto p = scoped_prof("sdl-input-monitor-poll-for-kb-mouse");
     ImGuiIO& io = ImGui::GetIO();
