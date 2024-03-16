@@ -612,6 +612,7 @@
 
 
 (define-once *pc-settings* (new 'global 'pc-settings-jak1))
+(define *mod-settings* (new 'global 'mod-settings))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
