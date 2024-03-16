@@ -6,7 +6,7 @@
 
 #include "decompiler/util/data_decompile.h"
 
-#include "third-party/fmt/format.h"
+#include "fmt/format.h"
 
 namespace decompiler {
 // sparticle fields.
@@ -337,7 +337,8 @@ const SparticleFieldDecomp field_kind_jak2[73] = {
 
 const std::unordered_map<GameVersion, const SparticleFieldDecomp*> field_kinds = {
     {GameVersion::Jak1, field_kind_jak1},
-    {GameVersion::Jak2, field_kind_jak2}};
+    {GameVersion::Jak2, field_kind_jak2},
+    {GameVersion::Jak3, field_kind_jak2}};
 
 float word_as_float(const LinkedWord& w) {
   ASSERT(w.kind() == LinkedWord::PLAIN_DATA);
