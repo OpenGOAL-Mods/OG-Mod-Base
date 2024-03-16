@@ -6,7 +6,7 @@
 
 #include "decompiler/util/config_parsers.h"
 
-#include "third-party/fmt/core.h"
+#include "fmt/core.h"
 #include "third-party/json.hpp"
 
 namespace decompiler {
@@ -314,6 +314,10 @@ Config make_config_via_json(nlohmann::json& json) {
   config.import_deps_by_file =
       import_deps.get<std::unordered_map<std::string, std::vector<std::string>>>();
 
+  if (json.contains("rip_collision")) {
+    config.rip_collision = json.at("rip_collision").get<bool>();
+  }
+
   config.write_patches = json.at("write_patches").get<bool>();
   config.apply_patches = json.at("apply_patches").get<bool>();
   const auto& object_patches = json.at("object_patches");
@@ -324,6 +328,10 @@ Config make_config_via_json(nlohmann::json& json) {
     new_pch.patch_file = pch.at("out").get<std::string>();
     config.object_patches.insert({obj, new_pch});
   }
+
+  auto process_stack_size_json = read_json_file_from_config(json, "process_stack_size_file");
+  config.process_stack_size_overrides =
+      process_stack_size_json.get<std::unordered_map<std::string, int>>();
 
   return config;
 }

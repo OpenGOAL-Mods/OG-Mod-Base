@@ -22,7 +22,7 @@
 // This disables the use of PCLMULQDQ which is probably ok, but let's just be safe and disable it
 // because nobody will care if png compression is 10% slower.
 #define FPNG_NO_SSE 1
-#include "third-party/fmt/core.h"
+#include "fmt/core.h"
 #include "third-party/fpng/fpng.cpp"
 #include "third-party/fpng/fpng.h"
 #include "third-party/lzokay/lzokay.hpp"
@@ -96,6 +96,13 @@ fs::path get_user_screenshots_dir(GameVersion game_version) {
 fs::path get_user_misc_dir(GameVersion game_version) {
   auto game_version_name = game_version_names[game_version];
   return get_user_config_dir() / game_version_name / "misc";
+}
+
+fs::path get_user_features_dir(GameVersion game_version) {
+  auto game_version_name = game_version_names[game_version];
+  auto path = get_user_config_dir() / game_version_name / "features";
+  file_util::create_dir_if_needed(path);
+  return path;
 }
 
 struct {
@@ -416,7 +423,7 @@ std::string split_path_at(const fs::path& path, const std::vector<std::string>& 
     split_str += folder + "/";
 #endif
   }
-  const auto& path_str = path.u8string();
+  const auto& path_str = path.string();
   return path_str.substr(path_str.find(split_str) + split_str.length());
 }
 

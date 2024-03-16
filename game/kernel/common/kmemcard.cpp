@@ -19,7 +19,7 @@
 #include "game/sce/sif_ee.h"
 #include "game/sce/sif_ee_memcard.h"
 
-#include "third-party/fmt/core.h"
+#include "fmt/core.h"
 
 static constexpr bool memcard_debug = false;
 
@@ -60,9 +60,9 @@ void mc_print(const std::string& str, Args&&... args) {
   if (memcard_debug) {
     fmt::print("[MC] ");
     if (!str.empty() && str.back() == '\n') {
-      fmt::print(str, std::forward<Args>(args)...);
+      fmt::print(fmt::runtime(str), std::forward<Args>(args)...);
     } else {
-      fmt::print(str + '\n', std::forward<Args>(args)...);
+      fmt::print(fmt::runtime(str + '\n'), std::forward<Args>(args)...);
     }
   }
 }

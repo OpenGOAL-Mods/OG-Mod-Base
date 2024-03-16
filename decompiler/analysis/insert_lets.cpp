@@ -1,3 +1,5 @@
+#include "insert_lets.h"
+
 #include <algorithm>
 #include <array>
 #include <limits>
@@ -7,10 +9,10 @@
 #include "common/log/log.h"
 #include "common/util/Assert.h"
 #include "common/util/print_float.h"
+
 #include "decompiler/IR2/GenericElementMatcher.h"
 #include "decompiler/IR2/bitfields.h"
 #include "decompiler/util/DecompilerTypeSystem.h"
-#include "insert_lets.h"
 
 namespace decompiler {
 
@@ -367,6 +369,7 @@ FormElement* rewrite_as_send_event(LetElement* in,
             Matcher::any(1));
         break;
       case GameVersion::Jak2:
+      case GameVersion::Jak3:
         set_from_form_matcher = Matcher::set(
             Matcher::deref(Matcher::any_reg(0), false, {DerefTokenMatcher::string("from")}),
             Matcher::op_fixed(FixedOperatorKind::PROCESS_TO_PPOINTER, {Matcher::any(1)}));
@@ -1515,9 +1518,13 @@ FormElement* rewrite_proc_new(LetElement* in, const Env& env, FormPool& pool) {
 
   // look for setting a var to (get-process *default-dead-pool* logo-slave #x4000)
   auto ra = in->entries().at(0).dest;
-  auto mr_get_proc = match(
-      Matcher::func("get-process", {Matcher::any(0), Matcher::any_symbol(1), Matcher::any(2)}),
-      in->entries().at(0).src);
+  std::vector<Matcher> get_process_args = {Matcher::any(0), Matcher::any_symbol(1),
+                                           Matcher::any(2)};
+  if (env.version >= GameVersion::Jak3) {
+    // this flag appears unused...
+    get_process_args.push_back(Matcher::any_integer(3));
+  }
+  auto mr_get_proc = match(Matcher::func("get-process", get_process_args), in->entries().at(0).src);
   if (!mr_get_proc.matched) {
     return nullptr;
   }
@@ -1626,6 +1633,7 @@ FormElement* rewrite_proc_new(LetElement* in, const Env& env, FormPool& pool) {
             expected_name = fmt::format("'{}", proc_type);
             break;
           case GameVersion::Jak2:
+          case GameVersion::Jak3:
             expected_name = fmt::format("(symbol->string (-> {} symbol))", proc_type);
             break;
           default:
@@ -1653,6 +1661,14 @@ FormElement* rewrite_proc_new(LetElement* in, const Env& env, FormPool& pool) {
         }
         if (!mr_get_proc.maps.forms.at(2)->to_form(env).is_int(0x4000)) {
           ja_push_form_to_args(pool, args, mr_get_proc.maps.forms.at(2), "stack-size");
+        }
+        if (env.version >= GameVersion::Jak3) {
+          if (mr_get_proc.maps.ints.at(3) != 1) {
+            // TODO better name
+            args.push_back(pool.form<ConstantTokenElement>(":unk"));
+            args.push_back(
+                pool.form<ConstantTokenElement>(fmt::format("{}", mr_get_proc.maps.ints.at(3))));
+          }
         }
 
         return pool.form<GenericElement>(
@@ -1705,7 +1721,7 @@ FormElement* rewrite_attack_info(LetElement* in, const Env& env, FormPool& pool)
   const auto& words = env.file->words_by_seg.at(label.target_segment);
   // offset of `mask` field in `attack-info`
   int mask_field_offset = 64;
-  if (env.version == GameVersion::Jak2) {
+  if (env.version >= GameVersion::Jak2) {
     mask_field_offset = 88;
   }
   u32 mask = words.at((label.offset + mask_field_offset) / 4).data;
@@ -1741,9 +1757,36 @@ FormElement* rewrite_attack_info(LetElement* in, const Env& env, FormPool& pool)
       {"knock", {21, DEFAULT}},
       {"test", {22, DEFAULT}},
   };
+  const static std::map<std::string, std::pair<int, AttackInfoFieldKind>> possible_args_jak3 = {
+      {"vector", {1, VECTOR}},
+      {"intersection", {2, VECTOR}},
+      {"attacker", {3, DEFAULT}},
+      {"invinc-time", {5, DEFAULT}},
+      {"mode", {6, DEFAULT}},
+      {"shove-back", {7, DEFAULT}},
+      {"shove-up", {8, DEFAULT}},
+      {"speed", {9, DEFAULT}},
+      {"control", {11, DEFAULT}},
+      {"angle", {12, DEFAULT}},
+      {"id", {15, DEFAULT}},
+      {"count", {16, DEFAULT}},
+      {"penetrate-using", {17, DEFAULT}},
+      {"attacker-velocity", {18, VECTOR}},
+      {"damage", {19, DEFAULT}},
+      {"shield-damage", {20, DEFAULT}},
+      {"vehicle-damage-factor", {21, DEFAULT}},
+      {"vehicle-impulse-factor", {21, DEFAULT}},
+      {"knock", {23, DEFAULT}},
+      {"test", {24, DEFAULT}},
+  };
 
-  const auto& possible_args =
-      env.version == GameVersion::Jak1 ? possible_args_jak1 : possible_args_jak2;
+  auto possible_args = possible_args_jak1;
+  if (env.version == GameVersion::Jak2) {
+    possible_args = possible_args_jak2;
+  }
+  if (env.version == GameVersion::Jak3) {
+    possible_args = possible_args_jak3;
+  }
 
   std::vector<std::pair<std::string, Form*>> args_in_info;
   for (int i = 0; i < in->body()->size() - 1; ++i) {
@@ -2193,6 +2236,7 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
   if (!mr_buf_base.matched) {
     return nullptr;
   }
+
   if (!var_equal(env, buf_dst, mr_buf_base.maps.regs.at(0))) {
     lg::print("dma buf bad name\n");
     return nullptr;
@@ -2208,16 +2252,59 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
 
   last_part = dynamic_cast<LetElement*>(in->body()->at(in->body()->size() - 1));
   if (!last_part) {
-    // lg::error("NO LAST PART AHH wtf!!");
     return nullptr;
   }
 
-  if (last_part->entries().size() != 1 || last_part->body()->size() != 2) {
+  // New for Jak 3: they check to see if nothing was added, and skip adding an empty DMA transfer
+  // if so. This means the usual 2 ending let body forms are now wrapped in a `when`.
+  const int expected_last_let_body_size = env.version == GameVersion::Jak3 ? 1 : 2;
+  if (last_part->entries().size() != 1 ||
+      last_part->body()->size() != expected_last_let_body_size) {
     return nullptr;
   }
   auto buf_end_dst = last_part->entries().at(0).dest;
 
-  auto dmatag_let = dynamic_cast<LetElement*>(last_part->body()->at(0));
+  LetElement* dmatag_let;
+  FormElement* insert_tag_call;
+
+  if (env.version == GameVersion::Jak3) {
+    // check for the when:
+    auto outer_when = dynamic_cast<CondNoElseElement*>(last_part->body()->at(0));
+    if (!outer_when) {
+      // lg::error(" P no cond-no-else:\n{}\n", last_part->body()->at(0)->to_string(env));
+      return nullptr;
+    }
+    if (outer_when->entries.size() != 1) {
+      // lg::error(" P cond-no-else bad entry count");
+      return nullptr;
+    }
+    auto& entry = outer_when->entries.at(0);
+    auto matcher = Matcher::op(GenericOpMatcher::fixed(FixedOperatorKind::NEQ),
+                               {Matcher::any_reg(0), Matcher::any_reg(1)});
+    auto mr = match(matcher, entry.condition);
+    if (!mr.matched) {
+      // lg::error(" P no match: {}\n", entry.condition->to_string(env));
+      return nullptr;
+    }
+
+    if (!var_equal(env, bucket_dst, mr.maps.regs.at(0)) ||
+        !var_equal(env, buf_end_dst, mr.maps.regs.at(1))) {
+      // lg::error(" P bad vars");
+      return nullptr;
+    }
+
+    auto body = entry.body;
+    if (body->size() != 2) {
+      // lg::error(" P bad inner body size");
+      return nullptr;
+    }
+
+    dmatag_let = dynamic_cast<LetElement*>(body->at(0));
+    insert_tag_call = body->at(1);
+  } else {
+    dmatag_let = dynamic_cast<LetElement*>(last_part->body()->at(0));
+    insert_tag_call = last_part->body()->at(1);
+  }
 
   if (!dmatag_let || dmatag_let->entries().size() != 1 || dmatag_let->body()->size() != 4) {
     return nullptr;
@@ -2291,7 +2378,7 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
                            DerefTokenMatcher::string("bucket-group")}),
            Matcher::any(1), Matcher::any_reg(2),
            Matcher::cast("(pointer dma-tag)", Matcher::any_reg(3))}),
-      last_part->body()->at(1));
+      insert_tag_call);
   if (!mr_bucket_add_tag_func.matched ||
       !var_equal(env, bucket_dst, mr_bucket_add_tag_func.maps.regs.at(2)) ||
       !var_equal(env, buf_end_dst, mr_bucket_add_tag_func.maps.regs.at(3))) {

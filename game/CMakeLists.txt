@@ -1,6 +1,3 @@
-# We define our own compilation flags here.
-set(CMAKE_CXX_STANDARD 17)
-
 # Set a more convenient ARM flag
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64")
     set(ARM64_ARCH TRUE)
@@ -117,6 +114,7 @@ set(RUNTIME_SOURCE
         kernel/jak2/klink.cpp
         kernel/jak2/klisten.cpp
         kernel/jak2/kmachine.cpp
+        kernel/jak2/kmachine_extras.cpp
         kernel/jak2/kmalloc.cpp
         kernel/jak2/kprint.cpp
         kernel/jak2/kscheme.cpp
@@ -186,6 +184,10 @@ set(RUNTIME_SOURCE
         mips2c/jak2_functions/squid.cpp
         mips2c/jak2_functions/texture.cpp
         mips2c/jak2_functions/vortex.cpp
+        mips2c/jak3_functions/collide_func.cpp
+        mips2c/jak3_functions/debug.cpp
+        mips2c/jak3_functions/lights.cpp
+        mips2c/jak3_functions/sky.cpp
         mips2c/mips2c_table.cpp
         overlord/common/dma.cpp
         overlord/common/fake_iso.cpp
