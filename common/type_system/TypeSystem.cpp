@@ -14,8 +14,8 @@
 #include "common/util/Assert.h"
 #include "common/util/math_util.h"
 
-#include "third-party/fmt/color.h"
-#include "third-party/fmt/core.h"
+#include "fmt/color.h"
+#include "fmt/core.h"
 
 namespace {
 template <typename... Args>
@@ -28,7 +28,7 @@ template <typename... Args>
   }
 
   throw std::runtime_error(
-      fmt::format("Type Error: {}", fmt::format(str, std::forward<Args>(args)...)));
+      fmt::format("Type Error: {}", fmt::format(fmt::runtime(str), std::forward<Args>(args)...)));
 }
 }  // namespace
 
@@ -1482,8 +1482,7 @@ std::vector<std::string> TypeSystem::search_types_by_size(
     }
   } else {
     for (const auto& [type_name, type_info] : m_types) {
-      // Only NullType's have no parent
-      if (!type_info->has_parent()) {
+      if (dynamic_cast<NullType*>(type_info.get())) {
         continue;
       }
       const auto size_of_type = m_types[type_name]->get_size_in_memory();

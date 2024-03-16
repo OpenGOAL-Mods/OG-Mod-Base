@@ -416,7 +416,7 @@ void InstallHandler(u32 handler_idx, u32 handler_func) {
       vif1_interrupt_handler = handler_func;
       break;
     default:
-      printf("unknown handler: %d\n", handler_idx);
+      lg::error("unknown handler: {}\n", handler_idx);
       ASSERT(false);
   }
 }
@@ -863,6 +863,13 @@ void pc_set_controller(u32 controller_id, u32 port) {
   }
 }
 
+u32 pc_get_keyboard_enabled() {
+  if (Display::GetMainDisplay()) {
+    return bool_to_symbol(Display::GetMainDisplay()->get_input_manager()->is_keyboard_enabled());
+  }
+  return bool_to_symbol(false);
+}
+
 void pc_set_keyboard_enabled(u32 sym_val) {
   if (Display::GetMainDisplay()) {
     Display::GetMainDisplay()->get_input_manager()->enable_keyboard(symbol_to_bool(sym_val));
@@ -1108,6 +1115,7 @@ void init_common_pc_port_functions(
   make_func_symbol_func("pc-get-controller-count", (void*)pc_get_controller_count);
   make_func_symbol_func("pc-get-controller-index", (void*)pc_get_controller_index);
   make_func_symbol_func("pc-set-controller!", (void*)pc_set_controller);
+  make_func_symbol_func("pc-get-keyboard-enabled?", (void*)pc_get_keyboard_enabled);
   make_func_symbol_func("pc-set-keyboard-enabled!", (void*)pc_set_keyboard_enabled);
   make_func_symbol_func("pc-set-mouse-options!", (void*)pc_set_mouse_options);
   make_func_symbol_func("pc-set-mouse-camera-sens!", (void*)pc_set_mouse_camera_sens);
