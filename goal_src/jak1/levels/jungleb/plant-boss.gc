@@ -1079,7 +1079,7 @@
     (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
       (let ((target (get-interactive-target tgt-idx)))
         (let ((f30-0 (vector-vector-distance (remote-target-pos 0 target) (-> self root-override trans))))
-          (if (< 409600.0 f30-0)
+          (if (and (= target *target*) (< 409600.0 f30-0))
               (go plant-boss-far-idle)
               )
           (if (and (< f30-0 143360.0)
