@@ -7,6 +7,7 @@
 
 (declare-type plant-boss-leaf process-drawable)
 
+(define-extern get-closest-interactive-target (function process-drawable target))
 (define-extern add-boss-phase-to-interaction-buffer (function string float string float none))
 
 ;; DECOMP BEGINS
@@ -979,7 +980,7 @@
 (defstate plant-boss-intro (plant-boss)
   :code (behavior ()
     (set-setting! 'music 'danger 0.0 0)
-    (if *enable-ingame-cutscenes?* (send-event *target* 'reset-pickup 'eco))
+    (if (= (get-closest-interactive-target self) *target*) (send-event *target* 'reset-pickup 'eco))
     (let ((v1-9 (-> self entity extra perm)))
       (logior! (-> v1-9 status) (entity-perm-status user-set-from-cstage))
       (b! (zero? (-> v1-9 user-int8 2)) cfg-5 :delay (empty-form))
