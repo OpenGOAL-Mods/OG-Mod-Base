@@ -1491,6 +1491,12 @@ This commonly includes things such as:
   :code (behavior ((arg0 symbol) (arg1 handle))
     (process-entity-status! self (entity-perm-status dead) #t)
     )
+  :exit (behavior ()
+    ;; refresh orb-placer list in debug mode
+    (when *debug-segment*
+      (orb-placer-list-maintenace #t)
+      )
+    )
   )
 
 (defmethod initialize-allocations ((this money))

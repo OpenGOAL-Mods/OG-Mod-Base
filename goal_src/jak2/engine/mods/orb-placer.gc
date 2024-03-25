@@ -9,7 +9,7 @@
 (define *orb-placer-count* 0)
 
 ;; max number of orbs
-(defconstant ORB_PLACER_MAX 1000)
+(defconstant ORB_PLACER_MAX 100)
 
 ;; index of currently selected orb for placing
 (define *orb-placer-selected-idx* -1)
@@ -18,16 +18,16 @@
 (define *orb-placer-orbs* (new 'global 'boxed-array handle ORB_PLACER_MAX))
 
 (define *orb-placer-temp-strs* (new 'static 'boxed-array :type string :length ORB_PLACER_MAX
-  "orba-0"
-  "orba-1"
-  "orba-2"
-  "orba-3"
-  "orba-4"
-  "orba-5"
-  "orba-6"
-  "orba-7"
-  "orba-8"
-  "orba-9"
+  "orba-00"
+  "orba-01"
+  "orba-02"
+  "orba-03"
+  "orba-04"
+  "orba-05"
+  "orba-06"
+  "orba-07"
+  "orba-08"
+  "orba-09"
   "orba-10"
   "orba-11"
   "orba-12"
@@ -155,17 +155,15 @@
   (none)
   )
 
-(defun orb-placer-list-maintenace ()
-  (let ((debug-menu-active? (and (-> *debug-menu-context* is-active)
-                                 (string= (-> *debug-menu-context* sel-menu (- (-> *debug-menu-context* sel-length) 1) name) "Select Orb"))))
-    ;; if debug menu inactive we'll refresh the list while we're iterating
-    (when (not debug-menu-active?) (debug-menu-remove-all-items *orb-placer-select-menu*))
+(defun orb-placer-list-maintenace ((update-debug-list? symbol))
+  (when update-debug-list? (debug-menu-remove-all-items *orb-placer-select-menu*))
 
-    (dotimes (i *orb-placer-count*)
-      (let ((orb-handle (-> *orb-placer-orbs* i))
-            (is-selected? (= i *orb-placer-selected-idx*)))
-        (when (and (nonzero? orb-handle) (handle->process orb-handle))
-          (let ((orb-proc (the skill (handle->process orb-handle))))
+  (dotimes (i *orb-placer-count*)
+    (let ((orb-handle (-> *orb-placer-orbs* i))
+          (is-selected? (and *orb-placer-enabled?* (= i *orb-placer-selected-idx*))))
+      (when (and (nonzero? orb-handle) (handle->process orb-handle))
+        (let ((orb-proc (the skill (handle->process orb-handle))))
+          (when (and orb-proc (!= (-> orb-proc next-state name) 'dead-state))
             ;; ensure correct highlighting
             (orb-placer-highlight 
               orb-proc
@@ -182,7 +180,7 @@
               (new 'static 'vector2h :y 16)
               )
 
-            (when (not debug-menu-active?)
+            (when update-debug-list?
               ;; append to debug menu list
               (let ((orb-menu-item (new-dm-flag (-> *orb-placer-temp-strs* i) i dm-orb-placer-select-func)))
                 (debug-menu-append-item *orb-placer-select-menu* orb-menu-item)
@@ -195,10 +193,10 @@
           )
         )
       )
+    )
 
-    (when (not debug-menu-active?)
-      (set! (-> *orb-placer-select-menu* items) (sort (-> *orb-placer-select-menu* items) debug-menu-node<?))
-      )
+  (when update-debug-list?
+    (set! (-> *orb-placer-select-menu* items) (sort (-> *orb-placer-select-menu* items) debug-menu-node<?))
     )
   (none)
   )
@@ -234,7 +232,7 @@
           (set! *orb-placer-selected-idx* *orb-placer-count*)
           (orb-placer-highlight (the skill (handle->process orb-handle)) #t)
           (+! *orb-placer-count* 1)
-          (orb-placer-list-maintenace)
+          (orb-placer-list-maintenace #t)
           )
         )
       )
@@ -246,7 +244,7 @@
   (when (and (>= *orb-placer-selected-idx* 0) (nonzero? (-> *orb-placer-orbs* *orb-placer-selected-idx*)))
     (let ((orb (the skill (handle->process (-> *orb-placer-orbs* *orb-placer-selected-idx*)))))
       (when orb
-        (format 0 " ~m ~m ~m~%" (-> orb base x) (-> orb base y) (-> orb base z))
+        (format 0 " ~m, ~m, ~m~%" (-> orb base x) (-> orb base y) (-> orb base z))
         )
       )
     )
@@ -259,7 +257,7 @@
     (let ((orb-handle (-> *orb-placer-orbs* i)))
       (when (and (nonzero? orb-handle) (handle->process orb-handle))
         (let ((orb (the skill (handle->process orb-handle))))
-          (format 0 " ~m ~m ~m~%" (-> orb base x) (-> orb base y) (-> orb base z))
+          (format 0 " ~m, ~m, ~m~%" (-> orb base x) (-> orb base y) (-> orb base z))
           )
         )
       )
@@ -272,7 +270,7 @@
 (define *orb-offset-tmp-vec* (new 'global 'vector))
 (defun orb-placer-maintenance ()
   (when *debug-segment*
-    (orb-placer-list-maintenace)
+    (orb-placer-list-maintenace #f)
 
     (when (and (not (paused?)) *orb-placer-enabled?*)
       (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
@@ -345,7 +343,7 @@
                           ;; camera magic
                           (vector-matrix*! vec vec (matrix-local->world #t #f))
                           (vector-flatten! vec vec (-> *camera* local-down))
-                          (vector-float*! vec vec (* (-> pad stick0-speed) 1024.0))  ;; TODO scale?
+                          (vector-float*! vec vec (* (-> pad stick0-speed) 512.0))
                           
                           ;; actually move orb
                           (vector+! (-> orb root trans) (-> orb root trans) vec)
@@ -353,23 +351,40 @@
                           )
                         
 
-                        ;; Y (up/down)
                         (cond
+                          ;; fine tune/axis-aligned X/Z
+                          ((cpad-pressed? 0 down)
+                            (+! (-> orb root trans z) (meters 0.03))
+                            (+! (-> orb base z) (meters 0.03))
+                            )
+                          ((cpad-pressed? 0 up)
+                            (+! (-> orb root trans z) (meters -0.03))
+                            (+! (-> orb base z) (meters -0.03))
+                            )
+                          ((cpad-pressed? 0 right)
+                            (+! (-> orb root trans x) (meters 0.03))
+                            (+! (-> orb base x) (meters 0.03))
+                            )
+                          ((cpad-pressed? 0 left)
+                            (+! (-> orb root trans x) (meters -0.03))
+                            (+! (-> orb base x) (meters -0.03))
+                            )
+                          ;; Y (up/down)
                           ((cpad-hold? 0 r2)
-                            (+! (-> orb root trans y) (meters 0.05))
-                            (+! (-> orb base y) (meters 0.05))
+                            (+! (-> orb root trans y) (meters 0.08))
+                            (+! (-> orb base y) (meters 0.08))
                             )
                           ((cpad-hold? 0 l2)
-                            (+! (-> orb root trans y) (meters -0.05))
-                            (+! (-> orb base y) (meters -0.05))
+                            (+! (-> orb root trans y) (meters -0.08))
+                            (+! (-> orb base y) (meters -0.08))
                             )
                           ((cpad-pressed? 0 r1)
-                            (+! (-> orb root trans y) (meters 2.0))
-                            (+! (-> orb base y) (meters 2.0))
+                            (+! (-> orb root trans y) (meters 0.03))
+                            (+! (-> orb base y) (meters 0.03))
                             )
                           ((cpad-pressed? 0 l1)
-                            (+! (-> orb root trans y) (meters -2.0))
-                            (+! (-> orb base y) (meters -2.0))
+                            (+! (-> orb root trans y) (meters -0.03))
+                            (+! (-> orb base y) (meters -0.03))
                             )
                           )
                         )
