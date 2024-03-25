@@ -1454,7 +1454,7 @@
           (safe-kill-crate-buzzer (-> remote-player inter_parent) (or (= (-> remote-player inter_cleanup) 0) (name= (-> remote-player inter_name) "buzzer-last")) (= (-> remote-player inter_cleanup) 1))
           )
         )
-      (((interaction-type crate-normal) (interaction-type crate-iron) (interaction-type crate-steel) (interaction-type crate-darkeco))
+      (((interaction-type crate))
         (safe-break-crate (-> remote-player inter_name))
         )
       (((interaction-type fish))

@@ -48,10 +48,7 @@
   (game-task)
   (enemy-death)
   (buzzer)
-  (crate-normal)
-  (crate-iron)
-  (crate-steel)
-  (crate-darkeco)
+  (crate)
   (fish)
   (periscope)
   (snow-bumper)
@@ -59,6 +56,14 @@
   (lpc-chamber)
   (swingpole)
   (boss-phase)
+  )
+
+(defenum crate-type
+  :type int32
+  (crate-normal)
+  (crate-iron)
+  (crate-steel)
+  (crate-darkeco)
   )
   
 (defenum run-category

@@ -250,13 +250,13 @@
       (none)
       )
 
-    (defun add-crate-to-interaction-buffer ((type interaction-type) (amount float) (proc process))
+    (defun add-crate-to-interaction-buffer ((type crate-type) (amount float) (proc process))
       (dotimes (idx (-> *interaction-update-buffer* length))
         (when (= (-> *interaction-update-buffer* idx has_update?) #f)
 
-          (set! (-> *interaction-update-buffer* idx type) type)
+          (set! (-> *interaction-update-buffer* idx type) (interaction-type crate))
           (set! (-> *interaction-update-buffer* idx amount) amount)
-          (set! (-> *interaction-update-buffer* idx status) 0.0)
+          (set! (-> *interaction-update-buffer* idx status) (the float type))
           (set! (-> *interaction-update-buffer* idx ename) (the-as string (-> proc name)))
           (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> *level* level (-> (the-as process-drawable proc) draw level-index) name)))
           (set! (-> *interaction-update-buffer* idx parent) (symbol->string (-> (ppointer->process (-> proc parent)) name)))
@@ -543,7 +543,7 @@
       (none)
       )
 
-    (defun runs-on-crate-break ((type interaction-type) (amount float) (proc process))
+    (defun runs-on-crate-break ((type crate-type) (amount float) (proc process))
       (add-crate-to-interaction-buffer type amount proc)
 
       (none)
