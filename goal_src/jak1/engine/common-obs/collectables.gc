@@ -1111,6 +1111,7 @@
     )
   )
 
+(define-extern orb-placer-list-maintenace (function symbol none))
 (defstate pickup (money)
   :virtual #t
   :code (behavior ((arg0 object) (arg1 handle))
@@ -1123,6 +1124,12 @@
     (process-entity-status! self (entity-perm-status dead) #t)
     (runs-on-orb-pickup (ppointer->process (-> self parent)))  ;; trigger hook for mod base
     (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* money))))
+    )
+  :exit (behavior ()
+    ;; refresh orb-placer list in debug mode
+    (when *debug-segment*
+      (orb-placer-list-maintenace #t)
+      )
     )
   )
 

@@ -29,6 +29,11 @@
         (input-display-off)
         )
 
+      ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
+      (when *debug-segment*
+        (orb-placer-maintenance)
+        )
+
       (none)
       )
 

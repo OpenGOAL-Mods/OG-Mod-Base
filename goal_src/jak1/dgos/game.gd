@@ -348,7 +348,9 @@
   "hud-classes-pc.o" ;; added
   "mod-settings.o" ;; added
   "mod-common-functions.o" ;; added
+  "orb-placer.o" ;; added
   "mod-custom-code.o" ;; added
+  "mod-debug.o" ;; added
   ;; keep zoomer stuff loaded
   "target-racer-h.o"
   "racer-part.o"

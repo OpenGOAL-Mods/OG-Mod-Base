@@ -274,7 +274,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defmacro pd-pos-m (procname)
   `(let* ((obj (the process-drawable (process-by-ename ,procname)))
           (vec (-> obj root trans)))
-    (format 0 "~m ~m ~m~%" (-> vec x) (-> vec y) (-> vec z) 4096.0)
+    (format 0 "~m ~m ~m~%" (-> vec x) (-> vec y) (-> vec z))
     (none)
     )
   )
@@ -441,6 +441,29 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (draw-xyz jak 0.0 3.0 3.0)
 )
 
+;; Helper functions for spawning orbs (used by orb placer in debug mode)
 
+(defun spawn-money ((vec vector) (amount float) (bob? symbol))
+  (let ((fax (new 'static 'fact-info)))
+    (set! (-> fax pickup-type) (pickup-type money))
+    (set! (-> fax pickup-amount) amount)
+    (set! (-> fax pickup-spawn-amount) amount)
+    (set! (-> fax fade-time) (the-as time-frame 0))
+    
+    (let ((proc (the money (ppointer->process (birth-pickup-at-point vec (pickup-type money) amount #t *active-pool* fax)))))
+      (when bob? 
+        (set! (-> proc bob-amount) 1024.0)
+        )
+      (format 0 "spawned ~A~%" proc)
+      ;; return handle to the orb
+      (process->handle proc)
+      )
+    )
+  )
 
-
+(defun spawn-money-meters ((x float) (y float) (z float) (amount float) (bob? symbol))
+  (let ((vec (new 'stack-no-clear 'vector)))
+    (set-vector-meters! vec x y z)
+    (spawn-money vec amount bob?)
+    )
+  )
