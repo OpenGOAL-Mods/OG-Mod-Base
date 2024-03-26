@@ -166,7 +166,7 @@
       (dotimes (team-id MAX_TEAM_COUNT)
         (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
           (when (and
-                (is-interactive? tgt-idx)
+                (not (is-inactive? tgt-idx))
                 (= (-> *multiplayer-info* players tgt-idx team_id) team-id)
               )
             (case *player-ui-option*

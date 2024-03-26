@@ -89,6 +89,14 @@
   (= (-> *multiplayer-info* players tgt-idx mp_state) (mp-tgt-state mp-tgt-interactive))
   )
 
+(defun is-active? ((tgt-idx int))
+  (= (-> *multiplayer-info* players tgt-idx mp_state) (mp-tgt-state mp-tgt-active))
+  )
+
+(defun is-inactive? ((tgt-idx int))
+  (= (-> *multiplayer-info* players tgt-idx mp_state) (mp-tgt-state mp-tgt-disconnected))
+  )
+
 (defun is-teammate? ((tgt-idx int))
   (= (-> *multiplayer-info* players tgt-idx team_id) (-> *self-player-info* team_id))
   )
