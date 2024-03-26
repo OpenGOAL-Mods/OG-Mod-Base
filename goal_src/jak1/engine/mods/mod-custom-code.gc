@@ -406,7 +406,11 @@
           (set! *allow-cell-pickup?* #t)
           (set! *allow-final-boss?* #t)
           )
-        (((teamrun-command reset-game)) (initialize! *game-info* 'game (the-as game-save #f) (the-as string #f)))
+        (((teamrun-command reset-game)) 
+          (set! (-> *game-info* mode) 'debug) ;;prevent jak from respawning
+          (initialize! *game-info* 'game (the-as game-save #f) (the-as string #f))
+          (set! (-> *game-info* mode) 'play)
+          )
         (((teamrun-command reset-actors)) (reset-actors 'life))
         (((teamrun-command trip)) (send-event *target* 'loading))
         (((teamrun-command target-grab)) (process-grab? *target*))
