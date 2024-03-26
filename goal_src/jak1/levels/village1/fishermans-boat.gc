@@ -917,6 +917,9 @@
       (set! (-> self anchored) #t)
       (set! (-> self propeller enable) #t)
       (fishermans-boat-play-sounds)
+      (if (and (not (target-in-level-sphere? "village1")) (has-camera-type? "cam-stick")) 
+        (camera-change-to (the-as string 'base) 300 #f)
+        )
       )
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (none)
@@ -1057,6 +1060,9 @@
       (if (= (-> *game-info* current-continue level) 'misty)
         (load-state-want-display-level 'village1 'special)
         (load-state-want-display-level 'misty 'special)
+        )
+      (if (and (not (target-in-level-sphere? "misty")) (has-camera-type? "cam-stick")) 
+        (camera-change-to (the-as string 'base) 300 #f)
         )
       (set! (-> self waiting-for-player) #t)
       (set! (-> self ignition) #f)
@@ -1520,6 +1526,16 @@
     (none)
     )
   :code (behavior ()
+    (if (and (not *enable-ingame-cutscenes?*) (= (-> self root-overlay riders num-riders) 0)) ;;remove loads from animation if main target is not on the boat
+      (set! (-> self anim) (new 'static 'spool-anim
+                            :name "fishermans-boat-ride-to-misty"
+                            :index 15
+                            :parts 3
+                            :command-list '()
+                            )
+        )
+      )
+
     (set! (-> self propeller enable) #f)
     (when (not *enable-ingame-cutscenes?*)
       (let ((gp-1 (-> *display* base-frame-counter)))
@@ -1678,6 +1694,16 @@
       )
     )
   :code (behavior ()
+    (if (and (not *enable-ingame-cutscenes?*) (= (-> self root-overlay riders num-riders) 0)) ;;remove loads from animation if main target is not on the boat
+      (set! (-> self anim) (new 'static 'spool-anim
+                              :name "fishermans-boat-ride-to-village1"
+                              :index 16
+                              :parts 3
+                              :command-list '()
+                              )
+        )
+      )
+      
     (set! (-> self propeller enable) #f)
     (set! (-> self evilbro) (the-as handle #f))
     (set! (-> self evilsis) (the-as handle #f))
