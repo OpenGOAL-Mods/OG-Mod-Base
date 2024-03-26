@@ -492,7 +492,7 @@
             (let ((p (-> *multiplayer-info* players idx))
                   (obj (the process-drawable (handle->process (-> *remote-targets* idx)))))
               (when obj
-                (if (and (is-interactive? idx) (or (= (-> p team_id) (-> *self-player-info* team_id)) (= (-> *multiplayer-info* game free_for_all) 1)))
+                (if (is-interactive? idx)
                   (handle-remote-interaction p idx)
                   )
                 (update-actor-position obj p)
