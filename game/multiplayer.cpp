@@ -421,6 +421,7 @@ void send_position_update() {
         {"debugModeActive", gTeamrunInfo->debug_mode_active},
         {"justSpawned", gTeamrunInfo->just_spawned},
         {"justLoaded", gTeamrunInfo->just_loaded},
+        {"justSaved", gTeamrunInfo->just_saved},
         {"cellCount", gTeamrunInfo->cell_count},
         {"buzzerCount", gTeamrunInfo->buzzer_count},
         {"orbCount", gTeamrunInfo->money_count},

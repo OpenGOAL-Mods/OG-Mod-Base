@@ -55,6 +55,8 @@
 
     (defun runs-after-save ()
       (set! *player-can-load* #t)
+      (set! (-> *teamrun-info* just_saved?) 1)
+      (update-state)
       (none)
     )
 
@@ -466,6 +468,7 @@
               (set! (-> *teamrun-info* has_state_update?) 0)
               (set! (-> *teamrun-levels-info* has_level_update?) 0)
               (set! (-> *teamrun-info* just_loaded?) 0)
+              (set! (-> *teamrun-info* just_saved?) 0)
               (when (!= (-> *teamrun-info* just_spawned?) 0)
                 (set! (-> *teamrun-info* just_spawned?) 0)
                 (runs-after-jak-spawn)
