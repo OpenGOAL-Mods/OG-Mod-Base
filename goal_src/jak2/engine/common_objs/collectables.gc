@@ -1486,6 +1486,7 @@ This commonly includes things such as:
     )
   )
 
+(define-extern orb-placer-list-maintenace (function symbol none))
 (defstate pickup (money)
   :virtual #t
   :code (behavior ((arg0 symbol) (arg1 handle))
