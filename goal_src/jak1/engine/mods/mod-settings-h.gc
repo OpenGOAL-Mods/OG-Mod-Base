@@ -120,6 +120,8 @@
   (free-cam-enter)
   (free-cam-exit)
   (on-remote-level-update)
+  (enable-debug-mode)
+  (disable-debug-mode)
 )
 
 (deftype remote-player-info (structure)
@@ -177,6 +179,7 @@
   
 (deftype multiplayer-info (structure)
  ((teamrun_command      teamrun-command)
+  (force_continue       string)
   (client_version       string)
   (game_version         string)
   (player_num           int32)
