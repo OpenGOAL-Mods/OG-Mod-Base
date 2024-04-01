@@ -77,6 +77,7 @@
 
     (defun runs-on-new-checkpoint ()
       (when (and *target* (!= (-> (level-get-target-inside *level*) name) 'title))
+        (set! (-> *teamrun-info* current_continue) (-> *game-info* current-continue name))
         (update-state)
         (set! *player-can-load* #f)
 
@@ -450,6 +451,10 @@
 
         (check-set-interaction-from-buffer)
 
+        (when (not (string= (-> *multiplayer-info* force_continue) ""))
+          (start 'play (get-continue-by-name *game-info* (-> *multiplayer-info* force_continue)))
+          (set! (-> *multiplayer-info* force_continue) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+          )
         (if (!= (-> *multiplayer-info* teamrun_command) (teamrun-command none)) (execute-teamrun-command))
 
         ;; on player movement

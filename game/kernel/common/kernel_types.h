@@ -95,6 +95,7 @@ struct TeamrunPlayerInfo {
   s32 just_spawned;
   s32 just_loaded;
   s32 just_saved;
+  s32 current_continue;
   int cell_count;
   int buzzer_count;
   int money_count;
@@ -128,6 +129,7 @@ const int MAX_INTERACTION_BUFFER_COUNT = 10;
 
 struct MultiplayerInfo {
   u32 teamrun_command;
+  u32 force_continue;       // string (basic)
   u32 client_version;       // string (basic)
   u32 game_version;         // string (basic)
   s32 player_num;

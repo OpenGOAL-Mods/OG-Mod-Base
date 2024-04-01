@@ -167,6 +167,9 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
     } else if (section.key().compare("version") == 0) {
       std::string buildVersion = section.value();
       strncpy(Ptr<String>(gMultiplayerInfo->client_version).c()->data(), buildVersion.c_str(), INTERACTION_STRING_LEN);
+    } else if (section.key().compare("forceContinue") == 0) {
+      std::string continuePoint = section.value();
+      strncpy(Ptr<String>(gMultiplayerInfo->force_continue).c()->data(), continuePoint.c_str(), INTERACTION_STRING_LEN);
     } else if (section.key().compare("username") == 0) {
       std::string username = section.value();
       strncpy(Ptr<String>(gSelfPlayerInfo->username).c()->data(), username.c_str(), MAX_USERNAME_LEN);
@@ -422,6 +425,7 @@ void send_position_update() {
         {"justSpawned", gTeamrunInfo->just_spawned},
         {"justLoaded", gTeamrunInfo->just_loaded},
         {"justSaved", gTeamrunInfo->just_saved},
+        {"currentCheckpoint", Ptr<String>(gTeamrunInfo->current_continue).c()->data()},
         {"cellCount", gTeamrunInfo->cell_count},
         {"buzzerCount", gTeamrunInfo->buzzer_count},
         {"orbCount", gTeamrunInfo->money_count},
