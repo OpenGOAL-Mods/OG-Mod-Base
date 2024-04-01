@@ -1,4 +1,4 @@
-name: 🏭 Cut Mod Release
+name: 🏭 Draft Release
 
 on:
   workflow_dispatch:
@@ -13,20 +13,23 @@ on:
           - minor
           - major
 
-permissions:
-  contents: write
-
 jobs:
-  cut_release:
-    name: "Cut Release"
-    uses: open-goal/mod-bundling-tools/.github/workflows/mod-bundler.yml@v1
-    with:
-      semverBump: ${{ inputs.bump }}
-      metadataName: "Test Mod Bundle"
-      metadataDescription: "This is a test mod bundle. 2"
-      metadataSupportedGames: "jak1"
-      metadataAuthors: "barg,vaser"
-      metadataTags: "rng,gameplay-mod"
-      metadataWebsiteUrl: "https://www.example.com/this/is/optional"
-    secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}
+  cut-release:
+    runs-on: ubuntu-latest
+    steps:
+      # Docs - https://github.com/mathieudutour/github-tag-action
+      # Workflows cannot trigger other workflows implicitly
+      # - https://github.community/t/github-actions-workflow-not-triggering-with-tag-push/17053/7
+      - name: Bump Version and Push Tag
+        if: github.repository == 'JoKronk/teamruns-jak-project'
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.BOT_PAT }}
+          tag_prefix: v
+          default_bump: ${{ github.event.inputs.bump }}
+
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_PAT }}
+        run: gh release create ${{ steps.tag_version.outputs.new_tag }} --generate-notes --draft --repo JoKronk/teamruns-jak-project

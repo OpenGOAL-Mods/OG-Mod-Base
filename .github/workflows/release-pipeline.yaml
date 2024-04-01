@@ -38,7 +38,7 @@ jobs:
 
   # Upload the Artifacts
   upload_artifacts:
-    if: github.repository == 'open-goal/jak-project'
+    if: github.repository == 'JoKronk/teamruns-jak-project'
     needs:
       - build_windows_clang
       - build_linux_clang
@@ -46,12 +46,12 @@ jobs:
     name: "Upload Artifacts"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Prepare Artifact Folder
         run: mkdir -p ./ci-artifacts/final
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         name: Download all Artifacts
         with:
           path: ./ci-artifacts/
@@ -94,11 +94,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG_VAL=$(echo ${{ github.REF }} | awk -F'refs/tags/' '{print $2}')
-          gh release upload "${TAG_VAL}" ${{ github.WORKSPACE }}/ci-artifacts/final/* --repo open-goal/jak-project --clobber
+          gh release upload "${TAG_VAL}" ${{ github.WORKSPACE }}/ci-artifacts/final/* --repo JoKronk/teamruns-jak-project --clobber
 
       - name: Publish Release
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_PAT }}
         run: |
           TAG_VAL=$(echo ${{ github.REF }} | awk -F'refs/tags/' '{print $2}')
-          gh release edit ${TAG_VAL} --draft=false --repo open-goal/jak-project
+          gh release edit ${TAG_VAL} --draft=false --repo JoKronk/teamruns-jak-project
