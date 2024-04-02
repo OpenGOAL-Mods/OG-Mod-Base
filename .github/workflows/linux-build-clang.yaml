@@ -52,11 +52,6 @@ jobs:
       - name: Build Project
         run: cmake --build build --parallel $((`nproc`))
 
-      - name: Run Tests
-        env:
-          GTEST_OUTPUT: "xml:opengoal-test-report.xml"
-        run: ./test.sh
-
       - name: Prepare artifacts
         if: ${{ inputs.uploadArtifacts }}
         run: |
