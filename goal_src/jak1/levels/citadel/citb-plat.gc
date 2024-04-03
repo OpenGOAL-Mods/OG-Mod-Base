@@ -5,6 +5,8 @@
 ;; name in dgo: citb-plat
 ;; dgos: CIT, L1
 
+(define-extern process-close? (function process-drawable float basic))
+
 ;; DECOMP BEGINS
 
 
@@ -1075,7 +1077,9 @@
             (t9-1)
             )
         )
-      (citb-exit-plat-move-player gp-0)
+      (if (process-close? (the-as process-drawable self) 110000.0)
+        (citb-exit-plat-move-player gp-0)
+        )
       )
     (none)
     )
@@ -1092,7 +1096,9 @@
             (t9-1)
             )
         )
-      (citb-exit-plat-move-player gp-0)
+      (if (process-close? (the-as process-drawable self) 110000.0)
+        (citb-exit-plat-move-player gp-0)
+        )
       )
     (none)
     )

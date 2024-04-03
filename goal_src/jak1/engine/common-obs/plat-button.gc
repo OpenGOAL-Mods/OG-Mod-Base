@@ -6,6 +6,7 @@
 ;; dgos: GAME, COMMON, L1
 
 (define-extern target-is-interactive? (function target symbol))
+(define-extern process-close? (function process-drawable float basic))
 (define-extern *enable-ingame-cutscenes?* symbol)
 
 ;; DECOMP BEGINS
@@ -180,8 +181,10 @@
   :enter (behavior ()
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (process-entity-status! self (entity-perm-status bit-3) #t)
-    (plat-button-camera-on)
-    (set-setting! 'allow-look-around #f 0.0 0)
+    (when (process-close? (the-as process-drawable self) 110000.0) ;; only place where this really affects jak (that I noticed) is citadel elevator
+      (plat-button-camera-on)
+      (set-setting! 'allow-look-around #f 0.0 0)
+      )
     (none)
     )
   :exit (behavior ()
@@ -254,8 +257,10 @@
   :enter (behavior ()
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (process-entity-status! self (entity-perm-status bit-3) #t)
-    (plat-button-camera-on)
-    (set-setting! 'allow-look-around #f 0.0 0)
+    (when (process-close? (the-as process-drawable self) 110000.0) ;; only place where this really affects jak (that I noticed) is citadel elevator
+      (plat-button-camera-on)
+      (set-setting! 'allow-look-around #f 0.0 0)
+      )
     (none)
     )
   :exit (behavior ()

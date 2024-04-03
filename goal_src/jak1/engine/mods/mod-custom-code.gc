@@ -458,13 +458,14 @@
         (if (!= (-> *multiplayer-info* teamrun_command) (teamrun-command none)) (execute-teamrun-command))
 
         ;; on player movement
-        (when (and (not *in-finalboss-cutscene?*)
-          (or *has-none-position-update?*
-          (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
-          (!= (-> *self-player-info* trans_y) (-> *target* root trans y))
-          (!= (-> *self-player-info* trans_z) (-> *target* root trans z))
-          (!= (-> *self-player-info* tgt_state) (-> *target* state name))
-        ))
+        (when (or *has-none-position-update?*
+          (and (not *in-finalboss-cutscene?*)
+            (or
+            (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
+            (!= (-> *self-player-info* trans_y) (-> *target* root trans y))
+            (!= (-> *self-player-info* trans_z) (-> *target* root trans z))
+            (!= (-> *self-player-info* tgt_state) (-> *target* state name))
+        )))
 
             ;; update this player's position
             (update-self-multiplayer-info)
