@@ -421,6 +421,7 @@ void send_position_update() {
 
   if (gTeamrunInfo->has_state_update) {
     json_payload["state"] = {
+        {"gameVersion", build_revision().c_str()},
         {"debugModeActive", gTeamrunInfo->debug_mode_active},
         {"justSpawned", gTeamrunInfo->just_spawned},
         {"justLoaded", gTeamrunInfo->just_loaded},
