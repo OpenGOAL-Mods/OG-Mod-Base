@@ -181,7 +181,6 @@
  ((teamrun_command      teamrun-command)
   (force_continue       string)
   (client_version       string)
-  (game_version         string)
   (player_num           int32)
   (players              remote-player-info MAX_MULTIPLAYER_COUNT :inline)
   (game                 game-mode :inline)

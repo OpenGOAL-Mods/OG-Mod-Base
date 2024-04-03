@@ -131,7 +131,6 @@ struct MultiplayerInfo {
   u32 teamrun_command;
   u32 force_continue;       // string (basic)
   u32 client_version;       // string (basic)
-  u32 game_version;         // string (basic)
   s32 player_num;
   RemotePlayerInfo players[MAX_MULTIPLAYER_COUNT];
   GameMode game;
