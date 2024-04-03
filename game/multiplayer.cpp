@@ -93,18 +93,16 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
         }
       }
     } else if (section.key().compare("selfInfo") == 0) {
+        RemotePlayerInfo* player = &(gMultiplayerInfo->players[gMultiplayerInfo->player_num]);
       for (const auto& infoField : section.value().items()) {
         if (infoField.key().compare("teamId") == 0) {
           gSelfPlayerInfo->team_id = infoField.value();
-          RemotePlayerInfo* player = &(gMultiplayerInfo->players[gMultiplayerInfo->player_num]);
           player->team_id = infoField.value();
         } else if (infoField.key().compare("playerIndex") == 0) {
           gSelfPlayerInfo->player_index = infoField.value();
-          RemotePlayerInfo* player = &(gMultiplayerInfo->players[gMultiplayerInfo->player_num]);
           player->player_index = infoField.value();
         } else if (infoField.key().compare("cellsCollected") == 0) {
           gSelfPlayerInfo->cells_collected = infoField.value();
-          RemotePlayerInfo* player = &(gMultiplayerInfo->players[gMultiplayerInfo->player_num]);
           player->cells_collected = infoField.value();
         }
       }
@@ -187,7 +185,7 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
               std::string username = field.value();
               strncpy(Ptr<String>(player->username).c()->data(), username.c_str(), MAX_USERNAME_LEN);
             } else if (field.key().compare("color") == 0) {
-              player->color = field.value().get<float>();
+              player->color = field.value();
             } else if (field.key().compare("transX") == 0) {
               player->trans_x = field.value().get<float>();
             } else if (field.key().compare("transY") == 0) {
@@ -207,7 +205,7 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
             } else if (field.key().compare("tgtState") == 0) {
               player->tgt_state = field.value();
             } else if (field.key().compare("mpState") == 0) {
-              player->mp_state = field.value().get<float>();
+              player->mp_state = field.value();
             } else if (field.key().compare("currentLevel") == 0) {
               std::string levelName = field.value();
               strncpy(Ptr<String>(player->current_level).c()->data(), levelName.c_str(), INTERACTION_STRING_LEN);
