@@ -89,7 +89,10 @@
     ((-> (method-of-type process-taskable idle) enter))
     (case (get-task-status (game-task village4-button))
       (((task-status need-reward-speech))
-       (send-event self 'play-anim)
+        (if *enable-ingame-cutscenes?*
+          (send-event self 'play-anim)
+          (close-specific-task! (game-task village4-button) (task-status need-reward-speech))
+          )
        )
       )
     (none)

@@ -221,6 +221,7 @@
             (or (= (get-task-status (game-task beach-ecorocks)) (task-status need-hint))
                 (= (get-task-status (game-task beach-ecorocks)) (task-status need-introduction))
                 )
+            *enable-ingame-cutscenes?*
             (#when PC_PORT (not (is-speedrun-category? 'il-village1)))  ;; modified for PC port - skip green sage cutscene in Sandover IL speedrun
             )
        (let ((s5-4 (entity-by-name "sage-23")))
