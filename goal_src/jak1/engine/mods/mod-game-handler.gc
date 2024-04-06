@@ -112,7 +112,7 @@
 
 (defun current-level-is-zoomer-restricted? ()
   (let ((level-name (symbol->string (-> (level-get-target-inside *level*) name))))
-    (case level-name
+    (cond
       ((string= level-name "firecanyon")
         (not (-> *zoomer-level-unlocks* fire-canyon))
         )
@@ -131,7 +131,7 @@
 
 (defun unlock-zoomer-in-current-level ()
   (let ((level-name (symbol->string (-> (level-get-target-inside *level*) name))))
-    (case level-name
+    (cond
       ((string= level-name "firecanyon")
         (set! (-> *zoomer-level-unlocks* fire-canyon) #t)
         )
