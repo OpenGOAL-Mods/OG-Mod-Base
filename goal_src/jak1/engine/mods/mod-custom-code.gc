@@ -176,6 +176,8 @@
 
           (case kind
             (((pickup-type money) (pickup-type buzzer) (pickup-type fuel-cell))
+              (update-state)
+              
               (if (or (name= (-> proc name) "fuel-cell") (name= (-> proc name) "buzzer"))
                 (set! (-> *interaction-update-buffer* idx ename) (symbol->string (-> proc name)))
                 (set! (-> *interaction-update-buffer* idx ename) (the-as string (-> proc name)))
