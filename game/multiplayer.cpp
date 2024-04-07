@@ -92,6 +92,30 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
           gMultiplayerInfo->game.enable_pvp = gameField.value();
         }
       }
+    } else if (section.key().compare("timer") == 0) {
+      for (const auto& timerField : section.value().items()) {
+        if (timerField.key().compare("hours") == 0) {
+          gMultiplayerInfo->timer.hours = timerField.value();
+        } else if (timerField.key().compare("minutes") == 0) {
+          gMultiplayerInfo->timer.minutes = timerField.value();
+        } else if (timerField.key().compare("seconds") == 0) {
+          gMultiplayerInfo->timer.seconds = timerField.value();
+        } else if (timerField.key().compare("milliseconds") == 0) {
+          gMultiplayerInfo->timer.milliseconds = timerField.value();
+        } else if (timerField.key().compare("splitTime") == 0) {
+          std::string splitTime = timerField.value();
+          strncpy(Ptr<String>(gMultiplayerInfo->timer.split_time).c()->data(), splitTime.c_str(), INTERACTION_STRING_LEN);
+        } else if (timerField.key().compare("splitName") == 0) {
+          std::string splitName = timerField.value();
+          strncpy(Ptr<String>(gMultiplayerInfo->timer.split_name).c()->data(), splitName.c_str(), INTERACTION_STRING_LEN);
+        } else if (timerField.key().compare("splitPlayer") == 0) {
+          std::string splitPlayer = timerField.value();
+          strncpy(Ptr<String>(gMultiplayerInfo->timer.split_player).c()->data(), splitPlayer.c_str(), INTERACTION_STRING_LEN);
+        } else if (timerField.key().compare("splitTimesave") == 0) {
+          std::string splitTimesave = timerField.value();
+          strncpy(Ptr<String>(gMultiplayerInfo->timer.split_timesave).c()->data(), splitTimesave.c_str(), INTERACTION_STRING_LEN);
+        }
+      }
     } else if (section.key().compare("selfInfo") == 0) {
         RemotePlayerInfo* player = &(gMultiplayerInfo->players[gMultiplayerInfo->player_num]);
       for (const auto& infoField : section.value().items()) {

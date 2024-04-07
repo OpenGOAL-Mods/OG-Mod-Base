@@ -6,9 +6,15 @@
     ;; dgos: TODO
 
 
-(define *team-ui-option* (team-ui-option own-team))
-(define *player-ui-option* (player-ui-option minimal))
+(define *selector-option* (selector-option teams))
+(define *team-info* (info-option minimal))
+(define *timer-info* (info-option minimal))
+(define *splits-info* (info-option minimal))
+
 (define *ui-text* (new 'global 'string 128 ""))
+(define *timer-text* (new 'global 'string 128 ""))
+(define *split-text* (new 'global 'string 128 ""))
+(define *selector-text* (new 'global 'string 128 ""))
 
 (defun get-text-3d ()
   "Allocate a debug text 3d from the list."
@@ -136,53 +142,32 @@
 
 (defun render-player-ui ((dma-buf dma-buffer))
   (clear *ui-text*)
-  (case *team-ui-option*
-    (((team-ui-option own-team))
+  (case *team-info*
+    (((info-option minimal))
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
         (when (and
               (is-interactive? tgt-idx)
               (is-teammate? tgt-idx)
             )
-          (case *player-ui-option*
-            (((player-ui-option minimal))
-              (format *ui-text* "~S (~S)~%" 
-                (-> *multiplayer-info* players tgt-idx username)
-                (level-name->display-name (-> *multiplayer-info* players tgt-idx current_level))
-                )
-              )
-            (((player-ui-option full))
-              (format *ui-text* "~S (~S) Cells: ~d~%" 
-                (-> *multiplayer-info* players tgt-idx username)
-                (level-name->display-name (-> *multiplayer-info* players tgt-idx current_level))
-                (-> *multiplayer-info* players tgt-idx cells_collected)
-                )
-              )
+          (format *ui-text* "~S (~S)~%" 
+            (-> *multiplayer-info* players tgt-idx username)
+            (level-name->display-name (-> *multiplayer-info* players tgt-idx current_level))
             )
           )
         )
       (draw-string-xy *ui-text* dma-buf 5 48 (font-color white) (font-flags shadow kerning))
       )
-    (((team-ui-option all-teams))
+    (((info-option full))
       (dotimes (team-id MAX_TEAM_COUNT)
         (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
           (when (and
                 (not (is-inactive? tgt-idx))
                 (= (-> *multiplayer-info* players tgt-idx team_id) team-id)
               )
-            (case *player-ui-option*
-              (((player-ui-option minimal))
-                (format *ui-text* "~S (~S)~%" 
-                  (-> *multiplayer-info* players tgt-idx username)
-                  (level-name->display-name (-> *multiplayer-info* players tgt-idx current_level))
-                  )
-                )
-              (((player-ui-option full))
-                (format *ui-text* "~S (~S) Cells: ~d~%" 
-                  (-> *multiplayer-info* players tgt-idx username)
-                  (level-name->display-name (-> *multiplayer-info* players tgt-idx current_level))
-                  (-> *multiplayer-info* players tgt-idx cells_collected)
-                  )
-                )
+            (format *ui-text* "~S (~S) Cells: ~d~%" 
+              (-> *multiplayer-info* players tgt-idx username)
+              (level-name->display-name (-> *multiplayer-info* players tgt-idx current_level))
+              (-> *multiplayer-info* players tgt-idx cells_collected)
               )
             )
           )
@@ -191,5 +176,123 @@
       (draw-string-xy *ui-text* dma-buf 5 48 (font-color white) (font-flags shadow kerning))
       )
     )
+  (none) 
+  )
+
+(defun render-timer ((dma-buf dma-buffer))
+  (clear *timer-text*)
+
+  (let ((draw-rest #f))
+    (when (!= (-> *multiplayer-info* timer hours) 0)
+      (format *timer-text* "~d:" (-> *multiplayer-info* timer hours))
+      (set! draw-rest #t)
+      )
+
+    (when (or (!= (-> *multiplayer-info* timer hours) 0) (!= (-> *multiplayer-info* timer minutes) 0))
+      (if (> (-> *multiplayer-info* timer minutes) 9)
+        (if draw-rest
+          (format *timer-text* "~d:" (-> *multiplayer-info* timer minutes))
+          (format *timer-text* "  ~d:" (-> *multiplayer-info* timer minutes))
+          )
+        (if draw-rest
+          (format *timer-text* "0~d:" (-> *multiplayer-info* timer minutes))
+          (format *timer-text* "  ~d:" (-> *multiplayer-info* timer minutes))
+          )
+        )
+      (set! draw-rest #t)
+      )
+
+    (when (or draw-rest (!= (-> *multiplayer-info* timer seconds) 0) (!= (-> *multiplayer-info* timer milliseconds) 0))
+      (case *timer-info*
+        (((info-option full))
+          (if (> (-> *multiplayer-info* timer seconds) 9)
+            (if draw-rest
+              (format *timer-text* "~d.~d ~%" (-> *multiplayer-info* timer seconds) (-> *multiplayer-info* timer milliseconds))
+              (format *timer-text* "    ~d.~d ~%" (-> *multiplayer-info* timer seconds) (-> *multiplayer-info* timer milliseconds))
+              )
+            (if draw-rest
+              (format *timer-text* "0~d.~d ~%" (-> *multiplayer-info* timer seconds) (-> *multiplayer-info* timer milliseconds) )
+              (format *timer-text* "     ~d.~d ~%" (-> *multiplayer-info* timer seconds) (-> *multiplayer-info* timer milliseconds))
+              )
+            )
+          )
+        (((info-option minimal))
+          (if draw-rest
+            (if (> (-> *multiplayer-info* timer seconds) 9)
+              (format *timer-text* "~d ~%" (-> *multiplayer-info* timer seconds))
+              (format *timer-text* "0~d ~%" (-> *multiplayer-info* timer seconds))
+              )
+            (format *timer-text* "    ~d ~%" (-> *multiplayer-info* timer seconds))
+            )
+          )
+        )
+      (set! draw-rest #t)
+      )
+
+    (if draw-rest
+      (if (= *timer-info* (info-option full))
+        (draw-string-xy *timer-text* dma-buf 448 214 (font-color white) (font-flags shadow kerning))
+        (draw-string-xy *timer-text* dma-buf 458 214 (font-color white) (font-flags shadow kerning))
+        )
+      )
+    )
+
+  (none) 
+  )
+
+(defun render-splits ((dma-buf dma-buffer))
+  (clear *split-text*)
+
+  (case *splits-info*
+    (((info-option full))
+      (if (string= (-> *multiplayer-info* timer split_timesave) "")
+        (format *split-text* "~S ~S (~S) ~%"
+          (-> *multiplayer-info* timer split_time)
+          (-> *multiplayer-info* timer split_name)
+          (-> *multiplayer-info* timer split_player)
+          )
+        (format *split-text* "~S ~S ~S (~S) ~%"
+          (-> *multiplayer-info* timer split_time)
+          (-> *multiplayer-info* timer split_timesave)
+          (-> *multiplayer-info* timer split_name)
+          (-> *multiplayer-info* timer split_player)
+          )
+        )
+      )
+    (((info-option minimal))
+      (if (string= (-> *multiplayer-info* timer split_timesave) "")
+        (format *split-text* "~S ~S ~%"
+          (-> *multiplayer-info* timer split_time)
+          (-> *multiplayer-info* timer split_name)
+          )
+        (format *split-text* "~S ~S ~%"
+          (-> *multiplayer-info* timer split_timesave)
+          (-> *multiplayer-info* timer split_name)
+          )
+        )
+      )
+    )
+
+  (draw-string-xy *split-text* dma-buf 5 214 (font-color white) (font-flags shadow kerning))
+
+  (none) 
+  )
+
+(defun render-selector ((dma-buf dma-buffer))
+  (clear *selector-text*)
+  (format *selector-text* "V")
+
+  (case *selector-option*
+    (((selector-option teams))
+      (draw-string-xy *selector-text* dma-buf 8 38 (font-color orange) (font-flags shadow kerning))
+      )
+    (((selector-option timer))
+      (draw-string-xy *selector-text* dma-buf 492 204 (font-color orange) (font-flags shadow kerning))
+      )
+    (((selector-option splits))
+      (draw-string-xy *selector-text* dma-buf 8 204 (font-color orange) (font-flags shadow kerning))
+      )
+    )
+
   (none) 
   )

@@ -64,7 +64,7 @@
                   (-> obj first-init)
                   )
               )
-      (when (cpad-hold? 0 r2)
+      (when (and (cpad-hold? 0 r2) (not (cpad-hold? 0 l2)) (and (cpad-hold? 0 l2) (not (cpad-hold? 0 r2))))
         ;; modified for pc port
         (cond
           ((cpad-hold? 0 up)

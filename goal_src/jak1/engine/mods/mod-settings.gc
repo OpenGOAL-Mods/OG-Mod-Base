@@ -161,6 +161,20 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     )
   )
 
+(defmethod new timer-info ((allocation symbol) (type-to-make type))
+  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+    (set! (-> obj hours) 0)
+    (set! (-> obj minutes) 0)
+    (set! (-> obj seconds) 0)
+    (set! (-> obj milliseconds) 0)
+    (set! (-> obj split_time) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+    (set! (-> obj split_name) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+    (set! (-> obj split_player) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+    (set! (-> obj split_timesave) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+    obj
+    )
+  )
+
 
 (deftype zoomer-level-unlocks (structure)
  (
@@ -232,6 +246,15 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> obj game citadel_skip_version) (citadel-skip-version normal))
     (set! (-> obj game free_for_all) 0)
     (set! (-> obj game enable_pvp) 0)
+
+    (set! (-> obj timer hours) 0)
+    (set! (-> obj timer minutes) 0)
+    (set! (-> obj timer seconds) 0)
+    (set! (-> obj timer milliseconds) 0)
+    (set! (-> obj timer split_time) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+    (set! (-> obj timer split_name) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+    (set! (-> obj timer split_player) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+    (set! (-> obj timer split_timesave) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
     obj
     )
   )

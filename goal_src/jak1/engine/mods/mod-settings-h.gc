@@ -91,15 +91,16 @@
   )
 
 
-(defenum team-ui-option
+(defenum selector-option
   :type int32
-  (none)
-  (own-team)
-  (all-teams)
+  (teams)
+  (timer)
+  (splits)
   )
 
-(defenum player-ui-option
+(defenum info-option
   :type int32
+  (none)
   (minimal)
   (full)
   )
@@ -177,6 +178,23 @@
     )
   )
   
+(deftype timer-info (structure)
+ ((hours        int32)
+  (minutes      int32)
+  (seconds      int32)
+  (milliseconds int32)
+
+  (split_time     string)
+  (split_name     string)
+  (split_player   string)
+  (split_timesave string)
+  )
+  :pack-me
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+  
 (deftype multiplayer-info (structure)
  ((teamrun_command      teamrun-command)
   (force_continue       string)
@@ -184,6 +202,7 @@
   (player_num           int32)
   (players              remote-player-info MAX_MULTIPLAYER_COUNT :inline)
   (game                 game-mode :inline)
+  (timer                timer-info :inline)
   )
   (:methods
     (new (symbol type) _type_ 0)

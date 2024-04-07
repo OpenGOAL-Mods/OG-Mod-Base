@@ -123,6 +123,17 @@ struct GameMode {
   int enable_pvp;
 };
 
+struct TimerInfo {
+  int hours;
+  int minutes;
+  int seconds;
+  int milliseconds;
+  u32 split_time;      // string (basic)
+  u32 split_name;      // string (basic)
+  u32 split_player;    // string (basic)
+  u32 split_timesave;  // string (basic)
+};
+
 const int MAX_MULTIPLAYER_COUNT = 20;
 const int MAX_COMMAND_COUNT = 3;
 const int MAX_INTERACTION_BUFFER_COUNT = 10;
@@ -134,4 +145,5 @@ struct MultiplayerInfo {
   s32 player_num;
   RemotePlayerInfo players[MAX_MULTIPLAYER_COUNT];
   GameMode game;
+  TimerInfo timer;
 };
