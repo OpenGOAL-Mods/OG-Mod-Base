@@ -6,7 +6,7 @@
     ;; dgos: TODO
 
 
-(define *selector-option* (selector-option teams))
+(define *selector-option* (selector-option splits))
 (define *team-info* (info-option minimal))
 (define *timer-info* (info-option minimal))
 (define *splits-info* (info-option minimal))
