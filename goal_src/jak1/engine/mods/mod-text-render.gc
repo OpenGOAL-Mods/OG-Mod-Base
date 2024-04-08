@@ -36,7 +36,7 @@
     (set! (-> s2-0 quad) (the-as uint128 0))
     (when (transform-point-qword! (the-as vector4w s2-0) location)
       
-      (with-dma-buffer-add-bucket ((s3-0 (-> (current-frame) debug-buf)) bucket)
+      (with-dma-buffer-add-bucket ((s3-0 (-> (current-frame) global-buf)) bucket)
         
         (let ((a2-2 (new 'stack 'font-context *font-default-matrix*
                          (+ (+ (-> offset x) -1792) (/ (-> s2-0 x) 16))
