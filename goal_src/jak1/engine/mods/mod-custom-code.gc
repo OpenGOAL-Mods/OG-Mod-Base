@@ -451,7 +451,7 @@
       ;; setup our own remote-player-info if we haven't yet
       (set-up-self-remote-if-null)
 
-      (when (and *target* (>= (-> *multiplayer-info* player_num) 0) (!= (-> *self-player-info* mp_state) (mp-tgt-state mp-tgt-disconnected)))
+      (when (and *target* (>= (-> *multiplayer-info* player_num) 0) (!= (-> *self-player-info* mp_state) (mp-tgt-state mp-tgt-disconnected)) (>= (-> *display* base-frame-counter) (-> *game-info* blackout-time)))
 
         (check-set-interaction-from-buffer)
 
