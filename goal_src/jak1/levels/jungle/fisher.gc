@@ -1671,6 +1671,9 @@
 (defstate query (fisher)
   :virtual #t
   :enter (behavior ()
+    (if (task-closed? (game-task jungle-fishgame) (task-status need-resolution))
+      (go-virtual release)
+      )
     (init!
       (-> self query)
       (lookup-text! *common-text* (text-id fish?) #f)
