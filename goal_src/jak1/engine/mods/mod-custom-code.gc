@@ -482,9 +482,6 @@
             ;; clean none position updates
             (when *has-none-position-update?*
               (set! *has-none-position-update?* #f)
-
-              ;; target pickup data
-              (clean-up-interaction-data *self-player-info*)
               
               ;; update flags
               (set! (-> *teamrun-info* has_state_update?) 0)
@@ -501,6 +498,11 @@
             (if (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
               (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-interactive))
               )
+          )
+        
+        ;; cleanup self interaction data
+        (if (!= (-> *self-player-info* inter_type) (interaction-type none))
+          (clean-up-interaction-data *self-player-info*)
           )
 
         (render-targets)
