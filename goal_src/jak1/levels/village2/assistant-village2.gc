@@ -488,7 +488,7 @@
       (((task-status need-hint) (task-status need-introduction))
         (if *enable-ingame-cutscenes?*
           (send-event self 'play-anim)
-          (close-specific-task! (game-task village2-levitator) (task-status need-introduction))
+          (close-specific-task! (game-task village2-levitator) (task-status need-reminder-a))
           )
        )
       )
