@@ -840,13 +840,14 @@
     (if (nonzero? (-> self sound))
         (stop! (-> self sound))
         )
-    (if (and *target* (or (!= (-> self look) 'iron) (= (get-closest-interactive-target self) *target*)) (and (logtest? (-> *target* control root-prim prim-core action)
-                                     (collide-action racer snowball tube flut)
-                                     )
-                           (!= (-> self fact pickup-type) 6)
-                           (not arg0)
-                           )
-             )
+    (if (and *target* 
+          (or (!= (-> self look) 'iron) (= (get-closest-interactive-target self) *target*)) ;; make sure instant-collect on scoutfly crate is only run for self if closest to broken crate
+          (or (!= (-> self look) 'steel) (= (get-closest-interactive-target self) *target*)) ;; make sure instant-collect on orb crate is only run for self if closest to broken crate
+          (and (logtest? (-> *target* control root-prim prim-core action) (collide-action racer snowball tube flut))
+            (!= (-> self fact pickup-type) 6)
+            (not arg0)
+            )
+          )
         (logior! (-> self fact options) (fact-options instant-collect))
         )
     (when (not arg0)
