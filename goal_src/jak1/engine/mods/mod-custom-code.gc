@@ -95,14 +95,14 @@
       ;; especially if we want to support multiplayer in jak 2 in the future as well
 
       (when (and *target* (!= (-> (level-get-target-inside *level*) name) 'title))
-        (when (-> *level* level 0)
-          (set! (-> *teamrun-levels-info* level0_name) (symbol->string (-> *level* level 0 name)))
-          (set! (-> *teamrun-levels-info* level0_status) (symbol->string (-> *level* level 0 status)))
+        (when (-> *load-state* want 0)
+          (set! (-> *teamrun-levels-info* level0_name) (symbol->string (-> *load-state* want 0 name)))
+          (set! (-> *teamrun-levels-info* level0_status) (symbol->string (-> *load-state* want 0 display?)))
           )
 
-        (when (-> *level* level 1)
-          (set! (-> *teamrun-levels-info* level1_name) (symbol->string (-> *level* level 1 name)))
-          (set! (-> *teamrun-levels-info* level1_status) (symbol->string (-> *level* level 1 status)))
+        (when (-> *load-state* want 1)
+          (set! (-> *teamrun-levels-info* level1_name) (symbol->string (-> *load-state* want 1 name)))
+          (set! (-> *teamrun-levels-info* level1_status) (symbol->string (-> *load-state* want 1 display?)))
           )
 
         
