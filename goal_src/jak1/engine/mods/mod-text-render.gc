@@ -136,7 +136,7 @@
     ((string= level-name "training") "Geyser")
     ((string= level-name "village1") "Sandover")
     ((string= level-name "village2") "Rock Village")
-    ((string= level-name "village3") "Volcano")
+    ((string= level-name "village3") "Crater")
     )
   )
 
