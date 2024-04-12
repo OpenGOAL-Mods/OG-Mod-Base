@@ -254,7 +254,7 @@
   (mother-spider 13)
   (cak-14 14) ;; unused
   (blue-eco-suck 15) ;; manipy, orb-cache-top,
-  (unknown-16 16)
+  (target-remote 16) ;; remote
   (unknown-17 17)
   (unknown-18 18)
   (unknown-19 19)

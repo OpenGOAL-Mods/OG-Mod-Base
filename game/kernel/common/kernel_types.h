@@ -71,6 +71,7 @@ struct RemotePlayerInfo {
   u32 current_level;      // string (basic)
   u32 tgt_state;
   u32 mp_state;           // mp-tgt-state enum
+  u32 mp_state_check;     // mp-tgt-state enum (only used on goal side)
   
   int cells_collected;
   int player_index;

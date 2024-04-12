@@ -146,9 +146,10 @@
   (inter_level   string)
   (inter_cleanup   int32) ;; marks level cleanup interaction from entering level
 
-  (current_level string)
-  (tgt_state  symbol)
-  (mp_state   mp-tgt-state) 
+  (current_level    string)
+  (tgt_state        symbol)
+  (mp_state         mp-tgt-state) 
+  (mp_state_check   mp-tgt-state) ;; used only on goal side, used to check if mp_state has changed
   
   ;; set from teamrun side
   (cells_collected int32)

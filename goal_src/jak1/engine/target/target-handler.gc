@@ -8,6 +8,9 @@
 (define-extern target-powerup-effect (function symbol none :behavior target))
 (define-extern runs-on-level-enter (function none))
 (define-extern runs-on-pickup (function pickup-type float process none))
+(define-extern process-close? (function process-drawable float basic))
+(define-extern *remote-stuck-release-timestamp* time-frame)
+(define-extern *remote-stuck-released* symbol)
 
 ;; DECOMP BEGINS
 
@@ -747,6 +750,11 @@
   )
 
 (defbehavior target-standard-event-handler target ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
+  (when (and (not *remote-stuck-released*) (= (-> arg0 type) target) (!= arg0 *target*) (process-close? (the-as process-drawable arg0) 2500.0))
+    (set! *remote-stuck-released* #t)
+    (set! *remote-stuck-release-timestamp* (+ (current-time) (seconds 0.5)))
+    (logclear! (-> *target* control root-prim collide-with) (collide-kind target-remote))
+    )
   (case arg2
     (('attack 'attack-or-shove 'attack-invinc)
      (target-attacked

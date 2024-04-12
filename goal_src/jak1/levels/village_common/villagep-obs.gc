@@ -5,6 +5,7 @@
 ;; name in dgo: villagep-obs
 ;; dgos: CIT, L1, VI1, VI2, VI3, VILLAGEP
 
+(define-extern remove-remote-collision (function float none))
 
 ;; DECOMP BEGINS
 
@@ -22,6 +23,7 @@
   :enter (-> target-warp-out enter)
   :exit (-> target-warp-out exit)
   :trans (behavior ()
+    (remove-remote-collision 5.0)
     (set! (-> self control transv x)
           (- (-> self control unknown-vector103 x) (-> self control unknown-vector102 x))
           )

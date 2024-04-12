@@ -46,6 +46,10 @@
 (define *in-finalboss-cutscene?* #f)
 (define *current-boss-phase* 10)
 
+;; stuck in remote target fix
+(define *remote-stuck-released* #f)
+(define *remote-stuck-release-timestamp* (current-time))
+
 ;; pickup toggles for remote
 (define *enable-remote-target-buzzer-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that cell fly can't drop two cells on pickup
 (define *enable-remote-target-money-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions to prevent orbs pickups to count as current user pickups
@@ -101,6 +105,20 @@
   (= (-> *multiplayer-info* players tgt-idx team_id) (-> *self-player-info* team_id))
   )
 
+(defun has-new-mp-state? ((tgt-idx int))
+  (!= (-> *multiplayer-info* players tgt-idx mp_state) (-> *multiplayer-info* players tgt-idx mp_state_check))
+  )
+
+(defun handle-new-mp-state ((tgt-idx int) (remote-target target))
+  (set! (-> *multiplayer-info* players tgt-idx mp_state_check) (-> *multiplayer-info* players tgt-idx mp_state))
+  (if (and (is-interactive? tgt-idx) (not (logtest? (-> remote-target control root-prim prim-core collide-as) (collide-kind target-remote)))) ;; add collision if interactive
+    (logior! (-> remote-target control root-prim collide-as) (collide-kind target-remote))
+    )
+  (if (and (is-active? tgt-idx) (logtest? (-> remote-target control root-prim collide-as) (collide-kind target-remote)))
+    (logclear! (-> remote-target control root-prim collide-as) (collide-kind target-remote))
+    )
+  )
+
 (defun has-all-citadel-cells? ()
   (and 
     (task-closed? (game-task citadel-sage-green) (task-status need-resolution))
@@ -146,6 +164,13 @@
         )
       )
     )
+  )
+
+(defun remove-remote-collision ((ghost-seconds float))
+  (set! *remote-stuck-released* #t)
+  (set! *remote-stuck-release-timestamp* (+ (current-time) (seconds ghost-seconds)))
+  (logclear! (-> *target* control root-prim collide-with) (collide-kind target-remote))
+  (none)
   )
 
 (defun get-team-cell-count ()

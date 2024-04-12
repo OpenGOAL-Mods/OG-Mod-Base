@@ -85,6 +85,7 @@
   (let ((remote-target (-> *remote-targets* idx)))
     (when (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (handle->process (-> *remote-targets* idx)))
       (set! (-> *multiplayer-info* players idx mp_state) (mp-tgt-state mp-tgt-disconnected))
+      (set! (-> *multiplayer-info* players idx mp_state_check) (mp-tgt-state mp-tgt-disconnected))
       (deactivate (handle->process remote-target))
       )
     )
@@ -157,6 +158,7 @@
     (set! (-> *self-player-info* username) (new 'global 'string MAX_USERNAME_LEN "local_player")) 
     (set! (-> *self-player-info* color)  (tgt-color red))
     (set! (-> *self-player-info* mp_state)  (mp-tgt-state mp-tgt-interactive))
+    (set! (-> *self-player-info* mp_state_check)  (mp-tgt-state mp-tgt-interactive))
     (set! (-> *multiplayer-info* client_version) (new 'global 'string INTERACTION_STRING_LEN "Not Connected"))
     (set! (-> *multiplayer-info* player_num) 0)
 
@@ -484,7 +486,10 @@
             ;; see if we need to spawn any remote targets
             (when (or (zero? (-> *remote-targets* idx)) (not (handle->process (-> *remote-targets* idx))))
               (set! (-> *remote-targets* idx) (start-extra-target))
-              (set! (-> (the-as target (handle->process (-> *remote-targets* idx))) saved-owner) idx) ;; used to identify remote index from target
+              (let ((remote-target (the-as target (handle->process (-> *remote-targets* idx)))))
+                (set! (-> remote-target saved-owner) idx) ;; used to identify remote index from target
+                (handle-new-mp-state idx remote-target)
+                )
               )
             ;; assume target spawned at this point 
 
@@ -494,6 +499,9 @@
               (when obj
                 (if (is-interactive? idx)
                   (handle-remote-interaction p idx)
+                  )
+                (if (has-new-mp-state? idx)
+                  (handle-new-mp-state idx (the-as target obj))
                   )
                 (update-actor-position obj p)
                 )
@@ -930,7 +938,7 @@
     (and (target-is-interactive? remote-target) (= (-> remote-target state name) 'target-attack))
   )
 
-;;This returns true or false depending on if all jaks are within a provided distance from an actor
+;;This returns true or false depending on if any jak are within a provided distance from an actor
 (defun any-interactive-targets-close? ((proc process-drawable) (dist float))
   (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
     (let ((target (get-interactive-target tgt-idx)))

@@ -453,6 +453,11 @@
 
       (when (and *target* (>= (-> *multiplayer-info* player_num) 0) (!= (-> *self-player-info* mp_state) (mp-tgt-state mp-tgt-disconnected)) (>= (-> *display* base-frame-counter) (-> *game-info* blackout-time)))
 
+        (when (and *remote-stuck-released* (>= (-> *display* base-frame-counter) *remote-stuck-release-timestamp*))
+          (set! *remote-stuck-released* #f)
+          (logior! (-> *target* control root-prim collide-with) (collide-kind target-remote))
+          )
+
         (check-set-interaction-from-buffer)
 
         (when (not (string= (-> *multiplayer-info* force_continue) ""))
@@ -495,8 +500,9 @@
               )
 
 
-            (if (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
+            (when (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
               (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-interactive))
+              (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state_check) (mp-tgt-state mp-tgt-interactive))
               )
           )
         
