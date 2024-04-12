@@ -12,7 +12,8 @@
   )
 
 (defun safe-release-from-grab ()
-  (when (is-grabbed?)
+  ;;don't release if not grabbed (as this escapes certain states and cutscenes) and not if in freecam
+  (when (and (is-grabbed?) (not (has-camera-type? "cam-free-floating")))
     (process-release? *target*)
     )
   )
