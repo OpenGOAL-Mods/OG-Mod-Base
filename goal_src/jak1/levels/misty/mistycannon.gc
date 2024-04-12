@@ -1462,10 +1462,12 @@
               (-> self root-override)
               (the-as uint 1)
               )
+        (if (and (type-type? (-> proc type) target) (= proc *target*))
          (let ((v0-1 (the-as object #t)))
            (set! (-> self player-touching-grips?) (the-as symbol v0-1))
            v0-1
            )
+            )
          )
        )
       (('change-mode)
