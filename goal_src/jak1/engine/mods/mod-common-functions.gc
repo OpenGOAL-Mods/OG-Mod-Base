@@ -975,7 +975,7 @@
   )
 
 (defun has-camera-type? ((camera-type string))
-  (-> *camera* child 0) (name= (-> (the-as camera-slave (-> *camera* child 0)) state name) camera-type)
+  (and (-> *camera* child 0) (name= (-> (the-as camera-slave (-> *camera* child 0)) state name) camera-type))
   )
 
 
