@@ -53,10 +53,21 @@
       (none)
       )
 
-    (defun runs-after-save ()
-      (set! *player-can-load* #t)
-      (set! (-> *teamrun-info* just_saved?) 1)
-      (update-state)
+    (defun runs-on-save ((save-event symbol))
+    
+      (case save-event
+        (('save-start)   
+          (set! *is-saving* #t)
+          )
+        (('save-end)     
+          (set! *is-saving* #f) 
+          (set! *player-can-load* #t)
+          (set! (-> *teamrun-info* just_saved?) 1)
+          (update-state)
+          )
+        )
+
+
       (none)
     )
 
@@ -511,7 +522,9 @@
           (clean-up-interaction-data *self-player-info*)
           )
 
-        (render-targets)
+        (if (not *is-saving*)
+          (render-targets)
+          )
 
         ;; color ourselves
         (color-target *target* (-> *self-player-info* color))

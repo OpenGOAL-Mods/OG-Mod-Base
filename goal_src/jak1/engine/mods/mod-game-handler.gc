@@ -41,6 +41,7 @@
 ;; multiplayer save and load
 (define *enable-multiplayer-save-and-load* #t)
 (define *player-can-load* #f)
+(define *is-saving* #f)
 
 ;; multiplayer fixes
 (define *in-finalboss-cutscene?* #f)

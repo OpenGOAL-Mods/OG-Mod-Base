@@ -5,7 +5,7 @@
 ;; name in dgo: game-save
 ;; dgos: GAME, ENGINE
 
-(define-extern runs-after-save (function none))
+(define-extern runs-on-save (function symbol none))
 (define-extern runs-after-load (function none))
 
 ;; The game-save system implements the "background autosave" feature.
@@ -345,7 +345,8 @@
 
 (defmethod save-game! game-info ((obj game-info) (arg0 game-save) (arg1 string))
   "Update the game-save to have the info from the current game state"
-  
+  (runs-on-save 'save-start)
+
   ;; some stuff lives in the levels and needs to be copied into game-info.
   (dotimes (s3-0 (-> *level* length))
     (let ((a1-1 (-> *level* level s3-0)))
@@ -803,7 +804,7 @@
         (-> arg0 allocated-length)
         )
       )
-  (runs-after-save)
+  (runs-on-save 'save-end)
   (none)
   )
 
