@@ -13,6 +13,15 @@
 
 (defstate target-racing-start (target)
   :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
+    (when (and (not *remote-stuck-released*) 
+          (= (-> proc type) target) (!= proc *target*) 
+          (process-close? (the-as process-drawable proc) 6000.0)
+          )
+      (set! *remote-stuck-released* #t)
+      (set! *remote-stuck-release-timestamp* (+ (current-time) (seconds 0.5)))
+      (logclear! (-> *target* control root-prim collide-with) (collide-kind target-remote))
+      )
+
     (cond
       ((and (= event-type 'query) (= (-> event param 0) 'mode))
        'racer

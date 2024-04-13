@@ -282,6 +282,15 @@
   )
 
 (defbehavior target-flut-standard-event-handler target ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
+  (when (and (not *remote-stuck-released*) 
+        (= (-> arg0 type) target) (!= arg0 *target*) 
+        (process-close? (the-as process-drawable arg0) 6000.0)
+        )
+    (set! *remote-stuck-released* #t)
+    (set! *remote-stuck-release-timestamp* (+ (current-time) (seconds 0.5)))
+    (logclear! (-> *target* control root-prim collide-with) (collide-kind target-remote))
+    )
+
   (cond
     ((and (= arg2 'query) (= (-> arg3 param 0) 'mode))
      'flut

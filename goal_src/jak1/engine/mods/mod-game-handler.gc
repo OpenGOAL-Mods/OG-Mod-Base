@@ -80,10 +80,7 @@
 )
 
 (defun target-on-foot? ((t target))
-  (not (or 
-        (target-on-racer? t)
-        (target-on-flut? t))
-  )
+  (not (logtest? (-> t control root-prim prim-core action) (collide-action racer flut)))
 )
 
 (defun target-is-interactive? ((remote-target target))
