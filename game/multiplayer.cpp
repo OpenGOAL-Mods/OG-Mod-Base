@@ -365,6 +365,8 @@ void start_socket(int port) {
       ogSocket.set_fail_handler(bind(&on_fail, &ogSocket, ::_1));
       ogSocket.set_open_handler(&on_open);
       ogSocket.set_close_handler(&on_close);
+      
+      ogSocket.set_reuse_addr(true); //!TODO: Remove and add graceful close of socket on shutdown
 
       // Listen on port
       ogSocket.listen(socketPort);
