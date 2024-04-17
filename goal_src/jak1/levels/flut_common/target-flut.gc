@@ -7,9 +7,7 @@
 
 (define-extern is-interactive? (function int symbol))
 (define-extern *multiplayer-info* multiplayer-info)
-(define-extern *enable-remote-target-attacks* symbol)
 (define-extern *enable-remote-target-yellow-eco-blasts* symbol)
-(define-extern *pvp-attack-sphere-size* float)
 
 ;; DECOMP BEGINS
 
@@ -1233,21 +1231,10 @@
     (set! (-> self control unknown-surface00) *flut-run-attack-mods*)
     (set! (-> *run-attack-mods* turnv) 655360.0)
     (set! (-> *run-attack-mods* turnvv) 655360.0)
-    (when (or (= self *target*) (and *enable-remote-target-attacks* (is-interactive? (the int (-> self saved-owner)))))
+    (when (or (= self *target*) (is-interactive? (the int (-> self saved-owner))))
       (target-start-attack)
       (target-danger-set! 'flut-attack #f)
       )
-    (when (= (-> *multiplayer-info* game enable_pvp) 1)
-      (let ((gp-2 (process-spawn touch-tracker :init touch-tracker-init (-> self control trans) 4096.0 30 :to self)))
-        (send-event (ppointer->process gp-2) 'event 'attack)
-        (send-event (ppointer->process gp-2) 'function (lambda ((arg0 target)) 
-          (let 
-            ((f0-3 (seek *pvp-attack-sphere-size* (the-as float 28672.0) (* 286720.0 DISPLAY_FPS_RATIO 0.016666668))))
-            (set! (-> arg0 control root-prim local-sphere w) f0-3)
-            f0-3
-            )))
-          )
-        )
     (when (or (and (and (= (-> self fact-info-target eco-type) (pickup-type eco-yellow))
                     (>= (-> self fact-info-target eco-level) 1.0)
                     )
@@ -1476,21 +1463,10 @@
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (logclear! (-> self control status) (cshape-moving-flags onsurf onground tsurf))
     (set! (-> self control unknown-surface00) *flut-air-attack-mods*)
-    (when (or (= self *target*) (and *enable-remote-target-attacks* (is-interactive? (the int (-> self saved-owner)))))
+    (when (or (= self *target*) (is-interactive? (the int (-> self saved-owner))))
       (target-start-attack)
       (target-danger-set! 'flut-attack #f)
       )
-    (when (= (-> *multiplayer-info* game enable_pvp) 1)
-      (let ((gp-2 (process-spawn touch-tracker :init touch-tracker-init (-> self control trans) 4096.0 30 :to self)))
-        (send-event (ppointer->process gp-2) 'event 'attack)
-        (send-event (ppointer->process gp-2) 'function (lambda ((arg0 target)) 
-          (let 
-            ((f0-3 (seek *pvp-attack-sphere-size* (the-as float 28672.0) (* 286720.0 DISPLAY_FPS_RATIO 0.016666668))))
-            (set! (-> arg0 control root-prim local-sphere w) f0-3)
-            f0-3
-            )))
-          )
-        )
     (let ((gp-0 (new-stack-vector0)))
       (let ((f0-1 (vector-dot (-> self control dynam gravity-normal) (-> self control transv))))
         0.0
@@ -1609,7 +1585,7 @@
     (set! (-> self control unknown-surface00) *flut-air-attack-mods*)
     (sound-play "flop-land" :pitch -0.4)
     (effect-control-method-10 (-> self skel effect) 'group-flut-attack-strike-ground (ja-frame-num 0) 0)
-    (when (or (= self *target*) (= (-> *multiplayer-info* game enable_pvp) 1))
+    (when (= self *target*)
       (let ((gp-2 (process-spawn touch-tracker :init touch-tracker-init (-> self control trans) 4096.0 30 :to self)))
         (send-event (ppointer->process gp-2) 'event 'attack 'flut-attack)
         (send-event (ppointer->process gp-2) 'function (lambda :behavior target
