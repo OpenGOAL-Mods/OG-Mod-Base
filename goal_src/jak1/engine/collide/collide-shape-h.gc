@@ -252,9 +252,9 @@
   (ground-object 11) ;; object, like darkecobarray, platforms
   (target-attack 12) ;; all target attacks
   (mother-spider 13)
-  (cak-14 14) ;; unused
+  (target-remote 14) ;; target remote
   (blue-eco-suck 15) ;; manipy, orb-cache-top,
-  (target-remote 16) ;; remote
+  (unknown-16 16)
   (unknown-17 17)
   (unknown-18 18)
   (unknown-19 19)
