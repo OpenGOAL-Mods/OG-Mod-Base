@@ -15999,7 +15999,7 @@
         :vis-nick #f
         :want (new 'static 'inline-array level-buffer-state 6
           (new 'static 'level-buffer-state :name 'hub1 :display? 'display :force-vis? #f :force-inside? #f)
-          (new 'static 'level-buffer-state :name 'lavatubea :display? 'display :force-vis? #f :force-inside? #f)
+          (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)
           (new 'static 'level-buffer-state :name #f :display? #f :force-vis? #f :force-inside? #f)

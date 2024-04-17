@@ -83,16 +83,6 @@ fs::path get_user_settings_dir(GameVersion game_version) {
   return get_user_config_dir() / game_version_name / "settings";
 }
 
-fs::path get_user_memcard_dir(GameVersion game_version) {
-  auto game_version_name = game_version_names[game_version];
-  return get_user_config_dir() / game_version_name / "saves";
-}
-
-fs::path get_user_misc_dir(GameVersion game_version) {
-  auto game_version_name = game_version_names[game_version];
-  return get_user_config_dir() / game_version_name / "misc";
-}
-
 struct {
   bool initialized = false;
   fs::path path_to_data;
@@ -129,6 +119,18 @@ std::string get_current_executable_path() {
   return std::string(buffer);
 #endif
 }
+
+fs::path get_user_memcard_dir(GameVersion game_version) {
+  auto game_version_name = game_version_names[game_version];
+  return get_user_config_dir() / game_version_name /"og1-in-2" /"saves";
+}
+
+fs::path get_user_misc_dir(GameVersion game_version) {
+  auto game_version_name = game_version_names[game_version];
+  return get_user_config_dir() / game_version_name / "misc";
+}
+
+
 
 std::string get_parent_directory(const std::string& path) {
   // Find the last occurrence of ".github" in the path.

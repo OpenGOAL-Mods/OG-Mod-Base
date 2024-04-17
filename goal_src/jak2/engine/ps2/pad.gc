@@ -186,7 +186,7 @@ The cpad-set-buzz! function can be used for vibration.
     (set! (-> arg0 direct v1-14) (the-as uint 0))
     )
   ;; hey, this was fixed from jak 1!
-  (dotimes (v1-17 2)
+  (dotimes (v1-17 4)
     (nop!)
     (set! (-> arg0 buzz-val v1-17) (the-as uint 0))
     (set! (-> arg0 buzz-time v1-17) 0)
@@ -209,7 +209,7 @@ The cpad-set-buzz! function can be used for vibration.
 ;; List of controllers. It always has 2 controllers.
 (deftype cpad-list (basic)
   ((num-cpads  int32)
-   (cpads      cpad-info  2)
+   (cpads      cpad-info  4)
    )
   (:methods
     (new (symbol type) _type_)
@@ -221,9 +221,11 @@ The cpad-set-buzz! function can be used for vibration.
   "Create a cpad-list for 2 controllers. It's fine to do this even if one or both controllers
    aren't connected yet."
   (let ((gp-0 (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
-    (set! (-> gp-0 num-cpads) 2)
+    (set! (-> gp-0 num-cpads) 4)
     (set! (-> gp-0 cpads 0) (new 'global 'cpad-info 0))
     (set! (-> gp-0 cpads 1) (new 'global 'cpad-info 1))
+    (set! (-> gp-0 cpads 2) (new 'global 'cpad-info 2))
+    (set! (-> gp-0 cpads 3) (new 'global 'cpad-info 3))
     gp-0
     )
   )
@@ -699,4 +701,3 @@ The cpad-set-buzz! function can be used for vibration.
       (sound-play-by-spec (static-sound-spec "menu-back" :fo-curve 1) (new-sound-id) (the-as vector #t))
       )
   )
-
