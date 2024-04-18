@@ -844,6 +844,13 @@
   ;; need-reward-speech
   (when (= (the-as uint status) (the-as uint (task-status need-reward-speech)))
     (cond
+      ((= task (game-task village2-levitator))
+        (let ((boulder (process-by-ename "fireboulder-6")))
+          (if boulder
+            (reset-specific-actor "fireboulder-6")
+            )
+          )
+        )
       ((= task (game-task village4-button))
         (reset-all-present-warp-gates)
         )
