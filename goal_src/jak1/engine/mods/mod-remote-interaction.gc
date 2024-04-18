@@ -537,14 +537,12 @@
   )
 
 (defun safe-pickup-eco ((eco-ename string))
-  (when (not (string= eco-ename "reflector-mirror-2"))
-    (let* ((obj-eco (process-by-ename eco-ename)))
-      (when (-> obj-eco name)
-          (go-virtual-process (the-as eco-collectable obj-eco) pickup #f (process->handle (the-as eco-collectable obj-eco)))
-        )
+  (let* ((obj-eco (process-by-ename eco-ename)))
+    (when (-> obj-eco name)
+        (go-virtual-process (the-as eco-collectable obj-eco) pickup #f (process->handle (the-as eco-collectable obj-eco)))
       )
     )
-    (none)
+  (none)
   )
 
 (defun remove-money-dupe-from-level ((level string))
@@ -1391,7 +1389,8 @@
           (if (string-starts-with= (-> remote-player inter_parent) "crate-")
             (safe-pickup-crate-eco (-> remote-player inter_parent))
             )
-          (if (not (string-starts-with= (-> remote-player inter_name) "ecovent-"))
+
+          (if (and (not (string-starts-with= (-> remote-player inter_name) "ecovent-")) (not (string-starts-with= (-> remote-player inter_name) "vent")) (not (string= (-> remote-player inter_name) "reflector-mirror-2")))
             (safe-pickup-eco (-> remote-player inter_name))
             )
           )
