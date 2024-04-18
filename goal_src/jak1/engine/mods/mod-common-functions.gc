@@ -950,6 +950,17 @@
     #f
   )
 
+(defun any-interactive-remote-target-close-to-target? ((dist float))
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (let ((target (get-interactive-target tgt-idx)))
+      (if (and (!= tgt-idx (-> *multiplayer-info* player_num)) (<= (vector-vector-distance (remote-target-pos 0 target) (-> *target* root trans)) dist))
+        (return #t)
+        )
+      )
+    )
+    #f
+  )
+
 (defun any-interactive-targets-close-to-vector? ((vect vector) (dist float))
   (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
     (let ((target (get-interactive-target tgt-idx)))
