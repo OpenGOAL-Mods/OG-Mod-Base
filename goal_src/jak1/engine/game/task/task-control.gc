@@ -150,7 +150,10 @@
      ;; no current stage, do nothing
      )
     (else
-     (close-task! (-> obj stage (-> obj current-stage)))
+      (let ((task-stage (-> obj stage (-> obj current-stage))))
+        (runs-on-task-update (-> task-stage game-task) (-> task-stage status))
+        (close-task! task-stage)
+        )
      )
     )
   ;; attempt to update the current task
@@ -167,7 +170,10 @@
     (dotimes (v1-1 (-> obj stage length))
       (when (and (= a0-2 (-> obj stage v1-1 game-task)) (= arg0 (-> obj stage v1-1 status)))
         ;; found it! close and update current stage
-        (close-task! (-> obj stage v1-1))
+        (let ((task-stage (-> obj stage v1-1)))
+          (runs-on-task-update (-> task-stage game-task) (-> task-stage status))
+          (close-task! task-stage)
+          )
         (return (first-any obj #t))
         )
       )
@@ -4124,7 +4130,7 @@
 
 (defun close-specific-task! ((arg0 game-task) (arg1 task-status))
   "Close a cstage for a game-task"
-
+  
   (runs-on-task-update arg0 arg1)
 
   (let ((gp-0 (get-task-control arg0)))
@@ -4152,7 +4158,7 @@
 
 (defun close-specific-task-from-remote! ((arg0 game-task) (arg1 task-status))
   "Close a cstage for a game-task without adding to interaction buffers"
-
+  
   (let ((gp-0 (get-task-control arg0)))
     (when gp-0
       (dotimes (v1-1 (-> gp-0 stage length))
