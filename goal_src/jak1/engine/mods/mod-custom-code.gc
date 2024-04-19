@@ -784,6 +784,7 @@
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)
       (set! (-> *teamrun-info* just_spawned?) 1)
+      (remove-remote-collision 1.0)
       (update-state)
 
       (none)

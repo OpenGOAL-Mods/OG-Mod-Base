@@ -752,7 +752,7 @@
 (defbehavior target-standard-event-handler target ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (when (and (not *remote-stuck-released*) 
         (= (-> arg0 type) target) (!= arg0 *target*) 
-        (process-close? (the-as process-drawable arg0) 2500.0)
+        (process-close? (the-as process-drawable arg0) 4500.0)
         )
     (set! *remote-stuck-released* #t)
     (set! *remote-stuck-release-timestamp* (+ (current-time) (seconds 0.5)))
