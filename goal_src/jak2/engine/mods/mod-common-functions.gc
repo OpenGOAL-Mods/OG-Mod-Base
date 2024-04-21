@@ -19,7 +19,7 @@
 ;; Useful GOAL modding documentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-#| 
+#|
 Checks the condition and if it is true it does first argument if false it does optional second argument
 (if (condition) (do if true) (do if false))
 
@@ -53,7 +53,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defmacro set-current-cell-count (count)
   `(set! (-> *game-info* fuel) ,count)
   )
-  
+
 (defun increase-power-cell-by-one ()
   (set-current-cell-count (+ (current-cell-count) 1))
   ;; with the two macros defined above, this is equivalent to
@@ -83,7 +83,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defmacro current-level-name ()
   `(-> (level-get-target-inside *level*) name)
   )
-  
+
 (defmacro current-orb-count ()
   `(-> *game-info* money)
   )
@@ -102,14 +102,14 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (when actor
         (case (-> actor type)
           ((skill)
-           
+
               (set-vector! (-> entity-actor trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> entity-actor extra trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> (the process-drawable actor) root trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> (the money actor) base) (meters x) (meters y) (meters z) 1.0)
-         
-   
-              
+
+
+
             )
           ((crate)
             ;; only move crates if they're not jumping
@@ -168,7 +168,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (none)
     )
 
-    
+
   )
 )
 
@@ -275,11 +275,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 ;;This returns true or false depending on if jak is within a provided distance from an actor
 (defun close? ((actor-ename string) (dist float))
-  (and 
+  (and
     (process-by-ename actor-ename)
-    (<= 
-      (vector-vector-distance 
-        (target-pos 0) 
+    (<=
+      (vector-vector-distance
+        (target-pos 0)
         (-> (the process-drawable (process-by-ename actor-ename)) root trans)
         )
       dist
@@ -290,14 +290,14 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 ;;This returns true or false if jak is within a bubble defined by coordiantes and width
 (defun in-bubble? ((x float) (y float) (z float) (w float))
-  (<= 
-    (vector-vector-distance 
-      (target-pos 0) 
-      (set-vector! (new-stack-vector0) x y z 1.0)
-      )
-    (/ w 2.0)
-    )
-  )
+  (when (<= (vector-vector-distance (target-pos 0) (set-vector! (new-stack-vector0) x y z 1.0)) (/ w 2.0))
+    ;;in-bubble render a green bubble at location and radius and return true
+    (add-debug-sphere #t (bucket-id debug-no-zbuf1)  (set-vector! (new-stack-vector0) x y z 1.0)  w *color-green*)
+    (return #t))
+    ;;not in-bubble so rednder a red bubble at location and radius and return false
+    (add-debug-sphere #t (bucket-id debug-no-zbuf1)  (set-vector! (new-stack-vector0) x y z 1.0)  w *color-red*)
+    #f
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jak Color functions
@@ -345,9 +345,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ;; make sure it doesn't timeout and disappear
     (logior! (-> fax options) (actor-option fade-out))
     (set! (-> fax fade-time) (the-as time-frame 0))
-    
+
     (let ((proc (the skill (ppointer->process (birth-pickup-at-point vec (pickup-type skill) amount #t *active-pool* fax)))))
-      (when bob? 
+      (when bob?
         (set! (-> proc bob-amount) 1024.0)
         )
       (format 0 "spawned ~A~%" proc)
