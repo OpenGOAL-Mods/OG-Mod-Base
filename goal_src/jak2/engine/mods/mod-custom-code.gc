@@ -24,12 +24,6 @@
     (defun runs-every-frame ()
       ;; (increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
 
-      (when *target*
-        (when (in-bubble? (meters 0.0) (meters 0.0) (meters 0.0) (meters 7.0))
-          (protect ((-> *TARGET-bank* jump-height-max))
-            (set! (-> *TARGET-bank* jump-height-max) (meters 37.0))))
-      )
-
       ;; Sample code to turn jak pink whenever he's doing the jetboard hover glitch
       ;; (when *target*
       ;;   (if (board-hovering?)
