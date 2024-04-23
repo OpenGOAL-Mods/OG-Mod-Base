@@ -49,7 +49,7 @@ const int MAX_USERNAME_LEN = 100;
 const int INTERACTION_STRING_LEN = 32;
 struct RemotePlayerInfo {
   u32 username;           // string (basic)
-  u32 color;              // tgt-color enum
+  s32 color;              // tgt-color enum
   float trans_x;
   float trans_y;
   float trans_z;
@@ -60,7 +60,7 @@ struct RemotePlayerInfo {
   
   float zoomer_rot_y;
 
-  u32 inter_type;
+  s32 inter_type;
   float inter_amount;
   float inter_status;
   u32 inter_name;         // string (basic)
@@ -68,19 +68,19 @@ struct RemotePlayerInfo {
   u32 inter_level;        // string (basic)
   s32 inter_cleanup;      // 0 or 1 (bool)
 
-  u32 current_level;      // string (basic)
+  u32 current_level;
   u32 tgt_state;
-  u32 mp_state;           // mp-tgt-state enum
-  u32 mp_state_check;     // mp-tgt-state enum (only used on goal side)
+  s32 mp_state;           // mp-tgt-state enum
+  s32 mp_state_check;     // mp-tgt-state enum (only used on goal side)
   
-  int cells_collected;
-  int player_index;
-  int team_id;
+  s32 cells_collected;
+  s32 player_index;
+  s32 team_id;
 };
 
 struct InteractionInfo {
   bool buffered;
-  int player_id;
+  s32 player_id;
   u32 inter_type;
   float inter_amount;
   float inter_status;
@@ -97,10 +97,10 @@ struct TeamrunPlayerInfo {
   s32 just_loaded;
   s32 just_saved;
   s32 current_continue;
-  int cell_count;
-  int buzzer_count;
-  int money_count;
-  int death_count;
+  s32 cell_count;
+  s32 buzzer_count;
+  s32 money_count;
+  s32 death_count;
 };
 
 struct TeamrunLevelInfo {
@@ -114,21 +114,21 @@ struct TeamrunLevelInfo {
 };
 
 struct GameMode {
-  u32 category;
-  u32 mode;
-  int require_same_level;
-  int allow_solo_hub_zoomers;
-  int no_lts;
-  int citadel_skip_version;
-  int free_for_all;
-  int enable_pvp;
+  s32 category;
+  s32 mode;
+  s32 require_same_level;
+  s32 allow_solo_hub_zoomers;
+  s32 no_lts;
+  s32 citadel_skip_version;
+  s32 free_for_all;
+  s32 enable_pvp;
 };
 
 struct TimerInfo {
-  int hours;
-  int minutes;
-  int seconds;
-  int milliseconds;
+  s32 hours;
+  s32 minutes;
+  s32 seconds;
+  s32 milliseconds;
   u32 split_time;      // string (basic)
   u32 split_name;      // string (basic)
   u32 split_player;    // string (basic)
