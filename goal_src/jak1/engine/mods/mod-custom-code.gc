@@ -183,211 +183,48 @@
         (none)
       )
 
-    (defun add-pickup-to-interaction-buffer ((kind pickup-type) (amount float) (proc process))
-      (dotimes (idx (-> *interaction-update-buffer* length))
-        (when (= (-> *interaction-update-buffer* idx has_update?) #f)
-
-          (set! (-> *interaction-update-buffer* idx type) (the-as interaction-type kind))
-          (set! (-> *interaction-update-buffer* idx amount) amount)
-          (set! (-> *interaction-update-buffer* idx status) 0.0)
-
-          (case kind
-            (((pickup-type money) (pickup-type buzzer) (pickup-type fuel-cell))
-              (update-state)
-              
-              (if (or (name= (-> proc name) "fuel-cell") (name= (-> proc name) "buzzer"))
-                (set! (-> *interaction-update-buffer* idx ename) (symbol->string (-> proc name)))
-                (set! (-> *interaction-update-buffer* idx ename) (the-as string (-> proc name)))
-                )
-              (let* ((parent (ppointer->process (-> proc parent))))
-                (if (or (name= (-> parent name) "entity-pool") (name= (-> parent name) "buzzer"))
-                (set! (-> *interaction-update-buffer* idx parent) (symbol->string (-> parent name)))
-                (set! (-> *interaction-update-buffer* idx parent) (the-as string (-> parent name)))
-                  )
-                )
-              (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> *level* level (-> (the-as process-drawable proc) draw level-index) name)))
-              )
-
-            (((pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-green) (pickup-type eco-red))
-                (let* ((parent (ppointer->process (-> proc parent))))
-                  (if (and (name= (-> parent name) "entity-pool") (not (or (name= (-> proc name) "health") (name= (-> proc name) "eco-blue") (name= (-> proc name) "eco-red") (name= (-> proc name) "eco-yellow"))))
-                    (set! (-> *interaction-update-buffer* idx ename) (the-as string (-> proc name)))
-                    (set! (-> *interaction-update-buffer* idx ename) (symbol->string (-> proc name)))
-                    )
-                  (if (name= (-> parent name) "entity-pool")
-                    (set! (-> *interaction-update-buffer* idx parent) "entity-pool") ;; crash exist if assigned from parent name on green-eco from box
-                    (set! (-> *interaction-update-buffer* idx parent) (the-as string (-> parent name)))
-                    )
-                  )
-              (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> (level-get-target-inside *level*) name)))
-              )
-            )
-            
-          (set! (-> *interaction-update-buffer* idx has_update?) #t)
-          (return #t)
-          )
-        )
-      (none)
-      )
-
-    (defun add-task-to-interaction-buffer ((task game-task) (status task-status))
-      (when (or (!= task *last-task*) (!= status *last-task-status*))
+    (defun add-interaction-to-buffer ((type interaction-type) (amount float) (status float) (name string) (level string) (parent string))
+      (if *interaction-update-buffer-initialized*
         (dotimes (idx (-> *interaction-update-buffer* length))
           (when (= (-> *interaction-update-buffer* idx has_update?) #f)
 
-            (set! *last-task* task)
-            (set! *last-task-status* status)
-
-            (set! (-> *interaction-update-buffer* idx type) (interaction-type game-task))
-            (set! (-> *interaction-update-buffer* idx amount) (the float task))
-            (set! (-> *interaction-update-buffer* idx status) (the float status))
-            (set! (-> *interaction-update-buffer* idx ename) (game-task->string task))
-            (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> (level-get-target-inside *level*) name)))
-            (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
-            
-            (set! (-> *interaction-update-buffer* idx has_update?) #t)
+            (set! (-> *interaction-update-buffer* idx type) type)
+            (set! (-> *interaction-update-buffer* idx amount) amount)
+            (set! (-> *interaction-update-buffer* idx status) status)
+            (set! (-> *interaction-update-buffer* idx ename) name)
+            (set! (-> *interaction-update-buffer* idx level) level)
+            (set! (-> *interaction-update-buffer* idx parent) parent)
               
+            (set! (-> *interaction-update-buffer* idx has_update?) #t)
+            (return #t)
+            )
+          )
+        )
+        (none)
+      )
+
+    (defun check-set-interaction-from-buffer ()
+      (if *interaction-update-buffer-initialized*
+        (dotimes (idx (-> *interaction-update-buffer* length))
+          (when (= (-> *interaction-update-buffer* idx has_update?) #t)
+
+            ;; self-player-info holds data going out
+            ;; (-> *multiplayer-info* player_num) holds data coming in (orb reduction)
+            (set! (-> *self-player-info* inter_type) (-> *interaction-update-buffer* idx type))
+            (set! (-> *self-player-info* inter_amount) (-> *interaction-update-buffer* idx amount))
+            (set! (-> *self-player-info* inter_status) (-> *interaction-update-buffer* idx status))
+            (set! (-> *self-player-info* inter_name) (-> *interaction-update-buffer* idx ename))
+            (set! (-> *self-player-info* inter_parent) (-> *interaction-update-buffer* idx parent))
+            (set! (-> *self-player-info* inter_level) (-> *interaction-update-buffer* idx level))
+            
+            (set! *has-none-position-update?* #t)
+
+            (set! (-> *interaction-update-buffer* idx has_update?) #f)
             (return #t)
             )
           )
         )
       (none)
-      )
-
-    (defun add-death-to-interaction-buffer ((name string) (amount float))
-      (dotimes (idx (-> *interaction-update-buffer* length))
-        (when (= (-> *interaction-update-buffer* idx has_update?) #f)
-
-          (set! (-> *interaction-update-buffer* idx type) (interaction-type enemy-death))
-          (set! (-> *interaction-update-buffer* idx amount) amount)
-          (set! (-> *interaction-update-buffer* idx status) 0.0)
-          (set! (-> *interaction-update-buffer* idx ename) name)
-          (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> (level-get-target-inside *level*) name)))
-          (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
-            
-          (set! (-> *interaction-update-buffer* idx has_update?) #t)
-          (return #t)
-          )
-        )
-      (none)
-      )
-
-    (defun add-crate-to-interaction-buffer ((type crate-type) (amount float) (proc process))
-      (dotimes (idx (-> *interaction-update-buffer* length))
-        (when (= (-> *interaction-update-buffer* idx has_update?) #f)
-
-          (set! (-> *interaction-update-buffer* idx type) (interaction-type crate))
-          (set! (-> *interaction-update-buffer* idx amount) amount)
-          (set! (-> *interaction-update-buffer* idx status) (the float type))
-          (set! (-> *interaction-update-buffer* idx ename) (the-as string (-> proc name)))
-          (set! (-> *interaction-update-buffer* idx level) (symbol->string (-> *level* level (-> (the-as process-drawable proc) draw level-index) name)))
-          (set! (-> *interaction-update-buffer* idx parent) (symbol->string (-> (ppointer->process (-> proc parent)) name)))
-            
-          (set! (-> *interaction-update-buffer* idx has_update?) #t)
-          (return #t)
-          )
-        )
-      (none)
-      )
-
-    ;; name type level
-    (defun add-fish-to-interaction-buffer ((total-amount float) (type interaction-type) (status float))
-      (dotimes (idx (-> *interaction-update-buffer* length))
-        (when (= (-> *interaction-update-buffer* idx has_update?) #f)
-
-          (set! (-> *interaction-update-buffer* idx type) type)
-          (set! (-> *interaction-update-buffer* idx amount) total-amount)
-          (set! (-> *interaction-update-buffer* idx status) status)
-          (set! (-> *interaction-update-buffer* idx ename) "fisher-1")
-          (set! (-> *interaction-update-buffer* idx level) "jungle")
-          (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
-            
-          (set! (-> *interaction-update-buffer* idx has_update?) #t)
-          (return #t)
-          )
-        )
-      (none)
-      )
-
-    ;; name type level
-    (defun add-level-objective-to-interaction-buffer ((name string) (type interaction-type) (level string))
-      (dotimes (idx (-> *interaction-update-buffer* length))
-        (when (= (-> *interaction-update-buffer* idx has_update?) #f)
-
-          (set! (-> *interaction-update-buffer* idx type) type)
-          (set! (-> *interaction-update-buffer* idx amount) 1.0)
-          (set! (-> *interaction-update-buffer* idx status) 0.0)
-          (set! (-> *interaction-update-buffer* idx ename) name)
-          (set! (-> *interaction-update-buffer* idx level) level)
-          (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
-            
-          (set! (-> *interaction-update-buffer* idx has_update?) #t)
-          (return #t)
-          )
-        )
-      (none)
-      )
-
-    ;; status level
-    (defun add-lpc-chamber-to-interaction-buffer ((stop-point float) (level string))
-      (dotimes (idx (-> *interaction-update-buffer* length))
-        (when (= (-> *interaction-update-buffer* idx has_update?) #f)
-
-          (set! (-> *interaction-update-buffer* idx type) (interaction-type lpc-chamber))
-          (set! (-> *interaction-update-buffer* idx amount) 1.0)
-          (set! (-> *interaction-update-buffer* idx status) stop-point)
-          (set! (-> *interaction-update-buffer* idx ename) "exit-chamber-1")
-          (set! (-> *interaction-update-buffer* idx level) level)
-          (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
-            
-          (set! (-> *interaction-update-buffer* idx has_update?) #t)
-          (return #t)
-          )
-        )
-      (none)
-      )
-
-    ;; name amount level
-    (defun add-boss-phase-to-interaction-buffer ((name string) (phase float) (level string) (force-phase float))
-      (dotimes (idx (-> *interaction-update-buffer* length))
-        (when (= (-> *interaction-update-buffer* idx has_update?) #f)
-
-          (set! (-> *interaction-update-buffer* idx type) (interaction-type boss-phase))
-          (set! (-> *interaction-update-buffer* idx amount) phase)
-          (set! (-> *interaction-update-buffer* idx status) force-phase)
-          (set! (-> *interaction-update-buffer* idx ename) name)
-          (set! (-> *interaction-update-buffer* idx level) level)
-          (set! (-> *interaction-update-buffer* idx parent) "entity-pool")
-            
-          (set! (-> *interaction-update-buffer* idx has_update?) #t)
-
-          (set! *current-boss-phase* (the int phase))
-
-          (return #t)
-          )
-        )
-      (none)
-      )
-
-    (defun check-set-interaction-from-buffer ()
-      (dotimes (idx (-> *interaction-update-buffer* length))
-        (when (= (-> *interaction-update-buffer* idx has_update?) #t)
-
-          ;; self-player-info holds data going out
-          ;; (-> *multiplayer-info* player_num) holds data coming in (orb reduction)
-          (set! (-> *self-player-info* inter_type) (-> *interaction-update-buffer* idx type))
-          (set! (-> *self-player-info* inter_amount) (-> *interaction-update-buffer* idx amount))
-          (set! (-> *self-player-info* inter_status) (-> *interaction-update-buffer* idx status))
-          (set! (-> *self-player-info* inter_name) (-> *interaction-update-buffer* idx ename))
-          (set! (-> *self-player-info* inter_parent) (-> *interaction-update-buffer* idx parent))
-          (set! (-> *self-player-info* inter_level) (-> *interaction-update-buffer* idx level))
-          
-          (set! *has-none-position-update?* #t)
-
-          (set! (-> *interaction-update-buffer* idx has_update?) #f)
-          (return #t)
-          )
-        )
     )
 
 
@@ -642,7 +479,14 @@
       )
 
     (defun runs-on-task-update ((task game-task) (status task-status))
-      (add-task-to-interaction-buffer task status)
+      (add-interaction-to-buffer 
+        (interaction-type game-task)
+        (the float task)
+        (the float status)
+        (game-task->string task)
+        (symbol->string (-> (level-get-target-inside *level*) name))
+        "entity-pool"
+        )
       
       (if (and (= (-> *multiplayer-info* game mode) (run-mode lockout)) (= status (task-status need-resolution)))
         (check-lockout-restrictions)
@@ -651,17 +495,90 @@
       )
 
     (defun runs-on-pickup ((kind pickup-type) (amount float) (proc process))
-      (if (and (-> proc parent)
+      (when (and (-> proc parent)
         (not (name= (-> proc name) "display")) ;; prevent pickups given over REPL
         (not (and (= kind (pickup-type money)) (<= amount -90))) ;; prevent orb buys to avoid dupe deductions on buy
+        )
+        (let 
+          ((name (case kind
+            (((pickup-type money) (pickup-type buzzer) (pickup-type fuel-cell))
+              (update-state)
+              (if (or (name= (-> proc name) "fuel-cell") (name= (-> proc name) "buzzer"))
+                (symbol->string (-> proc name))
+                (the-as string (-> proc name))
+                )
+              )
+            (((pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-green) (pickup-type eco-red))
+              (if (and (name= (-> (ppointer->process (-> proc parent)) name) "entity-pool") (not (or (name= (-> proc name) "health") (name= (-> proc name) "eco-blue") (name= (-> proc name) "eco-red") (name= (-> proc name) "eco-yellow"))))
+                (the-as string (-> proc name))
+                (symbol->string (-> proc name))
+                )
+              )
+            (else
+              ""
+              )
+            ))
+
+          (parent (case kind
+            (((pickup-type money) (pickup-type buzzer) (pickup-type fuel-cell))
+              (let* ((parent (ppointer->process (-> proc parent))))
+                (if (or (name= (-> parent name) "entity-pool") (name= (-> parent name) "buzzer"))
+                  (symbol->string (-> parent name))
+                  (the-as string (-> parent name))
+                  )
+                )
+              )
+            (((pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-green) (pickup-type eco-red))
+                (let* ((parent (ppointer->process (-> proc parent))))
+                  (if (name= (-> parent name) "entity-pool")
+                    "entity-pool" ;; crash exist if assigned from parent name on green-eco from box
+                    (the-as string (-> parent name))
+                    )
+                  )
+              )
+            (else
+              ""
+              )
+            ))
+
+          (level (case kind
+          (((pickup-type money) (pickup-type buzzer) (pickup-type fuel-cell))
+            (symbol->string (-> *level* level (-> (the-as process-drawable proc) draw level-index) name))
+            )
+          (((pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-green) (pickup-type eco-red))
+            (symbol->string (-> (level-get-target-inside *level*) name))
+            )
+            (else
+              ""
+              )
+            ))
           )
-        (add-pickup-to-interaction-buffer kind amount proc)
+
+        (if (not (string= level ""))
+          (add-interaction-to-buffer 
+            (the-as interaction-type kind)
+            amount
+            0.0
+            name
+            level
+            parent
+            )
+          )
+        )
+
         )
       (none)
       )
 
     (defun runs-on-crate-break ((type crate-type) (amount float) (proc process))
-      (add-crate-to-interaction-buffer type amount proc)
+      (add-interaction-to-buffer 
+        (interaction-type crate)
+        amount
+        (the float type)
+        (the-as string (-> proc name))
+        (symbol->string (-> *level* level (-> (the-as process-drawable proc) draw level-index) name))
+        (symbol->string (-> (ppointer->process (-> proc parent)) name))
+        )
 
       (none)
       )
@@ -741,43 +658,123 @@
       (none)
       )
 
+    (defun runs-on-task-related-death ((name string) (amount float))
+      (add-interaction-to-buffer 
+        (interaction-type enemy-death)
+        amount
+        0.0
+        name
+        (symbol->string (-> (level-get-target-inside *level*) name))
+        "entity-pool"
+        )
+      (none)
+      )
+
+    (defun runs-on-new-boss-phase ((name string) (phase float) (level string) (force-phase float))
+      (add-interaction-to-buffer 
+        (interaction-type boss-phase)
+        phase
+        force-phase
+        name
+        level
+        "entity-pool"
+        )
+      (none)
+      )
+
     (defun runs-on-fish-caught ((total-amount float))
-      (add-fish-to-interaction-buffer total-amount (interaction-type fish) 1.0)
+      (add-interaction-to-buffer 
+        (interaction-type fish)
+        total-amount
+        1.0
+        "fisher-1"
+        "jungle"
+        "entity-pool"
+        )
       (none)
       )
 
     (defun runs-on-fish-missed((total-amount float))
-      (add-fish-to-interaction-buffer total-amount (interaction-type fish) 0.0)
+      (add-interaction-to-buffer 
+        (interaction-type fish)
+        total-amount
+        0.0
+        "fisher-1"
+        "jungle"
+        "entity-pool"
+        )
       (none)
       )
 
     (defun runs-on-periscope-activate ((periscope-name string))
-      (add-level-objective-to-interaction-buffer periscope-name (interaction-type periscope) "jungle")
+      (add-interaction-to-buffer 
+        (interaction-type periscope)
+        1.0
+        0.0
+        periscope-name
+        "jungle"
+        "entity-pool"
+        )
       (none)
       )
 
     (defun runs-on-last-periscope-power-up ()
-      (add-level-objective-to-interaction-buffer "periscope-16" (interaction-type periscope) "jungle")
+      (add-interaction-to-buffer 
+        (interaction-type periscope)
+        1.0
+        0.0
+        "periscope-16"
+        "jungle"
+        "entity-pool"
+        )
       (none)
       )
 
     (defun runs-on-bumper-deactivate ((bumper-name string))
-      (add-level-objective-to-interaction-buffer bumper-name (interaction-type snow-bumper) "snow")
+      (add-interaction-to-buffer 
+        (interaction-type snow-bumper)
+        1.0
+        0.0
+        bumper-name
+        "snow"
+        "entity-pool"
+        )
       (none)
       )
 
     (defun runs-on-dark-crystal-explode ((crystal-name string) (level-name string))
-      (add-level-objective-to-interaction-buffer crystal-name (interaction-type dark-crystal) level-name)
+      (add-interaction-to-buffer 
+        (interaction-type dark-crystal)
+        1.0
+        0.0
+        crystal-name
+        level-name
+        "entity-pool"
+        )
       (none)
       )
 
     (defun runs-on-lpc-chamber-stop ((stop-point float))
-      (add-lpc-chamber-to-interaction-buffer stop-point (if (= stop-point 1.0) "sunkenb" "village2"))
+      (add-interaction-to-buffer 
+        (interaction-type lpc-chamber)
+        1.0
+        stop-point
+        "exit-chamber-1"
+        (if (= stop-point 1.0) "sunkenb" "village2")
+        "entity-pool"
+        )
       (none)
       )
 
     (defun runs-on-swingpole-grab ((pole-name string) (level-name string))
-      (add-level-objective-to-interaction-buffer pole-name (interaction-type swingpole) level-name)
+      (add-interaction-to-buffer 
+        (interaction-type swingpole)
+        1.0
+        0.0
+        pole-name
+        level-name
+        "entity-pool"
+        )
       (none)
       )
 
@@ -801,12 +798,12 @@
                 (if (< *current-boss-phase* 2)
                   (set! *current-boss-phase* (+ *current-boss-phase* 1))
                   )
-                (add-boss-phase-to-interaction-buffer "plant-boss-3" (the float *current-boss-phase*) "jungleb" 1.0)
+                (runs-on-new-boss-phase "plant-boss-3" (the float *current-boss-phase*) "jungleb" 1.0)
                 )
               ((name= (-> *game-info* current-continue name) "ogre-start")
                 (when (< *current-boss-phase* 6)
                   (set! *current-boss-phase* (if (<= *current-boss-phase* 4) (+ *current-boss-phase* 3) 7))
-                  (add-boss-phase-to-interaction-buffer "ogreboss-1" (the float *current-boss-phase*) "ogre" 1.0)
+                  (runs-on-new-boss-phase "ogreboss-1" (the float *current-boss-phase*) "ogre" 1.0)
                   )
                 )
               ((name= (-> *game-info* current-continue name) "finalboss-fight")
@@ -824,7 +821,7 @@
                     (set! *current-boss-phase* 6)
                     )
                   )
-                (add-boss-phase-to-interaction-buffer "robotboss-3" (the float *current-boss-phase*) "finalboss" 1.0)
+                (runs-on-new-boss-phase "robotboss-3" (the float *current-boss-phase*) "finalboss" 1.0)
                 )
               )
             )

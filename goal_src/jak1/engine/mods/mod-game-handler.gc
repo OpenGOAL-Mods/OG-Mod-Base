@@ -11,6 +11,7 @@
 (define *teamrun-levels-info* (new 'global 'game-levels-info))
 (define *zoomer-level-unlocks* (new 'global 'zoomer-level-unlocks))
 
+(define *interaction-update-buffer-initialized* #f)
 (define *interaction-update-buffer* (new 'global 'boxed-array interaction-info MAX_INTERACTION_BUFFER_COUNT))
 (define *last-task* (game-task none)) ;; tasks get closed twice in a row sometimes, this is used to prevent it from sending multiple of same close over socket
 (define *last-task-status* (task-status invalid))

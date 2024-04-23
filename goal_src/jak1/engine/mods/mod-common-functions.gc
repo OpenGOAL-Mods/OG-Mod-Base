@@ -165,6 +165,7 @@
     (dotimes (idx (-> *interaction-update-buffer* length))
       (set! (-> *interaction-update-buffer* idx) (new 'global 'interaction-info))
       )
+    (set! *interaction-update-buffer-initialized* #t)
 
     (pc-connect-mp-info *multiplayer-info* *self-player-info* *teamrun-info* *teamrun-levels-info*)
     )
