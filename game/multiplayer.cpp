@@ -226,13 +226,12 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
               player->quat_w = field.value().get<float>();
             } else if (field.key().compare("rotY") == 0) {
               player->zoomer_rot_y = field.value().get<float>();
+            } else if (field.key().compare("currentLevel") == 0) {
+              player->current_level = field.value();
             } else if (field.key().compare("tgtState") == 0) {
               player->tgt_state = field.value();
             } else if (field.key().compare("mpState") == 0) {
               player->mp_state = field.value();
-            } else if (field.key().compare("currentLevel") == 0) {
-              std::string levelName = field.value();
-              strncpy(Ptr<String>(player->current_level).c()->data(), levelName.c_str(), INTERACTION_STRING_LEN);
             } else if (field.key().compare("interaction") == 0) {
 
               //check if interaction available
@@ -421,8 +420,10 @@ void send_position_update() {
     return;
 
   // Construct JSON payload
-  json json_payload = {
-    {"position", {
+  json json_payload = {};
+
+  if (gSelfPlayerInfo->inter_type) {
+    json_payload["position"] = {
       {"transX", gSelfPlayerInfo->trans_x},
       {"transY", gSelfPlayerInfo->trans_y},
       {"transZ", gSelfPlayerInfo->trans_z},
@@ -431,17 +432,30 @@ void send_position_update() {
       {"quatZ", gSelfPlayerInfo->quat_z},
       {"quatW", gSelfPlayerInfo->quat_w},
       {"rotY", gSelfPlayerInfo->zoomer_rot_y},
+      {"currentLevel", gSelfPlayerInfo->current_level},
       {"tgtState", gSelfPlayerInfo->tgt_state},
       {"interType", gSelfPlayerInfo->inter_type},
       {"interAmount", gSelfPlayerInfo->inter_amount},
       {"interStatus", gSelfPlayerInfo->inter_status},
       {"interName", Ptr<String>(gSelfPlayerInfo->inter_name).c()->data()},
       {"interParent", Ptr<String>(gSelfPlayerInfo->inter_parent).c()->data()},
-      {"interLevel", Ptr<String>(gSelfPlayerInfo->inter_level).c()->data()},
-      {"currentLevel", Ptr<String>(gSelfPlayerInfo->current_level).c()->data()}
-      }
-    }
-  };
+      {"interLevel", Ptr<String>(gSelfPlayerInfo->inter_level).c()->data()}
+    };
+  }
+  else {
+    json_payload["position"] = {
+      {"transX", gSelfPlayerInfo->trans_x},
+      {"transY", gSelfPlayerInfo->trans_y},
+      {"transZ", gSelfPlayerInfo->trans_z},
+      {"quatX", gSelfPlayerInfo->quat_x},
+      {"quatY", gSelfPlayerInfo->quat_y},
+      {"quatZ", gSelfPlayerInfo->quat_z},
+      {"quatW", gSelfPlayerInfo->quat_w},
+      {"rotY", gSelfPlayerInfo->zoomer_rot_y},
+      {"currentLevel", gSelfPlayerInfo->current_level},
+      {"tgtState", gSelfPlayerInfo->tgt_state}
+    };
+  }
 
   if (gTeamrunInfo->has_state_update) {
     json_payload["state"] = {

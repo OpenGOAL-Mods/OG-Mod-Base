@@ -11,7 +11,6 @@
 (define *teamrun-levels-info* (new 'global 'game-levels-info))
 (define *zoomer-level-unlocks* (new 'global 'zoomer-level-unlocks))
 
-(define *interaction-update-buffer-initialized* #f)
 (define *interaction-update-buffer* (new 'global 'boxed-array interaction-info MAX_INTERACTION_BUFFER_COUNT))
 (define *last-task* (game-task none)) ;; tasks get closed twice in a row sometimes, this is used to prevent it from sending multiple of same close over socket
 (define *last-task-status* (task-status invalid))
@@ -54,6 +53,7 @@
 (define *enable-remote-target-eco-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that the physical target can't accidentally miss it
 
 ;; multiplayer self
+(define *self-setup-completed* #f)
 (define *self-player-info* (the-as remote-player-info #f))
 
 
@@ -236,25 +236,25 @@
     #t
   )
 
-(defun is-same-level? ((level-name1 string) (level-name2 string))
+(defun is-same-level? ((level-name1 symbol) (level-name2 symbol))
   (cond
-    ((or (string= level-name1 "maincave") (string= level-name1 "robocave") (string= level-name1 "darkcave"))
-      (or (string= level-name2 "maincave") (string= level-name2 "robocave") (string= level-name2 "darkcave"))
+    ((or (= level-name1 'maincave) (= level-name1 'robocave) (= level-name1 'darkcave))
+      (or (= level-name2 'maincave) (= level-name2 'robocave) (= level-name2 'darkcave))
       )
-    ((or (string= level-name1 "sunken") (string= level-name1 "sunkenb"))
-      (or (string= level-name2 "sunken") (string= level-name2 "sunkenb"))
+    ((or (= level-name1 'sunken) (= level-name1 'sunkenb))
+      (or (= level-name2 'sunken) (= level-name2 'sunkenb))
       )
-    ((or (string= level-name1 "jungle") (string= level-name1 "jungleb"))
-      (or (string= level-name2 "jungleb") (string= level-name2 "jungle"))
+    ((or (= level-name1 'jungle) (= level-name1 'jungleb))
+      (or (= level-name2 'jungleb) (= level-name2 'jungle))
       )
     (else
-      (string= level-name1 level-name2)
+      (= level-name1 level-name2)
       )
     )
   )
 
 (defun all-teammates-in-same-level? ()
-  (let ((level-name (symbol->string (-> (level-get-target-inside *level*) name))))
+  (let ((level-name (-> (level-get-target-inside *level*) name)))
     (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
       (if (and
             (is-interactive? tgt-idx)
@@ -269,7 +269,7 @@
   )
 
 (defun all-teammates-on-level-racer? ()
-  (let ((level-name (symbol->string (-> (level-get-target-inside *level*) name))))
+  (let ((level-name (-> (level-get-target-inside *level*) name)))
     (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
       (let ((target (get-interactive-target tgt-idx)))
         (if (and

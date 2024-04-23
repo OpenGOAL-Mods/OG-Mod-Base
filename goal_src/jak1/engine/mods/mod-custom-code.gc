@@ -42,9 +42,9 @@
     )
 
     (defun runs-on-level-enter ()
-      (when (and *target* (!= (-> (level-get-target-inside *level*) name) 'title))
-        (when (!= (-> *self-player-info* current_level) (symbol->string (-> (level-get-target-inside *level*) name)))
-          (set! (-> *self-player-info* current_level) (symbol->string (-> (level-get-target-inside *level*) name)))
+      (when (and *target* *self-setup-completed* (!= (-> (level-get-target-inside *level*) name) 'title))
+        (when (!= (-> *self-player-info* current_level) (-> (level-get-target-inside *level*) name))
+          (set! (-> *self-player-info* current_level) (-> (level-get-target-inside *level*) name))
           (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) current_level) (-> *self-player-info* current_level))
           (set! *current-boss-phase* -1)
           )
@@ -184,7 +184,7 @@
       )
 
     (defun add-interaction-to-buffer ((type interaction-type) (amount float) (status float) (name string) (level string) (parent string))
-      (if *interaction-update-buffer-initialized*
+      (if *self-setup-completed*
         (dotimes (idx (-> *interaction-update-buffer* length))
           (when (= (-> *interaction-update-buffer* idx has_update?) #f)
 
@@ -204,7 +204,7 @@
       )
 
     (defun check-set-interaction-from-buffer ()
-      (if *interaction-update-buffer-initialized*
+      (if *self-setup-completed*
         (dotimes (idx (-> *interaction-update-buffer* length))
           (when (= (-> *interaction-update-buffer* idx has_update?) #t)
 

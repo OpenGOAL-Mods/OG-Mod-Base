@@ -151,27 +151,6 @@
     )
   )
 
-
-(defun set-up-self-remote-if-null ()
-  (when (not *self-player-info*)
-    (set! *self-player-info* (new 'global 'remote-player-info))
-    (set! (-> *self-player-info* username) (new 'global 'string MAX_USERNAME_LEN "local_player")) 
-    (set! (-> *self-player-info* color)  (tgt-color red))
-    (set! (-> *self-player-info* mp_state)  (mp-tgt-state mp-tgt-interactive))
-    (set! (-> *self-player-info* mp_state_check)  (mp-tgt-state mp-tgt-interactive))
-    (set! (-> *multiplayer-info* client_version) (new 'global 'string INTERACTION_STRING_LEN "Not Connected"))
-    (set! (-> *multiplayer-info* player_num) 0)
-
-    (dotimes (idx (-> *interaction-update-buffer* length))
-      (set! (-> *interaction-update-buffer* idx) (new 'global 'interaction-info))
-      )
-    (set! *interaction-update-buffer-initialized* #t)
-
-    (pc-connect-mp-info *multiplayer-info* *self-player-info* *teamrun-info* *teamrun-levels-info*)
-    )
-  (none)
-)
-
 (defun update-self-multiplayer-info ()
   (set! (-> *self-player-info* trans_x)    (-> *target* root trans x))
   (set! (-> *self-player-info* trans_y)    (-> *target* root trans y))
@@ -218,6 +197,29 @@
     )
   (none)
   )
+
+(defun set-up-self-remote-if-null ()
+  (when (not *self-player-info*)
+    (set! *self-player-info* (new 'global 'remote-player-info))
+    (set! (-> *self-player-info* username) (new 'global 'string MAX_USERNAME_LEN "local_player")) 
+    (set! (-> *self-player-info* color)  (tgt-color red))
+    (set! (-> *self-player-info* mp_state)  (mp-tgt-state mp-tgt-interactive))
+    (set! (-> *self-player-info* mp_state_check)  (mp-tgt-state mp-tgt-interactive))
+    (set! (-> *multiplayer-info* client_version) (new 'global 'string INTERACTION_STRING_LEN "Not Connected"))
+    (set! (-> *multiplayer-info* player_num) 0)
+    (set! (-> *self-player-info* current_level) (-> (level-get-target-inside *level*) name))
+    (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) current_level) (-> *self-player-info* current_level))
+
+    (dotimes (idx (-> *interaction-update-buffer* length))
+      (set! (-> *interaction-update-buffer* idx) (new 'global 'interaction-info))
+      )
+    (set! *self-setup-completed* #t)
+    
+    (update-self-multiplayer-info)
+    (pc-connect-mp-info *multiplayer-info* *self-player-info* *teamrun-info* *teamrun-levels-info*)
+    )
+  (none)
+)
 
 
 (defun target-sync-state ((tgt-state symbol) (t target) (inter-name string))

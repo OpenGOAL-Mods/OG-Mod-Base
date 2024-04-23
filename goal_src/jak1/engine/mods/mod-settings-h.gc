@@ -146,7 +146,7 @@
   (inter_level   string)
   (inter_cleanup   int32) ;; marks level cleanup interaction from entering level
 
-  (current_level    string)
+  (current_level    symbol)
   (tgt_state        symbol)
   (mp_state         mp-tgt-state) 
   (mp_state_check   mp-tgt-state) ;; used only on goal side, used to check if mp_state has changed
