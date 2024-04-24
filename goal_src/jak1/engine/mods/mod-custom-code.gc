@@ -307,7 +307,7 @@
 
       (when (and *target* (>= (-> *multiplayer-info* player_num) 0) (!= (-> *self-player-info* mp_state) (mp-tgt-state mp-tgt-disconnected)) (>= (-> *display* base-frame-counter) (-> *game-info* blackout-time)))
 
-        (when (and *remote-stuck-released* (>= (-> *display* base-frame-counter) *remote-stuck-release-timestamp*))
+        (when (and *remote-stuck-released* (>= (-> *display* base-frame-counter) *remote-stuck-release-timestamp*) (!= (-> *target* state name) 'target-fishing))
           (cond
             ((any-interactive-remote-target-close-to-target? 6000.0)
               (set! *remote-stuck-release-timestamp* (+ (current-time) (seconds 0.5)))

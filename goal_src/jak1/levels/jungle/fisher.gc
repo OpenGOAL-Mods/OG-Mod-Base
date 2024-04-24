@@ -7,6 +7,7 @@
 
 (declare-type fisher-fish process-drawable)
 
+(define-extern remove-remote-collision (function float none))
 (define-extern runs-on-fish-caught (function float none))
 (define-extern runs-on-fish-missed (function float none))
 
@@ -2023,6 +2024,7 @@
       )
     )
   :enter (behavior ((arg0 handle))
+    (remove-remote-collision 5.0)
     (set! (-> self control unknown-surface00) *empty-mods*)
     (logior! (-> self state-flags) (state-flags invulnerable))
     (set-zero! (-> self control unknown-smush00))
