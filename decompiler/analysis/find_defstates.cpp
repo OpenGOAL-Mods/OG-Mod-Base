@@ -644,66 +644,6 @@ FormElement* rewrite_nonvirtual_defstate_with_inherit(
                                              parent_state, entries, false, false);
 }
 
-FormElement* rewrite_nonvirtual_defstate_with_inherit(
-    LetElement* elt,
-    const Env& env,
-    const std::string& expected_state_name,
-    FormPool& pool,
-    const std::unordered_map<std::string, std::unordered_set<std::string>>& skip_states = {}) {
-  // (let ((gp-1 (new 'static 'state
-  //             :name 'target-swim-walk
-  //             :next #f
-  //             :exit #f
-  //             :parent #f
-  //             :code #f
-  //             :trans #f
-  //             :post #f
-  //             :enter #f
-  //             :event #f
-  //             )
-  //           )
-  //     )
-  //   (inherit-state gp-1 target-swim)
-  //   (set! (-> gp-1 parent) target-swim)
-  //   (set! target-swim-walk (the-as (state target) gp-1))
-  //   (set! (-> gp-1 enter) L120)
-  //   (set! (-> gp-1 exit) (-> target-swim-stance exit))
-  //   (set! (-> gp-1 trans) (the-as (function object) L107))
-  //   (set! (-> gp-1 code) L95)
-  //   )
-  env.func->warnings.warning("Encountered non-virtual defstate {} with inherit.",
-                             expected_state_name);
-  ASSERT(elt->body()->size() > 0);
-  int body_index = 0;
-
-  // the setup
-  auto first_in_body = elt->body()->at(body_index);
-  auto inherit = dynamic_cast<GenericElement*>(first_in_body);
-  std::string parent_state;
-  if (inherit) {
-    parent_state = inherit->elts().at(1)->to_string(env);
-  }
-  // advance to state set
-  body_index += 2;
-  auto info = get_state_info(elt->body()->at(body_index), env);
-  if (info.first != expected_state_name) {
-    env.func->warnings.error_and_throw(
-        "Inconsistent defstate name. code has {}, static state has {}", info.first,
-        expected_state_name);
-  }
-  if (debug_defstates) {
-    lg::debug("State: {} Type: {}", info.first, info.second.print());
-  }
-  body_index++;
-
-  auto entries =
-      get_defstate_entries(elt->body(), body_index, env, info.first, elt->entries().at(0).dest,
-                           info.second, pool, {}, skip_states);
-
-  return pool.alloc_element<DefstateElement>(info.second.last_arg().base_type(), info.first,
-                                             parent_state, entries, false, false);
-}
-
 bool is_nonvirtual_state(LetElement* elt) {
   return dynamic_cast<SetFormFormElement*>(elt->body()->at(0));
 }
