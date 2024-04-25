@@ -34,7 +34,6 @@ jobs:
             libfreetype6-dev libx11-dev libxrandr-dev libgl1-mesa-dev \
             libudev-dev libopenal-dev libflac-dev libogg-dev libvorbis-dev
 
-
       - name: Setup sccache
         uses: hendrikmuhs/ccache-action@v1.2.12
         with:
