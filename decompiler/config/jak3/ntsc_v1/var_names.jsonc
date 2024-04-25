@@ -1851,5 +1851,210 @@
       "v1-161": "fade-enable",
       "f0-11": "dist-until-gone"
     }
+  },
+  "fma-sphere-init-by-other": {
+    "args": ["fma-parms"]
+  },
+  "(method 9 progress-list-level)": {
+    "vars": {
+      "s3-0": ["act", "game-task-node-flag"]
+    }
+  },
+  "(method 4 progress-list-level)": {
+    "vars": {
+      "s4-0": ["act", "game-task-node-flag"]
+    }
+  },
+  "level-find-borrow-slot": {
+    "args": ["borrower-level", "mode"],
+    "vars": {
+      "v1-0": "host-level-borrow-slot",
+      "a2-0": "host-level-candidate-idx",
+      "a3-3": "host-level-candidate",
+      "t0-7": "mode2",
+      "t0-10": "found-slot",
+      "t0-8": "host-level-slot-idx"
+    }
+  },
+  "(method 24 com-airlock)": {
+    "args": ["this", "level-status"]
+  },
+  "(method 29 com-airlock)": {
+    "args": ["this", "side"]
+  },
+  "(method 23 com-airlock)": {
+    "vars": {
+      "s3-0": "tpos",
+      "f26-0": "target-dist",
+      "s4-0": "cmd"
+    }
+  },
+  "(method 26 com-airlock)": {
+    "args": ["this", "arg1", "side"]
+  },
+  "(method 9 proc-focusable-spawner)": {
+    "args": ["this", "count", "allocation"]
+  },
+  "(method 15 proc-focusable-spawner)": {
+    "vars": {
+      "s5-0": "i",
+      "s4-0": "proc",
+      "a0-6": "pfoc",
+      "v1-8": "ii"
+    }
+  },
+  "(method 119 enemy)": {
+    "vars": {
+      "a1-5": ["cspec", "collide-spec"]
+    }
+  },
+  "(method 64 enemy)": {
+    "vars": {
+      "s3-2": ["aware", "enemy-aware"]
+    }
+  },
+  "(method 146 enemy)": {
+    "vars": {
+      "gp-0": ["name", "sound-name"]
+    }
+  },
+  "(method 82 enemy)": {
+    "args": ["this", "proc", "argc", "msg", "block"]
+  },
+  "(method 11 process-taskable)": {
+    "args": ["this", "entity"]
+  },
+  "debris-group-init-by-other": {
+    "args": ["tuning", "params", "pdraw"],
+    "vars": {
+      "s3-0": "i",
+      "s1-0": "debris",
+      "s2-0": "skel",
+      "v0-18": "draw",
+      "sv-48": "tuning-scale",
+      "s0-0": "joint-transform",
+      "sv-64": "debris-scale"
+    }
+  },
+  "(method 15 debris-group)": {
+    "args": ["this", "idx"],
+    "vars": {
+      "s3-0": "cquery",
+      "v1-3": "debris-box",
+      "s5-0": "box-num",
+      "s4-0": "box-start",
+      "a0-1": "bbox",
+      "sv-96": "name",
+      "a1-13": "id",
+      "v1-7": "debris-start"
+    }
+  },
+  "(trans idle debris-group)": {
+    "vars": {
+      "gp-0": "i",
+      "s5-0": "debris",
+      "s4-0": "draw-ctrl",
+      "gp-1": "ii",
+      "s5-1": "debris-box",
+      "s3-0": "box-num",
+      "s4-1": "box-start",
+      "s1-0": "bbox"
+    }
+  },
+  "(method 16 debris-group)": {
+    "args": ["this", "idx"],
+    "vars": {
+      "s5-0": "debris-box",
+      "s4-0": "i",
+      "v1-7": "debris"
+    }
+  },
+  "(enter burnt-husk gun-yellow-3-saucer)": {
+    "vars": {
+      "s5-0": ["name", "sound-name"]
+    }
+  },
+  "reset-actors": {
+    "vars": {
+      "s5-0": ["perm", "entity-perm-status"]
+    }
+  },
+  "(method 24 level-group)": {
+    "vars": {
+      "a0-9": ["enemy-option", "enemy-option"]
+    }
+  },
+  "(code target-darkjak-running-attack)": {
+    "vars": {
+      "t1-2": ["name", "sound-name"]
+    }
+  },
+  "(method 18 level)": {
+    "vars": {
+      "s5-0": "mem-mode",
+      "a0-31": "lev",
+      "sv-32": "mask",
+      "sv-20": "memory-unused?"
+    }
+  },
+  "(method 119 nav-enemy)": {
+    "vars": {
+      "a1-13": ["cspec", "collide-spec"]
+    }
+  },
+  "(method 216 saberfish)": {
+    "vars": {
+      "s4-1": ["s4-1", "saberfish-command"]
+    }
+  },
+  "find-behavior<-in-water?": {
+    "vars": {
+      "v0-0": ["v0-0", "saberfish-find-behavior"]
+    }
+  },
+  "(method 23 spider-manager)": {
+    "vars": {
+      "s3-0": ["dist", "float"]
+    }
+  },
+  "(method 121 sewer-frog)": {
+    "vars": {
+      "v1-10": ["name", "sound-name"]
+    }
+  },
+  "(trans target-board-ride-edge)": {
+    "vars": {
+      "a0-44": ["name", "sound-name"]
+    }
+  },
+  "(method 9 menu-create-game-option)": {
+    "vars": {
+      "a0-26": ["name", "sound-name"]
+    }
+  },
+  "(code active task-manager-forest-plants)": {
+    "vars": {
+      "s5-8": ["hand", "handle"]
+    }
+  },
+  "(method 31 dm-mine-spider-spawner)": {
+    "vars": {
+      "s3-0": ["s3-0", "float"]
+    }
+  },
+  "(method 26 task-manager-wascity-gungame)": {
+    "vars": {
+      "s4-1": ["sname", "sound-name"]
+    }
+  },
+  "terraformer-head-always": {
+    "vars": {
+      "s4-2": ["sname", "sound-name"]
+    }
+  },
+  "launch-mine": {
+    "vars": {
+      "v0-1": ["hand", "handle"]
+    }
   }
 }
