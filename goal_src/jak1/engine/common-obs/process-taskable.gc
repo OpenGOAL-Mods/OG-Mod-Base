@@ -324,6 +324,9 @@
        (send-event *target* 'get-pickup 6 (the float (-> self cell-for-task)))
        )
       (else
+        ;;Teamruns fix for multiplayer crashes just before getting the cell
+        (close-specific-task! (current-task (-> self tasks)) (task-status need-resolution))
+        (go-virtual idle)
         (format
           #t
           "ERROR<GMJ>: ~S got into give-cell with give-cell == #f task = ~S~%"
