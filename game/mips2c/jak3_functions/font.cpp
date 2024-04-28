@@ -192,11 +192,14 @@ u64 execute(void* ctxt) {
   // shadow hack begin
   c->lw(t0, 16, v1);    // lw t0, 16(v1)
   // multiply shadow offset by font scale and screen x scale
+  c->vfs[vf26].f[0] += c->gprs[t0].f[0] * 2;
+  c->vfs[vf26].f[1] += 1;
   // shadow hack end
   c->lqc2(vf1, 32, v1);                             // lqc2 vf1, 32(v1)
   c->vdiv(vf0, BC::w, vf25, BC::w);                 // vdiv Q, vf0.w, vf25.w
   c->lqc2(vf2, 16, v1);                             // lqc2 vf2, 16(v1)
   c->vmul(DEST::x, vf25, vf25, vf1);                // vmul.x vf25, vf25, vf1
+  c->vmul(DEST::x, vf23, vf23, vf1);                // vmul.x vf23, vf23, vf1
   // pc-hack
   c->lw(v1, 64, a2);                                // lw v1, 64(a2)
   if (!(c->gprs[v1].du32[0] & (1 << 6))) {
@@ -2786,5 +2789,8 @@ void link() {
   // gLinkedFunctionTable.reg("get-string-length", execute, 512);
   gLinkedFunctionTable.reg("get-string-length-asm", execute, 512);
 }
+
+} // namespace get_string_length
+} // namespace Mips2C
 // add get_string_length::link to the link callback table for the object file.
 // FWD DEC:
