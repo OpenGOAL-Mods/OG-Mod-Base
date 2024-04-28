@@ -384,7 +384,12 @@
       (set! (-> self control reaction) target-collision-reaction)
 
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)))
+        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) 
+                (or (= self *target*) 
+                  (is-target-in-any-active-level? self) 
+                  (and (is-target-current-level-alive? tgt-idx) (not (< (remote-target-move-dist self (seconds 0.05)) 1000000.0)))
+                  )
+                )
           (fill-cache-integrate-and-collide!
             (-> self control)
             (-> self control transv)

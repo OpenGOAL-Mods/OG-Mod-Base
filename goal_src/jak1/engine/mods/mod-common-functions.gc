@@ -446,7 +446,7 @@
         (quaternion-copy! (-> t control dir-targ) (-> t root quat))
 
         ;; sync target state
-        (when (and (-> t state name) (!= (-> t state name) (-> p tgt_state)) 
+        (if (and (-> t state name) (!= (-> t state name) (-> p tgt_state)) 
                 (or 
                   (and (!= (-> p tgt_state) 'target-clone-anim) (!= (-> p tgt_state) 'target-racing-clone-anim) (!= (-> p tgt_state) 'target-flut-clone-anim)) 
                   (and (= (-> p inter_type) (interaction-type game-task)) (= (-> p inter_status) 7)) ;; only allow fuel cells from 'target-clone-anim
@@ -455,7 +455,7 @@
           (target-sync-state (-> p tgt_state) t (-> p inter_name))
           )
         )
-        (when (!= (-> p inter_type) (interaction-type none))
+        (if (!= (-> p inter_type) (interaction-type none))
           (clean-up-interaction-data p)
           )
       )

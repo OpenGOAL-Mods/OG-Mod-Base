@@ -8,6 +8,10 @@
 
 ;; target-start is modified due to changing the size of the stack in gkernel.gc
 
+(define-extern is-target-current-level-alive? (function int symbol))
+(define-extern is-target-in-any-active-level? (function target symbol))
+(define-extern remote-target-move-dist (function target time-frame float))
+
 ;; DECOMP BEGINS
 
 (defbehavior build-conversions target ((arg0 vector))
@@ -1592,7 +1596,12 @@
           )
       (set! (-> self control reaction) target-collision-reaction)
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)))
+        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) 
+                (or (= self *target*) 
+                  (is-target-in-any-active-level? self) 
+                  (and (is-target-current-level-alive? tgt-idx) (not (< (remote-target-move-dist self (seconds 0.05)) 1000000.0)))
+                  )
+                )
           (fill-cache-integrate-and-collide!
             (-> self control)
             (-> self control transv)
@@ -1667,7 +1676,12 @@
             )
           )
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)))
+        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) 
+                (or (= self *target*) 
+                  (is-target-in-any-active-level? self) 
+                  (and (is-target-current-level-alive? tgt-idx) (not (< (remote-target-move-dist self (seconds 0.05)) 1000000.0)))
+                  )
+                )
           (fill-cache-integrate-and-collide!
             (-> self control)
             (-> self control transv)
@@ -1865,7 +1879,12 @@
             )
           )
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)))
+        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) 
+                (or (= self *target*) 
+                  (is-target-in-any-active-level? self) 
+                  (and (is-target-current-level-alive? tgt-idx) (not (< (remote-target-move-dist self (seconds 0.05)) 1000000.0)))
+                  )
+                )
           (fill-cache-integrate-and-collide!
             (-> self control)
             (-> self control transv)
