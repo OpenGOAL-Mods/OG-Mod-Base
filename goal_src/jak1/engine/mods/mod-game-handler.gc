@@ -42,6 +42,9 @@
 
 (define *has-none-position-update?* #f)
 
+;; remote level check fix by added delay as they're set on the same frame and can cause check bugs
+(define *run-remote-level-update-check-next-frame* #f)
+
 ;; stuck in remote target fix
 (define *remote-stuck-released* #f)
 (define *remote-stuck-release-timestamp* (current-time))

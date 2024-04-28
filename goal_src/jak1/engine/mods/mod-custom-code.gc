@@ -284,7 +284,7 @@
           (send-event *camera* 'change-state cam-string 0)
           (safe-release-from-grab)
           )
-        (((teamrun-command on-remote-level-update)) (runs-on-level-enter))
+        (((teamrun-command on-remote-level-update)) (set! *run-remote-level-update-check-next-frame* #t))
         (((teamrun-command enable-debug-mode))
           (set! *debug-segment* #t)
           (set! *cheat-mode* #t)
@@ -324,6 +324,10 @@
         (when (not (string= (-> *multiplayer-info* force_continue) ""))
           (start 'play (get-continue-by-name *game-info* (-> *multiplayer-info* force_continue)))
           (set! (-> *multiplayer-info* force_continue) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+          )
+        (when *run-remote-level-update-check-next-frame*
+          (set! *run-remote-level-update-check-next-frame* #f)
+          (runs-on-level-enter)
           )
         (if (!= (-> *multiplayer-info* teamrun_command) (teamrun-command none)) (execute-teamrun-command))
 
