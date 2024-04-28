@@ -2,6 +2,7 @@
 
 #include "TP_Type.h"
 
+#include "common/goos/Printer.h"
 #include "common/goos/Reader.h"
 #include "common/log/log.h"
 #include "common/type_system/defenum.h"
