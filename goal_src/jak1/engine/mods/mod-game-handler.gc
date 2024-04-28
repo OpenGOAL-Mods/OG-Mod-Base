@@ -6,55 +6,57 @@
     ;; dgos: TODO
 
 
-;; teamrun
+;; teamruns data
 (define *teamrun-info* (new 'global 'teamrun-player-info))
 (define *teamrun-levels-info* (new 'global 'game-levels-info))
 (define *zoomer-level-unlocks* (new 'global 'zoomer-level-unlocks))
 
+;; interaction data
 (define *interaction-update-buffer* (new 'global 'boxed-array interaction-info MAX_INTERACTION_BUFFER_COUNT))
 (define *last-task* (game-task none)) ;; tasks get closed twice in a row sometimes, this is used to prevent it from sending multiple of same close over socket
 (define *last-task-status* (task-status invalid))
 
-(define *allow-cell-pickup?* #t)
-(define *allow-final-boss?* #t)
-(define *allow-one-time-citadel-skip?* #t)
-(define *has-none-position-update?* #f)
-
-
-;; game settings
+;; teamruns settings
 (define *enable-ingame-cutscenes?* #f) ;; should always be #f in multiplayer, some multiplayer stuff that isn't entirely cutscene related uses this as well !TODO: fix that maybe (see robotboss/sage-finalboss/boat? as example)
 
-;; game fixes
-(define *target-on-active-gondola?* #f)
-(define *move-by-index-on-spawn* #f)
-
-;; multiplayer
+;; multiplayer data
 (define *multiplayer-info* (new 'global 'multiplayer-info))
 (define *remote-targets* (new 'global 'boxed-array handle MAX_MULTIPLAYER_COUNT))
 (define *remote-target-active-count* 0)
 (define *enable-remote-target-yellow-eco-blasts* #t)
+
+;; multiplayer self
+(define *self-setup-completed* #f)
+(define *self-player-info* (the-as remote-player-info #f))
+
+;; multiplayer fixes
+(define *allow-cell-pickup?* #t)
+(define *allow-final-boss?* #t)
+(define *allow-one-time-citadel-skip?* #t)
+
+(define *target-on-active-gondola?* #f)
+(define *move-by-index-on-spawn* #f)
+
+(define *in-finalboss-cutscene?* #f)
+(define *current-boss-phase* 10)
+
+(define *has-none-position-update?* #f)
+
+;; stuck in remote target fix
+(define *remote-stuck-released* #f)
+(define *remote-stuck-release-timestamp* (current-time))
 
 ;; multiplayer save and load
 (define *enable-multiplayer-save-and-load* #t)
 (define *player-can-load* #f)
 (define *is-saving* #f)
 
-;; multiplayer fixes
-(define *in-finalboss-cutscene?* #f)
-(define *current-boss-phase* 10)
-
-;; stuck in remote target fix
-(define *remote-stuck-released* #f)
-(define *remote-stuck-release-timestamp* (current-time))
-
 ;; pickup toggles for remote
 (define *enable-remote-target-buzzer-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that cell fly can't drop two cells on pickup
 (define *enable-remote-target-money-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions to prevent orbs pickups to count as current user pickups
 (define *enable-remote-target-eco-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that the physical target can't accidentally miss it
 
-;; multiplayer self
-(define *self-setup-completed* #f)
-(define *self-player-info* (the-as remote-player-info #f))
+
 
 
 (defun reset-run-variables ()
