@@ -481,13 +481,18 @@
       )
 
     (defun runs-on-task-update ((task game-task) (status task-status))
-      (add-interaction-to-buffer 
-        (interaction-type game-task)
-        (the float task)
-        (the float status)
-        (game-task->string task)
-        (symbol->string (-> (level-get-target-inside *level*) name))
-        "entity-pool"
+      (when (or (!= task *last-task*) (!= status *last-task-status*))
+        (set! *last-task* task)
+        (set! *last-task-status* status)
+        
+        (add-interaction-to-buffer 
+          (interaction-type game-task)
+          (the float task)
+          (the float status)
+          (game-task->string task)
+          (symbol->string (-> (level-get-target-inside *level*) name))
+          "entity-pool"
+          )
         )
       
       (if (and (= (-> *multiplayer-info* game mode) (run-mode lockout)) (= status (task-status need-resolution)))
