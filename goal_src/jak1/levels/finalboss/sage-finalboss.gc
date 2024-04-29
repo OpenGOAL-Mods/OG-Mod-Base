@@ -6,8 +6,6 @@
 ;; dgos: FIN
 ;; DECOMP BEGINS
 
-(define-extern *in-finalboss-cutscene?* symbol)
-
 (define-extern check-allow-final-boss? (function symbol))
 
 
@@ -609,7 +607,6 @@
             (initialize! *game-info* 'game (the-as game-save #f) "title-start")
             (start 'play (get-continue-by-name *game-info* "finalboss-start"))
             )
-          (set! *in-finalboss-cutscene?* #f)
           )
         )
       )
@@ -700,7 +697,6 @@
            )
         (when (not (target-has-all-the-cells?))
           (start 'play (get-continue-by-name *game-info* "finalboss-start"))
-          (set! *in-finalboss-cutscene?* #f)
           )
        )
       ((= (current-status (-> self tasks)) (task-status invalid))
@@ -896,7 +892,6 @@
         (initialize! *game-info* 'game (the-as game-save #f) "title-start")
         (start 'play (get-continue-by-name *game-info* "finalboss-start"))
         )
-      (set! *in-finalboss-cutscene?* #f)
       )
     (none)
     )

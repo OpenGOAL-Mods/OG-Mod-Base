@@ -7,7 +7,6 @@
 
 (define-extern get-closest-interactive-target-to-vector (function vector target))
 (define-extern runs-on-new-boss-phase (function string float string float none))
-(define-extern *in-finalboss-cutscene?* symbol)
 
 ;; DECOMP BEGINS
 
@@ -430,7 +429,6 @@
       (the-as object (cond
                        ((= v1-0 'white-eco-picked-up)
                         (close-specific-task! (game-task finalboss-movies) (task-status unknown))
-                        (set! *in-finalboss-cutscene?* #t)
                         (entity-birth-no-kill (-> self alts 5))
                         (let ((a1-2 (new 'stack-no-clear 'event-message-block)))
                           (set! (-> a1-2 from) self)

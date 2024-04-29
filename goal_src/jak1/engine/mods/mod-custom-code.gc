@@ -333,42 +333,40 @@
 
         ;; on player movement
         (when (or *has-none-position-update?*
-          (and (not *in-finalboss-cutscene?*)
-            (or
             (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
             (!= (-> *self-player-info* trans_y) (-> *target* root trans y))
             (!= (-> *self-player-info* trans_z) (-> *target* root trans z))
             (!= (-> *self-player-info* tgt_state) (-> *target* state name))
-        )))
+            )
 
-            ;; update this player's position
-            (update-self-multiplayer-info)
-            ;; (update-debug-self-multiplayer-info)
+          ;; update this player's position
+          (update-self-multiplayer-info)
+          ;; (update-debug-self-multiplayer-info)
+          
+          ;; send updated player info to client
+          (pc-update-position)
+
+
+          ;; clean none position updates
+          (when *has-none-position-update?*
+            (set! *has-none-position-update?* #f)
             
-            ;; send updated player info to client
-            (pc-update-position)
-
-
-            ;; clean none position updates
-            (when *has-none-position-update?*
-              (set! *has-none-position-update?* #f)
-              
-              ;; update flags
-              (set! (-> *teamrun-info* has_state_update?) 0)
-              (set! (-> *teamrun-levels-info* has_level_update?) 0)
-              (set! (-> *teamrun-info* just_loaded?) 0)
-              (set! (-> *teamrun-info* just_saved?) 0)
-              (when (!= (-> *teamrun-info* just_spawned?) 0)
-                (set! (-> *teamrun-info* just_spawned?) 0)
-                (runs-after-jak-spawn)
-                )
+            ;; update flags
+            (set! (-> *teamrun-info* has_state_update?) 0)
+            (set! (-> *teamrun-levels-info* has_level_update?) 0)
+            (set! (-> *teamrun-info* just_loaded?) 0)
+            (set! (-> *teamrun-info* just_saved?) 0)
+            (when (!= (-> *teamrun-info* just_spawned?) 0)
+              (set! (-> *teamrun-info* just_spawned?) 0)
+              (runs-after-jak-spawn)
               )
+            )
 
 
-            (when (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
-              (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-interactive))
-              (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state_check) (mp-tgt-state mp-tgt-interactive))
-              )
+          (when (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
+            (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-interactive))
+            (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state_check) (mp-tgt-state mp-tgt-interactive))
+            )
           )
         
         ;; cleanup self interaction data

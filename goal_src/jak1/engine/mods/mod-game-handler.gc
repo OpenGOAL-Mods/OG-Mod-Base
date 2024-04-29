@@ -33,12 +33,10 @@
 (define *allow-cell-pickup?* #t)
 (define *allow-final-boss?* #t)
 (define *allow-one-time-citadel-skip?* #t)
+(define *current-boss-phase* 10)
 
 (define *target-on-active-gondola?* #f)
 (define *move-by-index-on-spawn* #f)
-
-(define *in-finalboss-cutscene?* #f)
-(define *current-boss-phase* 10)
 
 (define *has-none-position-update?* #f)
 
