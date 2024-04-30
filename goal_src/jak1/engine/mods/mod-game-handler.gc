@@ -29,6 +29,9 @@
 (define *self-setup-completed* #f)
 (define *self-player-info* (the-as remote-player-info #f))
 
+;; teamruns data
+(define *spectator-handler* (new 'global 'spectator-handler))
+
 ;; multiplayer fixes
 (define *allow-cell-pickup?* #t)
 (define *allow-final-boss?* #t)
@@ -143,6 +146,17 @@
         )
       )
     )
+  )
+
+(defun is-valid-level? ((level-name symbol))
+  (case level-name
+    (('lavatube 'beach 'citadel 'darkcave 'finalboss 'firecanyon 
+    'jungle 'jungleb 'maincave 'misty 'ogre 'robocave 'rolling 'snow 
+    'sunken 'sunkenb 'swamp 'training 'village1 'village2 'village3)
+      (return #t)
+      )
+    )
+  #f
   )
 
 (defun unlock-zoomer-in-current-level ()
@@ -305,6 +319,10 @@
   #f
   )
 
+(defun is-camera-within-target-dist? ((target target) (dist float))
+  (and target (-> *camera* child) (-> *camera* child 0) (< (vector-vector-distance (remote-target-pos 0 target) (-> (the-as camera-slave (-> *camera* child 0)) trans)) dist))
+  )
+
 (defun remote-target-move-dist ((target target) (arg0 time-frame))
   (when target
     (let ((s5-0 (new-stack-vector0))
@@ -444,6 +462,72 @@
   (set! (-> dst camera-rot 7) (-> src vector 2 y))
   (set! (-> dst camera-rot 8) (-> src vector 2 z))
   (none)
+  )
+
+
+(defun change-spectator ((search-forward symbol))
+  (let ((selected-target (get-target (-> *spectator-handler* spectator_id)))
+        (original-index (-> *spectator-handler* spectator_id)))
+    (if (not selected-target)
+      (set! selected-target *target*)
+      )
+
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (let ((target (get-target tgt-idx)))
+        (when (and target (not (is-inactive? tgt-idx)))
+          (if (= selected-target *target*)
+            (set! selected-target target)
+            )
+          (cond 
+            ((= search-forward #t)
+              (when (> tgt-idx original-index)
+                (set! (-> *spectator-handler* spectator_id) tgt-idx)
+                (return target)
+                )
+              )
+            (else
+              (cond 
+                ((and (< tgt-idx original-index) (!= target *target*))
+                  (set! (-> *spectator-handler* spectator_id) tgt-idx)
+                  (set! selected-target target)
+                  )
+                ((!= (-> *spectator-handler* spectator_id) original-index)
+                  (return selected-target)
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+      (cond
+        ;;pick first target found if move forwards and none found
+        ((and (= search-forward #t) (= (-> *spectator-handler* spectator_id) original-index))
+          (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+            (let ((target (get-target tgt-idx)))
+              (when (and target (!= target *target*) (not (is-inactive? tgt-idx)))
+                (set! selected-target target)
+                (set! (-> *spectator-handler* spectator_id) tgt-idx)
+                (return selected-target)
+                )
+              )
+            )
+          )
+        ;;pick last target found if move backwards and none found
+        ((and (= search-forward #f) (= (-> *spectator-handler* spectator_id) original-index))
+          (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+            (let ((target (get-target tgt-idx)))
+              (when (and target (!= target *target*) (not (is-inactive? tgt-idx)))
+                (set! selected-target target)
+                (set! (-> *spectator-handler* spectator_id) tgt-idx)
+                )
+              )
+            )
+          (return selected-target)
+          )
+        )
+      selected-target
+    )
   )
 
 

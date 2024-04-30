@@ -123,6 +123,8 @@
   (on-remote-level-update)
   (enable-debug-mode)
   (disable-debug-mode)
+  (enable-spectator-mode)
+  (disable-spectator-mode)
 )
 
 (deftype remote-player-info (structure)
