@@ -25,6 +25,45 @@
 ;; Define Custom Functions to call in mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun get-target ((idx int))
+  (if (= (-> *multiplayer-info* player_num) -1)
+    (if (= idx 0)
+      *target*
+      (the-as target #f)
+      )
+    (if (= (-> *multiplayer-info* player_num) idx)
+      *target*
+      (if (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (handle->process (-> *remote-targets* idx)))
+        (the target (handle->process (-> *remote-targets* idx)))
+        (the-as target #f)
+        )
+      )
+    )
+  )
+
+(defun get-interactive-target ((idx int))
+  (if (= (-> *multiplayer-info* player_num) -1)
+    (if (= idx 0)
+      *target*
+      (the-as target #f)
+      )
+    (if (= (-> *multiplayer-info* player_num) idx)
+      *target*
+      (if (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (is-interactive? idx) (handle->process (-> *remote-targets* idx)))
+        (the target (handle->process (-> *remote-targets* idx)))
+        (the-as target #f)
+        )
+      )
+    )
+  )
+
+(defun get-spectator-target ()
+  (if (and (-> *spectator-handler* is_spectator?) (nonzero? (-> *remote-targets* (-> *spectator-handler* spectator_idx))) (handle->process (-> *remote-targets* (-> *spectator-handler* spectator_idx))))
+    (get-target (-> *spectator-handler* spectator_idx))
+    *target*
+    )
+  )
+
 (defun clean-up-interaction-data ((target remote-player-info)) ;; needs to be done in game in case we skip frames when transfering position data
   (set! (-> target inter_type) (interaction-type none))
   (set! (-> target inter_amount) 0.0)
@@ -101,7 +140,7 @@
 
   (defun run-target-fuel-cell-pickup ((remote-target target))
     (when (if (-> *spectator-handler* is_spectator?)
-        (remote-target-process-close? (get-target (-> *spectator-handler* spectator_id)) remote-target 500000.0)
+        (remote-target-process-close? (get-spectator-target) remote-target 500000.0)
         (process-close? remote-target 500000.0)) ;; only run if target is close enough as pickup sound is global
       (let* ((remote-cell (birth-pickup-at-point (-> remote-target control trans) (pickup-type fuel-cell) 1.0 #f remote-target (the-as fact-info #f))))
         (safe-deactivate-remote-cell)
@@ -502,7 +541,7 @@
             (let ((p (-> *multiplayer-info* players idx))
                   (obj (the process-drawable (handle->process (-> *remote-targets* idx)))))
               (when obj
-                (if (is-interactive? idx)
+                (if (or (is-interactive? idx) (-> *spectator-handler* is_spectator?))
                   (handle-remote-interaction p idx)
                   )
                 (if (has-new-mp-state? idx)
@@ -530,40 +569,6 @@
           )
         )
       (set! *remote-target-active-count* target-count)
-      )
-    )
-  )
-
-
-(defun get-target ((idx int))
-  (if (= (-> *multiplayer-info* player_num) -1)
-    (if (= idx 0)
-      *target*
-      (the-as target #f)
-      )
-    (if (= (-> *multiplayer-info* player_num) idx)
-      *target*
-      (if (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (handle->process (-> *remote-targets* idx)))
-        (the target (handle->process (-> *remote-targets* idx)))
-        (the-as target #f)
-        )
-      )
-    )
-  )
-
-
-(defun get-interactive-target ((idx int))
-  (if (= (-> *multiplayer-info* player_num) -1)
-    (if (= idx 0)
-      *target*
-      (the-as target #f)
-      )
-    (if (= (-> *multiplayer-info* player_num) idx)
-      *target*
-      (if (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (is-interactive? idx) (handle->process (-> *remote-targets* idx)))
-        (the target (handle->process (-> *remote-targets* idx)))
-        (the-as target #f)
-        )
       )
     )
   )

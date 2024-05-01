@@ -320,7 +320,7 @@
   )
 
 (defun is-camera-within-target-dist? ((target target) (dist float))
-  (and target (-> *camera* child) (-> *camera* child 0) (< (vector-vector-distance (remote-target-pos 0 target) (-> (the-as camera-slave (-> *camera* child 0)) trans)) dist))
+  (and target (-> *camera* child 0) (< (vector-vector-distance (remote-target-pos 0 target) (-> (the-as camera-slave (-> *camera* child 0)) trans)) dist))
   )
 
 (defun remote-target-move-dist ((target target) (arg0 time-frame))
@@ -466,8 +466,8 @@
 
 
 (defun change-spectator ((search-forward symbol))
-  (let ((selected-target (get-target (-> *spectator-handler* spectator_id)))
-        (original-index (-> *spectator-handler* spectator_id)))
+  (let ((selected-target (get-target (-> *spectator-handler* spectator_idx)))
+        (original-index (-> *spectator-handler* spectator_idx)))
     (if (not selected-target)
       (set! selected-target *target*)
       )
@@ -481,17 +481,17 @@
           (cond 
             ((= search-forward #t)
               (when (> tgt-idx original-index)
-                (set! (-> *spectator-handler* spectator_id) tgt-idx)
+                (set! (-> *spectator-handler* spectator_idx) tgt-idx)
                 (return target)
                 )
               )
             (else
               (cond 
                 ((and (< tgt-idx original-index) (!= target *target*))
-                  (set! (-> *spectator-handler* spectator_id) tgt-idx)
+                  (set! (-> *spectator-handler* spectator_idx) tgt-idx)
                   (set! selected-target target)
                   )
-                ((!= (-> *spectator-handler* spectator_id) original-index)
+                ((!= (-> *spectator-handler* spectator_idx) original-index)
                   (return selected-target)
                   )
                 )
@@ -502,24 +502,24 @@
       )
       (cond
         ;;pick first target found if move forwards and none found
-        ((and (= search-forward #t) (= (-> *spectator-handler* spectator_id) original-index))
+        ((and (= search-forward #t) (= (-> *spectator-handler* spectator_idx) original-index))
           (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
             (let ((target (get-target tgt-idx)))
               (when (and target (!= target *target*) (not (is-inactive? tgt-idx)))
                 (set! selected-target target)
-                (set! (-> *spectator-handler* spectator_id) tgt-idx)
+                (set! (-> *spectator-handler* spectator_idx) tgt-idx)
                 (return selected-target)
                 )
               )
             )
           )
         ;;pick last target found if move backwards and none found
-        ((and (= search-forward #f) (= (-> *spectator-handler* spectator_id) original-index))
+        ((and (= search-forward #f) (= (-> *spectator-handler* spectator_idx) original-index))
           (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
             (let ((target (get-target tgt-idx)))
               (when (and target (!= target *target*) (not (is-inactive? tgt-idx)))
                 (set! selected-target target)
-                (set! (-> *spectator-handler* spectator_id) tgt-idx)
+                (set! (-> *spectator-handler* spectator_idx) tgt-idx)
                 )
               )
             )

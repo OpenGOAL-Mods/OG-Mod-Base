@@ -227,7 +227,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (deftype spectator-handler (structure)
  ((is_spectator? symbol)
-  (spectator_id  int32)
+  (spectator_idx  int32)
 
   (refocus_dist float)
   (is_refocusing? symbol)
@@ -242,7 +242,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defmethod new spectator-handler ((allocation symbol) (type-to-make type))
   (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
     (set! (-> obj is_spectator?) #f)
-    (set! (-> obj spectator_id) 0)
+    (set! (-> obj spectator_idx) 0)
     (set! (-> obj refocus_dist) 500000.0)
     (set! (-> obj is_refocusing?) #f)
     (set! (-> obj next_focus_check) (current-time))

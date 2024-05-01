@@ -314,7 +314,7 @@
           )
         (((teamrun-command disable-spectator-mode))
           (when (-> *spectator-handler* is_spectator?)
-            (set! (-> *spectator-handler* spectator_id) 0)
+            (set! (-> *spectator-handler* spectator_idx) 0)
             (set! (-> *spectator-handler* is_spectator?) #f)
             (start 'play (get-continue-by-name *game-info* "village1-hut"))
             )
@@ -516,7 +516,7 @@
           
           ;;check refocus need
           (when (and (not (has-camera-type? 'cam-free-floating)) (>= (-> *display* base-frame-counter) (-> *spectator-handler* next_focus_check)))
-            (let ((spec-target (get-target (-> *spectator-handler* spectator_id))))
+            (let ((spec-target (get-spectator-target)))
               (when spec-target
                 (if (-> *spectator-handler* is_refocusing?)
                   (when (is-camera-within-target-dist? spec-target (-> *spectator-handler* refocus_dist))
@@ -550,7 +550,7 @@
                 )
               ((cpad-pressed? 0 right)
                 (change-spectator #t)
-                (let ((spec-target (get-target (-> *spectator-handler* spectator_id))))
+                (let ((spec-target (get-spectator-target)))
                   (when spec-target
                     (send-event *camera* 'change-target spec-target)
                     (send-event *camera* 'change-state cam-free-floating 0)
@@ -561,7 +561,7 @@
                 )
               ((cpad-pressed? 0 left)
                 (change-spectator #f)
-                (let ((spec-target (get-target (-> *spectator-handler* spectator_id))))
+                (let ((spec-target (get-spectator-target)))
                   (when spec-target
                     (send-event *camera* 'change-target spec-target)
                     (send-event *camera* 'change-state cam-free-floating 0)
@@ -574,8 +574,8 @@
             )
 
             ;;ensure level is loaded
-            (when (not (is-target-current-level-alive? (-> *spectator-handler* spectator_id)))
-              (let ((level-name (-> *multiplayer-info* players (-> *spectator-handler* spectator_id) current_level)))
+            (when (not (is-target-current-level-alive? (-> *spectator-handler* spectator_idx)))
+              (let ((level-name (-> *multiplayer-info* players (-> *spectator-handler* spectator_idx) current_level)))
                 (when (is-valid-level? level-name)
                   (load-state-want-levels level-name #f)
                   (load-state-want-display-level level-name 'display)
