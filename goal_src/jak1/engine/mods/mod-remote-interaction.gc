@@ -87,8 +87,12 @@
   )
 
 (defun safe-kill-fuel-cell ((cell-name string))
-  (process-entity-status! (the-as fuel-cell (process-by-ename cell-name)) (entity-perm-status dead) #t)
-  (kill-by-name cell-name *active-pool*)
+  (let ((cell (process-by-ename cell-name)))
+    (when cell
+      (process-entity-status! (the-as fuel-cell cell) (entity-perm-status dead) #t)
+      (deactivate cell)
+      )
+    )
   )
 
 (defun safe-kill-fuel-cell-child ((name string))
@@ -97,7 +101,7 @@
       (let ((child (ppointer->process (-> proc child))))
         (when (type-type? (-> child type) fuel-cell)
           (process-entity-status! (the-as fuel-cell child) (entity-perm-status dead) #t)
-          (kill-by-name (-> (the-as fuel-cell child) name) *active-pool*)
+          (deactivate child)
           )
         )
       )
@@ -111,7 +115,7 @@
       (let ((brother (ppointer->process (-> proc child))))
         (when (type-type? (-> brother type) fuel-cell)
           (process-entity-status! (the-as fuel-cell brother) (entity-perm-status dead) #t)
-          (kill-by-name (-> (the-as fuel-cell brother) name) *active-pool*)
+          (deactivate brother)
           )
         )
       )
@@ -385,8 +389,12 @@
   )
 
 (defun safe-kill-orb ((money-name string))
-  (process-entity-status! (the-as money (process-by-ename money-name)) (entity-perm-status dead) #t)
-  (kill-by-name money-name *active-pool*)
+  (let ((orb (process-by-ename money-name)))
+    (when orb
+      (process-entity-status! (the-as money orb) (entity-perm-status dead) #t)
+      (deactivate orb)
+      )
+    )
   )
 
 (defun safe-kill-cache-orb ((cache-name string))
