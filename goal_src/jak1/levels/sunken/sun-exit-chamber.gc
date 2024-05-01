@@ -10,7 +10,7 @@
 
 (define-extern get-closest-interactive-target-to-vector (function vector target))
 (define-extern runs-on-lpc-chamber-stop (function float none))
-(define-extern has-camera-type? (function string basic))
+(define-extern has-camera-type? (function symbol basic))
 
 ;; DECOMP BEGINS
 
@@ -831,8 +831,8 @@
       (ja-no-eval :group! (-> self draw art-group data 3) :num! (seek!) :frame-num 0.0)
       (until (ja-done? 0)
         (when (and (not *enable-ingame-cutscenes?*)
-          (not (has-camera-type? "cam-stick")) 
-          (not (has-camera-type? "cam-decel")) 
+          (not (has-camera-type? 'cam-stick)) 
+          (not (has-camera-type? 'cam-decel)) 
           (or (!= (-> self root-override riders num-riders) 0) ;; as rider spot is only allowed for main jak
               (!= (-> (the-as exit-chamber-button (ppointer->process (-> self button))) root-override riders num-riders) 0)
               )
@@ -858,7 +858,7 @@
       (ja :num! (seek!))
       )
     (when (or *enable-ingame-cutscenes?*
-          (has-camera-type? "cam-stick")
+          (has-camera-type? 'cam-stick)
           (!= (-> self root-override riders num-riders) 0) ;; as rider spot is only allowed for main jak
           (!= (-> (the-as exit-chamber-button (ppointer->process (-> self button))) root-override riders num-riders) 0)
         )
@@ -874,7 +874,7 @@
       )
     (stop! (-> self sound))
     (when (or *enable-ingame-cutscenes?*
-          (has-camera-type? "cam-stick")
+          (has-camera-type? 'cam-stick)
           (!= (-> self root-override riders num-riders) 0) ;; as rider spot is only allowed for main jak
           (!= (-> (the-as exit-chamber-button (ppointer->process (-> self button))) root-override riders num-riders) 0)
         )
@@ -896,7 +896,7 @@
             (when (not gp-2)
                 (set! gp-2 #t)
                 (when (or (not *enable-ingame-cutscenes?*)
-                      (has-camera-type? "cam-stick")
+                      (has-camera-type? 'cam-stick)
                       (!= (-> self root-override riders num-riders) 0) ;; as rider spot is only allowed for main jak
                       (!= (-> (the-as exit-chamber-button (ppointer->process (-> self button))) root-override riders num-riders) 0)
                     )
@@ -1090,8 +1090,8 @@
       (ja-no-eval :group! (-> self draw art-group data 7) :num! (seek!) :frame-num 0.0)
       (until (ja-done? 0)
         (when (and (not *enable-ingame-cutscenes?*)
-          (not (has-camera-type? "cam-stick")) 
-          (not (has-camera-type? "cam-decel")) 
+          (not (has-camera-type? 'cam-stick)) 
+          (not (has-camera-type? 'cam-decel)) 
           (or (!= (-> self root-override riders num-riders) 0) ;; as rider spot is only allowed for main jak
               (!= (-> (the-as exit-chamber-button (ppointer->process (-> self button))) root-override riders num-riders) 0)
               )
@@ -1143,7 +1143,7 @@
       )
     (set! (-> self move-player?) #f)
     (when (and (not *enable-ingame-cutscenes?*)
-      (has-camera-type? "cam-stick")
+      (has-camera-type? 'cam-stick)
       (or (!= (-> self root-override riders num-riders) 0) ;; as rider spot is only allowed for main jak
           (!= (-> (the-as exit-chamber-button (ppointer->process (-> self button))) root-override riders num-riders) 0)
           )

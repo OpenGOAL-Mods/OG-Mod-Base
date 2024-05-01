@@ -988,18 +988,18 @@
     #f
   )
 
-(defun target-in-level-sphere? ((level-name string))
-  (if (and (-> *level* level0) (name= (-> *level* level0 name) level-name) (-> *level* level0 inside-sphere?))
+(defun target-in-level-sphere? ((level-name symbol))
+  (if (and (-> *level* level0) (= (-> *level* level0 name) level-name) (-> *level* level0 inside-sphere?))
     (return #t)
     )
-  (if (and (-> *level* level1) (name= (-> *level* level1 name) level-name) (-> *level* level1 inside-sphere?))
+  (if (and (-> *level* level1) (= (-> *level* level1 name) level-name) (-> *level* level1 inside-sphere?))
     (return #t)
     )
   #f
   )
 
-(defun has-camera-type? ((camera-type string))
-  (and (-> *camera* child 0) (name= (-> (the-as camera-slave (-> *camera* child 0)) state name) camera-type))
+(defun has-camera-type? ((camera-type symbol))
+  (and (-> *camera* child 0) (= (-> (the-as camera-slave (-> *camera* child 0)) state name) camera-type))
   )
 
 

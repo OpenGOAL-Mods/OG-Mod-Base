@@ -510,12 +510,12 @@
             (process-grab? *target*)
             )
             
-          (if (has-camera-type? "cam-circular")
+          (if (has-camera-type? 'cam-circular)
             (camera-change-to (the-as string 'base) 10 #f)
             )
           
           ;;check refocus need
-          (when (and (not (has-camera-type? "cam-free-floating")) (>= (-> *display* base-frame-counter) (-> *spectator-handler* next_focus_check)))
+          (when (and (not (has-camera-type? 'cam-free-floating)) (>= (-> *display* base-frame-counter) (-> *spectator-handler* next_focus_check)))
             (let ((spec-target (get-target (-> *spectator-handler* spectator_id))))
               (when spec-target
                 (if (-> *spectator-handler* is_refocusing?)
@@ -539,7 +539,7 @@
           (when (not (and (cpad-hold? 0 l2) (cpad-hold? 0 r2)))
             (cond
               ((cpad-pressed? 0 r3)
-                (if (has-camera-type? "cam-free-floating")
+                (if (has-camera-type? 'cam-free-floating)
                   (camera-change-to (the-as string 'base) 400 #f)
                   (send-event *camera* 'change-state cam-free-floating 0)
                   )
