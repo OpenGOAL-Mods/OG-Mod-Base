@@ -8,9 +8,7 @@
 
 ;; target-start is modified due to changing the size of the stack in gkernel.gc
 
-(define-extern is-target-current-level-alive? (function int symbol))
-(define-extern is-target-in-any-active-level? (function target symbol))
-(define-extern remote-target-move-dist (function target time-frame float))
+(define-extern remote-target-in-loaded-environment? (function target int symbol))
 
 ;; DECOMP BEGINS
 
@@ -1233,7 +1231,7 @@
 
 (defbehavior target-compute-edge target ()
   (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-    (when (and (get-target tgt-idx) (= self (get-target tgt-idx)))  ;; figure out target/collide-edge-work idx
+    (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self tgt-idx))  ;; figure out target/collide-edge-work idx
       (let ((s5-0 (-> *edge-grab-info-list* tgt-idx)))
         (if (not (edge-grab-info-method-9 s5-0 tgt-idx))
           (send-event self 'end-mode)
@@ -1294,7 +1292,7 @@
 
 (defbehavior target-compute-edge-rider target ()
   (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-    (when (and (get-target tgt-idx) (= self (get-target tgt-idx)))  ;; figure out target/collide-edge-work idx
+    (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self tgt-idx))  ;; figure out target/collide-edge-work idx
       (let ((gp-0 (-> *edge-grab-info-list* tgt-idx)))
         (if (not (edge-grab-info-method-9 gp-0 tgt-idx))
           (send-event self 'end-mode)
@@ -1596,12 +1594,7 @@
           )
       (set! (-> self control reaction) target-collision-reaction)
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) 
-                (or (= self *target*) 
-                  (is-target-in-any-active-level? self) 
-                  (and (is-target-current-level-alive? tgt-idx) (not (< (remote-target-move-dist self (seconds 0.05)) 1000000.0)))
-                  )
-                )
+        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self tgt-idx))
           (fill-cache-integrate-and-collide!
             (-> self control)
             (-> self control transv)
@@ -1676,12 +1669,7 @@
             )
           )
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) 
-                (or (= self *target*) 
-                  (is-target-in-any-active-level? self) 
-                  (and (is-target-current-level-alive? tgt-idx) (not (< (remote-target-move-dist self (seconds 0.05)) 1000000.0)))
-                  )
-                )
+        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self tgt-idx))
           (fill-cache-integrate-and-collide!
             (-> self control)
             (-> self control transv)
@@ -1750,7 +1738,7 @@
             )
           )
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)))
+        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self tgt-idx))
           (fill-cache-integrate-and-collide!
             (-> self control)
             (-> self control transv)
@@ -1879,12 +1867,7 @@
             )
           )
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) 
-                (or (= self *target*) 
-                  (is-target-in-any-active-level? self) 
-                  (and (is-target-current-level-alive? tgt-idx) (not (< (remote-target-move-dist self (seconds 0.05)) 1000000.0)))
-                  )
-                )
+        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self tgt-idx))
           (fill-cache-integrate-and-collide!
             (-> self control)
             (-> self control transv)

@@ -319,10 +319,6 @@
   #f
   )
 
-(defun is-camera-within-target-dist? ((target target) (dist float))
-  (and target (-> *camera* child 0) (< (vector-vector-distance (remote-target-pos 0 target) (-> (the-as camera-slave (-> *camera* child 0)) trans)) dist))
-  )
-
 (defun remote-target-move-dist ((target target) (arg0 time-frame))
   (when target
     (let ((s5-0 (new-stack-vector0))
@@ -351,6 +347,18 @@
       (/ f30-0 (the float gp-0))
       )
     )
+  )
+  
+(defun remote-target-in-loaded-environment? ((remote-target target) (tgt-idx int))
+  (or 
+    (= remote-target *target*) 
+    (is-target-in-any-active-level? remote-target)  
+    (and (is-target-current-level-alive? tgt-idx) (not (< (remote-target-move-dist remote-target (seconds 0.05)) 1000000.0)))
+    )
+  )
+
+(defun is-camera-within-target-dist? ((target target) (dist float))
+  (and target (-> *camera* child 0) (< (vector-vector-distance (remote-target-pos 0 target) (-> (the-as camera-slave (-> *camera* child 0)) trans)) dist))
   )
 
 (defun all-teammates-on-level-racer? ()
