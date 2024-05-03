@@ -734,8 +734,10 @@
      (ja-no-eval :group! eichar-jump-ja :num! (seek!) :frame-num 0.0)
      (when (= (-> arg0 angle) 'air)
        (sound-play "smack-surface")
-       (effect-control-method-10 (-> self skel effect) 'group-smack-surface (the-as float 0.0) 5)
-       (effect-control-method-10 (-> self skel effect) 'group-smack-surface-dizzy (the-as float 0.0) 8)
+       (when (= self *target*) ;;can in very rare cases cause crashes if applied on none main target mid teleport
+        (effect-control-method-10 (-> self skel effect) 'group-smack-surface (the-as float 0.0) 5)
+        (effect-control-method-10 (-> self skel effect) 'group-smack-surface-dizzy (the-as float 0.0) 8)
+        )
        )
      )
     (('shove)

@@ -269,6 +269,9 @@
 ;; WARN: rewrite_to_get_var got a none typed variable. Is there unreachable code? [OP: 450]
 ;; WARN: rewrite_to_get_var got a none typed variable. Is there unreachable code? [OP: 469]
 (defmethod effect-control-method-10 effect-control ((obj effect-control) (arg0 symbol) (arg1 float) (arg2 int))
+  (if (and (= arg0 'group-smack-surface) (!= (-> *target* state name) 'target-hit))
+    (return 0)
+    )
   (local-vars
     (sv-160 int)
     (sv-176 symbol)
