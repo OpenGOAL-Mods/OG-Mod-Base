@@ -196,7 +196,7 @@
            ;; try to open the debug menu:
            ((cpad-hold? 0 r3)
             ;; R3 pushed, no target.
-            (if *debug-segment*
+            (if (and (or (not (-> *spectator-handler* is_spectator?)) (cpad-hold? 0 l1)) *debug-segment*)
                 'menu ;; go to debug menu, when in debug mode.
                 *master-mode*
                 )
