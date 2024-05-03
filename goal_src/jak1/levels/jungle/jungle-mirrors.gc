@@ -1893,7 +1893,7 @@
       (while (or (-> self child) (-> *setting-control* current ambient))
         (suspend)
         )
-      (process-release? *target*)
+      (if *enable-ingame-cutscenes?* (process-release? *target*))
       (peri-beamcam-init-by-other (the-as string (-> self name)))
       (process-entity-status! self (entity-perm-status complete) #t)
       (close-specific-task! (game-task jungle-lurkerm) (task-status need-reminder-a))
