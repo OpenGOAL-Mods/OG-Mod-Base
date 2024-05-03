@@ -5,6 +5,10 @@
 ;; name in dgo: gsound
 ;; dgos: GAME, ENGINE
 
+(define-extern get-spectator-target (function target))
+(define-extern remote-target-pos (function int target vector))
+(define-extern *spectator-handler* spectator-handler)
+
 ;; The sound playback stuff is all on the IOP so we use IOP RPCs to control it.
 ;; Ther is a "player" that plays sound effects, and a "loader" that takes care of loading banks.
 (define *sound-player-rpc* (new 'global 'rpc-buffer-pair (the uint (size-of sound-rpc-union)) (the-as uint 128) RPC-SOUND-PLAYER))
@@ -802,7 +806,10 @@
      (math-camera-pos)
      )
     (*target*
-     (target-pos 0)
+      (if (-> *spectator-handler* is_spectator?)
+        (remote-target-pos 0 (get-spectator-target))
+        (target-pos 0)
+        )
      )
     (else
      (camera-pos)
