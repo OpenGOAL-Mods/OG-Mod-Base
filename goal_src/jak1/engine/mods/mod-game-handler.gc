@@ -285,16 +285,17 @@
   #t
   )
 
-(defun is-target-current-level-alive? ((tgt-idx int))
-  (if (or (and (-> *load-state* want 0)
-        (= (-> *multiplayer-info* players tgt-idx current_level) (-> *load-state* want 0 name)) 
+(defun is-level-alive? ((level-name symbol))
+  (if (or 
+      (and (-> *load-state* want 0)
+        (= level-name (-> *load-state* want 0 name)) 
         (case (-> *load-state* want 0 display?)
           (('special 'special-vis #f) #f)
           (else #t)
           )
         )
       (and (-> *load-state* want 1)
-        (= (-> *multiplayer-info* players tgt-idx current_level) (-> *load-state* want 1 name)) 
+        (= level-name (-> *load-state* want 1 name)) 
         (case (-> *load-state* want 1 display?)
           (('special 'special-vis #f) #f)
           (else #t)
@@ -304,6 +305,10 @@
     #t
     #f
     )
+  )
+
+(defun is-target-current-level-alive? ((tgt-idx int))
+    (is-level-alive? (-> *multiplayer-info* players tgt-idx current_level))
   )
 
 (defun is-target-in-any-active-level? ((remote-target target))
@@ -317,6 +322,47 @@
       )
     )
   #f
+  )
+  
+
+(defun get-preferable-level-slot ()
+  (cond
+    ((or (not (-> *load-state* want 0)) (not (is-valid-level? (-> *load-state* want 0 name))))
+      0
+      )
+    ((or (not (-> *load-state* want 1)) (not (is-valid-level? (-> *load-state* want 1 name))))
+      1
+      )
+    ((not (is-level-alive? (-> *load-state* want 0 name)))
+      0
+      )
+    ((not (is-level-alive? (-> *load-state* want 1 name)))
+      1
+      )
+    ((= (-> *load-state* want 0 display?) #f)
+      0
+      )
+    ((= (-> *load-state* want 1 display?) #f)
+      1
+      )
+    (else 
+      0
+      )
+    )
+  )
+
+(defun add-load-level ((level-name symbol))
+  (when (not (is-level-alive? level-name))
+    (let ((level-slot (get-preferable-level-slot)))
+      (if (= level-slot 0)
+        (load-state-want-levels level-name (-> *load-state* want 1 name))
+        (load-state-want-levels (-> *load-state* want 0 name) level-name)
+        )
+      (load-state-want-display-level level-name 'display)
+      (load-state-want-vis level-name)
+      (load-state-want-force-vis level-name #t)
+      )
+    )
   )
 
 (defun remote-target-move-dist ((target target) (arg0 time-frame))

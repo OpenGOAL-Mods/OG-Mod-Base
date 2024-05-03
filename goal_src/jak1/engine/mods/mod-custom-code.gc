@@ -576,11 +576,8 @@
             ;;ensure level is loaded
             (when (not (is-target-current-level-alive? (-> *spectator-handler* spectator_idx)))
               (let ((level-name (-> *multiplayer-info* players (-> *spectator-handler* spectator_idx) current_level)))
-                (when (is-valid-level? level-name)
-                  (load-state-want-levels level-name #f)
-                  (load-state-want-display-level level-name 'display)
-                  (load-state-want-vis level-name)
-                  (load-state-want-force-vis level-name #t)
+                (if (is-valid-level? level-name)
+                  (add-load-level level-name)
                   )
                 )
               )
