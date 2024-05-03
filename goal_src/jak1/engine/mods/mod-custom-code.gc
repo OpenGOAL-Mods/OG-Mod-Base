@@ -298,7 +298,7 @@
           (when (-> *spectator-handler* is_spectator?)
             (set! (-> *spectator-handler* spectator_idx) 0)
             (set! (-> *spectator-handler* is_spectator?) #f)
-            (safe-release-from-grab)
+            (if (is-grabbed?) (process-release? *target*))
             (send-event *camera* 'change-target *target*)
             (camera-change-to (the-as string 'base) 300 #f)
             )
