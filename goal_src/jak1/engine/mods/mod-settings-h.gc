@@ -205,6 +205,8 @@
   (refocus_dist float)
   (is_refocusing? symbol)
   (next_focus_check int32)
+
+  (last_level_slot_used int32)
   )
   :pack-me
   (:methods

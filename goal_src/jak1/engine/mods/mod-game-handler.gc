@@ -345,6 +345,12 @@
     ((= (-> *load-state* want 1 display?) #f)
       1
       )
+    ((-> *spectator-handler* is_spectator?)
+        (if (= (-> *spectator-handler* last_level_slot_used) 0)
+          1
+          0
+          )
+      )
     (else 
       0
       )
@@ -354,6 +360,10 @@
 (defun add-load-level ((level-name symbol))
   (when (not (is-level-alive? level-name))
     (let ((level-slot (get-preferable-level-slot)))
+      (if (-> *spectator-handler* is_spectator?)
+        (set! (-> *spectator-handler* last_level_slot_used) level-slot)
+        )
+      (format #t "force loading level ~s in slot ~d ~%" level-name level-slot)
       (if (= level-slot 0)
         (load-state-want-levels level-name (-> *load-state* want 1 name))
         (load-state-want-levels (-> *load-state* want 0 name) level-name)
