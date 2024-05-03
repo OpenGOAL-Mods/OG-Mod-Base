@@ -229,7 +229,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
     (set! (-> obj is_spectator?) #f)
     (set! (-> obj spectator_idx) 0)
-    (set! (-> obj refocus_dist) 500000.0)
+    (set! (-> obj refocus_dist) 200000.0)
     (set! (-> obj is_refocusing?) #f)
     (set! (-> obj next_focus_check) (current-time))
     (set! (-> obj last_level_slot_used) 0)
