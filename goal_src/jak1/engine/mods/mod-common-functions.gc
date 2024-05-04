@@ -136,6 +136,7 @@
         (deactivate remote-cell)
       )
     )
+    (none)
   )
 
   (defun run-target-fuel-cell-pickup ((remote-target target))

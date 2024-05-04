@@ -5,6 +5,7 @@
 ;; name in dgo: process-taskable
 ;; dgos: GAME, ENGINE
 
+(define-extern safe-deactivate-remote-cell (function none))
 (define-extern *allow-cell-pickup?* symbol)
 
 (defmacro is-nan-hack (flt)
@@ -965,6 +966,7 @@
                 )
                 (if *allow-cell-pickup?*
                   (when (and (cpad-pressed? 0 circle) (process-grab? *target*))
+                    (safe-deactivate-remote-cell)
                     (logclear! (-> *cpad-list* cpads 0 button0-abs 0) (pad-buttons circle))
                     (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons circle))
                     (send-event *target* 'trans 'save (-> self old-target-pos))
