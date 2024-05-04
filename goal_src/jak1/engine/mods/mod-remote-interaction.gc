@@ -368,6 +368,7 @@
                             (name= (-> boss-enemy state name) "robotboss-blue-wait")
                       )
                        (go-process boss-enemy robotboss-blue-dark-bomb)
+                       (go-process vent vent-wait-for-touch)
                       ))
                 )
               )
