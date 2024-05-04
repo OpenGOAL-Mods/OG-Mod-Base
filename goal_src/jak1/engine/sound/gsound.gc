@@ -7,6 +7,7 @@
 
 (define-extern get-spectator-target (function target))
 (define-extern remote-target-pos (function int target vector))
+(define-extern has-camera-type? (function symbol basic))
 (define-extern *spectator-handler* spectator-handler)
 
 ;; The sound playback stuff is all on the IOP so we use IOP RPCs to control it.
@@ -807,7 +808,10 @@
      )
     (*target*
       (if (-> *spectator-handler* is_spectator?)
-        (remote-target-pos 0 (get-spectator-target))
+        (if (has-camera-type? 'cam-string)
+          (remote-target-pos 0 (get-spectator-target))
+          (camera-pos)
+          )
         (target-pos 0)
         )
      )
