@@ -5,6 +5,7 @@
 ;; name in dgo: ogre-obs
 ;; dgos: L1, OGR
 
+(define-extern get-closest-interactive-target-with-blue-eco (function process-drawable target))
 
 ;; DECOMP BEGINS
 
@@ -904,7 +905,7 @@
     (ja-no-eval :group! (-> self draw art-group data 3) :num! (seek!) :frame-num 0.0)
     (until (ja-done? 0)
       (if (rand-vu-percent? 0.2)
-          (spawn-projectile-blue *target*)
+          (spawn-projectile-blue (get-closest-interactive-target-with-blue-eco self))
           )
       (suspend)
       (ja :num! (seek!))

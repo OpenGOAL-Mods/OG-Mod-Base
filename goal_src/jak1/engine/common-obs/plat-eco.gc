@@ -5,6 +5,8 @@
 ;; name in dgo: plat-eco
 ;; dgos: GAME, COMMON, L1
 
+(define-extern get-closest-interactive-target-with-blue-eco (function process-drawable target))
+
 ;; DECOMP BEGINS
 
 
@@ -216,7 +218,7 @@
       (else
         (process-entity-status! self (entity-perm-status complete) #t)
         (dotimes (gp-1 5)
-          (spawn-projectile-blue *target*)
+          (spawn-projectile-blue (get-closest-interactive-target-with-blue-eco self))
           )
         )
       )

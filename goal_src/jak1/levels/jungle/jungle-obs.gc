@@ -5,6 +5,8 @@
 ;; name in dgo: jungle-obs
 ;; dgos: JUN, JUNGLE, L1
 
+(define-extern get-closest-interactive-target-with-blue-eco (function process-drawable target))
+
 ;; DECOMP BEGINS
 
 
@@ -678,7 +680,7 @@
     (ja-no-eval :group! (-> self draw art-group data 3) :num! (seek! max 0.25) :frame-num 0.0)
     (until (ja-done? 0)
       (if (rand-vu-percent? 0.1)
-          (spawn-projectile-blue *target*)
+          (spawn-projectile-blue (get-closest-interactive-target-with-blue-eco self))
           )
       (suspend)
       (ja :num! (seek! max 0.25))
@@ -1010,7 +1012,7 @@
     (while (not (ja-max? 0))
       (ja :num! (seek! max 2.0))
       (if (and (not arg0) (rand-vu-percent? 0.2))
-          (spawn-projectile-blue *target*)
+          (spawn-projectile-blue (get-closest-interactive-target-with-blue-eco self))
           )
       (suspend)
       )

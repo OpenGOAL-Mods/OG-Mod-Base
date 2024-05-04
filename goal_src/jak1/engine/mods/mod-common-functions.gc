@@ -927,7 +927,7 @@
           )
         )
       )
-      closest-target
+    closest-target
     )
   )
 
@@ -940,7 +940,29 @@
           )
         )
       )
-      closest-target
+    closest-target
+    )
+  )
+
+(defun get-closest-interactive-target-with-blue-eco ((proc process-drawable))
+  (let ((closest-target *target*))
+    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+      (let ((target (get-interactive-target tgt-idx)))
+        (if (and target proc (send-event target 'query 'powerup (pickup-type eco-blue)) (<= (vector-vector-distance (remote-target-pos 0 target) (-> proc root trans)) (vector-vector-distance (remote-target-pos 0 closest-target) (-> proc root trans))))
+            (set! closest-target target)
+          )
+        )
+      )
+    (if (and (= closest-target *target*) (not (send-event *target* 'query 'powerup (pickup-type eco-blue))))
+      (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+        (let ((target (get-interactive-target tgt-idx)))
+          (if (and target proc (send-event target 'query 'powerup (pickup-type eco-blue)) (or (= closest-target *target*) (<= (vector-vector-distance (remote-target-pos 0 target) (-> proc root trans)) (vector-vector-distance (remote-target-pos 0 closest-target) (-> proc root trans)))))
+              (set! closest-target target)
+            )
+          )
+        )
+      )
+    closest-target
     )
   )
 

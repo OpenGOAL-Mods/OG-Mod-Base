@@ -4,6 +4,9 @@
 ;; name: sage-finalboss-FIN.gc
 ;; name in dgo: sage-finalboss
 ;; dgos: FIN
+
+(define-extern get-closest-interactive-target (function process-drawable target))
+
 ;; DECOMP BEGINS
 
 (define-extern check-allow-final-boss? (function symbol))
@@ -112,7 +115,7 @@
         )
       (else
         (dotimes (gp-1 5)
-          (spawn-projectile-blue *target*)
+          (spawn-projectile-blue (get-closest-interactive-target-with-blue-eco self))
           )
         )
       )
