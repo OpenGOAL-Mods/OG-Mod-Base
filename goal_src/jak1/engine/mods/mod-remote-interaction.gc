@@ -1260,6 +1260,7 @@
       ((= task (game-task citadel-sage-green))
         (safe-kill-fuel-cell-child "citb-generator-1")
         (reset-specific-actor "green-sagecage-1")
+        (check-citadel-skip)
         )
       ((= task (game-task citadel-sage-blue))
         (safe-kill-fuel-cell-child "citb-generator-3")
