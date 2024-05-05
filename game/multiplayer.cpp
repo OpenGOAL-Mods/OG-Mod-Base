@@ -154,7 +154,7 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
           }
         }
       } else {
-        lg::warn("skipped interaction, adding to buffer");
+        lg::info("skipped interaction, adding to buffer");
         bool hasOverflow = true;
         for (int i = 0; i < MAX_INTERACTION_BUFFER_COUNT; i++) {
           if (!interactionBuffer[i].buffered) {
@@ -316,6 +316,7 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
           hasUnclearedInteraction = true;
         }
         else {
+          //!TODO: add checks that these actually have value in them (parent for example can sometimes be empty)
           player->inter_type = interactionBuffer[i].inter_type;
           player->inter_amount = interactionBuffer[i].inter_amount;
           player->inter_status = interactionBuffer[i].inter_status;
