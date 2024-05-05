@@ -13,8 +13,9 @@
 
 (define *ui-text* (new 'global 'string 128 ""))
 (define *timer-text* (new 'global 'string 128 ""))
+(define *split-text-timesave* (new 'global 'string 32 ""))
 (define *split-text* (new 'global 'string 128 ""))
-(define *selector-text* (new 'global 'string 128 ""))
+(define *selector-text* (new 'global 'string 32 ""))
 
 (defun get-text-3d ()
   "Allocate a debug text 3d from the list."
@@ -242,38 +243,37 @@
 
 (defun render-splits ((dma-buf dma-buffer))
   (clear *split-text*)
+  (clear *split-text-timesave*)
 
   (case *splits-info*
     (((info-option full))
-      (if (string= (-> *multiplayer-info* timer split_timesave) "")
-        (format *split-text* "~S ~S (~S) ~%"
-          (-> *multiplayer-info* timer split_time)
-          (-> *multiplayer-info* timer split_name)
-          (-> *multiplayer-info* timer split_player)
-          )
-        (format *split-text* "~S ~S ~S (~S) ~%"
-          (-> *multiplayer-info* timer split_time)
-          (-> *multiplayer-info* timer split_timesave)
-          (-> *multiplayer-info* timer split_name)
-          (-> *multiplayer-info* timer split_player)
-          )
+      (format *split-text* "~S ~S (~S) ~%"
+        (-> *multiplayer-info* timer split_time)
+        (-> *multiplayer-info* timer split_name)
+        (-> *multiplayer-info* timer split_player)
         )
+      (format *split-text-timesave* "~S ~%" (-> *multiplayer-info* timer split_timesave))
       )
     (((info-option minimal))
-      (if (string= (-> *multiplayer-info* timer split_timesave) "")
-        (format *split-text* "~S ~S ~%"
-          (-> *multiplayer-info* timer split_time)
-          (-> *multiplayer-info* timer split_name)
-          )
-        (format *split-text* "~S ~S ~%"
-          (-> *multiplayer-info* timer split_timesave)
-          (-> *multiplayer-info* timer split_name)
-          )
+      (format *split-text* "~S ~S ~%"
+        (-> *multiplayer-info* timer split_time)
+        (-> *multiplayer-info* timer split_name)
         )
       )
     )
 
-  (draw-string-xy *split-text* dma-buf 5 214 (font-color white) (font-flags shadow kerning))
+  (cond
+    ((and (= *splits-info* (info-option full)) (not (string= (-> *multiplayer-info* timer split_timesave) "")))
+      (if (string-starts-with= *split-text-timesave* "-")
+        (draw-string-xy *split-text-timesave* dma-buf 5 214 (font-color green) (font-flags shadow kerning))
+        (draw-string-xy *split-text-timesave* dma-buf 5 214 (font-color red) (font-flags shadow kerning))
+        )
+      (draw-string-xy *split-text* dma-buf (+ (* 6 (length *split-text-timesave*)) 5) 214 (font-color white) (font-flags shadow kerning))
+      )
+    (else
+      (draw-string-xy *split-text* dma-buf 5 214 (font-color white) (font-flags shadow kerning))
+      )
+    )
 
   (none) 
   )
