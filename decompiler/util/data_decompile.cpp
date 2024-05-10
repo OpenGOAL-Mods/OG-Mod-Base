@@ -997,6 +997,7 @@ const std::unordered_map<
              {"vehicle-rider-info",
               {{"grab-rail-array", ArrayFieldDecompMeta(TypeSpec("vehicle-grab-rail-info"), 48)},
                {"attach-point-array", ArrayFieldDecompMeta(TypeSpec("vehicle-attach-point"), 32)}}},
+             {"vehicle-setup-info", {{"color", ArrayFieldDecompMeta(TypeSpec("vector"), 16)}}},
              {"desbeast-path", {{"node", ArrayFieldDecompMeta(TypeSpec("desbeast-node"), 32)}}},
              {"race-info",
               {{"turbo-pad-array", ArrayFieldDecompMeta(TypeSpec("race-turbo-pad"), 32)},
@@ -1031,6 +1032,12 @@ const std::unordered_map<
                {"speeches", ArrayFieldDecompMeta(TypeSpec("bot-speech-info"), 16)},
                {"dirs", ArrayFieldDecompMeta(TypeSpec("vector"), 16)},
                {"speech-tunings", ArrayFieldDecompMeta(TypeSpec("bot-speech-tuning"), 16)}}},
+             {"ctyport-mine-layout",
+              {{"stored-handles",
+                ArrayFieldDecompMeta(TypeSpec("handle"),
+                                     8,
+                                     ArrayFieldDecompMeta::Kind::REF_TO_INTEGER_ARR)}}},
+             {"deschase-path", {{"node", ArrayFieldDecompMeta(TypeSpec("deschase-node"), 32)}}},
          }}};
 
 goos::Object decompile_structure(const TypeSpec& type,
@@ -1226,7 +1233,10 @@ goos::Object decompile_structure(const TypeSpec& type,
         auto len = field.array_size();
         auto stride = ts.get_size_in_type(field) / len;
         ASSERT(stride == field_type_info->get_size_in_memory());
-
+        if (field.type() == TypeSpec("int128") || field.type() == TypeSpec("uint128")) {
+          lg::die("Trying to decompile field {} of {} as an array of type {} not supported",
+                  field.name(), type_info->get_name(), field.type().print());
+        }
         field_defs_out.emplace_back(
             field.name(), decompile_value_array(field.type(), field_type_info, len, stride,
                                                 field_start, obj_words, ts));
