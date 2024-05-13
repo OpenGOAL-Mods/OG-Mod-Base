@@ -57,10 +57,10 @@
     
       (case save-event
         (('save-start)   
-          (set! *is-saving* #t)
+          (set! *pause-multiplayer-logic* #t)
           )
         (('save-end)     
-          (set! *is-saving* #f) 
+          (set! *pause-multiplayer-logic* #f) 
           (set! *player-can-load* #t)
           (set! (-> *teamrun-info* just_saved?) 1)
           (update-state)
@@ -71,9 +71,18 @@
       (none)
     )
 
-    (defun runs-after-load ()
-      (set! (-> *teamrun-info* just_loaded?) 1)
-      (update-state)
+    (defun runs-on-load ((load-event symbol))
+    
+      (case load-event
+        (('load-start)   
+          (set! *pause-multiplayer-logic* #t)
+          )
+        (('load-end)     
+          (set! *pause-multiplayer-logic* #f) 
+          (set! (-> *teamrun-info* just_loaded?) 1)
+          (update-state)
+          )
+        )
       (none)
     )
 
@@ -319,13 +328,14 @@
 
 
     (defun runs-every-frame ()
-      (when (and (!= *target* #f) (!= (-> (level-get-target-inside *level*) name) 'title))
+      (when (and (!= *target* #f) (!= *pause-multiplayer-logic* #t) (!= (-> (level-get-target-inside *level*) name) 'title))
       
       ;; setup our own remote-player-info if we haven't yet
       (set-up-self-remote-if-null)
 
       (when (and *target* (>= (-> *multiplayer-info* player_num) 0) (!= (-> *self-player-info* mp_state) (mp-tgt-state mp-tgt-disconnected)) (>= (-> *display* base-frame-counter) (-> *game-info* blackout-time)))
 
+        ;; inside other player check for collision re-enabling
         (when (and *remote-stuck-released* (>= (-> *display* base-frame-counter) *remote-stuck-release-timestamp*) (!= (-> *target* state name) 'target-fishing))
           (cond
             ((any-interactive-remote-target-close-to-target? 6000.0)
@@ -393,9 +403,7 @@
           (clean-up-interaction-data *self-player-info*)
           )
 
-        (if (not *is-saving*)
-          (render-targets)
-          )
+        (render-targets)
 
         ;; color ourselves
         (color-target *target* (-> *self-player-info* color))

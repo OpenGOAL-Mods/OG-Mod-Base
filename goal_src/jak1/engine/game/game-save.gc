@@ -6,7 +6,7 @@
 ;; dgos: GAME, ENGINE
 
 (define-extern runs-on-save (function symbol none))
-(define-extern runs-after-load (function none))
+(define-extern runs-on-load (function symbol none))
 
 ;; The game-save system implements the "background autosave" feature.
 
@@ -810,6 +810,8 @@
 
 (defmethod load-game! game-info ((obj game-info) (save game-save))
   "Copy save data from a game-save to a game-info"
+  (runs-on-load 'load-start)
+
   (let ((save-data (the-as game-save-tag (-> save tag))))
     ;; loop over all tags
     (while (< (the-as int save-data) (the-as int (+ (+ (-> save length) 76) (the-as int save))))
@@ -1074,7 +1076,7 @@
       (+! s5-1 1)
       )
     )
-  (runs-after-load)
+  (runs-on-load 'load-end)
   (label cfg-134)
   save
   )

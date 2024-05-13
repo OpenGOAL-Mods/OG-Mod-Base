@@ -53,7 +53,7 @@
 ;; multiplayer save and load
 (define *enable-multiplayer-save-and-load* #t)
 (define *player-can-load* #f)
-(define *is-saving* #f)
+(define *pause-multiplayer-logic* #f)
 
 ;; pickup toggles for remote
 (define *enable-remote-target-buzzer-pickup* #f) ;; recommended to be #f and instead controlled by position data interactions so that cell fly can't drop two cells on pickup
