@@ -346,6 +346,7 @@
 (defmethod save-game! game-info ((obj game-info) (arg0 game-save) (arg1 string))
   "Update the game-save to have the info from the current game state"
   (runs-on-save 'save-start)
+  (suspend)
 
   ;; some stuff lives in the levels and needs to be copied into game-info.
   (dotimes (s3-0 (-> *level* length))
@@ -811,6 +812,7 @@
 (defmethod load-game! game-info ((obj game-info) (save game-save))
   "Copy save data from a game-save to a game-info"
   (runs-on-load 'load-start)
+  (suspend)
 
   (let ((save-data (the-as game-save-tag (-> save tag))))
     ;; loop over all tags
