@@ -866,7 +866,6 @@
             (when (has-camera-type? 'cam-circular)
               (send-event *camera* 'point-of-interest #f)
               )
-            (safe-release-from-grab)
             )
           (when bridge
             (process-entity-status! bridge (entity-perm-status complete) #t)
