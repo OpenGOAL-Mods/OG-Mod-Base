@@ -261,7 +261,7 @@
       )
     (logior! (-> self draw status) (draw-status hidden))
     (cond
-      ((or arg0 (and *target* (< (-> (target-pos 0) y) (+ 40960.0 (-> self entity extra trans y)))))
+      ((or arg0 (and *target* (not (-> *spectator-handler* is_spectator?)) (< (-> (target-pos 0) y) (+ 40960.0 (-> self entity extra trans y)))))
        (if *target*
            (logior! (-> *target* mask) (process-mask sleep))
            )
@@ -305,9 +305,22 @@
   )
 
 (defbehavior darkecobomb-explode-if-player-high-enough darkecobomb ()
-  (if (and (not (movie?)) *target* (< (+ 409600.0 (-> self entity extra trans y)) (-> (target-pos 0) y)))
-      (go darkecobomb-explode #f)
+  (cond
+    ((-> *spectator-handler* is_spectator?)
+      (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+        (let ((target (get-interactive-target tgt-idx)))
+          (when (and (not (movie?)) target (< (+ 409600.0 (-> self entity extra trans y)) (-> (remote-target-pos 0 target) y)))
+          (go darkecobomb-explode #f)
+            )
+          )
+        )
       )
+    (else
+      (if (and (not (movie?)) *target* (< (+ 409600.0 (-> self entity extra trans y)) (-> (target-pos 0) y)))
+          (go darkecobomb-explode #f)
+          )
+      )
+    )
   (none)
   )
 
