@@ -46,6 +46,7 @@ struct FileStream {
 };
 
 const int MAX_USERNAME_LEN = 100;
+const int NOTIFIFCATION_STRING_LEN = 100;
 const int INTERACTION_STRING_LEN = 32;
 struct RemotePlayerInfo {
   u32 username;           // string (basic)
@@ -135,6 +136,12 @@ struct TimerInfo {
   u32 split_timesave;  // string (basic)
 };
 
+struct NotificationInfo {
+  s32 has_notif;
+  u32 message;      // string (basic)
+  s32 time;
+};
+
 const int MAX_MULTIPLAYER_COUNT = 20;
 const int MAX_COMMAND_COUNT = 3;
 const int MAX_INTERACTION_BUFFER_COUNT = 10;
@@ -147,4 +154,5 @@ struct MultiplayerInfo {
   RemotePlayerInfo players[MAX_MULTIPLAYER_COUNT];
   GameMode game;
   TimerInfo timer;
+  NotificationInfo notification;
 };

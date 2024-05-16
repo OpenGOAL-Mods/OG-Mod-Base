@@ -16,6 +16,7 @@
 (define *split-text-timesave* (new 'global 'string 32 ""))
 (define *split-text* (new 'global 'string 128 ""))
 (define *selector-text* (new 'global 'string 32 ""))
+(define *notification-text* (new 'global 'string NOTIFIFCATION_STRING_LEN ""))
 
 (defun get-text-3d ()
   "Allocate a debug text 3d from the list."
@@ -296,3 +297,12 @@
 
   (none) 
   )
+
+
+(defun render-notification ((dma-buf dma-buffer))
+  (clear *notification-text*)
+  (format *notification-text* (-> *multiplayer-info* notification message))
+  (draw-string-xy *notification-text* dma-buf (- 252 (* 3 (length *notification-text*))) 198 (font-color white) (font-flags shadow kerning))
+  (none) 
+  )
+  

@@ -54,6 +54,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 
 (defconstant MAX_USERNAME_LEN 100)
+(defconstant NOTIFIFCATION_STRING_LEN 100)
 (defconstant INTERACTION_STRING_LEN 32)
 
 (defmethod new remote-player-info ((allocation symbol) (type-to-make type))
@@ -175,6 +176,15 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     )
   )
 
+(defmethod new notification-info ((allocation symbol) (type-to-make type))
+  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+    (set! (-> obj has_notif?) 0)
+    (set! (-> obj message) (new 'global 'string NOTIFIFCATION_STRING_LEN (the-as string #f)))
+    (set! (-> obj time) 0)
+    obj
+    )
+  )
+
 
 (deftype zoomer-level-unlocks (structure)
  (
@@ -266,6 +276,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> obj timer split_name) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
     (set! (-> obj timer split_player) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
     (set! (-> obj timer split_timesave) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
+    
+    (set! (-> obj notification has_notif?) 0)
+    (set! (-> obj notification message) (new 'global 'string NOTIFIFCATION_STRING_LEN (the-as string #f)))
+    (set! (-> obj notification time) 0)
     obj
     )
   )

@@ -502,6 +502,16 @@
               (render-splits textbuf)
               )
             )
+
+          (when (= (-> *multiplayer-info* notification has_notif?) 1)
+            (set! (-> *multiplayer-info* notification has_notif?) 0)
+            (set! (-> *multiplayer-info* notification time) (+ (current-time) (seconds (-> *multiplayer-info* notification time))))
+            )
+          (if (<= (-> *display* base-frame-counter) (-> *multiplayer-info* notification time))
+            (with-dma-buffer-add-bucket ((textbuf (-> (current-frame) global-buf)) (bucket-id subtitle))
+              (render-notification textbuf)
+              )
+            )
           )
 
         ;; handle spectator mode

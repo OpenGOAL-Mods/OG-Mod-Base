@@ -116,6 +116,16 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
           strncpy(Ptr<String>(gMultiplayerInfo->timer.split_timesave).c()->data(), splitTimesave.c_str(), INTERACTION_STRING_LEN);
         }
       }
+    } else if (section.key().compare("notification") == 0) {
+      for (const auto& notifField : section.value().items()) {
+        if (notifField.key().compare("message") == 0) {
+          gMultiplayerInfo->notification.has_notif = 1;
+          std::string notifMessage = notifField.value();
+          strncpy(Ptr<String>(gMultiplayerInfo->notification.message).c()->data(), notifMessage.c_str(), NOTIFIFCATION_STRING_LEN);
+        } else if (notifField.key().compare("time") == 0) {
+          gMultiplayerInfo->notification.time = notifField.value();
+        }
+      }
     } else if (section.key().compare("selfInfo") == 0) {
         RemotePlayerInfo* player = &(gMultiplayerInfo->players[gMultiplayerInfo->player_num]);
       for (const auto& infoField : section.value().items()) {

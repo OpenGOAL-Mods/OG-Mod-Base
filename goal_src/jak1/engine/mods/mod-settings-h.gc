@@ -195,6 +195,17 @@
     (new (symbol type) _type_ 0)
     )
   )
+  
+(deftype notification-info (structure)
+  ((has_notif?   int32)
+   (message     string)
+   (time        int32)
+  )
+  :pack-me
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
 
 (deftype spectator-handler (structure)
  ((is_spectator? symbol)
@@ -220,6 +231,7 @@
   (players              remote-player-info MAX_MULTIPLAYER_COUNT :inline)
   (game                 game-mode :inline)
   (timer                timer-info :inline)
+  (notification         notification-info :inline)
   )
   (:methods
     (new (symbol type) _type_ 0)
