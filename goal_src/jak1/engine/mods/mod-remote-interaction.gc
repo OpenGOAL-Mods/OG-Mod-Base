@@ -467,39 +467,37 @@
   )
 
 (defun safe-kill-crate-orb ((crate-name string))
-  (let* ((obj-crate (process-by-ename crate-name)))
+  (let* ((obj-crate (the-as crate (process-by-ename crate-name))))
+    (cond
+      ((name= (-> obj-crate state name) "special-contents-die") ;; when in orb collect phase
 
-    (when (name= (-> (the-as crate obj-crate) state name) "wait")
-      (set! (-> (the-as crate obj-crate) fact pickup-amount) (- (-> (the-as crate obj-crate) fact pickup-amount) 1))
-      (when (<= (-> (the-as crate obj-crate) fact pickup-amount) 0)
-        (set! (-> (the-as crate obj-crate) entity extra perm user-int8 1) 0)
-        (process-entity-status! (the-as crate obj-crate) (entity-perm-status bit-4) #f)
-        (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
-        (process-entity-status! (the-as crate obj-crate) (entity-perm-status complete) #t)
-        ((method-of-type crate deactivate) (the-as crate obj-crate))
-        )
-      (return #t)
-      )
+        (when (>= (-> obj-crate entity extra perm user-int8 0) 1) ;; all orbs have not been collected
+          (set! (-> obj-crate entity extra perm user-int8 1) (+ (-> obj-crate entity extra perm user-int8 1) 1))
+          (+! (-> obj-crate child-count) -1)
 
-    (when (name= (-> (the-as crate obj-crate) state name) "special-contents-die") ;; when in orb collect phase
+          ;; depspawn orb if exists
+          (if (-> obj-crate child 0)
+            ((method-of-type money deactivate) (the-as money (-> obj-crate child 0)))
+            )
 
-      (when (>= (-> (the-as crate obj-crate) entity extra perm user-int8 0) 1) ;; all orbs have not been collected
-
-        (set! (-> (the-as crate obj-crate) entity extra perm user-int8 1) (+ (-> (the-as crate obj-crate) entity extra perm user-int8 1) 1))
-        (+! (-> (the-as crate obj-crate) child-count) -1)
-
-        ;; depspawn orb if exists
-        (if (-> (the-as crate obj-crate) child 0)
-          ((method-of-type money deactivate) (the-as money (-> (the-as crate obj-crate) child 0)))
+          ;; mark as completed if done
+          (when (or (= (-> obj-crate entity extra perm user-int8 1) 0) (= (-> obj-crate entity extra perm user-int8 1) (float->int (-> (the-as crate obj-crate) fact pickup-amount)))) ;; if no orbs are left
+              (set! (-> obj-crate entity extra perm user-int8 1) 0)
+              (process-entity-status! obj-crate (entity-perm-status bit-4) #f)
+              (process-entity-status! obj-crate (entity-perm-status dead) #t)
+              (process-entity-status! obj-crate (entity-perm-status complete) #t)
+              ((method-of-type crate deactivate) obj-crate)
+            )
           )
-
-        ;; mark as completed if done
-        (when (or (= (-> (the-as crate obj-crate) entity extra perm user-int8 1) 0) (= (-> (the-as crate obj-crate) entity extra perm user-int8 1) (float->int (-> (the-as crate obj-crate) fact pickup-amount)))) ;; if no orbs are left
-            (set! (-> (the-as crate obj-crate) entity extra perm user-int8 1) 0)
-            (process-entity-status! (the-as crate obj-crate) (entity-perm-status bit-4) #f)
-            (process-entity-status! (the-as crate obj-crate) (entity-perm-status dead) #t)
-            (process-entity-status! (the-as crate obj-crate) (entity-perm-status complete) #t)
-            ((method-of-type crate deactivate) (the-as crate obj-crate))
+        )
+      (else
+        (set! (-> obj-crate fact pickup-amount) (- (-> obj-crate fact pickup-amount) 1))
+        (when (<= (-> obj-crate fact pickup-amount) 0)
+          (set! (-> obj-crate entity extra perm user-int8 1) 0)
+          (process-entity-status! obj-crate (entity-perm-status bit-4) #f)
+          (process-entity-status! obj-crate (entity-perm-status dead) #t)
+          (process-entity-status! obj-crate (entity-perm-status complete) #t)
+          ((method-of-type crate deactivate) obj-crate)
           )
         )
       )
