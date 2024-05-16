@@ -138,11 +138,13 @@
       (cond
         ((type-type? (-> cur-enemy type) pelican)
           (let ((a0-2 (handle->process (-> (the-as pelican cur-enemy) fuel-cell))))
-            (if a0-2
+            (if (and a0-2 (!= (-> (the-as pelican cur-enemy) state name) 'pelican-circle))
                 (send-event a0-2 'trans (-> (the-as pelican cur-enemy) root-override trans))
                 )
             )
-          (go-process cur-enemy pelican-explode #f)
+          (if (!= (-> (the-as pelican cur-enemy) state name) 'pelican-explode)
+            (go-process cur-enemy pelican-explode #f)
+            )
           )
         ((type-type? (-> cur-enemy type) robber)
           (go-process cur-enemy robber-die)
@@ -991,7 +993,12 @@
                 (reset-specific-actor "pelican-1")
                 )
               (else
-                (safe-kill-fuel-cell "beach-pelican")
+                (let ((cell (handle->process (-> task-process fuel-cell))))
+                  (when cell
+                    (process-entity-status! (the-as fuel-cell cell) (entity-perm-status dead) #t)
+                    (deactivate cell)
+                    )
+                  )
                 )
               )
             )
