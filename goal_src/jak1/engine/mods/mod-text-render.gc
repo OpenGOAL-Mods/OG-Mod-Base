@@ -7,9 +7,6 @@
 
 
 (define *selector-option* (selector-option teams))
-(define *team-info* (info-option minimal))
-(define *timer-info* (info-option minimal))
-(define *splits-info* (info-option minimal))
 
 (define *ui-text* (new 'global 'string 128 ""))
 (define *timer-text* (new 'global 'string 128 ""))
@@ -144,8 +141,8 @@
 
 (defun render-player-ui ((dma-buf dma-buffer))
   (clear *ui-text*)
-  (case *team-info*
-    (((info-option minimal))
+  (case (-> *teamruns-pc-settings* ui-teams)
+    ((1)
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
         (when (and
               (is-interactive? tgt-idx)
@@ -159,7 +156,7 @@
         )
       (draw-string-xy *ui-text* dma-buf 5 48 (font-color white) (font-flags shadow kerning))
       )
-    (((info-option full))
+    ((2)
       (dotimes (team-id MAX_TEAM_COUNT)
         (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
           (when (and
@@ -205,8 +202,8 @@
       )
 
     (when (or draw-rest (!= (-> *multiplayer-info* timer seconds) 0) (!= (-> *multiplayer-info* timer milliseconds) 0))
-      (case *timer-info*
-        (((info-option full))
+      (case (-> *teamruns-pc-settings* ui-timer)
+        ((2)
           (if (> (-> *multiplayer-info* timer seconds) 9)
             (if draw-rest
               (format *timer-text* "~d.~d ~%" (-> *multiplayer-info* timer seconds) (-> *multiplayer-info* timer milliseconds))
@@ -218,7 +215,7 @@
               )
             )
           )
-        (((info-option minimal))
+        ((1)
           (if draw-rest
             (if (> (-> *multiplayer-info* timer seconds) 9)
               (format *timer-text* "~d ~%" (-> *multiplayer-info* timer seconds))
@@ -232,7 +229,7 @@
       )
 
     (if draw-rest
-      (if (= *timer-info* (info-option full))
+      (if (= (-> *teamruns-pc-settings* ui-timer) 2)
         (draw-string-xy *timer-text* dma-buf 448 214 (font-color white) (font-flags shadow kerning))
         (draw-string-xy *timer-text* dma-buf 458 214 (font-color white) (font-flags shadow kerning))
         )
@@ -246,8 +243,8 @@
   (clear *split-text*)
   (clear *split-text-timesave*)
 
-  (case *splits-info*
-    (((info-option full))
+  (case (-> *teamruns-pc-settings* ui-splits)
+    ((2)
       (format *split-text* "~S ~S (~S) ~%"
         (-> *multiplayer-info* timer split_time)
         (-> *multiplayer-info* timer split_name)
@@ -255,7 +252,7 @@
         )
       (format *split-text-timesave* "~S ~%" (-> *multiplayer-info* timer split_timesave))
       )
-    (((info-option minimal))
+    ((1)
       (format *split-text* "~S ~S ~%"
         (-> *multiplayer-info* timer split_time)
         (-> *multiplayer-info* timer split_name)
@@ -264,7 +261,7 @@
     )
 
   (cond
-    ((and (= *splits-info* (info-option full)) (not (string= (-> *multiplayer-info* timer split_timesave) "")))
+    ((and (= (-> *teamruns-pc-settings* ui-splits) 2) (not (string= (-> *multiplayer-info* timer split_timesave) "")))
       (if (string-starts-with= *split-text-timesave* "-")
         (draw-string-xy *split-text-timesave* dma-buf 5 214 (font-color green) (font-flags shadow kerning))
         (draw-string-xy *split-text-timesave* dma-buf 5 214 (font-color red) (font-flags shadow kerning))

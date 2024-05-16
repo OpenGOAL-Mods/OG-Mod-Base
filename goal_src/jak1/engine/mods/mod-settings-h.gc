@@ -98,13 +98,6 @@
   (splits)
   )
 
-(defenum info-option
-  :type int32
-  (none)
-  (minimal)
-  (full)
-  )
-
 (defenum teamrun-command
   :type int32
   (none)

@@ -49,6 +49,16 @@
 (defun-extern get-pckernel-version pckernel-version)
 
 
+;; straight up stolen from randomizer, I have no idea how this part works yet
+;; but should help when new settings that aren't backwards compatible are needed
+(defglobalconstant TEAMRUNS_SETTINGS_VERSION_MINOR #x0006)
+(defglobalconstant TEAMRUNS_SETTINGS_VERSION_MAJOR #x0001)
+(defglobalconstant TEAMRUNS_SETTINGS_VERSION (logior
+                                        (ash TEAMRUNS_SETTINGS_VERSION_MAJOR 48)
+                                        (ash TEAMRUNS_SETTINGS_VERSION_MINOR 32)
+                                        ))
+
+
 (defconstant PS2_VOICE_AMOUNT 48)
 (defconstant PC_VOICE_AMOUNT 256)
 
@@ -260,6 +270,22 @@
     )
   )
 
+(deftype teamruns-pc-settings (basic)
+  ((version uint64)
+   (ui-teams int32)
+   (ui-timer int32)
+   (ui-splits int32)
+    )
+  (:methods
+    (new (symbol type) _type_)
+    (reset (_type_) none)
+    (read-from-file (_type_ string) symbol)
+    (commit-to-file (_type_) none)
+    (write-to-file (_type_ string) symbol)
+    (load-settings (_type_) int)
+    )
+  )
+
 (defconstant PC_TEMP_STRING_LEN 1024)
 (define *pc-temp-string* (new 'global 'string PC_TEMP_STRING_LEN (the string #f)))
 
@@ -281,6 +307,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; resets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+(defmethod reset teamruns-pc-settings ((obj teamruns-pc-settings))
+  "Set the default settings for teamruns settings"
+
+  (format 0 "Teamruns settings reset.~%")
+
+  (set! (-> obj version) TEAMRUNS_SETTINGS_VERSION)
+  (set! (-> obj ui-teams) 1)
+  (set! (-> obj ui-timer) 1)
+  (set! (-> obj ui-splits) 2)
+
+  (none))
 
 
 (defmethod reset pc-settings ((obj pc-settings) (call-handlers symbol))

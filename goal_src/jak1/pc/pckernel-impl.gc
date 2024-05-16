@@ -115,6 +115,7 @@
   )
 
 (define *pc-settings* (the pc-settings-jak1 #f))
+(define *teamruns-pc-settings* (the teamruns-pc-settings #f))
 
 
 ;; jak 1 discord rpc structure
