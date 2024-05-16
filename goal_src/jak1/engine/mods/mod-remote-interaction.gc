@@ -875,9 +875,14 @@
   (when (= (the-as uint status) (the-as uint (task-status need-reward-speech)))
     (cond
       ((= task (game-task village2-levitator))
-        (let ((boulder (process-by-ename "fireboulder-6")))
+        (let ((boulder (process-by-ename "fireboulder-6"))
+              (levitator (process-by-ename "assistant-levitator-1"))
+              )
           (if boulder
-            (reset-specific-actor "fireboulder-6")
+            (go-process boulder fireboulder-hover)
+            )
+          (if levitator
+            (go-process levitator just-particles)
             )
           )
         )
