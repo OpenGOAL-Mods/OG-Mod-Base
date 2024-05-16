@@ -35,28 +35,23 @@
         (gate-village3 (process-by-ename "warp-gate-switch-2"))
         (gate-citadel (process-by-ename "warp-gate-switch-12"))
       )
-    (when gate-training
-      (reset-specific-actor "warp-gate-switch-8")
-      (reset-specific-actor "training-part-1")
+    (if gate-training
+      (send-event (the-as warp-gate-switch (process-by-ename "warp-gate-switch-8")) 'touch)
       )
-    (when gate-village1
-      (reset-specific-actor "warp-gate-switch-3")
-      (reset-specific-actor "villagea-part-1")
+    (if gate-village1
+      (send-event (the-as warp-gate-switch (process-by-ename "warp-gate-switch-3")) 'touch)
       )
-    (when gate-village2
-      (reset-specific-actor "warp-gate-switch-7")
-      (reset-specific-actor "villageb-part-55")
+    (if gate-village2
+      (send-event (the-as warp-gate-switch (process-by-ename "warp-gate-switch-7")) 'touch)
       )
-    (when gate-village3
-      (reset-specific-actor "warp-gate-switch-2")
-      (reset-specific-actor "villagec-part-32")
+    (if gate-village3
+      (send-event (the-as warp-gate-switch (process-by-ename "warp-gate-switch-2")) 'touch)
       )
-      (when gate-citadel
-        (reset-specific-actor "warp-gate-switch-12")
-        (reset-specific-actor "citb-part-1")
-        )
+    (if gate-citadel
+      (send-event (the-as warp-gate-switch (process-by-ename "warp-gate-switch-12")) 'touch)
       )
-    (safe-release-from-grab)
+    )
+    (none)
   )
 
 (defun level-is-alive-or-active? ((level-name string))
