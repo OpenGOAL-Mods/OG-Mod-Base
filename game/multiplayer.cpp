@@ -19,6 +19,7 @@ TeamrunLevelInfo* gTeamrunLevelInfo;
 int commandBuffer[MAX_COMMAND_COUNT] = { 0, 0, 0 };
 InteractionInfo interactionBuffer[MAX_INTERACTION_BUFFER_COUNT];
 bool hasInteractionsBuffered = false;
+int bufferInteractionCount = 0;
 
 // Create a server endpoint
 server ogSocket;
@@ -242,8 +243,8 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
               player->tgt_state = field.value();
             } else if (field.key().compare("mpState") == 0) {
               player->mp_state = field.value();
-            } else if (field.key().compare("interaction") == 0) {
-
+            } 
+            else if (player->mp_state != 0 && field.key().compare("interaction") == 0) {
               //check if interaction available
               if (player->inter_type == 0) {
                 for (const auto& interaction : field.value().items()) {
@@ -318,14 +319,12 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
 
   //check and fill interactions from buffer if any
   if (hasInteractionsBuffered) {
-    bool hasUnclearedInteraction = false;
+    bufferInteractionCount = -1; //since one will be removed
     for (int i = 0; i < MAX_INTERACTION_BUFFER_COUNT; i++) {
       if (interactionBuffer[i].buffered) {
+        bufferInteractionCount += 1;
         RemotePlayerInfo* player = &(gMultiplayerInfo->players[interactionBuffer[i].player_id]);
-        if (player->inter_type != 0) {
-          hasUnclearedInteraction = true;
-        }
-        else {
+        if (player->inter_type == 0) {
           //!TODO: add checks that these actually have value in them (parent for example can sometimes be empty)
           player->inter_type = interactionBuffer[i].inter_type;
           player->inter_amount = interactionBuffer[i].inter_amount;
@@ -338,7 +337,8 @@ void on_json_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg
         }
       }
     }
-    hasInteractionsBuffered = hasUnclearedInteraction;
+    lg::warn("Set interaction from buffer, has {} left", bufferInteractionCount);
+    hasInteractionsBuffered = bufferInteractionCount > 0;
   }
 
   //check and fill command slot if any
@@ -494,6 +494,10 @@ void send_position_update() {
       {"status", Ptr<String>(gTeamrunLevelInfo->level1_status).c()->data()}
       }
     });
+  }
+
+  if (bufferInteractionCount > 5) {
+    json_payload["interactionBufferCount"] = bufferInteractionCount;
   }
 
   if (sendConnectionAcknowledgement) {

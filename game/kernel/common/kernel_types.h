@@ -144,7 +144,7 @@ struct NotificationInfo {
 
 const int MAX_MULTIPLAYER_COUNT = 20;
 const int MAX_COMMAND_COUNT = 3;
-const int MAX_INTERACTION_BUFFER_COUNT = 10;
+const int MAX_INTERACTION_BUFFER_COUNT = 20;
 
 struct MultiplayerInfo {
   u32 teamrun_command;
