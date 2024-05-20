@@ -554,6 +554,7 @@
               (set! target-count (+ target-count 1))
             )
           )
+        ;; self interactions
         ((and (is-interactive? idx) (!= (-> *multiplayer-info* players idx inter_type) (interaction-type none)))
           (handle-remote-interaction (-> *multiplayer-info* players idx) idx)
           (clean-up-interaction-data (-> *multiplayer-info* players idx))

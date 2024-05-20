@@ -879,11 +879,11 @@
       (none)
       )
 
-    (defun runs-on-dark-crystal-explode ((crystal-name string) (level-name string))
+    (defun runs-on-dark-crystal-explode ((crystal-name string) (crystal-num int) (level-name string))
       (add-interaction-to-buffer 
         (interaction-type dark-crystal)
         1.0
-        0.0
+        (the float crystal-num)
         crystal-name
         level-name
         "entity-pool"
