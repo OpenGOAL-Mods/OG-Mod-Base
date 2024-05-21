@@ -127,7 +127,6 @@
                                 :parts 3
                                 :command-list '((0 want-levels village3 snow)
                                   (1 display-level village3 display)
-                                  (175 display-level snow #f)
                                   (300 setting-reset music village3)
                                   (618 save)
                                   )
