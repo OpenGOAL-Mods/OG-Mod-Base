@@ -319,8 +319,8 @@
     (('target-walk) (go-process t target-walk))
     (('target-wade-stance) (go-process t target-wade-stance))
     (('target-wade-walk) (go-process t target-wade-walk))
-    (('target-ice-stance) (go-process t target-ice-stance))
-    (('target-ice-walk) (go-process t target-ice-walk))
+    (('target-ice-stance) (if (is-target-in-any-active-level? t) (go-process t target-ice-stance) (go-process t target-stance)))
+    (('target-ice-walk) (if (is-target-in-any-active-level? t) (go-process t target-ice-walk) (go-process t target-walk))) ;; ensure we only slide if loaded as this otherwise crashes
     (('target-load-wait) (go-process t target-load-wait)) ;; trip
     (('target-slide-down) (go-process t target-slide-down)) ;; slippery surface
     (('target-turn-around) (go-process t target-turn-around))
