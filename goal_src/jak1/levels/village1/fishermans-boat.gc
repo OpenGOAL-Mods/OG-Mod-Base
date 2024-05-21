@@ -10,6 +10,7 @@
 (define-extern remote-target-fake-cpad-circle-pressed? (function target basic))
 (define-extern target-in-level-sphere? (function symbol basic))
 (define-extern has-camera-type? (function symbol basic))
+(define-extern *pause-handler* pause-handler)
 
 ;; DECOMP BEGINS
 
@@ -1409,10 +1410,20 @@
   (set! (-> obj debug-draw) #f)
   (set! (-> obj cam-tracker) (the-as handle #f))
   (set! (-> obj auto-pilot) #f)
-  (if (= (-> *game-info* current-continue level) 'misty)
-      (fishermans-boat-set-dock-point 4)
-      (fishermans-boat-set-dock-point 0)
+  (cond 
+    ((-> *pause-handler* in_pause_menu_buffer?)
+      (if (= (-> *game-info* current-continue level) 'misty)
+          (fishermans-boat-set-dock-point 0)
+          (fishermans-boat-set-dock-point 4)
+          )
       )
+    (else
+      (if (= (-> *game-info* current-continue level) 'misty)
+          (fishermans-boat-set-dock-point 4)
+          (fishermans-boat-set-dock-point 0)
+          )
+      )
+    )
   (fishermans-boat-set-path-point (-> obj dock-point-index))
   (fishermans-boat-next-path-point)
   (set! (-> obj root-overlay trans quad) (-> obj dock-point quad))
@@ -1492,10 +1503,20 @@
   (rigid-body-platform-method-30 obj)
   (process-drawable-from-entity! obj arg0)
   (rigid-body-platform-method-31 obj)
-  (if (= (-> *game-info* current-continue level) 'misty)
-      (go fishermans-boat-docked-misty)
-      (go fishermans-boat-docked-village)
+  (cond 
+    ((-> *pause-handler* in_pause_menu_buffer?)
+      (if (= (-> *game-info* current-continue level) 'misty)
+          (go fishermans-boat-docked-village)
+          (go fishermans-boat-docked-misty)
+          )
       )
+    (else
+      (if (= (-> *game-info* current-continue level) 'misty)
+          (go fishermans-boat-docked-misty)
+          (go fishermans-boat-docked-village)
+          )
+      )
+    )
   (none)
   )
 
