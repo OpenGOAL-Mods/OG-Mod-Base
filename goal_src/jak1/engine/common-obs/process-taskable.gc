@@ -6,6 +6,7 @@
 ;; dgos: GAME, ENGINE
 
 (define-extern safe-deactivate-remote-cell (function none))
+(define-extern cancel-current-spool-anim (function none))
 (define-extern *allow-cell-pickup?* symbol)
 
 (defmacro is-nan-hack (flt)
@@ -314,6 +315,7 @@
   :trans (behavior ()
     (cond
       ((nonzero? (-> self cell-for-task))
+       (cancel-current-spool-anim)
        (let ((gp-0 (handle->process (-> self cell-x))))
          (when gp-0
            (send-event *target* 'trans 'reset)
@@ -325,7 +327,7 @@
        (send-event *target* 'get-pickup 6 (the float (-> self cell-for-task)))
        )
       (else
-        ;;Teamruns fix for multiplayer crashes just before getting the cell
+        ;;Teamruns fix for multiplayer crashes just before getting the cell (happens if spool anim is playing on buy)
         (close-specific-task! (current-task (-> self tasks)) (task-status need-resolution))
         (go-virtual idle)
         (format
