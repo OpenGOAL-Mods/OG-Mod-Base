@@ -120,6 +120,23 @@
   (none)
   )
 
+(defun cancel-current-spool-anim ()
+  (let ((spool-process (the-as process-drawable (handle->process (-> *art-control* spool-lock)))))
+    (when spool-process
+      (cond
+        ((-> spool-process entity)
+          (kill! (-> spool-process entity))
+          (update-perm! (-> spool-process entity extra perm) 'life (the-as entity-perm-status 623))
+          )
+        ((and (type-type? (-> spool-process type) fuel-cell) (name= (-> spool-process name) "remote-cell"))
+          (safe-deactivate-remote-cell)
+          )
+        )
+      )
+    )
+  (none)
+  )
+
 (defun safe-deactivate-remote-target ((idx int))
   (let ((remote-target (-> *remote-targets* idx)))
     (when (and (-> *remote-targets* idx) (nonzero? (-> *remote-targets* idx)) (handle->process (-> *remote-targets* idx)))
@@ -141,7 +158,7 @@
 
   (defun run-target-fuel-cell-pickup ((remote-target target))
     (when (if (-> *spectator-handler* is_spectator?)
-        (remote-target-process-close? (get-spectator-target) remote-target 500000.0)
+                (remote-target-process-close? (get-spectator-target) remote-target 500000.0)
         (process-close? remote-target 500000.0)) ;; only run if target is close enough as pickup sound is global
       (let* ((remote-cell (birth-pickup-at-point (-> remote-target control trans) (pickup-type fuel-cell) 1.0 #f remote-target (the-as fact-info #f))))
         (safe-deactivate-remote-cell)

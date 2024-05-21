@@ -200,6 +200,16 @@
     )
   )
 
+(deftype pause-handler (structure)
+ ((in_pause_menu_buffer? symbol)
+  (buffer_time int32)
+  )
+  :pack-me
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+
 (deftype spectator-handler (structure)
  ((is_spectator? symbol)
   (spectator_idx  int32)

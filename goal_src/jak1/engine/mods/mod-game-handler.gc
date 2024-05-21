@@ -31,6 +31,7 @@
 
 ;; teamruns data
 (define *spectator-handler* (new 'global 'spectator-handler))
+(define *pause-handler* (new 'global 'pause-handler))
 
 ;; multiplayer fixes
 (define *allow-cell-pickup?* #t)
