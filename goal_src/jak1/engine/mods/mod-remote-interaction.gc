@@ -41,13 +41,13 @@
     (if gate-village1
       (send-event (the-as warp-gate-switch (process-by-ename "warp-gate-switch-3")) 'touch)
       )
-    (if gate-village2
+    (if (and gate-village2 (task-closed? (game-task village2-levitator) (task-status need-reminder-a)))
       (send-event (the-as warp-gate-switch (process-by-ename "warp-gate-switch-7")) 'touch)
       )
-    (if gate-village3
+    (if (and gate-village3 (task-closed? (game-task village3-button) (task-status need-introduction)))
       (send-event (the-as warp-gate-switch (process-by-ename "warp-gate-switch-2")) 'touch)
       )
-    (if gate-citadel
+    (if (and gate-citadel (task-closed? (game-task village4-button) (task-status need-reward-speech)))
       (send-event (the-as warp-gate-switch (process-by-ename "warp-gate-switch-12")) 'touch)
       )
     )
