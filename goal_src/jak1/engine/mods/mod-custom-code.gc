@@ -620,7 +620,10 @@
           (the float task)
           (the float status)
           (game-task->string task)
-          (symbol->string (-> (level-get-target-inside *level*) name))
+          (cond
+            ((= task (game-task village3-extra1)) "village3") ;; gets broken from maincave and is handled from there otherwise
+            (else (symbol->string (-> (level-get-target-inside *level*) name)))
+            )
           "entity-pool"
           )
         )
