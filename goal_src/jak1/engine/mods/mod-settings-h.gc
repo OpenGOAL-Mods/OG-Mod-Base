@@ -81,6 +81,7 @@
   :type int32
   (speedrun)
   (lockout)
+  (casual)
   )
   
 (defenum citadel-skip-version
