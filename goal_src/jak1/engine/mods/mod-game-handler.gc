@@ -433,7 +433,7 @@
   (or 
     (= remote-target *target*) 
     (is-target-in-any-active-level? remote-target)  
-    (and (is-target-current-level-alive? tgt-idx) (not (< (remote-target-move-dist remote-target (seconds 0.05)) 1000000.0)))
+    (and (is-target-current-level-alive? tgt-idx) (not (< (remote-target-move-dist remote-target (seconds 1.5)) 250000.0)))
     )
   )
 
