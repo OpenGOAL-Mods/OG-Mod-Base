@@ -158,8 +158,12 @@
 
   (defun run-target-fuel-cell-pickup ((remote-target target))
     (when (if (-> *spectator-handler* is_spectator?)
-                (remote-target-process-close? (get-spectator-target) remote-target 500000.0)
-        (process-close? remote-target 500000.0)) ;; only run if target is close enough as pickup sound is global
+            (if (has-camera-type? 'cam-free-floating)
+              (is-camera-within-target-dist? remote-target 500000.0)
+              (remote-target-process-close? (get-spectator-target) remote-target 500000.0)
+              )
+            (process-close? remote-target 500000.0) ;; only run if target is close enough as pickup sound is global
+            )
       (let* ((remote-cell (birth-pickup-at-point (-> remote-target control trans) (pickup-type fuel-cell) 1.0 #f remote-target (the-as fact-info #f))))
         (safe-deactivate-remote-cell)
         (set! (-> (the-as fuel-cell (ppointer->process remote-cell)) name) "remote-cell")
