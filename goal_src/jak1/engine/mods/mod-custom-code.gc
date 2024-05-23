@@ -301,12 +301,13 @@
         (((teamrun-command temp-checkpoint-load)) (spawn-temp-checkpoint))
         (((teamrun-command enable-spectator-mode))
             (set! (-> *spectator-handler* is_spectator?) #t)
-            (send-event *camera* 'change-state cam-free-floating 0)
+            (set! (-> *spectator-handler* has_found_initial_target?) #f)
           )
         (((teamrun-command disable-spectator-mode))
           (when (-> *spectator-handler* is_spectator?)
             (set! (-> *spectator-handler* spectator_idx) 0)
             (set! (-> *spectator-handler* is_spectator?) #f)
+            (set! (-> *spectator-handler* has_found_initial_target?) #f)
             (if (is-grabbed?) (process-release? *target*))
             (send-event *camera* 'change-target *target*)
             (camera-change-to (the-as string 'base) 300 #f)
@@ -492,7 +493,7 @@
           )
 
         ;; UI rendering
-        (when (and (not (paused?)) ) ;; render teamrun UI
+        (when (not (paused?)) ;; render teamrun UI
           (if (!= (-> *teamruns-pc-settings* ui-teams) 0)
             (with-dma-buffer-add-bucket ((textbuf (-> (current-frame) global-buf)) (bucket-id subtitle))
               (render-player-ui textbuf)
@@ -532,6 +533,19 @@
           (if (has-camera-type? 'cam-circular)
             (camera-change-to (the-as string 'base) 10 #f)
             )
+            
+          (if (has-camera-type? 'cam-circular)
+            (camera-change-to (the-as string 'base) 10 #f)
+            )
+
+          ;; find initial target logic
+          (if (and (not (-> *spectator-handler* has_found_initial_target?)) (game-has-other-targets?) (or (has-camera-type? 'cam-free-floating) (change-spectator #t #f)))
+            (set! (-> *spectator-handler* has_found_initial_target?) #t)
+            )
+
+          (if (not (-> *camera* drawable-target))
+            (set! (-> *spectator-handler* has_found_initial_target?) #f)
+            )
           
           ;;check refocus need
           (when (and (has-camera-type? 'cam-string) (>= (-> *display* base-frame-counter) (-> *spectator-handler* next_focus_check)))
@@ -553,7 +567,7 @@
             (set! (-> *spectator-handler* next_focus_check) (+ (current-time) (seconds 0.5)))
             )
             
-          ;;spectator mode/player toggling
+          ;;spectator toggles
           (when (not (and (cpad-hold? 0 l2) (cpad-hold? 0 r2)))
             (cond
               ((cpad-pressed? 0 r3)
@@ -573,38 +587,22 @@
                 (camera-change-to (the-as string 'base) 400 #f)
                 )
               ((cpad-pressed? 0 right)
-                (change-spectator #t)
-                (let ((spec-target (get-spectator-target)))
-                  (when spec-target
-                    (send-event *camera* 'change-target spec-target)
-                    (send-event *camera* 'change-state cam-free-floating 0)
-                    (camera-change-to (the-as string 'base) 300 #f)
-                    (set! (-> *spectator-handler* is_refocusing?) #t)
-                    )
-                  )
+                (change-spectator #t #t)
                 )
               ((cpad-pressed? 0 left)
-                (change-spectator #f)
-                (let ((spec-target (get-spectator-target)))
-                  (when spec-target
-                    (send-event *camera* 'change-target spec-target)
-                    (send-event *camera* 'change-state cam-free-floating 0)
-                    (camera-change-to (the-as string 'base) 300 #f)
-                    (set! (-> *spectator-handler* is_refocusing?) #t)
-                    )
-                  )
+                (change-spectator #f #t)
                 )
               )
             )
 
-            ;;ensure level is loaded
-            (when (not (is-target-current-level-alive? (-> *spectator-handler* spectator_idx)))
-              (let ((level-name (-> *multiplayer-info* players (-> *spectator-handler* spectator_idx) current_level)))
-                (if (is-valid-level? level-name)
-                  (add-load-level level-name)
-                  )
+          ;;ensure level is loaded
+          (when (not (is-target-current-level-alive? (-> *spectator-handler* spectator_idx)))
+            (let ((level-name (-> *multiplayer-info* players (-> *spectator-handler* spectator_idx) current_level)))
+              (if (is-valid-level? level-name)
+                (add-load-level level-name)
                 )
               )
+            )
           )
         )
       (none)

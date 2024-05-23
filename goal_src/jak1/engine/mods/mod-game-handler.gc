@@ -326,7 +326,7 @@
   #f
   )
 
-(defun get-first-target-active-level ((remote-target target))
+(defun get-target-active-level ((remote-target target))
   (when target
     (dotimes (s5-1 (-> *level* length))
       (let ((s4-0 (-> *level* level s5-1)))
@@ -337,6 +337,17 @@
       )
     )
   #f
+  )
+
+(defun game-has-other-targets? ()
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (let ((target (get-target tgt-idx)))
+      (when (and target (!= target *target*))
+        (return #t)
+        )
+      )
+    )
+    #f
   )
   
 
@@ -361,7 +372,7 @@
       1
       )
     (else 
-      (let ((current-level (get-first-target-active-level (get-spectator-target))))
+      (let ((current-level (get-target-active-level (get-spectator-target))))
         (cond
           ((!= current-level #f)
             (if (= (-> *load-state* want 0 name) current-level)
@@ -553,7 +564,7 @@
   )
 
 
-(defun change-spectator ((search-forward symbol))
+(defun select-new-spectator ((search-forward symbol))
   (let ((selected-target (get-target (-> *spectator-handler* spectator_idx)))
         (original-index (-> *spectator-handler* spectator_idx)))
     (if (not selected-target)
@@ -615,6 +626,20 @@
           )
         )
       selected-target
+    )
+  )
+
+(defun change-spectator ((search-forward symbol) (force-refocus symbol))
+  (let ((spec-target (select-new-spectator search-forward)))
+    (when (and spec-target (!= spec-target *target*))
+      (send-event *camera* 'change-target spec-target)
+      (when force-refocus
+        (send-event *camera* 'change-state cam-free-floating 0)
+        (camera-change-to (the-as string 'base) 300 #f)
+        (set! (-> *spectator-handler* is_refocusing?) #t)
+        )
+      )
+    (!= spec-target *target*)
     )
   )
 
