@@ -8,8 +8,6 @@ echo Copying gk.exe, extractor.exe, and goalc.exe ...
 copy "..\..\out\build\Release\bin\gk.exe" "%releaseDir%\"
 copy "..\..\out\build\Release\bin\extractor.exe" "%releaseDir%\"
 copy "..\..\out\build\Release\bin\goalc.exe" "%releaseDir%\"
-copy "..\..\out\build\Release\bin\sdl2.dll" "%releaseDir%\"
-copy "..\..\out\build\Release\bin\openal32.dll" "%releaseDir%\"
 xcopy "..\..\out\build\Release\bin\SND\" "%releaseDir%\SND\"
 
 echo Copying data folder ...
