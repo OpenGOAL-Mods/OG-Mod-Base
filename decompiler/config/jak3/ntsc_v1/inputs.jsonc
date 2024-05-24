@@ -182,12 +182,12 @@
     "DGO/RAILE.DGO",
     "DGO/RAILF.DGO",
     "DGO/RAILX.DGO",
-    // // precursor
-    // "DGO/PRECA.DGO",
-    // "DGO/PRECB.DGO",
-    // "DGO/PRECC.DGO",
+    // precursor
+    "DGO/PRECA.DGO",
+    "DGO/PRECB.DGO",
+    "DGO/PRECC.DGO",
     // "DGO/PRECD.DGO",
-    // title/intro
+    // // title/intro
     "DGO/WIN.DGO", // wasintro
     "DGO/TITLE.DGO",
     "DGO/INTTITLE.DGO",
@@ -195,15 +195,15 @@
     "DGO/IPF.DGO", // intro-palace-fall
     "DGO/INTROCST.DGO",
     // // outro
-    // "DGO/OUTCAST3.DGO",
-    // "DGO/OUTROCST.DGO",
+    "DGO/OUTCAST3.DGO",
+    "DGO/OUTROCST.DGO",
     // // museum
-    // "DGO/MUSEUM.DGO",
-    // "DGO/MUSEUM2.DGO",
-    // "DGO/MUSEUM3.DGO",
-    // "DGO/MUSEUM3B.DGO",
-    // "DGO/MUSEUM4.DGO",
-    // "DGO/MUSEUM4B.DGO",
+    "DGO/MUSEUM.DGO",
+    "DGO/MUSEUM2.DGO",
+    "DGO/MUSEUM3.DGO",
+    "DGO/MUSEUM3B.DGO",
+    "DGO/MUSEUM4.DGO",
+    "DGO/MUSEUM4B.DGO",
     // test
     "DGO/HALFPIPE.DGO",
     // borrow
@@ -345,6 +345,19 @@
     "VAGWAD.ITA",
     "VAGWAD.COM",
     "VAGWAD.INT"
+  ],
+
+  "animated_textures": [
+    // dark jak
+    "jakc-arm", "jakc-eyebrow", "jakc-face", "jakc-finger", "jakc-hair",
+    "jakc-arm-norm", "jakc-eyebrow-norm", "jakc-face-norm", "jakc-finger-norm", "jakc-hair-norm",
+    "jakc-arm-dark", "jakc-eyebrow-dark", "jakc-face-dark", "jakc-finger-dark", "jakc-hair-dark",
+
+    // Skull Gem
+    "skull-gem-dest",
+    "skull-gem-alpha-00",
+    "skull-gem-alpha-01",
+    "skull-gem-alpha-02"
   ],
 
   "levels_to_extract": [

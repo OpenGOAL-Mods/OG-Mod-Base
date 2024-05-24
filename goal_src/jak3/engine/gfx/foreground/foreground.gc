@@ -852,6 +852,9 @@
               )
             )
           )
+    (#when PC_PORT ;; og:preserve-this
+      (if (not (-> *pc-settings* ps2-shadow?))
+          (set! t0-0 0.0)))
     (let ((t1-5 (-> a3-3 flags)))
       (-> arg0 cur-lod)
       (when (not (logtest? t1-5 (shadow-flags disable-fade)))
@@ -1894,9 +1897,9 @@
          )
         ;;(.lui fg-work 28672)
         (set! fg-work (scratchpad-object foreground-work))
-        ;; (with-pc
-        ;;   (when (-> *pc-settings* force-envmap?)
-        ;;       (set! dist-in 0.0)))
+        (with-pc
+          (when (-> *pc-settings* force-envmap?)
+              (set! dist-in 0.0)))
         (let* ((bone-calc (the-as bone-calculation (-> dma-buf base)))
                (matrix-mem (the-as object (&+ (the-as pointer bone-calc) 64)))
                )
