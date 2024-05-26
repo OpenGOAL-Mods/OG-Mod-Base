@@ -92,7 +92,7 @@ MakeSystem::MakeSystem(const std::optional<REPL::Config> repl_config, const std:
   m_goos.set_global_variable_to_symbol("ASSETS", "#t");
 
   set_constant("*iso-data*", file_util::get_file_path({"iso_data"}));
-  set_constant("*use-iso-data-path*", false);
+  set_constant("*use-iso-data-path*", true);
 
   add_tool<DgoTool>();
   add_tool<TpageDirTool>();

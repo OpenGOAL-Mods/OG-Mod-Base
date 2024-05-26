@@ -102,6 +102,7 @@ int main(int argc, char** argv) {
     return 1;
   }
 
+  in_folder = "C:\\Users\\NinjaPC\\AppData\\Roaming\\OpenGOAL-Mods\\_iso_data\\iso_data";
   in_folder = in_folder / config.game_name;
   // Verify the in_folder is correct
   if (!exists(in_folder)) {
