@@ -254,14 +254,6 @@ build_third_party_lib(zstd libzstd_static)
 #set (FREETYPE_LIBRARY= "third-party/freetype/lib/")
 
 
-set(SFML_BUILD_WINDOW OFF)
-set(SFML_BUILD_GRAPHICS OFF)
-set(SFML_BUILD_NETWORK OFF)
-add_subdirectory(third-party/SFML EXCLUDE_FROM_ALL)
-#include_directories(third-party/SFML/include)
-#include_directories(third-party/SFML/lib)
-
-
 
 
 

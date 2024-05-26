@@ -5,9 +5,9 @@
 #include <fstream>
 #include <thread>
 #include <chrono>
-#include <SFML/Audio.hpp>
-#include <SFML/Audio/Music.hpp>
 
+#define MINIAUDIO_IMPLEMENTATION
+#include "third-party/miniaudio.h"
 
 #include "common/global_profiler/GlobalProfiler.h"
 #include "common/log/log.h"
@@ -51,6 +51,10 @@ u32 vblank_interrupt_handler = 0;
 
 Timer ee_clock_timer;
 
+ma_engine maEngine;
+std::map<std::string, ma_sound> maSoundMap;
+ma_sound* mainMusicSound;
+
 void kmachine_init_globals_common() {
   memset(pad_dma_buf, 0, sizeof(pad_dma_buf));
   isodrv = fakeiso;  // changed. fakeiso is the only one that works in opengoal.
@@ -59,6 +63,8 @@ void kmachine_init_globals_common() {
   vif1_interrupt_handler = 0;
   vblank_interrupt_handler = 0;
   ee_clock_timer = Timer();
+
+  ma_engine_init(NULL, &maEngine);
 }
 
 /*!
@@ -111,185 +117,125 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
   return cpad_info;
 }
 
-
-
-
-
-// Define a vector to store references to the active music instances.
-std::vector<std::pair<sf::Music*, std::string>> activeMusics;
-
-// Index to store the main music in the vector.
-const size_t MAIN_MUSIC_INDEX = 0;
-
 // Function to stop all currently playing sounds.
-void stopAllSounds()
-{
-    for (auto& pair : activeMusics)
-    {
-        pair.first->stop();
-    }
-    activeMusics.clear();
+void stopAllSounds() {
+  for (auto& pair : maSoundMap) {
+    ma_sound_stop(&pair.second);
+  }
+  maSoundMap.clear();
 }
 
 // Function to get the names of currently playing files.
-std::vector<std::string> getPlayingFileNames()
-{
-    std::vector<std::string> playingFileNames;
-    for (const auto& pair : activeMusics)
-    {
-        playingFileNames.push_back(pair.second);
-    }
-    return playingFileNames;
+std::vector<std::string> getPlayingFileNames() {
+  std::vector<std::string> playingFileNames;
+  for (const auto& pair : maSoundMap) {
+    playingFileNames.push_back(pair.first);
+  }
+  return playingFileNames;
 }
 
 std::mutex activeMusicsMutex;  // Mutex to synchronize access to activeMusics
 
-void playMP3(u32 filePathu32, u32 volume) {
-    std::thread thread([=]() {
-        std::string filePath = Ptr<String>(filePathu32).c()->data();
-        std::cout << "Playing MP3: " << filePath << std::endl;
-
-        sf::Music* music = new sf::Music;
-        if (!music->openFromFile(filePath)) {
-            std::cout << "Failed to load: " << filePath << std::endl;
-            delete music;
-            return;
-        }
-        music->setVolume(volume);
-        music->play();
-
-        {
-            std::lock_guard<std::mutex> lock(activeMusicsMutex);
-            activeMusics.push_back(std::make_pair(music, filePath));
-        }
-
-        while (music->getStatus() == sf::Music::Playing) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-
-        {
-            std::lock_guard<std::mutex> lock(activeMusicsMutex);
-            activeMusics.erase(std::remove_if(activeMusics.begin(), activeMusics.end(),
-                [music](const auto& pair) { return pair.first == music; }), activeMusics.end());
-        }
-
-        delete music;
-    });
-
-    thread.detach();
-}
-
-
 // Declare a mutex for synchronizing access to mainMusicInstance
 std::mutex mainMusicMutex;
 
-// Define a structure to hold music data
-struct MusicData {
-    sf::Music* music;
-    std::string filePath;
-    u32 volume;
-    bool isPaused; // Added flag to track pause/resume state
-};
+void playMP3_internal(u32 filePathu32, u32 volume, bool isMainMusic) {
+  std::thread thread([=]() {
+    std::string filePath = Ptr<String>(filePathu32).c()->data();
+    std::cout << "Playing file: " << filePath << std::endl;
 
-// Define a vector to hold the music instances
-std::vector<MusicData> musicInstances;
-std::string mainMusicFilePath; // Global variable to store the main music file path
+    ma_result result;
+    ma_sound sound;
+
+    result = ma_sound_init_from_file(&maEngine, filePath.c_str(), 0, NULL, NULL, &sound);
+    if (result != MA_SUCCESS) {
+      std::cout << "Failed to load: " << filePath << std::endl;
+      return;
+    }
+
+    ma_sound_set_volume(&sound, ((float)volume) / 100.0);
+
+    if (isMainMusic) {
+      ma_sound_set_looping(&sound, MA_TRUE);
+      mainMusicMutex.lock();
+      mainMusicSound = &sound;
+      mainMusicMutex.unlock();
+    }
+
+    ma_sound_start(&sound);
+
+    {
+      std::lock_guard<std::mutex> lock(activeMusicsMutex);
+      maSoundMap.insert(std::make_pair(filePath, sound));
+    }
+
+    // loop until we're no longer main music, or we reach the end of non-looping sound
+    while (mainMusicSound == &sound || !ma_sound_at_end(&sound)) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    ma_sound_stop(&sound);
+    ma_sound_uninit(&sound);
+    std::cout << "Finished playing file: " << filePath << std::endl;
+
+    {
+      std::lock_guard<std::mutex> lock(activeMusicsMutex);
+      maSoundMap.erase(filePath);
+    }
+  });
+
+  thread.detach();
+}
+
+void playMP3(u32 filePathu32, u32 volume) {
+  playMP3_internal(filePathu32, volume, false);
+}
 
 // Function to stop the Main Music.
 void stopMainMusic() {
-  std::cout << "Trying to stop Main Music: " << mainMusicFilePath << std::endl;
-    auto it = musicInstances.begin();
-    while (it != musicInstances.end()) {
-        std::cout << "Looking for Main Music: " << mainMusicFilePath << std::endl;
-        if (it->filePath == mainMusicFilePath) {
-          std::cout << "FOUND!!! Main Music: " << mainMusicFilePath << std::endl;
-            it->music->stop();
-            delete it->music;
-            it = musicInstances.erase(it);  // 'erase' will automatically move to the next element
-        } else {
-            ++it;
-        }
-    }
+  mainMusicMutex.lock();
+  if (mainMusicSound && ma_sound_is_playing(mainMusicSound)) {
+    std::cout << "Stopping Main Music..." << std::endl;
+    ma_sound_stop(mainMusicSound);
+    mainMusicSound = NULL;
+    std::cout << "Stopped Main Music " << std::endl;
+  }
+  mainMusicMutex.unlock();
 }
 
 // Function to play the Main Music.
 void playMainMusic(u32 filePathu32, u32 volume) {
-    std::string filePath = Ptr<String>(filePathu32).c()->data();
-    std::cout << "Playing Main Music: " << filePath << std::endl;
-    mainMusicFilePath = filePath;
-    //stopMainMusic();
-    // Stop and clean up any existing music instances for this file path
-    for (auto it = musicInstances.begin(); it != musicInstances.end();) {
-        if (it->filePath == filePath) {
-            it->music->stop();
-            delete it->music;
-            it = musicInstances.erase(it);
-        } else {
-            ++it;
-        }
-    }
+  stopMainMusic();
 
-    // Create a new instance of sf::Music for the new Main Music.
-    sf::Music* mainMusic = new sf::Music;
-    if (!mainMusic->openFromFile(filePath))
-    {
-        std::cout << "Failed to load: " << filePath << std::endl;
-        delete mainMusic;
-        return;
-    }
-    mainMusic->setVolume(volume);
-    // Set looping to true to make the track loop
-    mainMusic->setLoop(true);
+  std::cout << "Playing Main Music" << std::endl;
 
-    mainMusic->play();
-
-    // Store the Main Music instance in the vector.
-    MusicData musicData = { mainMusic, filePath, volume, false }; // Initialize isPaused to false
-    musicInstances.push_back(musicData);
+  playMP3_internal(filePathu32, volume, true);
 }
 
-
-
 void pauseMainMusic() {
-    mainMusicMutex.lock();
-    for (auto& musicData : musicInstances) {
-        if (musicData.music && !musicData.isPaused) {
-            if (musicData.music->getStatus() == sf::SoundSource::Playing) {
-                musicData.music->pause();
-                musicData.isPaused = true;
-            }
-        }
-    }
-    mainMusicMutex.unlock();
+  mainMusicMutex.lock();
+  if (mainMusicSound && ma_sound_is_playing(mainMusicSound)) {
+    ma_sound_stop(mainMusicSound);
+  }
+  mainMusicMutex.unlock();
 }
 
 void resumeMainMusic() {
-    mainMusicMutex.lock();
-    for (auto& musicData : musicInstances) {
-        if (musicData.music && musicData.isPaused) {
-            if (musicData.music->getStatus() == sf::SoundSource::Paused) {
-                musicData.music->play();
-                musicData.isPaused = false;
-            }
-        }
-    }
-    mainMusicMutex.unlock();
+  mainMusicMutex.lock();
+  if (mainMusicSound && !ma_sound_is_playing(mainMusicSound)) {
+    ma_sound_start(mainMusicSound);
+  }
+  mainMusicMutex.unlock();
 }
-
-
 
 // Function to change the volume of the Main Music.
 void changeMainMusicVolume(u32 volume) {
-    mainMusicMutex.lock();
-    for (auto& musicData : musicInstances) {
-        if (musicData.music) {
-            musicData.music->setVolume(volume);
-            musicData.volume = volume;
-        }
-    }
-    mainMusicMutex.unlock();
+  mainMusicMutex.lock();
+  if (mainMusicSound) {
+    ma_sound_set_volume(mainMusicSound, ((float)volume) / 100.0);
+  }
+  mainMusicMutex.unlock();
 }
-
 
 /*!
  * Not checked super carefully for jak 2, but looks the same
