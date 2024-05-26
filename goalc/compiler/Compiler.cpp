@@ -28,6 +28,10 @@ Compiler::Compiler(GameVersion version,
       m_make(repl_config, user_profile),
       m_repl(std::move(repl)),
       m_symbol_info(&m_goos.reader.db) {
+
+              file_util::set_iso_data_dir("C:\\Users\\NinjaPC\\AppData\\Roaming\\OpenGOAL-Mods\\_iso_data\\");
+  lg::info("Calling set iso_data_dir with params {}", "C:\\Users\\NinjaPC\\AppData\\Roaming\\OpenGOAL-Mods\\_iso_data\\");
+
   m_listener.add_debugger(&m_debugger);
   m_listener.set_default_port(version);
   m_ts.add_builtin_types(m_version);
@@ -43,6 +47,9 @@ Compiler::Compiler(GameVersion version,
   // load GOAL library
   Object library_code = m_goos.reader.read_from_file({"goal_src", "goal-lib.gc"});
   compile_object_file("goal-lib", library_code, false);
+
+      file_util::set_iso_data_dir("C:\\Users\\NinjaPC\\AppData\\Roaming\\OpenGOAL-Mods\\_iso_data\\");
+  lg::info("Calling set iso_data_dir with params {}", "C:\\Users\\NinjaPC\\AppData\\Roaming\\OpenGOAL-Mods\\_iso_data\\");
 
   // user profile stuff
   if (user_profile != "#f" && fs::exists(file_util::get_jak_project_dir() / "goal_src" / "user" /
@@ -80,6 +87,9 @@ Compiler::Compiler(GameVersion version,
 
   // add GOOS forms that get info from the compiler
   setup_goos_forms();
+
+        file_util::set_iso_data_dir("C:\\Users\\NinjaPC\\AppData\\Roaming\\OpenGOAL-Mods\\_iso_data\\");
+  lg::info("Calling set iso_data_dir with params {}", "C:\\Users\\NinjaPC\\AppData\\Roaming\\OpenGOAL-Mods\\_iso_data\\");
 }
 
 Compiler::~Compiler() {
@@ -95,6 +105,9 @@ ReplStatus Compiler::handle_repl_string(const std::string& input) {
   }
 
   try {
+
+
+
     // 1). read
     goos::Object code = m_goos.reader.read_from_string(input, true);
     // 2). compile

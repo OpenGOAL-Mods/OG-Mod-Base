@@ -271,6 +271,18 @@ fs::path get_jak_project_dir() {
 }
 
 fs::path get_iso_dir_for_game(GameVersion game_version) {
+
+  lg::info("get_iso_dir_for_game");
+      std::vector<std::string> predefined_paths = {
+        "C:\\Users\\NinjaPC\\AppData\\Roaming\\OpenGOAL-Mods\\_iso_data\\jak1"
+    };
+    for (const auto& path_str : predefined_paths) {
+        fs::path path = path_str;
+        if (fs::exists(path) && !fs::is_empty(path)) {
+          lg::info("Found PATH YAYY");
+            return path;
+        }
+    }
   if (!g_iso_data_directory.empty()) {
     return g_iso_data_directory;
   }
@@ -289,6 +301,20 @@ fs::path get_iso_dir_for_game(GameVersion game_version) {
 }
 
 void set_iso_data_dir(const fs::path& directory) {
+
+   lg::info("set_iso_data_dir start");
+        std::vector<std::string> predefined_paths = {
+        "C:\\Users\\NinjaPC\\AppData\\Roaming\\OpenGOAL-Mods\\_iso_data\\jak1"
+    };
+    for (const auto& path_str : predefined_paths) {
+        fs::path path = path_str;
+        if (fs::exists(path) && !fs::is_empty(path)) {
+           lg::info("Found PATH YAYY");
+            g_iso_data_directory = path;
+            return;
+        }
+    }
+
   g_iso_data_directory = directory;
 }
 
