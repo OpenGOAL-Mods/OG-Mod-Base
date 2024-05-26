@@ -12,6 +12,10 @@
 #include "fmt/color.h"
 #include "fmt/core.h"
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
 std::string MakeStep::print() const {
   std::string result = fmt::format("Tool {} with inputs", tool);
   int i = 0;
@@ -37,6 +41,28 @@ std::string MakeStep::print() const {
   }
   result.pop_back();
   return result;
+}
+
+std::string getGameValue(const std::string& filePath) {
+    std::ifstream configFile(filePath);
+    std::string line;
+    std::string gameValue;
+
+    if (configFile.is_open()) {
+        while (std::getline(configFile, line)) {
+            // Find the GAME key in the line
+            if (line.find("GAME=") == 0) {
+                // Extract the value after the "GAME=" key
+                gameValue = line.substr(5); // "GAME=" is 5 characters long
+                break;
+            }
+        }
+        configFile.close();
+    } else {
+        std::cerr << "Unable to open file: " << filePath << std::endl;
+    }
+
+    return gameValue;
 }
 
 MakeSystem::MakeSystem(const std::optional<REPL::Config> repl_config, const std::string& username)
@@ -91,8 +117,20 @@ MakeSystem::MakeSystem(const std::optional<REPL::Config> repl_config, const std:
 
   m_goos.set_global_variable_to_symbol("ASSETS", "#t");
 
+//normal behavior
   set_constant("*iso-data*", file_util::get_file_path({"iso_data"}));
   set_constant("*use-iso-data-path*", false);
+
+//og mod base
+  std::vector<std::string> path_components = {
+         "scripts", "tasks", ".env"
+     };
+
+     std::string full_path = file_util::get_file_path(path_components);
+
+   set_constant("*iso-data*", file_util::get_file_path({"iso_data"}) + "/" + getGameValue(full_path));
+   set_constant("*use-iso-data-path*", true) ;
+// mod base end
 
   add_tool<DgoTool>();
   add_tool<TpageDirTool>();

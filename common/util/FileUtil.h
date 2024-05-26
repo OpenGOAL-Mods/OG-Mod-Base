@@ -29,6 +29,7 @@ namespace fs = ghc::filesystem;
 namespace file_util {
 fs::path get_user_home_dir();
 fs::path get_user_config_dir();
+fs::path get_user_config_dir_no_OPENGOAL();
 fs::path get_user_settings_dir(GameVersion game_version);
 fs::path get_user_memcard_dir(GameVersion game_version);
 fs::path get_user_screenshots_dir(GameVersion game_version);

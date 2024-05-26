@@ -82,6 +82,7 @@ int main(int argc, char** argv) {
   }
 
   using namespace decompiler;
+  using namespace file_util;
 
   Config config;
   try {
@@ -101,7 +102,7 @@ int main(int argc, char** argv) {
     lg::error("Aborting - There is an overlap between 'allowed_objects' and 'banned_objects'");
     return 1;
   }
-
+  in_folder = get_user_config_dir_no_OPENGOAL().string() + "\\OpenGOAL-Mods\\_iso_data";
   in_folder = in_folder / config.game_name;
   // Verify the in_folder is correct
   if (!exists(in_folder)) {

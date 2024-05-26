@@ -86,6 +86,27 @@ fs::path get_user_config_dir() {
   return config_base_path / "OpenGOAL";
 }
 
+fs::path get_user_config_dir_no_OPENGOAL() {
+  fs::path config_base_path;
+#ifdef _WIN32
+  auto config_base_dir = get_env("APPDATA");
+  config_base_path = fs::path(config_base_dir);
+#elif __linux
+  // Docs - https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+  // Prefer XDG_CONFIG_HOME if available
+  auto config_base_dir = get_env("XDG_CONFIG_HOME");
+  if (config_base_dir.empty()) {
+    config_base_path = get_user_home_dir() / ".config";
+  } else {
+    config_base_path = fs::path(config_base_dir);
+  }
+#elif __APPLE__
+  auto config_base_dir = get_env("HOME");
+  config_base_path = fs::path(config_base_dir) / "Library" / "Application Support";
+#endif
+  return config_base_path;
+}
+
 fs::path get_user_settings_dir(GameVersion game_version) {
   auto game_version_name = game_version_names[game_version];
   auto config_dir = get_user_config_dir();
@@ -297,6 +318,12 @@ std::string get_file_path(const std::vector<std::string>& input) {
   // the project path should be explicitly provided by whatever if needed
   // TEMP HACK
   // - if the provided path is absolute, don't add the project path
+
+// og mod base
+if (input.size() == 1 && input.at(0) == "iso_data") {
+        return get_user_config_dir_no_OPENGOAL().string() + "\\OpenGOAL-Mods\\_iso_data";
+    }
+
   if (input.size() == 1 && fs::path(input.at(0)).is_absolute()) {
     return input.at(0);
   }
