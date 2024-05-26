@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
   }
 
   using namespace decompiler;
-
+  using namespace file_util;
   Config config;
   try {
     config = read_config_file(config_path, config_game_version, config_override);
@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  in_folder = "C:\\Users\\NinjaPC\\AppData\\Roaming\\OpenGOAL-Mods\\_iso_data\\iso_data";
+  in_folder = get_user_config_dir().string() + "\\OpenGOAL-Mods\\_iso_data";
   in_folder = in_folder / config.game_name;
   // Verify the in_folder is correct
   if (!exists(in_folder)) {

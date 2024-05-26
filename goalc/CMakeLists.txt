@@ -63,6 +63,7 @@ add_library(compiler
         debugger/DebugInfo.cpp
         listener/Listener.cpp
         listener/MemoryMap.cpp
+        ../decompiler/config.cpp
         make/MakeSystem.cpp
         make/Tool.cpp
         make/Tools.cpp

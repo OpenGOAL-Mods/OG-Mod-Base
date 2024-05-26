@@ -300,7 +300,7 @@ std::string get_file_path(const std::vector<std::string>& input) {
 
   if (input.size() == 1 && input.at(0) == "iso_data") {
      // throw std::runtime_error("couldn't open file " + current_path.string());
-        return "C:\\Users\\NinjaPC\\AppData\\Roaming\\OpenGOAL-Mods\\_iso_data\\iso_data";
+        return get_user_config_dir().string() + "\\OpenGOAL-Mods\\_iso_data";
     }
   if (input.size() == 1 && fs::path(input.at(0)).is_absolute()) {
     return input.at(0);
