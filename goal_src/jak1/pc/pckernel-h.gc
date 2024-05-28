@@ -300,7 +300,7 @@
    If you just want to set the settings and handle the fields yourself later, set call-handlers to #f
    such as if you're setting the initial values right before reading the settings file that changes them."
 
-  (format 0 "pc settings reset ~A~%" (-> obj type symbol))
+  (format 0 "pc settings reset~%")
 
   (set! (-> obj version) (get-pckernel-version))
 

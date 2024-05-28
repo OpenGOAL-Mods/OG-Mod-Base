@@ -835,7 +835,6 @@
 
 (defmethod new pc-settings ((allocation symbol) (type-to-make type))
   "make a new pc-settings"
-  (format 0 "new pc-settings! ~A~%" type-to-make)
   (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
     (initialize obj)
     obj))
