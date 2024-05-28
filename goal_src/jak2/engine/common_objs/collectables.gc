@@ -5,6 +5,10 @@
 ;; name in dgo: collectables
 ;; dgos: ENGINE, GAME
 
+(define-extern runs-on-orb-pickup (function none))
+(define-extern runs-on-skullgem-pickup (function none))
+(define-extern runs-on-eco-pickup (function pickup-type none))
+
 (defenum collectable-flag
   :type uint32
   :bitfield #t
@@ -435,6 +439,7 @@
      (talker-spawn-func (-> *talker-speech* 16) *entity-pool* (target-pos 0) (the-as region #f))
      )
     )
+  (runs-on-eco-pickup (-> this fact pickup-type))  ;; trigger hook for mod base
   (let ((s4-9 (handle->process arg0)))
     (when (nonzero? (-> this collect-effect))
       (let ((s5-1 (get-process *default-dead-pool* part-tracker #x4000)))
@@ -1490,6 +1495,14 @@ This commonly includes things such as:
 (defstate pickup (money)
   :virtual #t
   :code (behavior ((arg0 symbol) (arg1 handle))
+    (case (-> self type symbol)
+      (('skill)
+        (runs-on-orb-pickup)  ;; trigger hook for mod base
+        )
+      (('gem)
+        (runs-on-skullgem-pickup)  ;; trigger hook for mod base
+        )
+      )
     (process-entity-status! self (entity-perm-status dead) #t)
     )
   :exit (behavior ()

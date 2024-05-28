@@ -618,8 +618,6 @@
 
 
 (define-once *pc-settings* (new 'global 'pc-settings-jak1))
-(define *mod-settings* (new 'global 'mod-settings))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; other
@@ -643,3 +641,180 @@
 ;; the actor pool for PC processes! it has space for 4 processes, with 16K of space.
 (define *pc-dead-pool* (new 'global 'dead-pool 4 (* 16 1024) '*pc-dead-pool*))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; mod-settings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmethod reset mod-settings-jak1 ((obj mod-settings-jak1) (call-handlers symbol))
+  "Set the default settings for mod settings"
+
+  (format 0 "resetting mod settings~%")
+
+  ;; reset per-save fields here
+  (dotimes (idx 4)
+    (set! (-> obj save-data idx last-eco-color) #f)
+    )
+
+  ;; reset overall mod settings fields here
+  (set! (-> obj some-int)   0)
+  (set! (-> obj some-float) 0.0)
+
+  0)
+  
+(defmethod read-from-file mod-settings-jak1 ((obj mod-settings-jak1) (filename string))
+  "read mod settings from a file"
+
+  (if (not filename)
+    (return #f))
+
+  (let ((file (new 'stack 'file-stream filename 'read)))
+    (when (not (file-stream-valid? file))
+      (return #f))
+
+    (let ((version PC_KERNEL_VERSION))
+      (with-settings-scope (file)
+        (case-str (file-stream-read-word file)
+          (("settings")
+            (set! version (the pckernel-version (file-stream-read-int file)))
+            (cond
+              ((and (= (-> version major) PC_KERNEL_VER_MAJOR)
+                    (= (-> version minor) PC_KERNEL_VER_MINOR))
+                ;; minor or no difference
+                )
+              (else
+                ;; major difference
+                (format 0 "PC kernel version mismatch! Got ~D.~D vs ~D.~D~%" PC_KERNEL_VER_MAJOR PC_KERNEL_VER_MINOR (-> version major) (-> version minor))
+                (file-stream-close file)
+                (return #f)
+                )
+              )
+            (dosettings (file)
+              (handle-input-settings obj file)
+              )
+            ;; upgrade settings if minor changes
+            ;; remember to delete this when major changes to the version number are made
+            (when (and (= PC_KERNEL_VER_MAJOR 1)
+                       (= PC_KERNEL_VER_MINOR 10)
+                       (or (> 3 (-> version build))
+                           (and (= 3 (-> version build)) (> 1 (-> version revision)))))
+                )
+            )
+          )
+        )
+
+      )
+
+    (file-stream-close file)
+    )
+
+  (format 0 "mod settings file read: ~A~%" filename)
+
+  #t
+  )
+
+(defmethod handle-input-settings mod-settings-jak1 ((obj mod-settings-jak1) (file file-stream))
+  "handle the text parsing input for the 'settings' group"
+
+  (case-str *pc-temp-string*
+    ;; handle per-save fields here
+    (("last-eco-color")
+      (set! (-> obj save-data 0 last-eco-color) (file-stream-read-symbol file))
+      (set! (-> obj save-data 1 last-eco-color) (file-stream-read-symbol file))
+      (set! (-> obj save-data 2 last-eco-color) (file-stream-read-symbol file))
+      (set! (-> obj save-data 3 last-eco-color) (file-stream-read-symbol file))
+      )
+
+    ;; handle overall settings fields here
+    (("some-int") (set! (-> obj some-int) (file-stream-read-int file)))
+    (("some-float") (set! (-> obj some-float) (file-stream-read-float file)))
+
+    (else
+      (format 0 "Unrecognized field ~S when trying to parse mod-settings~%" *pc-temp-string*)
+      )
+    )
+  0)
+
+(defmethod handle-output-settings mod-settings-jak1 ((obj mod-settings-jak1) (file file-stream))
+  "handle the text writing output for the 'settings' group"
+
+  ;; handle per-save fields here
+  (format file "  (last-eco-color ~A ~A ~A ~A)~%" 
+    (-> obj save-data 0 last-eco-color)
+    (-> obj save-data 1 last-eco-color)
+    (-> obj save-data 2 last-eco-color)
+    (-> obj save-data 3 last-eco-color)
+    )
+
+  ;; handle overall settings fields here
+  (format file "  (some-int ~D)~%" (-> obj some-int))
+  (format file "  (some-float ~f)~%" (-> obj some-float))
+
+  0)
+
+(defmethod write-to-file mod-settings-jak1 ((obj mod-settings-jak1) (filename string))
+  "write settings to a file"
+
+  (if (not filename)
+    (return #f))
+
+  (let ((file (new 'stack 'file-stream filename 'write)))
+    (if (not (file-stream-valid? file))
+      (return #f))
+
+    (format file "(settings #x~X~%" PC_KERNEL_VERSION)
+
+    (handle-output-settings obj file)
+
+    (format file "  )~%")
+    (file-stream-close file)
+    )
+
+  (format 0 "mod settings file write: ~A~%" filename)
+
+  #t
+  )
+  
+(defmethod commit-to-file mod-settings-jak1 ((obj mod-settings-jak1))
+  "commits the current mod settings to the file"
+  (format (clear *pc-temp-string-1*) "~S/~S" *pc-settings-folder* *mod-settings-filename*)
+  (pc-mkdir-file-path *pc-temp-string-1*)
+  (write-to-file obj *pc-temp-string-1*)
+  (none))
+
+(defmethod load-settings mod-settings-jak1 ((obj mod-settings-jak1))
+  "load"
+  (format (clear *pc-temp-string-1*) "~S/~S" *pc-settings-folder* *mod-settings-filename*)
+  (cond
+    ((pc-filepath-exists? *pc-temp-string-1*)
+      (format 0 "[PC] Mod Settings found at '~S'...loading!~%" *pc-temp-string-1*)
+      (unless (read-from-file obj *pc-temp-string-1*)
+        (format 0 "[PC] Mod Settings found at '~S' but could not be loaded, using defaults!~%" *pc-temp-string-1*)
+        (reset obj #t)
+        )
+      )
+    (else
+      (format 0 "[PC] Mod Settings not found at '~S'...initializing with defaults!~%" *pc-temp-string-1*)
+      (reset obj #t)
+      )
+    )
+  0)
+
+(defmethod initialize mod-settings-jak1 ((obj mod-settings-jak1))
+  "initial initialize method to be run after allocating"
+  ;; load defaults not covered by the file
+  (reset obj #f)
+  ;; if saved settings are corrupted or not found, the object will be fully reset to use all defaults
+  (load-settings obj)
+  ;; any post-operations that need to be done after loading
+
+  ;; return obj
+  obj)
+
+(defmethod new mod-settings-jak1 ((allocation symbol) (type-to-make type))
+  "make a new mod-settings-jak1"
+  (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
+    (initialize obj)
+    obj))
+
+(define-once *mod-settings* (new 'global 'mod-settings-jak1))
