@@ -197,7 +197,7 @@ yakow-default-event-handler
           (close-specific-task! (-> self entity extra perm task) (task-status need-hint))
           (close-specific-task! (-> self entity extra perm task) (task-status need-introduction))
           (close-specific-task! (-> self entity extra perm task) (task-status need-reminder))
-          (if gp-0
+          (if (and gp-0 *enable-ingame-cutscenes?*)
               (yakow-cam)
               )
           ;; PAL patch here
