@@ -142,6 +142,15 @@
       (cond
         (*move-by-index-on-spawn* ;; on run start
           (set! *move-by-index-on-spawn* #f)
+
+          (when (is-level-alive? 'village1) ;; ensure training is loaded for fast tp and crash avoidance for spectator
+            (load-state-want-levels 'training 'village1)
+            (load-state-want-display-level 'village1 'display)
+            (load-state-want-display-level 'training 'display)
+            (load-state-want-vis 'training)
+            (load-state-want-force-vis 'training #t)
+            )
+
           (cond 
             ((not (-> *spectator-handler* is_spectator?))
               (+! (-> *target* root trans x) (meters (* (the float (-> *self-player-info* player_index)) 2.8)))
@@ -149,11 +158,6 @@
               )
             (else ;; on run start move to hut if spectator
               (tp-jak -63.5 11.1 -32.8)
-              (load-state-want-levels 'training 'village1)
-              (load-state-want-display-level 'village1 'display)
-              (load-state-want-display-level 'training 'display)
-              (load-state-want-vis 'training)
-              (load-state-want-force-vis 'training #t)
               )
             )
           )
