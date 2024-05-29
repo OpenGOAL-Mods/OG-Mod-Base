@@ -925,13 +925,9 @@
     (cond
       ((= task (game-task village2-levitator))
         (let ((boulder (process-by-ename "fireboulder-6"))
-              (levitator (process-by-ename "assistant-levitator-1"))
               )
           (if boulder
             (go-process boulder fireboulder-hover)
-            )
-          (if levitator
-            (go-process levitator just-particles)
             )
           )
         )
