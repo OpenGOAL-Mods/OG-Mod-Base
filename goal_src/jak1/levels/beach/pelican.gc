@@ -300,29 +300,18 @@
                     )
               )
             (else
-              (ppointer->handle (process-spawn
-                                    camera-tracker
-                                    :init camera-tracker-init
-                                    (lambda :behavior camera-tracker
-                                      ()
-                                      (local-vars
-                                        (a0-6 process-tree)
-                                        (a1-5 event-message-block)
-                                        (t9-6 (function process-tree event-message-block object))
-                                        )
-                                      (send-event (ppointer->process (-> self parent)) 'dive)
-                                      (set! a1-5 (new 'stack-no-clear 'event-message-block))
-                                      (set! (-> a1-5 from) self)
-                                      (set! (-> a1-5 num-params) 0)
-                                      (set! (-> a1-5 message) 'got-cell?)
-                                      (set! t9-6 send-event-function)
-                                      (set! a0-6 (ppointer->process (-> self parent)))
-                                      (set! (-> self message) #f)
-                                      (none)
-                                      )
-                                    :to self
-                                    )
-                                  )
+              (local-vars
+                (a0-6 process-tree)
+                (a1-5 event-message-block)
+                (t9-6 (function process-tree event-message-block object))
+                )
+              (send-event self 'dive)
+              (set! a1-5 (new 'stack-no-clear 'event-message-block))
+              (set! (-> a1-5 from) self)
+              (set! (-> a1-5 num-params) 0)
+              (set! (-> a1-5 message) 'got-cell?)
+              (set! t9-6 send-event-function)
+              (none)
               )
             )
           (set! (-> self draw force-lod) 0)

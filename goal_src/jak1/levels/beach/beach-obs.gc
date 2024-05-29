@@ -1179,12 +1179,12 @@
 (defstate flutflutegg-physics-fall (flutflutegg)
   :code (behavior ()
     (local-vars (v1-25 symbol))
-    (process-spawn
-      camera-tracker
-      :init camera-tracker-init
-      (lambda :behavior camera-tracker
-        ()
-        (when *enable-ingame-cutscenes?*
+    (when *enable-ingame-cutscenes?*
+      (process-spawn
+        camera-tracker
+        :init camera-tracker-init
+        (lambda :behavior camera-tracker
+          ()
           (while (not (process-grab? *target*))
             (suspend)
             )
@@ -1199,13 +1199,14 @@
             (suspend)
             )
           (camera-look-at (the-as pair *target*) (the-as uint 0))
+          (send-event *camera* 'blend-from-as-fixed)
+          (camera-change-to (the-as string 'base) 75 #f)
+          (none)
           )
-        (send-event *camera* 'blend-from-as-fixed)
-        (camera-change-to (the-as string 'base) 75 #f)
-        (none)
+        :to self
         )
-      :to self
       )
+
     (close-specific-task! (game-task beach-flutflut) (task-status need-reminder))
     (loop
       (vector-float*! (-> self root-override transv) (-> self dir) (-> self vel))
