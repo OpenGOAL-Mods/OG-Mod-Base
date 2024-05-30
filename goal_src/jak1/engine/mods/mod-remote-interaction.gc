@@ -1523,7 +1523,6 @@
           ((string= (-> remote-player inter_parent) "client")
             (let ((adjust-amount (- (-> remote-player inter_amount) (-> *game-info* money))))
               (when (!= adjust-amount 0)
-                (format #t "have ~f set to ~f adjusting by ~f~%" (-> *game-info* money) (-> remote-player inter_amount) adjust-amount)
                 (send-event *target* 'get-pickup 5 adjust-amount)
                 )
               (if (not (string= (-> remote-player inter_level) "none"))
