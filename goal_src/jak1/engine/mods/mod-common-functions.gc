@@ -412,7 +412,7 @@
 
     ;; zoomer !DONE!
     (('target-racing 'target-racing-start 'target-racing-get-on 'target-racing-bounce 'target-racing-clone-anim 
-      'target-racing-falling 'target-racing-grab 'target-racing-hit 'target-racing-jump  'target-racing-smack)
+      'target-racing-falling 'target-racing-grab 'target-racing-hit 'target-racing-jump  'target-racing-smack 'target-racing-death)
 
       (if (not (target-on-racer? t)) (send-event t 'change-mode 'racing #f)) ;; ensure on racer state
       
@@ -425,17 +425,22 @@
           (('target-racing-grab) (go-process t target-racing-grab))
           (('target-racing-falling) (go-process t target-racing-falling))
           (('target-racing-clone-anim) (run-target-fuel-cell-pickup t))
+          (('target-racing-death)  
+            (set! (-> t attack-info attacker) (the-as handle #f))
+            (set! (-> t attack-info mode) 'generic)
+            ((method-of-type attack-info combine!) (-> t attack-info) (static-attack-info ((mode 'heat))))
+            (go-process t target-racing-death 'heat))
           ;; (('target-racing-hit))
           )
         )
       )
-    (('target-racing-get-off 'target-racing-get-off-hit-ground 'target-racing-get-off-jump 'target-racing-death)
+    (('target-racing-get-off 'target-racing-get-off-hit-ground 'target-racing-get-off-jump)
       (if (target-on-racer? t) (send-event t 'end-mode))
       )
 
 
     ;; flut flut !DONE!
-    (('target-flut-air-attack 'target-flut-air-attack-hit-ground 'target-flut-clone-anim 'target-flut-death 
+    (('target-flut-air-attack 'target-flut-air-attack-hit-ground 'target-flut-clone-anim 
       'target-flut-double-jump 'target-flut-falling 'target-flut-get-on 'target-flut-grab 'target-flut-hit 'target-flut-hit-ground 
       'target-flut-jump 'target-flut-running-attack 'target-flut-stance 'target-flut-start 'target-flut-walk)
       
