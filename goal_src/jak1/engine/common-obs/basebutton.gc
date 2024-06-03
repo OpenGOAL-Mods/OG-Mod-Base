@@ -80,7 +80,7 @@
   :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
     (case event-type
       (('attack)
-       (when (or (!= (-> proc type) target) (= (the-as target proc) target) (target-is-interactive? (the-as target proc)))
+       (when (or (!= (-> proc type) target) (= (the-as target proc) *target*) (target-is-interactive? (the-as target proc)))
         (case (-> event param 1)
           (('flop)
            (basebutton-method-29 self (-> self event-going-down) (-> self notify-actor))

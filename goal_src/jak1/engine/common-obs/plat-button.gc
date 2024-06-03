@@ -70,7 +70,7 @@
                    (-> self root-override)
                    (the-as uint 1)
                    )
-                   (or (!= (-> proc type) target) (= (the-as target proc) target) (target-is-interactive? (the-as target proc)))
+                   (or (!= (-> proc type) target) (= (the-as target proc) *target*) (target-is-interactive? (the-as target proc)))
                   (or (not *enable-ingame-cutscenes?*) (not (-> self should-grab-player?)) (set! (-> self grab-player?) (process-grab? *target*)))
                   )
              (go-virtual plat-button-pressed)
