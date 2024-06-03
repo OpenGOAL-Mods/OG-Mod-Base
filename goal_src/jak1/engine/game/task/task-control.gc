@@ -1,9 +1,5 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(bundles "ENGINE.CGO" "GAME.CGO")
-
-(require "engine/game/game-info.gc")
-(require "engine/game/task/game-task-h.gc")
 
 ;; name: task-control.gc
 ;; name in dgo: task-control
@@ -4072,6 +4068,144 @@
             )
           )
         )
+      (new 'static 'task-control
+        :current-stage -1
+        :stage (new 'static 'boxed-array :type task-cstage
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-buzzer)
+            :status (task-status need-hint)
+            :flags (task-flags has-entity closed-by-default)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-buzzer)
+            :status (task-status need-introduction)
+            :flags (task-flags has-entity closed-by-default)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-buzzer)
+            :status (task-status need-reminder)
+            :flags (task-flags has-entity)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-buzzer)
+            :status (task-status need-resolution)
+            :flags (task-flags has-entity)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          )
+        )
+      (new 'static 'task-control
+        :current-stage -1
+        :stage (new 'static 'boxed-array :type task-cstage
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-findcell1)
+            :status (task-status need-hint)
+            :flags (task-flags has-entity closed-by-default)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-findcell1)
+            :status (task-status need-introduction)
+            :flags (task-flags has-entity closed-by-default)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-findcell1)
+            :status (task-status need-reminder)
+            :flags (task-flags has-entity)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-findcell1)
+            :status (task-status need-resolution)
+            :flags (task-flags has-entity)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          )
+        )
+      (new 'static 'task-control
+        :current-stage -1
+        :stage (new 'static 'boxed-array :type task-cstage
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-findcell2)
+            :status (task-status need-hint)
+            :flags (task-flags has-entity closed-by-default)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-findcell2)
+            :status (task-status need-introduction)
+            :flags (task-flags has-entity closed-by-default)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-findcell2)
+            :status (task-status need-reminder)
+            :flags (task-flags has-entity)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-findcell2)
+            :status (task-status need-resolution)
+            :flags (task-flags has-entity)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          )
+        )
+      (new 'static 'task-control
+        :current-stage -1
+        :stage (new 'static 'boxed-array :type task-cstage
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-findcell3)
+            :status (task-status need-hint)
+            :flags (task-flags has-entity closed-by-default)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-findcell3)
+            :status (task-status need-introduction)
+            :flags (task-flags has-entity closed-by-default)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-findcell3)
+            :status (task-status need-reminder)
+            :flags (task-flags has-entity)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-findcell3)
+            :status (task-status need-resolution)
+            :flags (task-flags has-entity)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          )
+        )
+      (new 'static 'task-control
+        :current-stage -1
+        :stage (new 'static 'boxed-array :type task-cstage
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-button)
+            :status (task-status unknown)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-button)
+            :status (task-status need-hint)
+            :flags (task-flags has-entity closed-by-default)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          (new 'static 'task-cstage
+            :game-task (game-task afoniddwr-button)
+            :status (task-status need-reward-speech)
+            :flags (task-flags has-entity)
+            :condition (lambda :behavior process-taskable ((arg0 task-control)) #t)
+            )
+          )
+        )
       )
     )
   )
@@ -4091,7 +4225,7 @@
 (defun get-task-control ((arg0 game-task))
   "Get the task control for a given game-task"
   (cond
-    ((or (>= (the-as uint 1) (the-as uint arg0)) (>= (the-as uint arg0) (the-as uint (game-task max)))) ;; changed from hard-coded 116 to (game-task max)
+    ((or (>= (the-as uint 1) (the-as uint arg0)) (>= (the-as uint arg0) (the-as uint (game-task max))))
      ;; invalid game task
      (format 0 "ERROR<GMJ>: get-task-control received invalid task ~D/~S~%" arg0 (game-task->string arg0))
      *null-task-control*

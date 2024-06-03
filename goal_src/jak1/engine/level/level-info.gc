@@ -1,11 +1,5 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(bundles "ENGINE.CGO" "GAME.CGO")
-
-(require "engine/math/quaternion-h.gc")
-(require "engine/math/vector-h.gc")
-(require "engine/level/level-h.gc")
-(require "engine/game/game-info-h.gc")
 
 ;; name: level-info.gc
 ;; name in dgo: level-info
@@ -1979,43 +1973,62 @@
 
 
 ;;;;;;;;; CUSTOM LEVELS
-(define test-zone (new 'static 'level-load-info
-                           :index 26
-                           :name 'test-zone
-                           :visname 'test-zone-vis ;; name + -vis
-                           :nickname 'tsz          ;; nickname
+(define afoniddwr (new 'static 'level-load-info
+                           :index 24 ;; set this number so that the menu defaults to afoniddwr when in afoniddwr. Its the 24th entry in the level-task-data-remap in progress-static. Guessing thats why 24 works. 
+                           :name 'afoniddwr
+                           :visname 'afoniddwr-vis ;; name + -vis
+                           :nickname 'afo          ;; nickname
                            :packages '()
                            :sound-banks '()
-                           :music-bank #f
+                           :music-bank 'beach
                            :ambient-sounds '()
-                           :mood '*default-mood*
-                           :mood-func 'update-mood-default
+                           :mood '*village1-mood*
+                           :mood-func 'update-mood-village1
                            :ocean #f
                            :sky #t
-                           :continues '((new 'static 'continue-point
-                                             :name "test-zone-start"
-                                             :level 'test-zone
-                                             :trans (new 'static 'vector :x 0.0 :y (meters 10.) :z (meters 10.) :w 1.0)
+                           ;; :sun-fade 1.0
+                           :continues '(
+                           (new 'static 'continue-point
+                                             :name "afoniddwr-start"
+                                             :level 'afoniddwr
+                                             :trans (new 'static 'vector :x (meters -246.64) :y (meters 192.43) :z (meters 402.68) :w 1.0) ;; -838.75 380.02 289.93(top) -246.64 192.43 402.68(bottom)
                                              :quat (new 'static 'quaternion  :w 1.0)
-                                             :camera-trans (new 'static 'vector :x 0.0 :y 4096.0 :z 0.0 :w 1.0)
+                                             :camera-trans (new 'static 'vector :x -245.62 :y 211.01 :z 404.02 :w 1.0) 
                                              :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
                                              :load-commands '()
                                              :vis-nick 'none
-                                             :lev0 'test-zone
+                                             :lev0 'afoniddwr
                                              :disp0 'display
-                                             :lev1 'village1
-                                             :disp1 'display
-                                             ))
+                                             :lev1 #f
+                                             :disp1 #f
+                                             )
+                           (new 'static 'continue-point
+                                        :name "afoniddwr-warp"
+                                        :level 'afoniddwr
+                                        :flags (continue-flags warp)
+                                        :trans (new 'static 'vector :x (meters -246.64) :y (meters 209.34) :z (meters 402.68) :w 1.0)
+                                        :quat (new 'static 'quaternion :x -0.1204 :y -0.1174 :z 0.6881 :w 0.7057)
+                                        :camera-trans (new 'static 'vector :x (meters -246.64) :y (meters 209.34) :z (meters 402.68) :w 1.0)
+                                        :camera-rot (new 'static 'array float 9 0.0040 0.0000 0.9999 -0.1934 -0.9811 -0.0007 -0.9810 0.1934 -0.0039)
+                                        :load-commands '()
+                                        :vis-nick #f
+                                        :lev0 'afoniddwr
+                                        :disp0 'display
+                                        :lev1 #f
+                                        :disp1 #f
+                                        )
+                           )
+
                            :tasks '()
                            :priority 100
                            :load-commands '()
                            :alt-load-commands '()
                            :bsp-mask #xffffffffffffffff
-                           :bsphere (new 'static 'sphere :w 167772160000.0)
+                           :bsphere (new 'static 'sphere :w 50000167772160000.0) ;; 50000 was added by me - FUTURE ME: why did you do that?
                            :bottom-height (meters -20)
                            :run-packages '()
                            :wait-for-load #t
                            )
         )
 
-(cons! *level-load-list* 'test-zone)
+(cons! *level-load-list* 'afoniddwr)

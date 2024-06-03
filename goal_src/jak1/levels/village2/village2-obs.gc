@@ -1,10 +1,5 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(bundles "VI2.DGO")
-
-(require "engine/common-obs/rigid-body.gc")
-(require "engine/camera/pov-camera.gc")
-(require "engine/game/task/task-control.gc")
 
 ;; name: village2-obs.gc
 ;; name in dgo: village2-obs
@@ -155,7 +150,7 @@
   (rigid-body-platform-method-30 this)
   (process-drawable-from-entity! this arg0)
   (rigid-body-platform-method-31 this)
-  (set! (-> this water-anim) #f)
+  ;; (set! (-> this water-anim) #f) THIS WAS DISABLED SO THAT PONTOONS CAN SPAWN ANYWHERE THAT ISNT AT Y 0. THANK LUMINAR!
   (set! (-> this root-overlay pause-adjust-distance) -122880.0)
   (set! (-> this task) (the-as uint (-> arg0 extra perm task)))
   (set! (-> this alt-task) (res-lump-value arg0 'alt-task uint))

@@ -1,7 +1,5 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(bundles "ENGINE.CGO" "GAME.CGO")
-
 
 ;; name: game-task-h.gc
 ;; name in dgo: game-task-h
@@ -129,5 +127,11 @@
   (plunger-lurker-hit 113)
   (leaving-misty 114)
   (assistant-village3 115)
-  (max 116)
+  (afoniddwr-buzzer 116)
+  (afoniddwr-findcell1 117)
+  (afoniddwr-findcell2 118)
+  (afoniddwr-findcell3 119)
+  (afoniddwr-button 120) ;; warp button
+  (afon-ram 121) ;; LURKER RAM ENEMIES
+  (max 122)
   )

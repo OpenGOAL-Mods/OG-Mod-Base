@@ -1,18 +1,5 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(bundles "ENGINE.CGO" "GAME.CGO")
-
-(require "engine/common-obs/generic-obs-h.gc")
-(require "pc/features/speedruns-h.gc")
-(require "engine/game/task/hint-control-h.gc")
-(require "engine/game/task/task-control-h.gc")
-(require "engine/ui/hud-h.gc")
-(require "engine/game/fact-h.gc")
-(require "engine/camera/cam-interface-h.gc")
-(require "engine/target/target-h.gc")
-(require "engine/collide/collide-shape-h.gc")
-(require "engine/debug/debug.gc")
-(require "engine/game/game-info-h.gc")
 
 ;; name: game-info.gc
 ;; name in dgo: game-info
@@ -24,12 +11,6 @@
 ;; The "perm" data is saved to the memory card.
 
 ;; DECOMP BEGINS
-
-(define-extern runs-on-jak-death (function symbol none))
-;;Forward declaration Variable for mod base settings
-(define-extern startingDebugContinuePoint (string))
-;; DECOMP BEGINS
-
 
 ;;;;;;;;;;;;;;;;;;
 ;; border plane
@@ -183,11 +164,16 @@
   (-> this task-perm-list data arg0)
   )
 
+(define *game-counts* (the-as game-count-info #f))
+
 (defmethod initialize! ((this game-info) (cause symbol) (save-to-load game-save) (continue-point-override string))
   "Initialize the game-info.
     The cause can be 'dead if you die, or 'game to reset everything.
     If save-to-load is not #f will load data from that.
     If continue-point-override is not #f, will use that."
+
+  (set! (-> *game-counts* data 16 money-count) (the-as int 231)) ;; number 16 is afoniddwrs level count found in progress-static
+  (set! (-> *game-counts* data 16 buzzer-count) (the-as int 7))
 
   (local-vars (v0-0 int) (sv-96 symbol))
   (case cause
@@ -224,7 +210,6 @@
          (goto cfg-50)
          )
        )
-       (runs-on-jak-death 'blackout)
      )
     )
   (kill-current-level-hint '() '() 'die)
@@ -241,9 +226,6 @@
                           ((!= *kernel-boot-message* 'play)
                            "demo-start"
                            )
-                          ((and *debug-segment* (not (string= startingDebugContinuePoint "village1-hut")))
-                            startingDebugContinuePoint
-                            )
                           (*debug-segment*
                             "village1-hut"
                             )
@@ -270,7 +252,7 @@
      (set-time! (-> this continue-time))
      (set-time! (-> this death-time))
      (set-time! (-> this hit-time))
-     (dotimes (v1-50 (the int (game-task max))) ;; changed from hard-coded 116 to (game-task max)
+     (dotimes (v1-50 (game-task max))
        (set! (-> this fuel-cell-time 0) 0)
        (nop!)
        )
@@ -956,7 +938,7 @@
   (inspect this)
   (when (or (not arg0) (= arg0 'game-task))
     (format #t "~Tgame-task:~%")
-    (dotimes (s4-0 (the int (game-task max))) ;; changed from hard-coded 116 to (game-task max)
+    (dotimes (s4-0 (game-task max)) 
       (if (task-complete? this (the-as game-task s4-0))
           (format #t "~T~T~S~%" (game-task->string (the-as game-task s4-0)))
           )
@@ -984,7 +966,7 @@
 
   ;; task perms
   (when (zero? (-> gp-0 task-perm-list))
-    (let ((v1-15 (new 'global 'entity-perm-array (the int (game-task max))))) ;; changed from hard-coded 116 to (game-task max)
+    (let ((v1-15 (new 'global 'entity-perm-array (the-as int(game-task max)))))
       (set! (-> gp-0 task-perm-list) v1-15)
       (dotimes (a0-24 (-> v1-15 length))
         (set! (-> v1-15 data a0-24 task) (the-as game-task a0-24))

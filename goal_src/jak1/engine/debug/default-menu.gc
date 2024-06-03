@@ -1,14 +1,5 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(bundles "ENGINE.CGO" "GAME.CGO")
-
-(require "engine/camera/cam-update.gc")
-(require "engine/game/task/task-control.gc")
-(require "engine/draw/drawable.gc")
-(require "engine/math/euler.gc")
-(require "engine/entity/entity.gc")
-(require "engine/debug/memory-usage.gc")
-(require "engine/debug/menu.gc")
 
 ;; name: default-menu.gc
 ;; name in dgo: default-menu
@@ -3575,7 +3566,6 @@
         arg0
         '(menu
            "Display"
-           (flag "Input Display" *show-input-display* dm-boolean-toggle-pick-func)
            (flag "Profile" *display-profile* dm-boolean-toggle-pick-func)
            (flag "Ticks" *profile-ticks* dm-boolean-toggle-pick-func)
            (flag "File Info" *display-file-info* dm-boolean-toggle-pick-func)
@@ -3591,6 +3581,7 @@
            (flag "Camera Info" *display-camera-info* dm-boolean-toggle-pick-func)
            (flag "Geometry Marks" *display-geo-marks* dm-boolean-toggle-pick-func)
            (flag "Nav Marks" *display-nav-marks* dm-boolean-toggle-pick-func)
+           (flag "Nav Marks Extras" *display-nav-marks-extras* dm-boolean-toggle-pick-func)
            (flag "Path Marks" *display-path-marks* dm-boolean-toggle-pick-func)
            (flag "Vol Marks" *display-vol-marks* dm-boolean-toggle-pick-func)
            (menu
@@ -3743,7 +3734,6 @@
              "Mode"
              (function "normal" #f ,(lambda () (send-event *target* 'end-mode)))
              (function "racing" #f ,(lambda () (send-event *target* 'change-mode 'racing #f)))
-             (function "flut" #f ,(lambda () (send-event *target* 'change-mode 'flut #f)))
              (function "snowball" #f ,(lambda () (send-event *target* 'change-mode 'snowball #f)))
              )
            (flag "Slow Frame Rate" *slow-frame-rate* dm-boolean-toggle-pick-func)

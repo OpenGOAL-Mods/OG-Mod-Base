@@ -1,12 +1,5 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(bundles "CIT.DGO" "VI1.DGO" "VI2.DGO" "VI3.DGO")
-
-(require "engine/entity/ambient.gc")
-(require "engine/game/task/task-control.gc")
-(require "engine/target/target.gc")
-(require "engine/camera/pov-camera-h.gc")
-(require "engine/common-obs/basebutton.gc")
 
 ;; name: villagep-obs.gc
 ;; name in dgo: villagep-obs
@@ -138,7 +131,7 @@
               (go-virtual active)
               )
           (if (and *cheat-mode* (cpad-pressed? 0 l3))
-              (set! (-> self max-slot) 4)
+              (set! (-> self max-slot) (- (-> *warp-info* length) 1)) ;; changed for warp working in afoniddwr
               )
           (let ((gp-0
                   (new 'stack 'font-context *font-default-matrix* 32 160 0.0 (font-color default) (font-flags shadow kerning))
@@ -199,11 +192,16 @@
                   (- arg2)
                   )
               )
+        (level-text-id (if (= arg0 5) ;; added for warp in afoniddwr
+                  #x1704 ;; memory address for afon i ddwr! found in game_text.txt
+                  (+ arg0 286)
+                  )
+              )
         )
     (+! (-> arg1 origin x) (the float s5-0))
     (let ((f30-0 (- 1.0 (* 0.0033333334 (the float arg2)))))
       (print-game-text-scaled
-        (lookup-text! *common-text* (the-as text-id (+ arg0 286)) #f)
+        (lookup-text! *common-text* (the-as text-id level-text-id) #f) ;; added for afoniddwr
         f30-0
         arg1
         (the int (* 128.0 f30-0))
@@ -253,7 +251,31 @@
       )
     )
   :code (behavior ()
-    (local-vars (sv-112 int) (sv-128 int) (sv-144 int))
+    #|
+    Had to move this here, because if you make all actors always visible (like in a custom level), and you load saved game into such a level, the warp gate is initialized before the task statuses are loaded.
+    So we instead set the "max-slot" when a warp gate's menu is activated by the player. By this time, the task statuses are surely loaded.
+    |#
+    (set! (-> self max-slot) (cond
+                            ((or (task-closed? (game-task finalboss-movies) (task-status need-reminder)) (task-closed? (game-task afoniddwr-button) (task-status need-hint)))
+                            5
+                            )
+                            ((task-closed? (game-task village4-button) (task-status need-hint))
+                            4
+                            )
+                            ((task-closed? (game-task village3-button) (task-status need-hint))
+                            3
+                            )
+                            ((task-closed? (game-task village2-levitator) (task-status need-hint))
+                            2
+                            )
+                            (else
+                              1 
+                              )
+                            )
+          )
+    (format 0 "SELF MAX-SLOT: ~D~%" (-> self max-slot))
+
+    (local-vars (sv-112 int) (sv-128 int) (sv-144 int))    
     (let ((gp-0 (get-next-slot-up self (+ (-> self level-slot) -1))))
       0
       (let ((s5-0 #f)
@@ -404,7 +426,7 @@
   (set! (-> self min-slot) 0)
   (let ((v1-11 (-> self level)))
     (set! (-> self level-slot) (cond
-                                 ((= v1-11 'training)
+                                 ((= v1-11 'training) 
                                   0
                                   )
                                  ((= v1-11 'village1)
@@ -419,27 +441,16 @@
                                  ((or (= v1-11 'citadel) (= v1-11 'lavatube))
                                   4
                                   )
+                                 ((= v1-11 'afoniddwr) ;; added for warpgate functionality in afon level
+                                  5
+                                  )
                                  (else
                                    -1
                                    )
                                  )
           )
-    )
-  (set! (-> self max-slot) (cond
-                             ((task-closed? (game-task village4-button) (task-status need-hint))
-                              4
-                              )
-                             ((task-closed? (game-task village3-button) (task-status need-hint))
-                              3
-                              )
-                             ((task-closed? (game-task village2-levitator) (task-status need-hint))
-                              2
-                              )
-                             (else
-                               1
-                               )
-                             )
-        )
+          (format 0 "SELF LEVEL-SLOT: ~D~%" (-> self level-slot)) ;; added for afoniddwr
+          )
   (go-virtual idle)
   (none)
   )

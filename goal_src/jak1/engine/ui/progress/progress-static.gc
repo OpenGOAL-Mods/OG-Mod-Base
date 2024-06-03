@@ -1,10 +1,5 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(bundles "ENGINE.CGO" "GAME.CGO")
-
-(require "engine/ui/progress/progress-h.gc")
-(require "engine/ui/text-h.gc")
-(require "engine/game/task/game-task-h.gc")
 
 ;; name: progress-static.gc
 ;; name in dgo: progress-static
@@ -178,7 +173,8 @@
   (cave 13)
   (lavatube 14)
   (citadel 15)
-  (max 16)
+  (afoniddwr 16)
+  (max 17)
   )
 
 ;; maps level-info indices to the appropriate offset in *level-task-data*
@@ -207,6 +203,7 @@
     (level-task-data-index citadel) ;; finalboss?
     (level-task-data-index misty) ;; demo?
     (level-task-data-index misty) ;; intro?
+    (level-task-data-index afoniddwr)
     )
   )
 
@@ -1381,6 +1378,55 @@
                         )
                    )
               )
+         (new 'static 'level-tasks-info
+              :level-name-id (text-id afoniddwr-level-name)
+              :text-group-index 3
+              :nb-of-tasks 4 ;; added additional for ram enemy task ( was 4)
+              :buzzer-task-index 3
+              :task-info
+              (new 'static 'array task-info-data 8
+                   (new 'static 'task-info-data
+                        :task-id (game-task afoniddwr-buzzer)
+                        :task-name
+                        (new 'static 'array text-id 4
+                             (text-id generic-buzzer)
+                             (text-id generic-buzzer)
+                             (text-id generic-buzzer)
+                             (text-id zero)
+                             )
+                        )
+                   (new 'static 'task-info-data
+                        :task-id (game-task afoniddwr-findcell1)
+                        :task-name
+                        (new 'static 'array text-id 4
+                             (text-id afoniddwr-findcell1)
+                             (text-id afoniddwr-findcell1)
+                             (text-id afoniddwr-findcell1)
+                             (text-id zero)
+                             )
+                        )
+                   (new 'static 'task-info-data
+                        :task-id (game-task afoniddwr-findcell2)
+                        :task-name
+                        (new 'static 'array text-id 4
+                             (text-id afoniddwr-findcell2)
+                             (text-id afoniddwr-findcell2)
+                             (text-id afoniddwr-findcell2)
+                             (text-id zero)
+                             )
+                        )
+                   (new 'static 'task-info-data
+                        :task-id (game-task afoniddwr-findcell3)
+                        :task-name
+                        (new 'static 'array text-id 4
+                             (text-id afoniddwr-findcell3)
+                             (text-id afoniddwr-findcell3)
+                             (text-id afoniddwr-findcell3)
+                             (text-id zero)
+                             )
+                        )
+                   )
+              )
          )
   )
 
@@ -1399,7 +1445,7 @@
          )
   )
 
-(define *game-counts* (the-as game-count-info #f))
+;(define *game-counts* (the-as game-count-info #f))
 
 
 

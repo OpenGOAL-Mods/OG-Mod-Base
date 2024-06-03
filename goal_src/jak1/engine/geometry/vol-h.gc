@@ -1,13 +1,5 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(bundles "ENGINE.CGO" "GAME.CGO")
-
-(require "engine/entity/res.gc")
-(require "kernel/gstate.gc")
-(require "engine/draw/drawable-h.gc")
-(require "engine/game/main-h.gc")
-(require "engine/entity/entity-h.gc")
-(require "engine/game/game-h.gc")
 
 ;; name: vol-h.gc
 ;; name in dgo: vol-h
@@ -61,8 +53,7 @@
       )
     (set! (-> (the-as vol-control gp-0) process) arg0)
     (let* ((s5-1 (the-as res-lump (-> (the-as vol-control gp-0) process entity)))
-           ;; note: changed 'exact to 'base
-           (s4-0 (-> ((method-of-type res-lump lookup-tag-idx) (the-as entity-actor s5-1) 'vol 'base 0.0) lo))
+           (s4-0 (-> ((method-of-type res-lump lookup-tag-idx) (the-as entity-actor s5-1) 'vol 'base 0.0) lo)) ;; edited from 'vol 'exact to 'vol 'base for custom water vols
            )
       (when (>= (the-as int s4-0) 0)
         (let ((s3-0 (the-as int s4-0))

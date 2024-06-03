@@ -1,10 +1,5 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(bundles "GAME.CGO")
-
-(require "engine/common-obs/process-drawable.gc")
-(require "engine/gfx/foreground/ripple.gc")
-(require "engine/common-obs/water-h.gc")
 
 ;; name: water-anim.gc
 ;; name in dgo: water-anim
@@ -32,7 +27,7 @@
 
 (defskelgroup *water-anim-sunken-dark-eco-helix-room-sg* water-anim-sunken-dark-eco water-anim-sunken-dark-eco-helix-room-lod0-jg -1
               ((water-anim-sunken-dark-eco-helix-room-lod0-mg (meters 999999)))
-              :bounds (static-spherem 0 0 0 21)
+              :bounds (static-spherem 0 0 0 510) ;; BOUNDS CHANGED TO ENSURE THIS DOESNT DISSAPEAR. LOOK VALUE IS 40. USING FOR TESTING SCALING.
               )
 
 (defskelgroup *water-anim-sunken-big-room-sg* water-anim-sunken water-anim-sunken-big-room-lod0-jg -1
@@ -57,12 +52,12 @@
 
 (defskelgroup *water-anim-sunken-circular-with-bullys-sg* water-anim-sunken water-anim-sunken-circular-with-bullys-lod0-jg -1
               ((water-anim-sunken-circular-with-bullys-lod0-mg (meters 999999)))
-              :bounds (static-spherem 0 0 0 15)
+              :bounds (static-spherem 0 0 0 15) 
               )
 
 (defskelgroup *water-anim-sunken-hall-with-one-whirlpool-sg* water-anim-sunken water-anim-sunken-hall-with-one-whirlpool-lod0-jg -1
               ((water-anim-sunken-hall-with-one-whirlpool-lod0-mg (meters 999999)))
-              :bounds (static-spherem 0 0 0 27)
+              :bounds (static-spherem 0 0 0 15) 
               )
 
 (defskelgroup *water-anim-sunken-hall-with-three-whirlpools-sg* water-anim-sunken water-anim-sunken-hall-with-three-whirlpools-lod0-jg -1
@@ -72,12 +67,12 @@
 
 (defskelgroup *water-anim-sunken-start-of-helix-slide-sg* water-anim-sunken water-anim-sunken-start-of-helix-slide-lod0-jg -1
               ((water-anim-sunken-start-of-helix-slide-lod0-mg (meters 999999)))
-              :bounds (static-spherem 0 0 0 25)
+              :bounds (static-spherem 0 0 0 25) 
               )
 
 (defskelgroup *water-anim-sunken-room-above-exit-chamber-sg* water-anim-sunken water-anim-sunken-room-above-exit-chamber-lod0-jg -1
               ((water-anim-sunken-room-above-exit-chamber-lod0-mg (meters 999999)))
-              :bounds (static-spherem 0 0 0 45)
+              :bounds (static-spherem 0 0 0 450) ;; THIS IS LOOK 8! PERFECT CIRCLE 
               )
 
 (defskelgroup *water-anim-sunken-hall-before-big-room-sg* water-anim-sunken water-anim-sunken-hall-before-big-room-lod0-jg -1
@@ -97,7 +92,7 @@
 
 (defskelgroup *water-anim-maincave-center-pool-sg* water-anim-maincave water-anim-maincave-center-pool-lod0-jg -1
               ((water-anim-maincave-center-pool-lod0-mg (meters 999999)))
-              :bounds (static-spherem 0 0 0 70)
+              :bounds (static-spherem 0 0 0 70) 
               )
 
 (defskelgroup *water-anim-maincave-lower-right-pool-sg* water-anim-maincave water-anim-maincave-lower-right-pool-lod0-jg -1

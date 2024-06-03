@@ -1,9 +1,5 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(bundles "GAME.CGO")
-
-(require "engine/common-obs/generic-obs.gc")
-(require "engine/target/logic-target.gc")
 
 ;; name: basebutton.gc
 ;; name in dgo: basebutton
@@ -428,12 +424,13 @@
   (none)
   )
 
-(define *warp-info* (new 'static 'boxed-array :type string
+(define *warp-info* (new 'static 'boxed-array :type string ;; here is needed for warp functionality? 
                       "training-warp"
                       "village1-warp"
                       "village2-warp"
                       "village3-warp"
                       "citadel-warp"
+                      "afoniddwr-warp" ;; added for afon
                       )
         )
 
@@ -485,7 +482,7 @@
     ;; we add "training" to the list here so that the training warp gate waits until it's safe to
     ;; dispose the old code from memory.
     (case (-> self level)
-      (('citadel 'lavatube 'training)
+      (('citadel 'lavatube 'training 'afoniddwr) ;; added afoniddwr here
        (while (and *target* (not (logtest? (-> *target* draw status) (draw-status hidden))))
          (suspend)
          )

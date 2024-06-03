@@ -1,18 +1,11 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(bundles "ENGINE.CGO" "GAME.CGO")
-
-(require "engine/camera/cam-start.gc")
-(require "engine/target/target.gc")
-(require "engine/camera/pov-camera-h.gc")
-(require "engine/target/target-part.gc")
 
 ;; name: target-death.gc
 ;; name in dgo: target-death
 ;; dgos: GAME, ENGINE
 
 ;; DECOMP BEGINS
-(define-extern runs-on-jak-spawn (function none))
 
 (defskelgroup *deathcam-sg* deathcam deathcam-lod0-jg deathcam-idle-ja
               ((deathcam-lod0-mg (meters 999999)))
@@ -433,6 +426,10 @@
               )
             (set-continue! *game-info* "lavatube-end")
             )
+            ((string= (-> arg0 name) "afoniddwr-warp") ;; added for warp working
+             (set! (-> s5-6 quad) (-> (entity-by-name "afon-training-part-1") extra trans quad)) 
+             (set-continue! *game-info* "afoniddwr-start")
+            )
            )
          (go target-warp-in s5-6 (-> arg0 trans))
          )
@@ -459,7 +456,6 @@
     (ja :group! eichar-stance-loop-ja)
     (suspend)
     (logior! (-> self control status) (cshape-moving-flags onsurf onground tsurf))
-    (runs-on-jak-spawn) ;; trigger hook for mod base
     (go target-stance)
     )
   :post target-no-move-post
@@ -1077,7 +1073,6 @@
     )
   :trans (-> target-hit trans)
   :code (behavior ((arg0 symbol))
-    (runs-on-jak-death 'dying)
     (set! (-> self control unknown-uint20) (the-as uint #f))
     (set! (-> self control unknown-int21)
           (the-as int (send-event (handle->process (-> self attack-info attacker)) 'target 'die arg0))
