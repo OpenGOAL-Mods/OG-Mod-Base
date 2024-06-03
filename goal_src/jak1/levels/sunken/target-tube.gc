@@ -448,7 +448,9 @@
              )
            )
           (('touched)
-           (send-event proc 'attack (-> event param 0) 'tube 0 0)
+           (if (or (= self *target*) (target-is-interactive? self))
+            (send-event proc 'attack (-> event param 0) 'tube 0 0)
+            )
            #f
            )
           (('attack 'attack-or-shove 'attack-invinc)
