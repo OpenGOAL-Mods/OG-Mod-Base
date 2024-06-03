@@ -1,0 +1,5116 @@
+{
+  // The "in-game" name of the level. Should be lower case, with dashes (GOAL symbol name)
+  // the name of this file, and the folder this file is in must have the same name.
+  "long_name": "afoniddwr",
+  // The file name, should be upper case and 8 characters or less.
+  "iso_name": "AFO",
+  // The nickname, should be exactly 3 characters
+  "nickname": "afo", // 3 char name, all lowercase
+  // Background mesh file.
+  // Must have vertex colors. Use the blender cycles renderer, bake, diffuse, uncheck color,
+  // and bake to vertex colors. For now, only the first vertex color group is used, so make sure you
+  // only have 1.
+  "gltf_file": "custom_levels/jak1/afoniddwr/afoniddwr2.glb",
+
+  // automatically set wall vs. ground based on angle. Useful if you don't want to assign this yourself
+  "automatic_wall_detection": true,
+  "automatic_wall_angle": 45.0,
+
+  // if your mesh has triangles with incorrect orientation, set this to make all collision mesh triangles double sided
+  // this makes collision 2x slower and bigger, so only use if really needed
+  "double_sided_collide": false,
+
+  // available res-lump tag types:
+  // value types: int32, uint32, enum-int32, enum-uint32, float, meters (1 meter = 4096.0 units), degrees (65536.0 = 360°)
+  // vector types: vector (normal floats), vector4m (meters), vector3m (meters with w set to 1.0), vector-vol (normal floats with w in meters), movie-pos (meters with w in degrees)
+  // special types: eco-info, water-height
+  //
+  // examples:
+  //
+  // adds a float tag 'spring-height' with value of 200 meters (1 meter = 4096.0 units):
+  // "spring-height": ["meters", 200.0]
+  //
+  // adds a degrees tag 'rotoffset':
+  // "rotoffset": ["degrees", -45.0]
+  //
+  // adds a movie-pos tag:
+  // "movie-pos": ["movie-pos", [100.22, -25.3, 99.5, 180.0]]
+  //
+  // adds an enum tag 'options':
+  // "options": ["enum-int32", "(fact-options large)"]
+  //
+  // adds a water-height tag:
+  // "water-height": ["water-height", 25.0, 0.5, 2.0, "(water-flags wt08 wt03 wt01)"]
+  //
+  // adds an eco-info tag:
+  // "eco-info": ["eco-info", "(pickup-type health)", 2]
+
+   // The base actor id for your custom level. If you have multiple levels this should be unique!
+   "base_id": 100,
+
+  // All art groups you want to use in your custom level. Will add their models and corresponding textures to the FR3 file.
+  // Note: You will still have to add them to your level's .gd file.
+  // Removed so that the release builds don't have to double-decompile the game
+  // "art_groups": ["plat-ag"],
+  "art_groups": [ "racer-ag", "plat-eco-ag", "babak-ag", "water-anim-sunken-ag", "eichar-pole+0-ag", "pontoonten-ag", "bounceytarp-ag", "lurkerworm-ag", "driller-lurker-ag", "warp-gate-switch-ag", "warp-gate-switch-ag", "ram-ag", "ram-boss-ag", "snowcam-ag" ],
+
+   // Any textures you want to include in your custom level. This is mainly useful for things such as the zoomer HUD,
+   // which is not in the common level files and has no art group associated with it.
+   // To get a list of all the textures, you can extract all of the game's textures
+   // by setting "save_texture_pngs" to true in the decompiler config.
+   "textures": [
+    // all textures required for the zoomer HUD
+     "zoomerhud",
+     "zoomerhud-dial",
+     "zoomerhud-main-02",
+     "zoomerhud-main-03",
+     "zoomerhud-pieslice",
+     "zoomerhud-heatbg-01",
+     "zoomerhud-main-03arrow",
+     "zoomerhud-main-03knob"
+  ],
+
+  // Ambients you want to use in your custom level. Ambients can be used for various things like changing the music variation (flava),
+  // adding ambient sounds, level name hints, etc.
+  "ambients": [
+    {
+      "trans": [-21.6238, 20.0496, 17.1191, 10.0],
+      "bsphere": [-21.6238, 20.0496, 17.1191, 15.0],
+      "lump": {
+        "name": "test-ambient",
+        "type": "'hint",
+        "text-id": ["enum-uint32", "(text-id fuel-cell)"], // text id for the "POWER CELL" text
+        "play-mode": "'notice"
+      }
+    }
+  ],
+
+  "actors": [
+    {
+      "trans": [ -248.73, 211.03, 390.48 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -248.73, 211.03, 390.48, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-01"
+      }
+    },
+
+    {
+      "trans": [ -248.10, 211.02, 375.05 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -248.10, 211.02, 375.05, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-02"
+      }
+    },
+
+    {
+      "trans": [ -247.81, 210.51, 358.93 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -247.81, 210.51, 358.93, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-03"
+      }
+    },
+
+    {
+      "trans": [ -245.76, 197.85, 327.79 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -245.76, 197.85, 327.79, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-04"
+      }
+    },
+
+    {
+      "trans": [ -255.03, 203.13, 317.88 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -255.03, 203.13, 317.88, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-05"
+      }
+    },
+
+    {
+      "trans": [ -269.82, 210.00, 317.10 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -269.82, 210.00, 317.10, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-06"
+      }
+    },
+
+    {
+      "trans": [ -293.43, 200.39, 332.45 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -293.43, 200.39, 332.45, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-07"
+      }
+    },
+
+    {
+      "trans": [ -302.94, 201.70, 340.44 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -302.94, 201.70, 340.44, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-08"
+      }
+    },
+
+    {
+      "trans": [ -315.59, 202.86, 350.67 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -315.59, 202.86, 350.67, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-09"
+      }
+    },
+
+    {
+      "trans": [ -335.02, 206.86, 355.60 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -335.02, 206.86, 355.60, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-10"
+      }
+    },
+
+    {
+      "trans": [ -346.85, 193.59, 356.00 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -346.85, 193.59, 356.00, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-11"
+      }
+    },
+
+    {
+      "trans": [ -360.10, 199.35, 352.81 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -360.10, 199.35, 352.81, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-12"
+      }
+    },
+
+    {
+      "trans": [ -373.88, 192.87, 351.37 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -373.88, 192.87, 351.37, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-13"
+      }
+    },
+
+    {
+      "trans": [ -340.27, 201.51, 355.36 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -340.27, 201.51, 355.36, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-14"
+      }
+    },
+
+    {
+      "trans": [ -385.14, 191.18, 351.29 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -385.14, 191.18, 351.29, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-15"
+      }
+    },
+
+    {
+      "trans": [ -396.14, 195.50, 350.12 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -396.14, 195.50, 350.12, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-16"
+      }
+    },
+
+    {
+      "trans": [ -402.43, 182.09, 346.00 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -402.43, 182.09, 346.00, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-17"
+      }
+    },
+
+    {
+      "trans": [ -411.90, 169.60, 303.72 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -411.90, 169.60, 303.72, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-18"
+      }
+    },
+
+    {
+      "trans": [ -416.23, 169.57, 293.54 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -416.23, 169.57, 293.54, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-19"
+      }
+    },
+
+    {
+      "trans": [ -420.32, 169.63, 282.54 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -420.32, 169.63, 282.54, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-20"
+      }
+    },
+
+    {
+      "trans": [ -426.92, 169.55, 259.25 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -426.92, 169.55, 259.25, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-21"
+      }
+    },
+
+    {
+      "trans": [ -426.14, 169.60, 248.95 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -426.14, 169.60, 248.95, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-22"
+      }
+    },
+
+    {
+      "trans": [ -424.08, 169.51, 236.05 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -424.08, 169.51, 236.05, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-23"
+      }
+    },
+
+    {
+      "trans": [ -446.48, 171.90, 233.37 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -446.48, 171.90, 233.37, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-24"
+      }
+    },
+
+    {
+      "trans": [ -445.98, 170.50, 219.89 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -445.98, 170.50, 219.89, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-25"
+      }
+    },
+
+    {
+      "trans": [ -442.30, 161.52, 201.16 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -442.30, 161.52, 201.16, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-26"
+      }
+    },
+
+    {
+      "trans": [ -435.13, 165.92, 182.91 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -435.13, 165.92, 182.91, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-27"
+      }
+    },
+
+    {
+      "trans": [ -428.45, 154.66, 169.85 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -428.45, 154.66, 169.85, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-28"
+      }
+    },
+
+    {
+      "trans": [ -436.18, 160.13, 151.28 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -436.18, 160.13, 151.28, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-29"
+      }
+    },
+
+    {
+      "trans": [ -453.99, 145.53, 137.60 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -453.99, 145.53, 137.60, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-30"
+      }
+    },
+
+    {
+      "trans": [ -462.64, 145.53, 136.56 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -462.64, 145.53, 136.56, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-31"
+      }
+    },
+
+    {
+      "trans": [ -472.92, 145.53, 137.05 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -472.92, 145.53, 137.05, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-32"
+      }
+    },
+
+    {
+      "trans": [ -417.19, 169.59, 212.68 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -417.19, 169.59, 212.68, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-33"
+      }
+    },
+
+    {
+      "trans": [ -413.59, 169.57, 203.35 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -413.59, 169.57, 203.35, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-34"
+      }
+    },
+
+    {
+      "trans": [ -409.36, 169.57, 193.50 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -409.36, 169.57, 193.50, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-35"
+      }
+    },
+
+    {
+      "trans": [ -399.98, 174.37, 158.32 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -399.98, 174.37, 158.32, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-36"
+      }
+    },
+
+    {
+      "trans": [ -404.77, 176.80, 145.59 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -404.77, 176.80, 145.59, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-37"
+      }
+    },
+
+    {
+      "trans": [ -411.95, 179.99, 130.88 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -411.95, 179.99, 130.88, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-38"
+      }
+    },
+
+    {
+      "trans": [ -442.55, 185.41, 102.57 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -442.55, 185.41, 102.57, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-39"
+      }
+    },
+
+    {
+      "trans": [ -455.63, 186.50, 97.28 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -455.63, 186.50, 97.28, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-40"
+      }
+    },
+
+    {
+      "trans": [ -469.70, 186.71, 95.00 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -469.70, 186.71, 95.00, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-41"
+      }
+    },
+
+    {
+      "trans": [ -518.11, 188.32, 104.75 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -518.11, 188.32, 104.75, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-42"
+      }
+    },
+
+    {
+      "trans": [ -527.79, 191.18, 115.00 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -527.79, 191.18, 115.00, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-43"
+      }
+    },
+
+    {
+      "trans": [ -532.14, 193.81, 130.15 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -532.14, 193.81, 130.15, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-44"
+      }
+    },
+
+    {
+      "trans": [ -531.83, 227.79, 225.60 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -531.83, 227.79, 225.60, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-45"
+      }
+    },
+
+    {
+      "trans": [ -531.82, 229.53, 237.48 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -531.82, 229.53, 237.48, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-46"
+      }
+    },
+
+    {
+      "trans": [ -531.73, 232.21, 254.13 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -531.73, 232.21, 254.13, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-47"
+      }
+    },
+
+    {
+      "trans": [ -529.54, 236.62, 282.06 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -529.54, 236.62, 282.06, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-48"
+      }
+    },
+
+    {
+      "trans": [ -529.90, 237.92, 294.37 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -529.90, 237.92, 294.37, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-49"
+      }
+    },
+
+    {
+      "trans": [ -530.01, 242.93, 307.47 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -530.01, 242.93, 307.47, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-50"
+      }
+    },
+
+    {
+      "trans": [ -516.23, 252.47, 340.65 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -516.23, 252.47, 340.65, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-51"
+      }
+    },
+
+    {
+      "trans": [ -516.88, 252.26, 353.41 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -516.88, 252.26, 353.41, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-52"
+      }
+    },
+
+    {
+      "trans": [ -516.34, 255.52, 359.23 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -516.34, 255.52, 359.23, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-53"
+      }
+    },
+
+    {
+      "trans": [ -517.06, 246.95, 365.64 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -517.06, 246.95, 365.64, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-54"
+      }
+    },
+
+    {
+      "trans": [ -519.46, 246.06, 388.04 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -519.46, 246.06, 388.04, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-55"
+      }
+    },
+
+    {
+      "trans": [ -527.15, 245.69, 397.30 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -527.15, 245.69, 397.30, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-56"
+      }
+    },
+
+    {
+      "trans": [ -538.30, 246.65, 403.51 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -538.30, 246.65, 403.51, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-57"
+      }
+    },
+
+    {
+      "trans": [ -563.72, 248.24, 405.22 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -563.72, 248.24, 405.22, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-58"
+      }
+    },
+
+    {
+      "trans": [ -570.59, 254.16, 403.99 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -570.59, 254.16, 403.99, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-59"
+      }
+    },
+
+    {
+      "trans": [ -578.14, 252.72, 400.55 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -578.14, 252.72, 400.55, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-60"
+      }
+    },
+
+    {
+      "trans": [ -535.08, 252.05, 338.04 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -535.08, 252.05, 338.04, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-61"
+      }
+    },
+
+    {
+      "trans": [ -535.08, 258.95, 338.04 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -535.08, 258.95, 338.042, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-62"
+      }
+    },
+
+    {
+      "trans": [ -542.01, 258.97, 339.91 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -542.01, 258.97, 339.91, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-63"
+      }
+    },
+
+    {
+      "trans": [ -534.27, 264.67, 339.98 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -534.27, 264.67, 339.98, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-64"
+      }
+    },
+
+    {
+      "trans": [ -525.99, 263.55, 339.73 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -525.99, 263.55, 339.73, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-65"
+      }
+    },
+
+    {
+      "trans": [ -531.12, 269.88, 355.70 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -531.12, 269.88, 355.70, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-66"
+      }
+    },
+
+    {
+      "trans": [ -535.54, 272.42, 374.76 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -535.54, 272.42, 374.76, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-67"
+      }
+    },
+
+    {
+      "trans": [ -544.48, 277.28, 386.45 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -544.48, 277.28, 386.45, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-68"
+      }
+    },
+
+    {
+      "trans": [ -566.59, 281.60, 384.71 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -566.59, 281.60, 384.71, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-69"
+      }
+    },
+
+    {
+      "trans": [ -570.68, 282.24, 372.77 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -570.68, 282.24, 372.77, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-70"
+      }
+    },
+
+    {
+      "trans": [ -571.77, 285.34, 358.30 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -571.77, 285.34, 358.30, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-71"
+      }
+    },
+
+    {
+      "trans": [ -573.83, 294.46, 334.42 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -573.83, 294.46, 334.42, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-72"
+      }
+    },
+
+    {
+      "trans": [ -574.17, 288.27, 331.00 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -574.17, 288.27, 331.00, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-73"
+      }
+    },
+
+    {
+      "trans": [ -574.69, 280.98, 325.23 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -574.69, 280.98, 325.23, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-74"
+      }
+    },
+
+    {
+      "trans": [ -577.74, 284.68, 299.27 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -577.74, 284.68, 299.27, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-75"
+      }
+    },
+
+    {
+      "trans": [ -579.09, 285.01, 285.72 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -579.09, 285.01, 285.72, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-76"
+      }
+    },
+
+    {
+      "trans": [ -580.47, 290.36, 270.78 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -580.47, 290.36, 270.78, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-77"
+      }
+    },
+
+    {
+      "trans": [ -581.91, 312.82, 185.35 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -581.91, 312.82, 185.35, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-78"
+      }
+    },
+
+    {
+      "trans": [ -590.58, 316.84, 184.32 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -590.58, 316.84, 184.32, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-79"
+      }
+    },
+
+    {
+      "trans": [ -597.34, 320.64, 183.09 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -597.34, 320.64, 183.09, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-80"
+      }
+    },
+
+    {
+      "trans": [ -601.73, 321.65, 182.57 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -601.73, 321.65, 182.57, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-81"
+      }
+    },
+
+    {
+      "trans": [ -596.53, 328.76, 182.96 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -596.53, 328.76, 182.96, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-82"
+      }
+    },
+
+    {
+      "trans": [ -583.56, 330.00, 186.31 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -583.56, 330.00, 186.31, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-83"
+      }
+    },
+
+    {
+      "trans": [ -578.23, 334.33, 186.48 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -578.23, 334.33, 186.48, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-84"
+      }
+    },
+
+    {
+      "trans": [ -578.19, 336.98, 185.09 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -578.19, 336.98, 185.09, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-85"
+      }
+    },
+
+    {
+      "trans": [ -585.70, 336.99, 185.15 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -585.70, 336.99, 185.15, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-86"
+      }
+    },
+
+    {
+      "trans": [ -596.14, 336.99, 185.15 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -596.14, 336.99, 185.15, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-87"
+      }
+    },
+
+    {
+      "trans": [ -563.26, 305.44, 209.43 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -563.26, 305.44, 209.43, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-88"
+      }
+    },
+
+    {
+      "trans": [ -563.26, 301.86, 209.43 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -563.26, 301.86, 209.43, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-89"
+      }
+    },
+
+    {
+      "trans": [ -563.26, 298.68, 209.43 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -563.26, 298.68, 209.43, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-90"
+      }
+    },
+
+    {
+      "trans": [ -567.78, 298.94, 193.56 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -567.78, 298.94, 193.56, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-91"
+      }
+    },
+
+    {
+      "trans": [ -567.78, 295.81, 193.56 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -567.78, 295.81, 193.56, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-92"
+      }
+    },
+
+    {
+      "trans": [ -567.78, 292.28, 193.56 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -567.78, 292.28, 193.56, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-93"
+      }
+    },
+
+    {
+      "trans": [ -556.29, 290.06, 163.61 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -556.29, 290.06, 163.61, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-94"
+      }
+    },
+
+    {
+      "trans": [ -556.58, 289.10, 143.57 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -556.58, 289.10, 143.57, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-95"
+      }
+    },
+
+    {
+      "trans": [ -558.52, 288.33, 129.83 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -558.52, 288.33, 129.83, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-96"
+      }
+    },
+
+    {
+      "trans": [ -582.42, 287.77, 80.72 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -582.42, 287.77, 80.72, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-97"
+      }
+    },
+
+    {
+      "trans": [ -594.84, 287.75, 75.75 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -594.84, 287.75, 75.75, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-98"
+      }
+    },
+
+    {
+      "trans": [ -607.74, 287.80, 73.31 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -607.74, 287.80, 73.31, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-99"
+      }
+    },
+
+    {
+      "trans": [ -584.64, 342.39, 158.23 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -584.64, 342.39, 158.23, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-100"
+      }
+    },
+
+    {
+      "trans": [ -589.40, 342.33, 136.25 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -589.40, 342.33, 136.25, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-101"
+      }
+    },
+
+    {
+      "trans": [ -599.72, 342.27, 121.32 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -599.72, 342.27, 121.32, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-102"
+      }
+    },
+
+    {
+      "trans": [ -620.48, 342.26, 116.82 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -620.48, 342.26, 116.82, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-103"
+      }
+    },
+
+    {
+      "trans": [ -633.14, 342.69, 126.13 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -633.14, 342.69, 126.13, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-104"
+      }
+    },
+
+    {
+      "trans": [ -640.87, 343.96, 144.38 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -640.87, 343.96, 144.38, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-105"
+      }
+    },
+
+    {
+      "trans": [ -647.79, 349.07, 171.65 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -647.79, 349.07, 171.65, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-106"
+      }
+    },
+
+    {
+      "trans": [ -638.06, 351.05, 192.73 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -638.06, 351.05, 192.73, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-107"
+      }
+    },
+
+    {
+      "trans": [ -650.37, 356.71, 217.71 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -650.37, 356.71, 217.71, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-108"
+      }
+    },
+
+    {
+      "trans": [ -642.20, 360.17, 251.27 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -642.20, 360.17, 251.27, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-109"
+      }
+    },
+
+    {
+      "trans": [ -654.54, 364.95, 272.15 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -654.54, 364.95, 272.153, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-110"
+      }
+    },
+
+    {
+      "trans": [ -645.91, 367.87, 299.70 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -645.91, 367.87, 299.709, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-111"
+      }
+    },
+
+    {
+      "trans": [ -661.82, 371.39, 326.26 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -661.82, 371.39, 326.26, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-112"
+      }
+    },
+
+    {
+      "trans": [ -653.06, 374.51, 352.17 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -653.06, 374.51, 352.17, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-113"
+      }
+    },
+
+    {
+      "trans": [ -660.35, 377.60, 383.81 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -660.35, 377.60, 383.81, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-114"
+      }
+    },
+
+    {
+      "trans": [ -669.86, 380.60, 417.81 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -669.86, 380.60, 417.81, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-115"
+      }
+    },
+
+    {
+      "trans": [ -686.74, 381.12, 423.52 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -686.74, 381.12, 423.52, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-116"
+      }
+    },
+
+    {
+      "trans": [ -705.50, 381.57, 421.99 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -705.50, 381.57, 421.99, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-117"
+      }
+    },
+
+    {
+      "trans": [ -721.26, 381.16, 390.50 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -721.26, 381.16, 390.50, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-118"
+      }
+    },
+
+    {
+      "trans": [ -736.64, 381.52, 371.77 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -736.64, 381.52, 371.77, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-119"
+      }
+    },
+
+    {
+      "trans": [ -763.45, 381.00, 364.31 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -763.45, 381.00, 364.31, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-120"
+      }
+    },
+
+    {
+      "trans": [ -794.31, 381.37, 338.21 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -794.31, 381.37, 338.21, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-121"
+      }
+    },
+
+    {
+      "trans": [ -802.22, 381.34, 320.57 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -802.22, 381.34, 320.57, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-122"
+      }
+    },
+
+    {
+      "trans": [ -817.93, 381.43, 299.48 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -817.93, 381.43, 299.48, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-123"
+      }
+    },
+
+    {
+      "trans": [ -1020.40, 379.58, 392.40 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1020.40, 379.58, 392.40, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-124"
+      }
+    },
+
+    {
+      "trans": [ -1028.36, 387.17, 394.12 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1028.36, 387.17, 394.12, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-125"
+      }
+    },
+
+    {
+      "trans": [ -1019.29, 394.24, 400.75 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1019.29, 394.24, 400.75, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-126"
+      }
+    },
+
+    {
+      "trans": [ -970.83, 360.42, 229.13 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -970.83, 360.42, 229.13, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-127"
+      }
+    },
+
+    {
+      "trans": [ -975.81, 360.44, 229.01 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -975.81, 360.44, 229.01, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-128"
+      }
+    },
+
+    {
+      "trans": [ -989.65, 360.37, 225.77 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -989.65, 360.37, 225.77, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-129"
+      }
+    },
+
+    {
+      "trans": [ -995.18, 360.45, 225.74 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -995.18, 360.45, 225.74, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-130"
+      }
+    },
+
+    {
+      "trans": [ -1004.88, 360.38, 213.93 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1004.88, 360.38, 213.93, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-131"
+      }
+    },
+
+    {
+      "trans": [ -1010.71, 360.43, 213.57 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1010.71, 360.43, 213.57, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-132"
+      }
+    },
+
+    {
+      "trans": [ -1028.11, 360.40, 222.50 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1028.11, 360.40, 222.50, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-133"
+      }
+    },
+
+    {
+      "trans": [ -1034.53, 360.42, 222.52 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1034.53, 360.42, 222.52, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-134"
+      }
+    },
+
+    {
+      "trans": [ -1053.18, 360.44, 216.62 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1053.18, 360.44, 216.62, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-135"
+      }
+    },
+
+    {
+      "trans": [ -1059.65, 360.41, 216.60 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1059.65, 360.41, 216.60, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-136"
+      }
+    },
+
+    {
+      "trans": [ -1077.05, 389.60, 36.11 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1077.05, 389.60, 36.11, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-137"
+      }
+    },
+
+    {
+      "trans": [ -1082.37, 396.97, 28.23 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1082.37, 396.97, 28.23, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-138"
+      }
+    },
+
+    {
+      "trans": [ -1085.57, 403.24, 38.69 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1085.57, 403.24, 38.69, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-139"
+      }
+    },
+
+    {
+      "trans": [ -1087.87, 413.37, 24.27 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1087.87, 413.37, 24.27, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-140"
+      }
+    },
+
+    {
+      "trans": [ -1087.85, 420.13, 24.27 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1087.85, 420.13, 24.27, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-141"
+      }
+    },
+
+    {
+      "trans": [ -1087.85, 417.23, 24.27 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1087.85, 417.23, 24.27, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-142"
+      }
+    },
+
+    {
+      "trans": [ -1231.71, 391.01, 73.98 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1231.71, 391.01, 73.98, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-143"
+      }
+    },
+
+    {
+      "trans": [ -1229.36, 399.45, 66.98 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1229.36, 399.45, 66.98, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-144"
+      }
+    },
+
+    {
+      "trans": [ -1219.28, 411.06, 70.50 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1219.28, 411.06, 70.50, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-145"
+      }
+    },
+
+    {
+      "trans": [ -1210.58, 421.86, 61.60 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1210.58, 421.86, 61.60, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-146"
+      }
+    },
+
+    {
+      "trans": [ -1215.31, 430.66, 49.68 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1215.31, 430.66, 49.68, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-147"
+      }
+    },
+
+    {
+      "trans": [ -1219.50, 451.94, 48.30 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1219.50, 451.94, 48.30, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-148"
+      }
+    },
+
+    {
+      "trans": [ -1220.24, 465.90, 56.36 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1220.24, 465.90, 56.36, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-149"
+      }
+    },
+
+    {
+      "trans": [ -1137.33, 379.34, 405.76 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1137.33, 377.34, 405.76, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-150"
+      }
+    },
+
+    {
+      "trans": [ -1150.84, 381.33, 403.12 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1150.84, 378.33, 403.12, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-151"
+      }
+    },
+
+    {
+      "trans": [ -1165.31, 381.31, 399.87 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1165.31, 379.31, 399.87, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-152"
+      }
+    },
+
+    {
+      "trans": [ -1187.05, 380.73, 388.48 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1187.05, 378.73, 388.48, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-153"
+      }
+    },
+
+    {
+      "trans": [ -1197.35, 379.64, 379.92 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1197.35, 377.64, 379.92, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-154"
+      }
+    },
+
+    {
+      "trans": [ -1209.60, 377.78, 368.27 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1209.60, 375.78, 368.27, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-155"
+      }
+    },
+
+    {
+      "trans": [ -1224.28, 382.29, 370.63 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1224.28, 380.29, 370.63, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-156"
+      }
+    },
+
+    {
+      "trans": [ -1235.79, 386.55, 373.84 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1235.79, 384.55, 373.84, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-157"
+      }
+    },
+
+    {
+      "trans": [ -1245.89, 389.63, 376.65 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1245.89, 387.63, 376.65, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-158"
+      }
+    },
+
+    {
+      "trans": [ -1261.79, 394.37, 381.01 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1261.79, 392.37, 381.01, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-159"
+      }
+    },
+
+    {
+      "trans": [ -1272.65, 397.30, 383.05 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1272.65, 395.30, 383.05, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-160"
+      }
+    },
+
+    {
+      "trans": [ -1287.29, 400.49, 384.21 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1287.29, 398.49, 384.21, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-161"
+      }
+    },
+
+    {
+      "trans": [ -867.08, 377.73, 227.14 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -867.08, 377.73, 227.14, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-163"
+      }
+    },
+
+    {
+      "trans": [ -871.49, 377.52, 302.39 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -871.49, 377.52, 302.39, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-164"
+      }
+    },
+
+    {
+      "trans": [ -884.35, 377.47, 317.37 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -884.35, 377.47, 317.37, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-165"
+      }
+    },
+
+    {
+      "trans": [ -896.66, 377.74, 333.38 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -896.66, 377.74, 333.38, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-166"
+      }
+    },
+
+    {
+      "trans": [ -902.14, 378.86, 367.29 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -902.14, 378.86, 367.29, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-167"
+      }
+    },
+
+    {
+      "trans": [ -902.38, 379.54, 383.98 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -902.38, 379.54, 383.98, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-168"
+      }
+    },
+
+    {
+      "trans": [ -906.10, 379.71, 406.59 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -906.10, 379.71, 406.59, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-169"
+      }
+    },
+
+    {
+      "trans": [ -989.44, 380.88, 426.01 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -989.44, 380.88, 426.01, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-170"
+      }
+    },
+
+    {
+      "trans": [ -1017.54, 379.85, 431.55 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1017.54, 379.85, 431.55, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-171"
+      }
+    },
+
+    {
+      "trans": [ -1041.41, 380.06, 428.81 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1041.41, 380.06, 428.81, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-172"
+      }
+    },
+
+    {
+      "trans": [ -1077.70, 379.07, 417.85 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1077.70, 379.07, 417.85, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-173"
+      }
+    },
+
+    {
+      "trans": [ -1089.96, 378.83, 415.02 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1089.96, 378.83, 415.02, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-174"
+      }
+    },
+
+    {
+      "trans": [ -1101.53, 379.04, 413.01 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1101.53, 379.04, 413.01, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-175"
+      }
+    },
+
+    {
+      "trans": [ -871.13, 377.78, 215.14 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -871.13, 377.78, 215.14, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-176"
+      }
+    },
+
+    {
+      "trans": [ -876.26, 377.92, 199.74 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -876.26, 377.92, 199.74, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-178"
+      }
+    },
+
+    {
+      "trans": [ -879.76, 379.21, 158.29 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -879.76, 379.21, 158.29, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-179"
+      }
+    },
+
+    {
+      "trans": [ -878.58, 379.74, 140.97 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -878.58, 379.74, 140.97, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-180"
+      }
+    },
+
+    {
+      "trans": [ -877.53, 379.88, 124.96 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -877.53, 379.88, 124.96, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-181"
+      }
+    },
+
+    {
+      "trans": [ -929.44, 372.61, 102.95 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -929.44, 372.61, 102.95, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-182"
+      }
+    },
+
+    {
+      "trans": [ -944.15, 372.56, 93.43 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -944.15, 372.56, 93.43, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-183"
+      }
+    },
+
+    {
+      "trans": [ -958.12, 373.11, 85.24 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -958.12, 373.11, 85.24, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-184"
+      }
+    },
+
+    {
+      "trans": [ -989.24, 374.98, 70.38 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -989.24, 374.98, 70.38, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-185"
+      }
+    },
+
+    {
+      "trans": [ -1005.95, 375.55, 64.61 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1005.95, 375.55, 64.61, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-186"
+      }
+    },
+
+    {
+      "trans": [ -1023.19, 376.29, 59.62 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1023.19, 376.29, 59.62, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-187"
+      }
+    },
+
+    {
+      "trans": [ -1115.78, 377.95, 43.15 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1115.78, 377.95, 43.15, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-188"
+      }
+    },
+
+    {
+      "trans": [ -1130.57, 377.79, 42.36 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1130.57, 377.79, 42.36, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-189"
+      }
+    },
+
+    {
+      "trans": [ -1148.23, 378.01, 41.92 ], // translation
+      "etype": "money", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1148.23, 378.01, 41.92, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-money-190"
+      }
+    },
+
+    {
+      "trans": [ -618.65, 297.64, -21.02 ], // translation
+      "etype": "fuel-cell", // actor type
+      "game_task": "(game-task afoniddwr-findcell1)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -618.65, 297.64, -21.02, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fuel-cell-01",
+        "eco-info": [ "int32", 6, 117 ]
+      }
+    },
+
+    {
+      "trans": [ -397.99, 3.99, 251.05 ], // translation
+      "etype": "fuel-cell", // actor type
+      "game_task": "(game-task afoniddwr-findcell2)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -397.99, 4.99, 251.05, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fuel-cell-02",
+        "eco-info": [ "int32", 6, 118 ]
+      }
+    },
+
+    {
+      "trans": [ -1085.97, 360.52, 213.01 ], // translation
+      "etype": "fuel-cell", // actor type
+      "game_task": "(game-task afoniddwr-findcell3)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1085.97, 362.52, 213.01, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fuel-cell-03",
+        "eco-info": [ "int32", 6, 119 ]
+      }
+    },
+
+    {
+      "trans": [ -257.65, 197.76, 333.93 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task afoniddwr-buzzer)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -257.65, 197.76, 333.93, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fly1",
+        //"crate-type": "'iron",
+        //"eco-info": [ "int32", 8, 1 ]
+        "eco-info": [ "buzzer-info", "(game-task afoniddwr-buzzer)", 0 ],
+        "movie-pos": [ "meters", -256.18, 180.41, 331.98 ]
+      }
+    },
+
+    {
+      "trans": [ -494.92, 143.53, 137.02 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task afoniddwr-buzzer)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -494.92, 143.53, 137.02, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fly2",
+        //"crate-type": "'iron",
+        //"eco-info": [ "int32", 8, 1 ]
+        "eco-info": [ "buzzer-info", "(game-task afoniddwr-buzzer)", 1 ],
+        "movie-pos": [ "meters", -494.92, 143.53, 137.02 ]
+      }
+    },
+
+    {
+      "trans": [ -593.15, 249.58, 366.10 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task afoniddwr-buzzer)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -593.15, 249.58, 366.10, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fly3",
+        //"crate-type": "'iron",
+        //"eco-info": [ "int32", 8, 1 ],
+        "eco-info": [ "buzzer-info", "(game-task afoniddwr-buzzer)", 2 ],
+        "movie-pos": [ "meters", -593.15, 249.58, 366.10 ]
+      }
+    },
+
+    {
+      "trans": [ -652.29, 285.41, 73.57 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task afoniddwr-buzzer)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -652.29, 285.41, 73.57, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fly4",
+        // "crate-type": "'iron",
+        // "eco-info": [ "int32", 8, 1 ],
+        "eco-info": [ "buzzer-info", "(game-task afoniddwr-buzzer)", 3 ],
+        "movie-pos": [ "meters", -652.29, 285.41, 73.57 ]
+      }
+    },
+
+    {
+      "trans": [ -664.01, 361.09, 262.30 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task afoniddwr-buzzer)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -664.01, 361.09, 262.30, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fly5",
+        // "crate-type": "'iron",
+        // "eco-info": [ "int32", 8, 1 ],
+        "eco-info": [ "buzzer-info", "(game-task afoniddwr-buzzer)", 4 ],
+        "movie-pos": [ "meters", -664.01, 361.09, 262.30 ]
+      }
+    },
+
+    {
+      "trans": [ -1029.80, 402.07, 399.54 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task afoniddwr-buzzer)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1029.80, 402.07, 399.54, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fly6",
+        // "crate-type": "'iron",
+        // "eco-info": [ "int32", 8, 1 ],
+        "eco-info": [ "buzzer-info", "(game-task afoniddwr-buzzer)", 5 ],
+        "movie-pos": [ "meters", -1029.80, 402.07, 399.54 ]
+      }
+    },
+
+    {
+      "trans": [ -1226.67, 463.61, 59.35 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task afoniddwr-buzzer)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1226.67, 463.61, 59.35, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fly7",
+        // "crate-type": "'iron",
+        // "eco-info": [ "int32", 8, 1 ],
+        "eco-info": [ "buzzer-info", "(game-task afoniddwr-buzzer)", 6 ],
+        "movie-pos": [ "meters", -1226.67, 463.61, 59.35 ]
+      }
+    },
+
+    {
+      "trans": [ -403.33, 0.14, 692.66 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -403.33, 0.14, 692.66, 10 ], // bounding sphere
+      "lump": {
+        "name": "dark-eco-1",
+        "crate-type": "'darkeco"
+      }
+    },
+
+    {
+      "trans": [ -352.55, 0.14, 644.18 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -352.55, 0.14, 644.18, 10 ], // bounding sphere
+      "lump": {
+        "name": "dark-eco-2",
+        "crate-type": "'darkeco"
+      }
+    },
+
+    {
+      "trans": [ -344.30, 0.14, 696.72 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -344.30, 0.14, 696.72, 10 ], // bounding sphere
+      "lump": {
+        "name": "dark-eco-3",
+        "crate-type": "'darkeco"
+      }
+    },
+
+    {
+      "trans": [ -326.71, 0.14, 698.70 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -326.71, 0.14, 698.70, 10 ], // bounding sphere
+      "lump": {
+        "name": "dark-eco-4",
+        "crate-type": "'darkeco"
+      }
+    },
+
+    {
+      "trans": [ -277.50, 0.14, 695.00 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -277.50, 0.14, 695.00, 10 ], // bounding sphere
+      "lump": {
+        "name": "dark-eco-5",
+        "crate-type": "'darkeco"
+      }
+    },
+
+    {
+      "trans": [ -191.28, 0.51, 725.75 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -191.28, 0.51, 725.75, 10 ], // bounding sphere
+      "lump": {
+        "name": "dark-eco-6",
+        "crate-type": "'darkeco"
+      }
+    },
+
+    {
+      "trans": [ -124.00, 9.33, 664.33 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -124.00, 9.33, 664.33, 10 ], // bounding sphere
+      "lump": {
+        "name": "dark-eco-7",
+        "crate-type": "'darkeco"
+      }
+    },
+
+    {
+      "trans": [ -129.91, 0.14, 392.74 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -129.91, 0.14, 392.74, 10 ], // bounding sphere
+      "lump": {
+        "name": "dark-eco-8",
+        "crate-type": "'darkeco"
+      }
+    },
+
+    {
+      "trans": [ -125.00, 0.14, 356.44 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -125.00, 0.14, 356.44, 10 ], // bounding sphere
+      "lump": {
+        "name": "dark-eco-9",
+        "crate-type": "'darkeco"
+      }
+    },
+
+    {
+      "trans": [ -138.10, 0.14, 331.56 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -138.10, 0.14, 331.56, 10 ], // bounding sphere
+      "lump": {
+        "name": "dark-eco-10",
+        "crate-type": "'darkeco"
+      }
+    },
+
+    {
+      "trans": [ -124.40, 0.14, 310.33 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -124.40, 0.14, 310.33, 10 ], // bounding sphere
+      "lump": {
+        "name": "dark-eco-11",
+        "crate-type": "'darkeco"
+      }
+    },
+
+    {
+      "trans": [ -165.00, 0.14, 286.03 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -165.00, 0.14, 286.03, 10 ], // bounding sphere
+      "lump": {
+        "name": "dark-eco-12",
+        "crate-type": "'darkeco"
+      }
+    },
+
+    {
+      "trans": [ -526.20, 0.45, 287.30 ], // translation
+      "etype": "ecovent", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -526.20, 0.45, 287.30, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-1",
+        "eco-info": [ "int32", 3, 1 ]
+      }
+    },
+
+    {
+      "trans": [ -160.64, 0.82, 713.31 ], // translation
+      "etype": "ecovent", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -160.64, 0.82, 713.31, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-2",
+        "eco-info": [ "int32", 3, 1 ]
+      }
+    },
+
+    {
+      "trans": [ -602.21, 315.32, 183.15 ], // translation
+      "etype": "plat-eco", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -602.21, 315.32, 183.15, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-plat-1",
+        "path": [
+          "vector4m",
+          [ -602.21, 315.32, 183.15, 1.0 ], // fourth value seems to have no effect
+          [ -602.21, 322.55, 183.15, 1.0 ]
+          //[ -530.87, 106.70, 144.45, 1.0 ],
+          //[ -530.87, 100.70, 144.45, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      "trans": [ -602.21, 334.96, 183.15 ], // translation
+      "etype": "plat-eco", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -602.21, 327.96, 183.15, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-plat-2",
+        "path": [
+          "vector4m",
+          [ -602.21, 334.96, 185.59, 1.0 ], // fourth value seems to have no effect
+          [ -577.56, 334.96, 185.59, 1.0 ]
+          //[ -523.23, 107.14, 138.03, 1.0 ],
+          //[ -523.23, 114.14, 138.03, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      "trans": [ -591.44, 322.58, 184.41 ], // translation
+      "etype": "plat-eco", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -591.44, 322.58, 184.41, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-plat-3",
+        "path": [
+          "vector4m",
+          [ -591.44, 322.58, 184.41, 1.0 ] // fourth value seems to have no effect
+          //[ -577.56, 327.96, 183.15, 1.0 ]
+          //[ -523.23, 107.14, 138.03, 1.0 ],
+          //[ -523.23, 114.14, 138.03, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      "trans": [ -616.2, 285.1, 48.94 ], // translation
+      "etype": "plat-eco", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -602.21, 315.32, 183.15, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-plat-4",
+        "path": [
+          "vector4m",
+          [ -616.2, 285.1, 48.94, 1.0 ] // fourth value seems to have no effect
+          //[ -602.21, 322.55, 183.15, 1.0 ]
+          //[ -530.87, 106.70, 144.45, 1.0 ],
+          //[ -530.87, 100.70, 144.45, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      "trans": [ -612.1, 285.1, 41.13 ], // translation
+      "etype": "plat-eco", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -612.1, 285.1, 41.13, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-plat-5",
+        "path": [
+          "vector4m",
+          [ -612.1, 285.1, 41.13, 1.0 ] // fourth value seems to have no effect
+          //[ -577.56, 334.96, 185.59, 1.0 ]
+          //[ -523.23, 107.14, 138.03, 1.0 ],
+          //[ -523.23, 114.14, 138.03, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      "trans": [ -617.7, 288.8, 37.30 ], // translation
+      "etype": "plat-eco", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -617.7, 288.8, 37.30, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-plat-6",
+        "path": [
+          "vector4m",
+          [ -617.7, 288.8, 37.30, 1.0 ] // fourth value seems to have no effect
+          //[ -577.56, 327.96, 183.15, 1.0 ]
+          //[ -523.23, 107.14, 138.03, 1.0 ],
+          //[ -523.23, 114.14, 138.03, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      "trans": [ -617.7, 292.7, 19.75 ], // translation
+      "etype": "plat-eco", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -617.7, 292.7, 19.75, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-plat-7",
+        "path": [
+          "vector4m",
+          [ -617.7, 292.7, 19.75, 1.0 ] // fourth value seems to have no effect
+          //[ -602.21, 322.55, 183.15, 1.0 ]
+          //[ -530.87, 106.70, 144.45, 1.0 ],
+          //[ -530.87, 100.70, 144.45, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      "trans": [ -625.08, 294.6, 10.40 ], // translation
+      "etype": "plat-eco", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -625.0, 294.6, 2.914, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-plat-9",
+        "path": [
+          "vector4m",
+          [ -625.08, 294.6, 10.40, 1.0 ], // fourth value seems to have no effect
+          [ -603.0, 294.6, 2.914, 1.0 ]
+          //[ -523.23, 107.14, 138.03, 1.0 ],
+          //[ -523.23, 114.14, 138.03, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      "trans": [ -603.21, 294.6, -0.927 ], // translation
+      "etype": "plat-eco", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -603.21, 294.6, -0.927, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-plat-10",
+        "path": [
+          "vector4m",
+          [ -603.21, 294.6, -0.927, 1.0 ], // fourth value seems to have no effect
+          [ -625.21, 294.6, -0.927, 1.0 ]
+          //[ -530.87, 106.70, 144.45, 1.0 ],
+          //[ -530.87, 100.70, 144.45, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      "trans": [ -611.8, 294.6, -10.489 ], // translation
+      "etype": "plat-eco", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -611.8, 294.6, -10.489, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-plat-11",
+        "path": [
+          "vector4m",
+          [ -611.8, 294.6, -10.489, 1.0 ] // fourth value seems to have no effect
+          //[ -577.56, 334.96, 185.59, 1.0 ]
+          //[ -523.23, 107.14, 138.03, 1.0 ],
+          //[ -523.23, 114.14, 138.03, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      "trans": [ -618.78, 294.6, -20.898 ], // translation
+      "etype": "plat-eco", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -618.78, 294.6, -20.898, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-plat-12",
+        "path": [
+          "vector4m",
+          [ -618.78, 294.6, -20.898, 1.0 ] // fourth value seems to have no effect
+          //[ -577.56, 327.96, 183.15, 1.0 ]
+          //[ -523.23, 107.14, 138.03, 1.0 ],
+          //[ -523.23, 114.14, 138.03, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      "trans": [ -526.00, 3.0, 386.0 ], // translation
+      "etype": "racer", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -526.00, 3.0, 386.0, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-racer"
+      }
+    },
+
+    {
+      "trans": [ -398.00, 8.0, 251.0 ], // translation
+      "etype": "racer", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -398.00, 8.0, 251.0, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-racer-dock"
+      }
+    },
+
+    {
+      "trans": [ -490.12, 143.53, 119.85 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -490.12, 143.53, 119.85, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-1",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ] // zoomer goes through it and doesnt bump 
+      }
+    },
+
+    {
+      "trans": [ -490.92, 143.53, 125.11 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -490.92, 143.53, 125.11, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-2",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ]
+      }
+    },
+
+    {
+      "trans": [ -484.34, 143.88, 121.49 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -484.34, 143.88, 121.49, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-3",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ]
+      }
+    },
+
+    {
+      "trans": [ -521.34, 218.14, 205.50 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -521.34, 218.14, 205.50, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-4",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ]
+      }
+    },
+
+    {
+      "trans": [ -525.69, 218.30, 205.58 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -525.69, 218.30, 205.58, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-5",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ]
+      }
+    },
+
+    {
+      "trans": [ -587.98, 251.60, 398.32 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -587.98, 251.60, 398.32, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-6",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ]
+      }
+    },
+
+    {
+      "trans": [ -585.05, 251.63, 401.62 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -585.05, 251.63, 401.62, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-7",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ]
+      }
+    },
+
+    {
+      "trans": [ -582.87, 250.76, 403.90 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -582.87, 250.76, 403.90, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-8",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ]
+      }
+    },
+
+    {
+      "trans": [ -562.30, 285.80, 77.14 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -562.30, 285.80, 77.14, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-9",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ]
+      }
+    },
+
+    {
+      "trans": [ -566.13, 285.76, 75.66 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -566.13, 285.76, 75.66, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-10",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ]
+      }
+    },
+
+    {
+      "trans": [ -570.73, 285.77, 74.95 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -570.73, 285.77, 74.95, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-11",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ]
+      }
+    },
+
+    {
+      "trans": [ -921.71, 378.71, 473.93 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -921.71, 378.71, 473.93, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-12",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ]
+      }
+    },
+
+    {
+      "trans": [ -927.01, 378.66, 468.52 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -927.01, 378.66, 468.52, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-13",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ]
+      }
+    },
+
+    {
+      "trans": [ -933.93, 378.95, 471.23 ], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -933.93, 378.95, 471.23, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-steel-crate-14",
+        "crate-type": "'steel",
+        "eco-info": [ "eco-info", "(pickup-type money)", 3 ],
+        "options": [ "int32", 8192 ]
+      }
+    },
+
+    {
+      "trans": [ -507.22, 10.58, 286.67 ], // translation
+      "etype": "launcher", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -507.22, 10.58, 286.67, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-launcher1",
+        "spring-height": [ "meters", 120.0 ]
+      }
+    },
+
+    {
+      "trans": [ -483.28, 43.55, 231.82 ], // translation
+      "etype": "launcher", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -463.28, 43.55, 231.82, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-launcher2",
+        "spring-height": [ "meters", 100.0 ]
+      }
+    },
+
+    {
+      "trans": [ -455.18, 85.33, 201.83 ], // translation
+      "etype": "launcher", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ 33, 33, 130, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-launcher3",
+        "spring-height": [ "meters", 50.0 ]
+      }
+    },
+
+    {
+      "trans": [ -433.93, 29.02, 154.31 ], // translation
+      "etype": "launcher", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -433.93, 29.02, 154.31, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-launcher4",
+        "spring-height": [ "meters", 110.0 ]
+      }
+    },
+
+    {
+      "trans": [ -456.71, 67.70, 120.85 ], // translation
+      "etype": "launcher", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -456.71, 67.70, 120.85, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-launcher5",
+        "spring-height": [ "meters", 125.0 ]
+      }
+    },
+
+    {
+      "trans": [ -447.17, 143.55, 133.65 ], // translation
+      "etype": "eco-yellow", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -447.17, 143.55, 133.65, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-yellow1"
+      }
+    },
+
+    {
+      "trans": [ -540.39, 217.77, 204.37 ], // translation
+      "etype": "eco-yellow", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -540.39, 217.77, 204.37, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-yellow2"
+      }
+    },
+
+    {
+      "trans": [ -524.44, 242.90, 405.74 ], // translation
+      "etype": "eco-yellow", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -524.44, 242.90, 405.74, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-yellow3"
+      }
+    },
+
+    {
+      "trans": [ -649.81, 285.81, 103.79 ], // translation
+      "etype": "eco-yellow", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -649.81, 285.81, 103.79, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-yellow4"
+      }
+    },
+
+    {
+      "trans": [ -949.89, 378.54, 453.54 ], // translation
+      "etype": "eco-yellow", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -949.89, 378.54, 453.54, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-yellow5"
+      }
+    },
+
+    {
+      "trans": [ -414.14, 167.64, 317.52 ], // translation
+      "etype": "eco-blue", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -414.14, 167.64, 317.52, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-blue1"
+      }
+    },
+
+    {
+      "trans": [ -399.01, 170.02, 171.23 ], // translation
+      "etype": "eco-blue", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -399.01, 170.02, 171.23, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-blue2"
+      }
+    },
+
+    {
+      "trans": [ -535.68, 204.92, 157.68 ], // translation
+      "etype": "eco-blue", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -535.68, 204.92, 157.68, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-blue3"
+      }
+    },
+
+    {
+      "trans": [ -554.95, 278.85, 392.35 ], // translation
+      "etype": "eco-blue", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -554.95, 278.85, 392.35, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-blue4"
+      }
+    },
+
+    {
+      "trans": [ -579.00, 340.33, 138.25 ], // translation
+      "etype": "eco-blue", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -579.00, 340.33, 138.25, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-blue5"
+      }
+    },
+
+    {
+      "trans": [ -656.22, 353.96, 203.45 ], // translation
+      "etype": "eco-blue", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -656.22, 353.96, 203.45, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-blue6"
+      }
+    },
+
+    {
+      "trans": [ -647.38, 376.83, 384.56 ], // translation
+      "etype": "eco-blue", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -647.38, 376.83, 384.56, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-blue7"
+      }
+    },
+
+    {
+      "trans": [ -1090.39, 374.70, 48.28 ], // translation
+      "etype": "eco-blue", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1090.39, 374.70, 48.28, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-blue8"
+      }
+    },
+
+    {
+      "trans": [ -432.22, 181.10, 112.30 ], // translation
+      "etype": "eco-blue", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -432.22, 181.10, 112.30, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-blue9"
+      }
+    },
+
+    {
+      "aid": 40000,
+      "trans": [ -317.57, 200.87, 350.96 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -317.57, 200.87, 350.96, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-1",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -317.57, 200.87, 350.96 ],
+          [ -324.58, 201.31, 354.45 ],
+          [ -312.52, 200.45, 346.45 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40050,
+      "trans": [ -418.98, 167.57, 298.68 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -418.98, 167.57, 298.68, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-2",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -418.98, 167.57, 298.68 ],
+          [ -425.70, 167.45, 298.49 ],
+          [ -410.64, 167.58, 300.89 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40150,
+      "trans": [ -424.85, 167.54, 246.02 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -424.85, 167.54, 246.02, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-3",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -424.85, 167.54, 246.02 ],
+          [ -425.23, 167.50, 237.89 ],
+          [ -428.42, 167.66, 251.08 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ],
+        "nav-mesh-sphere": [
+          "vector4m", // You can define spheres that will be added to the navmesh of the enemy. Enemies of the navmesh will avoid these spheres - like they avoid each other.
+          [ -421.62, 167.54, 250.81, 3.0 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40100,
+      "trans": [ -406.27, 167.75, 186.82 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -406.27, 167.75, 186.82, 10 ],
+      "lump": {
+        "name": "afoniddwr-baba-4",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -406.27, 167.75, 186.82 ],
+          [ -412.88, 167.76, 182.39 ],
+          [ -399.43, 167.72, 191.52 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40101,
+      "trans": [ -453.60, 184.35, 98.01 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -453.60, 184.35, 98.01, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-5",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -453.60, 184.35, 98.01 ],
+          [ -454.77, 182.39, 103.42 ],
+          [ -451.53, 186.52, 91.92 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40102,
+      "trans": [ -530.68, 227.46, 236.95 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -530.68, 227.46, 236.95, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-6",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -530.68, 227.46, 236.95 ],
+          [ -525.00, 227.49, 235.88 ],
+          [ -539.09, 227.66, 235.68 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ],
+        "nav-mesh-sphere": [
+          "vector4m", // You can define spheres that will be added to the navmesh of the enemy. Enemies of the navmesh will avoid these spheres - like they avoid each other.
+          [ -287.07, 0.14, 664.30, 5.0 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40103,
+      "trans": [ -528.67, 234.85, 286.46 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -528.67, 234.85, 286.46, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-7",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -528.67, 234.85, 286.46 ],
+          [ -527.58, 233.91, 275.20 ],
+          [ -530.02, 236.05, 294.86 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40104,
+      "trans": [ -573.73, 285.41, 350.08 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -573.73, 285.41, 350.08, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-8",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -573.73, 285.41, 350.08 ],
+          [ -580.06, 285.91, 349.99 ],
+          [ -565.47, 284.76, 351.70 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40105,
+      "trans": [ -581.09, 287.41, 275.41 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -581.09, 287.41, 275.41, 10 ],
+      "lump": {
+        "name": "mnynydd-babak-9",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -581.09, 287.41, 275.41 ],
+          [ -580.38, 285.34, 284.13 ],
+          [ -581.38, 288.68, 268.88 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40106,
+      "trans": [ -586.02, 303.63, 206.84 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -586.02, 303.63, 206.84, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-10",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -586.02, 303.63, 206.84 ],
+          [ -585.92, 304.13, 199.98 ],
+          [ -586.37, 301.55, 219.62 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40107,
+      "trans": [ -592.27, 340.28, 129.22 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -592.27, 340.28, 129.22, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-11",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -592.27, 340.28, 129.22 ],
+          [ -585.39, 340.33, 137.24 ],
+          [ -595.62, 340.26, 124.11 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40108,
+      "trans": [ -643.41, 346.27, 175.94 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -643.41, 346.27, 175.94, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-12",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -643.41, 346.27, 175.94 ],
+          [ -649.12, 348.14, 174.18 ],
+          [ -635.32, 347.44, 176.52 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40109,
+      "trans": [ -643.77, 352.62, 219.18 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -643.77, 352.62, 219.18, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-13",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -643.77, 352.62, 219.18 ],
+          [ -642.84, 350.90, 206.35 ],
+          [ -644.68, 353.64, 225.80 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40110,
+      "trans": [ -653.75, 363.42, 276.67 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -653.75, 363.42, 276.67, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-14",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -653.75, 363.42, 276.67 ],
+          [ -653.54, 363.84, 280.85 ],
+          [ -648.68, 361.57, 270.52 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40111,
+      "trans": [ -654.05, 372.35, 339.31 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -654.05, 372.35, 339.31, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-15",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -654.05, 372.35, 339.31 ],
+          [ -660.97, 371.17, 339.00 ],
+          [ -647.76, 371.24, 341.49 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40112,
+      "trans": [ -666.92, 378.01, 409.76 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -666.92, 378.01, 409.76, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-16",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -654.05, 372.35, 339.31 ],
+          [ -672.13, 377.76, 404.81 ],
+          [ -661.01, 378.26, 411.93 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40113,
+      "trans": [ -725.85, 379.27, 385.46 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -725.85, 379.27, 385.46, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-17",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -725.85, 379.27, 385.46 ],
+          [ -718.11, 379.52, 383.05 ],
+          [ -731.29, 379.45, 390.59 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40114,
+      "trans": [ -780.63, 379.07, 357.83 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -780.63, 379.07, 357.83, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-18",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -780.63, 379.07, 357.83 ],
+          [ -771.83, 379.19, 356.26 ],
+          [ -786.75, 379.15, 363.01 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      "aid": 40115,
+      "trans": [ -821.12, 379.68, 293.70 ],
+      "etype": "babak",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -821.12, 379.68, 293.70, 10 ],
+      "lump": {
+        "name": "afoniddwr-babak-19",
+        "vis-dist": [ "meters", 200.0 ],
+        "cam-notice-dist": [ "meters", 30.0 ],
+        "idle-distance": [ "meters", 50.0 ],
+        "cam-vert": [ "meters", 8.0 ],
+        "cam-horz": [ "meters", 20.0 ],
+        "path": [
+          "vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -821.12, 379.68, 293.70 ],
+          [ -811.08, 379.45, 294.36 ],
+          [ -828.91, 379.91, 293.48 ]
+          // [ -417.26, 7.62, 179.60 ]
+        ]
+      }
+    },
+
+    {
+      //  "aid": 40116, // not needed
+      "trans": [ -421.62, 167.54, 250.81 ],
+      "etype": "driller-lurker",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -421.62, 167.54, 250.81, 10 ],
+      "lump": {
+        "name": "afoniddwr-driller-lurker-1",
+        "vis-dist": [ "meters", 200.0 ],
+        "path": [
+          "vector4m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -421.62, 167.54, 250.81, 1.0 ],
+          [ -422.62, 167.54, 250.81, 1.0 ],
+          [ -423.62, 167.54, 250.81, 1.0 ],
+          [ -424.62, 167.54, 250.81, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      // "aid": 40116, // not needed
+      "trans": [ -502.16, 143.52, 137.12 ],
+      "etype": "driller-lurker",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -502.16, 143.52, 137.12, 10 ],
+      "lump": {
+        "name": "afoniddwr-driller-lurker-2",
+        "vis-dist": [ "meters", 200.0 ],
+        "path": [
+          "vector4m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -502.16, 143.52, 137.12, 1.0 ],
+          [ -503.16, 143.52, 137.12, 1.0 ],
+          [ -504.16, 143.52, 137.12, 1.0 ],
+          [ -505.16, 143.52, 137.12, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      // "aid": 40116, // not needed
+      "trans": [ -538.23, 224.28, 217.43 ],
+      "etype": "driller-lurker",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -538.23, 224.28, 217.43, 10 ],
+      "lump": {
+        "name": "afoniddwr-driller-lurker-3",
+        "vis-dist": [ "meters", 200.0 ],
+        "path": [
+          "vector4m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -538.23, 224.28, 217.43, 1.0 ],
+          [ -539.23, 224.28, 217.43, 1.0 ],
+          [ -540.23, 224.28, 217.43, 1.0 ],
+          [ -541.23, 224.28, 217.43, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      //  "aid": 40116, // not needed
+      "trans": [ -522.66, 242.95, 402.44 ],
+      "etype": "driller-lurker",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -522.66, 242.95, 402.44, 10 ],
+      "lump": {
+        "name": "afoniddwr-driller-lurker-4",
+        "vis-dist": [ "meters", 200.0 ],
+        "path": [
+          "vector4m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -522.66, 242.95, 402.44, 1.0 ],
+          [ -523.66, 242.95, 402.44, 1.0 ],
+          [ -524.66, 242.95, 402.44, 1.0 ],
+          [ -525.66, 242.95, 402.44, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      //  "aid": 40116, // not needed
+      "trans": [ -568.83, 286.45, 65.21 ],
+      "etype": "driller-lurker",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -568.83, 286.45, 65.21, 10 ],
+      "lump": {
+        "name": "afoniddwr-driller-lurker-5",
+        "vis-dist": [ "meters", 200.0 ],
+        "path": [
+          "vector4m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -568.83, 286.45, 65.21, 1.0 ],
+          [ -569.83, 286.45, 65.21, 1.0 ],
+          [ -570.83, 286.45, 65.21, 1.0 ],
+          [ -571.83, 286.45, 65.21, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      // "aid": 40116, // not needed
+      "trans": [ -658.70, 359.78, 248.89 ],
+      "etype": "driller-lurker",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -658.70, 359.78, 248.89, 10 ],
+      "lump": {
+        "name": "afoniddwr-driller-lurker-6",
+        "vis-dist": [ "meters", 200.0 ],
+        "path": [
+          "vector4m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -658.70, 359.78, 248.89, 1.0 ],
+          [ -659.70, 359.78, 248.89, 1.0 ],
+          [ -660.70, 359.78, 248.89, 1.0 ],
+          [ -661.70, 359.78, 248.89, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      //  "aid": 40116, // not needed
+      "trans": [ -731.01, 379.95, 407.51 ],
+      "etype": "driller-lurker",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -731.01, 379.95, 407.51, 10 ],
+      "lump": {
+        "name": "afoniddwr-driller-lurker-7",
+        "vis-dist": [ "meters", 200.0 ],
+        "path": [
+          "vector4m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -731.01, 379.95, 407.51, 1.0 ],
+          [ -732.01, 379.95, 407.51, 1.0 ],
+          [ -733.01, 379.95, 407.51, 1.0 ],
+          [ -734.01, 379.95, 407.51, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      // "aid": 40116, // not needed
+      "trans": [ -924.89, 377.99, 447.36 ],
+      "etype": "driller-lurker",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -924.89, 377.99, 447.36, 10 ],
+      "lump": {
+        "name": "afoniddwr-driller-lurker-8",
+        "vis-dist": [ "meters", 200.0 ],
+        "path": [
+          "vector4m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -924.89, 377.99, 447.36, 1.0 ],
+          [ -925.89, 377.99, 447.36, 1.0 ],
+          [ -926.89, 377.99, 447.36, 1.0 ],
+          [ -927.89, 377.99, 447.36, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      //  "aid": 40116, // not needed
+      "trans": [ -870.15, 377.79, 80.90 ],
+      "etype": "driller-lurker",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -870.15, 377.79, 80.90, 10 ],
+      "lump": {
+        "name": "afoniddwr-driller-lurker-9",
+        "vis-dist": [ "meters", 200.0 ],
+        "path": [
+          "vector4m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -870.15, 377.79, 80.90, 1.0 ],
+          [ -871.15, 377.79, 80.90, 1.0 ],
+          [ -872.15, 377.79, 80.90, 1.0 ],
+          [ -873.15, 377.79, 80.90, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      //  "aid": 40116, // not needed
+      "trans": [ -1282.57, 396.98, 381.40 ],
+      "etype": "driller-lurker",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -1282.57, 396.98, 381.40, 10 ],
+      "lump": {
+        "name": "afoniddwr-driller-lurker-10",
+        "vis-dist": [ "meters", 200.0 ],
+        "path": [
+          "vector4m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+          [ -1282.57, 396.98, 381.40, 1.0 ],
+          [ -1283.57, 396.98, 381.40, 1.0 ],
+          [ -1284.57, 396.98, 381.40, 1.0 ],
+          [ -1285.57, 396.98, 381.40, 1.0 ]
+        ]
+      }
+    },
+
+    {
+      "trans": [ -854.15, 376.56, 200.28 ],
+      "etype": "lurkerworm",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -854.15, 376.56, 200.28, 10 ],
+      "lump": {
+        "name": "afoniddwr-worm1",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -898.81, 375.67, 179.06 ],
+      "etype": "lurkerworm",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -898.81, 375.67, 179.06, 10 ],
+      "lump": {
+        "name": "afoniddwr-worm2",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -917.61, 373.53, 108.06 ],
+      "etype": "lurkerworm",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -917.61, 373.53, 108.06, 10 ],
+      "lump": {
+        "name": "afoniddwr-worm3",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -985.08, 369.66, 82.77 ],
+      "etype": "lurkerworm",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -985.08, 369.66, 82.77, 10 ],
+      "lump": {
+        "name": "afoniddwr-worm4",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -1059.40, 377.18, 46.35 ],
+      "etype": "lurkerworm",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -1059.40, 377.18, 46.358, 10 ],
+      "lump": {
+        "name": "afoniddwr-worm5",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -1140.33, 374.95, 43.91 ],
+      "etype": "lurkerworm",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -1140.33, 374.95, 43.91, 10 ],
+      "lump": {
+        "name": "afoniddwr-worm6",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -886.10, 376.78, 347.55 ],
+      "etype": "lurkerworm",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -886.10, 376.78, 347.55, 10 ],
+      "lump": {
+        "name": "afoniddwr-worm7",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -948.95, 377.17, 371.83 ],
+      "etype": "lurkerworm",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -948.95, 377.17, 371.83, 10 ],
+      "lump": {
+        "name": "afoniddwr-worm8",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -1002.85, 371.76, 387.13 ],
+      "etype": "lurkerworm",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -1002.85, 371.76, 387.13, 10 ],
+      "lump": {
+        "name": "afoniddwr-worm9",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -1111.55, 375.02, 405.54 ],
+      "etype": "lurkerworm",
+      "game_task": 0,
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -1111.55, 375.02, 405.54, 10 ],
+      "lump": {
+        "name": "afoniddwr-worm10",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+
+    {
+      "trans": [ -404.77, 11.62, 124.91 ], // translation
+      "etype": "eco-yellow", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -404.77, 11.62, 124.91, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-yellow2"
+      }
+    }, // TEST
+
+    {
+      "trans": [ -436.78, 8.92, 250.47 ], // translation
+      "etype": "eco-yellow", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -436.78, 8.92, 250.47, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-eco-yellow3"
+      }
+    },
+
+    {
+      "trans": [ -1169.40, 359.28, 194.49 ], // translation -1196.41 354.36 178.98
+      "etype": "afon-part", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ -2, -1.825, -2, 0.905 ], // quaternion
+      "bsphere": [ -1169.40, 354.28, 194.49, 50 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-waterfall-07",
+        "effect-name": "'waterfall",
+        "art-name": "group-afon-waterfall3",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -1196.41, 421.77, 178.18 ], // translation -1196.41 354.36 178.98
+      "etype": "afon-part", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ -2, -1.825, -2, 0.905 ], // quaternion
+      "bsphere": [ -1196.41, 354.44, 178.98, 50 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-waterfall-01",
+        "effect-name": "'waterfall",
+        "art-name": "group-afon-waterfall2",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -1248.98, 501.53, 188.26 ], // translation
+      "etype": "afon-part", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1248.98, 471.53, 188.26, 50 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-waterfall-04",
+        "effect-name": "'waterfall",
+        "art-name": "group-afon-waterfall",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -1248.98, 501.53, 200.26 ], // translation
+      "etype": "afon-part", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1248.98, 471.53, 200.26, 50 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-waterfall-05",
+        "effect-name": "'waterfall",
+        "art-name": "group-afon-waterfall",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -1248.98, 501.53, 212.26 ], // translation
+      "etype": "afon-part", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -1248.98, 471.53, 200.26, 50 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-waterfall-06",
+        "effect-name": "'waterfall",
+        "art-name": "group-afon-waterfall",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "aid": 48888,
+      "trans": [ -1113.0, 357.1, 218.95 ], // translation needs to also sit on top of water volume plane
+      "etype": "water-anim", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -973.13, 371.98, 229.00, 200.0 ], // bounding sphere
+      "lump": {
+        "vol": [
+          "vector",
+          [ 1.0, 0.0, 0.0, -3892183.04 ], // +x (+x in blender)
+          [ -1.0, 0.0, 0.0, 5225267.2 ], // -x (inverted x in blender because of the -1)
+          [ 0.0, 1.0, 0.0, 1462681.6 ], // +y (+z in blender)
+          [ 0.0, -1.0, 0.0, -1366589.44 ], // -y (inverted z in blender because of the -1)
+          [ 0.0, 0.0, 1.0, 1563361.28 ], // +z (-y in blender)
+          [ 0.0, 0.0, -1.0, 230309.888 ] // -z (+y in blender)
+        ],
+        "name": "afon-water",
+        "water-height": [ "float", 1466873.6, 2048.0, 8192.0, 1048588.0 ], // camera height (top of water volume plane + 4192), ?, wadledept, flags "water-height": ["water-height", 0.0, 0.5, 2.0, "(water-flags wt08 wt03 wt01)"],
+        "look": [ "int32", 8 ],
+        "vis-dist": [ "meters", 200.0 ],
+        "scale": [ "float", 5.0 ]
+      }
+    },
+
+    {
+      "trans": [ -973.63, 358.1234375, 228.97 ], // translation
+      "etype": "pontoonten", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -973.63, 358.12, 228.97, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-pontoon-01",
+        "water-actor": [ "uint32", 48888 ]
+      }
+    },
+
+    {
+      "trans": [ -517.36, 100.45, 375.22 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -517.36, 100.45, 375.22, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog1",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -582.60, 100.45, 366.10 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -582.60, 100.45, 366.10, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog2",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -601.84, 100.45, 160.61 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -601.84, 100.45, 160.61, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog3",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -665.26, 100.45, 277.49 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -665.26, 100.45, 277.49, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog4",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -699.22, 100.45, 418.02 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -699.22, 100.45, 418.02, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog5",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -805.66, 100.45, 307.02 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -805.66, 100.45, 307.02, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog6",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -418.88, 100.45, 315.31 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -418.88, 100.45, 315.31, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog7",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -477.25, 100.45, 156.90 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -477.25, 131.45, 156.90, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog8",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -880.55, 100.45, 460.22 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -880.55, 100.45, 460.22, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog9",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -892.38, 100.45, 491.25 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -892.38, 100.45, 491.25, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog10",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -873.43, 100.45, 554.72 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -873.43, 100.45, 554.72, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog11",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -859.82, 100.45, 671.36 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -859.82, 100.45, 671.36, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog12",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -850.97, 100.45, 821.15 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -850.97, 100.45, 821.15, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog13",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -801.19, 100.45, 196.72 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -801.19, 100.45, 196.72, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog14",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -792.76, 100.45, 131.34 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -792.76, 100.45, 131.34, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog15",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -765.27, 100.45, 71.64 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -765.27, 100.45, 71.645, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog16",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -761.51, 100.45, 15.98 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -761.51, 100.45, 15.98, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog17",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -749.15, 100.45, -36.07 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -749.15, 100.45, -36.076, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog18",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -736.31, 100.45, -95.54 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -736.31, 100.45, -95.54, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog19",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -725.53, 100.45, -160.28 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -725.53, 100.45, -160.28, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog20",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -721.27, 100.45, -238.61 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -721.27, 100.45, -238.61, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog21",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -246.36, 100.45, 409.25 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -246.36, 100.45, 409.25, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog22",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -257.10, 100.45, 392.36 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -257.10, 100.45, 392.36, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog23",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -241.55, 100.45, 382.47 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -241.55, 100.45, 382.47, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog24",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -243.95, 100.45, 358.92 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -243.95, 100.45, 358.92, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog25",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -248.27, 100.45, 334.49 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -248.27, 100.45, 334.49, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog26",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -255.79, 100.45, 317.48 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -255.79, 100.45, 317.48, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog27",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -271.49, 100.45, 318.38 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -271.49, 100.45, 318.38, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog28",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -297.39, 100.45, 336.98 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -297.39, 100.45, 336.98, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog29",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -322.43, 100.45, 355.80 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -322.43, 100.45, 355.80, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog30",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -349.08, 100.45, 356.33 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -349.08, 100.45, 356.335, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog31",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -376.40, 100.45, 350.12 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -376.40, 100.45, 350.12, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog32",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -469.58, 100.45, 471.49 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -469.58, 100.45, 471.49, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog33",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -506.11, 100.45, 510.42 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -506.11, 100.45, 510.42, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog34",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -553.68, 100.45, 542.79 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -553.68, 100.45, 542.79, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog35",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -608.34, 100.45, 572.40 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -608.34, 100.45, 572.40, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog36",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -628.43, 100.45, 650.55 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -628.43, 100.45, 650.55, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog37",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -651.74, 100.45, 735.76 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -651.74, 100.45, 735.76, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog38",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -669.11, 100.45, 843.22 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -669.11, 100.45, 843.22, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog39",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -773.72, 100.45, 936.67 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -773.72, 100.45, 936.67, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog40",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -842.96, 100.45, 996.45 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -842.96, 100.45, 996.45, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog41",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -294.17, 100.45, 222.37 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -294.17, 100.45, 222.37, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog42",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -278.58, 100.45, 136.47 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -278.58, 100.45, 136.47, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog43",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -401.71, 100.45, 44.23 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -401.71, 100.45, 44.23, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog44",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -465.81, 100.45, 24.34 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -465.81, 100.45, 24.34, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog45",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -550.45, 100.45, 20.72 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -550.45, 100.45, 20.72, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog46",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -539.13, 100.45, -49.18 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -539.13, 100.45, -49.18, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog47",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -529.16, 100.45, -143.27 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -529.16, 100.45, -143.27, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog48",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -529.29, 100.45, -230.51 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -529.29, 100.45, -230.51, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog49",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -730.89, 100.45, -353.65 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -730.89, 100.45, -353.65, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog50",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -603.04, 100.45, 492.57 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -603.04, 121.08, 492.57, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog51",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -648.85, 100.45, 560.95 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -648.85, 126.68, 560.95, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog52",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -699.56, 100.45, 668.68 ], // translation
+      "etype": "misty-part", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -699.56, 122.09, 668.68, 10 ], // bounding sphere
+      "lump": {
+        "name": "afoniddwr-fog53",
+        "art-name": "group-misty-fog",
+        "effect-name": "'fog",
+        "effect-param": [ "float", 11.0, 40.0, 12.0, 80.0 ], // ??, ??, ??, ??
+        "cycle-speed": [ "float", -1.0, 0.0 ],
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -578.92, 310.14, 184.11 ], // translation
+      "etype": "swingpole", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0.121, -0.694, -0.697, 0.133 ], // quaternion - Total agony. use the EDGE of the cube in blender. point it to where you want it to be.
+      "bsphere": [ -578.92, 310.14, 184.11, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-swingpole-01",
+        "scale": [ "float", 1.0, 1.0, 1.0, 1.0 ]
+      }
+    },
+
+    {
+      "trans": [ -586.72, 311.67, 182.87 ], // translation
+      "etype": "swingpole", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0.173, -0.703, -0.686, 0.080 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -586.72, 311.67, 182.87, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-swingpole-02",
+        "scale": [ "float", 1.0, 1.0, 1.0, 1.0 ]
+      }
+    },
+
+    {
+      "trans": [ -594.72, 311.92, 182.01 ], // translation
+      "etype": "swingpole", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0.196, -0.705, -0.679, 0.056 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -586.72, 311.67, 182.87, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-swingpole-03",
+        "scale": [ "float", 1.0, 1.0, 1.0, 1.0 ]
+      }
+    },
+
+    {
+      "trans": [ -578.5, 327.71, 186.18 ], // translation
+      "etype": "swingpole", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0.121, -0.694, -0.697, 0.133 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -578.05, 327.71, 185.18, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-swingpole-04",
+        "scale": [ "float", 1.0, 1.0, 1.0, 1.0 ]
+      }
+    },
+
+    {
+      "trans": [ -1214.35, 443.04, 50.93 ], // translation
+      "etype": "swingpole", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0.121, -0.694, -0.697, 0.133 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -1214.35, 443.04, 50.93, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-swingpole-05",
+        "scale": [ "float", 1.0, 1.0, 1.0, 1.0 ]
+      }
+    },
+
+    {
+      "trans": [ -993.32, 358.10, 225.71 ], // translation
+      "etype": "pontoonten", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -993.32, 355.10, 225.71, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-pontoon-02",
+        "vis-dist": [ "meters", 200.0 ],
+        "water-actor": [ "uint32", 48888 ]
+      }
+    },
+
+    {
+      "trans": [ -1008.70, 358.1234375, 213.68 ], // translation
+      "etype": "pontoonten", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -1008.70, 355.10, 213.68, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-pontoon-03",
+        "vis-dist": [ "meters", 200.0 ],
+        "water-actor": [ "uint32", 48888 ]
+      }
+    },
+
+    {
+      "trans": [ -1031.64, 358.1234375, 222.43 ], // translation
+      "etype": "pontoonten", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -1031.64, 355.10, 222.43, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-pontoon-04",
+        "vis-dist": [ "meters", 200.0 ],
+        "water-actor": [ "uint32", 48888 ]
+      }
+    },
+
+    {
+      "trans": [ -1056.82, 358.1234375, 216.36 ], // translation. Pontoon needs to be EXACTLY where the water-height is on the water vol
+      "etype": "pontoonten", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -1056.82, 355.10, 216.36, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-pontoon-05",
+        "vis-dist": [ "meters", 200.0 ],
+        "water-actor": [ "uint32", 48888 ] // water anim needs to be given an aid, and this tied to it so that it can get its float-height-offset
+      }
+    },
+
+    {
+      "trans": [ -1086.42, 358.1234375, 213.37 ], // translation
+      "etype": "pontoonten", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -1086.42, 355.10, 213.37, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-pontoon-06",
+        "vis-dist": [ "meters", 200.0 ],
+        "water-actor": [ "uint32", 48888 ]
+      }
+    },
+
+    {
+      "trans": [ -1227.56, 396.56, 68.55 ], // translation
+      "etype": "springbox", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -1227.56, 397.56, 68.55, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-trampoline-01",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -1219.90, 408.14, 67.51 ], // translation
+      "etype": "springbox", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -1219.90, 409.14, 67.51, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-trampoline-02",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -1215.66, 427.82, 48.83 ], // translation
+      "etype": "springbox", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -1215.66, 428.82, 48.83, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-trampoline-03",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -1223.85, 448.80, 48.14 ], // translation
+      "etype": "springbox", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion - Along Z axis in Blender
+      "bsphere": [ -1223.85, 449.80, 48.14, 10 ], // bounding sphere
+      "lump": {
+        "name": "afon-trampoline-04",
+        "vis-dist": [ "meters", 200.0 ]
+      }
+    },
+
+    {
+      "trans": [ -246.62, 212.59, 406.14 ],
+      "etype": "warpgate",
+      "game_task": 0,
+      "quat": [ -0.1204, -0.1174, 0.6881, 0.7057 ],
+      "bsphere": [ -246.62, 209.59, 406.14, 10 ],
+      "lump": {
+        "name": "afon-warpgate"
+      }
+    },
+
+    {
+      "trans": [ -250.59, 209.13, 403.58 ],
+      "etype": "warp-gate-switch",
+      "game_task": "(game-task afoniddwr-button)",
+      "quat": [ 0, 0, 0, 1 ],
+      "bsphere": [ -250.59, 209.13, 403.58, 10 ],
+      "lump": {
+        "name": "afon-warp-gate-switch",
+        "alt-actor": "afon-training-part-1"
+      }
+    },
+
+    {
+      "trans": [ -246.62, 212.59, 406.14 ],
+      "etype": "training-part",
+      "game_task": 0,
+      "quat": [ -0.1204, -0.1174, 0.6881, 0.7057 ],
+      "bsphere": [ -246.62, 209.59, 406.14, 10 ],
+      "lump": {
+        "name": "afon-training-part-1",
+        "effect-name": "'warpgate-loop",
+        "art-name": "group-training-warpgate",
+        "effect-param": [ "float", 3.0000, 80.0000, 12.0000, 40.0000 ],
+        "cycle-speed": [ "float", -1.0000, 0.0000 ]
+      }
+    }
+
+
+
+    //{
+    // "trans": [ -96.3990, 88.0923, 4.2067 ], // translation
+    //  "etype": "water-anim", // actor type
+    // "game_task": 0, // associated game task (for powercells, etc)
+    // "quat": [ 0, 0, 0, 1 ], // quaternion 
+    // "bsphere": [ -96.3990, 88.0923, 4.2067, 200.0 ], // bounding sphere
+    // "lump": {
+    //  "vol": [
+    //    "vector",
+    //    [ 1.0, 0.0, 0.0, -328628.224 ], // +x (+x in blender)
+    //    [ -1.0, 0.0, 0.0, 454656.0 ], // -x (inverted x in blender because of the -1)
+    //    [ 0.0, 1.0, 0.0, 360448.0 ], // +y (+z in blender)
+    //    [ 0.0, -1.0, 0.0, -342198.6304 ], // -y (inverted z in blender because of the -1)
+    //   [ 0.0, 0.0, 1.0, 65536.0 ], // +z (-y in blender)
+    //   [ 0.0, 0.0, -1.0, 34816.0 ] // -z (+y in blender)
+    //  ],
+    //  "name": "crystalc-water-vol-1",
+    //  "water-height": [ "float", 364640.0, 2048.0, 8192.0, 1048588.0 ], // camera height, ?, wadledept, flags
+    //  "look": [ "int32", 36 ],
+    //  "vis-dist": [ "meters", 200.0 ]
+    //    }
+    // }
+
+
+    // {
+    //   "trans": [-7.41, 3.5, 28.42], // translation
+    //   "etype": "plat",  // actor type
+    //   "game_task": "(game-task none)", // associated game task (for powercells, etc)
+    //   "quat": [0, 0, 0, 1], // quaternion
+    //   "bsphere": [-7.41, 3.5, 28.42, 10], // bounding sphere
+    //   "lump": {
+    //     "name": "test-plat"
+    //   }
+    // }
+  ]
+}

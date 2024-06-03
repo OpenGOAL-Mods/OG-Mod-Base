@@ -1,8 +1,5 @@
 ;;-*-Lisp-*-
 (in-package goal)
-(bundles "ENGINE.CGO" "GAME.CGO")
-
-(require "kernel/gkernel-h.gc")
 
 ;; name: text-h.gc
 ;; name in dgo: text-h
@@ -804,7 +801,6 @@
   (speedrun-hub2-100             #x1522)
   (speedrun-hub3-100             #x1523)
   (speedrun-all-cutscenes        #x1524)
-
   ;; input options
   (input-options #x1600)
   (input-opts-select-controller #x1601)
@@ -830,6 +826,13 @@
   (input-opts-binds-unknown #x1615)
   (progress-no-other-resolution-options #x1616)
   (input-opts-controller-led-reflect-heat #x1617)
+  (afoniddwr-level-name #x1700)
+  (afoniddwr-findcell1 #x1701)
+  (afoniddwr-findcell2 #x1702)
+  (afoniddwr-findcell3 #x1703)
+  (afon-ram #x1705)
+;; GAME-TEXT-ID ENUM ENDS
+  
 
   ;; mod text
   (pad-triangle #x2000)

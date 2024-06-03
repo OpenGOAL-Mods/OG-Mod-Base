@@ -13,7 +13,7 @@
    (z float :offset 64)
    (w float :offset 96))
   :method-count-assert 9
-  :size-assert          #x10
+  :size-assert         #x10
   :flag-assert         #x900000010
   )
 
@@ -860,7 +860,13 @@
   (plunger-lurker-hit 113)
   (leaving-misty 114)
   (assistant-village3 115)
-  (max 116)
+  (afoniddwr-buzzer 116)
+  (afoniddwr-findcell1 117)
+  (afoniddwr-findcell2 118)
+  (afoniddwr-findcell3 119)
+  (afoniddwr-button 120)
+  (afon-ram 121) ;; LURKER RAM ENEMIES
+  (max 122)
   )
 
 (defenum text-id
@@ -1653,7 +1659,6 @@
   (speedrun-hub2-100             #x1522)
   (speedrun-hub3-100             #x1523)
   (speedrun-all-cutscenes        #x1524)
-
   ;; input options
   (input-options #x1600)
   (input-opts-select-controller #x1601)
@@ -15796,7 +15801,6 @@
   (quit 34)
 
   ;; extra screens for pc port
-
   ;; input options
   (input-options)
   (select-controller)

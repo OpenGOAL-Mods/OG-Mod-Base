@@ -153,21 +153,10 @@
     )
   )
 
-(defun custom-actor-cgo (output-name desc-file-name)
-  "Add a CGO with the given output name (in $OUT/iso) and input name (in custom_assets/jak1/models/)"
-  (let ((out-name (string-append "$OUT/iso/" output-name)))
-    (defstep :in (string-append "custom_assets/jak1/models/" desc-file-name)
-      :tool 'dgo
-      :out `(,out-name)
-      )
-    (set! *all-cgos* (cons out-name *all-cgos*))
-    )
-  )
-
 (defun custom-level-cgo (output-name desc-file-name)
-  "Add a CGO with the given output name (in $OUT/iso) and input name (in custom_assets/jak1/levels/)"
+  "Add a CGO with the given output name (in $OUT/iso) and input name (in custom_levels/jak1/)"
   (let ((out-name (string-append "$OUT/iso/" output-name)))
-    (defstep :in (string-append "custom_assets/jak1/levels/" desc-file-name)
+    (defstep :in (string-append "custom_levels/jak1/" desc-file-name)
       :tool 'dgo
       :out `(,out-name)
       )
@@ -219,16 +208,11 @@
   )
 
 (defmacro build-custom-level (name)
-  (let* ((path (string-append "custom_assets/jak1/levels/" name "/" name ".jsonc")))
+  (let* ((path (string-append "custom_levels/jak1/" name "/" name ".jsonc")))
     `(defstep :in ,path
               :tool 'build-level
               :out '(,(string-append "$OUT/obj/" name ".go")))))
 
-(defmacro build-actor (name)
-  (let* ((path (string-append "custom_assets/jak1/models/" name ".glb")))
-    `(defstep :in ,path
-              :tool 'build-actor
-              :out '(,(string-append "$OUT/obj/" name "-ag.go")))))
 
 (defun copy-iso-file (name subdir ext)
   (let* ((path (string-append "$ISO/" subdir name ext))
@@ -1652,15 +1636,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Set up the build system to build the level geometry
-;; this path is relative to the custom_assets/jak1/levels/ folder
+;; this path is relative to the custom_levels/jak1 folder
 ;; it should point to the .jsonc file that specifies the level.
-(build-custom-level "test-zone")
+(build-custom-level "afoniddwr")
 ;; the DGO file
-(custom-level-cgo "TSZ.DGO" "test-zone/testzone.gd")
-
-;; generate the art group for a custom actor.
-;; requires a .glb model file in custom_assets/jak1/models
-(build-actor "test-actor")
+(custom-level-cgo "AFO.DGO" "afoniddwr/afoniddwr.gd")
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Game Engine Code
@@ -1747,7 +1727,7 @@
  :deps
  ("$OUT/obj/display.o"
   "$OUT/obj/decomp-h.o")
-
+ 
  "engine/connect.gc"
  "ui/text-h.gc"
  "game/settings-h.gc"
@@ -2101,6 +2081,13 @@
 (goal-src "pc/debug/pc-debug-common.gc" "pckernel-impl" "entity-h" "game-info-h" "level-h" "settings-h" "gsound-h" "target-util")
 (goal-src "pc/debug/pc-debug-methods.gc" "pc-debug-common")
 
+
+(goal-src-sequence
+ "levels/afon/"
+ :deps ("$OUT/obj/ticky.o") ;; custom code to include parts and obs
+ "afon-part.gc"
+ )
+
 (goal-src "engine/mods/input-display.gc")
 (goal-src "engine/mods/orb-placer.gc")
 
@@ -2114,8 +2101,6 @@
  "mods/mod-custom-code.gc"
  "mods/mod-debug.gc"
 )
-
-(goal-src "levels/test-zone/test-zone-obs.gc" "process-drawable")
 
 
 (group-list "all-code"
