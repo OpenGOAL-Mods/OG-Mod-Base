@@ -991,8 +991,10 @@
          (else
            (ja-no-eval :group! (-> self draw art-group data 139) :num! (seek!) :frame-num 0.0)
            (until (ja-done? 0)
-             (set! (-> self racer stick-lock) #t)
-             (send-event *camera* 'joystick 0.0 1.0)
+             (when (= self *target*)
+              (set! (-> self racer stick-lock) #t)
+              (send-event *camera* 'joystick 0.0 1.0)
+              )
              (seek! (-> self control unknown-vector11 y) 6144.0 (* 12288.0 (-> *display* seconds-per-frame)))
              (if (>= (ja-aframe-num 0) 245.0)
                  (set-forward-vel (* 0.5 (-> self control unknown-float01)))
