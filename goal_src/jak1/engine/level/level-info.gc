@@ -1991,7 +1991,7 @@
                            (new 'static 'continue-point
                                              :name "afoniddwr-start"
                                              :level 'afoniddwr
-                                             :trans (new 'static 'vector :x (meters -246.64) :y (meters 192.43) :z (meters 402.68) :w 1.0) ;; -838.75 380.02 289.93(top) -246.64 192.43 402.68(bottom)
+                                             :trans (new 'static 'vector :x (meters -246.64) :y (meters 209.31) :z (meters 402.68) :w 1.0) ;; -838.75 380.02 289.93(top) 
                                              :quat (new 'static 'quaternion  :w 1.0)
                                              :camera-trans (new 'static 'vector :x -245.62 :y 211.01 :z 404.02 :w 1.0) 
                                              :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
