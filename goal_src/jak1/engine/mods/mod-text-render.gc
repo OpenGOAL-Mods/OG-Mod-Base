@@ -8,11 +8,11 @@
 
 (define *selector-option* (selector-option teams))
 
-(define *ui-text* (new 'global 'string 128 ""))
+(define *ui-text* (new 'global 'string 512 ""))
 (define *timer-text* (new 'global 'string 128 ""))
 (define *split-text-timesave* (new 'global 'string 32 ""))
 (define *split-text* (new 'global 'string 128 ""))
-(define *selector-text* (new 'global 'string 32 ""))
+(define *selector-text* (new 'global 'string 16 ""))
 (define *notification-text* (new 'global 'string NOTIFIFCATION_STRING_LEN ""))
 
 (defun get-text-3d ()
