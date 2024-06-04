@@ -219,9 +219,35 @@
 
   (refocus_dist float)
   (is_refocusing? symbol)
-  (next_focus_check int32)
+
+  (next_logic_check int32)
 
   (last_level_slot_used int32)
+  (next_level_check int32)
+  (in_level_check_wait? symbol)
+  (full_new_level? symbol)
+
+  (next_vis_nick_check int32)
+  (check_vis_nick? symbol)
+
+  (render_animations? symbol)
+  )
+  :pack-me
+  (:methods
+    (new (symbol type) _type_ 0)
+    )
+  )
+
+(deftype load-handler (structure)
+ ((load_slot_0 symbol)
+  (load_slot_1 symbol)
+
+  (force_load_slot_0 symbol)
+  (force_load_slot_1 symbol)
+
+  (load_phase int32)
+  (load_phase_interval_seconds float)
+  (next_load_phase int32)
   )
   :pack-me
   (:methods

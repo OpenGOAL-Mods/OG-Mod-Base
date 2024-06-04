@@ -471,6 +471,16 @@
   (none)
   )
 
+(defun force-stance-all ()
+  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+    (let ((tgt (get-target tgt-idx)))
+      (when (and tgt (!= tgt *target*) (target-on-foot? tgt))
+        (target-sync-state 'target-stance tgt "")
+        )
+      )
+    )
+  )
+
 (defun update-actor-position ((obj process-drawable) (p remote-player-info))
   ;; position
   (set! (-> obj root trans x) (-> p trans_x))
@@ -515,9 +525,13 @@
 
         ;; sync target state
         (if (and (-> t state name) (!= (-> t state name) (-> p tgt_state)) 
-                (or 
-                  (and (!= (-> p tgt_state) 'target-clone-anim) (!= (-> p tgt_state) 'target-racing-clone-anim) (!= (-> p tgt_state) 'target-flut-clone-anim)) 
-                  (and (= (-> p inter_type) (interaction-type game-task)) (= (-> p inter_status) 7)) ;; only allow fuel cells from 'target-clone-anim
+              (or 
+                (and (!= (-> p tgt_state) 'target-clone-anim) (!= (-> p tgt_state) 'target-racing-clone-anim) (!= (-> p tgt_state) 'target-flut-clone-anim)) 
+                (and (= (-> p inter_type) (interaction-type game-task)) (= (-> p inter_status) 7)) ;; only allow fuel cells from 'target-clone-anim
+                )
+              (or
+                (not (-> *spectator-handler* is_spectator?))
+                (-> *spectator-handler* render_animations?)
                 )
               )
           (target-sync-state (-> p tgt_state) t (-> p inter_name))
