@@ -525,9 +525,9 @@
 
         ;; sync target state
         (if (and (-> t state name) (!= (-> t state name) (-> p tgt_state)) 
-              (or 
-                (and (!= (-> p tgt_state) 'target-clone-anim) (!= (-> p tgt_state) 'target-racing-clone-anim) (!= (-> p tgt_state) 'target-flut-clone-anim)) 
-                (and (= (-> p inter_type) (interaction-type game-task)) (= (-> p inter_status) 7)) ;; only allow fuel cells from 'target-clone-anim
+                (or 
+                  (and (!= (-> p tgt_state) 'target-clone-anim) (!= (-> p tgt_state) 'target-racing-clone-anim) (!= (-> p tgt_state) 'target-flut-clone-anim)) 
+                  (and (= (-> p inter_type) (interaction-type game-task)) (= (-> p inter_status) 7)) ;; only allow fuel cells from 'target-clone-anim
                 )
               (or
                 (not (-> *spectator-handler* is_spectator?))
@@ -537,6 +537,10 @@
           (target-sync-state (-> p tgt_state) t (-> p inter_name))
           )
         )
+        ;; cleanup after sync state as some states uses interaction, don't cleanup on warp out as we skip interactions during this to avoid crashes
+        (if (and *target* (!= (-> *target* state name) 'target-warp-out) (!= (-> p inter_type) (interaction-type none)))
+          (clean-up-interaction-data p)
+          )
       )
     ((money)
       (let ((m (the money obj)))
@@ -579,13 +583,10 @@
             (let ((p (-> *multiplayer-info* players idx))
                   (obj (the process-drawable (handle->process (-> *remote-targets* idx)))))
               (when obj
-                (when (and *target* (!= (-> *target* state name) 'target-warp-out)) ;; avoids potential portal softlocks
-                  (if (or (is-interactive? idx) (-> *spectator-handler* is_spectator?))
-                    (handle-remote-interaction p idx)
-                    )
-                  (if (!= (-> p inter_type) (interaction-type none))
-                    (clean-up-interaction-data p)
-                    )
+                (if (and *target* (!= (-> *target* state name) 'target-warp-out) ;; avoids potential portal softlocks 
+                      (or (is-interactive? idx) (-> *spectator-handler* is_spectator?))
+                      )
+                  (handle-remote-interaction p idx)
                   )
                 (if (has-new-mp-state? idx)
                   (handle-new-mp-state idx (the-as target obj))
