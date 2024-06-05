@@ -414,7 +414,7 @@
           (send-event *camera* 'teleport-to-other-start-string)
           )
         )
-      (if *enable-ingame-cutscenes?*
+      (when *enable-ingame-cutscenes?*
         (load-state-want-vis 'vi3)
         (set-continue! *game-info* "village3-farside")
         )
