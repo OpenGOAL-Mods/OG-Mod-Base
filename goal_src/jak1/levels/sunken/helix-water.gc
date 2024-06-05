@@ -248,7 +248,7 @@
   :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
     (case event-type
       (('touch)
-       (when *target*
+       (when (and *target* (or (not (type-type? (-> proc type) target)) (= proc *target*) (target-is-interactive? (the-as target proc))))
          (when (logtest? (-> *target* control status) (cshape-moving-flags onsurf))
            (cond
              ((and (and (-> self entity) (logtest? (-> self entity extra perm status) (entity-perm-status complete)))

@@ -514,11 +514,11 @@
                       (new 'static 'vector2h :y 16)
                       )
 
-        ;; activate invuln for interactive and nuka glitch for ghost targets
-        (if (= (-> p mp_state) (mp-tgt-state mp-tgt-interactive))
-          (logior! (-> t state-flags) (state-flags invulnerable))
+        ;; activate invuln for everyone and add nuka glitch for ghost targets
+        (logior! (-> t state-flags) (state-flags invulnerable))
+        (if (= (-> p mp_state) (mp-tgt-state mp-tgt-active))
           (logior! (-> t state-flags) (state-flags dying))
-        )
+          )
 
         ;; finalize rotation
         (quaternion-copy! (-> t control dir-targ) (-> t root quat))

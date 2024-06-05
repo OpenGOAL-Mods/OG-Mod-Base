@@ -299,7 +299,9 @@
 (defbehavior darkecobomb-handler darkecobomb ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (case arg2
     (('touch 'attack)
-     (go darkecobomb-explode #t)
+      (if (or (not (type-type? (-> arg0 type) target)) (= arg0 *target*) (target-is-interactive? (the-as target arg0)))
+        (go darkecobomb-explode #t)
+        )
      )
     )
   )
