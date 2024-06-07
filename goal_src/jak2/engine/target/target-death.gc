@@ -9,6 +9,9 @@
 (define-extern find-nearest-entity (function vector type entity))
 (define-extern warp-gate type)
 
+(define-extern runs-on-jak-spawn (function none))
+(define-extern runs-on-jak-death (function symbol none))
+
 ;; DECOMP BEGINS
 
 (define *auto-continue* #f)
@@ -418,6 +421,7 @@
         )
       (set! (-> self mode-cache) #f)
       )
+    (runs-on-jak-spawn)
     (go target-stance)
     )
   :post target-no-move-post
@@ -1534,6 +1538,7 @@
     )
   :trans (-> target-hit trans)
   :code (behavior ((arg0 symbol))
+    (runs-on-jak-death 'dying)
     (set! (-> self control unknown-word04) (the-as uint #f))
     (set! (-> self control did-move-to-pole-or-max-jump-height)
           (the-as float (send-event (handle->process (-> self attack-info attacker)) 'target 'die arg0))

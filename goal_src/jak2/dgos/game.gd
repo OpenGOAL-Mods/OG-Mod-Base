@@ -31,6 +31,7 @@
   "dma-disasm.o"
   "statistics-h.o" ;; added
   "pc-cheats.o" ;; added
+  "file-io.o"
   "pckernel-h.o" ;; added
   "pckernel-impl.o" ;; added
   "pc-debug-common.o" ;; added
@@ -40,7 +41,6 @@
   "geometry.o"
   "timer.o"
   "vector.o"
-  "file-io.o"
   "loader-h.o"
   "texture-h.o"
   "texture-anim-h.o"

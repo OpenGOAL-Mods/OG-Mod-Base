@@ -11,8 +11,9 @@
 ;; name in dgo: target-death
 ;; dgos: GAME, ENGINE
 
-;; DECOMP BEGINS
 (define-extern runs-on-jak-spawn (function none))
+
+;; DECOMP BEGINS
 
 (defskelgroup *deathcam-sg* deathcam deathcam-lod0-jg deathcam-idle-ja
               ((deathcam-lod0-mg (meters 999999)))

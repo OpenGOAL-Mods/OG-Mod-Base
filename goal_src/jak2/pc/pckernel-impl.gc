@@ -302,3 +302,40 @@
   )
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; mod-settings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; CHANGE THE FILENAME SO YOUR SETTINGS DON'T CONFLICT WITH OTHER MODS' SETTINGS
+(define *mod-settings-filename* "modbase-settings.gc")
+
+;; Per-save data should be stored here. The overall mod-settings-jak2 has an array of 4 of these
+(deftype mod-save-file (basic)
+  (
+    ;; add/replace per-save fields here
+    (last-eco-color         symbol)
+    )
+  )
+
+;; Overall settings file for the mod, contains an array of 4 mod-save-files for per-save data
+(deftype mod-settings-jak2 (basic)
+  (
+    (save-data    mod-save-file 4 :inline)
+    ;; add/replace other settings fields here
+    (some-int     int32)
+    (some-float   float)
+    )
+  (:methods
+    (new (symbol type) _type_)
+    (initialize (_type_) _type_)
+    (reset (_type_ symbol) int)
+    (read-from-file (_type_ string) symbol)
+    (commit-to-file (_type_) none)
+    (write-to-file (_type_ string) symbol)
+    (handle-input-settings (_type_ file-stream) object)
+    (handle-output-settings (_type_ file-stream) object)
+    (load-settings (_type_) int)
+    )
+  )
+
+(define *mod-settings* (the mod-settings-jak2 #f))

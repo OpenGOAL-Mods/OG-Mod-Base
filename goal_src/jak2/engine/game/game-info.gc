@@ -13,6 +13,8 @@
 (define-extern lightning-probe-callback (function lightning-tracker none))
 (define-extern process-drawable-shock-effect (function process-drawable lightning-spec (function lightning-tracker none) sparticle-launcher int int float object)) ;; guess
 
+(define-extern runs-on-jak-death (function symbol none))
+
 ;; DECOMP BEGINS
 
 (defmethod debug-draw ((this border-plane))
@@ -316,6 +318,7 @@
          (goto cfg-131)
          )
        )
+       (runs-on-jak-death 'blackout)
      )
     (('try)
      (+! (-> this total-trys) 1)
