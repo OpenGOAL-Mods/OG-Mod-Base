@@ -15,11 +15,34 @@
  |#
 
 
+
+(defun mort-rewrite-text ()
+ ;;mort debugging
+ ;; this is a debug checking text to see certain values
+      (when (and
+            (portal-mort-switch)
+             (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
+    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
+                                      (bucket-id subtitle))
+      (draw-string-xy (string-format "Will Remove soon!~%Mort Rewrite info ~%Chicks in memory card: ~D ~%Total Chicks is is ~D~%Current Chicks is is ~D~%saved Chicks is is ~D~%Chicken going to portal? ~A~%Unlock lvl is ~D~%"
+                                     (get-saved-chicks-from-mem)
+                                     (get-total-chicks)
+                                     (get-current-chicks)
+                                     (get-saved-chicks)
+                                      (chicken-portal?)
+                                      (get-unlock-level)
+                                     )
+                      buf (- 400 70) (- 150 (* 8 16)) (font-color flat-yellow) (font-flags shadow kerning)))
+          )
+
+(none)
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful GOAL modding documentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-#| 
+#|
 Checks the condition and if it is true it does first argument if false it does optional second argument
 (if (condition) (do if true) (do if false))
 
@@ -52,7 +75,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defmacro set-current-cell-count (count)
   `(set! (-> *game-info* fuel) ,count)
   )
-  
+
 (defun increase-power-cell-by-one ()
   (set-current-cell-count (+ (current-cell-count) 1))
   ;; with the two macros defined above, this is equivalent to
@@ -77,7 +100,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defmacro current-level-name ()
   `(-> (level-get-target-inside *level*) name)
   )
-  
+
 (defmacro current-orb-count ()
   `(-> *game-info* money)
   )
@@ -188,8 +211,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           (e-info (entity-info-lookup type))
       )
       (when (entity-by-name name)
-        (init-entity 
-          (get-process *default-dead-pool* type (if e-info (-> e-info heap-size) #x4000)) 
+        (init-entity
+          (get-process *default-dead-pool* type (if e-info (-> e-info heap-size) #x4000))
           entity-actor)
           (sound-play "buzzer-pickup")
       )
@@ -360,11 +383,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 ;;This returns true or false depending on if jak is within a provided distance from an actor
 (defun close? ((actor-ename string) (dist float))
-  (and 
+  (and
     (process-by-ename actor-ename)
-    (<= 
-      (vector-vector-distance 
-        (target-pos 0) 
+    (<=
+      (vector-vector-distance
+        (target-pos 0)
         (-> (the process-drawable (process-by-ename actor-ename)) root trans)
         )
       dist
@@ -375,9 +398,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 ;; This returns true or false if jak is within a bubble defined by coordinates and width
 (defun in-bubble? ((x float) (y float) (z float) (w float))
-  (<= 
-    (vector-vector-distance 
-      (target-pos 0) 
+  (<=
+    (vector-vector-distance
+      (target-pos 0)
       (set-vector! (new-stack-vector0) x y z 1.0)
       )
     (/ w 2.0)
@@ -449,9 +472,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> fax pickup-amount) amount)
     (set! (-> fax pickup-spawn-amount) amount)
     (set! (-> fax fade-time) (the-as time-frame 0))
-    
+
     (let ((proc (the money (ppointer->process (birth-pickup-at-point vec (pickup-type money) amount #t *active-pool* fax)))))
-      (when bob? 
+      (when bob?
         (set! (-> proc bob-amount) 1024.0)
         )
       (format 0 "spawned ~A~%" proc)

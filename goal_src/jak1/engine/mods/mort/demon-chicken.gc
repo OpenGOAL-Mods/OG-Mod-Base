@@ -1,0 +1,9 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(import "goal_src/jak1/import/sidekick-ag.gc")
+(import "goal_src/jak1/import/flut-saddle-ag.gc")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Orange Demon Challenge
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -451,6 +451,7 @@
   (melt)
   )
 
+;;tageco ADD NEW ECO HERE, ORDER IS IMPORTANT ONLY ADD TO END
 (defenum pickup-type
   :type int32
   (none)
@@ -463,6 +464,10 @@
   (eco-pill)
   (buzzer)
   (eco-pill-random)
+  (star)
+  (eco-gravity)
+  (eco-ice)
+  (eco-chicken)
   )
 
 (defenum load-msg-result
@@ -1032,7 +1037,7 @@
   (sidekick-hint-rounddoor #x23c)
   (sidekick-hint-lurkerm #x23d)
   (sidekick-hint-tower #x23e)
-  
+
   (sidekick-reminder-fish #x240)
 
   (firecanyon-need-cells #x24f)
