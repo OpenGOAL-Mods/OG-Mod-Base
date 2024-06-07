@@ -2080,7 +2080,7 @@
 
 (define factory-cross (new 'static 'level-load-info
                            :index 28
-                           :name 'fac-cross
+                           :name 'factory-cross
                            :visname 'fac-cross-vis ;; name + -vis
                            :nickname 'cro          ;; nickname
                            :packages '(training)
@@ -2094,7 +2094,7 @@
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
                                              :name "fac-cross-warp"
-                                             :level 'fac-cross
+                                             :level 'factory-cross
                                              :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
@@ -2102,7 +2102,7 @@
                                              :camera-rot (new 'static 'array float 9 -0.9995 0.0000 0.0299 -0.0038 0.9916 -0.1289 -0.0297 -0.1289 -0.9912)
                                              :load-commands '()
                                              :vis-nick 'none
-                                             :lev0 'fac-cross
+                                             :lev0 'factory-cross
                                              :disp0 'display
                                              :lev1 #f
                                              :disp1 #f

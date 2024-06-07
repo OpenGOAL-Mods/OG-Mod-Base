@@ -994,7 +994,9 @@
   0
   (none)
   )
-
+(define-extern *has-chicken-eco* symbol)
+(defun-extern is-in-chem-fac-silo symbol)
+(defun-extern play-chem-hint none)
 (defbehavior flag-setup target ()
   (level-setup)
   (set! (-> self control unknown-vector10 quad) (-> self control transv quad))
@@ -1050,11 +1052,14 @@
         (send-event self 'change-mode 'look-around)
         )
     )
-  (when (and (= *cheat-mode* 'debug)
+   (if (is-in-chem-fac-silo)(play-chem-hint))
+  (when (or (and *has-chicken-eco* (cpad-hold? 0 r2)) (and (is-in-chem-fac-silo) (cpad-hold? 0 r2))
+
+          (and (= *cheat-mode* 'debug)
              (cpad-hold? (-> self control unknown-cpad-info00 number) r2)
              (not *pause-lock*)
              (not (logtest? (-> self state-flags) (state-flags grabbed first-person-mode)))
-             )
+             ))
     (if (!= (-> self next-state name) 'target-falling)
         (send-event self 'change-mode 'falling)
         )

@@ -13,7 +13,7 @@
  to call inside of mod-custom-code.gc for example I have defined a function that increases
  the powercell count by one when it is called
  |#
-
+(define-extern *in-mort-menu* symbol)
 (define *sphere-color* (new 'static 'rgba :r #xff :g #xff :b #xff :a #x80))
 ;;This function is a mess TODO: Pretend it doesn't exist.
 (define *closest-pos-index* 0)
@@ -468,26 +468,343 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     )
   )
 
-(defun music-manager ()
-  (stop-main-music)
-      (case (-> (level-get-target-inside *level*) name)
-         (('test-zone)
-        ;;  (if (> (knuth-rand-int-range 0 15) (+ 8 5))
-        ;;   (play-main-music "custom_assets/jak1/SND/music-test-zone.mp3" (the int (-> *setting-control* default music-volume)))
-        ;;   (play-main-music "custom_assets/jak1/SND/music-test-zone-track2.mp3" (the int (-> *setting-control* default music-volume))))
-         )
-         ;;Add more cases here for each level
-         (else
-          (play-main-music "" (the int (-> *setting-control* default music-volume)))
-          ;;(stop-main-music) This function is broken but playing a invalid sound does the same thing
-         )
-      )
+  (defun zero-volume? ()
+  "Returns true if the volume of main music should be set to 0 This is a hack."
+  (or (not (= *master-mode* 'game) )
+  (= (-> (level-get-target-inside *level*)name) 'title)
+  )
+  )
+
+(define *loaded-cell-pause* 0)
+
+(defun mort-chicks-text ()
+ ;;mort debugging
+    (if *cheat-mode*
+      (when (and
+            (portal-mort-switch)
+
+             (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
+    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
+                                      (bucket-id subtitle))
+      (draw-string-xy (string-format "Mort Chicken info ~%Chickens Saved: ~D ~%Chickens Following ~D~%Remaining Cells ~D~%"
+                                     (get-saved-chicks)
+                                     (get-current-chicks)
+                                     *loaded-cell-pause*
+                                     )
+                      buf 15 (- 150 (* 8 4)) (font-color green) (font-flags shadow kerning)))
+          )
+    )
 (none)
 )
+(defbehavior josh-suprise-sound-25 process ()
+            (let ((current-timea (current-time)))
+                (until (time-elapsed? current-timea (seconds 27))
+                    (suspend)
+                )
+            (play-sound-file "SND/joshsuprise.mp3" (the int 200))
+            )
+  (none)
+)
+
+(defun mort-main-menu ()
+
+    (if (and *in-mort-menu* *target*)
+      (begin
+      ;;If we arent in hub 3 warp there.
+        (if (and  (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
+        (begin
+         (send-event *target* 'continue (get-continue-by-name *game-info* "mort-title-start"))
+            (set-blackout-frames (seconds 25.1))
+            ;;We need to sleep for a tiny amount of time, so we dont spawn multiple process
+            (let ((current-timea (current-time)))
+             (until (time-elapsed? current-timea (seconds 0.2))
+             (suspend)
+             )
+             )
+             ;;This function sleeps for 27 seconds so it has to be in another process to not block this one
+           (when (not (process-by-name "josh-suprise-sound-25" *active-pool*))  (process-spawn-function process josh-suprise-sound-25 :name "josh-suprise-sound-25"))
+        )
+
+          )
+
+        (if (and  (= (-> (level-get-target-inside *level*)name ) 'mort-title) (!= (-> *target* root trans y) (meters 1)))
+          (set! (-> *target* root trans y) (meters 301))
+          )
+        (if (and  (= (-> (level-get-target-inside *level*)name ) 'mort-title) (!= (-> *target* root trans x) (meters 0.0)))
+          (set! (-> *target* root trans x) (meters 0.0))
+          )
+        (if (and  (= (-> (level-get-target-inside *level*)name ) 'mort-title) (!= (-> *target* root trans z) (meters 0.0)))
+          (set! (-> *target* root trans z) (meters 0.0))
+          )
+
+        ;;if we arent in cam-eye switch to cam-eye
+        (if (and (!= (-> (-> (the-as (pointer camera-slave) (-> *camera* child) ))state name) 'cam-eye))
+          (begin
+            (send-event *camera* 'change-state  cam-eye *dm-cam-mode-interpolation*)
+          )
+        )
+        ;;do the invisible hacks
+        (if (!=  (-> *target* draw status) (draw-status hidden))
+          (begin
+            (set! (-> *target* draw status) (draw-status hidden))
+            (send-event *target* 'sidekick #f)
+          )
+        )
+      )
+      (none)
+    )
+  )
+
+    (defun runs-every-frame-proc-func ()
+    "this is ran in its own process called run-every-frame-proc"
+    ;;This is a hack to run softlock prevention
+
+    (when (and (not (cpad-hold? 0 l3))(cpad-hold? 0 down))
+    (mort-chicks-text)
+    )
+    (if (not (= *master-mode* 'progress))
+    (set! *loaded-cell-pause* (get-loaded-cell-count))
+
+    )
+
+    ;;This is a hack to try to patch a bug, remove if it messes up save/restoring
+    (if (and *target* (= (-> *target* state name) 'target-warp-out))
+    (reset-saved-chick-from-mem)
+    )
+
+    (when #t
+    ;;(format #t "~A" (-> *target* state name))
+
+      (if (and *target*
+          (= (-> *target* state name) 'target-stance)
+          (not (movie?))
+          (!= (level-get-target-inside *level*) #f)
+          (!= (-> (level-get-target-inside *level*)name) 'misty)
+          (!= (-> (level-get-target-inside *level*)name) 'village1)
+          (!= (-> (level-get-target-inside *level*)name) 'beach)
+          (!= (-> (level-get-target-inside *level*)name) 'mort-title)
+          (!= (-> (level-get-target-inside *level*)name) 'citadel)
+          (!= (-> (level-get-target-inside *level*)name) 'finalboss)
+          )
+      (have-all-chicks-safe)
+      )
+      ;;
+      ;; )
+
+    ;;This is kind of a hack to start up during the opening cutscene
+    (when (and (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (>= *currentCutsceneFrame* 1649))
+    (set! *in-mort-menu* #t)
+                  (let ((current-timea (current-time)))
+                    (until (time-elapsed? current-timea (seconds 0.55))
+                    ;;(format #t "~S~%" "NOT ELAPSED")
+                      (suspend)
+                    )
+              )
+    (str-play-stop *currentSpoolName*)
+    (set! (-> *art-control* active-stream) #f)
+
+    )
+
+    (when (and (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 2))
+    (move-samos-butts)
+    )
+
+    (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 2))
+    (play-sound-file "SND/farts/fart1.mp3" (the int (-> *setting-control* default dialog-volume)))
+    )
+    (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 250))
+    (play-sound-file "SND/farts/vinefart.mp3" (the int (-> *setting-control* default dialog-volume)))
+    )
+
+
+   ;; (sound-manager)
+    (when (run-mort-code?)
+      ;;   (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+      ;;   (init-chickens)
+      ;; )
+
+
+    (eco-manager) ;;checks constantly if we do or do not have eco, and what type, the gives effect or turns it off
+    (none)
+
+   )
+     ;; This should be done as the last thing
+      (find-best-master-mark)
+      (mort-main-menu)
+
+
+    )
+
+      (none)
+    )
+
+
+    (defun runs-every-frame ()
+    "this is ran in its own process called run-every-frame-proc"
+    ;;This is a hack to run softlock prevention
+
+    (when (and (not (cpad-hold? 0 l3))(cpad-hold? 0 down))
+    (mort-chicks-text)
+    )
+    (if (not (= *master-mode* 'progress))
+    (set! *loaded-cell-pause* (get-loaded-cell-count))
+
+    )
+
+    ;;This is a hack to try to patch a bug, remove if it messes up save/restoring
+    (if (and *target* (= (-> *target* state name) 'target-warp-out))
+    (reset-saved-chick-from-mem)
+    )
+
+    (when #t
+    ;;(format #t "~A" (-> *target* state name))
+
+      (if (and *target*
+          (= (-> *target* state name) 'target-stance)
+          (not (movie?))
+          (!= (level-get-target-inside *level*) #f)
+          (!= (-> (level-get-target-inside *level*)name) 'misty)
+          (!= (-> (level-get-target-inside *level*)name) 'village1)
+          (!= (-> (level-get-target-inside *level*)name) 'beach)
+          (!= (-> (level-get-target-inside *level*)name) 'mort-title)
+          (!= (-> (level-get-target-inside *level*)name) 'citadel)
+          (!= (-> (level-get-target-inside *level*)name) 'finalboss)
+          )
+      (have-all-chicks-safe)
+      )
+      ;;
+      ;; )
+
+    ;;This is kind of a hack to start up during the opening cutscene
+    (when (and (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (>= *currentCutsceneFrame* 1649))
+    (set! *in-mort-menu* #t)
+                  (let ((current-timea (current-time)))
+                    (until (time-elapsed? current-timea (seconds 0.55))
+                    ;;(format #t "~S~%" "NOT ELAPSED")
+                      (suspend)
+                    )
+              )
+    (str-play-stop *currentSpoolName*)
+    (set! (-> *art-control* active-stream) #f)
+
+    )
+
+    (when (and (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 2))
+    (move-samos-butts)
+    )
+
+    (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 2))
+    (play-sound-file "SND/farts/fart1.mp3" (the int (-> *setting-control* default dialog-volume)))
+    )
+    (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 250))
+    (play-sound-file "SND/farts/vinefart.mp3" (the int (-> *setting-control* default dialog-volume)))
+    )
+
+
+   ;; (sound-manager)
+    (when (run-mort-code?)
+      ;;   (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+      ;;   (init-chickens)
+      ;; )
+
+
+    (eco-manager) ;;checks constantly if we do or do not have eco, and what type, the gives effect or turns it off
+    (none)
+
+   )
+     ;; This should be done as the last thing
+      (find-best-master-mark)
+      (mort-main-menu)
+
+
+    )
+
+      (none)
+    )
+
+
+(defun music-manager ()
+(stop-main-music)
+        ;; Some of the alt sounds only play if you stay in a level for a very long time, so its nice to give them a rare chance to get a spotlight
+        (case (-> (level-get-target-inside *level*) name)
+         (('mort-title)
+          (play-main-music "custom_assets/jak1/SND/jak-chicken-theme.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          )
+         (('block-world)
+         (if (> (knuth-rand-int-range 0 15) (+ 8 5))
+          (play-main-music "custom_assets/jak1/SND/music-block-world2.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          (play-main-music "custom_assets/jak1/SND/music-block-world.mp3" (the int (* (-> *setting-control* default music-volume) 0.75))))
+          )
+         (('factory-cross 'chicks)
+          (play-main-music "custom_assets/jak1/SND/music-factory-cross-chicks.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          )
+         (('holly-wood)
+          (if (> (knuth-rand-int-range 0 15) (+ 8 5))
+          (play-main-music "custom_assets/jak1/SND/music-holly-wood2.mp3" (the int (* (-> *setting-control* default music-volume) 0.75))) ;;get holly wood 1?
+          (play-main-music "custom_assets/jak1/SND/music-holly-wood1.mp3" (the int (* (-> *setting-control* default music-volume) 0.75))) ;;get holly wood 1?
+          )
+         )
+         (('monument)
+          (if (> (knuth-rand-int-range 0 15) (+ 8 5))
+          (play-main-music "custom_assets/jak1/SND/music-monument2.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          (play-main-music "custom_assets/jak1/SND/music-monument1.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          )
+          ;;add alt theme? ITS SO GOOD YES
+          )
+         (('cathedral)
+          (if (> (knuth-rand-int-range 0 15) (+ 8 5))
+          (play-main-music "custom_assets/jak1/SND/music-cathedral2.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          (play-main-music "custom_assets/jak1/SND/music-cathedral1.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          )
+          )
+         (('pyramid)
+          (play-main-music "custom_assets/jak1/SND/music-pyramid.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          )
+         (('ice-canyon 'cold-pipe)
+         (if (> (knuth-rand-int-range 0 15) (+ 8 5))
+                (play-main-music "custom_assets/jak1/SND/music-ice-canyon2.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)));;2?
+                (play-main-music "custom_assets/jak1/SND/music-ice-canyon-cold-pipe.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)));;2?
+         )
+         )
+         (('coins)
+          (play-main-music "custom_assets/jak1/SND/music-coins.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          )
+         (('villa-cube)
+           (play-main-music "custom_assets/jak1/SND/music-monument1.mp3" (the int (* (-> *setting-control* default music-volume) 0.75))) ;; monument and villa cuba share audio
+          )
+         (('ice-slide)
+          (play-main-music "custom_assets/jak1/SND/music-ice-slide.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          )
+         (('islands)
+          (play-main-music "custom_assets/jak1/SND/music-holly-wood1.mp3" (the int (* (-> *setting-control* default music-volume) 0.75))) ;; shares track with islands
+          )
+         (('glass-towers 'chemical-factory)
+          (play-main-music "custom_assets/jak1/SND/music-glass-towers-chemical-factory.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          )
+         (('space-bridge)
+          (play-main-music "custom_assets/jak1/SND/music-space-bridge.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          )
+         (('garden)
+          (play-main-music "custom_assets/jak1/SND/music-block-man.mp3" (the int (* (-> *setting-control* default music-volume) 0.75))) ;;FIX
+          )
+         (('block-man)
+          (play-main-music "custom_assets/jak1/SND/music-block-man.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          )
+         (('cube-face)
+          (play-main-music "custom_assets/jak1/SND/music-cube-face.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          )
+          (else
+          (play-main-music "" (the int (* (-> *setting-control* default music-volume) 0.75)))
+          ;;(stop-main-music) This function is broken but playing a invalid sound does the same thing
+          )
+         )
+
+(none))
+
 
 (defbehavior music-manager-proc process ()
-  (music-manager)
-  (none)
+(music-manager)
+(none)
 )
 
 
@@ -530,7 +847,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (if (not *heard-chem-hint*)
 (begin
 (set! *heard-chem-hint* #t)
-(play-sound-file "custom_assets/jak1/SND/dax/daxter_for_zed.mp3" (the int (-> *setting-control* default dialog-volume)))
+(play-sound-file "custom_assets/jak1/custom_assets/jak1/SND/dax/daxter_for_zed.mp3" (the int (-> *setting-control* default dialog-volume)))
 )
 )
 

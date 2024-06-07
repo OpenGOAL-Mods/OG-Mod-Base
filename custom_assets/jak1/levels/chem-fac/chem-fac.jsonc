@@ -13,7 +13,9 @@
   // only have 1.
   "gltf_file": "custom_assets/jak1/levels/chem-fac/test-zone2.glb",
   "automatic_wall_detection": true,
-  "automatic_wall_angle": 45.0,
+    "automatic_wall_angle": 45.0,
+  "art_groups": ["flutflutegg-ag","flutflut-ag",  "eichar-flut+0-ag",
+  "flut-saddle-ag"],
   "base_id": 5003211246,
   // if your mesh has triangles with incorrect orientation, set this to make all collision mesh triangles double sided
   // this makes collision 2x slower and bigger, so only use if really needed

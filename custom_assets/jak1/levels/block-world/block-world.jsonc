@@ -10,17 +10,21 @@
   // Background mesh fil.
   // Must have vertex colors. Use the blender cycles renderer, bake, diffuse, uncheck color,
   // and bake to vertex colors. For now, only the first vertex color group is used, so make sure you
-  // only have 1.gate
+  // only have 1.gate sad
   "gltf_file": "custom_assets/jak1/levels/block-world/test-zone2.glb",
   "automatic_wall_detection": true,
-  "automatic_wall_angle": 45.0,
+    "automatic_wall_angle": 45.0,
+  "art_groups": ["flutflutegg-ag","flutflut-ag",  "eichar-flut+0-ag",
+  "flut-saddle-ag"],
+  "art_groups": ["flutflutegg-ag","flutflut-ag",  "eichar-flut+0-ag",
+  "flut-saddle-ag"],
 
   // if your mesh has triangles with incorrect orientation, set this to make all collision mesh triangles double sided
   // this makes collision 2x slower and bigger, so only use if really needed
   "double_sided_collide": false,
   "base_id": 3000000,"ambients": [],
   // Note: You will still have to add them to your level's .gd file.
-  "art_groups": ["flutflutegg-ag","flutsaddle-ag"],
+
   "actors" : [
   //   {
   //     "trans": [ 31.73, 303.37, 153.08],

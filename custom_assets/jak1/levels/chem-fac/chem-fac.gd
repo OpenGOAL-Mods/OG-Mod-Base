@@ -10,5 +10,7 @@
 "warpgate.o"
 "flutflut-ag.go"
 "flutflutegg-ag.go"
+"eichar-flut+0-ag.go"
+"flut-saddle-ag.go"
 ;;End of "default" package - level specific stuff should go under here
 ))

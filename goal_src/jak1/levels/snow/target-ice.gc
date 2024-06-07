@@ -61,7 +61,7 @@
     (let ((gp-0 60))
       (let ((v1-2 (ja-group)))
         (cond
-          ((or (= v1-2 eichar-jump-ja) (= v1-2 eichar-jump-loop-ja))
+          ((or (= v1-2 eichar-jump-ja) (= v1-2 (return-hover-animation)))
            (set! gp-0 21)
            )
           ((ja-group? eichar-wheel-flip-ja)

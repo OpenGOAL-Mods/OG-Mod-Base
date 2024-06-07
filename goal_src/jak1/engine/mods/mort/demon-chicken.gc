@@ -142,13 +142,14 @@
 
 (defun chicken-portal? ()
 ;;Is a chicken going to the portal?
-;;  (dotimes (i NUM_FLOCKPOINTS)
-;;  (if (and (get-chick-from-flock i) (= (vector-vector-distance (-> (get-chick-from-flock i) target-pos) (-> (the-as process-drawable (process-by-ename "project-training-part-1") )root trans)) 0.0))
-;;   (return #t)
-;;   )
-;;   #f
-;; )
-#f
+(when mort-level?
+ (dotimes (i NUM_FLOCKPOINTS)
+ (if (and (get-chick-from-flock i) (= (vector-vector-distance (-> (get-chick-from-flock i) target-pos) (-> (the-as process-drawable (process-by-ename "project-training-part-1") )root trans)) 0.0))
+  (return #t)
+  )
+  #f
+ )
+)
 )
 
 (defun unlock-level-func ((idx int))

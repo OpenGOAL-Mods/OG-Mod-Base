@@ -1315,6 +1315,13 @@
     )
   this
   )
+(defun move-samos-butts ()
+(vector-copy! (-> (the sage (process-by-ename "crate-3256"))root trans) (new 'static 'vector :x (meters 3025.28) :y (meters 485.76) :z (meters -4821.85)))
+(vector-copy! (-> (the sage (process-by-ename "crate-3258"))root trans) (new 'static 'vector :x (meters 3065.19) :y (meters 485.76) :z (meters -4859.85)))
+(vector-copy! (-> (the sage (process-by-ename "crate-3259"))root trans) (new 'static 'vector :x (meters 2985.19) :y (meters 485.76) :z (meters -4859.85)))
+(vector-copy! (-> (the sage (process-by-ename "crate-3250"))root trans) (new 'static 'vector :x (meters 3017.5074) :y (meters 485.76) :z (meters -4896.85)))
+
+(none))
 
 (defun entity-deactivate-handler ((arg0 process) (arg1 entity-actor))
   "Handle a deactivation in the entity.

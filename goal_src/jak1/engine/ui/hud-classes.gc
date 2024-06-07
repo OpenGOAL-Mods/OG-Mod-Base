@@ -719,6 +719,7 @@
   )
 
 (define-extern *game-counts* game-count-info)
+(defun-extern get-mort-orb-total none)
 (defmethod draw-hud ((this hud-money))
   (let ((t9-0 (method-of-type hud draw-hud)))
     (t9-0 this)

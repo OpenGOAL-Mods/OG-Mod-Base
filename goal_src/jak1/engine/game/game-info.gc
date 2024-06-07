@@ -28,6 +28,7 @@
 (define-extern runs-on-jak-death (function symbol none))
 ;;Forward declaration Variable for mod base settings
 (define-extern startingDebugContinuePoint (string))
+(define-extern *mort-orb-total* int)
 ;; DECOMP BEGINS
 
 
@@ -644,6 +645,21 @@
        )
      (adjust (-> (the-as target (-> this process)) game) 'money amount source-handle)
      )
+
+    (((pickup-type star))
+     ;; get money.
+     (when (< 0.0 amount)
+       ;; play sound.
+       ;;hack
+       (set! amount 5.0)
+       (if (>= (- (-> *display* base-frame-counter) (-> this money-pickup-time)) (seconds 0.05))
+           (sound-play "money-pickup")
+           )
+       (set! (-> this money-pickup-time) (-> *display* base-frame-counter))
+       )
+     (adjust (-> (the-as target (-> this process)) game) 'money amount source-handle)
+     )
+
     (((pickup-type fuel-cell))
      ;; the amount is actually the index of the task.
      (let ((s4-2 (the int amount)))
@@ -676,7 +692,8 @@
        )
      (-> this buzzer)
      )
-    (((pickup-type eco-red) (pickup-type eco-blue) (pickup-type eco-yellow))
+      ;;tageco this handles picking up all eco with a timer
+    (((pickup-type eco-red) (pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-gravity) (pickup-type eco-ice) (pickup-type eco-chicken))
      ;; the green vent jumps here.
      (label cfg-80)
 
@@ -735,12 +752,22 @@
                   )
          (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 127 (seconds 0.2))
          (cpad-set-buzz! (-> *cpad-list* cpads 0) 0 17 (seconds 0.2))
-         (case kind
+        (case kind
            (((pickup-type eco-blue))
             (sound-play "get-blue-eco")
             )
+            ;;tageco this is a sound
+           (((pickup-type eco-gravity))
+            (sound-play "get-yellow-eco")
+            )
            (((pickup-type eco-green))
             (sound-play "get-green-eco")
+            )
+           (((pickup-type eco-ice))
+            (sound-play "get-green-eco")
+            )
+           (((pickup-type eco-chicken))
+            (sound-play "get-green-eco") ;; add chicken noise
             )
            (((pickup-type eco-yellow))
             (sound-play "get-yellow-eco")

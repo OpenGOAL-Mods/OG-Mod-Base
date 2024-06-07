@@ -556,7 +556,8 @@
     )
   0
   )
-
+(defun-extern zero-volume? (symbol))
+(defun-extern mort-chicks-text none)
 (defbehavior display-loop process ()
   "the main 'display loop' in GOAL. v-sync is done in this function, so all frames start and end here."
 
@@ -582,9 +583,11 @@
 
 
     (while *run*
-   
+
+     (if (zero-volume?)  (pause-main-music)  (resume-main-music))
+
       (runs-every-frame) ;; trigger hook for mod base
-      
+
       ;; start immediately after all process updates finish.
       (profiler-instant-event "display-loop-top")
 

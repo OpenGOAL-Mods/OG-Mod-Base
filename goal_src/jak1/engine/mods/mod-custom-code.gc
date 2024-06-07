@@ -21,7 +21,7 @@
     ;; Begin function defintions.
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define *custom-cutscene?* #t)
-
+(define *in-mort-menu* #f)
 
 
 
@@ -150,11 +150,19 @@
 (none)
 )
 
+(defbehavior run-every-frame-proc process ()
+(while #t
+(runs-every-frame-proc-func)
+(suspend)
+)
+(none)
+)
+
 (defun init-chickens ()
 
 
 
-      ;;  (process-spawn-function process run-every-frame-proc)
+        (process-spawn-function process run-every-frame-proc) ;; THERE IS A RETAIL CRASH HERE
        (process-spawn-function process chicken-every-frame-proc)
        (process-spawn-function process variable-every-frame-proc)
       ;; (process-spawn-function process text-every-frame-proc)
@@ -360,6 +368,51 @@
 (none)
 )
 
+(define custom-music-eco-paused? #f)
+(defun eco-manager ()
+
+;;Eco-chicken start
+(when (send-event *target* 'query 'powerup (pickup-type eco-chicken))
+(set! *has-chicken-eco* #t)
+
+)
+
+(when (not (send-event *target* 'query 'powerup (pickup-type eco-chicken)))
+(set! *has-chicken-eco* #f)
+
+)
+;;Ice eco start
+(when (send-event *target* 'query 'powerup (pickup-type eco-ice))
+
+;;Turn on the ice slide
+(set! (-> *stone-surface* slope-slip-angle) 16384.0)(set! (-> *stone-surface* slip-factor) 0.7)(set! (-> *stone-surface* transv-max) 1.5)(set! (-> *stone-surface* transv-max) 1.5)(set! (-> *stone-surface* turnv) 0.5)(set! (-> *stone-surface* nonlin-fric-dist) 4091904.0)(set! (-> *stone-surface* fric) 23756.8)
+
+;;snow
+(run-next-time-in-process (the process (activate (get-process *default-dead-pool* process #x4000) *default-pool* 'process (the pointer #x70004000))) (lambda () (dotimes (i 7) (if (send-event *target* 'query 'powerup (pickup-type eco-ice)) (if *target* (update-snow *target*)) (suspend)))))
+
+;;Stop custom music
+(when (not custom-music-eco-paused?)
+(set!  (-> (-> (level-get-target-inside *level*)info)music-bank) 'snow)
+(stop-main-music)
+(set! custom-music-eco-paused? #t)
+)
+)
+;; The condition for slip-angle is a disgusting hack so we arent consitantly setting a new jump-height
+(when  (and (not (send-event *target* 'query 'powerup (pickup-type eco-ice))) (= (-> *stone-surface* slope-slip-angle) 16384.0))
+(set! (-> *stone-surface* slope-slip-angle) 8192.0)(set! (-> *stone-surface* slip-factor) 1.0)(set! (-> *stone-surface* transv-max) 1.0)(set! (-> *stone-surface* turnv) 1.0)(set! (-> *stone-surface* nonlin-fric-dist) 5120.0)(set! (-> *stone-surface* fric) 153600.0)
+(music-manager)
+;;We should prob store the previous music-bank instead of assuming it was #f
+(set!  (-> (-> (level-get-target-inside *level*)info)music-bank) #f)
+(set! custom-music-eco-paused? #f)
+)
+;;Ice eco end
+
+;;Low gravity eco is in logic-target.gc 836, due to the values it sets being overridden.
+
+(none))
+
+
+
 
 (defun restore-cells ()
 
@@ -378,6 +431,9 @@
 (when (not done-init?)
       (format #t "INITIALIZING TITLE PROC~%")
       (dotimes (i 16)(set! (-> *game-counts* data i money-count) 0)(set! (-> *game-counts* data i buzzer-count) 0))
+      (when (not *target*)
+      (suspend)
+      )
       (process-spawn-function process sound-manager-proc)
       (set! done-init? #t)
 )

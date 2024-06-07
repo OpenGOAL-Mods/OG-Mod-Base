@@ -25242,7 +25242,7 @@
   )
 
 (deftype village-cam (process)
-  ((root-override       trsq   :score 100 :offset-assert 112)
+  ((root       trsq   :score 100 :offset-assert 112)
    (range      meters  :offset-assert 116)
    (index      int32   :offset-assert 120)
    (state-time time-frame  :offset-assert 128)
@@ -27329,7 +27329,7 @@
   )
 
 (deftype towertop (process-drawable)
-  ((root-override trsq :score 100 :offset 112))
+  ((root trsq :score 100 :offset 112))
   :method-count-assert 20
   :size-assert         #xb0
   :heap-base           #x40
@@ -28360,7 +28360,7 @@
 ;; - Types
 
 (deftype windmill-sail (process-drawable)
-  ((root-override trsq :score 100 :offset 112)
+  ((root trsq :score 100 :offset 112)
    (sync         sync-info  :inline :offset-assert 176)
    (blade-normal vector     :inline :offset-assert 192)
    (orig-quat    quaternion :inline :offset-assert 208)
@@ -28376,7 +28376,7 @@
   )
 
 (deftype sagesail (process-drawable)
-  ((root-override trsq :score 100 :offset 112)
+  ((root trsq :score 100 :offset 112)
    (sync         sync-info  :inline :offset-assert 176)
    (blade-normal vector     :inline :offset-assert 192)
    (orig-quat    quaternion :inline :offset-assert 208)
