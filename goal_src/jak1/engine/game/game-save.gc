@@ -23,6 +23,8 @@
 
 ;; DECOMP BEGINS
 
+(defun-extern reset-custom-info none)
+
 ;; version identifier
 (defconstant SAVE_VERSION 1)
 
@@ -845,6 +847,7 @@
   ;; if we're a new game, set our checkpoint.
   (when (nonzero? (-> save new-game))
     (set-continue! this "game-start")
+    (reset-custom-info)
     (set! save save)
     (goto cfg-134)
     )

@@ -6,7 +6,7 @@
   "iso_name": "TESTZONE",
   // The nickname, should be exactly 3 characters
   "nickname": "tsz", // 3 char name, all lowercase
-  // Background mesh file.
+  // Background mesh fil.
   // Must have vertex colors. Use the blender cycles renderer, bake, diffuse, uncheck color,
   // and bake to vertex colors. For now, only the first vertex color group is used, so make sure you
   // only have 1.
