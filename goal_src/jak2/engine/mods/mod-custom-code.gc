@@ -138,6 +138,14 @@ an orb |#
   (none)
   )
 
+ 
+(defun runs-on-game-saved ((which-slot int))
+  ;; uncomment the below line to piggy-back and save your mod-settings whenever the game is saved are saved to slot # "which-slot"
+  ;; (commit-to-file *mod-settings*)
+
+  (none)
+  )
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; deprecated function defintions.

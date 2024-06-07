@@ -1996,6 +1996,7 @@ auto-save-post
   :post auto-save-post
   )
 
+(define-extern runs-on-game-saved (function int none))
 (defstate save (auto-save)
   :virtual #t
   :code (behavior ()
@@ -2020,6 +2021,7 @@ auto-save-post
       (set! (-> self result)
             (mc-save (-> self card) (-> self which) (&-> (-> self save) type) (the-as int (-> self save info-int32)))
             )
+      (runs-on-game-saved (-> self which))
       (when (!= (-> self result) (mc-status-code ok))
         (suspend)
         (goto cfg-5)
