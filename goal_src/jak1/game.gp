@@ -1691,9 +1691,9 @@
 
 
 ;; it should point to the .jsonc file that specifies the level.
-(build-custom-level "space-bridge")
+(build-custom-level "space-bird")
 ;; the DGO file
-(custom-level-cgo "SPA.DGO" "space-bridge/space-bridge.gd")
+(custom-level-cgo "SPA.DGO" "space-bird/space-bird.gd")
 
 
 ;; it should point to the .jsonc file that specifies the level.
@@ -1733,15 +1733,15 @@
 
 
 ;; it should point to the .jsonc file that specifies the level.
-(build-custom-level "chemical-factory")
+(build-custom-level "chem-fac")
 ;; the DGO file
-(custom-level-cgo "CHE.DGO" "chemical-factory/chemical-factory.gd")
+(custom-level-cgo "CHE.DGO" "chem-fac/chem-fac.gd")
 
 
 ;; it should point to the .jsonc file that specifies the level.
-(build-custom-level "glass-towers")
+(build-custom-level "glass-toe")
 ;; the DGO file
-(custom-level-cgo "GLA.DGO" "glass-towers/glass-towers.gd")
+(custom-level-cgo "GLA.DGO" "glass-toe/glass-toe.gd")
 
 
 ;; it should point to the .jsonc file that specifies the level.
@@ -1757,9 +1757,9 @@
 
 
 ;; it should point to the .jsonc file that specifies the level.
-(build-custom-level "factory-cross")
+(build-custom-level "fac-cross")
 ;; the DGO file
-(custom-level-cgo "CRO.DGO" "factory-cross/factory-cross.gd")
+(custom-level-cgo "CRO.DGO" "fac-cross/fac-cross.gd")
 
 
 ;; it should point to the .jsonc file that specifies the level.

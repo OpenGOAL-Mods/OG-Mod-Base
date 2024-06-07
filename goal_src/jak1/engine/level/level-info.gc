@@ -2080,8 +2080,8 @@
 
 (define factory-cross (new 'static 'level-load-info
                            :index 28
-                           :name 'factory-cross
-                           :visname 'factory-cross-vis ;; name + -vis
+                           :name 'fac-cross
+                           :visname 'fac-cross-vis ;; name + -vis
                            :nickname 'cro          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
@@ -2093,8 +2093,8 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "factory-cross-warp"
-                                             :level 'factory-cross
+                                             :name "fac-cross-warp"
+                                             :level 'fac-cross
                                              :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
@@ -2102,7 +2102,7 @@
                                              :camera-rot (new 'static 'array float 9 -0.9995 0.0000 0.0299 -0.0038 0.9916 -0.1289 -0.0297 -0.1289 -0.9912)
                                              :load-commands '()
                                              :vis-nick 'none
-                                             :lev0 'factory-cross
+                                             :lev0 'fac-cross
                                              :disp0 'display
                                              :lev1 #f
                                              :disp1 #f
@@ -2495,10 +2495,10 @@
                            )
         )
 
-(define glass-towers (new 'static 'level-load-info
+(define glass-tower (new 'static 'level-load-info
                            :index 38
-                           :name 'glass-towers
-                           :visname 'glass-towers-vis ;; name + -vis
+                           :name 'glass-toe
+                           :visname 'glass-toe-vis ;; name + -vis
                            :nickname 'gla          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
@@ -2510,8 +2510,8 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "glass-towers-warp"
-                                             :level 'glass-towers
+                                             :name "glass-tower-warp"
+                                             :level 'glass-toe
                                              :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
@@ -2519,7 +2519,7 @@
                                              :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
                                              :load-commands '()
                                              :vis-nick 'none
-                                             :lev0 'glass-towers
+                                             :lev0 'glass-toe
                                              :disp0 'display
                                              :lev1 #f
                                              :disp1 #f
@@ -2538,8 +2538,8 @@
 
 (define chemical-factory (new 'static 'level-load-info
                            :index 39
-                           :name 'chemical-factory
-                           :visname 'chemical-factory-vis ;; name + -vis
+                           :name 'chem-fac
+                           :visname 'chem-fac-vis ;; name + -vis
                            :nickname 'che          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
@@ -2551,8 +2551,8 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "chemical-factory-warp"
-                                             :level 'chemical-factory
+                                             :name "chem-fac-warp"
+                                             :level 'chem-fac
                                              :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
@@ -2560,7 +2560,7 @@
                                              :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
                                              :load-commands '()
                                              :vis-nick 'none
-                                             :lev0 'chemical-factory
+                                             :lev0 'chem-fac
                                              :disp0 'display
                                              :lev1 #f
                                              :disp1 #f
@@ -2579,8 +2579,8 @@
 
 (define space-bridge (new 'static 'level-load-info
                            :index 40
-                           :name 'space-bridge
-                           :visname 'space-bridge-vis ;; name + -vis
+                           :name 'space-bird
+                           :visname 'space-bird-vis ;; name + -vis
                            :nickname 'spa          ;; nickname
                            :packages '(training)
                            :sound-banks '(training)
@@ -2592,8 +2592,8 @@
                            :sky #t
                            :sun-fade 1.0
                            :continues '((new 'static 'continue-point
-                                             :name "space-bridge-warp"
-                                             :level 'space-bridge
+                                             :name "space-bird-warp"
+                                             :level 'space-bird
                                              :flags (continue-flags warp)
                                              :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
                                              :quat (new 'static 'quaternion  :w 1.0)
@@ -2601,7 +2601,7 @@
                                              :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
                                              :load-commands '()
                                              :vis-nick 'none
-                                             :lev0 'space-bridge
+                                             :lev0 'space-bird
                                              :disp0 'display
                                              :lev1 #f
                                              :disp1 #f
@@ -2875,7 +2875,7 @@
 (cons! *level-load-list* 'chicks)
 (cons! *level-load-list* 'space-bridge)
 (cons! *level-load-list* 'chemical-factory)
-(cons! *level-load-list* 'glass-towers)
+(cons! *level-load-list* 'glass-tower)
 (cons! *level-load-list* 'islands)
 (cons! *level-load-list* 'ice-slide)
 (cons! *level-load-list* 'villa-cube)
@@ -2892,7 +2892,7 @@
 (cons! *level-load-list* 'mort-title)
 
                                              #|"block-world-start"
-                                             "factory-cross-start"
+                                             "fac-cross-start"
                                              "holly-world-start"
                                              "monument-start"
                                              "cathedral-start"
@@ -2902,9 +2902,9 @@
                                              "villa-cube-start"
                                              "ice-slide-start"
                                              "islands-start"
-                                             "glass-towers-start"
-                                             "chemical-factory-start"
-                                             "space-bridge-start"
+                                             "glass-toe-start"
+                                             "chem-fac-start"
+                                             "space-bird-start"
                                              "chicks-start"
                                              "garden-start"
                                              "cold-pipe-start"

@@ -1,7 +1,7 @@
 ("SPA.DGO"
 (
 "static-screen.o"
-"space-bridge.go"
+"space-bird.go"
 ;;Start of "default" package for mort levels
 "training-part.o"
 "warp-gate-switch-ag.go"

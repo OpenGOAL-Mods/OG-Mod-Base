@@ -1873,7 +1873,7 @@
                    )
               )
                         (new 'static 'level-tasks-info
-              :level-name-id (text-id glass-towers-level-name)
+              :level-name-id (text-id glass-toe-level-name)
               :text-group-index 1
               :nb-of-tasks 3
               :buzzer-task-index 2
@@ -1912,7 +1912,7 @@
                    )
               )
                         (new 'static 'level-tasks-info
-              :level-name-id (text-id chemical-factory-level-name)
+              :level-name-id (text-id chem-fac-level-name)
               :text-group-index 1
               :nb-of-tasks 3
               :buzzer-task-index 2
@@ -1951,7 +1951,7 @@
                    )
               )
                         (new 'static 'level-tasks-info
-              :level-name-id (text-id space-bridge-level-name)
+              :level-name-id (text-id space-bird-level-name)
               :text-group-index 1
               :nb-of-tasks 3
               :buzzer-task-index 2

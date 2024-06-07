@@ -259,7 +259,7 @@ std::vector<EyeRenderer::SingleEyeDraws> EyeRenderer::get_draws(DmaFollower& dma
         l_draw.clear_color = tex_val;
         r_draw.clear_color = tex_val;
       } else {
-        fmt::print("clear lookup failed\n");
+        //fmt::print("stupid flutflut eye bug that doesnt matter\n");
         l_draw.clear_color = 0;
         r_draw.clear_color = 0;
       }

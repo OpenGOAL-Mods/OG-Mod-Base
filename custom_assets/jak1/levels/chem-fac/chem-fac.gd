@@ -1,7 +1,7 @@
 ("CHE.DGO"
 (
 "static-screen.o"
-"chemical-factory.go"
+"chem-fac.go"
 ;;Start of "default" package for mort levels
 "training-part.o"
 "warp-gate-switch-ag.go"

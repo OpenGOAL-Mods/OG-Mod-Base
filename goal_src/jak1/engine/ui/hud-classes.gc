@@ -731,11 +731,12 @@
       (case *hud-collectable-view*
         (((hud-collectable-view game-totals))
           ;; show orbs collected/total across entire game
+           (get-mort-orb-total)
           (draw-string-xy-scaled
             (string-format
               "~D~%/~D"
               (the int (-> *game-info* money-total))
-              2000  ;;(-> (the progress (-> *progress-process* 0)) total-nb-of-orbs)
+              *mort-orb-total* ;;(-> (the progress (-> *progress-process* 0)) total-nb-of-orbs)
               )
             buf
             string-x
