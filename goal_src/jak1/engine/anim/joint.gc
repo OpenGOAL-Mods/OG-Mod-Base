@@ -940,34 +940,38 @@
   this
   )
 
-(defmethod relocate ((this art-group) (arg0 kheap) (arg1 (pointer uint8)))
+(defmethod relocate ((obj art-group) (arg0 kheap) (arg1 (pointer uint8)))
   "Handle a loaded art-group."
   (let ((s4-0 (clear *temp-string*)))
     (string<-charp s4-0 arg1)
-    (set! this (cond
-                 ((not this)
-                  (format 0 "ERROR: art-group ~A is not a valid file.~%" s4-0)
-                  (the-as art-group #f)
-                  )
-                 ((not (type-type? (-> this type) art-group))
-                  (format 0 "ERROR: art-group ~A is not a art-group.~%" s4-0)
-                  (the-as art-group #f)
-                  )
-                 ((not (file-info-correct-version? (-> this info) (file-kind art-group) 0))
-                  (the-as art-group #f)
-                  )
-                 (else
-                   (let ((s5-1 (-> *level* loading-level)))
-                     (if (or (not s5-1) (= (-> s5-1 name) 'default))
-                         (login this) ;; not part of level load, just normal login.
-                         )
-                     (if s5-1
-                         (set-loaded-art (-> s5-1 art-group) this) ;; part of level load, add to level's ag, but don't log in yet.
-                         )
-                     )
-                   this
-                   )
+    (set! obj (cond
+                ((not obj)
+                 (format 0 "ERROR: art-group ~A is not a valid file.~%" s4-0)
+                 (the-as art-group #f)
                  )
+                ((not (type-type? (-> obj type) art-group))
+                 (format 0 "ERROR: art-group ~A is not a art-group.~%" s4-0)
+                 (the-as art-group #f)
+                 )
+                ((not (file-info-correct-version? (-> obj info) (file-kind art-group) 0))
+                 (the-as art-group #f)
+                 )
+                (else
+                  (let ((s5-1 (-> *level* loading-level)))
+                    (when (or (not s5-1) (= (-> s5-1 name) 'default))
+                        (login obj) ;; not part of level load, just normal login.
+                        (when (needs-link? obj)
+                          (format 0 "bonus link~%")
+                          (link-art! obj)
+                          )
+                        )
+                    (if s5-1
+                        (set-loaded-art (-> s5-1 art-group) obj) ;; part of level load, add to level's ag, but don't log in yet.
+                        )
+                    )
+                  obj
+                  )
+                )
           )
     )
   (none)

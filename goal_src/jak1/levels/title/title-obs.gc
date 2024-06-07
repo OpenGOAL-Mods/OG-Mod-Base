@@ -641,6 +641,11 @@
   (set! (-> self camera) (the-as handle #f))
   (set! (-> self volumes) (the-as handle #f))
   (set! (-> self black) (the-as handle #f))
+
+          (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+        (init-title)
+      )
+
   (cond
     ((= arg2 'logo)
      (go-virtual startup)

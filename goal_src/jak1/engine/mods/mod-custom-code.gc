@@ -20,6 +20,347 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Begin function defintions.
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define *custom-cutscene?* #t)
+
+
+
+
+
+;;Processes
+
+;;Every frame
+
+(define *currentCutsceneFrame* 0)
+(define *currentSpoolName* "")
+(defun update-mort-vars()
+"This function runs first thing and gets the updated state of variables/booleans"
+  ;;This locks the first person with no rotation if in certain levels (psuedo loading screens)
+  (cam-eye-no-rot)
+  (check-portal-distance)
+  (when (handle->process (-> *art-control* spool-lock))(with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the
+ int (ja-aframe-num 0))))
+  (set! *currentSpoolName* (-> *art-control* active-stream))
+ )
+  ;;Are we in a mort level?
+  (if (and (>= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 16)
+           (<= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 34))
+                (set! mort-level? #t)
+                (set! mort-level? #f)
+  )
+(none)
+)
+
+(defun run-mort-code? ()
+"When these are true, we dont want to run mort code."
+(and *target*
+      (!= (-> (level-get-target-inside *level*)name) title) ;; this doesnt work and should be 'title but I am afraid fixing it will cause bugs
+      (!= (-> (level-get-target-inside *level*)name) mort-title)
+      (!= (-> (level-get-target-inside *level*)name) 'mort-title)
+      (!= (-> *target* state name) 'target-continue)
+      ;;This warp stuff is a total hack to fix warp-demon-chick in retail mode. Id like to remove it one day
+      (!= (-> *target* state name) 'target-warp-out)
+      (!= (-> *target* state name) 'target-warp-in)
+      mort-level?)
+)
+
+(defun variable-every-frame()
+ "Responsible for updating most globals - if this isnt running something is terribly wrong"
+(update-mort-vars)
+;;If we input a button combo and we are in debug, unlock the next level
+      (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1) *cheat-mode*)
+      (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
+      (set-unlock-level)
+      ;;This might be ok to revert later
+      ;;(reset-actors #t)
+      )
+
+
+(none))
+
+(defun text-every-frame ()
+"This should be used to draw text, Near portal need X chicks etc"
+
+      (if *show-input-display*
+        (input-display-on)
+        (input-display-off)
+        )
+
+(none))
+
+(defun debug-text-every-frame ()
+"This process ONLY spawns when debug mode is on and shows some extra info"
+"I have no idea why the close-to-portal check is needed but it works."
+   (when *debug-segment*
+
+    (update-mort-vars)
+    (when (and run-mort-code? #t)
+     (draw-beta-flock-points)
+     (mort-rewrite-text)
+    )
+   )
+
+(none))
+
+(defun chicken-every-frame ()
+
+
+(when (run-mort-code?)
+ (adjust-chick-origin (find-best-master-mark))
+    ;;If are flock points aren't setup, lets set them up.
+
+    ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
+
+    ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
+    ;;If a chicken should despawn, set its target pos to 0,0,0.
+    (assign-remove-demon-chicken-target)
+    ;;Constantly check all chicks to see if they are in the warpgate if they are, then run chick-saved and increment saved per level
+    ;;THIS FUNCTION HAS A SLEEP/SUSPEND WHEN IT RUNS (have a chick, be near portal)
+    (warp-demon-chick)
+    (save-chicks-func)
+)
+(none))
+
+(defun-extern chicken-every-frame none)
+(defbehavior chicken-every-frame-proc process ()
+"Process is responsible for most chicken related functions"
+(while #t
+(chicken-every-frame)
+(suspend)
+)
+(none)
+)
+
+(defun init-chickens ()
+
+
+
+      ;;  (process-spawn-function process run-every-frame-proc)
+       (process-spawn-function process chicken-every-frame-proc)
+      ;; (process-spawn-function process variable-every-frame-proc)
+      ;; (process-spawn-function process text-every-frame-proc)
+      ;; (process-spawn-function process debug-text-every-frame-proc)
+      ;; (process-spawn-function process stupid-hacks-every-frame-proc)
+
+
+      (when *debug-segment*
+      (format #t "INITIALIZING CHICKENS~%")
+      (format #t "ITS MORTIN TIME~%")
+      )
+
+      (set-flock-points-start)
+      (set-flock-points)
+      (set-flock-false);; Set all flock values to #f before chickens are in it
+      (chicken-pls) ;; spawn the chickens offscreen
+      ;;(get-mort-orb-total)
+      (set! done-init? #t)
+
+      (none))
+
+
+
+;;sound sound-manager
+
+(defun sound-manager()
+"responsible for all the sounds played during cutscenes"
+(let ((current-timea (current-time))
+      (chem-bool #f))
+  (when (handle->process (-> *art-control* spool-lock))(with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the
+ int (ja-aframe-num 0))))
+  (set! *currentSpoolName* (-> *art-control* active-stream)))
+
+
+  (if (and (is-in-chem-fac-silo) (not chem-bool))
+  (begin
+   (play-sound-file "SND/windy.wav" (the int (-> *setting-control* default sfx-volume)))
+   (set! chem-bool #t)
+   (until (or (not (is-in-chem-fac-silo)) (time-elapsed? current-timea (seconds 20)))
+   (suspend)
+   )
+   (stop-sound-file)
+   (set! chem-bool #f)
+  )
+  )
+
+
+(cond
+((and (string= *currentSpoolName* "ndi-intro") (= *currentCutsceneFrame* 420))
+   (play-sound-file "SND/zed.mp3" (the int (-> *setting-control* default sfx-volume)))
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+
+)
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 0))
+   (play-sound-file "SND/fart-intro.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 2447))
+   (play-sound-file "SND/dax/oldgreenstufftoldusnotto.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-b") (= *currentCutsceneFrame* 555))
+   (play-sound-file "SND/htootsgas.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 16))
+   (play-sound-file "SND/dax/what_are_we_doing_here.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 220))
+   (play-sound-file "SND/dax/euagh_ooop.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;375 huH
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 375))
+   (play-sound-file "SND/dax/stupid_precursor_gas.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+
+;;410 STUPID PERCURSOR GAS
+
+;;584 eek daRT TOOT
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 584))
+   (play-sound-file "SND/dax/what_is_that_dark_toot.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;725 BREATH
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 725))
+   (play-sound-file "SND/dax/yaps_on_about.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;1019 POWERTOOTS
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1019))
+   (play-sound-file "SND/dax/power_toots.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+
+;;1215 how did you do that
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1215))
+   (play-sound-file "SND/dax/wow_how_did_you_do_that.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;1340 JAK WE IN TROUBLE
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1340))
+   (play-sound-file "SND/dax/i_think_were_in_trouble.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;1627 ahhhHHH
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1627))
+   (play-sound-file "SND/dax/daxter_ahh.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+
+((and *custom-cutscene?* (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 52))
+   (play-sound-file "SND/hnot_my_farts.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+
+((and *custom-cutscene?* (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 165))
+   (play-sound-file "SND/htootsgas2.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+
+((and *custom-cutscene?* (string= *currentSpoolName* "green-sagecage-daxter-sacrifice") (= *currentCutsceneFrame* 12))
+   (play-sound-file "SND/dax/daxter light eco.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+
+)
+)
+
+(none))
+(defbehavior sound-manager-proc process ()
+"handles the sound, and if it needs to spawn the runs-every-frame process it does that too"
+(while #t
+(sound-manager)
+(if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+  (init-chickens)
+)
+(suspend)
+)
+(none)
+)
+
+
+(defun restore-cells ()
+
+;;Loop the flock and restore all the Cells
+(dotimes (i (get-current-chicks))
+(set-or-clear-status! (the entity-actor (entity-by-name (-> (get-chick-from-flock i) parent-cell-name))) (entity-perm-status dead) #f)
+)
+
+
+;;Clear the flock to 0
+(set! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 0)
+
+)
+
+(defun init-title ()
+(when (not done-init?)
+      (format #t "INITIALIZING TITLE PROC~%")
+      (dotimes (i 16)(set! (-> *game-counts* data i money-count) 0)(set! (-> *game-counts* data i buzzer-count) 0))
+      (process-spawn-function process sound-manager-proc)
+      (set! done-init? #t)
+)
+      (none))
+
+
+
 
     (defun runs-every-frame ()
       ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
@@ -116,6 +457,15 @@
 
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)
+
+      (init-title)
+
+
+
+      (format #t  "RUNNING MUSIC PROC~%")
+      (process-spawn-function process music-manager-proc)
+      (restore-cells)
+      (restore-saved-chicks-from-mem)
 
       ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc
       ;;(process-spawn-function process music-manager-proc)

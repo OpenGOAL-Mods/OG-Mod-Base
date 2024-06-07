@@ -14,7 +14,26 @@
  the powercell count by one when it is called
  |#
 
+  (defun cam-eye-no-rot ()
+  ;;add levels to this or condition if you want the cam-eye to not be able to rotate (Useful for psuedo loading screens/images/menus)
+    (if (or #f (= (-> (level-get-target-inside *level*)name )'mort-title))
+      (set! (-> *CAM_EYE-bank* rot-speed) 0.0)
+      (set! (-> *CAM_EYE-bank* rot-speed) 364.0889)
+    )
+  (none)
+  )
 
+(defun check-portal-distance ()
+    (cond
+      ((< (vector-vector-distance (-> *target* root trans) (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans)) (meters 12))
+        (set! *close-to-portal?* #t)
+        )
+      (else
+      (set! *close-to-portal?* #f)
+        )
+    )
+  (none)
+)
 
 (defun mort-rewrite-text ()
  ;;mort debugging
@@ -428,6 +447,58 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (music-manager)
   (none)
 )
+
+
+(defun is-in-chem-fac-silo ()
+(when  (= (-> (level-get-target-inside *level*)name ) 'chemical-factory)
+  (if (in-bubble? (meters 131.51) (meters 310.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 315.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 320.57) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 325.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 330.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 335.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 340.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 345.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+)
+  #f
+)
+(define *heard-chem-hint* #f)
+(defun-extern music-manager none)
+(defun play-chem-hint ()
+
+
+
+(when (is-in-chem-fac-silo)
+(if (not *heard-chem-hint*)
+(begin
+(set! *heard-chem-hint* #t)
+(play-sound-file "SND/dax/daxter_for_zed.mp3" (the int (-> *setting-control* default dialog-volume)))
+)
+)
+
+
+
+
+)
+(none)
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jak Color functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;

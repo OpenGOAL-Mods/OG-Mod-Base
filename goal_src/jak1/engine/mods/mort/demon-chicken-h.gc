@@ -1,6 +1,26 @@
 ;;-*-Lisp-*-
 (in-package goal)
 
+(define *Origin*  (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0))
+(define *buddy-test-point-1*  (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0))
+(defconstant NOTICE_DIST (meters 10000))
+(defconstant STOP_CHASE_DIST (meters 100000))
+(defconstant ORANGE_DEMON_DEBUG #f)
+(defun-extern find-best-master-mark vector)
+(defun-extern adjust-chick-origin vector vector)
+(define *num-chicken-follow* 0)
+(define-extern *target3* demon-chicken)
+(define-extern *show-debug* symbol)
+(defun-extern demon-chicken-init-by-other vector none)
+(defun-extern move-flock-by-xz float float float none)
+(defun-extern point-at-origin? symbol)
+(defun-extern point-away-from-target symbol)
+(defun-extern point-close-to-another? vector symbol)
+(define done-init? #f)
+(define mort-level? #f)
+(defun-extern set-unlock-level-val int none)
+
+
 (deftype demon-chicken (process-drawable)
   ((cshape collide-shape-moving :offset 112)
    (trajectory trajectory :inline)
