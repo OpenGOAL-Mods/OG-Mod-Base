@@ -559,97 +559,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     "this is ran in its own process called run-every-frame-proc"
     ;;This is a hack to run softlock prevention
 
-    (when (and (not (cpad-hold? 0 l3))(cpad-hold? 0 down))
-    (mort-chicks-text)
-    )
-    (if (not (= *master-mode* 'progress))
-    (set! *loaded-cell-pause* (get-loaded-cell-count))
+    ;; (when (and (not (cpad-hold? 0 l3))(cpad-hold? 0 down))
+    ;; (mort-chicks-text)
+    ;; )
+    ;; (if (not (= *master-mode* 'progress))
+    ;; (set! *loaded-cell-pause* (get-loaded-cell-count))
 
-    )
-
-    ;;This is a hack to try to patch a bug, remove if it messes up save/restoring
-    (if (and *target* (= (-> *target* state name) 'target-warp-out))
-    (reset-saved-chick-from-mem)
-    )
-
-    (when #t
-    ;;(format #t "~A" (-> *target* state name))
-
-      (if (and *target*
-          (= (-> *target* state name) 'target-stance)
-          (not (movie?))
-          (!= (level-get-target-inside *level*) #f)
-          (!= (-> (level-get-target-inside *level*)name) 'misty)
-          (!= (-> (level-get-target-inside *level*)name) 'village1)
-          (!= (-> (level-get-target-inside *level*)name) 'beach)
-          (!= (-> (level-get-target-inside *level*)name) 'mort-title)
-          (!= (-> (level-get-target-inside *level*)name) 'citadel)
-          (!= (-> (level-get-target-inside *level*)name) 'finalboss)
-          )
-      (have-all-chicks-safe)
-      )
-      ;;
-      ;; )
-
-    ;;This is kind of a hack to start up during the opening cutscene
-    (when (and (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (>= *currentCutsceneFrame* 1649))
-    (set! *in-mort-menu* #t)
-                  (let ((current-timea (current-time)))
-                    (until (time-elapsed? current-timea (seconds 0.55))
-                    ;;(format #t "~S~%" "NOT ELAPSED")
-                      (suspend)
-                    )
-              )
-    (str-play-stop *currentSpoolName*)
-    (set! (-> *art-control* active-stream) #f)
-
-    )
-
-    (when (and (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 2))
-    (move-samos-butts)
-    )
-
-    (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 2))
-    (play-sound-file "SND/farts/fart1.mp3" (the int (-> *setting-control* default dialog-volume)))
-    )
-    (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 250))
-    (play-sound-file "SND/farts/vinefart.mp3" (the int (-> *setting-control* default dialog-volume)))
-    )
-
-
-   ;; (sound-manager)
-    (when (run-mort-code?)
-      ;;   (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
-      ;;   (init-chickens)
-      ;; )
-
-
-    (eco-manager) ;;checks constantly if we do or do not have eco, and what type, the gives effect or turns it off
-    (none)
-
-   )
-     ;; This should be done as the last thing
-      (find-best-master-mark)
-      (mort-main-menu)
-
-
-    )
-
-      (none)
-    )
-
-
-    (defun runs-every-frame ()
-    "this is ran in its own process called run-every-frame-proc"
-    ;;This is a hack to run softlock prevention
-
-    (when (and (not (cpad-hold? 0 l3))(cpad-hold? 0 down))
-    (mort-chicks-text)
-    )
-    (if (not (= *master-mode* 'progress))
-    (set! *loaded-cell-pause* (get-loaded-cell-count))
-
-    )
+    ;; )
 
     ;;This is a hack to try to patch a bug, remove if it messes up save/restoring
     (if (and *target* (= (-> *target* state name) 'target-warp-out))
