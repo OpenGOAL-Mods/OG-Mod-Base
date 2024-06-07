@@ -19,6 +19,10 @@
 (define done-init? #f)
 (define mort-level? #f)
 (defun-extern set-unlock-level-val int none)
+(defun-extern get-saved-chicks int)
+(defun-extern update-saved-chicks int none)
+(defun-extern get-total-chicks int)
+(defun-extern target-pos-with-offset vector)
 
 
 (deftype demon-chicken (process-drawable)

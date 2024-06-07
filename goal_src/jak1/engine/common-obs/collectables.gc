@@ -19,6 +19,23 @@
 (define-extern runs-on-cell-pickup (function symbol none))
 (define-extern runs-on-eco-pickup (function pickup-type process-tree none))
 
+(define *MAXCURRENTCHICKS* 11)
+(define-extern *num-chicken-follow* int)
+(defun-extern chicken-pls none)
+(define-extern runs-on-orb-pickup (function process-tree none))
+(define-extern runs-on-fly-pickup (function none))
+(define-extern runs-on-cell-pickup (function symbol none))
+(define-extern runs-on-eco-pickup (function pickup-type process-tree none))
+(define-extern *chicks-follow?* symbol)
+(declare-type demon-chicken process-drawable)
+(defun-extern get-chick-from-flock int demon-chicken)
+(defun-extern chicken-portal? symbol)
+(defun-extern get-current-chicks int)
+(defun-extern get-saved-chicks int)
+(defun-extern get-total-chicks int)
+(defun-extern update-saved-chicks int none)
+(defun-extern update-current-chicks int none)
+
 (declare-type vent process-drawable)
 (declare-type eco eco-collectable)
 
@@ -1712,9 +1729,13 @@
     )
   )
 
+(defun-extern get-saved-chicks-from-mem int)
 (defstate pickup (fuel-cell)
   :virtual #t
   :enter (behavior ((arg0 object) (arg1 handle))
+  (if (or (< *MAXCURRENTCHICKS*  (get-current-chicks)) (chicken-portal?))
+  (return #f)
+  )
     (set-time! (-> self state-time))
     (set! (-> self state-object) #t)
     (let ((t9-1 (-> (the-as (state eco-collectable) (find-parent-state)) enter)))
@@ -1724,6 +1745,9 @@
       )
     )
   :trans (behavior ()
+    (if (or (< *MAXCURRENTCHICKS*  (get-current-chicks)) (chicken-portal?))
+  (return #f)
+  )
     (let ((f30-0 (the-as float (cond
                                  ((string= (-> self victory-anim name) "fuel-cell-victory")
                                   97.0
@@ -1779,14 +1803,48 @@
         )
       )
     )
-  :code (behavior ((arg0 object) (arg1 handle))
+   :code (behavior ((arg0 object) (arg1 handle))
     (local-vars (sv-96 res-tag))
+      (if (or (< *MAXCURRENTCHICKS*  (get-current-chicks)) (chicken-portal?))
+  (return #f)
+  )
     (sound-play "pu-powercell")
     (clear-collide-with-as (-> self root))
     (logclear! (-> self mask) (process-mask actor-pause))
     (logclear! (-> self draw status) (draw-status hidden))
     (process-entity-status! self (entity-perm-status dead) #t)
     (stop! (-> self sound))
+    ;;Saved a chick
+    ;;Tagmort
+
+    ;;check to see the saved chickens stored and maybe restore it
+    (if (and (= (get-current-chicks) 0)
+    (= (get-saved-chicks) 0) )
+    (begin
+    (format #t "picked up a chick and its first in the level~%")
+    (if (> (get-saved-chicks-from-mem) (get-saved-chicks))
+    (begin
+    (format #t "Found saved chick data that was non zero, updating saved chicks in level to ~D~%" (get-saved-chicks-from-mem))
+    (update-saved-chicks (get-saved-chicks-from-mem))
+    )
+    )
+    )
+    )
+    ;; Set the chick with the highest index as this cell
+    (set! (-> (get-chick-from-flock (the int (get-current-chicks))) parent-cell-name)
+        (the string (-> self name))
+    )
+    ;; Increment after setting name
+    (update-current-chicks (+ (get-current-chicks) 1))
+    (play-sound-file "SND/ChickPickup1.mp3" (the int (-> *setting-control* default sfx-volume)))
+    (if (= (+  (get-current-chicks)  (get-saved-chicks))
+           (get-total-chicks)
+        )
+   (play-sound-file "SND/coin1.wav" (the int (-> *setting-control* default sfx-volume)))
+    )
+    (if #f
+
+    (begin
     (while (handle->process (-> *game-info* other-camera-handle))
       (format
         #t
@@ -1833,12 +1891,24 @@
         (else
           (move-to-point! (-> self root) (-> *target* control trans))
           (set-yaw-angle-clear-roll-pitch! (-> self root) (y-angle (-> *target* control)))
-          (move-to-ground (-> self root) (the-as float 40960.0) (the-as float 40960.0) #f (collide-kind background))
+          (move-to-ground
+            (-> self root)
+            (the-as float 40960.0)
+            (the-as float 40960.0)
+            #f
+            (collide-kind background)
+            )
           )
         )
       )
     (spool-push *art-control* (-> self victory-anim name) 0 self (the-as float -99.0))
+  )
+)
+
     (send-event *target* 'get-pickup (-> self fact pickup-type) (-> self fact pickup-amount))
+    (if
+    #f
+    (begin
     (set! (-> self draw bounds w) 32768.0)
     (logior! (-> self skel status) (janim-status inited))
     (send-event *target* 'blend-shape #t)
@@ -1846,23 +1916,41 @@
     (add-setting! 'sfx-volume 'rel (-> *setting-control* current sfx-volume-movie) 0)
     (add-setting! 'ambient-volume 'rel (-> *setting-control* current ambient-volume-movie) 0)
     (process-spawn othercam self 10 #f #t :to self)
-    (auto-save-command 'auto-save 0 0 *default-pool*)
-    (ja-play-spooled-anim
-      (-> self victory-anim)
-      (the-as art-joint-anim fuel-cell-idle-ja)
-      (the-as art-joint-anim #f)
-      (the-as (function process-drawable symbol) false-func)
-      )
+    ))
+
+
+   ;;dont autosave so if we crash the cell comes back maybe?
+    ;;(auto-save-command 'auto-save 0 0 *default-pool*)
+
+    ;; play powercell animation if randomizer disabled
+    (if
+     #f
+      (begin
+          (ja-play-spooled-anim
+        (-> self victory-anim)
+        (the-as art-joint-anim (-> self draw art-group data 2))
+        (the-as art-joint-anim #f)
+        (the-as (function process-drawable symbol) false-func)
+        )))
+
+
+ (begin
+   (send-event *target* 'end-mode)
+ )
+
+
+
+
     (remove-setting! 'music-volume)
     (remove-setting! 'sfx-volume)
     (remove-setting! 'ambient-volume)
     (send-event *target* 'blend-shape #f)
-    (send-event *target* 'end-mode)
     (send-event *camera* 'no-intro)
     (send-event *camera* 'clear-entity)
     (ja-channel-set! 0)
     (suspend)
     (suspend)
+
     (process-spawn-function
       process
       (lambda :behavior collectable
@@ -2126,6 +2214,9 @@
     (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* fuel-cell))))
     )
   :post (behavior ()
+    (if (or (< *MAXCURRENTCHICKS*  (get-current-chicks)) (chicken-portal?))
+  (return #f)
+  )
     (transform-post)
     (if (-> self state-object)
         (spawn (-> self part) (the-as vector (-> self root root-prim prim-core)))

@@ -130,15 +130,35 @@
 (none)
 )
 
+(defun-extern debug-text-every-frame none)
+(defbehavior debug-text-every-frame-proc process ()
+"Process is responsible for drawing debug text this process should never be suspended"
+(while #t
+(debug-text-every-frame)
+(suspend)
+)
+(none)
+)
+
+(defun-extern variable-every-frame none)
+(defbehavior variable-every-frame-proc process ()
+"Process is responsible for updating most variables/globals this process should never be suspended"
+(while #t
+(variable-every-frame)
+(suspend)
+)
+(none)
+)
+
 (defun init-chickens ()
 
 
 
       ;;  (process-spawn-function process run-every-frame-proc)
        (process-spawn-function process chicken-every-frame-proc)
-      ;; (process-spawn-function process variable-every-frame-proc)
+       (process-spawn-function process variable-every-frame-proc)
       ;; (process-spawn-function process text-every-frame-proc)
-      ;; (process-spawn-function process debug-text-every-frame-proc)
+       (process-spawn-function process debug-text-every-frame-proc)
       ;; (process-spawn-function process stupid-hacks-every-frame-proc)
 
 
@@ -151,10 +171,14 @@
       (set-flock-points)
       (set-flock-false);; Set all flock values to #f before chickens are in it
       (chicken-pls) ;; spawn the chickens offscreen
-      ;;(get-mort-orb-total)
+      (get-mort-orb-total)
       (set! done-init? #t)
 
       (none))
+
+
+
+
 
 
 
