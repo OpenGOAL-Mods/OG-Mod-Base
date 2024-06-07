@@ -23,8 +23,10 @@
 
     (defun runs-every-frame ()
       ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
-      
-      (if *show-input-display* 
+
+       (mort-rewrite-text)
+
+      (if *show-input-display*
         (input-display-on)
         (input-display-off)
         )
@@ -63,11 +65,11 @@
 
     (defun runs-on-cell-pickup ((cell-event symbol))
       (case cell-event
-        (('pickup)      
+        (('pickup)
           ;; Code here runs as soon as you pickup a powercell
 
           )
-        (('cutscene-end)      
+        (('cutscene-end)
           ;; Code here runs at the end of any powercell cutscene
 
           )
@@ -81,28 +83,28 @@
         ;; Code here runs as soon as you pickup ANY eco
 
         (case eco-type
-          (((pickup-type eco-yellow))      
+          (((pickup-type eco-yellow))
             ;; Code here runs as soon as you pickup yellow eco
 
             )
-          (((pickup-type eco-red))      
+          (((pickup-type eco-red))
             ;; Code here runs as soon as you pickup red eco
 
             )
-          (((pickup-type eco-blue))      
+          (((pickup-type eco-blue))
             ;; Code here runs as soon as you pickup blue eco
 
             )
-          (((pickup-type eco-pill))      
+          (((pickup-type eco-pill))
             ;; Code here runs as soon as you pickup small green eco
 
             )
-          (((pickup-type eco-green))      
-            ;; Code here runs as soon as you pickup big green eco 
+          (((pickup-type eco-green))
+            ;; Code here runs as soon as you pickup big green eco
 
             )
           )
-        
+
         (when from-vent?
           ;; Code here runs only if the eco was picked up from a vent
 
@@ -114,7 +116,7 @@
 
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)
-      
+
       ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc
       ;;(process-spawn-function process music-manager-proc)
       (none)
@@ -124,14 +126,14 @@
       (case death-event
         (('dying)
           ;; Code here runs immediately every time jak dies, before any death animation or death cutscene
-          
+
           )
         (('blackout)
           ;; Code here runs after jak dies (and any death cutscene finishes), during the blackout before he spawns
 
           )
         )
-      
+
       (none)
       )
 

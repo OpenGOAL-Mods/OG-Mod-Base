@@ -27,7 +27,7 @@
 
 (define *hud-demon-chicken* (new 'static 'hud-demon-chicken-parts :parts #f))
 
-(defmethod deactivate hud-demon-chicken ((this hud-demon-chicken))
+(defmethod deactivate ((this hud-demon-chicken))
   (if (and (-> *hud-demon-chicken* parts) (= (ppointer->process (-> *hud-demon-chicken* parts)) this))
       (set! (-> *hud-demon-chicken* parts) (the (pointer hud-demon-chicken) #f))
       )
@@ -36,7 +36,7 @@
   )
 
 
-(defmethod kill-icon hud-demon-chicken ((this hud-demon-chicken) (idx int))
+(defmethod kill-icon ((this hud-demon-chicken) (idx int))
   (when (and (nonzero? (-> this icons idx)) (nonzero? (-> this icons idx icon)) (-> this icons idx icon))
     (deactivate (ppointer->process (-> this icons idx icon)))
     (set! (-> this icons idx icon) #f)
@@ -44,20 +44,20 @@
   (none)
   )
 
-(defmethod kill-all-icons hud-demon-chicken ((this hud-demon-chicken))
+(defmethod kill-all-icons ((this hud-demon-chicken))
   (dotimes (i (-> this nb-of-icons))
     (kill-icon this i)
     )
   (none)
   )
 
-(defmethod make-icon hud-demon-chicken ((this hud-demon-chicken) (idx int))
+(defmethod make-icon ((this hud-demon-chicken) (idx int))
   (kill-icon this 0)
   (hud-pc-replace-icon this 0 :skel *sidekick-sg* :z (meters 0.02))
   (none)
   )
 
-(defmethod update-display-status hud-demon-chicken ((this hud-demon-chicken) (icon-idx int) (trigger-force symbol))
+(defmethod update-display-status ((this hud-demon-chicken) (icon-idx int) (trigger-force symbol))
   (cond
     ((hidden? this)
      (when (-> this ready?)
@@ -118,7 +118,7 @@
   (none)
   )
 
-(defmethod hud-update hud-demon-chicken ((this hud-demon-chicken))
+(defmethod hud-update ((this hud-demon-chicken))
   (when (and (not (-> this ready?)) (hidden? this))
     (kill-all-icons this)
     )
@@ -151,7 +151,7 @@
   (none)
   )
 
-(defmethod draw-hud hud-demon-chicken ((this hud-demon-chicken))
+(defmethod draw-hud ((this hud-demon-chicken))
   ((method-of-type hud draw-hud) this)
   (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
                                (bucket-id debug))
@@ -184,7 +184,7 @@
   )
 
 
-(defmethod init-particles! hud-demon-chicken ((this hud-demon-chicken) (arg0 int))
+(defmethod init-particles! ((this hud-demon-chicken) (arg0 int))
   (hud-pc-make-icon this HUD_ICON_COUNT :skel *sidekick-sg*
                                         :x (the int (* 0.84 512)) :y (the int (* 0.51 448)) :z (meters 0.5)
                                         :scale-x 0.004 :scale-y (* -0.004 (/ 512.0 448.0)))

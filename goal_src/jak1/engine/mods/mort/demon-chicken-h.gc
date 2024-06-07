@@ -70,6 +70,7 @@
     )
   )
 
+
 (defpartgroup group-demon-chicken-burn-circle
   :id 800
   :duration (seconds 0.5)

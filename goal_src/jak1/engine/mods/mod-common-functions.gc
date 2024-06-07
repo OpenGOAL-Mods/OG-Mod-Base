@@ -20,17 +20,17 @@
  ;;mort debugging
  ;; this is a debug checking text to see certain values
       (when (and
-            (portal-mort-switch)
+             (portal-mort-switch)
              (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
                                       (bucket-id subtitle))
       (draw-string-xy (string-format "Will Remove soon!~%Mort Rewrite info ~%Chicks in memory card: ~D ~%Total Chicks is is ~D~%Current Chicks is is ~D~%saved Chicks is is ~D~%Chicken going to portal? ~A~%Unlock lvl is ~D~%"
-                                     (get-saved-chicks-from-mem)
-                                     (get-total-chicks)
-                                     (get-current-chicks)
-                                     (get-saved-chicks)
-                                      (chicken-portal?)
-                                      (get-unlock-level)
+                                   (get-saved-chicks-from-mem)
+                                   (get-total-chicks)
+                                   (get-current-chicks)
+                                   (get-saved-chicks)
+                                   (chicken-portal?)
+                                   (get-unlock-level)
                                      )
                       buf (- 400 70) (- 150 (* 8 16)) (font-color flat-yellow) (font-flags shadow kerning)))
           )

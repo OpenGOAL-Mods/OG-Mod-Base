@@ -7,3 +7,49 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Orange Demon Challenge
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;mort getters
+(defun get-saved-chicks-from-mem ()
+  ;;(format #t "getting unlock level it is ~D~%" (-> *game-info* money-per-level 3))
+  (the int (-> *game-info* money-per-level 5) )
+)
+
+(defun get-total-chicks ()
+(-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks)
+)
+
+(defun get-current-chicks ()
+(-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)
+)
+
+(defun get-saved-chicks ()
+(-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks)
+)
+
+(defun get-unlock-level ()
+  ;;(format #t "getting unlock level it is ~D~%" (-> *game-info* money-per-level 3))
+  (the int (-> *game-info* money-per-level 3) )
+)
+
+(defun portal-mort-trans ()
+  (-> (the warp-gate (-> (the basebutton (process-by-ename "project-warp-gate-switch") )child 0)) root trans)
+  )
+
+(defun portal-mort-switch ()
+  (the-as warp-gate-switch (process-by-ename "project-warp-gate-switch"))
+  )
+
+(defun portal-mort-gate ()
+  (the warp-gate (-> (the basebutton (process-by-ename "project-warp-gate-switch") )child 0))
+  )
+
+(defun chicken-portal? ()
+;;Is a chicken going to the portal?
+;;  (dotimes (i NUM_FLOCKPOINTS)
+;;  (if (= (vector-vector-distance (-> (get-chick-from-flock i) target-pos) (-> (the-as process-drawable (process-by-ename "project-training-part-1") )root trans)) 0.0)
+;;   (return #t)
+;;   )
+;;   #f
+;; )
+#f
+)

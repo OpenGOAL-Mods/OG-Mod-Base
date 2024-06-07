@@ -245,6 +245,18 @@
 
   0)
 
+(deftype level-information (structure)
+((name string)
+ (total-chicks int32)
+ (current-chicks int32)
+ (saved-chicks int32)
+))
+  (deftype custom-level-info (structure)
+  ((data level-information 47 :inline  :offset-assert 0)
+   )
+  )
+ (define *custom-level-info*(new 'static 'custom-level-info))
+
 (defmethod update-discord-rpc pc-settings-jak1 ((obj pc-settings-jak1))
   "update discord rpc module"
   (let ((info (new 'stack 'discord-info)))
