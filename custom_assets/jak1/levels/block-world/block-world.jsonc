@@ -20,7 +20,7 @@
   "double_sided_collide": false,
   "base_id": 3000000,"ambients": [],
   // Note: You will still have to add them to your level's .gd file.
-  "art_groups": ["flutflutegg-ag"],
+  "art_groups": ["flutflutegg-ag","flutsaddle-ag"],
   "actors" : [
   //   {
   //     "trans": [ 31.73, 303.37, 153.08],

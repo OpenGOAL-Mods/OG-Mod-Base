@@ -59,6 +59,45 @@
   (none)
 )
 
+(defun reset-custom-info ()
+(reset-saved-chick-from-mem)
+
+(dotimes (i 40)
+  (set! (-> *custom-level-info* data i total-chicks) 1)
+  (set! (-> *custom-level-info* data i saved-chicks) 0)
+  (set! (-> *custom-level-info* data i current-chicks) 0)
+)
+;;Then override its index here and set it to the proper value when complete.
+(set! (-> *custom-level-info* data 16 total-chicks) 6)
+(set! (-> *custom-level-info* data 17 total-chicks) 6)
+(set! (-> *custom-level-info* data 18 total-chicks) 6)
+(set! (-> *custom-level-info* data 19 total-chicks) 9)
+(set! (-> *custom-level-info* data 20 total-chicks) 10)
+(set! (-> *custom-level-info* data 21 total-chicks) 10)
+(set! (-> *custom-level-info* data 22 total-chicks) 9)
+(set! (-> *custom-level-info* data 23 total-chicks) 1)
+(set! (-> *custom-level-info* data 24 total-chicks) 10)
+(set! (-> *custom-level-info* data 25 total-chicks) 6)
+(set! (-> *custom-level-info* data 26 total-chicks) 6)
+(set! (-> *custom-level-info* data 26 total-chicks) 5);; MISSING A CHICK IN ISLANDS
+(set! (-> *custom-level-info* data 27 total-chicks) 10)
+(set! (-> *custom-level-info* data 28 total-chicks) 6)
+;;28 is chem factory
+(set! (-> *custom-level-info* data 29 total-chicks) 6)
+(set! (-> *custom-level-info* data 30 total-chicks) 36)
+(set! (-> *custom-level-info* data 30 total-chicks) 32)
+(set! (-> *custom-level-info* data 31 total-chicks) 10)
+(set! (-> *custom-level-info* data 32 total-chicks) 6)
+
+(set! (-> *custom-level-info* data 33 total-chicks) 12)
+(set! (-> *custom-level-info* data 34 total-chicks) 12)
+
+;;getters
+
+(none))
+
+(reset-custom-info)
+
 
 (defun get-total-chicks ()
 (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks)
@@ -114,7 +153,7 @@
 
 (defun unlock-level-func ((idx int))
 (set-unlock-level-val idx)
-(play-sound-file "SND/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
+(play-sound-file "custom_assets/jak1/SND/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
 (reset-saved-chick-from-mem)
 (auto-save-command 'auto-save 0 0 *default-pool*)
 (none)

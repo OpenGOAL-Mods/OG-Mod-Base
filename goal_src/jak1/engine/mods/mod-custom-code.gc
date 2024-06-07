@@ -195,7 +195,7 @@
 
   (if (and (is-in-chem-fac-silo) (not chem-bool))
   (begin
-   (play-sound-file "SND/windy.wav" (the int (-> *setting-control* default sfx-volume)))
+   (play-sound-file "custom_assets/jak1/SND/windy.wav" (the int (-> *setting-control* default sfx-volume)))
    (set! chem-bool #t)
    (until (or (not (is-in-chem-fac-silo)) (time-elapsed? current-timea (seconds 20)))
    (suspend)
@@ -208,7 +208,7 @@
 
 (cond
 ((and (string= *currentSpoolName* "ndi-intro") (= *currentCutsceneFrame* 420))
-   (play-sound-file "SND/zed.mp3" (the int (-> *setting-control* default sfx-volume)))
+   (play-sound-file "custom_assets/jak1/SND/zed.mp3" (the int (-> *setting-control* default sfx-volume)))
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -217,7 +217,7 @@
 )
 
 ((and *custom-cutscene?* (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 0))
-   (play-sound-file "SND/fart-intro.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/fart-intro.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -225,7 +225,7 @@
 )
 
 ((and *custom-cutscene?* (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 2447))
-   (play-sound-file "SND/dax/oldgreenstufftoldusnotto.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/dax/oldgreenstufftoldusnotto.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -233,7 +233,7 @@
 )
 
 ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-b") (= *currentCutsceneFrame* 555))
-   (play-sound-file "SND/htootsgas.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/htootsgas.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -241,14 +241,14 @@
 )
 
 ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 16))
-   (play-sound-file "SND/dax/what_are_we_doing_here.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/dax/what_are_we_doing_here.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
 )
 
 ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 220))
-   (play-sound-file "SND/dax/euagh_ooop.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/dax/euagh_ooop.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -257,7 +257,7 @@
 ;;375 huH
 
 ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 375))
-   (play-sound-file "SND/dax/stupid_precursor_gas.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/dax/stupid_precursor_gas.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -268,7 +268,7 @@
 
 ;;584 eek daRT TOOT
 ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 584))
-   (play-sound-file "SND/dax/what_is_that_dark_toot.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/dax/what_is_that_dark_toot.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -277,7 +277,7 @@
 ;;725 BREATH
 
 ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 725))
-   (play-sound-file "SND/dax/yaps_on_about.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/dax/yaps_on_about.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -285,7 +285,7 @@
 
 ;;1019 POWERTOOTS
 ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1019))
-   (play-sound-file "SND/dax/power_toots.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/dax/power_toots.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -294,7 +294,7 @@
 
 ;;1215 how did you do that
 ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1215))
-   (play-sound-file "SND/dax/wow_how_did_you_do_that.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/dax/wow_how_did_you_do_that.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -302,7 +302,7 @@
 
 ;;1340 JAK WE IN TROUBLE
 ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1340))
-   (play-sound-file "SND/dax/i_think_were_in_trouble.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/dax/i_think_were_in_trouble.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -310,7 +310,7 @@
 
 ;;1627 ahhhHHH
 ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1627))
-   (play-sound-file "SND/dax/daxter_ahh.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/dax/daxter_ahh.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -318,7 +318,7 @@
 
 
 ((and *custom-cutscene?* (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 52))
-   (play-sound-file "SND/hnot_my_farts.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/hnot_my_farts.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -327,7 +327,7 @@
 
 
 ((and *custom-cutscene?* (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 165))
-   (play-sound-file "SND/htootsgas2.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/htootsgas2.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )
@@ -336,7 +336,7 @@
 
 
 ((and *custom-cutscene?* (string= *currentSpoolName* "green-sagecage-daxter-sacrifice") (= *currentCutsceneFrame* 12))
-   (play-sound-file "SND/dax/daxter light eco.mp3" 100)
+   (play-sound-file "custom_assets/jak1/SND/dax/daxter light eco.mp3" 100)
    (until (time-elapsed? current-timea (seconds 1))
    (suspend)
    )

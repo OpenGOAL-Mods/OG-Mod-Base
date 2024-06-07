@@ -1836,11 +1836,11 @@
     )
     ;; Increment after setting name
     (update-current-chicks (+ (get-current-chicks) 1))
-    (play-sound-file "SND/ChickPickup1.mp3" (the int (-> *setting-control* default sfx-volume)))
+    (play-sound-file "custom_assets/jak1/SND/ChickPickup1.mp3" (the int (-> *setting-control* default sfx-volume)))
     (if (= (+  (get-current-chicks)  (get-saved-chicks))
            (get-total-chicks)
         )
-   (play-sound-file "SND/coin1.wav" (the int (-> *setting-control* default sfx-volume)))
+   (play-sound-file "custom_assets/jak1/SND/coin1.wav" (the int (-> *setting-control* default sfx-volume)))
     )
     (if #f
 
