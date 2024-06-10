@@ -184,7 +184,7 @@
   )
 
 (define *last-master-mode* 'game)
-
+(define-extern *currentSpoolName* string)
 (defun toggle-pause ()
   "Do pause/menu/progress transitions"
   (case *master-mode*

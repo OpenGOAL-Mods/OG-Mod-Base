@@ -1266,6 +1266,10 @@
   `(or ,@(apply (lambda (x) `(begin (define-extern ,x type) (type-type? (-> this etype) ,x))) types))
   )
 
+
+  (declare-type sage process-drawable)
+
+
 (defmethod birth! ((this entity-actor))
   "Create a process for this entity and start it."
 
@@ -1282,6 +1286,24 @@
     ; )
 
   ;;(birth-log "call to birth! on ~A~%" this)
+
+
+        (if (string= (the-as string (res-lump-struct this 'name basic)) "crate-3256")
+         (set!(-> this etype) sage)
+         )
+
+                 (if (string= (the-as string (res-lump-struct this 'name basic)) "crate-3258")
+         (set!(-> this etype) sage)
+         )
+
+        (if (string= (the-as string (res-lump-struct this 'name basic)) "crate-3259")
+         (set!(-> this etype) sage)
+         )
+
+                 (if (string= (the-as string (res-lump-struct this 'name basic)) "crate-3250")
+         (set!(-> this etype) sage)
+         )
+
 
   (let* ((entity-type (-> this etype))
          (info (entity-info-lookup entity-type))
@@ -1315,6 +1337,7 @@
     )
   this
   )
+
 (defun move-samos-butts ()
 (vector-copy! (-> (the sage (process-by-ename "crate-3256"))root trans) (new 'static 'vector :x (meters 3025.28) :y (meters 485.76) :z (meters -4821.85)))
 (vector-copy! (-> (the sage (process-by-ename "crate-3258"))root trans) (new 'static 'vector :x (meters 3065.19) :y (meters 485.76) :z (meters -4859.85)))

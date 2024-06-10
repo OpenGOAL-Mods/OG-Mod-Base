@@ -162,7 +162,7 @@
 (defun art-group-load-check ((arg0 string) (arg1 kheap) (arg2 int))
   "Load and check an art-group file. this only runs if we're using debug memory."
 
-  (when *debug-segment*
+  (when #t  ;;*debug-segment*
     #|(with-sp (protect sp
       (if (< sp *stack-top*)
         (set! sp (&+ *kernel-sp* -1024))

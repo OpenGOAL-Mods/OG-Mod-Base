@@ -13,7 +13,11 @@
  to call inside of mod-custom-code.gc for example I have defined a function that increases
  the powercell count by one when it is called
  |#
+
+ (define-extern *currentCutsceneFrame* int)
 (define-extern *in-mort-menu* symbol)
+(defun-extern run-mort-code? basic)
+(defun-extern eco-manager none)
 (define *sphere-color* (new 'static 'rgba :r #xff :g #xff :b #xff :a #x80))
 ;;This function is a mess TODO: Pretend it doesn't exist.
 (define *closest-pos-index* 0)
