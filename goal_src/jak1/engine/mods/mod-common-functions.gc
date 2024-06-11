@@ -700,10 +700,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          (('islands)
           (play-main-music "custom_assets/jak1/SND/music-holly-wood1.mp3" (the int (* (-> *setting-control* default music-volume) 0.75))) ;; shares track with islands
           )
-         (('glass-towers 'chemical-factory)
+         (('glass-toe 'chem-fac)
           (play-main-music "custom_assets/jak1/SND/music-glass-towers-chemical-factory.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
           )
-         (('space-bridge)
+         (('space-brid)
           (play-main-music "custom_assets/jak1/SND/music-space-bridge.mp3" (the int (* (-> *setting-control* default music-volume) 0.75)))
           )
          (('garden)
@@ -769,7 +769,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (if (not *heard-chem-hint*)
 (begin
 (set! *heard-chem-hint* #t)
-(play-sound-file "custom_assets/jak1/custom_assets/jak1/SND/dax/daxter_for_zed.mp3" (the int (-> *setting-control* default dialog-volume)))
+(play-sound-file "custom_assets/jak1/SND/dax/daxter_for_zed.mp3" (the int (-> *setting-control* default dialog-volume)))
 )
 )
 

@@ -91,3 +91,7 @@ out/jak2/fr3.rar
 
 *.diff
 goalc-report.html
+*.vsidx
+*.opendb
+*.db-shm
+*.db-wal

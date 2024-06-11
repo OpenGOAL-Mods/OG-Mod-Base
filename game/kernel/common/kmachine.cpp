@@ -120,10 +120,15 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
 // Function to stop all currently playing sounds.
 void stopAllSounds() {
   for (auto& pair : maSoundMap) {
-    ma_sound_stop(&pair.second);
+    if (ma_sound_stop(&pair.second) != MA_SUCCESS) {
+      // Handle the error appropriately, for example:
+      // Log the error, continue to the next sound, etc.
+      std::cerr << "Failed to stop sound: " << pair.first << std::endl;
+    }
   }
   maSoundMap.clear();
 }
+
 
 // Function to get the names of currently playing files.
 std::vector<std::string> getPlayingFileNames() {
@@ -1112,10 +1117,10 @@ void init_common_pc_port_functions(
   make_func_symbol_func("pc-mkdir-file-path", (void*)pc_mkdir_filepath);
 
   //Play sound file
-  make_func_symbol_func("play-sound-file", (void*)playMP3);  
+  make_func_symbol_func("play-sound-file", (void*)playMP3);
 
   //Stop sound file
-  make_func_symbol_func("stop-sound-file", (void*)stopAllSounds);  
+  make_func_symbol_func("stop-sound-file", (void*)stopAllSounds);
 
   //Main music stuff
   make_func_symbol_func("play-main-music", (void*)playMainMusic);

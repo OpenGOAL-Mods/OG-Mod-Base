@@ -1,0 +1,23 @@
+{
+  "OutputFoldersPerTargetSystem": {
+    "Local Machine": [
+      "out\\build\\Debug",
+      "out\\install\\Debug-windows-clang",
+      "out\\install\\Debug-windows-clang-static",
+      "out\\build\\Release",
+      "out\\install\\RelWithDebInfo-windows-clang",
+      "out\\install\\Release-windows-clang",
+      "out\\install\\Release-windows-clang-static",
+      "out\\install\\Debug-windows-msvc",
+      "out\\install\\Release-windows-msvc",
+      "build\\Release\\bin",
+      "build\\install\\Release-linux-clang",
+      "build\\install\\Release-macos-clang",
+      "build\\install\\Release-macos-clang-static",
+      "build\\install\\Release-linux-clang-asan",
+      "build\\install\\Release-linux-clang-static",
+      "build\\install\\Debug-linux-clang-static",
+      "build\\install\\Release-linux-gcc"
+    ]
+  }
+}
