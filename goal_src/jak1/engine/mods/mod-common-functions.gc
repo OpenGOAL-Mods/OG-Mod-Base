@@ -431,7 +431,3 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun draw-light-blue ((jak target))
   (draw-xyz jak 0.0 3.0 3.0)
 )
-
-
-
-

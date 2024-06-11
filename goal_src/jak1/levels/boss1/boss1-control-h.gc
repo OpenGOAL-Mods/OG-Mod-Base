@@ -5,10 +5,13 @@
 
 (deftype boss1-control (process-drawable)
   (
-    (cshape                       collide-shape :overlay-at root)
-    (current-attack-element-dark? symbol) ;; our convention will be that dark is #t and light is #f
-    (timeline-flag                uint32)
-    (rand-attack-element-dark?    symbol) ;; our convention will be that dark is #t and light is #f
+    (cshape                        collide-shape :overlay-at root)
+    (current-attack-element-dark?  symbol) ;; our convention will be that dark is #t and light is #f
+    (timeline-flag                 uint32)
+    (rand-attack-element-dark?     symbol) ;; our convention will be that dark is #t and light is #f
+    (attack-colour-override-chess? symbol)
+    (chess-piece-row               uint32)
+    (chess-piece-col               uint32)
   )
   (:states
     boss1-control-active

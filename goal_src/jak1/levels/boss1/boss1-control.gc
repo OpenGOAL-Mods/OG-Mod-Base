@@ -140,6 +140,7 @@
   (set! (-> this current-attack-element-dark?) #f)
   (set! (-> this timeline-flag) 0)
   (set! (-> this rand-attack-element-dark?) #f)
+  (set! (-> this attack-colour-override-chess?) #f)
   (let ((s4-0 (new 'process 'collide-shape this (collide-list-enum hit-by-player))))
     (let ((s3-0 (new 'process 'collide-shape-prim-group s4-0 (the-as uint 4) 0)))
       (set! (-> s3-0 prim-core collide-as) (collide-kind enemy))

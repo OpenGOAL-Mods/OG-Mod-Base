@@ -46,3 +46,18 @@
     eco-orb-exploding
   )
 )
+
+(deftype chess-piece (process-drawable)
+  (
+    (cshape              collide-shape :overlay-at root)
+    (shove-up            float)
+    (was-deadly?         symbol)
+    (should-play-sound?  symbol)
+    (piece-type          uint32) ;; 0: null, 1: knight, 2: bishop, 3: rook, 4: queen
+  )
+  (:states
+    chess-piece-inactive
+    ;;chess-piece-active
+    chess-piece-attacking
+  )
+)
