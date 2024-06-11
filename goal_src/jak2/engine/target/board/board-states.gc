@@ -120,6 +120,8 @@
   (none)
   )
 
+(define-extern *target-board-hold-tricks* int)
+
 ;; WARN: Return type mismatch object vs none.
 (defbehavior target-board-spin-check target ()
   (when (and (or (cpad-pressed? (-> self control cpad number) r1)
@@ -245,6 +247,7 @@
                         )
                    )
           (set! (-> self board unknown-float01) f28-1)
+          (+! *target-board-hold-tricks* 1)
           (go
             target-board-hold
             (-> *TARGET_BOARD-bank* tricky-jump-height-min)
@@ -584,13 +587,8 @@
              )
         (go target-board-duck-stance)
         )
-    (when (and (logtest? (logior (logior (-> *cpad-list* cpads (-> self control cpad number) button0-rel 0)
-                                         (-> *cpad-list* cpads (-> self control cpad number) button0-rel 1)
-                                         )
-                                 (-> *cpad-list* cpads (-> self control cpad number) button0-rel 2)
-                                 )
-                         (pad-buttons x)
-                         )
+    ;; og:preserve-this - High FPS Fix - https://github.com/open-goal/jak-project/pull/3178
+    (when (and (recently-pressed? x)
                (can-jump? 'board)
                )
       (let ((gp-0 (vector-flatten!
@@ -760,13 +758,8 @@
              )
         (go target-board-stance)
         )
-    (when (and (logtest? (logior (logior (-> *cpad-list* cpads (-> self control cpad number) button0-rel 0)
-                                         (-> *cpad-list* cpads (-> self control cpad number) button0-rel 1)
-                                         )
-                                 (-> *cpad-list* cpads (-> self control cpad number) button0-rel 2)
-                                 )
-                         (pad-buttons x)
-                         )
+    ;; og:preserve-this - High FPS Fix - https://github.com/open-goal/jak-project/pull/3178
+    (when (and (recently-pressed? x)
                (can-jump? 'board)
                )
       (let ((gp-0 (vector-flatten!
@@ -1645,11 +1638,9 @@
   :post target-board-post
   )
 
-(define-extern *target-board-hold-tricks* int)
 (defstate target-board-hold (target)
   :event (-> target-board-jump event)
   :enter (behavior ((arg0 float) (arg1 float) (arg2 symbol))
-    (+! *target-board-hold-tricks* 1)
     (set! (-> self control unknown-word04) (the-as uint arg2))
     (forward-up-nopitch->quaternion
       (-> self control dir-targ)
@@ -1677,7 +1668,9 @@
     (set! (-> self control dynam gravity-length) 147456.0)
     )
   :exit (behavior ()
-    (set! *target-board-hold-tricks* 0)
+    (when (and (-> self next-state) (!= 'target-board-hold (-> self next-state name)))
+      (set! *target-board-hold-tricks* 0)
+      )
     (set! (-> self board unknown-float01) 0.0)
     (set-time! (-> self board unknown-time-frame05))
     (let ((v1-3 (the-as sound-rpc-set-param (get-sound-buffer-entry))))
@@ -1734,7 +1727,6 @@
                   (ja :num! (loop!))
                   )
                  (else
-                   (+! *target-board-hold-tricks* 1)
                    (add-to-trick-list (-> self board) (board-tricks board-method) 500.0)
                    (set! (-> self board unknown-sound-id01) (sound-play "board-method"))
                    (ja-channel-push! 1 (seconds 0.08))
@@ -1754,7 +1746,6 @@
              (ja :num! (loop!))
              )
             ((< 40960.0 (target-height-above-ground))
-             (+! *target-board-hold-tricks* 1)
              (add-to-trick-list (-> self board) (board-tricks board-nosegrab) 500.0)
              (set! (-> self board unknown-sound-id01) (sound-play "board-nosegrab"))
              (ja-channel-push! 1 (seconds 0.08))
@@ -1928,13 +1919,8 @@
     )
   :exit target-board-exit
   :trans (behavior ()
-    (when (and (logtest? (logior (logior (-> *cpad-list* cpads (-> self control cpad number) button0-rel 0)
-                                         (-> *cpad-list* cpads (-> self control cpad number) button0-rel 1)
-                                         )
-                                 (-> *cpad-list* cpads (-> self control cpad number) button0-rel 2)
-                                 )
-                         (pad-buttons x)
-                         )
+    ;; og:preserve-this - High FPS Fix - https://github.com/open-goal/jak-project/pull/3178
+    (when (and (recently-pressed? x)
                (can-jump? 'board)
                )
       (flush-trick-list (-> self board))
@@ -2025,13 +2011,8 @@
     )
   :exit target-board-exit
   :trans (behavior ()
-    (when (and (logtest? (logior (logior (-> *cpad-list* cpads (-> self control cpad number) button0-rel 0)
-                                         (-> *cpad-list* cpads (-> self control cpad number) button0-rel 1)
-                                         )
-                                 (-> *cpad-list* cpads (-> self control cpad number) button0-rel 2)
-                                 )
-                         (pad-buttons x)
-                         )
+    ;; og:preserve-this - High FPS Fix - https://github.com/open-goal/jak-project/pull/3178
+    (when (and (recently-pressed? x)
                (can-jump? 'board)
                )
       (flush-trick-list (-> self board))
@@ -2173,13 +2154,8 @@
       )
     )
   :trans (behavior ()
-    (when (and (logtest? (logior (logior (-> *cpad-list* cpads (-> self control cpad number) button0-rel 0)
-                                         (-> *cpad-list* cpads (-> self control cpad number) button0-rel 1)
-                                         )
-                                 (-> *cpad-list* cpads (-> self control cpad number) button0-rel 2)
-                                 )
-                         (pad-buttons x)
-                         )
+    ;; og:preserve-this - High FPS Fix - https://github.com/open-goal/jak-project/pull/3178
+    (when (and (recently-pressed? x)
                (can-jump? 'board)
                )
       (let ((v1-15 (/ (- (current-time) (-> self board ride-start-time)) 300)))
@@ -2960,7 +2936,7 @@
           (set! (-> v1-6 invinc-time) (the-as time-frame (-> *TARGET-bank* hit-invulnerable-timeout)))
           (set! (-> v1-6 speed) 1.0)
           (set! (-> v1-6 damage) (-> *FACT-bank* health-default-inc))
-          (set! (-> v1-6 knock) (the-as uint 0))
+          (set! (-> v1-6 knock) (knocked-type knocked-type-0))
           )
         (case arg0
           (('shove)
@@ -3044,7 +3020,7 @@
             )
           )
         (when (not (and (= (-> self game mode) 'play) (>= 0.0 (-> (the-as fact-info-target (-> self fact)) health))))
-          (when (= (-> gp-0 knock) 8)
+          (when (= (-> gp-0 knock) (knocked-type knocked-type-8))
             (set-quaternion! (-> self control) (-> self control dir-targ))
             (set-forward-vel (* -3.0 (-> gp-0 shove-back)))
             (when (demo?)

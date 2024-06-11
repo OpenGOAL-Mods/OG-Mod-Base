@@ -23,7 +23,7 @@ const std::unordered_map<int, std::string> game_iso_territory_map = {
 
 std::string get_territory_name(int territory) {
   ASSERT_MSG(game_iso_territory_map.count(territory),
-             fmt::format("territory {} not found in territory name map"));
+             fmt::format("territory {} not found in territory name map", territory));
   return game_iso_territory_map.at(territory);
 }
 
@@ -117,6 +117,16 @@ extractor_iso_database() {
               {4637199624374114440U},  // iso hash
               "ko",                    // decompiler config
               "jak2",
+              {}}}}},
+          // Jak 3 NTSC-U
+          {"SCUS-97330",            // serial from ELF name
+           {{4975852519304227343,  // hash of ELF
+             {"Jak 3",             // canonical name
+              GAME_TERRITORY_SCEA,
+              749,                     // number of files
+              {1197801364027358161},  // iso hash
+              "ntsc_v1",                    // decompiler config
+              "jak3",
               {}}}}},
       };
   return database;
@@ -267,6 +277,11 @@ std::tuple<uint64_t, int> calculate_extraction_hash(const fs::path& extracted_is
   int filec = 0;
   for (auto const& dir_entry : fs::recursive_directory_iterator(extracted_iso_path)) {
     if (dir_entry.is_regular_file()) {
+      // skip the `buildinfo.json` file, we make that -- not relevant!
+      if (dir_entry.path().filename() == "buildinfo.json") {
+        lg::warn("skipping buildinfo.json, that is a file our tools generate");
+        continue;
+      }
       auto buffer = file_util::read_binary_file(dir_entry.path().string());
       auto hash = XXH64(buffer.data(), buffer.size(), 0);
       combined_hash ^= hash;

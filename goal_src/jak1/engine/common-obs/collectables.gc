@@ -1,5 +1,13 @@
 ;;-*-Lisp-*-
 (in-package goal)
+(bundles "ENGINE.CGO" "GAME.CGO")
+
+(require "engine/common-obs/generic-obs.gc")
+(require "engine/physics/trajectory.gc")
+(require "engine/collide/collide-cache.gc")
+(require "pc/pckernel.gc")
+(require "engine/common-obs/collectables-part.gc")
+(require "engine/entity/entity.gc")
 
 ;; name: collectables.gc
 ;; name in dgo: collectables
@@ -1111,6 +1119,7 @@
     )
   )
 
+(define-extern orb-placer-list-maintenace (function symbol none))
 (defstate pickup (money)
   :virtual #t
   :code (behavior ((arg0 object) (arg1 handle))
@@ -1123,6 +1132,12 @@
     (process-entity-status! self (entity-perm-status dead) #t)
     (runs-on-orb-pickup (ppointer->process (-> self parent)))  ;; trigger hook for mod base
     (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* money))))
+    )
+  :exit (behavior ()
+    ;; refresh orb-placer list in debug mode
+    (when *debug-segment*
+      (orb-placer-list-maintenace #t)
+      )
     )
   )
 

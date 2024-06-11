@@ -9,16 +9,6 @@
 
 #include "third-party/imgui/imgui.h"
 
-namespace {
-std::string uppercase_string(const std::string& s) {
-  std::string result;
-  for (auto c : s) {
-    result.push_back(toupper(c));
-  }
-  return result;
-}
-}  // namespace
-
 Loader::Loader(const fs::path& base_path, int max_levels)
     : m_base_path(base_path), m_max_levels(max_levels) {
   m_loader_thread = std::thread(&Loader::loader_thread, this);
@@ -49,6 +39,13 @@ const LevelData* Loader::get_tfrag3_level(const std::string& level_name) {
   } else {
     existing->second->frames_since_last_used = 0;
     return existing->second.get();
+  }
+}
+
+void Loader::debug_print_loaded_levels() {
+  std::unique_lock<std::mutex> lk(m_loader_mutex);
+  for (const auto& [name, _] : m_loaded_tfrag3_levels) {
+    fmt::print("{}\n", name);
   }
 }
 
@@ -188,8 +185,7 @@ void Loader::loader_thread() {
       // load the fr3 file
       prof().begin_event("read-file");
       Timer disk_timer;
-      auto data =
-          file_util::read_binary_file(m_base_path / fmt::format("{}.fr3", uppercase_string(lev)));
+      auto data = file_util::read_binary_file(m_base_path / fmt::format("{}.fr3", lev));
       double disk_load_time = disk_timer.getSeconds();
       prof().end_event();
 
@@ -365,7 +361,7 @@ void Loader::update_blocking(TexturePool& tex_pool) {
 }
 
 const std::string* Loader::get_most_unloadable_level() {
-  for (const auto& [name, lev] : m_loaded_tfrag3_levels) {
+  for (auto& [name, lev] : m_loaded_tfrag3_levels) {
     if (lev->frames_since_last_used > 180 &&
         std::find(m_desired_levels.begin(), m_desired_levels.end(), name) ==
             m_desired_levels.end()) {
@@ -494,6 +490,9 @@ void Loader::update(TexturePool& texture_pool) {
           }
         }
 
+        m_garbage_buffers.push_back(lev->hfrag_indices);
+        m_garbage_buffers.push_back(lev->hfrag_indices);
+
         m_garbage_buffers.push_back(lev->collide_vertices);
         m_garbage_buffers.push_back(lev->merc_vertices);
         m_garbage_buffers.push_back(lev->merc_indices);
@@ -511,7 +510,22 @@ void Loader::update(TexturePool& texture_pool) {
     }
 
     if (unload_timer.getMs() > 5.f) {
-      fmt::print("Unload took {:.2f}\n", unload_timer.getMs());
+      fmt::print("Unload took {:.2f}ms\n", unload_timer.getMs());
+    }
+
+    if (!m_garbage_buffers.empty()) {
+      did_gpu_stuff = true;
+      for (int i = 0; i < 5 && !m_garbage_buffers.empty(); i++) {
+        glDeleteBuffers(1, &m_garbage_buffers.back());
+        m_garbage_buffers.pop_back();
+      }
+    }
+
+    if (!did_gpu_stuff && !m_garbage_textures.empty()) {
+      for (int i = 0; i < 20 && !m_garbage_textures.empty(); i++) {
+        glDeleteTextures(1, &m_garbage_textures.back());
+        m_garbage_textures.pop_back();
+      }
     }
 
     if (!m_garbage_buffers.empty()) {

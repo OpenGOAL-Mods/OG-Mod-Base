@@ -59,7 +59,7 @@
   (the text-id (+ (text-id trick-board-none) trick)))
 
 (defmethod render-combo board-trick-tracker ((this board-trick-tracker))
-  (when (not (-> *pc-settings* jetboard-trick-text?))
+  (when (not (pc-cheats? (-> *pc-settings* cheats) board-tricks))
     (return 0))
 
   (clear *temp-string*)
@@ -105,7 +105,6 @@
     (set-width! font-ctx 332)
     (set-scale! font-ctx 0.35)
     (print-game-text *temp-string* font-ctx #f 44 (bucket-id debug-no-zbuf1))
-    
     ;; Add points
     (+! (-> font-ctx origin y) 36.0)
     (set-scale! font-ctx 0.5)
@@ -2914,6 +2913,7 @@
   (none)
   )
 
+(define-extern *target-board-hold-tricks* int)
 (defmethod flush-trick-list ((this board-info))
   "Flush trick list and give out points."
   (let ((f30-0 0.0))
@@ -2936,6 +2936,7 @@
         (end-combo! *board-trick-tracker*))
       )
     )
+  (set! *target-board-hold-tricks* 0)
   (set! (-> this trick-count) 0)
   0
   0

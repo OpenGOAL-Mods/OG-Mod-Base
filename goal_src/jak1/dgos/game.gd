@@ -30,6 +30,7 @@
   "dma-buffer.o"
   "dma-bucket.o"
   "dma-disasm.o"
+  "pc-cheats.o" ;; added
   "pckernel-h.o" ;; added
   "pckernel-impl.o" ;; added
   "pc-debug-common.o" ;; added
@@ -348,7 +349,9 @@
   "hud-classes-pc.o" ;; added
   "mod-settings.o" ;; added
   "mod-common-functions.o" ;; added
+  "orb-placer.o" ;; added
   "mod-custom-code.o" ;; added
+  "mod-debug.o" ;; added
   ;; keep zoomer stuff loaded
   "target-racer-h.o"
   "racer-part.o"
@@ -365,4 +368,7 @@
   "target-flut.o"
   "flut-saddle-ag.go"
   "eichar-flut+0-ag.go"
+  ;; keep blocking-plane stuff loaded
+  "blocking-plane.o"
+  "ef-plane-ag.go"
  ))

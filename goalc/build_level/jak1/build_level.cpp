@@ -1,5 +1,7 @@
 #include "build_level.h"
 
+#include "common/util/gltf_util.h"
+
 #include "decompiler/extractor/extractor_util.h"
 #include "decompiler/level_extractor/extract_merc.h"
 #include "goalc/build_level/collide/jak1/collide_bvh.h"
@@ -15,9 +17,9 @@ bool run_build_level(const std::string& input_file,
                      const std::string& output_prefix) {
   auto level_json = parse_commented_json(
       file_util::read_text_file(file_util::get_file_path({input_file})), input_file);
-  LevelFile file;          // GOAL level file
-  tfrag3::Level pc_level;  // PC level file
-  TexturePool tex_pool;    // pc level texture pool
+  LevelFile file;                   // GOAL level file
+  tfrag3::Level pc_level;           // PC level file
+  gltf_util::TexturePool tex_pool;  // pc level texture pool
 
   // process input mesh from blender
   gltf_mesh_extract::Input mesh_extract_in;
@@ -45,12 +47,20 @@ bool run_build_level(const std::string& input_file,
   // vis infos
   // actors
   std::vector<EntityActor> actors;
-  add_actors_from_json(level_json.at("actors"), actors, level_json.value("base_id", 1234));
+  auto dts = decompiler::DecompilerTypeSystem(GameVersion::Jak1);
+  dts.parse_enum_defs({"decompiler", "config", "jak1", "all-types.gc"});
+  add_actors_from_json(level_json.at("actors"), actors, level_json.value("base_id", 1234), dts);
+  std::sort(actors.begin(), actors.end(), [](auto& a, auto& b) { return a.aid < b.aid; });
+  auto duplicates = std::adjacent_find(actors.begin(), actors.end(),
+                                       [](auto& a, auto& b) { return a.aid == b.aid; });
+  ASSERT_MSG(duplicates == actors.end(),
+             fmt::format("Actor IDs must be unique. Found at least two actors with ID {}",
+                         duplicates->aid));
   file.actors = std::move(actors);
   // ambients
   std::vector<EntityAmbient> ambients;
   jak1::add_ambients_from_json(level_json.at("ambients"), ambients,
-                               level_json.value("base_id", 12345));
+                               level_json.value("base_id", 12345), dts);
   file.ambients = std::move(ambients);
   auto& ambient_drawable_tree = file.drawable_trees.ambients.emplace_back();
   (void)ambient_drawable_tree;
@@ -96,18 +106,9 @@ bool run_build_level(const std::string& input_file,
   // TODO remove hardcoded config settings
   if ((level_json.contains("art_groups") && !level_json.at("art_groups").empty()) ||
       (level_json.contains("textures") && !level_json.at("textures").empty())) {
-    fs::path iso_folder = "";
     lg::info("Looking for ISO path...");
-    // TODO - add to file_util
-    for (const auto& entry :
-         fs::directory_iterator(file_util::get_jak_project_dir() / "iso_data")) {
-      // TODO - hard-coded to jak 1
-      if (entry.is_directory() &&
-          entry.path().filename().string().find("jak1") != std::string::npos) {
-        lg::info("Found ISO path: {}", entry.path().string());
-        iso_folder = entry.path();
-      }
-    }
+    const auto iso_folder = file_util::get_iso_dir_for_game(GameVersion::Jak1);
+    lg::info("Found ISO path: {}", iso_folder.string());
 
     if (iso_folder.empty() || !fs::exists(iso_folder)) {
       lg::warn("Could not locate ISO path!");
@@ -137,7 +138,7 @@ bool run_build_level(const std::string& input_file,
       objs.push_back(iso_folder / obj_name);
     }
 
-    decompiler::ObjectFileDB db(dgos, fs::path(config.obj_file_name_map_file), objs, {}, {},
+    decompiler::ObjectFileDB db(dgos, fs::path(config.obj_file_name_map_file), objs, {}, {}, {},
                                 config);
 
     // need to process link data for tpages
@@ -146,7 +147,7 @@ bool run_build_level(const std::string& input_file,
     decompiler::TextureDB tex_db;
     auto textures_out = file_util::get_jak_project_dir() / "decompiler_out/jak1/textures";
     file_util::create_dir_if_needed(textures_out);
-    db.process_tpages(tex_db, textures_out, config);
+    db.process_tpages(tex_db, textures_out, config, "");
 
     std::vector<std::string> processed_art_groups;
 
@@ -203,8 +204,16 @@ bool run_build_level(const std::string& input_file,
     }
   }
 
+  // add custom models to fr3
+  if (level_json.contains("custom_models") && !level_json.at("custom_models").empty()) {
+    auto models = level_json.at("custom_models").get<std::vector<std::string>>();
+    for (auto& name : models) {
+      add_model_to_level(GameVersion::Jak1, name, pc_level);
+    }
+  }
+
   // Save the PC level
-  save_pc_data(file.nickname, pc_level,
+  save_pc_data(file.name, pc_level,
                file_util::get_jak_project_dir() / "out" / output_prefix / "fr3");
 
   return true;

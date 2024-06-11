@@ -172,6 +172,15 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none)
   )
 
+(defun process-by-aid ((arg0 uint))
+  "Get the process for the entity with the given aid. If there is no entity or process, #f."
+  (let ((v1-0 (entity-by-aid arg0)))
+    (if v1-0
+      (-> v1-0 extra process)
+    )
+  )
+)
+
 (defun spawn-actor-by-name ((name string))
   ;; Takes in the string of name of a actor, and spawns a new process based on the entity.
     (let* ((entity-actor (the entity-actor (entity-by-name name)))
@@ -265,7 +274,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defmacro pd-pos-m (procname)
   `(let* ((obj (the process-drawable (process-by-ename ,procname)))
           (vec (-> obj root trans)))
-    (format 0 "~m ~m ~m~%" (-> vec x) (-> vec y) (-> vec z) 4096.0)
+    (format 0 "~m ~m ~m~%" (-> vec x) (-> vec y) (-> vec z))
     (none)
     )
   )
@@ -364,7 +373,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   )
 
 
-;;This returns true or false if jak is within a bubble defined by coordiantes and width
+;; This returns true or false if jak is within a bubble defined by coordinates and width
 (defun in-bubble? ((x float) (y float) (z float) (w float))
   (<= 
     (vector-vector-distance 
@@ -379,9 +388,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (stop-main-music)
       (case (-> (level-get-target-inside *level*) name)
          (('test-zone)
-         (if (> (knuth-rand-int-range 0 15) (+ 8 5))
-          (play-main-music "SND/music-test-zone.mp3" (the int (-> *setting-control* default music-volume)))
-          (play-main-music "SND/music-test-zone-track2.mp3" (the int (-> *setting-control* default music-volume))))
+        ;;  (if (> (knuth-rand-int-range 0 15) (+ 8 5))
+        ;;   (play-main-music "SND/music-test-zone.mp3" (the int (-> *setting-control* default music-volume)))
+        ;;   (play-main-music "SND/music-test-zone-track2.mp3" (the int (-> *setting-control* default music-volume))))
          )
          ;;Add more cases here for each level
          (else
@@ -431,3 +440,30 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun draw-light-blue ((jak target))
   (draw-xyz jak 0.0 3.0 3.0)
 )
+
+;; Helper functions for spawning orbs (used by orb placer in debug mode)
+
+(defun spawn-money ((vec vector) (amount float) (bob? symbol))
+  (let ((fax (new 'static 'fact-info)))
+    (set! (-> fax pickup-type) (pickup-type money))
+    (set! (-> fax pickup-amount) amount)
+    (set! (-> fax pickup-spawn-amount) amount)
+    (set! (-> fax fade-time) (the-as time-frame 0))
+    
+    (let ((proc (the money (ppointer->process (birth-pickup-at-point vec (pickup-type money) amount #t *active-pool* fax)))))
+      (when bob? 
+        (set! (-> proc bob-amount) 1024.0)
+        )
+      (format 0 "spawned ~A~%" proc)
+      ;; return handle to the orb
+      (process->handle proc)
+      )
+    )
+  )
+
+(defun spawn-money-meters ((x float) (y float) (z float) (amount float) (bob? symbol))
+  (let ((vec (new 'stack-no-clear 'vector)))
+    (set-vector-meters! vec x y z)
+    (spawn-money vec amount bob?)
+    )
+  )

@@ -276,3 +276,4 @@
           (pc-settings-save))))
 
 (define *progress-generic-temp-string* (new 'global 'string 512 (the string #f)))
+

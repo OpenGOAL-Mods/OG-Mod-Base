@@ -56,7 +56,7 @@
               :bounds (static-spherem 0 0 0 0.6)
               :shadow collectables-skill-shadow-mg
               :texture-level 6
-              :shadow-joint-index 0
+              :shadow-joint-index 3
               )
 
 (deftype collectable (process-drawable)
@@ -1486,10 +1486,17 @@ This commonly includes things such as:
     )
   )
 
+(define-extern orb-placer-list-maintenace (function symbol none))
 (defstate pickup (money)
   :virtual #t
   :code (behavior ((arg0 symbol) (arg1 handle))
     (process-entity-status! self (entity-perm-status dead) #t)
+    )
+  :exit (behavior ()
+    ;; refresh orb-placer list in debug mode
+    (when *debug-segment*
+      (orb-placer-list-maintenace #t)
+      )
     )
   )
 
