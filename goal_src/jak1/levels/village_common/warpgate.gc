@@ -140,7 +140,7 @@
 (if
 (and (= (-> (level-get-target-inside *level*)name) (->  (get-continue-by-name *game-info* (-> *warp-info* (get-unlock-level))) level)) (!= (-> (level-get-target-inside *level*)name) 'block-world))
 (begin
-(play-sound-file "SND/nosoftlock.mp3" 100)
+(play-sound-file "custom_assets/jak1/SND/nosoftlock.mp3" 100)
 (set-unlock-level)
 ;;TEST THIS
 )
@@ -421,7 +421,7 @@
           (let ((s1-2 (get-continue-by-name *game-info* (-> *warp-info* gp-0))))
             (lookup-level-info (-> s1-2 level))
            (if (and (= (-> (level-get-target-inside *level*)name) (->  (get-continue-by-name *game-info* (-> *warp-info* gp-0)) level)) (cpad-pressed? 0 circle) (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.05)))
-          (play-sound-file "SND/nope.mp3" (the int (-> *setting-control* default dialog-volume)))
+          (play-sound-file "custom_assets/jak1/SND/nope.mp3" (the int (-> *setting-control* default dialog-volume)))
            (begin
 
             (when (and (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.05)) (cpad-pressed? 0 circle) (have-all-chicks-safe))

@@ -1116,6 +1116,7 @@
    )
   )
 
+(define *show-total-chicks-in-lvl* #f)
 
 (defmethod draw-hud ((this hud-fuel-cell))
   (let ((t9-0 (method-of-type hud draw-hud)))
@@ -1172,7 +1173,17 @@
         (((hud-collectable-view original))
           ;; show original (cells collected across entire game)
           (draw-string-xy
-            (string-format "~D" (-> this value))
+             (if *show-total-chicks-in-lvl* (string-format "~D/~D" (+
+                                    (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks)
+                                    (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)
+                                    )
+                                    (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks)
+                                    )
+                                    (string-format "~D" (+
+                                    (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))saved-chicks)
+                                    (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks)
+                                    ))
+                                    );;(-> this value))
             buf
             string-x
             string-y

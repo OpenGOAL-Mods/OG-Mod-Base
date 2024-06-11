@@ -140,6 +140,17 @@
 (none)
 )
 
+(defun-extern stupid-hacks-every-frame none)
+(defbehavior stupid-hacks-every-frame-proc process ()
+"Ideally this process does nothing, but unfortunately it does alot"
+(while #t
+(stupid-hacks-every-frame)
+(suspend)
+)
+(none)
+)
+
+
 (defun-extern variable-every-frame none)
 (defbehavior variable-every-frame-proc process ()
 "Process is responsible for updating most variables/globals this process should never be suspended"
@@ -167,7 +178,7 @@
        (process-spawn-function process variable-every-frame-proc)
       ;; (process-spawn-function process text-every-frame-proc)
        (process-spawn-function process debug-text-every-frame-proc)
-      ;; (process-spawn-function process stupid-hacks-every-frame-proc)
+       (process-spawn-function process stupid-hacks-every-frame-proc)
 
 
       (when *debug-segment*
@@ -194,6 +205,22 @@
 
 (defun sound-manager()
 "responsible for all the sounds played during cutscenes"
+
+  ;;Hack to disable cutscene skips for specific cutscenes     (if               ;;Cutscenes added here will be unskippable witht the triangle button
+          (if (and *custom-cutscene?* (or  (string= (-> *art-control* active-stream) "sage-intro-sequence-a")
+                        (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-b")
+                        (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-c")
+                        (string= (-> *art-control* active-stream) "finalbosscam-white-eco")
+                        (string= (-> *art-control* active-stream) "green-sagecage-daxter-sacrifice")
+                        (string= (-> *art-control* active-stream) "green-sagecage-outro-beat-boss-a")
+
+
+                        ))
+                        (set! (-> *pc-settings* skip-movies?) #f)
+                        (set! (-> *pc-settings* skip-movies?) #t)
+                  )
+
+
 (let ((current-timea (current-time))
       (chem-bool #f))
   (when (handle->process (-> *art-control* spool-lock))(with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the
@@ -459,6 +486,102 @@
 
       (none)
       )
+
+      (define *old-voice-volume* 0.0)
+      (defun-extern robo-movie-check (none))
+
+        (defun robo-movie-check ()
+
+      (when (and (process-by-ename "robotboss-3") *target*)
+      (if  (and (= (-> (process-by-ename "robotboss-3") state name) 'robotboss-blue-wait) (!= (-> *target* state name) 'target-continue) )
+        (begin
+              (suspend)
+        (go-process  (process-by-ename "robotboss-3") robotboss-white-eco-movie)
+        (suspend)
+        )
+
+      )
+
+      )
+      (none))
+
+(defun stupid-hacks-every-frame ()
+(when run-mort-code?
+;;Hack the main menu music since we cant pause it yet
+(main-music-volume (the int (* (-> *setting-control* default music-volume) 0.75)))
+
+    ;; Its so funny that this works lol
+
+
+;;Hack to warp/skip to the light eco cutscene if we are in citadel because I dont know how to make mort bosses yet
+(when (and (process-by-ename "robotboss-3") *target*)
+    (robo-movie-check)
+    )
+
+
+;;Hack to rotat the warpgate this one is extra weird the math on this is wrong but the idea is close enough, might not work in coins??
+  (if (and  (entity-by-name "project-training-part-1") (!= (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))
+  ))))
+       (set! (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))))
+     )
+  )
+
+
+
+  )
+
+
+
+;;Hack to set the voice volume to 0 during these cutscenes, then restore it when the cutscene is overridden.
+
+(when (string= *currentSpoolName* "green-sagecage-outro-beat-boss-b")
+    (str-play-stop *currentSpoolName*)
+    (set! (-> *art-control* active-stream) #f)
+
+)
+
+          (if (or (and *custom-cutscene?* (or  (string= *currentSpoolName* "sage-intro-sequence-a")
+                   (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
+                   (string= *currentSpoolName* "sidekick-human-intro-sequence-c")))
+
+
+                   (and *custom-cutscene?*  (string= *currentSpoolName* "finalbosscam-white-eco")
+
+                    (or (< *currentCutsceneFrame* 267)
+                    (> *currentCutsceneFrame* 321)
+                    )
+                   )
+                   ;;annoying but the daxter cutscene takes a second to update the volume...
+                   (and *custom-cutscene?*  (string= *currentSpoolName* "green-sagecage-daxter-sacrifice") )
+                   )
+
+
+
+                        (begin
+                        ;;store the current volume setting
+                        (if (= *old-voice-volume* 0.0)
+                        (set! *old-voice-volume* (-> *setting-control* default dialog-volume))
+                        )
+                        ;;set volume to 0 during this cutscene
+                        (set! (-> *setting-control* default dialog-volume) 0.0)
+                        )
+                        (begin
+                        (if (and (!= *old-voice-volume* 0.0 )(= (-> *setting-control* default dialog-volume) 0.0))
+                          (begin
+                          (set! (-> *setting-control* default dialog-volume) *old-voice-volume*)
+                          (set! *old-voice-volume* 0.0)
+                          )
+                        )
+                  )
+
+          )
+
+
+
+  (none)
+)
+
+
 
     (defun runs-on-orb-pickup ((parent process-tree))
       (let* ((from-cache? (and parent (type-type? (-> parent type) orb-cache-top))))

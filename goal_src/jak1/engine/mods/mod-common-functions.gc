@@ -505,7 +505,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                 (until (time-elapsed? current-timea (seconds 27))
                     (suspend)
                 )
-            (play-sound-file "SND/joshsuprise.mp3" (the int 200))
+            (play-sound-file "custom_assets/jak1/SND/joshsuprise.mp3" (the int 200))
             )
   (none)
 )
@@ -517,8 +517,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       ;;If we arent in hub 3 warp there.
         (if (and  (!= (-> (level-get-target-inside *level*)name ) 'mort-title))
         (begin
+
          (send-event *target* 'continue (get-continue-by-name *game-info* "mort-title-start"))
-            (set-blackout-frames (seconds 25.1))
+
             ;;We need to sleep for a tiny amount of time, so we dont spawn multiple process
             (let ((current-timea (current-time)))
              (until (time-elapsed? current-timea (seconds 0.2))
@@ -604,6 +605,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                       (suspend)
                     )
               )
+              (set-blackout-frames (seconds 25.3))
     (str-play-stop *currentSpoolName*)
     (set! (-> *art-control* active-stream) #f)
 
@@ -614,10 +616,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     )
 
     (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 2))
-    (play-sound-file "SND/farts/fart1.mp3" (the int (-> *setting-control* default dialog-volume)))
+    (play-sound-file "custom_assets/jak1/SND/farts/fart1.mp3" (the int (-> *setting-control* default dialog-volume)))
     )
     (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 250))
-    (play-sound-file "SND/farts/vinefart.mp3" (the int (-> *setting-control* default dialog-volume)))
+    (play-sound-file "custom_assets/jak1/SND/farts/vinefart.mp3" (the int (-> *setting-control* default dialog-volume)))
     )
 
 

@@ -11,6 +11,7 @@
 (require "engine/common-obs/generic-obs.gc")
 (require "pc/pckernel.gc")
 
+
 ;; name: main.gc
 ;; name in dgo: main
 ;; dgos: GAME, ENGINE
@@ -21,6 +22,8 @@
 ;; Letterbox and blackout
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun-extern runs-every-frame (none))
+(define-extern *in-mort-menu* symbol)
+(define-extern *warp-info* (array string))
 
 (defun set-letterbox-frames ((arg0 time-frame))
   "Set the letterbox frame counter for arg0 frames in the future"
@@ -238,6 +241,18 @@
 
                  ;; pushing start.
                  ((cpad-hold? 0 start)
+
+                      ;;Tagmort This is where the game checks for pause, we can hijack here and have different results based on level etc
+                     (if (= (-> (level-get-target-inside *level*)name) 'mort-title)
+                        (begin
+                        (set! *in-mort-menu* #f)
+                        ;; replace with mort menu eventually
+                        (sound-play "select-menu")
+                        (send-event *target* 'continue (get-continue-by-name *game-info* (-> *warp-info* 0)))
+                        (return 0)
+                        )
+                        )
+
                   ;; toggle between progress/game
                   (if *progress-process*
                       'game
@@ -377,6 +392,16 @@
   (when (and (cpad-hold? 0 l3)
              (or *cheat-mode* (= *kernel-boot-message* 'play)) ;; not in demo
              )
+
+    ;; cheat mode
+    (check-cheat-code (-> *cheat-temp* 0) 0
+        (up up down down left right left right x x square circle square circle)
+          (cpad-clear! 0 r1)
+          ;;Mort softlock backup hack
+      (+! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 1)
+     (play-sound-file "custom_assets/jak1/snd/chickendance.mp3" (the int (-> *setting-control* default sfx-volume)))
+        )
+
 
     ;; cheat mode
     (check-cheat-code (-> *cheat-temp* 0) 0

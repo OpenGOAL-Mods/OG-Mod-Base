@@ -1140,7 +1140,7 @@ Temporary hardcoded hack so I can be sure how this works for release
     (the-as process-drawable (process-by-ename "project-training-part-1") )
                                     (< (vector-vector-distance
                                     (-> (the-as process-drawable (process-by-ename "project-training-part-1") )root trans)
-                                    (-> (get-chick-from-flock i) root trans)) (meters 0.1))
+                                    (-> (get-chick-from-flock i) root trans)) (meters 0.6))
                                     )
                                     ;;Play portal effect on them
                                     (if (!=  (-> (get-chick-from-flock i) skel effect) #f)

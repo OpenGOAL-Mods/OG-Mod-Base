@@ -1079,7 +1079,7 @@
   )
 
 (defmethod should-display? ((this green-sagecage))
-  (< (-> this which-movie) 2)
+  #t;;(< (-> this which-movie) 2)
   )
 
 (defstate idle (green-sagecage)

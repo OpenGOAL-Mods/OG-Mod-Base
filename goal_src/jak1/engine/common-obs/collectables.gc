@@ -1668,17 +1668,17 @@
                    )
                )
          )
-    (cond
-      (s5-0
-        (set! (-> s5-0 victory-anim) (fuel-cell-pick-anim s5-0))
-        (spool-push *art-control* (-> s5-0 victory-anim name) 0 self (the-as float -99.0))
-        )
-      (else
-        (let ((v1-5 (fuel-cell-pick-anim self)))
-          (spool-push *art-control* (-> v1-5 name) 0 self (the-as float -99.0))
-          )
-        )
-      )
+    ;; (cond
+    ;;   (s5-0
+    ;;     (set! (-> s5-0 victory-anim) (fuel-cell-pick-anim s5-0))
+    ;;     (spool-push *art-control* (-> s5-0 victory-anim name) 0 self (the-as float -99.0))
+    ;;     )
+    ;;   (else
+    ;;     (let ((v1-5 (fuel-cell-pick-anim self)))
+    ;;       (spool-push *art-control* (-> v1-5 name) 0 self (the-as float -99.0))
+    ;;       )
+    ;;     )
+    ;;   )
     )
   (when (nonzero? (-> self part))
     (cond
@@ -1701,10 +1701,22 @@
                      )
                )
           (spawn (-> self part) (the-as vector gp-2))
-          (when (nonzero? (-> self sound))
+         (if (< (vector-vector-xz-distance (target-pos 0) (-> self root trans)) (meters 8.0))
+         ;;tag mort
+                 (begin  (when (nonzero? (-> self sound))
             (update-trans! (-> self sound) (the-as vector gp-2))
             (update! (-> self sound))
-            )
+           )
+                 )
+
+                  (begin  (when (nonzero? (-> self sound))
+            (update-trans! (-> self sound) (new 'static 'vector))
+            (update! (-> self sound))
+           )
+                 )
+
+
+         )
           )
         )
       )

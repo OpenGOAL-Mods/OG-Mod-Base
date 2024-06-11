@@ -451,7 +451,6 @@
   (melt)
   )
 
-;;tageco ADD NEW ECO HERE, ORDER IS IMPORTANT ONLY ADD TO END
 (defenum pickup-type
   :type int32
   (none)
@@ -464,10 +463,6 @@
   (eco-pill)
   (buzzer)
   (eco-pill-random)
-  (star)
-  (eco-gravity)
-  (eco-ice)
-  (eco-chicken)
   )
 
 (defenum load-msg-result
@@ -11423,12 +11418,13 @@
      (time             float          :offset-assert 32)
      (gravity          meters         :offset-assert 36)
      )
-
+    :method-count-assert 16
+    :size-assert         #x28
+    :flag-assert         #x1000000028
     (:methods
       (eval-position! (_type_ float vector) vector) ;; 9
       (eval-velocity! (_type_ float vector) vector) ;; 10
       (setup-from-to-duration! (_type_ vector vector float float) none) ;; 11
-      (setup-from-to-duration-scaled! (_type_ vector vector float float float) none) ;; 11
       (setup-from-to-xz-vel! (_type_ vector vector float float) none) ;; 12
       (setup-from-to-y-vel! (_type_ vector vector float float) none) ;; 13
       (setup-from-to-height! (_type_ vector vector float float) none) ;; 14
@@ -25242,7 +25238,7 @@
   )
 
 (deftype village-cam (process)
-  ((root       trsq   :score 100 :offset-assert 112)
+  ((root-override       trsq   :score 100 :offset-assert 112)
    (range      meters  :offset-assert 116)
    (index      int32   :offset-assert 120)
    (state-time time-frame  :offset-assert 128)
@@ -27329,7 +27325,7 @@
   )
 
 (deftype towertop (process-drawable)
-  ((root trsq :score 100 :offset 112))
+  ((root-override trsq :score 100 :offset 112))
   :method-count-assert 20
   :size-assert         #xb0
   :heap-base           #x40
@@ -28360,7 +28356,7 @@
 ;; - Types
 
 (deftype windmill-sail (process-drawable)
-  ((root trsq :score 100 :offset 112)
+  ((root-override trsq :score 100 :offset 112)
    (sync         sync-info  :inline :offset-assert 176)
    (blade-normal vector     :inline :offset-assert 192)
    (orig-quat    quaternion :inline :offset-assert 208)
@@ -28376,7 +28372,7 @@
   )
 
 (deftype sagesail (process-drawable)
-  ((root trsq :score 100 :offset 112)
+  ((root-override trsq :score 100 :offset 112)
    (sync         sync-info  :inline :offset-assert 176)
    (blade-normal vector     :inline :offset-assert 192)
    (orig-quat    quaternion :inline :offset-assert 208)
@@ -35038,4 +35034,3 @@
 (define-extern *cavegeyserrock-sg* skeleton-group)
 
 (define-extern cavecrystal-light-control-cavegeyserrock-callback (function (pointer process-drawable) int float object vector none))
-

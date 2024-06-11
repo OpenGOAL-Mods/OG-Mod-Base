@@ -57,6 +57,9 @@
   ;; the velocity we need in xz to make it in time
   (let ((xz-vel (/ (vector-vector-xz-distance to from) duration)))
     ;; our velocity will point along from -> to
+     ;; MORT
+    (set! xz-vel (* xz-vel speed))
+
     (vector-! (-> this initial-velocity) to from)
     ;; but have magnitude that we calculated above.
     (vector-xz-normalize! (-> this initial-velocity) xz-vel)

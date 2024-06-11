@@ -19,7 +19,24 @@ const std::map<std::string, std::string> level_names = {{"intro", "Intro"},
                                                         {"maincave", "Spider Cave"},
                                                         {"lavatube", "Lava Tube"},
                                                         {"citadel", "Gol and Maia's Citadel"},
-                                                        {"finalboss", "Final Boss"}};
+                                                        {"finalboss", "finalboss"},
+                                                        {"block-world", "block-world"},
+                                                        {"chemical-factory", "Chemical Factory"},
+                                                        {"chicks", "Chicks"},
+                                                        {"coins", "Coins"},
+                                                        {"cold-pipe", "Cold Pipe"},
+                                                        {"factory-cross", "Factory Cross"},
+                                                        {"garden", "Garden"},
+                                                        {"glass-towers", "Glass Towers"},
+                                                        {"holly-wood", "Holly Wood"},
+                                                        {"ice-canyon", "Ice Canyon"},
+                                                        {"ice-slide", "Ice Slide"},
+                                                        {"islands", "Islands"},
+                                                        {"monument", "Monument"},
+                                                        {"pyramid", "Pyramid"},
+                                                        {"space-bridge", "Space Bridge"},
+                                                        {"villa-cube", "Villa Cube"}};
+
 
 // for remapping sub-level names to the matching one in level_names
 const std::map<std::string, std::string> level_name_remap = {{"jungleb", "jungle"},
