@@ -1471,7 +1471,13 @@
 
 (defbehavior ogreboss-post ogreboss ()
   (transform-post)
-  (send-event *camera* 'point-of-interest (-> self node-list data 5 bone transform vector 3))
+  (if (or *enable-ingame-cutscenes?* (name= (-> *game-info* current-continue name) "ogre-start"))
+    (send-event *camera* 'point-of-interest (-> self node-list data 5 bone transform vector 3))
+    (when (and (-> *camera* child 0) (type-type? (-> (the-as process (-> *camera* child 0)) type) camera-slave) (-> (the-as camera-slave (-> *camera* child 0)) tracking use-point-of-interest))
+      (camera-change-to (the-as string 'base) 300 #f)
+      (send-event *camera* 'point-of-interest #f)
+      )
+    )
   0
   (none)
   )
