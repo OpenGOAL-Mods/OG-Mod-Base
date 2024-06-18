@@ -518,7 +518,7 @@
         (logior! (-> gnawer entity extra perm status) (entity-perm-status user-set-from-cstage))
         (set! (-> gnawer entity extra perm user-int16 0) (the-as int (-> gnawer money-mask)))
         )
-      (when (nonzero? (-> gnawer entity extra perm user-uint16 0))
+      (when (and (nonzero? (-> gnawer entity extra perm user-uint16 0)) (type-type? (-> (the-as process-drawable (-> gnawer child 0)) type) money))
         (gnawer-method-30 gnawer (the-as process-drawable (-> gnawer child 0)))
         (reset-specific-actor gnawer-name)
         )
