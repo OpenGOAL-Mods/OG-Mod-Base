@@ -173,8 +173,8 @@
         ;; not in play mode, we're done.
         (set! this this)
         (goto cfg-50))
-        (runs-on-jak-death 'blackout)
         )))
+  (runs-on-jak-death 'blackout)
   (kill-current-level-hint '() '() 'die)
   (case cause
     (('game)
@@ -675,7 +675,7 @@
   (inspect this)
   (when (or (not arg0) (= arg0 'game-task))
     (format #t "~Tgame-task:~%")
-    (dotimes (the int (game-task max))
+    (dotimes (s4-0 (the int (game-task max))) ;; changed from hard-coded 116 to (game-task max)
       (if (task-complete? this (the-as game-task s4-0))
           (format #t "~T~T~S~%" (game-task->string (the-as game-task s4-0)))
           )
