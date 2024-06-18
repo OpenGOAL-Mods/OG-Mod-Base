@@ -1869,6 +1869,9 @@
 
 (defstate robotboss-green-dark-bomb (robotboss)
   :enter (behavior ()
+    (if (not *enable-ingame-cutscenes?*)
+      (kill-by-type green-eco-lurker *active-pool*)
+      )
     (set! (-> self old-loc quad) (-> self desired-loc quad))
     (set-vector! (-> self desired-loc) 16384.0 -81920.0 716800.0 1.0)
     (set! (-> self loc-t) 0.0)
