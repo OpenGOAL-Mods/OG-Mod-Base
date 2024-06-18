@@ -182,7 +182,9 @@
             )
           )
         ((type-type? (-> cur-enemy type) gnawer)
-          (go-process cur-enemy gnawer-die)
+          (if (not (or (= (-> cur-enemy state) gnawer-dying-give-pickups) (= (-> cur-enemy state) gnawer-put-items-at-dest) (= (-> cur-enemy state) gnawer-give-fuel-cell)))
+            (go-process cur-enemy gnawer-die)
+            )
           )
         (else
           (send-event cur-enemy 'die)
