@@ -1,28 +1,21 @@
 ;;-*-Lisp-*-
 (in-package goal)
 (bundles "FIC.DGO" "LAV.DGO" "MIS.DGO" "OGR.DGO" "ROL.DGO" "SNO.DGO" "SWA.DGO")
-
 (require "engine/geometry/path.gc")
 (require "engine/common-obs/process-drawable.gc")
 
-;; name: blocking-plane.gc
-;; name in dgo: blocking-plane
-;; dgos: L1, FIC, LAV, MIS, OGR, RACERP, ROL, SNO, SWA
-
 ;; DECOMP BEGINS
 
-(deftype blocking-plane (process-drawable)
-  ()
+(deftype blocking-plane (process-drawable) ()
   (:states
-    blocking-plane-idle
-    )
-  )
+   blocking-plane-idle))
 
-
-(defskelgroup *ef-plane-sg* ef-plane ef-plane-lod0-jg ef-plane-idle-ja
-              ((ef-plane-lod0-mg (meters 999999)))
-              :bounds (static-spherem 0 0 0 30)
-              )
+(defskelgroup *ef-plane-sg*
+  ef-plane
+  ef-plane-lod0-jg
+  ef-plane-idle-ja
+  ((ef-plane-lod0-mg (meters 999999)))
+  :bounds (static-spherem 0 0 0 30))
 
 (defstate blocking-plane-idle (blocking-plane)
   :trans (behavior ()
@@ -52,8 +45,7 @@
         )
     0.0
     (let ((f30-1 (* 0.5 (vector-vector-distance s5-0 gp-0)))
-          (s4-1 (new 'process 'collide-shape self (collide-list-enum usually-hit-by-player)))
-          )
+          (s4-1 (new 'process 'collide-shape self (collide-list-enum usually-hit-by-player))))
       (let ((s3-1 (new 'process 'collide-shape-prim-mesh s4-1 (the-as uint 0) (the-as uint 0))))
         (set! (-> s3-1 prim-core collide-as) (collide-kind wall-object))
         (set! (-> s3-1 collide-with) (collide-kind target))
@@ -65,8 +57,7 @@
         )
       (set! (-> s4-1 nav-radius) (* 0.75 (-> s4-1 root-prim local-sphere w)))
       (backup-collide-with-as s4-1)
-      (set! (-> self root) s4-1)
-      )
+      (set! (-> self root) s4-1))
     (let ((s4-2 (new-stack-matrix0)))
       (vector+! (-> self root trans) s5-0 gp-0)
       (vector-float*! (-> self root trans) (-> self root trans) 0.5)
@@ -80,9 +71,7 @@
       (set! (-> s4-2 vector 1 quad) (-> (new 'static 'vector :y 1.0 :w 1.0) quad))
       (vector-cross! (-> s4-2 vector 2) (the-as vector (-> s4-2 vector)) (-> s4-2 vector 1))
       (vector-normalize! (-> s4-2 vector 2) 1.0)
-      (matrix->quaternion (-> self root quat) s4-2)
-      )
-    )
+      (matrix->quaternion (-> self root quat) s4-2)))
   (initialize-skeleton self *ef-plane-sg* '())
   (logior! (-> self draw status) (draw-status skip-bones))
   (go blocking-plane-idle)
@@ -90,7 +79,7 @@
   )
 
 ;; Use the below function to spawn a blocking-plane between 2 vectors with a given height.
-;; 
+;;
 ;; Example (spawn):
 ;;
 ;; (when (not (process-by-name "test-blocking-plane-1" *active-pool*))
@@ -100,7 +89,7 @@
 ;;     (blocking-plane-spawn-simple verts (meters 30.0) "test-blocking-plane-1")
 ;;     )
 ;;   )
-;; 
+;;
 ;; Example (despawn):
 ;;
 ;; (let ((plane (process-by-name "test-blocking-plane-1" *active-pool*)))
@@ -109,11 +98,10 @@
 (defun blocking-plane-spawn-simple ((verts (inline-array vector)) (height float) (name string))
   (process-spawn blocking-plane verts height :to *active-pool* :name name)
   )
-  
+
 (defbehavior blocking-plane-spawn process ((arg0 curve-control))
   (cond
-    ((or (not arg0) (logtest? (-> arg0 flags) (path-control-flag not-found)))
-     )
+    ((or (not arg0) (logtest? (-> arg0 flags) (path-control-flag not-found))))
     (else
       (let ((s5-0 (the int (the float (+ (-> arg0 curve num-cverts) -1))))
             (s2-0 (new 'stack-no-clear 'inline-array 'vector 2))
@@ -129,8 +117,7 @@
       )
     )
   0
-  (none)
-  )
+  (none))
 
 (defun blocking-plane-destroy ()
   (with-pp
@@ -138,13 +125,6 @@
       (while gp-0
         (let ((s5-0 (ppointer->process gp-0)))
           (set! gp-0 (-> gp-0 0 brother))
-          (if (type-type? (-> s5-0 type) blocking-plane)
-              (deactivate s5-0)
-              )
-          )
-        )
-      )
+          (if (type-type? (-> s5-0 type) blocking-plane) (deactivate s5-0)))))
     0
-    (none)
-    )
-  )
+    (none)))
