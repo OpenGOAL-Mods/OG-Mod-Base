@@ -886,7 +886,7 @@
         (let ((boss (process-by-ename "ogreboss-1"))
               (bridge (process-by-ename "ogre-bridge-1"))
               )
-          (when boss
+          (when (and boss (!= (-> boss state name) 'ogreboss-die)  (!= (-> boss state name) 'ogreboss-dead))
             (process-entity-status! boss (entity-perm-status complete) #t)
             (cond
               ((= (-> boss state name) 'ogreboss-stage1)
