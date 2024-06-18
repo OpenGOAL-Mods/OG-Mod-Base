@@ -1361,7 +1361,7 @@
     (set! (-> self control unknown-surface00) *run-attack-mods*)
     (set! (-> *run-attack-mods* turnv) 655360.0)
     (set! (-> *run-attack-mods* turnvv) 655360.0)
-    (when (or (= self *target*) (is-interactive? (the int (-> self saved-owner))))
+    (when (or (= self *target*) (target-is-interactive? self))
       (target-start-attack)
       (target-danger-set! 'spin #f)
       )
@@ -1434,7 +1434,7 @@
                    (>= (-> self fact-info-target eco-level) 1.0)
                    (= self *target*)
                    ) 
-                   (and *enable-remote-target-yellow-eco-blasts* (!= self *target*) (is-interactive? (the int (-> self saved-owner))))) ;; give free pass to shoot for remotes
+                   (and *enable-remote-target-yellow-eco-blasts* (!= self *target*) (target-is-interactive? self))) ;; give free pass to shoot for remotes
           (let ((gp-1 (get-process *default-dead-pool* projectile-yellow #x4000)))
             (set! gp-0 (ppointer->handle
                          (when gp-1
@@ -1564,7 +1564,7 @@
         )
       )
     (ja :num! (seek!))
-    (when (or (= self *target*) (and *enable-remote-target-yellow-eco-blasts* (!= self *target*) (is-interactive? (the int (-> self saved-owner)))))
+    (when (or (= self *target*) (and *enable-remote-target-yellow-eco-blasts* (!= self *target*) (target-is-interactive? self)))
       (process-spawn
         projectile-yellow
         :init projectile-init-by-other

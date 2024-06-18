@@ -166,13 +166,13 @@
               )
 
 (defmethod touch-handler muse ((obj muse) (arg0 process) (arg1 event-message-block))
-  (if (or (= arg0 *target*) (and (= (-> arg0 type) target) (is-interactive? (the int (-> (the-as target arg0) saved-owner)))))
+  (if (or (= arg0 *target*) (and (= (-> arg0 type) target) (target-is-interactive? (the-as target arg0))))
     (go muse-caught)
     )
   )
 
 (defmethod attack-handler muse ((obj muse) (arg0 process) (arg1 event-message-block))
-  (if (or (= arg0 *target*) (and (= (-> arg0 type) target) (is-interactive? (the int (-> (the-as target arg0) saved-owner)))))
+  (if (or (= arg0 *target*) (and (= (-> arg0 type) target) (target-is-interactive? (the-as target arg0))))
     (go muse-caught)
     )
   )
