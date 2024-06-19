@@ -1547,7 +1547,7 @@
     (none)
     )
   :code (behavior ()
-    (if (and (not *enable-ingame-cutscenes?*) (= (-> self root-overlay riders num-riders) 0)) ;;remove loads from animation if main target is not on the boat
+    (if (and (not *enable-ingame-cutscenes?*) (= (-> self root-overlay riders num-riders) 0) (not (process-close? self 25000.0))) ;;remove loads from animation if main target is not on the boat
       (set! (-> self anim) (new 'static 'spool-anim
                             :name "fishermans-boat-ride-to-misty"
                             :index 15
@@ -1564,7 +1564,7 @@
           (suspend)
           )
         )
-      (when (!= (-> self root-overlay riders num-riders) 0) ;; rider spot is only allowed for main jak
+      (when (or (!= (-> self root-overlay riders num-riders) 0) (process-close? self 25000.0)) ;; rider spot is only allowed for main jak
         (send-event *target* 'no-look-around (seconds 17.5))
         (camera-change-to (the-as string 'cam-stick) 300 #f)
         )
@@ -1715,7 +1715,7 @@
       )
     )
   :code (behavior ()
-    (if (and (not *enable-ingame-cutscenes?*) (= (-> self root-overlay riders num-riders) 0)) ;;remove loads from animation if main target is not on the boat
+    (if (and (not *enable-ingame-cutscenes?*) (= (-> self root-overlay riders num-riders) 0) (not (process-close? self 25000.0))) ;;remove loads from animation if main target is not on the boat
       (set! (-> self anim) (new 'static 'spool-anim
                               :name "fishermans-boat-ride-to-village1"
                               :index 16
@@ -1734,7 +1734,7 @@
           (suspend)
           )
         )
-      (when (!= (-> self root-overlay riders num-riders) 0) ;; rider spot is only allowed for main jak
+      (when (or (!= (-> self root-overlay riders num-riders) 0) (process-close? self 25000.0)) ;; rider spot is only allowed for main jak
         (send-event *target* 'no-look-around (seconds 15.5))
         (camera-change-to (the-as string 'cam-stick) 600 #f)
         )
