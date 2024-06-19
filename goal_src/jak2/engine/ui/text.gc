@@ -329,7 +329,7 @@ in a single text group and file."
   )
 
 (defun draw-debug-text-box ((arg0 font-context))
-  "Draws the boundaries of the font context. requires any cheat to be enabled."
+  "Draws some lines"
   (when *cheat-mode*
     (#when PC_PORT
       (if (logtest? (-> arg0 flags) (font-flags right))

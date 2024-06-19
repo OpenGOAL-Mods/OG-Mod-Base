@@ -31,7 +31,6 @@ void setup_logging(const bool disable_ansi_colors) {
 int main(int argc, char** argv) {
   ArgumentGuard u8_guard(argc, argv);
 
-  bool auto_mi_exit = false;
   bool auto_find_user = false;
   std::string cmd = "";
   std::string username = "#f";
@@ -93,18 +92,6 @@ int main(int argc, char** argv) {
     if (!cmd.empty()) {
       compiler = std::make_unique<Compiler>(game_version);
       compiler->run_front_end_on_string(cmd);
-      return 0;
-    }
-  } catch (std::exception& e) {
-    lg::error("Compiler Fatal Error: {}", e.what());
-    return 1;
-  }
-
-    try {
-    if (auto_mi_exit) {
-      compiler = std::make_unique<Compiler>(game_version);
-      compiler->run_front_end_on_string("(mi)");
-      compiler->run_front_end_on_string("(e)");
       return 0;
     }
   } catch (std::exception& e) {
