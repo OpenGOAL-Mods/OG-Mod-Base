@@ -294,6 +294,15 @@
     )
   :virtual #t
   :code (behavior ()
+    (if (and (not *enable-ingame-cutscenes?*) (= (-> self root-override riders num-riders) 0) (not (process-close? self 105000.0))) ;;remove loads from animation if main target is not on gondola
+      (set! (-> self anim) (new 'static 'spool-anim
+                                :name "gondola-ride-up"
+                                :index 5
+                                :parts 3
+                                :command-list '()
+                                )
+        )
+      )
     (process-entity-status! self (entity-perm-status bit-3) #t)
     (when (not *enable-ingame-cutscenes?*)
       (let ((gp-1 (-> *display* base-frame-counter)))
@@ -371,6 +380,15 @@
     )
   :virtual #t
   :code (behavior ()
+    (if (and (not *enable-ingame-cutscenes?*) (= (-> self root-override riders num-riders) 0) (not (process-close? self 105000.0))) ;;remove loads from animation if main target is not on gondola
+      (set! (-> self anim) (new 'static 'spool-anim
+                                :name "gondola-ride-down"
+                                :index 6
+                                :parts 3
+                                :command-list '()
+                                )
+        )
+      )
     (process-entity-status! self (entity-perm-status bit-3) #t)
     (when (not *enable-ingame-cutscenes?*)
       (let ((gp-1 (-> *display* base-frame-counter)))
