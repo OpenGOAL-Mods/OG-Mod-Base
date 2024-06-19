@@ -168,31 +168,8 @@ std::string get_current_executable_path() {
 #endif
 }
 
-std::string get_parent_directory(const std::string& path) {
-  // Find the last occurrence of ".github" in the path.
-  size_t github_index = path.rfind(".github");
-  // If ".github" is not found in the path, return an empty string.
-  if (github_index == std::string::npos) {
-    return "";
-  }
-  // Extract the part of the path up to the ".github" directory.
-  std::string parent_directory = path.substr(0, github_index);
-  // Remove the last character from the path, which will be the slash.
-  parent_directory.pop_back();
-  // Return the parent directory.
-  return parent_directory;
-}
-
-
-
-std::optional<std::string> try_get_project_path_from_path(const std::string& path) {
-  // std::string::size_type pos =
-  //     std::string(path).rfind("jak-project");  // Strip file path down to /jak-project/ directory
-  // if (pos == std::string::npos) {
-  //   return {};
-  // }
-  // return std::string(path).substr(
-  //     0, pos + 11);  // + 12 to include "/jak-project" in the returned filepath
+// mod-base-change
+std::optional<std::string> try_get_project_path_from_path_modbase(const std::string& path) {
   fs::path current_path = fs::path(path);
   while (true) {
     lg::info("Current path in loop - {}", current_path.string());
@@ -206,6 +183,17 @@ std::optional<std::string> try_get_project_path_from_path(const std::string& pat
     }
     current_path = current_path.parent_path();
   }
+}
+
+std::optional<std::string> try_get_project_path_from_path(const std::string& path) {
+  return try_get_project_path_from_path_modbase(path);
+  std::string::size_type pos =
+      std::string(path).rfind("jak-project");  // Strip file path down to /jak-project/ directory
+  if (pos == std::string::npos) {
+    return {};
+  }
+  return std::string(path).substr(
+      0, pos + 11);  // + 12 to include "/jak-project" in the returned filepath
 }
 
 /*!
