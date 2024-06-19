@@ -22,6 +22,8 @@
 (declare-type eco collectable)
 (declare-type ammo collectable)
 
+(define-extern orb-placer-list-maintenace (function symbol none))
+
 ;; DECOMP BEGINS
 
 (defskelgroup skel-health collectables collectables-health-lod0-jg collectables-health-idle-ja
@@ -1486,7 +1488,6 @@ This commonly includes things such as:
     )
   )
 
-(define-extern orb-placer-list-maintenace (function symbol none))
 (defstate pickup (money)
   :virtual #t
   :code (behavior ((arg0 symbol) (arg1 handle))

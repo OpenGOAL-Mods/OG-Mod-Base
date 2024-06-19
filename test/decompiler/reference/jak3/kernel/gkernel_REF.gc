@@ -656,6 +656,7 @@
   )
 
 ;; definition for method 3 of type dead-pool-heap
+;; INFO: this function exists in multiple non-identical object files
 (defmethod inspect ((this dead-pool-heap))
   (format #t "[~8x] ~A~%" this (-> this type))
   (format #t "~Tname: ~A~%" (-> this name))

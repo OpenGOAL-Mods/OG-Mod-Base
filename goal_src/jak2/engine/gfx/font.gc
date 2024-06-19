@@ -216,7 +216,6 @@
     (*! (-> font-ctxt scale) scale)
     (*! (-> font-ctxt width) scale)
     (*! (-> font-ctxt height) scale)
-
     (draw-string str buf font-ctxt)
     )
   (none)

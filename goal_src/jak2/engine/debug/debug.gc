@@ -1616,7 +1616,6 @@ Most functions take a boolean as their first argument. If the boolean is set to 
               (font-flags shadow)
               )
             )
-          (font-flags shadow)
           )
         )
       )
