@@ -527,21 +527,6 @@ void Loader::update(TexturePool& texture_pool) {
         m_garbage_textures.pop_back();
       }
     }
-
-    if (!m_garbage_buffers.empty()) {
-      did_gpu_stuff = true;
-      for (int i = 0; i < 5 && !m_garbage_buffers.empty(); i++) {
-        glDeleteBuffers(1, &m_garbage_buffers.back());
-        m_garbage_buffers.pop_back();
-      }
-    }
-
-    if (!did_gpu_stuff && !m_garbage_textures.empty()) {
-      for (int i = 0; i < 20 && !m_garbage_textures.empty(); i++) {
-        glDeleteTextures(1, &m_garbage_textures.back());
-        m_garbage_textures.pop_back();
-      }
-    }
   }
 
   if (loader_timer.getMs() > 5) {
