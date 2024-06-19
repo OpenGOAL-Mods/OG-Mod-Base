@@ -358,9 +358,9 @@
     (('target-grab) (go-process t target-grab)) ;; process-grab animation while in cutscenes
     (('target-fishing) (go-process t target-duck-stance)) ;; duck stance to not get stuck in active animation (send-event t 'change-mode 'fishing #f) ;; crashes as it tries sending commands as target, should be avoidable with (= self *target*) checks
     (('target-death) (go-process t target-death 'target-hit-ground-hard))
+    (('target-look-around) (send-event t 'change-mode 'periscope #f)) ;; first person enter
 
     ;; redundant for multiplayer
-    ;; (('target-look-around) (go-process t target-look-around)) ;; first person enter
     ;; (('target-stance-look-around) (go-process t target-stance-look-around)) ;; first person exit
     ;; (('target-billy-game)) ;; will only put you in first person
     ;; (('target-play-anim))
