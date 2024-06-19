@@ -795,7 +795,8 @@
               (set! (-> gp-0 quad) (-> self old-hips quad))
               (set! (-> self old-hips quad) (-> (remote-target-pos 26 target) quad))
               (vector-! gp-0 gp-0 (-> self old-hips))
-              (when (>= (ray-flat-cyl-intersect (-> self cyl) (-> self old-hips) gp-0) 0.0)
+              (when (and (>= (ray-flat-cyl-intersect (-> self cyl) (-> self old-hips) gp-0) 0.0) 
+                         (remote-target-process-close? target self 37000.0)) ;; helps catch false possitives from multiplayer logic
                 (level-hint-spawn
                   (text-id rolling-ring-chase-1-hint)
                   "sksp0119"
