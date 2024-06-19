@@ -6,6 +6,8 @@
 (require "pc/features/autosplit-h.gc")
 (define *speedrun-info* (new 'static 'speedrun-info-jak1 :should-display? #t :needs-post-blackout-setup? #f))
 
+(define-extern *mod-version-text* string)
+
 (define *hub1-cell-list*
   (new 'static
        'boxed-array
@@ -403,16 +405,12 @@
   (start-speedrun (speedrun-category full-game))
   (none))
 
-(define-extern *mod-version-text* string)
 (defun speedrun-draw-settings ()
   "Draw speedrun related settings in the bottom left corner"
-  (when (and (-> *pc-settings* speedrunner-mode?)
-             (not (paused?))
-             (-> *speedrun-info* should-display?))
-    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
-                                      (bucket-id subtitle))
+  (when (and (-> *pc-settings* speedrunner-mode?) (not (paused?)) (-> *speedrun-info* should-display?))
+    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id subtitle))
       (draw-string-xy (string-format "Speedrunner Mode ~%~S ~%Category: ~S ~%Cutscene Skips ~A"
-                                    *mod-version-text*
+                                     *mod-version-text*
                                      (enum->string speedrun-category (-> *speedrun-info* category))
                                      (-> *pc-settings* skip-movies?))
                       buf

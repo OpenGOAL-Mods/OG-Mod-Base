@@ -1,6 +1,7 @@
 ("SWA.DGO"
  ("battlecontroller.o"
   "blocking-plane.o"
+  "blocking-plane-modded.o"
   ;; "flut-part.o"
   ;; "flutflut.o"
   ;; "target-flut.o" mod-base-change
