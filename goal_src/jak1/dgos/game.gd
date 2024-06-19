@@ -370,5 +370,6 @@
   "eichar-flut+0-ag.go"
   ;; keep blocking-plane stuff loaded
   "blocking-plane.o"
+  "blocking-plane-modded.o"
   "ef-plane-ag.go"
  ))

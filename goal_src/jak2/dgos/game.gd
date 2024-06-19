@@ -432,6 +432,7 @@
   "airlock.o"
   "water-anim.o"
   "blocking-plane.o"
+  "blocking-plane-modded.o"
   "idle-control.o"
   "dark-eco-pool.o"
   "enemy-h.o"
