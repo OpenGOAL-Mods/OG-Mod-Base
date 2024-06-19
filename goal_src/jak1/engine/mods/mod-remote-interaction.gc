@@ -409,7 +409,7 @@
         )
       )
     )
-  (if (< *current-boss-phase* to-phase)
+  (if (> *current-boss-phase* to-phase)
     (set! *current-boss-phase* to-phase)
     )
   (none)
