@@ -1,5 +1,5 @@
 ("ROL.DGO"
- (;;"target-racer-h.o"
+ (;;"target-racer-h.o" mod-base-change
   ;;"racer-part.o"
   ;;"racer.o"
   ;;"target-racer.o"
