@@ -112,6 +112,10 @@
   (!= (-> *multiplayer-info* players tgt-idx mp_state) (-> *multiplayer-info* players tgt-idx mp_state_check))
   )
 
+(defun target-has-mp-state? ((remote-target target) (state symbol))
+  (if (= (-> *multiplayer-info* players (-> remote-target saved-owner) tgt_state) state) #t #f)
+  )
+
 (defun handle-new-mp-state ((tgt-idx int) (remote-target target))
   (set! (-> *multiplayer-info* players tgt-idx mp_state_check) (-> *multiplayer-info* players tgt-idx mp_state))
   (if (and (is-interactive? tgt-idx) (not (logtest? (-> remote-target control root-prim prim-core collide-as) (collide-kind target-remote)))) ;; add collision if interactive

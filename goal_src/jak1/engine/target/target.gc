@@ -22,6 +22,7 @@
 (define-extern target-bonk-event-handler (function process int symbol event-message-block object :behavior target))
 (define-extern is-interactive? (function int symbol))
 (define-extern target-is-interactive? (function target symbol))
+(define-extern target-has-mp-state? (function target symbol symbol))
 (define-extern *multiplayer-info* multiplayer-info)
 
 ;; DECOMP BEGINS
@@ -130,7 +131,10 @@
             #t
             )
     (logior! (-> self control status) (cshape-moving-flags onsurf))
-    (go target-hit-ground 'stuck)
+    (if (and (!= self *target*) (target-has-mp-state? self 'target-tube)) ;; tube crash fix on remote usage during deload (this one might not be needed?)
+      (go target-jump (-> *TARGET-bank* tube-jump-height-min) (-> *TARGET-bank* tube-jump-height-max) (the-as surface #f))
+      (go target-hit-ground 'stuck)
+      )
     )
   (if (!= (-> self state-time) (-> *display* base-frame-counter))
       (slide-down-test)

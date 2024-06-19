@@ -9,6 +9,7 @@
 ;; level info/names
 ;;;;;;;;;;;;;;;;;;;;;;
 
+(define-extern get-target (function int target))
 (define-extern runs-on-level-status-update (function none))
 
 (defun lookup-level-info ((name symbol))
@@ -1682,6 +1683,25 @@
                   )
                 )
               (when (not a0-6)
+                ;; tube crash fix on remote usage during deload
+                (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
+                  (let ((tgt (get-target tgt-idx)))
+                    (when (and tgt (!= tgt *target*) (nonzero? (-> tgt tube)))
+                      (go-process tgt target-jump (meters 1.75) (meters 2.5) (the-as surface #f))
+                      (set! (-> tgt control transv quad) (the-as uint128 0))
+                      (set! (-> tgt control status) (cshape-moving-flags))
+                      (set! (-> tgt control unknown-dynamics00) *standard-dynamics*)
+                      (set! (-> tgt control surf) *standard-ground-surface*)
+                      (set! (-> tgt control unknown-vector02 quad) (-> tgt control unknown-dynamics00 gravity-normal quad))
+                      (set! (-> tgt control unknown-float00) 0.0)
+                      (set! (-> tgt control unknown-float80) 0.0)
+                      (set! (-> tgt control unknown-float82) 32.0)
+                      (set! (-> tgt control unknown-handle10) (the-as handle #f))
+                      (set! (-> tgt control unknown-handle00) (the-as handle #f))
+                      (set! (-> tgt control unknown-dword82) 0)
+                      )
+                    )
+                  )
                 (format 0 "Discarding level ~A~%" (-> s4-0 name))
                 (level-status-set! s4-0 'inactive)
                 (set! v1-0 #t)
