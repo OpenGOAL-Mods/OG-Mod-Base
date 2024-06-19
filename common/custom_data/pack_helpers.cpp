@@ -19,6 +19,7 @@ std::pair<u64, u16> position_to_cluster_and_offset(float in) {
 
   float recovered = ((float)cluster_cell + ((float)offset / UINT16_MAX)) * kClusterSize;
   float diff = std::fabs(recovered - in);
+  // mod-base-change made this bigger
   ASSERT(diff < 32587);
   ASSERT(cluster_cell >= 0);
   ASSERT(cluster_cell < UINT16_MAX);
