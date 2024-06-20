@@ -25,6 +25,8 @@
 (define-extern target-hit-orient (function attack-info vector symbol :behavior target))
 (define-extern target-hit-move (function attack-info symbol (function none :behavior target) float none :behavior target))
 
+(define-extern *target-board-hold-tricks* int)
+
 (declare-type grenade projectile)
 
 ;; DECOMP BEGINS
@@ -120,7 +122,6 @@
   (none)
   )
 
-(define-extern *target-board-hold-tricks* int)
 
 ;; WARN: Return type mismatch object vs none.
 (defbehavior target-board-spin-check target ()

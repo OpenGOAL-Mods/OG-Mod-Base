@@ -119,9 +119,6 @@
    (mat        matrix             :offset-assert  72)
    (start-line uint32             :offset-assert  76)
    (alpha      float              :offset-assert  80)
-   (context-vec vector  :inline   :offset  48) ;; added
-   (color-s32  int32              :offset 64) ;; added for asm
-   (flags-signed int32            :offset        72) ;; added for asm
    )
   :method-count-assert 21
   :size-assert         #x54
@@ -304,15 +301,7 @@
    (buf                 basic                     :offset-assert 2872)
    (str-ptr             uint32                    :offset-assert 2876)
    (flags               font-flags                :offset-assert 2880)
-   (reg-save            uint32         5          :offset-assert 2884)   
-   (small-font-lo-tmpl-qw uint128            :offset 80)
-   (small-font-hi-tmpl-qw uint128            :offset 96)
-   (large-font-lo-tmpl-qw uint128            :offset 112)
-   (large-font-hi-tmpl-qw uint128            :offset 128)
-   (last-color-32      int32                  :offset 2864)
-   (save-last-color-32 int32                  :offset 2868) ;; added
-   (str-ptr-signed     (pointer uint8)        :offset 2876) ;; added
-   (flags-signed       int32                  :offset 2880) ;; added
+   (reg-save            uint32         5          :offset-assert 2884)
    )
   :method-count-assert 9
   :size-assert         #xb58

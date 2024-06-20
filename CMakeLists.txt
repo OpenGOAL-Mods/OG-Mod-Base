@@ -247,17 +247,6 @@ add_subdirectory(lsp)
 build_third_party_lib(libco libco)
 build_third_party_lib(zstd libzstd_static)
 
-
-# MOD BASE
-#add_subdirectory(third-party/freetype EXCLUDE_FROM_ALL)
-#set (FREETYPE_INCLUDE_DIRS= "third-party/freetype/")
-#set (FREETYPE_LIBRARY= "third-party/freetype/lib/")
-
-
-
-
-
-
 # build SDL
 include(SDLOptions)
 if(STATICALLY_LINK)
