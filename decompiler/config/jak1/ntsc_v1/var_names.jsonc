@@ -3,97 +3,52 @@
     "args": ["this"]
   },
   "1/": {
-    "args": [
-      "x"
-    ]
+    "args": ["x"]
   },
   "+": {
-    "args": [
-      "x",
-      "y"
-    ]
+    "args": ["x", "y"]
   },
   "-": {
-    "args": [
-      "x",
-      "y"
-    ]
+    "args": ["x", "y"]
   },
   "*": {
-    "args": [
-      "x",
-      "y"
-    ]
+    "args": ["x", "y"]
   },
   "/": {
-    "args": [
-      "x",
-      "y"
-    ]
+    "args": ["x", "y"]
   },
   "ash": {
-    "args": [
-      "value",
-      "shift-amount"
-    ]
+    "args": ["value", "shift-amount"]
   },
   "mod": {
-    "args": [
-      "x",
-      "y"
-    ]
+    "args": ["x", "y"]
   },
   "rem": {
-    "args": [
-      "x",
-      "y"
-    ]
+    "args": ["x", "y"]
   },
   "abs": {
-    "args": [
-      "x"
-    ]
+    "args": ["x"]
   },
   "min": {
-    "args": [
-      "x",
-      "y"
-    ]
+    "args": ["x", "y"]
   },
   "max": {
-    "args": [
-      "x",
-      "y"
-    ]
+    "args": ["x", "y"]
   },
   "logior": {
-    "args": [
-      "x",
-      "y"
-    ]
+    "args": ["x", "y"]
   },
   "logand": {
-    "args": [
-      "x",
-      "y"
-    ]
+    "args": ["x", "y"]
   },
   "lognor": {
-    "args": [
-      "x",
-      "y"
-    ]
+    "args": ["x", "y"]
   },
   "logxor": {
-    "args": [
-      "x",
-      "y"
-    ]
+    "args": ["x", "y"]
   },
   "lognot": {
-    "args": [
-      "x"
-    ]
+    "args": ["x"]
   },
   "basic-type?": {
     "args": ["this", "parent-type"],
@@ -109,10 +64,7 @@
     }
   },
   "find-parent-method": {
-    "args": [
-      "child-type",
-      "method-id"
-    ],
+    "args": ["child-type", "method-id"],
     "vars": {
       "v0-0": "current-method",
       "v1-2": "original-method",
@@ -197,10 +149,7 @@
     }
   },
   "sort": {
-    "args": [
-      "lst",
-      "compare-func"
-    ],
+    "args": ["lst", "compare-func"],
     "vars": {
       "s4-0": "unsorted-count",
       "s3-0": "iter",
@@ -247,11 +196,7 @@
     }
   },
   "qmem-copy->!": {
-    "args": [
-      "dst",
-      "src",
-      "size"
-    ],
+    "args": ["dst", "src", "size"],
     "vars": {
       "v0-0": "result",
       "v1-1": "qwc",
@@ -275,9 +220,7 @@
     }
   },
   "fact": {
-    "args": [
-      "x"
-    ]
+    "args": ["x"]
   },
   "mem-print": {
     "args": ["data", "word-count"],
@@ -308,10 +251,7 @@
     }
   },
   "(method 23 dead-pool-heap)": {
-    "args": [
-      "this",
-      "rec"
-    ]
+    "args": ["this", "rec"]
   },
   "(method 0 dead-pool-heap)": {
     "vars": {
@@ -325,11 +265,7 @@
     }
   },
   "lerp": {
-    "args": [
-      "minimum",
-      "maximum",
-      "amount"
-    ]
+    "args": ["minimum", "maximum", "amount"]
   },
   "lerp-scale": {
     "args": ["min-out", "max-out", "in", "min-in", "max-in"],
@@ -338,11 +274,7 @@
     }
   },
   "lerp-clamp": {
-    "args": [
-      "minimum",
-      "maximum",
-      "amount"
-    ]
+    "args": ["minimum", "maximum", "amount"]
   },
   "rand-vu-int-range": {
     "args": ["first", "second"],
@@ -362,16 +294,10 @@
     }
   },
   "box-vector-enside?": {
-    "args": [
-      "box",
-      "pt"
-    ]
+    "args": ["box", "pt"]
   },
   "box-vector-inside?": {
-    "args": [
-      "box",
-      "pt"
-    ]
+    "args": ["box", "pt"]
   },
   "string=": {
     "args": ["str-a", "str-b"],
@@ -406,10 +332,7 @@
     }
   },
   "copy-charp<-charp": {
-    "args": [
-      "dst",
-      "src"
-    ]
+    "args": ["dst", "src"]
   },
   "cat-string<-string": {
     "args": ["a", "b"],
@@ -500,9 +423,7 @@
     }
   },
   "string->int": {
-    "args": [
-      "str"
-    ],
+    "args": ["str"],
     "vars": {
       "a0-1": "str-ptr",
       "v0-0": "result",
@@ -512,12 +433,7 @@
     }
   },
   "string-get-flag!!": {
-    "args": [
-      "result",
-      "in",
-      "first-flag",
-      "second-flag"
-    ]
+    "args": ["result", "in", "first-flag", "second-flag"]
   },
   "(method 0 state)": {
     "args": [
@@ -560,11 +476,7 @@
     }
   },
   "matrix*!": {
-    "args": [
-      "dst",
-      "src1",
-      "src2"
-    ]
+    "args": ["dst", "src1", "src2"]
   },
   "matrixp*!": {
     "args": ["dst", "src1", "src2"],
@@ -573,18 +485,10 @@
     }
   },
   "vector-matrix*!": {
-    "args": [
-      "dst",
-      "vec",
-      "mat"
-    ]
+    "args": ["dst", "vec", "mat"]
   },
   "vector-rotate*!": {
-    "args": [
-      "dst",
-      "vec",
-      "mat"
-    ]
+    "args": ["dst", "vec", "mat"]
   },
   "vector3s-matrix*!": {
     "args": ["dst", "vec", "mat"],
@@ -599,61 +503,31 @@
     }
   },
   "matrix-transpose!": {
-    "args": [
-      "dst",
-      "src"
-    ]
+    "args": ["dst", "src"]
   },
   "matrix-inverse-of-rot-trans!": {
-    "args": [
-      "dst",
-      "src"
-    ]
+    "args": ["dst", "src"]
   },
   "matrix-4x4-inverse!": {
-    "args": [
-      "dst",
-      "src"
-    ]
+    "args": ["dst", "src"]
   },
   "matrix-translate!": {
-    "args": [
-      "dst",
-      "trans"
-    ]
+    "args": ["dst", "trans"]
   },
   "matrix-translate+!": {
-    "args": [
-      "dst",
-      "src",
-      "trans"
-    ]
+    "args": ["dst", "src", "trans"]
   },
   "matrix-scale!": {
-    "args": [
-      "dst",
-      "scale"
-    ]
+    "args": ["dst", "scale"]
   },
   "scale-matrix!": {
-    "args": [
-      "dst",
-      "scale",
-      "src"
-    ]
+    "args": ["dst", "scale", "src"]
   },
   "matrix-inv-scale!": {
-    "args": [
-      "dst",
-      "scale"
-    ]
+    "args": ["dst", "scale"]
   },
   "column-scale-matrix!": {
-    "args": [
-      "dst",
-      "scale",
-      "src"
-    ]
+    "args": ["dst", "scale", "src"]
   },
   "matrix-rotate-x!": {
     "args": ["dst", "rot-deg"],
@@ -712,10 +586,7 @@
     }
   },
   "matrix-rotate-yxy!": {
-    "args": [
-      "dst",
-      "rots-deg"
-    ],
+    "args": ["dst", "rots-deg"],
     "vars": {
       "a2-0": "sincos-input",
       "s5-0": "sin-vec",
@@ -729,61 +600,31 @@
     }
   },
   "matrix-rotate-yx!": {
-    "args": [
-      "dst",
-      "rot-y-deg",
-      "rot-x-deg"
-    ]
+    "args": ["dst", "rot-y-deg", "rot-x-deg"]
   },
   "matrix-axis-angle!": {
-    "args": [
-      "dst",
-      "axis",
-      "angle-deg"
-    ]
+    "args": ["dst", "axis", "angle-deg"]
   },
   "matrix-lerp!": {
-    "args": [
-      "dst",
-      "src1",
-      "src2",
-      "alpha"
-    ]
+    "args": ["dst", "src1", "src2", "alpha"]
   },
   "matrix-3x3-determinant": {
-    "args": [
-      "mat"
-    ]
+    "args": ["mat"]
   },
   "matrix-3x3-inverse!": {
-    "args": [
-      "dst",
-      "src"
-    ]
+    "args": ["dst", "src"]
   },
   "matrix-3x3-inverse-transpose!": {
-    "args": [
-      "dst",
-      "src"
-    ]
+    "args": ["dst", "src"]
   },
   "matrix3-inverse-transpose!": {
-    "args": [
-      "dst",
-      "src"
-    ]
+    "args": ["dst", "src"]
   },
   "matrix-4x4-determinant": {
-    "args": [
-      "dst",
-      "src"
-    ]
+    "args": ["dst", "src"]
   },
   "matrix-4x4-inverse-transpose!": {
-    "args": [
-      "dst",
-      "src"
-    ]
+    "args": ["dst", "src"]
   },
   "matrix-y-angle": {
     "args": ["mat"],
@@ -797,81 +638,37 @@
     }
   },
   "transform-matrix-calc!": {
-    "args": [
-      "tf",
-      "dst-mat"
-    ]
+    "args": ["tf", "dst-mat"]
   },
   "transform-matrix-parent-calc!": {
-    "args": [
-      "tf",
-      "dst-mat",
-      "inv-scale"
-    ]
+    "args": ["tf", "dst-mat", "inv-scale"]
   },
   "trs-matrix-calc!": {
-    "args": [
-      "tf",
-      "dst-mat"
-    ]
+    "args": ["tf", "dst-mat"]
   },
   "quaternion-axis-angle!": {
-    "args": [
-      "quat",
-      "x",
-      "y",
-      "z",
-      "angle"
-    ]
+    "args": ["quat", "x", "y", "z", "angle"]
   },
   "quaternion-vector-angle!": {
-    "args": [
-      "quat",
-      "axis",
-      "angle"
-    ]
+    "args": ["quat", "axis", "angle"]
   },
   "vector-flatten!": {
-    "args": [
-      "dst",
-      "src",
-      "plane-normal"
-    ]
+    "args": ["dst", "src", "plane-normal"]
   },
   "vector-reflect!": {
-    "args": [
-      "dst",
-      "src",
-      "plane-normal"
-    ]
+    "args": ["dst", "src", "plane-normal"]
   },
   "vector-reflect-flat!": {
-    "args": [
-      "dst",
-      "src",
-      "plane-normal"
-    ]
+    "args": ["dst", "src", "plane-normal"]
   },
   "vector-reflect-true-flat!": {
-    "args": [
-      "dst",
-      "src",
-      "plane-normal"
-    ]
+    "args": ["dst", "src", "plane-normal"]
   },
   "vector-reflect-flat-above!": {
-    "args": [
-      "dst",
-      "src",
-      "plane-normal"
-    ]
+    "args": ["dst", "src", "plane-normal"]
   },
   "deg-seek": {
-    "args": [
-      "in",
-      "target",
-      "max-diff"
-    ],
+    "args": ["in", "target", "max-diff"],
     "vars": {
       "v1-1": "in-int",
       "a0-2": "target-int",
@@ -887,97 +684,43 @@
     }
   },
   "deg-lerp-clamp": {
-    "args": [
-      "min-val",
-      "max-val",
-      "in"
-    ]
+    "args": ["min-val", "max-val", "in"]
   },
   "sinerp-clamp": {
-    "args": [
-      "minimum",
-      "maximum",
-      "amount"
-    ]
+    "args": ["minimum", "maximum", "amount"]
   },
   "coserp-clamp": {
-    "args": [
-      "minimum",
-      "maximum",
-      "amount"
-    ]
+    "args": ["minimum", "maximum", "amount"]
   },
   "coserp": {
-    "args": [
-      "minimum",
-      "maximum",
-      "amount"
-    ]
+    "args": ["minimum", "maximum", "amount"]
   },
   "coserp180-clamp": {
-    "args": [
-      "minimum",
-      "maximum",
-      "amount"
-    ]
+    "args": ["minimum", "maximum", "amount"]
   },
   "coserp180": {
-    "args": [
-      "minimum",
-      "maximum",
-      "amount"
-    ]
+    "args": ["minimum", "maximum", "amount"]
   },
   "ease-in-out": {
-    "args": [
-      "total",
-      "progress"
-    ]
+    "args": ["total", "progress"]
   },
   "dma-send-to-spr": {
-    "args": [
-      "sadr",
-      "madr",
-      "qwc",
-      "sync"
-    ]
+    "args": ["sadr", "madr", "qwc", "sync"]
   },
   "dma-send-to-spr-no-flush": {
-    "args": [
-      "sadr",
-      "madr",
-      "qwc",
-      "sync"
-    ]
+    "args": ["sadr", "madr", "qwc", "sync"]
   },
   "dma-send-from-spr": {
-    "args": [
-      "madr",
-      "sadr",
-      "qwc",
-      "sync"
-    ]
+    "args": ["madr", "sadr", "qwc", "sync"]
   },
   "dma-send-from-spr-no-flush": {
-    "args": [
-      "madr",
-      "sadr",
-      "qwc",
-      "sync"
-    ]
+    "args": ["madr", "sadr", "qwc", "sync"]
   },
   "dump-vu1-range": {
-    "args": [
-      "start",
-      "total-count"
-    ]
+    "args": ["start", "total-count"]
   },
   "ultimate-memcpy": {
-    "args": [
-      "dst",
-      "src",
-      "size-bytes"
-    ],
+    "args": ["dst", "src", "size-bytes"],
     "vars": {
       "s2-0": "qwc-remaining",
       "s1-0": "qwc-transferred-now",
@@ -986,20 +729,14 @@
     }
   },
   "dma-buffer-add-vu-function": {
-    "args": [
-      "dma-buf",
-      "vu-func"
-    ],
+    "args": ["dma-buf", "vu-func"],
     "vars": {
       "t1-1": "dma-buf-2",
       "v1-0": "func-ptr",
       "a3-0": "qlen",
       "a1-1": "origin",
       "t0-1": "qwc-now",
-      "t2-0": [
-        "buf-ptr",
-        "dma-packet"
-      ]
+      "t2-0": ["buf-ptr", "dma-packet"]
     }
   },
   "dma-buffer-add-buckets": {
@@ -1030,22 +767,14 @@
     }
   },
   "disasm-vif-tag": {
-    "args": [
-      "data",
-      "words",
-      "stream",
-      "details"
-    ],
+    "args": ["data", "words", "stream", "details"],
     "vars": {
       "gp-0": "byte-idx",
       "v1-0": "cmd-template-idx",
       "a0-12": "print-kind",
       "s1-0": "first-tag",
       "s0-0": "packet-size",
-      "t1-1": [
-        "stcycl-imm",
-        "vif-stcycl-imm"
-      ],
+      "t1-1": ["stcycl-imm", "vif-stcycl-imm"],
       "sv-16": "cmd",
       "sv-32": "data-ptr",
       "sv-48": "data-idx",
@@ -1053,13 +782,7 @@
     }
   },
   "disasm-dma-list": {
-    "args": [
-      "data",
-      "mode",
-      "verbose",
-      "stream",
-      "expected-size"
-    ],
+    "args": ["data", "mode", "verbose", "stream", "expected-size"],
     "vars": {
       "sv-16": "addr",
       "sv-32": "data-2",
@@ -1078,9 +801,7 @@
     }
   },
   "cpad-invalid!": {
-    "args": [
-      "pad"
-    ]
+    "args": ["pad"]
   },
   "(method 0 cpad-info)": {
     "args": ["alloction", "type-to-make", "idx"],
@@ -1089,13 +810,7 @@
     }
   },
   "analog-input": {
-    "args": [
-      "in",
-      "offset",
-      "center-val",
-      "max-val",
-      "out-range"
-    ],
+    "args": ["in", "offset", "center-val", "max-val", "out-range"],
     "vars": {
       "f1-1": "offset-in",
       "f0-3": "magnitude",
@@ -1103,12 +818,7 @@
     }
   },
   "cpad-set-buzz!": {
-    "args": [
-      "pad",
-      "buzz-idx",
-      "buzz-amount",
-      "duration"
-    ]
+    "args": ["pad", "buzz-idx", "buzz-amount", "duration"]
   },
   "service-cpads": {
     "vars": {
@@ -1120,35 +830,19 @@
     }
   },
   "buzz-stop!": {
-    "args": [
-      "idx"
-    ]
+    "args": ["idx"]
   },
   "default-buffer-init": {
-    "args": [
-      "buff"
-    ],
+    "args": ["buff"],
     "vars": {
       "v1-0": "buff-ptr",
       "v1-1": "buff-ptr2",
       "v1-3": "buff-ptr3",
       "v1-4": "buff-ptr4",
-      "a1-4": [
-        "packet",
-        "dma-gif-packet"
-      ],
-      "a1-6": [
-        "gif-tag",
-        "gs-gif-tag"
-      ],
-      "a1-8": [
-        "data",
-        "(pointer uint64)"
-      ],
-      "a0-1": [
-        "ret-packet",
-        "dma-packet"
-      ],
+      "a1-4": ["packet", "dma-gif-packet"],
+      "a1-6": ["gif-tag", "gs-gif-tag"],
+      "a1-8": ["data", "(pointer uint64)"],
+      "a0-1": ["ret-packet", "dma-packet"],
       "v1-2": "buff-ptr5"
     }
   },
@@ -1207,13 +901,7 @@
     }
   },
   "font-set-tex0": {
-    "args": [
-      "ptr-tex0",
-      "tex",
-      "tex-addr",
-      "psm",
-      "clut-addr"
-    ]
+    "args": ["ptr-tex0", "tex", "tex-addr", "psm", "clut-addr"]
   },
   "(method 0 display-frame)": {
     "vars": {
@@ -1246,12 +934,7 @@
     }
   },
   "vector-seek-2d-xz-smooth!": {
-    "args": [
-      "vec",
-      "target",
-      "max-step",
-      "alpha"
-    ],
+    "args": ["vec", "target", "max-step", "alpha"],
     "vars": {
       "f0-1": "x-diff",
       "f2-1": "z-diff",
@@ -1261,12 +944,7 @@
     }
   },
   "vector-seek-2d-yz-smooth!": {
-    "args": [
-      "vec",
-      "target",
-      "max-step",
-      "alpha"
-    ],
+    "args": ["vec", "target", "max-step", "alpha"],
     "vars": {
       "f0-1": "y-diff",
       "f2-1": "z-diff",
@@ -1277,12 +955,7 @@
     }
   },
   "vector-seek-3d-smooth!": {
-    "args": [
-      "vec",
-      "target",
-      "max-step",
-      "alpha"
-    ],
+    "args": ["vec", "target", "max-step", "alpha"],
     "vars": {
       "f0-1": "x-diff",
       "f1-2": "y-diff",
@@ -1303,92 +976,40 @@
     }
   },
   "vector-v+!": {
-    "args": [
-      "result",
-      "position",
-      "velocity"
-    ]
+    "args": ["result", "position", "velocity"]
   },
   "vector-v*float+!": {
-    "args": [
-      "result",
-      "position",
-      "velocity",
-      "velocity-scale"
-    ]
+    "args": ["result", "position", "velocity", "velocity-scale"]
   },
   "vector-v++!": {
-    "args": [
-      "position",
-      "velocity"
-    ]
+    "args": ["position", "velocity"]
   },
   "vector-v*float!": {
-    "args": [
-      "delta-p",
-      "velocity",
-      "scale"
-    ]
+    "args": ["delta-p", "velocity", "scale"]
   },
   "vector-v*float++!": {
-    "args": [
-      "position",
-      "velocity",
-      "scale"
-    ]
+    "args": ["position", "velocity", "scale"]
   },
   "vector-lerp!": {
-    "args": [
-      "out",
-      "a",
-      "b",
-      "alpha"
-    ]
+    "args": ["out", "a", "b", "alpha"]
   },
   "vector-lerp-clamp!": {
-    "args": [
-      "out",
-      "a",
-      "b",
-      "alpha"
-    ]
+    "args": ["out", "a", "b", "alpha"]
   },
   "vector4-lerp!": {
-    "args": [
-      "out",
-      "a",
-      "b",
-      "alpha"
-    ]
+    "args": ["out", "a", "b", "alpha"]
   },
   "vector4-lerp-clamp!": {
-    "args": [
-      "out",
-      "a",
-      "b",
-      "alpha"
-    ]
+    "args": ["out", "a", "b", "alpha"]
   },
   "vector-deg-lerp-clamp!": {
-    "args": [
-      "out",
-      "min-val",
-      "max-val",
-      "in"
-    ]
+    "args": ["out", "min-val", "max-val", "in"]
   },
   "make-file-name": {
-    "args": [
-      "kind",
-      "name",
-      "art-group-version"
-    ]
+    "args": ["kind", "name", "art-group-version"]
   },
   "make-vfile-name": {
-    "args": [
-      "kind",
-      "name"
-    ]
+    "args": ["kind", "name"]
   },
   "file-info-correct-version?": {
     "args": ["info", "kind", "version-override"],
@@ -1430,53 +1051,19 @@
     }
   },
   "set-draw-env-offset": {
-    "args": [
-      "env",
-      "x",
-      "y"
-    ]
+    "args": ["env", "x", "y"]
   },
   "set-display-env": {
-    "args": [
-      "env",
-      "psm",
-      "width",
-      "height",
-      "dx",
-      "dy",
-      "fbp"
-    ]
+    "args": ["env", "psm", "width", "height", "dx", "dy", "fbp"]
   },
   "set-draw-env": {
-    "args": [
-      "env",
-      "psm",
-      "width",
-      "height",
-      "ztest",
-      "zpsm",
-      "fbp"
-    ]
+    "args": ["env", "psm", "width", "height", "ztest", "zpsm", "fbp"]
   },
   "set-display": {
-    "args": [
-      "disp",
-      "psm",
-      "w",
-      "h",
-      "ztest",
-      "zpsm"
-    ]
+    "args": ["disp", "psm", "w", "h", "ztest", "zpsm"]
   },
   "set-display2": {
-    "args": [
-      "disp",
-      "psm",
-      "w",
-      "h",
-      "ztest",
-      "zpsm"
-    ]
+    "args": ["disp", "psm", "w", "h", "ztest", "zpsm"]
   },
   "(method 11 profile-bar)": {
     "args": ["this", "name", "color"],
@@ -1503,9 +1090,7 @@
     ]
   },
   "store-image": {
-    "args": [
-      "oddeven"
-    ],
+    "args": ["oddeven"],
     "vars": {
       "s4-0": "buff0",
       "s1-0": "buff1",
@@ -1520,32 +1105,16 @@
     }
   },
   "draw-context-set-xy": {
-    "args": [
-      "ctxt",
-      "x",
-      "y"
-    ]
+    "args": ["ctxt", "x", "y"]
   },
   "texture-qwc": {
-    "args": [
-      "w",
-      "h",
-      "tex-format"
-    ]
+    "args": ["w", "h", "tex-format"]
   },
   "gs-find-block": {
-    "args": [
-      "bx",
-      "by",
-      "tex-format"
-    ]
+    "args": ["bx", "by", "tex-format"]
   },
   "gs-largest-block": {
-    "args": [
-      "tex-width",
-      "tex-height",
-      "tex-format"
-    ],
+    "args": ["tex-width", "tex-height", "tex-format"],
     "vars": {
       "s5-0": "block-width",
       "v1-0": "block-height",
@@ -1559,11 +1128,7 @@
     }
   },
   "gs-blocks-used": {
-    "args": [
-      "tex-width",
-      "tex-height",
-      "tex-format"
-    ],
+    "args": ["tex-width", "tex-height", "tex-format"],
     "vars": {
       "s4-0": "page-width",
       "v1-0": "page-height",
@@ -1574,30 +1139,15 @@
     }
   },
   "dma-buffer-add-ref-texture": {
-    "args": [
-      "buf",
-      "data",
-      "tex-w",
-      "tex-h",
-      "tex-format"
-    ],
+    "args": ["buf", "data", "tex-w", "tex-h", "tex-format"],
     "vars": {
       "s5-0": "data-ptr",
       "v1-0": "qwc",
       "a0-4": "qwc-this-time",
       "a1-3": "eop",
-      "a3-1": [
-        "setup-dma",
-        "dma-packet"
-      ],
-      "a3-3": [
-        "setup-dif",
-        "gs-gif-tag"
-      ],
-      "a2-4": [
-        "data-dma",
-        "dma-packet"
-      ]
+      "a3-1": ["setup-dma", "dma-packet"],
+      "a3-3": ["setup-dif", "gs-gif-tag"],
+      "a2-4": ["data-dma", "dma-packet"]
     }
   },
   "(method 15 texture-pool)": {
@@ -1644,33 +1194,16 @@
     }
   },
   "upload-vram-data": {
-    "args": [
-      "buf",
-      "dest",
-      "tex-data",
-      "tex-h"
-    ],
+    "args": ["buf", "dest", "tex-data", "tex-h"],
     "vars": {
       "a3-2": "height-this-time",
-      "a0-1": [
-        "dma",
-        "dma-packet"
-      ],
-      "a0-3": [
-        "gif",
-        "gs-gif-tag"
-      ],
+      "a0-1": ["dma", "dma-packet"],
+      "a0-3": ["gif", "gs-gif-tag"],
       "a0-5": "gs-data"
     }
   },
   "upload-vram-pages": {
-    "args": [
-      "pool",
-      "segment",
-      "page",
-      "mode",
-      "bucket-idx"
-    ],
+    "args": ["pool", "segment", "page", "mode", "bucket-idx"],
     "vars": {
       "s3-0": "dma-buf",
       "sv-16": "tex-data",
@@ -1683,28 +1216,14 @@
       "sv-40": "first-chunk-idx-to-upload",
       "gp-0": "total-upload-size",
       "s4-0": "dma-start",
-      "a0-26": [
-        "dma",
-        "dma-packet"
-      ],
-      "a0-28": [
-        "gif",
-        "gs-gif-tag"
-      ],
+      "a0-26": ["dma", "dma-packet"],
+      "a0-28": ["gif", "gs-gif-tag"],
       "a0-30": "gif-data",
-      "v1-50": [
-        "dma-end",
-        "dma-packet"
-      ]
+      "v1-50": ["dma-end", "dma-packet"]
     }
   },
   "update-vram-pages": {
-    "args": [
-      "pool",
-      "pool-segment",
-      "page",
-      "mode"
-    ],
+    "args": ["pool", "pool-segment", "page", "mode"],
     "vars": {
       "t1-0": "dest-block",
       "t2-0": "sz",
@@ -1716,13 +1235,7 @@
     }
   },
   "upload-vram-pages-pris": {
-    "args": [
-      "pool",
-      "segment",
-      "page",
-      "bucket-idx",
-      "allow-cache-mask"
-    ],
+    "args": ["pool", "segment", "page", "bucket-idx", "allow-cache-mask"],
     "vars": {
       "s3-0": "dma-buf",
       "sv-16": "tex-data",
@@ -1735,27 +1248,13 @@
       "sv-52": "current-dest-chunk",
       "sv-56": "need-tex",
       "gp-0": "total-upload-size",
-      "a0-21": [
-        "dma",
-        "dma-packet"
-      ],
-      "a0-23": [
-        "gif",
-        "gs-gif-tag"
-      ],
-      "v1-55": [
-        "dma-end",
-        "dma-packet"
-      ]
+      "a0-21": ["dma", "dma-packet"],
+      "a0-23": ["gif", "gs-gif-tag"],
+      "v1-55": ["dma-end", "dma-packet"]
     }
   },
   "texture-page-near-allocate-0": {
-    "args": [
-      "pool",
-      "page",
-      "heap",
-      "mode"
-    ],
+    "args": ["pool", "page", "heap", "mode"],
     "vars": {
       "s3-0": "common-dest",
       "s2-0": "page-seg-idx",
@@ -1765,12 +1264,7 @@
     }
   },
   "texture-page-near-allocate-1": {
-    "args": [
-      "pool",
-      "page",
-      "heap",
-      "mode"
-    ],
+    "args": ["pool", "page", "heap", "mode"],
     "vars": {
       "s4-0": "seg2-size",
       "a1-1": "seg2-dest",
@@ -1779,22 +1273,14 @@
     }
   },
   "texture-page-level-allocate": {
-    "args": [
-      "pool",
-      "page",
-      "heap",
-      "mode"
-    ],
+    "args": ["pool", "page", "heap", "mode"],
     "vars": {
       "s2-0": "common-id",
       "v1-6": "level-idx"
     }
   },
   "texture-page-dir-inspect": {
-    "args": [
-      "dir",
-      "mode"
-    ],
+    "args": ["dir", "mode"],
     "vars": {
       "v1-0": "pool",
       "s4-0": "level-idx",
@@ -1806,11 +1292,7 @@
     }
   },
   "texture-page-size-check": {
-    "args": [
-      "pool",
-      "level",
-      "hide-prints"
-    ],
+    "args": ["pool", "level", "hide-prints"],
     "vars": {
       "gp-0": "oversize",
       "s3-0": "tfrag-page",
@@ -1863,37 +1345,19 @@
       "s4-0": "current-dest",
       "s3-0": "current-data",
       "a3-1": "chunks-now",
-      "a0-1": [
-        "pkt",
-        "dma-packet"
-      ],
-      "a0-3": [
-        "gs-tag",
-        "gs-gif-tag"
-      ],
+      "a0-1": ["pkt", "dma-packet"],
+      "a0-3": ["gs-tag", "gs-gif-tag"],
       "a0-5": "gs-reg-data"
     }
   },
   "texture-relocate": {
-    "args": [
-      "dma-buff",
-      "tex",
-      "dest-loc",
-      "dest-fmt",
-      "clut-dst"
-    ],
+    "args": ["dma-buff", "tex", "dest-loc", "dest-fmt", "clut-dst"],
     "vars": {
       "v1-0": "mip-level",
       "t1-1": "mip-w",
       "t2-3": "mip-h",
-      "t4-0": [
-        "dma-pkt",
-        "dma-packet"
-      ],
-      "t4-2": [
-        "gs-pkt",
-        "gs-gif-tag"
-      ]
+      "t4-0": ["dma-pkt", "dma-packet"],
+      "t4-2": ["gs-pkt", "gs-gif-tag"]
     }
   },
   "(method 11 texture-pool)": {
@@ -1934,10 +1398,7 @@
       "t0-3": "tex-count",
       "t1-4": "tex-idx",
       "t2-0": "link-slot",
-      "t3-2": [
-        "shader",
-        "adgif-shader"
-      ],
+      "t3-2": ["shader", "adgif-shader"],
       "t4-1": "dist-past-end"
     }
   },
@@ -1955,9 +1416,7 @@
     }
   },
   "adgif-shader-login-fast": {
-    "args": [
-      "shader"
-    ],
+    "args": ["shader"],
     "vars": {
       "v1-4": "tex-id",
       "a0-9": "dir-entry",
@@ -1965,11 +1424,7 @@
     }
   },
   "texture-page-login": {
-    "args": [
-      "id",
-      "alloc-func",
-      "heap"
-    ],
+    "args": ["id", "alloc-func", "heap"],
     "vars": {
       "s5-0": "dir-entry",
       "s4-0": "old-alloc-func",
@@ -1980,51 +1435,22 @@
     "args": ["this", "filename", "line-num", "column-num"]
   },
   "__assert": {
-    "args": [
-      "exp",
-      "msg"
-    ]
+    "args": ["exp", "msg"]
   },
   "__assert-min-max-range-float": {
-    "args": [
-      "exp",
-      "minimum",
-      "maximum",
-      "msg-exp",
-      "msg-min",
-      "msg-max"
-    ]
+    "args": ["exp", "minimum", "maximum", "msg-exp", "msg-min", "msg-max"]
   },
   "__assert-min-max-range-int": {
-    "args": [
-      "exp",
-      "minimum",
-      "maximum",
-      "msg-exp",
-      "msg-min",
-      "msg-max"
-    ]
+    "args": ["exp", "minimum", "maximum", "msg-exp", "msg-min", "msg-max"]
   },
   "__assert-zero-lim-range-int": {
-    "args": [
-      "exp",
-      "maximum",
-      "msg-exp",
-      "msg-max"
-    ]
+    "args": ["exp", "maximum", "msg-exp", "msg-max"]
   },
   "fog-corrector-setup": {
-    "args": [
-      "corrector",
-      "math-cam"
-    ]
+    "args": ["corrector", "math-cam"]
   },
   "update-math-camera": {
-    "args": [
-      "math-cam",
-      "video-mode",
-      "aspect"
-    ],
+    "args": ["math-cam", "video-mode", "aspect"],
     "vars": {
       "f0-4": "temp1",
       "v1-1": "elim1",
@@ -2090,10 +1516,7 @@
     }
   },
   "move-target-from-pad": {
-    "args": [
-      "trans",
-      "pad-idx"
-    ],
+    "args": ["trans", "pad-idx"],
     "vars": {
       "s4-0": "local-trans",
       "a0-5": "inv-cam-rot",
@@ -2110,89 +1533,45 @@
       "v1-3": "end-time",
       "s4-0": "worst-time-cache",
       "a3-1": "screen-y",
-      "t2-0": [
-        "direct-tag",
-        "dma-packet"
-      ],
-      "t2-2": [
-        "start-gif-tag",
-        "gs-gif-tag"
-      ],
+      "t2-0": ["direct-tag", "dma-packet"],
+      "t2-2": ["start-gif-tag", "gs-gif-tag"],
       "t1-4": "block"
     }
   },
   "draw-sprite2d-xy": {
-    "args": [
-      "buf",
-      "x",
-      "y",
-      "w",
-      "h",
-      "color"
-    ],
+    "args": ["buf", "x", "y", "w", "h", "color"],
     "vars": {
       "t2-1": "context",
       "a0-3": "draw-x",
       "a1-9": "draw-y",
       "t1-2": "draw-w",
       "t0-2": "draw-h",
-      "a3-2": [
-        "dma",
-        "dma-packet"
-      ],
-      "a3-4": [
-        "gif",
-        "gs-gif-tag"
-      ],
-      "v1-10": [
-        "end-dma",
-        "dma-packet"
-      ],
+      "a3-2": ["dma", "dma-packet"],
+      "a3-4": ["gif", "gs-gif-tag"],
+      "v1-10": ["end-dma", "dma-packet"],
       "a0-13": "total-qwc",
       "a3-6": "gif-buf"
     }
   },
   "draw-quad2d": {
-    "args": [
-      "buf",
-      "context"
-    ],
+    "args": ["buf", "context"],
     "vars": {
       "a2-1": "draw-x",
       "a3-7": "draw-y",
       "t3-0": "draw-w",
       "t2-0": "draw-h",
       "v1-8": "end-dma",
-      "t1-0": [
-        "dma",
-        "dma-packet"
-      ],
-      "t1-2": [
-        "gif",
-        "gs-gif-tag"
-      ],
+      "t1-0": ["dma", "dma-packet"],
+      "t1-2": ["gif", "gs-gif-tag"],
       "t1-4": "gif-buf",
       "a1-11": "total-qwc"
     }
   },
   "set-display-gs-state": {
-    "args": [
-      "dma-buf",
-      "fbp",
-      "scx",
-      "scy",
-      "fb-msk",
-      "psm"
-    ],
+    "args": ["dma-buf", "fbp", "scx", "scy", "fb-msk", "psm"],
     "vars": {
-      "t3-0": [
-        "dma",
-        "dma-packet"
-      ],
-      "t3-2": [
-        "gif",
-        "gs-gif-tag"
-      ],
+      "t3-0": ["dma", "dma-packet"],
+      "t3-2": ["gif", "gs-gif-tag"],
       "t3-4": "gif-buf",
       "t2-0": "fbw"
     }
@@ -2210,42 +1589,20 @@
     ],
     "vars": {
       "t4-0": "fbw",
-      "t5-0": [
-        "dma",
-        "dma-packet"
-      ],
-      "t5-2": [
-        "gif",
-        "gs-gif-tag"
-      ],
-      "t5-4": [
-        "gif-data",
-        "(pointer uint64)"
-      ]
+      "t5-0": ["dma", "dma-packet"],
+      "t5-2": ["gif", "gs-gif-tag"],
+      "t5-4": ["gif-data", "(pointer uint64)"]
     }
   },
   "reset-display-gs-state": {
-    "args": [
-      "disp",
-      "dma-buf",
-      "oddeven"
-    ],
+    "args": ["disp", "dma-buf", "oddeven"],
     "vars": {
       "a3-0": "onscreen",
       "v1-0": "hoff",
       "a2-6": "fbp",
-      "t0-0": [
-        "dma",
-        "dma-packet"
-      ],
-      "t0-2": [
-        "gif",
-        "gs-gif-tag"
-      ],
-      "a3-3": [
-        "gif-data",
-        "(pointer uint64)"
-      ]
+      "t0-0": ["dma", "dma-packet"],
+      "t0-2": ["gif", "gs-gif-tag"],
+      "a3-3": ["gif-data", "(pointer uint64)"]
     }
   },
   "(method 0 engine)": {
@@ -2307,28 +1664,13 @@
     }
   },
   "surface-interp!": {
-    "args": [
-      "dst",
-      "src0",
-      "src1",
-      "amount"
-    ]
+    "args": ["dst", "src0", "src1", "amount"]
   },
   "surface-mult!": {
-    "args": [
-      "dst",
-      "src0",
-      "src1"
-    ]
+    "args": ["dst", "src0", "src1"]
   },
   "(method 0 collide-shape-prim)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "cshape",
-      "prim-id",
-      "size-bytes"
-    ]
+    "args": ["allocation", "type-to-make", "cshape", "prim-id", "size-bytes"]
   },
   "(method 0 collide-shape-prim-sphere)": {
     "args": ["allocation", "type-to-make", "cshape", "prim-id"],
@@ -2393,78 +1735,13 @@
   "shrubbery-login-post-texture": {
     "args": ["this"],
     "vars": {
-      "s5-0": "this"
-    }
-  },
-  "(method 0 collide-sticky-rider-group)": {
-    "vars": {
-      "v0-0": "this"
-    }
-  },
-  "(method 11 touching-prims-entry-pool)": {
-    "vars": {
-      "a1-0": "current",
-      "v1-0": "prev",
-      "a2-0": "next"
-    }
-  },
-  "(method 0 touching-list)": {
-    "vars": {
-      "v0-0": [
-        "this",
-        "touching-list"
-      ]
-    }
-  },
-  "cspace-by-name-no-fail": {
-    "vars": {
-      "v0-0": [
-        "result",
-        "cspace"
-      ]
-    }
-  },
-  "num-func-loop!": {
-    "args": [
-      "chan",
-      "inc"
-    ],
-    "vars": {
-      "f0-1": "duration",
-      "f1-2": "after-inc",
-      "f0-3": "wrapped"
-    }
-  },
-  "shrubbery-login-post-texture": {
-    "args": [
-      "this"
-    ],
-    "vars": {
       "v1-1": "shader-count",
-      "a1-1": [
-        "dst",
-        "qword"
-      ],
-      "a2-5": [
-        "tex-dst",
-        "qword"
-      ],
-      "a3-0": [
-        "src",
-        "qword"
-      ],
-      "a2-6": [
-        "text-dst2",
-        "qword"
-      ],
-      "a3-1": [
-        "src-2",
-        "qword"
-      ],
-      "a3-2": [
-        "src-3",
-        "qword"
-      ]
+      "a1-1": ["dst", "qword"],
+      "a2-5": ["tex-dst", "qword"],
+      "a3-0": ["src", "qword"],
+      "a2-6": ["text-dst2", "qword"],
+      "a3-1": ["src-2", "qword"],
+      "a3-2": ["src-3", "qword"]
     }
   },
   "(method 20 actor-link-info)": {
@@ -2477,14 +1754,9 @@
     }
   },
   "lookup-level-info": {
-    "args": [
-      "name"
-    ],
+    "args": ["name"],
     "vars": {
-      "a1-1": [
-        "info",
-        "level-load-info"
-      ],
+      "a1-1": ["info", "level-load-info"],
       "v1-0": "rest",
       "a1-0": "current-sym"
     }
@@ -2575,10 +1847,7 @@
   },
   "(method 15 res-lump)": {
     "vars": {
-      "s5-0": [
-        "tag-pair",
-        "res-tag-pair"
-      ],
+      "s5-0": ["tag-pair", "res-tag-pair"],
       "s2-0": "existing-tag",
       "s3-0": "data-size",
       "v1-25": "resource-mem"
@@ -2612,13 +1881,7 @@
     }
   },
   "(method 0 fact-info)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "proc",
-      "pkup-type",
-      "pkup-amount"
-    ],
+    "args": ["allocation", "type-to-make", "proc", "pkup-type", "pkup-amount"],
     "vars": {
       "gp-0": ["this", "fact-info"],
       "s5-0": "ent",
@@ -2673,15 +1936,10 @@
     }
   },
   "string->sound-name": {
-    "args": [
-      "str"
-    ],
+    "args": ["str"],
     "vars": {
       "v1-0": "snd-name",
-      "a1-0": [
-        "out-ptr",
-        "(pointer uint8)"
-      ],
+      "a1-0": ["out-ptr", "(pointer uint8)"],
       "a2-0": "in-ptr"
     }
   },
@@ -2751,31 +2009,20 @@
     }
   },
   "entity-actor-count": {
-    "args": [
-      "res",
-      "name"
-    ],
+    "args": ["res", "name"],
     "vars": {
       "sv-16": "tag"
     }
   },
   "(method 0 joint-mod)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "mode",
-      "proc",
-      "joint-idx"
-    ],
+    "args": ["allocation", "type-to-make", "mode", "proc", "joint-idx"],
     "vars": {
       "gp-0": "this",
       "v1-7": "twist-max"
     }
   },
   "joint-mod-debug-draw": {
-    "args": [
-      "mod"
-    ]
+    "args": ["mod"]
   },
   "(method 9 joint-mod)": {
     "args": ["this", "handler-mode"],
@@ -2800,10 +2047,7 @@
     "args": ["this", "target-trans", "option", "proc"],
     "vars": {
       "s1-0": "proc-drawable",
-      "s3-1": [
-        "enemy-facts",
-        "fact-info-enemy"
-      ],
+      "s3-1": ["enemy-facts", "fact-info-enemy"],
       "f30-0": "dist"
     }
   },
@@ -2819,11 +2063,7 @@
     }
   },
   "entity-actor-lookup": {
-    "args": [
-      "lump",
-      "name",
-      "idx"
-    ]
+    "args": ["lump", "name", "idx"]
   },
   "(method 0 actor-link-info)": {
     "args": ["allocation", "type-to-make", "proc"],
@@ -2916,42 +2156,18 @@
     }
   },
   "sound-play-by-name": {
-    "args": [
-      "name",
-      "id",
-      "vol",
-      "pitch",
-      "bend",
-      "group",
-      "trans"
-    ],
+    "args": ["name", "id", "vol", "pitch", "bend", "group", "trans"],
     "vars": {
-      "s5-0": [
-        "cmd",
-        "sound-rpc-play"
-      ],
-      "s3-1": [
-        "proc",
-        "process-drawable"
-      ],
+      "s5-0": ["cmd", "sound-rpc-play"],
+      "s3-1": ["proc", "process-drawable"],
       "s4-0": "sound-trans"
     }
   },
   "sound-play-by-spec": {
-    "args": [
-      "spec",
-      "id",
-      "trans"
-    ],
+    "args": ["spec", "id", "trans"],
     "vars": {
-      "s5-0": [
-        "cmd",
-        "sound-rpc-play"
-      ],
-      "s3-1": [
-        "proc",
-        "process-drawable"
-      ]
+      "s5-0": ["cmd", "sound-rpc-play"],
+      "s3-1": ["proc", "process-drawable"]
     }
   },
   "sound-pause": {
@@ -3045,11 +2261,7 @@
     }
   },
   "nav-mesh-connect": {
-    "args": [
-      "proc",
-      "trans",
-      "nav-cont"
-    ],
+    "args": ["proc", "trans", "nav-cont"],
     "vars": {
       "s2-0": "ent",
       "v0-0": "lookup-entity",
@@ -3072,235 +2284,104 @@
   "add-debug-point": {
     "args": ["enable-draw", "bucket", "pt"],
     "vars": {
-      "s5-0": [
-        "this",
-        "nav-control"
-      ],
-      "a0-3": "ent"
-    }
-  },
-  "add-debug-point": {
-    "args": [
-      "enable-draw",
-      "bucket",
-      "pt"
-    ],
-    "vars": {
-      "a0-6": [
-        "a0-6",
-        "(pointer uint64)"
-      ],
-      "a0-7": [
-        "a0-7",
-        "dma-packet"
-      ],
-      "a3-0": [
-        "a3-0",
-        "dma-packet"
-      ],
-      "a3-2": [
-        "a3-2",
-        "gs-gif-tag"
-      ],
-      "a3-4": [
-        "a3-4",
-        "vector4w-2"
-      ],
-      "a3-6": [
-        "a3-6",
-        "vector4w-2"
-      ],
-      "a3-8": [
-        "a3-8",
-        "vector4w-2"
-      ],
-      "a1-30": [
-        "a1-30",
-        "vector4w-2"
-      ],
+      "a0-6": ["a0-6", "(pointer uint64)"],
+      "a0-7": ["a0-7", "dma-packet"],
+      "a3-0": ["a3-0", "dma-packet"],
+      "a3-2": ["a3-2", "gs-gif-tag"],
+      "a3-4": ["a3-4", "vector4w-2"],
+      "a3-6": ["a3-6", "vector4w-2"],
+      "a3-8": ["a3-8", "vector4w-2"],
+      "a1-30": ["a1-30", "vector4w-2"],
       "v1-7": "buf"
     }
   },
   "internal-draw-debug-line": {
     "vars": {
-      "s2-0": [
-        "s2-0",
-        "rgba"
-      ],
-      "s5-0": [
-        "s5-0",
-        "rgba"
-      ],
-      "a3-1": [
-        "a3-1",
-        "dma-packet"
-      ],
-      "a3-3": [
-        "a3-3",
-        "gs-gif-tag"
-      ],
-      "a1-43": [
-        "a1-43",
-        "(inline-array vector4w-2)"
-      ],
-      "a0-31": [
-        "a0-31",
-        "(pointer uint64)"
-      ],
-      "a0-32": [
-        "a0-32",
-        "dma-packet"
-      ]
+      "s2-0": ["s2-0", "rgba"],
+      "s5-0": ["s5-0", "rgba"],
+      "a3-1": ["a3-1", "dma-packet"],
+      "a3-3": ["a3-3", "gs-gif-tag"],
+      "a1-43": ["a1-43", "(inline-array vector4w-2)"],
+      "a0-31": ["a0-31", "(pointer uint64)"],
+      "a0-32": ["a0-32", "dma-packet"]
     }
   },
   "add-debug-flat-triangle": {
     "vars": {
-      "a3-1": [
-        "a3-1",
-        "dma-packet"
-      ],
-      "a3-3": [
-        "a3-3",
-        "gs-gif-tag"
-      ],
-      "a3-5": [
-        "a3-5",
-        "(inline-array vector4w-3)"
-      ],
-      "a0-9": [
-        "a0-9",
-        "(pointer uint64)"
-      ],
-      "a0-10": [
-        "a0-10",
-        "dma-packet"
-      ]
+      "a3-1": ["a3-1", "dma-packet"],
+      "a3-3": ["a3-3", "gs-gif-tag"],
+      "a3-5": ["a3-5", "(inline-array vector4w-3)"],
+      "a0-9": ["a0-9", "(pointer uint64)"],
+      "a0-10": ["a0-10", "dma-packet"]
     }
   },
   "add-debug-line2d": {
     "vars": {
-      "a2-3": [
-        "a2-3",
-        "dma-packet"
-      ],
-      "a2-5": [
-        "a2-5",
-        "gs-gif-tag"
-      ],
-      "a2-7": [
-        "a2-7",
-        "(inline-array vector4w)"
-      ],
-      "a2-9": [
-        "a2-9",
-        "(inline-array vector4w)"
-      ],
-      "a0-20": [
-        "a0-20",
-        "(pointer uint64)"
-      ],
-      "v1-10": [
-        "v1-10",
-        "dma-packet"
-      ]
+      "a2-3": ["a2-3", "dma-packet"],
+      "a2-5": ["a2-5", "gs-gif-tag"],
+      "a2-7": ["a2-7", "(inline-array vector4w)"],
+      "a2-9": ["a2-9", "(inline-array vector4w)"],
+      "a0-20": ["a0-20", "(pointer uint64)"],
+      "v1-10": ["v1-10", "dma-packet"]
     }
   },
   "debug-percent-bar": {
     "vars": {
-      "v1-5": [
-        "v1-5",
-        "dma-packet"
-      ]
+      "v1-5": ["v1-5", "dma-packet"]
     }
   },
   "debug-pad-display": {
     "vars": {
-      "v1-12": [
-        "v1-12",
-        "dma-packet"
-      ]
+      "v1-12": ["v1-12", "dma-packet"]
     }
   },
   "internal-draw-debug-text-3d": {
     "vars": {
-      "v1-11": [
-        "v1-11",
-        "dma-packet"
-      ]
+      "v1-11": ["v1-11", "dma-packet"]
     }
   },
   "generic-init-buffers": {
     "vars": {
-      "v1-8": [
-        "packet",
-        "dma-packet"
-      ],
-      "gp-0": [
-        "gp-0",
-        "gs-zbuf"
-      ],
-      "s5-0": [
-        "s5-0",
-        "gs-zbuf"
-      ]
+      "v1-8": ["packet", "dma-packet"],
+      "gp-0": ["gp-0", "gs-zbuf"],
+      "s5-0": ["s5-0", "gs-zbuf"]
     }
   },
   "level-update-after-load": {
-    "args": [
-      "loaded-level",
-      "level-login-state"
-    ],
+    "args": ["loaded-level", "level-login-state"],
     "vars": {
       "s3-0": "level-drawable-trees",
       "s5-0": "initial-timer",
       "v1-4": "current-timer",
       "v1-5": "elapsed-timer",
       "s2-0": "current-login-pos",
-      "s2-1": [
-        "current-drawable",
-        "drawable-tree"
-      ],
+      "s2-1": ["current-drawable", "drawable-tree"],
       "s1-0": "idx-in-drawable"
     }
   },
   "(method 9 setting-data)": {
     "vars": {
-      "s3-0": [
-        "conn",
-        "connection"
-      ]
+      "s3-0": ["conn", "connection"]
     }
   },
   "(method 12 level)": {
     "vars": {
-      "s5-3": [
-        "s5-3",
-        "pair"
-      ]
+      "s5-3": ["s5-3", "pair"]
     }
   },
   "update-sound-banks": {
     "vars": {
-      "t0-0": [
-        "t0-0",
-        "symbol"
-      ]
+      "t0-0": ["t0-0", "symbol"]
     }
   },
   "(method 16 level-group)": {
     "vars": {
-      "s1-0": [
-        "s1-0",
-        "continue-point"
-      ]
+      "s1-0": ["s1-0", "continue-point"]
     }
   },
   "(method 20 level)": {
     "vars": {
-      "s3-0": [
-        "s3-0",
-        "ramdisk-rpc-fill"
-      ]
+      "s3-0": ["s3-0", "ramdisk-rpc-fill"]
     }
   },
   "(method 9 game-info)": {
@@ -3344,14 +2425,8 @@
   "(method 25 game-info)": {
     "args": ["this", "save"],
     "vars": {
-      "v1-0": [
-        "save-data",
-        "game-save-tag"
-      ],
-      "s4-0": [
-        "data",
-        "game-save-tag"
-      ],
+      "v1-0": ["save-data", "game-save-tag"],
+      "s4-0": ["data", "game-save-tag"],
       "v1-9": "old-base-frame",
       "v1-10": "frame-counter-diff"
     }
@@ -3367,10 +2442,7 @@
   "(method 11 game-save)": {
     "args": ["this", "detail"],
     "vars": {
-      "s4-0": [
-        "tag",
-        "game-save-tag"
-      ],
+      "s4-0": ["tag", "game-save-tag"],
       "s3-0": "tag-idx",
       "s2-1": "prog-lev-idx",
       "a2-13": "lev-name"
@@ -3378,29 +2450,20 @@
   },
   "debug-menu-func-decode": {
     "vars": {
-      "v0-0": [
-        "ret-val",
-        "symbol"
-      ]
+      "v0-0": ["ret-val", "symbol"]
     }
   },
   "letterbox": {
     "vars": {
       "s5-0": "dma-buf",
-      "v1-5": [
-        "pkt",
-        "dma-packet"
-      ]
+      "v1-5": ["pkt", "dma-packet"]
     }
   },
   "blackout": {
     "vars": {
       "s5-0": "dma-buf",
       "gp-0": "sprite-dma-data",
-      "v1-4": [
-        "pkt",
-        "dma-packet"
-      ]
+      "v1-4": ["pkt", "dma-packet"]
     }
   },
   "set-master-mode": {
@@ -3417,21 +2480,14 @@
       "v1-394": "cheat-pal-state",
       "s5-9": "dma-buff",
       "gp-9": "dma-start",
-      "v1-533": [
-        "dma-pkt",
-        "dma-packet"
-      ],
+      "v1-533": ["dma-pkt", "dma-packet"],
       "gp-10": "timeout",
       "v1-548": "inactive-timeout",
       "gp-11": "game-end-proc"
     }
   },
   "load-game-text-info": {
-    "args": [
-      "txt-name",
-      "curr-text",
-      "heap"
-    ],
+    "args": ["txt-name", "curr-text", "heap"],
     "vars": {
       "sv-16": "heap-sym-heap",
       "sv-24": "lang",
@@ -3515,31 +2571,15 @@
   },
   "raw-ray-sphere-intersect": {
     "vars": {
-      "v0-0": [
-        "result",
-        "float"
-      ],
-      "v1-0": [
-        "v1-0",
-        "float"
-      ]
+      "v0-0": ["result", "float"],
+      "v1-0": ["v1-0", "float"]
     }
   },
   "ray-sphere-intersect": {
-    "args": [
-      "ray-origin",
-      "ray-dir",
-      "sph-origin",
-      "radius"
-    ]
+    "args": ["ray-origin", "ray-dir", "sph-origin", "radius"]
   },
   "ray-circle-intersect": {
-    "args": [
-      "ray-origin",
-      "ray-dir",
-      "circle-origin",
-      "radius"
-    ]
+    "args": ["ray-origin", "ray-dir", "circle-origin", "radius"]
   },
   "ray-cylinder-intersect": {
     "args": [
@@ -3579,18 +2619,10 @@
     ]
   },
   "print-tr-stat": {
-    "args": [
-      "stat",
-      "name",
-      "dest"
-    ]
+    "args": ["stat", "name", "dest"]
   },
   "update-subdivide-settings!": {
-    "args": [
-      "settings",
-      "math-cam",
-      "idx"
-    ]
+    "args": ["settings", "math-cam", "idx"]
   },
   "start-perf-stat-collection": {
     "vars": {
@@ -3609,26 +2641,14 @@
   },
   "(method 3 anim-tester)": {
     "vars": {
-      "s5-0": [
-        "s5-0",
-        "anim-test-obj"
-      ],
-      "s4-0": [
-        "s4-0",
-        "anim-test-sequence"
-      ],
-      "s3-0": [
-        "s3-0",
-        "anim-test-seq-item"
-      ]
+      "s5-0": ["s5-0", "anim-test-obj"],
+      "s4-0": ["s4-0", "anim-test-sequence"],
+      "s3-0": ["s3-0", "anim-test-seq-item"]
     }
   },
   "anim-test-obj-item-valid?": {
     "vars": {
-      "s5-0": [
-        "s5-0",
-        "anim-test-sequence"
-      ]
+      "s5-0": ["s5-0", "anim-test-sequence"]
     }
   },
   "anim-test-obj-remove-invalid": {
@@ -3640,46 +2660,25 @@
   },
   "anim-tester-reset": {
     "vars": {
-      "v1-1": [
-        "v1-1",
-        "anim-test-obj"
-      ]
+      "v1-1": ["v1-1", "anim-test-obj"]
     }
   },
   "anim-tester-save-object-seqs": {
     "vars": {
-      "s4-2": [
-        "s4-2",
-        "anim-test-seq-item"
-      ]
+      "s4-2": ["s4-2", "anim-test-seq-item"]
     }
   },
   "sprite-setup-header": {
-    "args": [
-      "hdr",
-      "num-sprites"
-    ]
+    "args": ["hdr", "num-sprites"]
   },
   "(method 0 sprite-aux-list)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "size"
-    ]
+    "args": ["allocation", "type-to-make", "size"]
   },
   "sprite-setup-frame-data": {
-    "args": [
-      "data",
-      "tbp-offset"
-    ]
+    "args": ["data", "tbp-offset"]
   },
   "(method 0 sprite-array-2d)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "group-0-size",
-      "group-1-size"
-    ],
+    "args": ["allocation", "type-to-make", "group-0-size", "group-1-size"],
     "vars": {
       "v1-0": "sprite-count",
       "s4-0": "vec-data-size",
@@ -3687,12 +2686,7 @@
     }
   },
   "(method 0 sprite-array-3d)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "group-0-size",
-      "group-1-size"
-    ],
+    "args": ["allocation", "type-to-make", "group-0-size", "group-1-size"],
     "vars": {
       "v1-0": "sprite-count",
       "s4-0": "vec-data-size",
@@ -3700,50 +2694,26 @@
     }
   },
   "sprite-set-3d-quaternion": {
-    "args": [
-      "data",
-      "quat"
-    ]
+    "args": ["data", "quat"]
   },
   "sprite-get-3d-quaternion": {
-    "args": [
-      "data",
-      "quat"
-    ]
+    "args": ["data", "quat"]
   },
   "sprite-add-matrix-data": {
-    "args": [
-      "dma-buff",
-      "matrix-mode"
-    ],
+    "args": ["dma-buff", "matrix-mode"],
     "vars": {
       "v1-0": "count",
-      "a2-1": [
-        "pkt1",
-        "dma-packet"
-      ],
-      "a1-2": [
-        "mtx",
-        "matrix"
-      ],
-      "a2-9": [
-        "pkt2",
-        "dma-packet"
-      ],
+      "a2-1": ["pkt1", "dma-packet"],
+      "a1-2": ["mtx", "matrix"],
+      "a2-9": ["pkt2", "dma-packet"],
       "a1-11": "mtx2",
       "a1-20": "hvdf-idx"
     }
   },
   "sprite-add-frame-data": {
-    "args": [
-      "dma-buff",
-      "tbp-offset"
-    ],
+    "args": ["dma-buff", "tbp-offset"],
     "vars": {
-      "a0-1": [
-        "pkt",
-        "dma-packet"
-      ]
+      "a0-1": ["pkt", "dma-packet"]
     }
   },
   "sprite-add-2d-chunk": {
@@ -3755,33 +2725,17 @@
       "mscal-addr"
     ],
     "vars": {
-      "a0-1": [
-        "pkt1",
-        "dma-packet"
-      ],
+      "a0-1": ["pkt1", "dma-packet"],
       "s1-0": "qwc-pkt1",
       "a1-7": "qwc-pkt2",
-      "a0-5": [
-        "pkt2",
-        "dma-packet"
-      ],
+      "a0-5": ["pkt2", "dma-packet"],
       "a1-11": "qwc-pkt3",
-      "a0-7": [
-        "pkt3",
-        "dma-packet"
-      ],
-      "v1-7": [
-        "pkt4",
-        "dma-packet"
-      ]
+      "a0-7": ["pkt3", "dma-packet"],
+      "v1-7": ["pkt4", "dma-packet"]
     }
   },
   "sprite-add-2d-all": {
-    "args": [
-      "sprites",
-      "dma-buff",
-      "group-idx"
-    ],
+    "args": ["sprites", "dma-buff", "group-idx"],
     "vars": {
       "s4-0": "current-sprite-idx",
       "s2-0": "remaining-sprites",
@@ -3789,85 +2743,44 @@
     }
   },
   "sprite-add-3d-chunk": {
-    "args": [
-      "sprites",
-      "start-sprite-idx",
-      "num-sprites",
-      "dma-buff"
-    ],
+    "args": ["sprites", "start-sprite-idx", "num-sprites", "dma-buff"],
     "vars": {
-      "a0-1": [
-        "pkt1",
-        "dma-packet"
-      ],
+      "a0-1": ["pkt1", "dma-packet"],
       "s2-0": "qwc-pkt1",
       "a1-7": "qwc-pkt2",
-      "a0-5": [
-        "pkt2",
-        "dma-packet"
-      ],
+      "a0-5": ["pkt2", "dma-packet"],
       "a1-11": "qwc-pkt3",
-      "a0-7": [
-        "pkt3",
-        "dma-packet"
-      ],
-      "v1-7": [
-        "pkt4",
-        "dma-packet"
-      ]
+      "a0-7": ["pkt3", "dma-packet"],
+      "v1-7": ["pkt4", "dma-packet"]
     }
   },
   "sprite-add-3d-all": {
-    "args": [
-      "sprites",
-      "dma-buff",
-      "group-idx"
-    ],
+    "args": ["sprites", "dma-buff", "group-idx"],
     "vars": {
       "s4-0": "current-sprite-idx",
       "s3-0": "remaining-sprites"
     }
   },
   "sprite-add-shadow-chunk": {
-    "args": [
-      "shadow-buff",
-      "start-idx",
-      "num-sprites",
-      "dma-buff"
-    ],
+    "args": ["shadow-buff", "start-idx", "num-sprites", "dma-buff"],
     "vars": {
       "s2-0": "qwc-pkt1",
-      "a0-1": [
-        "pkt1",
-        "dma-packet"
-      ],
+      "a0-1": ["pkt1", "dma-packet"],
       "a1-7": "qwc-pkt2",
-      "a0-5": [
-        "pkt2",
-        "dma-packet"
-      ],
+      "a0-5": ["pkt2", "dma-packet"],
       "v1-5": "sprite-idx",
       "a0-7": "dma-vec-data",
       "a1-14": "in-vec-data",
       "a1-15": "qwc-pkt3",
-      "a0-11": [
-        "pkt3",
-        "dma-packet"
-      ],
+      "a0-11": ["pkt3", "dma-packet"],
       "s2-1": "si",
       "s1-0": "dma-adgif-data",
       "s0-0": "in-adgif-data",
-      "v1-21": [
-        "pkt4",
-        "dma-packet"
-      ]
+      "v1-21": ["pkt4", "dma-packet"]
     }
   },
   "sprite-add-shadow-all": {
-    "args": [
-      "shadow-buff",
-      "dma-buff"
-    ],
+    "args": ["shadow-buff", "dma-buff"],
     "vars": {
       "s4-0": "current-shadow",
       "s3-0": "remaining-shadows"
@@ -3879,40 +2792,17 @@
       "gp-0": "dma-mem-begin",
       "s4-0": "dma-buff",
       "s5-0": "dma-bucket-begin",
-      "a0-9": [
-        "pkt1",
-        "dma-packet"
-      ],
-      "a0-11": [
-        "giftag",
-        "gs-gif-tag"
-      ],
-      "a0-17": [
-        "pkt2",
-        "dma-packet"
-      ],
-      "a0-19": [
-        "pkt3",
-        "dma-packet"
-      ],
-      "a0-26": [
-        "pkt4",
-        "dma-packet"
-      ],
-      "v1-26": [
-        "pkt5",
-        "dma-packet"
-      ],
+      "a0-9": ["pkt1", "dma-packet"],
+      "a0-11": ["giftag", "gs-gif-tag"],
+      "a0-17": ["pkt2", "dma-packet"],
+      "a0-19": ["pkt3", "dma-packet"],
+      "a0-26": ["pkt4", "dma-packet"],
+      "v1-26": ["pkt5", "dma-packet"],
       "v1-31": "mem-use"
     }
   },
   "mem-usage-bsp-tree": {
-    "args": [
-      "header",
-      "node",
-      "mem-use",
-      "flags"
-    ]
+    "args": ["header", "node", "mem-use", "flags"]
   },
   "(method 8 bsp-header)": {
     "args": ["this", "mem-use", "flags"]
@@ -3923,41 +2813,24 @@
       "s4-0": "lev",
       "a2-3": "vis-list-qwc",
       "v1-15": "vis-list-qwc2",
-      "a0-9": [
-        "vis-list-spad",
-        "(pointer uint128)"
-      ],
-      "a1-5": [
-        "vis-list-lev",
-        "(pointer uint128)"
-      ],
+      "a0-9": ["vis-list-spad", "(pointer uint128)"],
+      "a1-5": ["vis-list-lev", "(pointer uint128)"],
       "a2-4": "current-qw"
     }
   },
   "bsp-camera-asm": {
-    "args": [
-      "bsp-hdr",
-      "camera-pos"
-    ],
+    "args": ["bsp-hdr", "camera-pos"],
     "vars": {
-      "v1-0": [
-        "next-node",
-        "bsp-node"
-      ],
+      "v1-0": ["next-node", "bsp-node"],
       "a1-1": "real-node"
     }
   },
   "level-remap-texture": {
-    "args": [
-      "tex-id"
-    ],
+    "args": ["tex-id"],
     "vars": {
       "v1-1": "bsp-hdr",
       "a3-0": "table-size",
-      "v1-2": [
-        "table-data-start",
-        "(pointer uint64)"
-      ],
+      "v1-2": ["table-data-start", "(pointer uint64)"],
       "t0-0": "table-data-ptr",
       "a1-1": "mask1",
       "a2-1": "masked-tex-id",
@@ -3968,62 +2841,35 @@
   },
   "debug-menu-make-from-template": {
     "vars": {
-      "s5-1": [
-        "s5-1",
-        "string"
-      ]
+      "s5-1": ["s5-1", "string"]
     }
   },
   "debug-menu-item-var-render": {
     "vars": {
-      "v1-14": [
-        "v1-14",
-        "dma-packet"
-      ]
+      "v1-14": ["v1-14", "dma-packet"]
     }
   },
   "generic-add-constants": {
     "vars": {
-      "a0-1": [
-        "a0-1",
-        "dma-packet"
-      ]
+      "a0-1": ["a0-1", "dma-packet"]
     }
   },
   "generic-init-buf": {
     "vars": {
-      "a0-2": [
-        "a0-2",
-        "dma-packet"
-      ],
-      "a0-4": [
-        "a0-4",
-        "gs-gif-tag"
-      ],
-      "a0-9": [
-        "a0-9",
-        "dma-packet"
-      ],
-      "v1-7": [
-        "v1-7",
-        "(pointer int32)"
-      ]
+      "a0-2": ["a0-2", "dma-packet"],
+      "a0-4": ["a0-4", "gs-gif-tag"],
+      "a0-9": ["a0-9", "dma-packet"],
+      "v1-7": ["v1-7", "(pointer int32)"]
     }
   },
   "(anon-function 1 cam-combiner)": {
     "vars": {
-      "pp": [
-        "pp",
-        "process"
-      ]
+      "pp": ["pp", "process"]
     }
   },
   "(anon-function 2 cam-combiner)": {
     "vars": {
-      "a0-3": [
-        "vec",
-        "(pointer vector)"
-      ]
+      "a0-3": ["vec", "(pointer vector)"]
     }
   },
   "(method 14 sync-info)": {
@@ -4223,34 +3069,16 @@
     }
   },
   "set-font-color-alpha": {
-    "args": [
-      "idx",
-      "alpha"
-    ]
+    "args": ["idx", "alpha"]
   },
   "print-game-text-scaled": {
-    "args": [
-      "str",
-      "scale",
-      "font-ctxt",
-      "alpha"
-    ]
+    "args": ["str", "scale", "font-ctxt", "alpha"]
   },
   "print-game-text": {
-    "args": [
-      "str",
-      "font-ctxt",
-      "opaque",
-      "alpha",
-      "line-height"
-    ]
+    "args": ["str", "font-ctxt", "opaque", "alpha", "line-height"]
   },
   "display-frame-start": {
-    "args": [
-      "disp",
-      "new-frame-idx",
-      "odd-even"
-    ],
+    "args": ["disp", "new-frame-idx", "odd-even"],
     "vars": {
       "f30-0": "time-ratio",
       "s3-0": "scaled-seconds",
@@ -4258,9 +3086,7 @@
     }
   },
   "display-frame-finish": {
-    "args": [
-      "disp"
-    ],
+    "args": ["disp"],
     "vars": {
       "s4-0": "this-frame",
       "s5-0": "this-calc-buf",
@@ -4275,9 +3101,7 @@
     }
   },
   "display-sync": {
-    "args": [
-      "disp"
-    ],
+    "args": ["disp"],
     "vars": {
       "s4-0": "frame-idx",
       "s5-0": "syncv-result",
@@ -4286,10 +3110,7 @@
     }
   },
   "draw-string": {
-    "args": [
-      "str-in",
-      "context"
-    ],
+    "args": ["str-in", "context"],
     "vars": {
       "v1-5": "fw",
       "a1-1": "dma-out",
@@ -4326,20 +3147,10 @@
     }
   },
   "add-debug-outline-triangle": {
-    "args": [
-      "enable",
-      "bucket",
-      "p0",
-      "p1",
-      "p2",
-      "color"
-    ]
+    "args": ["enable", "bucket", "p0", "p1", "p2", "color"]
   },
   "unpack-comp-rle": {
-    "args": [
-      "out",
-      "in"
-    ],
+    "args": ["out", "in"],
     "vars": {
       "v1-2": "current-input",
       "a2-0": "repeated-value",
@@ -4386,22 +3197,12 @@
       "s3-0": "frag-idx",
       "s2-0": "ctrl-size",
       "s1-0": "geo-size",
-      "s4-0": [
-        "geo",
-        "merc-fragment"
-      ],
-      "s5-0": [
-        "ctrl",
-        "merc-fragment-control"
-      ]
+      "s4-0": ["geo", "merc-fragment"],
+      "s5-0": ["ctrl", "merc-fragment-control"]
     }
   },
   "merc-vu1-add-vu-function": {
-    "args": [
-      "dma",
-      "func",
-      "flush-mode"
-    ],
+    "args": ["dma", "func", "flush-mode"],
     "vars": {
       "v1-0": "func-data",
       "a3-0": "qwc",
@@ -4413,17 +3214,11 @@
     "vars": {
       "s4-0": "ctrl-mem",
       "s3-0": "effect-idx",
-      "s2-0": [
-        "fctrl",
-        "merc-fragment-control"
-      ],
+      "s2-0": ["fctrl", "merc-fragment-control"],
       "s1-0": "frag-idx",
       "v1-35": "effect-mem",
       "a0-15": "effect-idx2",
-      "a1-9": [
-        "bctrl",
-        "merc-blend-ctrl"
-      ],
+      "a1-9": ["bctrl", "merc-blend-ctrl"],
       "a2-1": "blend-frag-idx"
     }
   },
@@ -4438,10 +3233,7 @@
     }
   },
   "merc-vu1-init-buffer": {
-    "args": [
-      "dma-bucket",
-      "test"
-    ],
+    "args": ["dma-bucket", "test"],
     "vars": {
       "gp-0": "bucket",
       "s4-0": "dma-buf"
@@ -4449,10 +3241,7 @@
   },
   "(method 9 screen-filter)": {
     "vars": {
-      "v1-4": [
-        "v1-4",
-        "dma-packet"
-      ],
+      "v1-4": ["v1-4", "dma-packet"],
       "s5-0": "buf"
     }
   },
@@ -4464,12 +3253,7 @@
     }
   },
   "auto-save-init-by-other": {
-    "args": [
-      "desired-mode",
-      "notify-proc",
-      "card-idx",
-      "file-idx"
-    ]
+    "args": ["desired-mode", "notify-proc", "card-idx", "file-idx"]
   },
   "debug-menu-item-var-make-int": {
     "args": [
@@ -4494,31 +3278,20 @@
     ]
   },
   "(method 0 debug-menu-item-var)": {
-    "args": [
-      "allocation",
-      "type-to-make",
-      "name",
-      "id",
-      "max-width"
-    ]
+    "args": ["allocation", "type-to-make", "name", "id", "max-width"]
   },
   "debug-menu-context-grab-joypad": {
     "args": ["ctxt", "callback-arg", "callback-func"]
   },
   "debug-menu-context-default-selection": {
-    "args": [
-      "ctxt",
-      "keep-current"
-    ],
+    "args": ["ctxt", "keep-current"],
     "vars": {
       "s5-0": "menu",
       "s4-0": "currently-active"
     }
   },
   "debug-menu-rebuild": {
-    "args": [
-      "menu"
-    ],
+    "args": ["menu"],
     "vars": {
       "s4-0": "max-width",
       "s5-0": "entry-count",
@@ -4527,19 +3300,13 @@
     }
   },
   "debug-menu-context-set-root-menu": {
-    "args": [
-      "context",
-      "menu"
-    ],
+    "args": ["context", "menu"],
     "vars": {
       "s4-0": "active"
     }
   },
   "debug-menu-append-item": {
-    "args": [
-      "menu",
-      "item"
-    ],
+    "args": ["menu", "item"],
     "vars": {
       "gp-0": "context",
       "s4-0": "was-active"
@@ -4577,10 +3344,7 @@
     }
   },
   "init-entity": {
-    "args": [
-      "proc",
-      "ent"
-    ]
+    "args": ["proc", "ent"]
   },
   "(method 22 entity-actor)": {
     "vars": {
@@ -4604,34 +3368,19 @@
   },
   "(code falling beach-rock)": {
     "vars": {
-      "gp-2": [
-        "gp-2",
-        "handle"
-      ],
-      "s5-1": [
-        "s5-1",
-        "handle"
-      ]
+      "gp-2": ["gp-2", "handle"],
+      "s5-1": ["s5-1", "handle"]
     }
   },
   "draw-percent-bar": {
     "vars": {
-      "v1-3": [
-        "v1-3",
-        "dma-packet"
-      ]
+      "v1-3": ["v1-3", "dma-packet"]
     }
   },
   "(dummy-17 progress)": {
     "vars": {
-      "v1-20": [
-        "v1-20",
-        "dma-packet"
-      ],
-      "v1-81": [
-        "v1-81",
-        "dma-packet"
-      ]
+      "v1-20": ["v1-20", "dma-packet"],
+      "v1-81": ["v1-81", "dma-packet"]
     }
   },
   "make-current-level-available-to-progress": {
@@ -4648,31 +3397,19 @@
     }
   },
   "get-next-task-up": {
-    "args": [
-      "cur-task-idx",
-      "lev-idx"
-    ]
+    "args": ["cur-task-idx", "lev-idx"]
   },
   "get-next-task-down": {
-    "args": [
-      "cur-task-idx",
-      "lev-idx"
-    ]
+    "args": ["cur-task-idx", "lev-idx"]
   },
   "get-next-level-up": {
-    "args": [
-      "lev-idx"
-    ]
+    "args": ["lev-idx"]
   },
   "get-next-level-down": {
-    "args": [
-      "lev-idx"
-    ]
+    "args": ["lev-idx"]
   },
   "calculate-completion": {
-    "args": [
-      "the-progress"
-    ],
+    "args": ["the-progress"],
     "vars": {
       "sv-40": "total-cells",
       "sv-48": "total-buzzers",
@@ -4686,56 +3423,32 @@
     "args": ["this", "screen", "option"]
   },
   "activate-progress": {
-    "args": [
-      "creator",
-      "screen"
-    ]
+    "args": ["creator", "screen"]
   },
   "(method 23 progress)": {
     "args": ["this", "aspect", "video-mode"]
   },
   "(method 35 progress)": {
     "vars": {
-      "s4-0": [
-        "s4-0",
-        "text-id"
-      ]
+      "s4-0": ["s4-0", "text-id"]
     }
   },
   "(method 43 progress)": {
     "vars": {
-      "s4-0": [
-        "s4-0",
-        "text-id"
-      ]
+      "s4-0": ["s4-0", "text-id"]
     }
   },
   "(method 38 progress)": {
     "vars": {
-      "a1-1": [
-        "a1-1",
-        "text-id"
-      ]
+      "a1-1": ["a1-1", "text-id"]
     }
   },
   "(post progress-debug)": {
     "vars": {
-      "v1-7": [
-        "v1-7",
-        "dma-packet"
-      ],
-      "v1-16": [
-        "v1-16",
-        "dma-packet"
-      ],
-      "v1-25": [
-        "v1-25",
-        "dma-packet"
-      ],
-      "v1-34": [
-        "v1-34",
-        "dma-packet"
-      ]
+      "v1-7": ["v1-7", "dma-packet"],
+      "v1-16": ["v1-16", "dma-packet"],
+      "v1-25": ["v1-25", "dma-packet"],
+      "v1-34": ["v1-34", "dma-packet"]
     }
   },
   "voicebox-track": {
@@ -4745,155 +3458,89 @@
   },
   "citb-drop-plat-drop-children": {
     "vars": {
-      "v1-4": [
-        "v1-4",
-        "handle"
-      ]
+      "v1-4": ["v1-4", "handle"]
     }
   },
   "master-track-target": {
     "vars": {
-      "v0-1": [
-        "v0-1",
-        "symbol"
-      ],
-      "v1-14": [
-        "v1-14",
-        "handle"
-      ]
+      "v0-1": ["v0-1", "symbol"],
+      "v1-14": ["v1-14", "handle"]
     }
   },
   "cam-los-spline-collide": {
     "vars": {
-      "s3-0": [
-        "s3-0",
-        "(inline-array collide-cache-tri)"
-      ]
+      "s3-0": ["s3-0", "(inline-array collide-cache-tri)"]
     }
   },
   "cam-draw-collide-cache": {
     "vars": {
-      "gp-0": [
-        "gp-0",
-        "(inline-array collide-cache-tri)"
-      ]
+      "gp-0": ["gp-0", "(inline-array collide-cache-tri)"]
     }
   },
   "cam-los-collide": {
     "vars": {
-      "s1-1": [
-        "s1-1",
-        "(inline-array collide-cache-tri)"
-      ]
+      "s1-1": ["s1-1", "(inline-array collide-cache-tri)"]
     }
   },
   "(code plunger-lurker-plunge)": {
     "vars": {
-      "gp-1": [
-        "gp-1",
-        "handle"
-      ],
-      "s5-0": [
-        "s5-0",
-        "othercam"
-      ]
+      "gp-1": ["gp-1", "handle"],
+      "s5-0": ["s5-0", "othercam"]
     }
   },
   "flying-lurker-play-intro": {
     "vars": {
-      "gp-1": [
-        "gp-1",
-        "handle"
-      ]
+      "gp-1": ["gp-1", "handle"]
     }
   },
   "(code flying-lurker-start)": {
     "vars": {
-      "v1-9": [
-        "v1-9",
-        "float"
-      ]
+      "v1-9": ["v1-9", "float"]
     }
   },
   "(code flying-lurker-fly)": {
     "vars": {
-      "v1-42": [
-        "v1-42",
-        "float"
-      ]
+      "v1-42": ["v1-42", "float"]
     }
   },
   "(method 14 level-group)": {
     "vars": {
-      "s0-1": [
-        "s0-1",
-        "(pointer int32)"
-      ],
-      "s1-1": [
-        "s1-1",
-        "process-drawable"
-      ],
-      "v0-10": [
-        "v0-10",
-        "symbol"
-      ]
+      "s0-1": ["s0-1", "(pointer int32)"],
+      "s1-1": ["s1-1", "process-drawable"],
+      "v0-10": ["v0-10", "symbol"]
     }
   },
   "level-hint-displayed?": {
     "vars": {
-      "a0-1": [
-        "a0-1",
-        "level-hint"
-      ]
+      "a0-1": ["a0-1", "level-hint"]
     }
   },
   "level-hint-init-by-other": {
     "vars": {
-      "a0-6": [
-        "a0-6",
-        "string"
-      ]
+      "a0-6": ["a0-6", "string"]
     }
   },
   "(method 27 entity-ambient)": {
     "vars": {
-      "s5-0": [
-        "s5-0",
-        "symbol"
-      ]
+      "s5-0": ["s5-0", "symbol"]
     }
   },
   "upload-vis-bits": {
     "vars": {
       "v1-2": "qwc",
-      "a0-1": [
-        "lev-vis-bits",
-        "(pointer uint128)"
-      ],
-      "a1-1": [
-        "all-vis",
-        "(pointer uint128)"
-      ],
-      "a2-2": [
-        "spad-vis",
-        "(pointer uint128)"
-      ]
+      "a0-1": ["lev-vis-bits", "(pointer uint128)"],
+      "a1-1": ["all-vis", "(pointer uint128)"],
+      "a2-2": ["spad-vis", "(pointer uint128)"]
     }
   },
   "(event be-clone process-taskable)": {
     "vars": {
-      "v0-0": [
-        "v0-0",
-        "shadow-geo"
-      ]
+      "v0-0": ["v0-0", "shadow-geo"]
     }
   },
   "(event idle process-taskable)": {
     "vars": {
-      "v0-0": [
-        "v0-0",
-        "symbol"
-      ]
+      "v0-0": ["v0-0", "symbol"]
     }
   },
   "(method 9 load-dir-art-group)": {
@@ -4901,226 +3548,136 @@
   },
   "(method 15 hud-money)": {
     "vars": {
-      "v1-8": [
-        "v1-8",
-        "dma-packet"
-      ]
+      "v1-8": ["v1-8", "dma-packet"]
     }
   },
   "(method 15 hud-money-all)": {
     "vars": {
-      "v1-32": [
-        "v1-32",
-        "dma-packet"
-      ]
+      "v1-32": ["v1-32", "dma-packet"]
     }
   },
   "(trans fisher-done)": {
     "vars": {
-      "v1-13": [
-        "v1-13",
-        "dma-packet"
-      ]
+      "v1-13": ["v1-13", "dma-packet"]
     }
   },
   "anim-tester-get-playing-item": {
     "vars": {
-      "v0-0": [
-        "v0-0",
-        "anim-test-seq-item"
-      ]
+      "v0-0": ["v0-0", "anim-test-seq-item"]
     }
   },
   "light-eco-mother-default-event-handler": {
     "vars": {
-      "v0-0": [
-        "v0-0",
-        "int"
-      ]
+      "v0-0": ["v0-0", "int"]
     }
   },
   "(code robotboss-white-eco-movie)": {
     "vars": {
-      "gp-1": [
-        "gp-1",
-        "handle"
-      ]
+      "gp-1": ["gp-1", "handle"]
     }
   },
   "cam-collision-record-draw": {
     "vars": {
-      "s5-0": [
-        "s5-0",
-        "cam-collision-record"
-      ]
+      "s5-0": ["s5-0", "cam-collision-record"]
     }
   },
   "cam-collision-record-save": {
     "vars": {
-      "v1-5": [
-        "v1-5",
-        "cam-collision-record"
-      ]
+      "v1-5": ["v1-5", "cam-collision-record"]
     }
   },
   "cam-layout-save-cam-trans": {
     "vars": {
-      "s5-1": [
-        "s5-1",
-        "vector"
-      ],
-      "s2-1": [
-        "s2-1",
-        "vector"
-      ]
+      "s5-1": ["s5-1", "vector"],
+      "s2-1": ["s2-1", "vector"]
     }
   },
   "(method 15 level)": {
     "vars": {
-      "v1-5": [
-        "v1-5",
-        "(inline-array box8s)"
-      ]
+      "v1-5": ["v1-5", "(inline-array box8s)"]
     }
   },
   "(method 14 process-drawable)": {
     "vars": {
-      "a2-10": [
-        "a2-10",
-        "int"
-      ]
+      "a2-10": ["a2-10", "int"]
     }
   },
   "joint-control-reset!": {
     "vars": {
-      "v1-2": [
-        "v1-2",
-        "joint-control-channel"
-      ]
+      "v1-2": ["v1-2", "joint-control-channel"]
     }
   },
   "matrix-from-control!": {
     "vars": {
-      "v1-10": [
-        "v1-10",
-        "matrix"
-      ]
+      "v1-10": ["v1-10", "matrix"]
     }
   },
   "(event citb-robotboss-idle)": {
     "vars": {
-      "v0-3": [
-        "v0-3",
-        "symbol"
-      ]
+      "v0-3": ["v0-3", "symbol"]
     }
   },
   "(code pov-camera-playing maincavecam)": {
     "vars": {
-      "gp-1": [
-        "gp-1",
-        "handle"
-      ]
+      "gp-1": ["gp-1", "handle"]
     }
   },
   "(event darkecobarrel-mover-move)": {
     "vars": {
-      "v0-0": [
-        "v0-0",
-        "object"
-      ]
+      "v0-0": ["v0-0", "object"]
     }
   },
   "(event cam-master-active)": {
     "vars": {
-      "v0-0": [
-        "v0-0",
-        "object"
-      ]
+      "v0-0": ["v0-0", "object"]
     }
   },
   "(code pickup fuel-cell)": {
     "vars": {
-      "v1-34": [
-        "v1-34",
-        "(inline-array vector)"
-      ]
+      "v1-34": ["v1-34", "(inline-array vector)"]
     }
   },
   "(method 11 eco)": {
     "vars": {
-      "v1-2": [
-        "v1-2",
-        "pickup-type"
-      ]
+      "v1-2": ["v1-2", "pickup-type"]
     }
   },
   "(method 9 fact-info)": {
     "vars": {
-      "s3-0": [
-        "s3-0",
-        "pickup-type"
-      ]
+      "s3-0": ["s3-0", "pickup-type"]
     }
   },
   "(event pickup eco-collectable)": {
     "vars": {
-      "v0-1": [
-        "v0-1",
-        "symbol"
-      ]
+      "v0-1": ["v0-1", "symbol"]
     }
   },
   "cloud-track": {
     "vars": {
-      "s1-1": [
-        "s1-1",
-        "handle"
-      ],
-      "s2-1": [
-        "s2-1",
-        "handle"
-      ]
+      "s1-1": ["s1-1", "handle"],
+      "s2-1": ["s2-1", "handle"]
     }
   },
   "(method 63 collide-shape-moving)": {
     "vars": {
-      "s0-0": [
-        "s0-0",
-        "collide-cache-prim"
-      ]
+      "s0-0": ["s0-0", "collide-cache-prim"]
     }
   },
   "target-powerup-effect": {
     "vars": {
-      "a0-74": [
-        "a0-74",
-        "vector"
-      ]
+      "a0-74": ["a0-74", "vector"]
     }
   },
   "(code target-yellow-blast)": {
     "vars": {
-      "gp-0": [
-        "gp-0",
-        "handle"
-      ]
+      "gp-0": ["gp-0", "handle"]
     }
   },
   "dma-add-process-drawable": {
     "vars": {
-      "a0-20": [
-        "a0-20",
-        "terrain-context"
-      ],
-      "s4-0": [
-        "s4-0",
-        "vector"
-      ],
-      "v1-42": [
-        "v1-42",
-        "vector"
-      ],
+      "a0-20": ["a0-20", "terrain-context"],
+      "s4-0": ["s4-0", "vector"],
+      "v1-42": ["v1-42", "vector"],
       "s3-1": "lod-to-use",
       "f30-1": "cam-dist",
       "s3-0": "tod",
@@ -5138,18 +3695,9 @@
   },
   "flatten-joint-control-to-spr": {
     "vars": {
-      "a1-0": [
-        "a1-0",
-        "(inline-array vector)"
-      ],
-      "a1-1": [
-        "a1-1",
-        "(inline-array vector)"
-      ],
-      "a1-2": [
-        "a1-2",
-        "(inline-array vector)"
-      ],
+      "a1-0": ["a1-0", "(inline-array vector)"],
+      "a1-1": ["a1-1", "(inline-array vector)"],
+      "a1-2": ["a1-2", "(inline-array vector)"],
       "s5-0": "nb-channels",
       "s4-0": "upl-idx",
       "s3-0": "ch"
@@ -5157,506 +3705,248 @@
   },
   "(event puffer-die)": {
     "vars": {
-      "v0-0": [
-        "v0-0",
-        "uint"
-      ]
+      "v0-0": ["v0-0", "uint"]
     }
   },
   "bones-init": {
     "vars": {
-      "a2-1": [
-        "a2-1",
-        "bone-memory"
-      ],
-      "v1-2": [
-        "v1-2",
-        "bone-memory"
-      ]
+      "a2-1": ["a2-1", "bone-memory"],
+      "v1-2": ["v1-2", "bone-memory"]
     }
   },
   "draw-bones-mtx-calc": {
     "vars": {
-      "t2-0": [
-        "t2-0",
-        "bone-memory"
-      ]
+      "t2-0": ["t2-0", "bone-memory"]
     }
   },
   "bones-mtx-calc-execute": {
     "vars": {
-      "a1-9": [
-        "a1-9",
-        "(inline-array vector)"
-      ],
-      "v1-18": [
-        "v1-18",
-        "(inline-array matrix)"
-      ]
+      "a1-9": ["a1-9", "(inline-array vector)"],
+      "v1-18": ["v1-18", "(inline-array matrix)"]
     }
   },
   "texscroll-make-request": {
     "vars": {
-      "a1-1": [
-        "a1-1",
-        "mei-texture-scroll"
-      ]
+      "a1-1": ["a1-1", "mei-texture-scroll"]
     }
   },
   "texscroll-execute": {
     "vars": {
-      "t1-0": [
-        "t1-0",
-        "merc-fragment"
-      ],
-      "a1-2": [
-        "a1-2",
-        "mei-texture-scroll"
-      ],
-      "t1-3": [
-        "t1-3",
-        "(pointer int8)"
-      ],
-      "a2-1": [
-        "a2-1",
-        "merc-fragment-control"
-      ]
+      "t1-0": ["t1-0", "merc-fragment"],
+      "a1-2": ["a1-2", "mei-texture-scroll"],
+      "t1-3": ["t1-3", "(pointer int8)"],
+      "a2-1": ["a2-1", "merc-fragment-control"]
     }
   },
   "draw-bones": {
     "vars": {
-      "a2-6": [
-        "a2-6",
-        "bone-regs"
-      ],
-      "t4-0": [
-        "t4-0",
-        "bone-memory"
-      ],
-      "v1-36": [
-        "v1-36",
-        "mei-texture-scroll"
-      ],
-      "v1-6": [
-        "v1-6",
-        "vu-lights"
-      ]
+      "a2-6": ["a2-6", "bone-regs"],
+      "t4-0": ["t4-0", "bone-memory"],
+      "v1-36": ["v1-36", "mei-texture-scroll"],
+      "v1-6": ["v1-6", "vu-lights"]
     }
   },
   "draw-bones-hud": {
     "vars": {
-      "t0-1": [
-        "t0-1",
-        "bone-regs"
-      ],
-      "t6-0": [
-        "t6-0",
-        "bone-memory"
-      ],
-      "t2-10": [
-        "t2-10",
-        "vu-lights"
-      ]
+      "t0-1": ["t0-1", "bone-regs"],
+      "t6-0": ["t6-0", "bone-memory"],
+      "t2-10": ["t2-10", "vu-lights"]
     }
   },
   "(code manipy-idle)": {
     "vars": {
-      "v1-29": [
-        "v1-29",
-        "(pointer process)"
-      ]
+      "v1-29": ["v1-29", "(pointer process)"]
     }
   },
   "(code target-death)": {
     "vars": {
-      "s5-8": [
-        "s5-8",
-        "handle"
-      ]
+      "s5-8": ["s5-8", "handle"]
     }
   },
   "(method 23 exit-chamber)": {
     "vars": {
-      "v1-39": [
-        "v1-39",
-        "handle"
-      ]
+      "v1-39": ["v1-39", "handle"]
     }
   },
   "beachcam-spawn": {
     "vars": {
-      "gp-1": [
-        "gp-1",
-        "handle"
-      ],
-      "v1-12": [
-        "v1-12",
-        "handle"
-      ],
-      "v1-15": [
-        "v1-15",
-        "handle"
-      ],
-      "s5-2": [
-        "s5-2",
-        "handle"
-      ]
+      "gp-1": ["gp-1", "handle"],
+      "v1-12": ["v1-12", "handle"],
+      "v1-15": ["v1-15", "handle"],
+      "s5-2": ["s5-2", "handle"]
     }
   },
   "(code pelican-spit)": {
     "vars": {
-      "gp-1": [
-        "gp-1",
-        "handle"
-      ],
-      "s4-0": [
-        "s4-0",
-        "handle"
-      ]
+      "gp-1": ["gp-1", "handle"],
+      "s4-0": ["s4-0", "handle"]
     }
   },
   "(code race-ring-active)": {
     "vars": {
-      "gp-2": [
-        "gp-2",
-        "handle"
-      ],
-      "v1-65": [
-        "v1-65",
-        "handle"
-      ],
-      "s5-2": [
-        "s5-2",
-        "handle"
-      ]
+      "gp-2": ["gp-2", "handle"],
+      "v1-65": ["v1-65", "handle"],
+      "s5-2": ["s5-2", "handle"]
     }
   },
   "(code pov-camera-playing snowcam)": {
     "vars": {
-      "gp-2": [
-        "gp-2",
-        "handle"
-      ]
+      "gp-2": ["gp-2", "handle"]
     }
   },
   "(code target-demo)": {
     "vars": {
-      "v1-12": [
-        "v1-12",
-        "handle"
-      ],
-      "v1-24": [
-        "v1-24",
-        "handle"
-      ],
-      "v1-32": [
-        "v1-32",
-        "handle"
-      ],
-      "v1-38": [
-        "v1-38",
-        "handle"
-      ],
-      "v1-44": [
-        "v1-44",
-        "handle"
-      ],
-      "v1-50": [
-        "v1-50",
-        "handle"
-      ],
-      "v1-56": [
-        "v1-56",
-        "handle"
-      ],
-      "v1-62": [
-        "v1-62",
-        "handle"
-      ],
-      "v1-70": [
-        "v1-70",
-        "handle"
-      ],
-      "v1-76": [
-        "v1-76",
-        "handle"
-      ],
-      "v1-82": [
-        "v1-82",
-        "handle"
-      ],
-      "v1-88": [
-        "v1-88",
-        "handle"
-      ],
-      "v1-94": [
-        "v1-94",
-        "handle"
-      ],
-      "v1-100": [
-        "v1-100",
-        "handle"
-      ],
-      "v1-106": [
-        "v1-106",
-        "handle"
-      ],
-      "v1-112": [
-        "v1-112",
-        "handle"
-      ],
-      "v1-18": [
-        "v1-18",
-        "handle"
-      ]
+      "v1-12": ["v1-12", "handle"],
+      "v1-24": ["v1-24", "handle"],
+      "v1-32": ["v1-32", "handle"],
+      "v1-38": ["v1-38", "handle"],
+      "v1-44": ["v1-44", "handle"],
+      "v1-50": ["v1-50", "handle"],
+      "v1-56": ["v1-56", "handle"],
+      "v1-62": ["v1-62", "handle"],
+      "v1-70": ["v1-70", "handle"],
+      "v1-76": ["v1-76", "handle"],
+      "v1-82": ["v1-82", "handle"],
+      "v1-88": ["v1-88", "handle"],
+      "v1-94": ["v1-94", "handle"],
+      "v1-100": ["v1-100", "handle"],
+      "v1-106": ["v1-106", "handle"],
+      "v1-112": ["v1-112", "handle"],
+      "v1-18": ["v1-18", "handle"]
     }
   },
   "(method 32 sequenceA-village1)": {
     "vars": {
-      "v1-27": [
-        "v1-27",
-        "handle"
-      ],
-      "v1-34": [
-        "v1-34",
-        "handle"
-      ]
+      "v1-27": ["v1-27", "handle"],
+      "v1-34": ["v1-34", "handle"]
     }
   },
   "(exit play-anim sequenceA-village1)": {
     "vars": {
-      "v1-4": [
-        "v1-4",
-        "handle"
-      ],
-      "v1-10": [
-        "v1-10",
-        "handle"
-      ]
+      "v1-4": ["v1-4", "handle"],
+      "v1-10": ["v1-10", "handle"]
     }
   },
   "(event play-anim sequenceA-village1)": {
     "vars": {
-      "v1-12": [
-        "v1-12",
-        "handle"
-      ],
-      "v1-19": [
-        "v1-19",
-        "handle"
-      ],
-      "v1-26": [
-        "v1-26",
-        "handle"
-      ]
+      "v1-12": ["v1-12", "handle"],
+      "v1-19": ["v1-19", "handle"],
+      "v1-26": ["v1-26", "handle"]
     }
   },
   "mistycam-spawn": {
     "vars": {
-      "v1-12": [
-        "v1-12",
-        "handle"
-      ],
-      "v1-15": [
-        "v1-15",
-        "handle"
-      ],
-      "s5-2": [
-        "s5-2",
-        "handle"
-      ]
+      "v1-12": ["v1-12", "handle"],
+      "v1-15": ["v1-15", "handle"],
+      "s5-2": ["s5-2", "handle"]
     }
   },
   "(code happy-plant-opening)": {
     "vars": {
-      "gp-2": [
-        "gp-2",
-        "handle"
-      ],
-      "v1-40": [
-        "v1-40",
-        "handle"
-      ],
-      "s5-3": [
-        "s5-3",
-        "handle"
-      ]
+      "gp-2": ["gp-2", "handle"],
+      "v1-40": ["v1-40", "handle"],
+      "s5-3": ["s5-3", "handle"]
     }
   },
   "(code target-title)": {
     "vars": {
-      "gp-0": [
-        "gp-0",
-        "handle"
-      ]
+      "gp-0": ["gp-0", "handle"]
     }
   },
   "(code hud-collecting)": {
     "vars": {
-      "v1-0": [
-        "v1-0",
-        "handle"
-      ]
+      "v1-0": ["v1-0", "handle"]
     }
   },
   "(method 13 touching-list)": {
     "vars": {
-      "v0-0": [
-        "v0-0",
-        "touching-shapes-entry"
-      ]
+      "v0-0": ["v0-0", "touching-shapes-entry"]
     }
   },
   "(method 11 touching-list)": {
     "vars": {
-      "s5-0": [
-        "s5-0",
-        "touching-shapes-entry"
-      ]
+      "s5-0": ["s5-0", "touching-shapes-entry"]
     }
   },
   "recursive-inside-poly": {
     "vars": {
-      "a1-2": [
-        "a1-2",
-        "nav-node"
-      ]
+      "a1-2": ["a1-2", "nav-node"]
     }
   },
   "vu-point-triangle-intersection?": {
     "vars": {
-      "v1-0": [
-        "v1-0",
-        "int"
-      ],
-      "a0-1": [
-        "a0-1",
-        "int"
-      ],
-      "a1-1": [
-        "a1-1",
-        "int"
-      ]
+      "v1-0": ["v1-0", "int"],
+      "a0-1": ["a0-1", "int"],
+      "a1-1": ["a1-1", "int"]
     }
   },
   "point-inside-poly?": {
     "vars": {
-      "v1-6": [
-        "v1-6",
-        "int"
-      ],
-      "a0-3": [
-        "a0-3",
-        "int"
-      ],
-      "a1-6": [
-        "a1-6",
-        "int"
-      ]
+      "v1-6": ["v1-6", "int"],
+      "a0-3": ["a0-3", "int"],
+      "a1-6": ["a1-6", "int"]
     }
   },
   "(method 29 nav-mesh)": {
     "vars": {
-      "v1-10": [
-        "v1-10",
-        "int"
-      ]
+      "v1-10": ["v1-10", "int"]
     }
   },
   "(method 15 snow-ball)": {
     "vars": {
-      "v1-0": [
-        "v1-0",
-        "(pointer snow-ball-roller)"
-      ],
-      "a3-1": [
-        "a3-1",
-        "(inline-array snow-ball-junction)"
-      ]
+      "v1-0": ["v1-0", "(pointer snow-ball-roller)"],
+      "a3-1": ["a3-1", "(inline-array snow-ball-junction)"]
     }
   },
   "curve-evaluate!": {
     "vars": {
-      "t2-1": [
-        "t2-1",
-        "(pointer float)"
-      ],
-      "v1-5": [
-        "v1-5",
-        "(pointer float)"
-      ]
+      "t2-1": ["t2-1", "(pointer float)"],
+      "v1-5": ["v1-5", "(pointer float)"]
     }
   },
   "update-mood-flames": {
     "vars": {
-      "s5-0": [
-        "s5-0",
-        "flames-state"
-      ]
+      "s5-0": ["s5-0", "flames-state"]
     }
   },
   "update-mood-lava": {
     "vars": {
-      "s4-0": [
-        "s4-0",
-        "lava-state"
-      ]
+      "s4-0": ["s4-0", "lava-state"]
     }
   },
   "update-mood-snow": {
     "vars": {
-      "s5-1": [
-        "s5-1",
-        "snow-states"
-      ]
+      "s5-1": ["s5-1", "snow-states"]
     }
   },
   "update-mood-village3": {
     "vars": {
-      "s0-2": [
-        "s0-2",
-        "village3-states"
-      ]
+      "s0-2": ["s0-2", "village3-states"]
     }
   },
   "update-mood-ogre": {
     "vars": {
-      "s4-1": [
-        "s4-1",
-        "ogre-states"
-      ]
+      "s4-1": ["s4-1", "ogre-states"]
     }
   },
   "update-mood-finalboss": {
     "vars": {
-      "s4-0": [
-        "s4-0",
-        "finalboss-states"
-      ]
+      "s4-0": ["s4-0", "finalboss-states"]
     }
   },
   "(method 11 med-res-level)": {
     "vars": {
-      "s4-0": [
-        "s4-0",
-        "(pointer sparticle-launch-group)"
-      ]
+      "s4-0": ["s4-0", "(pointer sparticle-launch-group)"]
     }
   },
   "render-ocean-far": {
     "vars": {
-      "s5-0": [
-        "vertices",
-        "(inline-array ocean-vertex)"
-      ]
+      "s5-0": ["vertices", "(inline-array ocean-vertex)"]
     }
   },
   "(method 12 touching-list)": {
     "vars": {
-      "gp-0": [
-        "entry",
-        "touching-shapes-entry"
-      ],
+      "gp-0": ["entry", "touching-shapes-entry"],
       "s5-0": "i",
       "s4-0": "c1",
       "s3-0": "c2"
@@ -5664,10 +3954,7 @@
   },
   "(code ogreboss-stage1)": {
     "vars": {
-      "s5-0": [
-        "boulder-pickup",
-        "pickup-type"
-      ]
+      "s5-0": ["boulder-pickup", "pickup-type"]
     }
   },
   "aaaaaaaaaaaaaaaaaaaaaaa": {},

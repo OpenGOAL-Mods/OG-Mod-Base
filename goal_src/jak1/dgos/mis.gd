@@ -1,5 +1,5 @@
 ("MIS.DGO"
- (;;"target-racer-h.o"
+ (;;"target-racer-h.o" mod-base-change
   ;;"racer-part.o"
   ;;"racer.o"
   ;;"target-racer.o"
@@ -11,6 +11,7 @@
   "mistycannon.o"
   "babak-with-cannon.o"
   "blocking-plane.o"
+  "blocking-plane-modded.o"
   "misty-obs.o"
   "misty-warehouse.o"
   "misty-conveyor.o"

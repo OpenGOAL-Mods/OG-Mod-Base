@@ -1,5 +1,5 @@
 ("LAV.DGO"
- (;;"target-racer-h.o"
+ (;;"target-racer-h.o" mod-base-change
   ;;"racer-part.o"
   ;;"racer.o"
   ;;"target-racer.o"
@@ -8,6 +8,7 @@
   "eichar-racer+0-ag.go"
   "tpage-1119.go"
   "blocking-plane.o"
+  "blocking-plane-modded.o"
   "lavatube-obs.o"
   "lavatube-energy.o"
   "lavatube-part.o"
