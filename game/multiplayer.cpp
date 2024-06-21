@@ -445,6 +445,7 @@ void send_position_update() {
       {"rotY", gSelfPlayerInfo->zoomer_rot_y},
       {"currentLevel", gSelfPlayerInfo->current_level},
       {"tgtState", gSelfPlayerInfo->tgt_state},
+      {"color", gSelfPlayerInfo->color},
       {"interType", gSelfPlayerInfo->inter_type},
       {"interAmount", gSelfPlayerInfo->inter_amount},
       {"interStatus", gSelfPlayerInfo->inter_status},
@@ -464,7 +465,8 @@ void send_position_update() {
       {"quatW", gSelfPlayerInfo->quat_w},
       {"rotY", gSelfPlayerInfo->zoomer_rot_y},
       {"currentLevel", gSelfPlayerInfo->current_level},
-      {"tgtState", gSelfPlayerInfo->tgt_state}
+      {"tgtState", gSelfPlayerInfo->tgt_state},
+      {"color", gSelfPlayerInfo->color}
     };
   }
 
