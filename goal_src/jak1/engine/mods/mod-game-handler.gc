@@ -30,7 +30,6 @@
 (define *self-player-info* (the-as remote-player-info #f))
 
 ;; teamruns data
-(define *spectator-handler* (new 'global 'spectator-handler))
 (define *pause-handler* (new 'global 'pause-handler)) ;;handles killing spool anims on pause
 
 ;; multiplayer fixes
@@ -123,6 +122,12 @@
     )
   (if (and (is-active? tgt-idx) (logtest? (-> remote-target control root-prim collide-as) (collide-kind target-remote)))
     (logclear! (-> remote-target control root-prim collide-as) (collide-kind target-remote))
+    )
+  )
+  
+(defun is-grabbed? ()
+  (logtest? (-> *target* state-flags)
+    (state-flags grabbed)
     )
   )
 
@@ -547,86 +552,6 @@
   (set! (-> dst camera-rot 7) (-> src vector 2 y))
   (set! (-> dst camera-rot 8) (-> src vector 2 z))
   (none)
-  )
-
-
-(defun select-new-spectator ((search-forward symbol))
-  (let ((selected-target (get-target (-> *spectator-handler* spectator_idx)))
-        (original-index (-> *spectator-handler* spectator_idx)))
-    (if (not selected-target)
-      (set! selected-target *target*)
-      )
-
-    (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-      (let ((target (get-target tgt-idx)))
-        (when (and target (not (is-inactive? tgt-idx)))
-          (if (= selected-target *target*)
-            (set! selected-target target)
-            )
-          (cond 
-            ((= search-forward #t)
-              (when (> tgt-idx original-index)
-                (set! (-> *spectator-handler* spectator_idx) tgt-idx)
-                (return target)
-                )
-              )
-            (else
-              (cond 
-                ((and (< tgt-idx original-index) (!= target *target*))
-                  (set! (-> *spectator-handler* spectator_idx) tgt-idx)
-                  (set! selected-target target)
-                  )
-                ((!= (-> *spectator-handler* spectator_idx) original-index)
-                  (return selected-target)
-                  )
-                )
-              )
-            )
-          )
-        )
-      )
-      (cond
-        ;;pick first target found if move forwards and none found
-        ((and (= search-forward #t) (= (-> *spectator-handler* spectator_idx) original-index))
-          (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-            (let ((target (get-target tgt-idx)))
-              (when (and target (!= target *target*) (not (is-inactive? tgt-idx)))
-                (set! selected-target target)
-                (set! (-> *spectator-handler* spectator_idx) tgt-idx)
-                (return selected-target)
-                )
-              )
-            )
-          )
-        ;;pick last target found if move backwards and none found
-        ((and (= search-forward #f) (= (-> *spectator-handler* spectator_idx) original-index))
-          (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-            (let ((target (get-target tgt-idx)))
-              (when (and target (!= target *target*) (not (is-inactive? tgt-idx)))
-                (set! selected-target target)
-                (set! (-> *spectator-handler* spectator_idx) tgt-idx)
-                )
-              )
-            )
-          (return selected-target)
-          )
-        )
-      selected-target
-    )
-  )
-
-(defun change-spectator ((search-forward symbol) (force-refocus symbol))
-  (let ((spec-target (select-new-spectator search-forward)))
-    (when (and spec-target (!= spec-target *target*))
-      (send-event *camera* 'change-target spec-target)
-      (when force-refocus
-        (send-event *camera* 'change-state cam-free-floating 0)
-        (camera-change-to (the-as string 'base) 300 #f)
-        (set! (-> *spectator-handler* is_refocusing?) #t)
-        )
-      )
-    (!= spec-target *target*)
-    )
   )
 
 

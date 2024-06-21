@@ -349,6 +349,7 @@
   "hud-classes-pc.o" ;; added
   "mod-settings.o" ;; added
   "mod-game-handler.o" ;; added
+  "mod-spectator-mode.o" ;; added
   "mod-text-render.o" ;; added
   "mod-remote-interaction.o" ;; added
   "mod-common-functions.o" ;; added

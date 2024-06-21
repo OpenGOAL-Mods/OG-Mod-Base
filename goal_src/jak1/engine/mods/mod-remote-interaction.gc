@@ -4,13 +4,6 @@
     ;; dgos: TODO
 
 
-
-(defun is-grabbed? ()
-  (logtest? (-> *target* state-flags)
-    (state-flags grabbed)
-    )
-  )
-
 (defun safe-release-from-grab ()
   ;;don't release if not grabbed (as this escapes certain states and cutscenes) and not if in freecam
   (when (and (is-grabbed?) (not (has-camera-type? 'cam-free-floating)))

@@ -471,16 +471,6 @@
   (none)
   )
 
-(defun force-stance-all ()
-  (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-    (let ((tgt (get-target tgt-idx)))
-      (when (and tgt (!= tgt *target*) (target-on-foot? tgt))
-        (target-sync-state 'target-stance tgt "")
-        )
-      )
-    )
-  )
-
 (defun update-actor-position ((obj process-drawable) (p remote-player-info))
   ;; position
   (set! (-> obj root trans x) (-> p trans_x))
