@@ -275,6 +275,7 @@
    (ui-teams int32)
    (ui-timer int32)
    (ui-splits int32)
+   (ui-names int32)
     )
   (:methods
     (new (symbol type) _type_)
@@ -319,6 +320,7 @@
   (set! (-> obj ui-teams) 1)
   (set! (-> obj ui-timer) 1)
   (set! (-> obj ui-splits) 2)
+  (set! (-> obj ui-names) 2)
 
   (none))
 

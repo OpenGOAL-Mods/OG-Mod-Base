@@ -95,8 +95,17 @@
 (defenum selector-option
   :type int32
   (teams)
-  (timer)
   (splits)
+  (timer)
+  (names)
+  )
+
+
+(defenum name-display
+  :type uint32
+  (none)
+  (team)
+  (all)
   )
 
 (defenum teamrun-command

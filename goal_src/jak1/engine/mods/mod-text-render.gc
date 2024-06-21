@@ -12,6 +12,7 @@
 (define *timer-text* (new 'global 'string 128 ""))
 (define *split-text-timesave* (new 'global 'string 32 ""))
 (define *split-text* (new 'global 'string 128 ""))
+(define *names-option-text* (new 'global 'string 16 ""))
 (define *selector-text* (new 'global 'string 16 ""))
 (define *notification-text* (new 'global 'string NOTIFIFCATION_STRING_LEN ""))
 
@@ -276,9 +277,21 @@
   (none) 
   )
 
+(defun render-name-option ((dma-buf dma-buffer))
+  (clear *names-option-text*)
+  (format *names-option-text* "Names: ~s~%" (enum->string name-display (-> *teamruns-pc-settings* ui-names)))
+  (draw-string-xy *names-option-text* dma-buf 432 48 (font-color white) (font-flags shadow kerning))
+
+  (none) 
+  )
+
 (defun render-selector ((dma-buf dma-buffer))
   (clear *selector-text*)
   (format *selector-text* "V")
+
+  (if (= *selector-option* (selector-option names))
+    (render-name-option dma-buf)
+    )
 
   (case *selector-option*
     (((selector-option teams))
@@ -289,6 +302,9 @@
       )
     (((selector-option splits))
       (draw-string-xy *selector-text* dma-buf 8 204 (font-color orange) (font-flags shadow kerning))
+      )
+    (((selector-option names))
+      (draw-string-xy *selector-text* dma-buf 492 38 (font-color orange) (font-flags shadow kerning))
       )
     )
 

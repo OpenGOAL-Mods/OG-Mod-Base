@@ -505,14 +505,18 @@
           )
 
         ;; draw usernames for all players
-        (add-text-3d
-                      #t
-                      (bucket-id subtitle)
-                      (-> p username)
-                      (-> t root trans)
-                      (font-color white)
-                      (new 'static 'vector2h :y 16)
-                      )
+        (if (or (= (-> *teamruns-pc-settings* ui-names) (name-display all))
+              (and (= (-> *teamruns-pc-settings* ui-names) (name-display team)) (is-teammate? (the int (-> (the-as target obj) saved-owner))))
+            )
+            (add-text-3d
+                          #t
+                          (bucket-id subtitle)
+                          (-> p username)
+                          (-> t root trans)
+                          (font-color white)
+                          (new 'static 'vector2h :y 16)
+                          )
+          )
 
         ;; activate invuln for everyone and add nuka glitch for ghost targets
         (logior! (-> t state-flags) (state-flags invulnerable))
