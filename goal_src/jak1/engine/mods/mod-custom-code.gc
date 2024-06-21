@@ -101,7 +101,7 @@
         (update-state)
         (set! *player-can-load* #f)
 
-        (if (and (= (-> *multiplayer-info* game no_lts) 1) (name= (-> *game-info* current-continue name) "lavatube-after-ribbon") (< (get-team-cell-count) 72))
+        (if (and (= (-> *multiplayer-info* game no_lts) 1) (name= (-> *game-info* current-continue name) "lavatube-after-ribbon") (< (the int (-> *game-info* fuel)) 72))
           (start 'play (get-continue-by-name *game-info* "lavatube-start"))
           )
 
