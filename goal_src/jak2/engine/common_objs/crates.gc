@@ -1012,6 +1012,22 @@
     )
   )
 
+;;mod-base-change
+(defbehavior collectable-count crate ((arg0 process-tree))
+  (set! *global-search-count* 0)
+  (iterate-process-tree
+    arg0
+    (lambda ((arg0 process))
+      (if (type? arg0 collectable)
+          (set! *global-search-count* (+ *global-search-count* 1))
+          )
+      #t
+      )
+    *null-kernel-context*
+    )
+  *global-search-count*
+  )
+
 (defstate special-contents-die (crate)
   :virtual #t
   :event (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
@@ -1029,6 +1045,7 @@
                   )
               (process-entity-status! self (entity-perm-status dead) #t)
               (process-entity-status! self (entity-perm-status subtask-complete) #t)
+              (process-entity-status! self (entity-perm-status bit-15) #f) ;;mod-base-change
               (set! (-> gp-0 user-int8 0) 2)
               (let ((v0-0 (logclear (-> self mask) (process-mask sleep))))
                 (set! (-> self mask) v0-0)
@@ -1069,8 +1086,9 @@
     0
     (logior! (-> self draw status) (draw-control-status no-draw))
     (drop-pickup (-> self fact) #t self (the-as fact-info #f) 0)
-    (set! (-> self child-count) (+ (process-count self) -1))
+    (set! (-> self child-count) (collectable-count self)) ;;mod-base-change
     (process-entity-status! self (entity-perm-status bit-4) #t)
+    (process-entity-status! self (entity-perm-status bit-15) #t) ;;mod-base-change
     (when (-> self entity)
       (let ((v1-32 (-> self entity extra perm)))
         (logior! (-> v1-32 status) (entity-perm-status bit-5))
@@ -1279,7 +1297,9 @@ This commonly includes things such as:
 
 (defmethod crate-method-38 ((this crate))
   (when (-> this entity)
-    (if (>= (-> this entity extra perm user-int8 0) 1)
+    (if (and (>= (-> this entity extra perm user-int8 0) 1)
+             (logtest? (-> this entity extra perm status) (entity-perm-status bit-15)) ;;mod-base-change
+             )
         (go (method-of-object this die) #t 0)
         )
     )
