@@ -64,9 +64,47 @@ void Env::set_remap_for_new_method(const TypeSpec& ts) {
   }
 }
 
+void Env::set_remap_for_relocate_method(const TypeSpec& ts) {
+  int nargs = ts.arg_count() - 1;
+  m_var_remap["a0-0"] = "this";
+  if (ts.get_arg(1).base_type() == "kheap") {
+    m_var_remap["a1-0"] = "heap";
+  } else {
+    m_var_remap["a1-0"] = "offset";
+  }
+  if (nargs > 1 && ts.get_arg(2).base_type() == "pointer") {
+    m_var_remap["a2-0"] = "name";
+  }
+  for (int i = 3; i < nargs; i++) {
+    m_var_remap[get_reg_name(i)] = ("arg" + std::to_string(i - 3));
+  }
+  if (ts.try_get_tag("behavior")) {
+    m_var_remap["s6-0"] = "self";
+    m_pp_mapped_by_behavior = true;
+  } else {
+    m_var_remap["s6-0"] = "pp";
+  }
+}
+
+void Env::set_remap_for_memusage_method(const TypeSpec& ts) {
+  int nargs = ts.arg_count() - 1;
+  m_var_remap["a0-0"] = "this";
+  m_var_remap["a1-0"] = "usage";
+  m_var_remap["a2-0"] = "flags";
+  for (int i = 3; i < nargs; i++) {
+    m_var_remap[get_reg_name(i)] = ("arg" + std::to_string(i - 3));
+  }
+  if (ts.try_get_tag("behavior")) {
+    m_var_remap["s6-0"] = "self";
+    m_pp_mapped_by_behavior = true;
+  } else {
+    m_var_remap["s6-0"] = "pp";
+  }
+}
+
 void Env::set_remap_for_method(const TypeSpec& ts) {
   int nargs = ts.arg_count() - 1;
-  m_var_remap["a0-0"] = "obj";
+  m_var_remap["a0-0"] = "this";
   for (int i = 1; i < nargs; i++) {
     m_var_remap[get_reg_name(i)] = ("arg" + std::to_string(i - 1));
   }
@@ -121,6 +159,16 @@ goos::Object Env::get_variable_name_with_cast(const RegisterAccess& access) cons
 
 std::string Env::get_variable_name(const RegisterAccess& access) const {
   return get_variable_and_cast(access).name;
+}
+
+std::string Env::get_variable_name_name_only(const RegisterAccess& access) const {
+  if (access.reg().get_kind() == Reg::FPR || access.reg().get_kind() == Reg::GPR) {
+    auto& var_info = m_var_names.lookup(access.reg(), access.idx(), access.mode());
+    return var_info.name();
+
+  } else {
+    return std::string(access.reg().to_charp());
+  }
 }
 
 VariableWithCast Env::get_variable_and_cast(const RegisterAccess& access) const {
@@ -600,6 +648,22 @@ std::optional<std::string> Env::get_art_elt_name(int idx) const {
     const auto& art_group = it->second;
     auto it2 = art_group.find(idx);
     if (it2 == art_group.end()) {
+      return {};
+    } else {
+      return it2->second;
+    }
+  }
+}
+
+std::optional<std::string> Env::get_joint_node_name(int idx) const {
+  ASSERT(dts);
+  auto it = dts->jg_info.find(joint_geo());
+  if (it == dts->jg_info.end()) {
+    return {};
+  } else {
+    const auto& jg = it->second;
+    auto it2 = jg.find(idx);
+    if (it2 == jg.end()) {
       return {};
     } else {
       return it2->second;

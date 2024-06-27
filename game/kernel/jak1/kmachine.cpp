@@ -44,7 +44,6 @@
 #include "game/sce/libgraph.h"
 #include "game/sce/sif_ee.h"
 #include "game/sce/stubs.h"
-#include "game/system/vm/vm.h"
 
 using namespace ee;
 
@@ -293,7 +292,7 @@ void InitIOP() {
   }
 }
 
-AutoSplitterBlock gAutoSplitterBlock;
+AutoSplitterBlock g_auto_splitter_block_jak1;
 
 /*!
  * Initialize GOAL Runtime. This is the main initialization which is called before entering
@@ -358,7 +357,8 @@ int InitMachine() {
   }
 
   // TODO - better place to put this?
-  gAutoSplitterBlock.pointer_to_symbol =
+  // TODO - yes, see jak2's code!
+  g_auto_splitter_block_jak1.pointer_to_symbol =
       (u64)g_ee_main_mem + intern_from_c("*autosplit-info-jak1*")->value;
 
   lg::info("InitListenerConnect");
@@ -378,11 +378,6 @@ int ShutdownMachine() {
   ShutdownSound();
   ShutdownGoalProto();
 
-  // OpenGOAL only - kill ps2 VM
-  if (VM::use) {
-    VM::vm_kill();
-  }
-
   Msg(6, "kernel: machine shutdown\n");
   return 0;
 }
@@ -396,7 +391,7 @@ u64 kopen(u64 fs, u64 name, u64 mode) {
   file_stream->mode = mode;
   file_stream->name = name;
   file_stream->flags = 0;
-  printf("****** CALL TO kopen() ******\n");
+  lg::print("****** CALL TO kopen() ******\n");
   char buffer[128];
   // sprintf(buffer, "host:%s", Ptr<String>(name)->data());
   sprintf(buffer, "%s", Ptr<String>(name)->data());

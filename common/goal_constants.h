@@ -62,12 +62,23 @@ constexpr int LEVEL_MAX = 6;
 constexpr int LEVEL_TOTAL = LEVEL_MAX + 1;
 }  // namespace jak2
 
+namespace jak3 {
+// for now, we don't have the ability to extend the size of the symbol table
+constexpr s32 GOAL_MAX_SYMBOLS = 0x4000;
+// amount of levels in level heap
+constexpr int LEVEL_MAX = 10;
+// total amount of levels, including ones outside level heap (default-level)
+constexpr int LEVEL_TOTAL = LEVEL_MAX + 1;
+}  // namespace jak3
+
 constexpr s32 max_symbols(GameVersion version) {
   switch (version) {
     case GameVersion::Jak1:
       return jak1::GOAL_MAX_SYMBOLS;
     case GameVersion::Jak2:
       return jak2::GOAL_MAX_SYMBOLS;
+    case GameVersion::Jak3:
+      return jak3::GOAL_MAX_SYMBOLS;
   }
 }
 

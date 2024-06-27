@@ -1,0 +1,15 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: bigmap.gc
+;; name in dgo: bigmap
+;; dgos: GAME
+
+;; DECOMP BEGINS
+
+(kmemopen global "bigmap")
+
+;; og:preserve-this
+(define-perm *bigmap* bigmap #f)
+
+(kmemclose)

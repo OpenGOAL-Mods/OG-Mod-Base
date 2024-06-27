@@ -18,12 +18,14 @@ struct DebugSettings {
   bool monospaced_font = true;
   bool alternate_style = false;
   bool ignore_hide_imgui = false;
+  bool treat_pad0_as_pad1 = false;
 
   std::vector<DebugTextFilter> text_filters = {};
   bool text_check_range = false;
   float text_max_range = 0;
   u32 hide_imgui_key = SDLK_LALT;
 
+  void load_settings();
   void save_settings();
 };
 void to_json(json& j, const DebugSettings& obj);
@@ -38,6 +40,7 @@ struct DisplaySettings {
   int window_ypos = 50;
   int display_id = 0;
 
+  void load_settings();
   void save_settings();
 };
 
@@ -55,7 +58,11 @@ struct InputSettings {
   std::unordered_map<std::string, InputBindingGroups> controller_binds;
   InputBindingGroups keyboard_binds;
   InputBindingGroups mouse_binds;
+  bool keyboard_enabled = false;
+  bool keyboard_temp_enabled =
+      false;  // not saved or restored, flips on if no controllers are detected
 
+  void load_settings();
   void save_settings();
 };
 

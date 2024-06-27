@@ -6,8 +6,8 @@
 
 #include "goalc/emitter/IGen.h"
 
-#include "third-party/fmt/core.h"
-#include "third-party/fmt/format.h"
+#include "fmt/core.h"
+#include "fmt/format.h"
 
 using namespace emitter;
 namespace {
@@ -423,7 +423,7 @@ RegAllocInstr IR_FunctionCall::to_rai() {
   }
 
   for (int i = 0; i < emitter::RegisterInfo::N_REGS; i++) {
-    auto info = emitter::gRegInfo.get_info(i);
+    auto& info = emitter::gRegInfo.get_info(i);
     if (info.temp()) {
       rai.clobber.emplace_back(i);
     }

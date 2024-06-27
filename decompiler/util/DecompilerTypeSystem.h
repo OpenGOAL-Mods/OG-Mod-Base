@@ -5,6 +5,7 @@
 #include "common/type_system/TypeSystem.h"
 
 #include "decompiler/Disasm/Register.h"
+#include "decompiler/data/TextureDB.h"
 
 namespace decompiler {
 class TP_Type;
@@ -37,6 +38,8 @@ class DecompilerTypeSystem {
   std::unordered_map<std::string, std::vector<std::vector<int>>>
       format_ops_with_dynamic_string_by_func_name;
   std::unordered_map<std::string, std::unordered_map<int, std::string>> art_group_info;
+  std::unordered_map<std::string, std::unordered_map<int, std::string>> jg_info;
+  std::unordered_map<u32, TexInfo> textures;
 
   void add_symbol(const std::string& name) {
     if (symbols.find(name) == symbols.end()) {
@@ -55,6 +58,7 @@ class DecompilerTypeSystem {
                   const TypeSpec& type_spec,
                   const DefinitionMetadata& symbol_metadata);
   void parse_type_defs(const std::vector<std::string>& file_path);
+  void parse_enum_defs(const std::vector<std::string>& file_path);
   TypeSpec parse_type_spec(const std::string& str) const;
   void add_type_flags(const std::string& name, u64 flags);
   void add_type_parent(const std::string& child, const std::string& parent);
@@ -69,13 +73,34 @@ class DecompilerTypeSystem {
   TypeSpec lookup_symbol_type(const std::string& name) const;
   bool should_attempt_cast_simplify(const TypeSpec& expected, const TypeSpec& actual) const;
 
+  void add_art_group_elt(const std::string& ag_name, const std::string& elt_name, int elt_index) {
+    if (art_group_info.count(ag_name) == 0) {
+      art_group_info[ag_name] = {};
+    }
+    if (art_group_info.at(ag_name).count(elt_index) == 0) {
+      art_group_info.at(ag_name)[elt_index] = elt_name;
+    }
+  }
+
+  void add_joint_node(const std::string& jg_name, const std::string& joint_name, int joint_idx) {
+    if (jg_info.count(jg_name) == 0) {
+      jg_info[jg_name] = {};
+    }
+    if (jg_info.at(jg_name).count(joint_idx) == 0) {
+      jg_info.at(jg_name)[joint_idx] = joint_name;
+    }
+  }
+
   // todo - totally eliminate this.
   struct {
     std::string current_method_type;
     void reset() { current_method_type.clear(); }
   } type_prop_settings;
 
+  GameVersion version() const { return m_version; }
+
  private:
+  GameVersion m_version;
   mutable goos::Reader m_reader;
 };
 }  // namespace decompiler

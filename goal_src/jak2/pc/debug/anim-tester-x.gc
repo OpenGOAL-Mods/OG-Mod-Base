@@ -40,7 +40,7 @@
    (mgeo merc-ctrl        :overlay-at extra)
    )
   (:methods
-    (new (symbol type string basic) _type_ 0)
+    (new (symbol type string basic) _type_)
     )
   )
 
@@ -94,7 +94,7 @@
    (mg-list atx-list :inline)
    )
   (:methods
-    (new (symbol type string art-group) _type_ 0)
+    (new (symbol type string art-group) _type_)
     )
   )
 
@@ -470,7 +470,7 @@
     (when (!= *master-mode* 'menu)
       (add-debug-x #t (bucket-id debug-no-zbuf1) (-> self root trans) *color-white*)
       )
-    (none))
+    )
 
   :code (behavior ()
     (let
@@ -545,14 +545,14 @@
             ((cpad-pressed? 0 right)
               (cpad-clear! 0 right)
               (+! (-> lst selection) 1)
-              (set! need-update #t))           
+              (set! need-update #t))
             )
           (cond
             ((< (-> lst  selection) 0)
               (set! (-> lst selection) (1- (atx-list-size lst))))
             ((>= (-> lst selection) (atx-list-size lst))
               (set! (-> lst selection) 0))
-            )          
+            )
           (when need-update
               ((-> lst func) (atx-list-get-by-index lst (-> lst  selection)))
               (set! need-update #f))

@@ -4,13 +4,16 @@
 #include "common/util/DgoWriter.h"
 #include "common/util/FileUtil.h"
 
-#include "goalc/build_level/build_level.h"
+#include "goalc/build_actor/jak1/build_actor.h"
+#include "goalc/build_level/jak1/build_level.h"
+#include "goalc/build_level/jak2/build_level.h"
+#include "goalc/build_level/jak3/build_level.h"
 #include "goalc/compiler/Compiler.h"
 #include "goalc/data_compiler/dir_tpages.h"
 #include "goalc/data_compiler/game_count.h"
 #include "goalc/data_compiler/game_text_common.h"
 
-#include "third-party/fmt/core.h"
+#include "fmt/core.h"
 
 CompilerTool::CompilerTool(Compiler* compiler) : Tool("goalc"), m_compiler(compiler) {}
 
@@ -19,7 +22,7 @@ bool CompilerTool::needs_run(const ToolInput& task, const PathMap& path_map) {
     throw std::runtime_error(fmt::format("Invalid amount of inputs to {} tool", name()));
   }
 
-  if (!m_compiler->knows_object_file(fs::path(task.input.at(0)).stem().u8string())) {
+  if (!m_compiler->knows_object_file(fs::path(task.input.at(0)).stem().string())) {
     return true;
   }
   return Tool::needs_run(task, path_map);
@@ -258,5 +261,60 @@ bool BuildLevelTool::run(const ToolInput& task, const PathMap& path_map) {
   if (task.input.size() != 1) {
     throw std::runtime_error(fmt::format("Invalid amount of inputs to {} tool", name()));
   }
-  return run_build_level(task.input.at(0), task.output.at(0), path_map.output_prefix);
+  return jak1::run_build_level(task.input.at(0), task.output.at(0), path_map.output_prefix);
+}
+
+BuildLevel2Tool::BuildLevel2Tool() : Tool("build-level2") {}
+
+bool BuildLevel2Tool::needs_run(const ToolInput& task, const PathMap& path_map) {
+  if (task.input.size() != 1) {
+    throw std::runtime_error(fmt::format("Invalid amount of inputs to {} tool", name()));
+  }
+  auto deps = get_build_level_deps(task.input.at(0));
+  return Tool::needs_run({task.input, deps, task.output, task.arg}, path_map);
+}
+
+bool BuildLevel2Tool::run(const ToolInput& task, const PathMap& path_map) {
+  if (task.input.size() != 1) {
+    throw std::runtime_error(fmt::format("Invalid amount of inputs to {} tool", name()));
+  }
+  return jak2::run_build_level(task.input.at(0), task.output.at(0), path_map.output_prefix);
+}
+
+BuildLevel3Tool::BuildLevel3Tool() : Tool("build-level3") {}
+
+bool BuildLevel3Tool::needs_run(const ToolInput& task, const PathMap& path_map) {
+  if (task.input.size() != 1) {
+    throw std::runtime_error(fmt::format("Invalid amount of inputs to {} tool", name()));
+  }
+  auto deps = get_build_level_deps(task.input.at(0));
+  return Tool::needs_run({task.input, deps, task.output, task.arg}, path_map);
+}
+
+bool BuildLevel3Tool::run(const ToolInput& task, const PathMap& path_map) {
+  if (task.input.size() != 1) {
+    throw std::runtime_error(fmt::format("Invalid amount of inputs to {} tool", name()));
+  }
+  return jak3::run_build_level(task.input.at(0), task.output.at(0), path_map.output_prefix);
+}
+
+BuildActorTool::BuildActorTool() : Tool("build-actor") {}
+
+bool BuildActorTool::needs_run(const ToolInput& task, const PathMap& path_map) {
+  (void)path_map;
+  if (task.input.size() > 2) {
+    throw std::runtime_error(fmt::format("Invalid amount of inputs to {} tool", name()));
+  }
+  // std::vector<std::string> deps{};
+  // return Tool::needs_run({task.input, deps, task.output, task.arg}, path_map);
+  return true;
+}
+
+bool BuildActorTool::run(const ToolInput& task, const PathMap& path_map) {
+  (void)path_map;
+  if (task.input.size() > 2) {
+    throw std::runtime_error(fmt::format("Invalid amount of inputs to {} tool", name()));
+  }
+  auto gen_mesh = task.input.at(1) == "#t";
+  return jak1::run_build_actor(task.input.at(0), task.output.at(0), gen_mesh);
 }

@@ -21,7 +21,7 @@
 #include "decompiler/data/TextureDB.h"
 #include "decompiler/util/DecompilerTypeSystem.h"
 
-#include "third-party/fmt/core.h"
+#include "fmt/core.h"
 
 namespace decompiler {
 /*!
@@ -78,11 +78,13 @@ struct LetRewriteStats {
   int set_let = 0;
   int with_dma_buf_add_bucket = 0;
   int dma_buffer_add_gs_set = 0;
+  int launch_particles = 0;
 
   int total() const {
     return dotimes + countdown + abs + abs2 + unused + ja + case_no_else + case_with_else +
            set_vector + set_vector2 + send_event + font_context_meth + proc_new + attack_info +
-           vector_dot + rand_float_gen + set_let + with_dma_buf_add_bucket + dma_buffer_add_gs_set;
+           vector_dot + rand_float_gen + set_let + with_dma_buf_add_bucket + dma_buffer_add_gs_set +
+           launch_particles;
   }
 
   std::string print() const {
@@ -108,6 +110,7 @@ struct LetRewriteStats {
     out += fmt::format("  set_let: {}\n", set_let);
     out += fmt::format("  with_dma_buf_add_bucket: {}\n", with_dma_buf_add_bucket);
     out += fmt::format("  dma_buffer_add_gs_set: {}\n", dma_buffer_add_gs_set);
+    out += fmt::format("  launch_particles: {}\n", launch_particles);
     return out;
   }
 
@@ -131,6 +134,7 @@ struct LetRewriteStats {
     result.rand_float_gen = rand_float_gen + other.rand_float_gen;
     result.set_let = rand_float_gen + other.set_let;
     result.with_dma_buf_add_bucket = rand_float_gen + other.with_dma_buf_add_bucket;
+    result.launch_particles = launch_particles + other.launch_particles;
     return result;
   }
 
@@ -153,6 +157,7 @@ struct LetRewriteStats {
     rand_float_gen += other.rand_float_gen;
     set_let += other.set_let;
     with_dma_buf_add_bucket += other.with_dma_buf_add_bucket;
+    launch_particles += other.launch_particles;
     return *this;
   }
 };
@@ -164,6 +169,7 @@ class ObjectFileDB {
                const std::vector<fs::path>& object_files,
                const std::vector<fs::path>& str_files,
                const std::vector<fs::path>& str_tex_files,
+               const std::vector<fs::path>& str_art_files,
                const Config& config);
   std::string generate_dgo_listing();
   std::string generate_obj_listing(const std::unordered_set<std::string>& merged_objs);
@@ -217,13 +223,14 @@ class ObjectFileDB {
   void ir2_setup_labels(const Config& config, ObjectFileData& data);
   void ir2_run_mips2c(const Config& config, ObjectFileData& data);
   struct PerObjectAllTypeInfo {
-    std::string object_name;
     std::unordered_set<std::string> already_seen_symbols;
 
     // type-name : { method id : state name }
     std::unordered_map<std::string, std::unordered_map<int, std::string>> state_methods;
     // symbol-name : type-name
     std::unordered_map<std::string, std::string> symbol_types;
+    // state-name : type-name
+    std::unordered_map<std::string, std::string> non_virtual_state_guesses;
 
     struct TypeInfo {
       bool from_inspect_method = false;  // does this come from an inspect method?
@@ -248,7 +255,10 @@ class ObjectFileDB {
                             const std::vector<std::string>& imports,
                             const std::unordered_set<std::string>& skip_functions);
 
-  std::string process_tpages(TextureDB& tex_db, const fs::path& output_path, const Config& cfg);
+  std::string process_tpages(TextureDB& tex_db,
+                             const fs::path& output_path,
+                             const Config& cfg,
+                             const fs::path& dump_out);
   std::string process_game_count_file();
   std::string process_game_text_files(const Config& cfg);
   std::string process_all_spool_subtitles(const Config& cfg, const fs::path& image_out);
@@ -322,7 +332,7 @@ class ObjectFileDB {
   void for_each_function_def_order(Func f) {
     for_each_obj([&](ObjectFileData& data) {
       for (int i = 0; i < int(data.linked_data.segments); i++) {
-        int fn = 0;
+        [[maybe_unused]] int fn = 0;
         for (size_t j = data.linked_data.functions_by_seg.at(i).size(); j-- > 0;) {
           f(data.linked_data.functions_by_seg.at(i).at(j), i, data);
           fn++;
@@ -345,7 +355,7 @@ class ObjectFileDB {
   template <typename Func>
   void for_each_function_in_seg(int seg, Func f) {
     for_each_obj([&](ObjectFileData& data) {
-      int fn = 0;
+      [[maybe_unused]] int fn = 0;
       if (data.linked_data.segments == 3) {
         for (size_t j = data.linked_data.functions_by_seg.at(seg).size(); j-- > 0;) {
           f(data.linked_data.functions_by_seg.at(seg).at(j), data);
@@ -390,4 +400,7 @@ class ObjectFileDB {
 };
 
 std::string print_art_elt_for_dump(const std::string& group_name, const std::string& name, int idx);
+std::string print_jg_for_dump(const std::string& jg_name, const std::string& joint_name, int idx);
+std::string print_tpage_for_dump(const std::string& debug_name, u32 id);
+std::string print_tex_for_dump(const std::string& name, const std::string& page_name, u32 idx);
 }  // namespace decompiler

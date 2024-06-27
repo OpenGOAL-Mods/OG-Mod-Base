@@ -55,8 +55,16 @@ struct TextureDB {
                          const std::string& tpage_name,
                          const std::vector<std::string>& level_names);
 
+  void merge_textures(const fs::path& base_path);
   void replace_textures(const fs::path& path);
 
   std::string generate_texture_dest_adjustment_table() const;
+};
+
+// used by decompiler for texture macros
+struct TexInfo {
+  std::string name;
+  std::string tpage_name;
+  u32 idx;
 };
 }  // namespace decompiler

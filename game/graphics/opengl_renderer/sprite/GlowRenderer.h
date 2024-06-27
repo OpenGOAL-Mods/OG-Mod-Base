@@ -1,10 +1,12 @@
 #pragma once
 
+#include "game/graphics/gfx.h"
 #include "game/graphics/opengl_renderer/sprite/sprite_common.h"
 
 class GlowRenderer {
  public:
   GlowRenderer();
+  bool at_max_capacity();
   SpriteGlowOutput* alloc_sprite();
   void cancel_sprite();
 
@@ -27,6 +29,7 @@ class GlowRenderer {
   struct {
     bool show_probes = false;
     bool show_probe_copies = false;
+    bool enable_glow_boost = false;
     int num_sprites = 0;
     float glow_boost = 1.f;
   } m_debug;
@@ -85,8 +88,7 @@ class GlowRenderer {
 
   // max sprites should be 128 in simple sprite, plus 256 from aux = 384
   // 20 width = 20 * 20 = 400 sprites > 384.
-  // we multiply by 2 to get 4x as many max sprites (in-game the max is 4x)
-  static constexpr int kDownsampleBatchWidth = 20 * 2;
+  static constexpr int kDownsampleBatchWidth = 20;
   static constexpr int kMaxSprites = kDownsampleBatchWidth * kDownsampleBatchWidth;
   static constexpr int kMaxVertices = kMaxSprites * 32;  // check.
   static constexpr int kMaxIndices = kMaxSprites * 32;   // check.

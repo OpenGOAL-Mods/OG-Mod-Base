@@ -19,8 +19,12 @@
 using namespace iop;
 
 namespace jak2 {
+constexpr int kStrBufSize = sizeof(RPC_Str_Cmd_Jak2);
 static RPC_Str_Cmd_Jak2 sSTRBuf;
-static RPC_Play_Cmd_Jak2 sPLAYBuf[2];  // called sRPCBuf2
+// the size has been increased to 4 to fit jak3. This is a total hack, since the structures
+// are probably just completely different.
+constexpr int kPlayBufSize = 4 * sizeof(RPC_Play_Cmd_Jak2);
+static RPC_Play_Cmd_Jak2 sPLAYBuf[4];  // called sRPCBuf2
 
 struct CacheEntry {
   FileRecord* fr = nullptr;
@@ -178,7 +182,7 @@ void* RPC_PLAY([[maybe_unused]] unsigned int fno, void* _cmd, int size) {
             strncpy(list_node.name, cmd_iter->names[s].chars, 0x30);
             list_node.id = cmd_iter->id[s];
             list_node.unk_76 = cmd_iter->address & 1 << (s & 0x1f) & 0xf;
-            list_node.unk_72 = 0;
+            list_node.sound_handler = 0;
             list_node.unk_80 = cmd_iter->address & 0x10 << (s & 0x1f) & 0xf0;
             list_node.prio = iVar5;
             pRVar2 = FindThisVagStream(list_node.name, list_node.id);
@@ -247,7 +251,7 @@ void* RPC_PLAY([[maybe_unused]] unsigned int fno, void* _cmd, int size) {
             strncpy(list_node.name, cmd_iter->names[s].chars, 0x30);
             list_node.id = cmd_iter->id[s];
             list_node.unk_68 = 0;
-            list_node.unk_72 = 0;
+            list_node.sound_handler = 0;
             list_node.prio = iVar5;
             pRVar2 = FindThisVagStream(cmd_iter->names[s].chars, cmd_iter->id[s]);
             if ((pRVar2 == 0x0) || (pRVar2->byte4 == '\0')) {
@@ -260,7 +264,7 @@ void* RPC_PLAY([[maybe_unused]] unsigned int fno, void* _cmd, int size) {
 
                 iVar4->id = list_node.id;
                 iVar4->prio = list_node.prio;
-                iVar4->unk_72 = list_node.unk_72;
+                iVar4->sound_handler = list_node.sound_handler;
                 iVar4->unk_76 = 0;
                 iVar4->unk_80 = 0;
                 iVar4->unk_92 = 0;
@@ -337,7 +341,8 @@ u32 STRThread() {
   CpuDisableIntr();
   sceSifInitRpc(0);
   sceSifSetRpcQueue(&dq, GetThreadId());
-  sceSifRegisterRpc(&serve, STR_RPC_ID[g_game_version], RPC_STR, &sSTRBuf, nullptr, nullptr, &dq);
+  sceSifRegisterRpc(&serve, STR_RPC_ID[g_game_version], RPC_STR, &sSTRBuf, kStrBufSize, nullptr,
+                    nullptr, &dq);
 
   CpuEnableIntr();
   sceSifRpcLoop(&dq);
@@ -351,7 +356,8 @@ u32 PLAYThread() {
   CpuDisableIntr();
   sceSifInitRpc(0);
   sceSifSetRpcQueue(&dq, GetThreadId());
-  sceSifRegisterRpc(&serve, PLAY_RPC_ID[g_game_version], RPC_PLAY, sPLAYBuf, nullptr, nullptr, &dq);
+  sceSifRegisterRpc(&serve, PLAY_RPC_ID[g_game_version], RPC_PLAY, sPLAYBuf, kPlayBufSize, nullptr,
+                    nullptr, &dq);
   CpuEnableIntr();
   sceSifRpcLoop(&dq);
   return 0;

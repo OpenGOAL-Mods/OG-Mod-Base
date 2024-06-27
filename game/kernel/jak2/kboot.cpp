@@ -5,6 +5,8 @@
 #include <cstring>
 
 #include "common/goal_constants.h"
+#include "common/log/log.h"
+#include "common/repl/repl_wrapper.h"
 #include "common/util/Timer.h"
 
 #include "game/common/game_common_types.h"
@@ -26,7 +28,11 @@ char DebugBootArtGroup[64];
 void kboot_init_globals() {
   memset(DebugBootUser, 0, sizeof(DebugBootUser));
   memset(DebugBootArtGroup, 0, sizeof(DebugBootArtGroup));
-  strcpy(DebugBootUser, "unknown");
+  // strcpy(DebugBootUser, "unknown");
+  // CHANGED : let's just try to find the username automatically by default!
+  // the default is still "unknown"
+  auto username = REPL::find_repl_username();
+  strcpy(DebugBootUser, username.c_str());
 }
 
 void KernelCheckAndDispatch();
@@ -115,7 +121,7 @@ void KernelDispatch(u32 dispatcher_func) {
 
   float time_ms = dispatch_timer.getMs();
   if (time_ms > 50) {
-    printf("Kernel dispatch time: %.3f ms\n", time_ms);
+    lg::print("Kernel dispatch time: {:.3f} ms\n", time_ms);
   }
 
   // flush stdout

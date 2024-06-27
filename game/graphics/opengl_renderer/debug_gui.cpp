@@ -5,10 +5,12 @@
 
 #include "common/global_profiler/GlobalProfiler.h"
 
+#include "game/graphics/display.h"
 #include "game/graphics/gfx.h"
+#include "game/graphics/screenshot.h"
 #include "game/system/hid/sdl_util.h"
 
-#include "third-party/fmt/core.h"
+#include "fmt/core.h"
 #include "third-party/imgui/imgui.h"
 #include "third-party/imgui/imgui_style.h"
 
@@ -104,20 +106,25 @@ void OpenGlDebugGui::draw(const DmaStats& dma_stats) {
       ImGui::MenuItem("Profiler", nullptr, &m_draw_profiler);
       ImGui::MenuItem("Small Profiler", nullptr, &small_profiler);
       ImGui::MenuItem("Loader", nullptr, &m_draw_loader);
+      if (ImGui::MenuItem("Reboot In Debug Mode!")) {
+        want_reboot_in_debug = true;
+      }
       ImGui::EndMenu();
     }
 
     if (ImGui::BeginMenu("Tools")) {
       if (ImGui::BeginMenu("Screenshot")) {
         ImGui::MenuItem("Screenshot Next Frame!", nullptr, &m_want_screenshot);
-        ImGui::InputText("File", m_screenshot_save_name, 50);
-        ImGui::InputInt("Width", &screenshot_width);
-        ImGui::InputInt("Height", &screenshot_height);
-        ImGui::InputInt("MSAA", &screenshot_samples);
-        ImGui::Checkbox("Screenshot on F2", &screenshot_hotkey_enabled);
+        ImGui::InputText("File", g_screen_shot_settings->name,
+                         sizeof(g_screen_shot_settings->name));
+        ImGui::InputInt("Width", &g_screen_shot_settings->width);
+        ImGui::InputInt("Height", &g_screen_shot_settings->height);
+        ImGui::InputInt("MSAA", &g_screen_shot_settings->msaa);
+        ImGui::Checkbox("Quick-Screenshot on F2", &screenshot_hotkey_enabled);
         ImGui::EndMenu();
       }
       ImGui::MenuItem("Subtitle Editor", nullptr, &m_subtitle_editor);
+      ImGui::MenuItem("Debug Text Filter", nullptr, &m_filters_menu);
       ImGui::EndMenu();
     }
 
@@ -135,7 +142,7 @@ void OpenGlDebugGui::draw(const DmaStats& dma_stats) {
         ImGui::TreePop();
       }
       ImGui::Checkbox("Ignore Hide ImGui Bind", &Gfx::g_debug_settings.ignore_hide_imgui);
-      if (ImGui::BeginMenu("Frame Rate")) {
+      if (ImGui::TreeNode("Frame Rate")) {
         ImGui::Checkbox("Framelimiter", &Gfx::g_global_settings.framelimiter);
         ImGui::InputFloat("Target FPS", &target_fps_input);
         if (ImGui::MenuItem("Apply")) {
@@ -144,9 +151,15 @@ void OpenGlDebugGui::draw(const DmaStats& dma_stats) {
         ImGui::Separator();
         ImGui::Checkbox("Accurate Lag Mode", &Gfx::g_global_settings.experimental_accurate_lag);
         ImGui::Checkbox("Sleep in Frame Limiter", &Gfx::g_global_settings.sleep_in_frame_limiter);
-        ImGui::EndMenu();
+        ImGui::TreePop();
       }
-      ImGui::MenuItem("Filters", nullptr, &m_filters_menu);
+      ImGui::Checkbox("Treat Pad0 as Pad1", &Gfx::g_debug_settings.treat_pad0_as_pad1);
+      auto is_keyboard_enabled =
+          Display::GetMainDisplay()->get_input_manager()->is_keyboard_enabled();
+      if (ImGui::Checkbox("Enable Keyboard (forced on if no controllers detected)",
+                          &is_keyboard_enabled)) {
+        Display::GetMainDisplay()->get_input_manager()->enable_keyboard(is_keyboard_enabled);
+      }
       ImGui::EndMenu();
     }
 
@@ -158,16 +171,12 @@ void OpenGlDebugGui::draw(const DmaStats& dma_stats) {
       ImGui::EndMenu();
     }
 
-    if (ImGui::BeginMenu("Debug Mode")) {
-      if (ImGui::MenuItem("Reboot now!")) {
-        want_reboot_in_debug = true;
-      }
-      ImGui::EndMenu();
+    if (!Gfx::g_debug_settings.ignore_hide_imgui) {
+      ImGui::Text("%s", fmt::format("Toggle toolbar with {}",
+                                    sdl_util::get_keyboard_button_name(
+                                        Gfx::g_debug_settings.hide_imgui_key, InputModifiers()))
+                            .c_str());
     }
-    ImGui::Text("%s", fmt::format("Press {} to toggle this toolbar",
-                                  sdl_util::get_keyboard_button_name(
-                                      Gfx::g_debug_settings.hide_imgui_key, InputModifiers()))
-                          .c_str());
   }
   ImGui::EndMainMenuBar();
 

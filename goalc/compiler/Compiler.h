@@ -5,22 +5,23 @@
 #include <optional>
 
 #include "common/goos/Interpreter.h"
-#include "common/repl/util.h"
+#include "common/repl/repl_wrapper.h"
 #include "common/type_system/TypeSystem.h"
 
 #include "goalc/compiler/CompilerException.h"
 #include "goalc/compiler/CompilerSettings.h"
 #include "goalc/compiler/Env.h"
 #include "goalc/compiler/IR.h"
-#include "goalc/compiler/SymbolInfo.h"
+#include "goalc/compiler/docs/DocTypes.h"
+#include "goalc/compiler/symbol_info.h"
 #include "goalc/data_compiler/game_text_common.h"
 #include "goalc/debugger/Debugger.h"
 #include "goalc/emitter/Register.h"
 #include "goalc/listener/Listener.h"
 #include "goalc/make/MakeSystem.h"
 
-#include "third-party/fmt/color.h"
-#include "third-party/fmt/core.h"
+#include "fmt/color.h"
+#include "fmt/core.h"
 
 enum MathMode { MATH_INT, MATH_BINT, MATH_FLOAT, MATH_INVALID };
 
@@ -34,7 +35,12 @@ struct CompilationOptions {
   bool write = false;                   // write object file to out/obj
   bool no_code = false;                 // file shouldn't generate code, throw error if it does
   bool disassemble = false;             // either print disassembly to stdout or output_file
+  bool disasm_code_only = false;        // if on, IR and source lines are not printed
   bool print_time = false;              // print timing statistics
+};
+
+struct GlobalConstantInfo {
+  std::optional<goos::TextDb::ShortInfo> definition_info;
 };
 
 class Compiler {
@@ -95,9 +101,20 @@ class Compiler {
                      std::vector<std::pair<std::string, replxx::Replxx::Color>> const& user_data);
   bool knows_object_file(const std::string& name);
   MakeSystem& make_system() { return m_make; }
-  std::set<std::string> lookup_symbol_infos_starting_with(const std::string& prefix) const;
-  std::vector<SymbolInfo>* lookup_exact_name_info(const std::string& name) const;
-  std::optional<TypeSpec> lookup_typespec(const std::string& symbol_name) const;
+  std::vector<symbol_info::SymbolInfo*> lookup_symbol_info_by_file(
+      const std::string& file_path) const;
+  std::vector<symbol_info::SymbolInfo*> lookup_symbol_info_by_prefix(
+      const std::string& prefix) const;
+  std::set<std::string> lookup_symbol_names_starting_with(const std::string& prefix,
+                                                          int max_count = -1) const;
+  std::vector<symbol_info::SymbolInfo*> lookup_exact_name_info(const std::string& name) const;
+  std::optional<TypeSpec> lookup_typespec(const std::string& symbol_name);
+  TypeSystem& type_system() { return m_ts; };
+  // TODO - rename these types / namespaces -- consolidate with SymbolInfo and whatever else tries
+  // to also do this work
+  std::tuple<std::unordered_map<std::string, Docs::SymbolDocumentation>,
+             std::unordered_map<std::string, Docs::FileDocumentation>>
+  generate_per_file_symbol_info();
 
  private:
   GameVersion m_version;
@@ -109,16 +126,20 @@ class Compiler {
   listener::Listener m_listener;
   goos::Interpreter m_goos;
   Debugger m_debugger;
-  std::unordered_map<std::string, goos::ArgumentSpec> m_macro_specs;
-  std::unordered_map<std::string, TypeSpec> m_symbol_types;
-  std::unordered_map<goos::HeapObject*, goos::Object> m_global_constants;
-  std::unordered_map<goos::HeapObject*, InlineableFunction> m_inlineable_functions;
-  CompilerSettings m_settings;
-  bool m_throw_on_define_extern_redefinition = false;
-  std::unordered_set<std::string> m_allow_inconsistent_definition_symbols;
-  SymbolInfoMap m_symbol_info;
-  std::unique_ptr<REPL::Wrapper> m_repl;
   MakeSystem m_make;
+  std::unique_ptr<REPL::Wrapper> m_repl;
+  CompilerSettings m_settings;
+  bool m_throw_on_define_extern_redefinition = false;  // TODO - move to settings
+
+  // State Tracking
+  symbol_info::SymbolInfoMap m_symbol_info;
+  goos::InternedPtrMap<TypeSpec> m_symbol_types;
+  goos::InternedPtrMap<goos::Object> m_global_constants;
+  std::unordered_map<goos::InternedSymbolPtr, InlineableFunction, goos::InternedSymbolPtr::hash>
+      m_inlineable_functions;
+
+  // Overrides
+  std::unordered_set<std::string> m_allow_inconsistent_definition_symbols;
 
   struct DebugStats {
     int num_spills = 0;
@@ -207,7 +228,8 @@ class Compiler {
   std::vector<u8> codegen_object_file(FileEnv* env);
   bool codegen_and_disassemble_object_file(FileEnv* env,
                                            std::vector<u8>* data_out,
-                                           std::string* asm_out);
+                                           std::string* asm_out,
+                                           bool omit_ir);
 
   void for_each_in_list(const goos::Object& list,
                         const std::function<void(const goos::Object&)>& f);
@@ -219,7 +241,7 @@ class Compiler {
                 const std::vector<std::optional<goos::ObjectType>>& unnamed,
                 const std::unordered_map<std::string,
                                          std::pair<bool, std::optional<goos::ObjectType>>>& named);
-  std::string as_string(const goos::Object& o);
+  const std::string& as_string(const goos::Object& o);
   std::string symbol_string(const goos::Object& o);
   std::string quoted_sym_as_string(const goos::Object& o);
   goos::Object unquote(const goos::Object& o);
@@ -246,7 +268,6 @@ class Compiler {
 
   TypeSpec parse_typespec(const goos::Object& src, Env* env);
   bool is_local_symbol(const goos::Object& obj, Env* env);
-  emitter::HWRegKind get_preferred_reg_kind(const TypeSpec& ts);
   Val* compile_real_function_call(const goos::Object& form,
                                   RegVal* function,
                                   const std::vector<RegVal*>& args,
@@ -303,7 +324,7 @@ class Compiler {
                                 int offset,
                                 Env* env);
 
-  std::string make_symbol_info_description(const SymbolInfo& info);
+  std::string make_symbol_info_description(const symbol_info::SymbolInfo* info);
 
   MathMode get_math_mode(const TypeSpec& ts);
   bool is_number(const TypeSpec& ts);
@@ -611,6 +632,8 @@ class Compiler {
   Val* compile_gs(const goos::Object& form, const goos::Object& rest, Env* env);
   Val* compile_set_config(const goos::Object& form, const goos::Object& rest, Env* env);
   Val* compile_in_package(const goos::Object& form, const goos::Object& rest, Env* env);
+  Val* compile_bundles(const goos::Object& form, const goos::Object& rest, Env* env);
+  Val* compile_require(const goos::Object& form, const goos::Object& rest, Env* env);
   Val* compile_build_dgo(const goos::Object& form, const goos::Object& rest, Env* env);
   Val* compile_reload(const goos::Object& form, const goos::Object& rest, Env* env);
   Val* compile_get_info(const goos::Object& form, const goos::Object& rest, Env* env);
@@ -622,6 +645,7 @@ class Compiler {
                                           const goos::Object& rest,
                                           Env* env);
   Val* compile_gen_docs(const goos::Object& form, const goos::Object& rest, Env* env);
+  Val* compile_export_requires(const goos::Object& form, const goos::Object& rest, Env*);
 
   // ControlFlow
   Condition compile_condition(const goos::Object& condition, Env* env, bool invert);
@@ -658,6 +682,7 @@ class Compiler {
   Val* compile_defglobalconstant(const goos::Object& form, const goos::Object& rest, Env* env);
   Val* compile_defconstant(const goos::Object& form, const goos::Object& rest, Env* env);
   Val* compile_mlet(const goos::Object& form, const goos::Object& rest, Env* env);
+  Val* compile_macro_expand(const goos::Object& form, const goos::Object& rest, Env* env);
 
   // Math
   Val* compile_add(const goos::Object& form, const goos::Object& rest, Env* env);
@@ -696,6 +721,7 @@ class Compiler {
   Val* compile_car(const goos::Object& form, const goos::Object& rest, Env* env);
   Val* compile_cdr(const goos::Object& form, const goos::Object& rest, Env* env);
   Val* compile_method_of_type(const goos::Object& form, const goos::Object& rest, Env* env);
+  Val* compile_method_id_of_type(const goos::Object& form, const goos::Object& rest, Env* env);
   Val* compile_method_of_object(const goos::Object& form, const goos::Object& rest, Env* env);
   Val* compile_addr_of(const goos::Object& form, const goos::Object& rest, Env* env);
   Val* compile_declare_type(const goos::Object& form, const goos::Object& rest, Env* env);
@@ -704,6 +730,9 @@ class Compiler {
   Val* compile_size_of(const goos::Object& form, const goos::Object& rest, Env* env);
   ConstPropResult const_prop_size_of(const goos::Object& form, const goos::Object& rest, Env* env);
   Val* compile_psize_of(const goos::Object& form, const goos::Object& rest, Env* env);
+  Val* compile_current_method_id(const goos::Object& form, const goos::Object& rest, Env* env);
+  Val* compile_current_method_type(const goos::Object& form, const goos::Object& rest, Env* env);
+  Val* compile_cast_to_method_type(const goos::Object& form, const goos::Object& rest, Env* env);
 
   // State
   Val* compile_define_state_hook(const goos::Object& form, const goos::Object& rest, Env* env);

@@ -85,8 +85,8 @@ struct CommonPCPortFunctionWrappers {
 
 extern CommonPCPortFunctionWrappers g_pc_port_funcs;
 
-void pc_get_controller(u32 controller_id, u32 port);
-//void playMP3(u32 filePath, u32 volume);
+void pc_set_controller(u32 controller_id, u32 port);
+void playMP3(u32 filePath, u32 volume);
 
 /// Initializes all common PC Port functions for all Jak games
 void init_common_pc_port_functions(

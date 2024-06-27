@@ -9,10 +9,6 @@
 
 (deftype palshaft-part (part-spawner)
   ()
-  :heap-base #x30
-  :method-count-assert 16
-  :size-assert         #xb0
-  :flag-assert         #x10003000b0
   )
 
 
@@ -749,7 +745,7 @@
 
 (defun palshaft-deactivate ()
   "Sets [[palshaft.bigmap-id]] to `20`"
-  (set! (-> palshaft bigmap-id) (bigmap-id bigmap-id-20))
+  (set! (-> palshaft bigmap-id) (bigmap-id city))
   0
   (none)
   )

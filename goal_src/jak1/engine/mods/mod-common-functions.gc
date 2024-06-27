@@ -539,7 +539,7 @@
     ((money)
       (let ((m (the money obj)))
         (vector-copy! (-> m base) (-> m root trans))
-        (vector-copy! (-> m root-override root-prim world-sphere) (-> m root trans))
+        (vector-copy! (-> m root root-prim world-sphere) (-> m root trans))
         )
       )
     )
@@ -621,7 +621,7 @@
 (defmacro set-current-cell-count (count)
   `(set! (-> *game-info* fuel) ,count)
   )
-  
+
 (defun increase-power-cell-by-one ()
   (set-current-cell-count (+ (current-cell-count) 1))
   ;; with the two macros defined above, this is equivalent to
@@ -646,13 +646,21 @@
 (defmacro current-level-name ()
   `(-> (level-get-target-inside *level*) name)
   )
-  
+
 (defmacro current-orb-count ()
   `(-> *game-info* money)
   )
 
 (defmacro current-cutscene ()
   `(-> *art-control* active-stream)
+  )
+
+(defmacro set-cpad-pressed! (pad-idx &rest buttons)
+  `(logior! (cpad-pressed ,pad-idx) (pad-buttons ,@buttons))
+  )
+
+(defmacro set-cpad-hold! (pad-idx &rest buttons)
+  `(logior! (cpad-hold ,pad-idx) (pad-buttons ,@buttons))
   )
 
 ;;This function moves an actor to the given coordinates
@@ -669,12 +677,12 @@
               (set-vector! (-> entity-actor extra trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> (the process-drawable actor) root trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> (the fuel-cell actor) base) (meters x) (meters y) (meters z) 1.0)
-              (set-vector! (-> (the fuel-cell actor) root-override trans) (meters x) (meters y) (meters z) 1.0)
+              (set-vector! (-> (the fuel-cell actor) root trans) (meters x) (meters y) (meters z) 1.0)
             (when (name= (-> (the fuel-cell actor) state name) 'wait)
               ;; only move collision when idle (messes up glowing in cutscene)
-              (set! (-> (the fuel-cell actor) root-override root-prim world-sphere x) (meters x))
-              (set! (-> (the fuel-cell actor) root-override root-prim world-sphere y) (meters y))
-              (set! (-> (the fuel-cell actor) root-override root-prim world-sphere z) (meters z))
+              (set! (-> (the fuel-cell actor) root root-prim world-sphere x) (meters x))
+              (set! (-> (the fuel-cell actor) root root-prim world-sphere y) (meters y))
+              (set! (-> (the fuel-cell actor) root root-prim world-sphere z) (meters z))
               )
             )
           ((orb-cache-top)
@@ -684,10 +692,10 @@
               (set-vector! (-> entity-actor extra trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> (the process-drawable actor) root trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> (the orb-cache-top actor) basetrans) (meters x) (meters y) (meters z) 1.0)
-              (set-vector! (-> (the orb-cache-top actor) root-override trans) (meters x) (meters y) (meters z) 1.0)
-              (set! (-> (the orb-cache-top actor) root-override root-prim world-sphere x) (meters x))
-              (set! (-> (the orb-cache-top actor) root-override root-prim world-sphere y) (meters y))
-              (set! (-> (the orb-cache-top actor) root-override root-prim world-sphere z) (meters z))
+              (set-vector! (-> (the orb-cache-top actor) root trans) (meters x) (meters y) (meters z) 1.0)
+              (set! (-> (the orb-cache-top actor) root root-prim world-sphere x) (meters x))
+              (set! (-> (the orb-cache-top actor) root root-prim world-sphere y) (meters y))
+              (set! (-> (the orb-cache-top actor) root root-prim world-sphere z) (meters z))
               (set-vector! (-> (the orb-cache-top actor) draw origin) (meters x) (meters y) (meters z) 1.0)
               (let ((radius (-> (the process-drawable actor) draw radius))
                     (bounds (res-lump-data entity-actor 'visvol (inline-array vector)))
@@ -704,10 +712,10 @@
               (set-vector! (-> entity-actor extra trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> (the process-drawable actor) root trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> (the money actor) base) (meters x) (meters y) (meters z) 1.0)
-              (set-vector! (-> (the money actor) root-override trans) (meters x) (meters y) (meters z) 1.0)
-              (set! (-> (the money actor) root-override root-prim world-sphere x) (meters x))
-              (set! (-> (the money actor) root-override root-prim world-sphere y) (meters y))
-              (set! (-> (the money actor) root-override root-prim world-sphere z) (meters z))
+              (set-vector! (-> (the money actor) root trans) (meters x) (meters y) (meters z) 1.0)
+              (set! (-> (the money actor) root root-prim world-sphere x) (meters x))
+              (set! (-> (the money actor) root root-prim world-sphere y) (meters y))
+              (set! (-> (the money actor) root root-prim world-sphere z) (meters z))
               )
             )
           ((crate crate-buzzer)
@@ -717,10 +725,10 @@
               (set-vector! (-> entity-actor extra trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> (the process-drawable actor) root trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> (the crate actor) base) (meters x) (meters y) (meters z) 1.0)
-              ;; (set-vector! (-> (the crate actor) root-override trans) (meters x) (meters y) (meters z) 1.0)
-              ;; (set! (-> (the crate actor) root-override root-prim world-sphere x) (meters x))
-              ;; (set! (-> (the crate actor) root-override root-prim world-sphere y) (meters y))
-              ;; (set! (-> (the crate actor) root-override root-prim world-sphere z) (meters z))
+              ;; (set-vector! (-> (the crate actor) root trans) (meters x) (meters y) (meters z) 1.0)
+              ;; (set! (-> (the crate actor) root root-prim world-sphere x) (meters x))
+              ;; (set! (-> (the crate actor) root root-prim world-sphere y) (meters y))
+              ;; (set! (-> (the crate actor) root root-prim world-sphere z) (meters z))
               )
             )
           ((darkvine)
@@ -741,6 +749,15 @@
   (none)
   )
 
+(defun process-by-aid ((arg0 uint))
+  "Get the process for the entity with the given aid. If there is no entity or process, #f."
+  (let ((v1-0 (entity-by-aid arg0)))
+    (if v1-0
+      (-> v1-0 extra process)
+    )
+  )
+)
+
 (defun spawn-actor-by-name ((name string))
   ;; Takes in the string of name of a actor, and spawns a new process based on the entity.
     (let* ((entity-actor (the entity-actor (entity-by-name name)))
@@ -748,8 +765,8 @@
           (e-info (entity-info-lookup type))
       )
       (when (entity-by-name name)
-        (init-entity 
-          (get-process *default-dead-pool* type (if e-info (-> e-info heap-size) #x4000)) 
+        (init-entity
+          (get-process *default-dead-pool* type (if e-info (-> e-info heap-size) #x4000))
           entity-actor)
           (sound-play "buzzer-pickup")
       )
@@ -834,7 +851,7 @@
 (defmacro pd-pos-m (procname)
   `(let* ((obj (the process-drawable (process-by-ename ,procname)))
           (vec (-> obj root trans)))
-    (format 0 "~m ~m ~m~%" (-> vec x) (-> vec y) (-> vec z) 4096.0)
+    (format 0 "~m ~m ~m~%" (-> vec x) (-> vec y) (-> vec z))
     (none)
     )
   )
@@ -920,11 +937,11 @@
 
 ;;This returns true or false depending on if jak is within a provided distance from an actor
 (defun close? ((actor-ename string) (dist float))
-  (and 
+  (and
     (process-by-ename actor-ename)
-    (<= 
-      (vector-vector-distance 
-        (target-pos 0) 
+    (<=
+      (vector-vector-distance
+        (target-pos 0)
         (-> (the process-drawable (process-by-ename actor-ename)) root trans)
         )
       dist
@@ -1069,17 +1086,38 @@
   )
 
 
-;;This returns true or false if jak is within a bubble defined by coordiantes and width
+;; This returns true or false if jak is within a bubble defined by coordinates and width
 (defun in-bubble? ((x float) (y float) (z float) (w float))
-  (<= 
-    (vector-vector-distance 
-      (target-pos 0) 
+  (<=
+    (vector-vector-distance
+      (target-pos 0)
       (set-vector! (new-stack-vector0) x y z 1.0)
       )
     (/ w 2.0)
     )
   )
 
+(defun music-manager ()
+  (stop-main-music)
+      (case (-> (level-get-target-inside *level*) name)
+         (('test-zone)
+        ;;  (if (> (knuth-rand-int-range 0 15) (+ 8 5))
+        ;;   (play-main-music "SND/music-test-zone.mp3" (the int (-> *setting-control* default music-volume)))
+        ;;   (play-main-music "SND/music-test-zone-track2.mp3" (the int (-> *setting-control* default music-volume))))
+         )
+         ;;Add more cases here for each level
+         (else
+          (play-main-music "" (the int (-> *setting-control* default music-volume)))
+          ;;(stop-main-music) This function is broken but playing a invalid sound does the same thing
+         )
+      )
+(none)
+)
+
+(defbehavior music-manager-proc process ()
+  (music-manager)
+  (none)
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jak Color functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1115,6 +1153,29 @@
 (defun draw-light-blue ((jak target))
   (draw-xyz jak 0.0 1.0 1.0)
 )
+;; Helper functions for spawning orbs (used by orb placer in debug mode)
 
+(defun spawn-money ((vec vector) (amount float) (bob? symbol))
+  (let ((fax (new 'static 'fact-info)))
+    (set! (-> fax pickup-type) (pickup-type money))
+    (set! (-> fax pickup-amount) amount)
+    (set! (-> fax pickup-spawn-amount) amount)
+    (set! (-> fax fade-time) (the-as time-frame 0))
 
+    (let ((proc (the money (ppointer->process (birth-pickup-at-point vec (pickup-type money) amount #t *active-pool* fax)))))
+      (when bob?
+        (set! (-> proc bob-amount) 1024.0)
+        )
+      (format 0 "spawned ~A~%" proc)
+      ;; return handle to the orb
+      (process->handle proc)
+      )
+    )
+  )
 
+(defun spawn-money-meters ((x float) (y float) (z float) (amount float) (bob? symbol))
+  (let ((vec (new 'stack-no-clear 'vector)))
+    (set-vector-meters! vec x y z)
+    (spawn-money vec amount bob?)
+    )
+  )

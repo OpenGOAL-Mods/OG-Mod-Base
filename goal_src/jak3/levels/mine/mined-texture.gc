@@ -1,0 +1,13 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: mined-texture.gc
+;; name in dgo: mined-texture
+;; dgos: MINED
+
+;; DECOMP BEGINS
+
+;; stub
+(defun set-mined-pillar-texture! ((arg0 float))
+  (none)
+  )

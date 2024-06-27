@@ -1,6 +1,7 @@
 #include "common/goos/ParseHelpers.h"
 #include "common/type_system/deftype.h"
 #include "common/util/json_util.h"
+#include "common/util/string_util.h"
 
 #include "goalc/compiler/Compiler.h"
 #include "goalc/compiler/IR.h"
@@ -162,7 +163,7 @@ goos::Arguments Compiler::get_va(const goos::Object& form, const goos::Object& r
 
   std::string err;
   if (!goos::get_va(rest, &err, &args)) {
-    throw_compiler_error(form, err);
+    throw_compiler_error(form, "{}", err);
   }
   return args;
 }
@@ -189,7 +190,7 @@ void Compiler::va_check(
         named) {
   std::string err;
   if (!goos::va_check(args, unnamed, named, &err)) {
-    throw_compiler_error(form, err);
+    throw_compiler_error(form, "{}", err);
   }
 }
 
@@ -214,15 +215,15 @@ void Compiler::for_each_in_list(const goos::Object& list,
 /*!
  * Convert a goos::Object that's a string to a std::string. Must be a string.
  */
-std::string Compiler::as_string(const goos::Object& o) {
+const std::string& Compiler::as_string(const goos::Object& o) {
   return o.as_string()->data;
 }
 
 /*!
- * Convert a goos::Object that's a symbol to a std::string. Must be a string.
+ * Convert a goos::Object that's a symbol to a std::string. Must be a symbol.
  */
 std::string Compiler::symbol_string(const goos::Object& o) {
-  return o.as_symbol()->name;
+  return o.as_symbol().name_ptr;
 }
 
 /*!
@@ -257,7 +258,7 @@ bool Compiler::is_quoted_sym(const goos::Object& o) {
   if (o.is_pair()) {
     auto car = pair_car(o);
     auto cdr = pair_cdr(o);
-    if (car.is_symbol() && car.as_symbol()->name == "quote") {
+    if (car.is_symbol() && car.as_symbol() == "quote") {
       if (cdr.is_pair()) {
         auto thing = pair_car(cdr);
         if (thing.is_symbol()) {
@@ -290,6 +291,33 @@ TypeSpec Compiler::parse_typespec(const goos::Object& src, Env* env) {
       src.as_pair()->cdr.is_empty_list()) {
     return env->function_env()->method_of_type_name;
   }
+  if (src.is_pair() && src.as_pair()->car.is_symbol("current-method-function-type") &&
+      src.as_pair()->cdr.is_empty_list()) {
+    return env->function_env()->method_function_type.substitute_for_method_call(
+        env->function_env()->method_of_type_name);
+  }
+  if (m_settings.check_for_requires) {
+    TypeSpec ts = ::parse_typespec(&m_ts, src);
+    const auto& type_name = ts.base_type();
+    if (!type_name.empty()) {
+      const auto& symbol_info = m_symbol_info.lookup_exact_name(type_name);
+      if (!symbol_info.empty()) {
+        const auto& result = symbol_info.at(0);
+        if (result->m_def_location.has_value() &&
+            !env->file_env()->m_missing_required_files.contains(
+                result->m_def_location->file_path) &&
+            env->file_env()->m_required_files.find(result->m_def_location->file_path) ==
+                env->file_env()->m_required_files.end() &&
+            !str_util::ends_with(result->m_def_location->file_path,
+                                 env->file_env()->name() + ".gc")) {
+          lg::warn("Missing require in {} for {} over {}", env->file_env()->name(),
+                   result->m_def_location->file_path, type_name);
+          env->file_env()->m_missing_required_files.insert(result->m_def_location->file_path);
+        }
+      }
+    }
+  }
+
   return ::parse_typespec(&m_ts, src);
 }
 
@@ -309,22 +337,11 @@ bool Compiler::is_local_symbol(const goos::Object& obj, Env* env) {
   }
 
   // check global constants
-  if (m_global_constants.find(obj.as_symbol()) != m_global_constants.end()) {
+  if (m_global_constants.lookup(obj.as_symbol())) {
     return true;
   }
 
   return false;
-}
-
-emitter::HWRegKind Compiler::get_preferred_reg_kind(const TypeSpec& ts) {
-  switch (m_ts.lookup_type(ts)->get_preferred_reg_class()) {
-    case RegClass::GPR_64:
-      return emitter::HWRegKind::GPR;
-    case RegClass::FLOAT:
-      return emitter::HWRegKind::XMM;
-    default:
-      throw std::runtime_error("Unknown preferred register kind");
-  }
 }
 
 bool Compiler::is_none(Val* in) {
@@ -354,10 +371,10 @@ bool Compiler::is_symbol(const TypeSpec& ts) {
 bool Compiler::get_true_or_false(const goos::Object& form, const goos::Object& boolean) {
   // todo try other things.
   if (boolean.is_symbol()) {
-    if (boolean.as_symbol()->name == "#t") {
+    if (boolean.as_symbol() == "#t") {
       return true;
     }
-    if (boolean.as_symbol()->name == "#f") {
+    if (boolean.as_symbol() == "#f") {
       return false;
     }
   }

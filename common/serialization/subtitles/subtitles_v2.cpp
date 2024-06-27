@@ -5,7 +5,7 @@
 
 #include "subtitles_v1.h"
 
-#include "third-party/fmt/core.h"
+#include "fmt/core.h"
 
 void to_json(json& j, const SubtitleLineMetadata& obj) {
   json_serialize(frame_start);
@@ -89,7 +89,9 @@ const std::unordered_map<std::string, u16> jak2_speaker_name_to_enum_val = {
     {"citizen-male", 31},
     {"citizen-female", 32},
     {"oracle", 33},
-    {"precursor", 34}};
+    {"precursor", 34},
+    {"metalkor-before-consite", 35},
+    {"metalkor-intro", 36}};
 
 GameSubtitlePackage read_json_files_v2(const GameSubtitleDefinitionFile& file_info) {
   GameSubtitlePackage package;
@@ -373,7 +375,7 @@ bool GameSubtitleDB::write_subtitle_db_to_files(const GameVersion game_version) 
       file_util::write_text_file(dump_path, lines_file.dump(2));
     }
   } catch (std::exception& ex) {
-    lg::error(ex.what());
+    lg::error("{}", ex.what());
     return false;
   }
   return true;

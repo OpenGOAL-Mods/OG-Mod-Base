@@ -1,6 +1,8 @@
 #include "expression_build.h"
+
 #include "common/goos/PrettyPrinter.h"
 #include "common/log/log.h"
+
 #include "decompiler/Function/Function.h"
 #include "decompiler/IR2/Form.h"
 #include "decompiler/IR2/FormStack.h"
@@ -30,10 +32,19 @@ bool convert_to_expressions(
   } else if (f.guessed_name.kind == FunctionName::FunctionKind::METHOD) {
     auto method_type =
         dts.ts.lookup_method(f.guessed_name.type_name, f.guessed_name.method_id).type;
-    if (f.guessed_name.method_id == GOAL_NEW_METHOD) {
-      f.ir2.env.set_remap_for_new_method(method_type);
-    } else {
-      f.ir2.env.set_remap_for_method(method_type);
+    switch (f.guessed_name.method_id) {
+      case GOAL_NEW_METHOD:
+        f.ir2.env.set_remap_for_new_method(method_type);
+        break;
+      case GOAL_RELOC_METHOD:
+        f.ir2.env.set_remap_for_relocate_method(method_type);
+        break;
+      case GOAL_MEMUSAGE_METHOD:
+        f.ir2.env.set_remap_for_memusage_method(method_type);
+        break;
+      default:
+        f.ir2.env.set_remap_for_method(method_type);
+        break;
     }
   }
 
@@ -91,21 +102,31 @@ bool convert_to_expressions(
         needs_cast = true;
 
       } else {
-        bool found_early_return = false;
-        for (auto e : new_entries) {
-          e->apply([&](FormElement* elt) {
-            auto as_ret = dynamic_cast<ReturnElement*>(elt);
-            if (as_ret) {
-              found_early_return = true;
+        // note : a return type of "object" will accept ANYTHING as a return value
+        // "object" is the parent type of everything, including "none" (as of sep 2023)
+        // if a function wants to return an object, we can safely discard the cast
+        // since there is no possible level of polymorphism at this highest level.
+        if (f.type.last_arg() != TypeSpec("object")) {
+          bool found_early_return = false;
+          for (auto e : new_entries) {
+            e->apply([&](FormElement* elt) {
+              auto as_ret = dynamic_cast<ReturnElement*>(elt);
+              if (as_ret) {
+                found_early_return = true;
+              }
+            });
+            if (found_early_return) {
+              break;
             }
-          });
-          if (found_early_return) {
-            break;
           }
-        }
 
-        if (!found_early_return && f.type.last_arg() != return_type) {
-          needs_cast = true;
+          // the return value of this function is not an exact match
+          // we cast it to avoid complicated issues with polymorphism (e.g. methods)
+          // we don't run this if we find a (return statement for unknown reasons
+          // TODO : remove this and check?
+          if (!found_early_return && f.type.last_arg() != return_type) {
+            needs_cast = true;
+          }
         }
       }
 
@@ -124,8 +145,10 @@ bool convert_to_expressions(
     } else {
       // or just get all the expressions
       new_entries = stack.rewrite(pool, f.ir2.env);
-      new_entries.push_back(
-          pool.alloc_element<GenericElement>(GenericOperator::make_fixed(FixedOperatorKind::NONE)));
+      if (!f.ir2.skip_final_none) {
+        new_entries.push_back(pool.alloc_element<GenericElement>(
+            GenericOperator::make_fixed(FixedOperatorKind::NONE)));
+      }
     }
 
     // if we are a totally empty function, insert a placeholder so we don't have to handle
@@ -160,7 +183,7 @@ bool convert_to_expressions(
             "statement.",
             f.name());
         f.warnings.warning(warn);
-        lg::warn(warn);
+        lg::warn("{}", warn);
       }
     }
 

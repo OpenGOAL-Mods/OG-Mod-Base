@@ -1,8 +1,9 @@
 #include "common/goos/PrettyPrinter.h"
+#include "common/util/string_util.h"
 
 #include "goalc/compiler/Compiler.h"
 
-#include "third-party/fmt/core.h"
+#include "fmt/core.h"
 
 using namespace goos;
 
@@ -17,7 +18,7 @@ bool Compiler::try_getting_macro_from_goos(const goos::Object& macro_name, goos:
     got_macro = true;
   }
 
-  if (got_macro) {
+  if (got_macro && dest) {
     *dest = macro_obj;
   }
   return got_macro;
@@ -31,6 +32,24 @@ Val* Compiler::compile_goos_macro(const goos::Object& o,
                                   const goos::Object& rest,
                                   const goos::Object& name,
                                   Env* env) {
+  if (m_settings.check_for_requires) {
+    const auto& symbol_info =
+        m_symbol_info.lookup_exact_name(name.print(), symbol_info::Kind::MACRO);
+    if (!symbol_info.empty()) {
+      const auto& result = symbol_info.at(0);
+      if (result->m_def_location.has_value() &&
+          !env->file_env()->m_missing_required_files.contains(result->m_def_location->file_path) &&
+          env->file_env()->m_required_files.find(result->m_def_location->file_path) ==
+              env->file_env()->m_required_files.end() &&
+          !str_util::ends_with(result->m_def_location->file_path,
+                               env->file_env()->name() + ".gc")) {
+        lg::warn("Missing require in {} for {} over {}", env->file_env()->name(),
+                 result->m_def_location->file_path, name.print());
+        env->file_env()->m_missing_required_files.insert(result->m_def_location->file_path);
+      }
+    }
+  }
+
   auto macro = macro_obj.as_macro();
   Arguments args = m_goos.get_args(o, rest, macro->args);
   auto mac_env_obj = EnvironmentObject::make_new();
@@ -45,7 +64,6 @@ Val* Compiler::compile_goos_macro(const goos::Object& o,
       env->function_env()->alloc_env<MacroExpandEnv>(env, name.as_symbol(), macro->body, o);
   try {
     const auto& compile_result = compile(goos_result, compile_env_for_macro);
-    m_macro_specs.emplace(macro->name, macro->args);
     return compile_result;
   } catch (CompilerException& ce) {
     if (ce.print_err_stack) {
@@ -66,7 +84,7 @@ Val* Compiler::compile_goos_macro(const goos::Object& o,
       }
       std::string line(80, '-');
       line.push_back('\n');
-      lg::print(line);
+      lg::print("{}", line);
     }
 
     throw;
@@ -87,7 +105,7 @@ Val* Compiler::compile_goos_macro(const goos::Object& o,
     }
     std::string line(80, '-');
     line.push_back('\n');
-    lg::print(line);
+    lg::print("{}", line);
 
     throw;
   }
@@ -151,7 +169,7 @@ Val* Compiler::compile_quote(const goos::Object& form, const goos::Object& rest,
   auto& thing = args.unnamed.front();
   switch (thing.type) {
     case goos::ObjectType::SYMBOL:
-      return compile_get_sym_obj(thing.as_symbol()->name, env);
+      return compile_get_sym_obj(thing.as_symbol().name_ptr, env);
     case goos::ObjectType::EMPTY_LIST: {
       auto empty_pair = compile_get_sym_obj("_empty_", env);
       empty_pair->set_type(m_ts.make_typespec("pair"));
@@ -180,10 +198,9 @@ Val* Compiler::compile_define_constant(const goos::Object& form,
   rest = &pair_cdr(*rest);
 
   // check for potential docstring
-  SymbolInfo::Metadata sym_meta;
+  std::string docstring = "";
   if (rest->is_pair() && pair_car(*rest).is_string() && !pair_cdr(*rest).is_empty_list()) {
-    std::string docstring = pair_car(*rest).as_string()->data;
-    sym_meta.docstring = docstring;
+    docstring = pair_car(*rest).as_string()->data;
     rest = &pair_cdr(*rest);
   }
 
@@ -196,29 +213,29 @@ Val* Compiler::compile_define_constant(const goos::Object& form,
 
   // GOAL constant
   if (goal) {
-    if (m_symbol_types.find(sym->name) != m_symbol_types.end()) {
+    if (m_symbol_types.lookup(sym)) {
       throw_compiler_error(form,
                            "Cannot define {} as a constant because "
                            "it is already the name of a symbol of type {}",
-                           sym->name, m_symbol_types.at(sym->name).print());
+                           sym.name_ptr, m_symbol_types.lookup(sym)->print());
     }
 
-    auto existing = m_global_constants.find(sym);
-    if (existing != m_global_constants.end() && existing->second != value) {
-      print_compiler_warning("Constant {} has been redefined {} -> {}", sym->print(),
-                             existing->second.print(), value.print());
+    auto existing = m_global_constants.lookup(sym);
+    if (existing && *existing != value) {
+      print_compiler_warning("Constant {} has been redefined {} -> {}", sym.name_ptr,
+                             existing->print(), value.print());
     }
-    m_global_constants[sym] = value;
+    m_global_constants.set(sym, value);
   }
 
   // GOOS constant
   if (goos) {
-    m_goos.global_environment.as_env()->vars[sym] = value;
+    m_goos.global_environment.as_env()->vars.set(sym, value);
   }
 
   // TODO - eventually, it'd be nice if global constants were properly typed
   // and this information was propagated
-  m_symbol_info.add_constant(sym->name, form, sym_meta);
+  m_symbol_info.add_constant(sym.name_ptr, form, docstring);
 
   return get_none();
 }
@@ -265,13 +282,29 @@ Val* Compiler::compile_mlet(const goos::Object& form, const goos::Object& rest, 
   return result;
 }
 
+Val* Compiler::compile_macro_expand(const goos::Object& form, const goos::Object& rest, Env* env) {
+  auto& macro = pair_car(rest);
+  auto& macro_name = pair_car(macro);
+  if (!try_getting_macro_from_goos(macro_name, nullptr)) {
+    throw_compiler_error(form, "invalid argument to `macro-expand`: {} does not exist as a macro",
+                         macro_name.print());
+  }
+  if (!pair_cdr(rest).is_empty_list()) {
+    throw_compiler_error(form, "too many arguments to `macro-expand`");
+  }
+  auto result = expand_macro_completely(macro, env);
+  auto code = pretty_print::to_string(result);
+  lg::print("{}\n", code);
+  return get_none();
+}
+
 bool Compiler::expand_macro_once(const goos::Object& src, goos::Object* out, Env*) {
   if (!src.is_pair()) {
     return false;
   }
 
-  auto first = src.as_pair()->car;
-  auto rest = src.as_pair()->cdr;
+  auto& first = src.as_pair()->car;
+  auto& rest = src.as_pair()->cdr;
   if (!first.is_symbol()) {
     return false;
   }

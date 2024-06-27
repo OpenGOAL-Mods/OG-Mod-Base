@@ -1,0 +1,7857 @@
+{
+  "cutscenes": {},
+  "other": {
+    "DSbop001": [
+      "Sembri davvero arrabbiato, Jak."
+    ],
+    "DSbop002": [
+      "Ti ricordi come si salta?"
+    ],
+    "DSbop003": [
+      "Per superare la barricata, salta su quella cassa!"
+    ],
+    "DSbop004": [
+      "Ooh, è alto!",
+      "Prova a saltare, e mentre sei in aria datti la spinta per saltare di nuovo",
+      "dovresti raggiungerlo."
+    ],
+    "DSbop005": [
+      "Bel lavoro, vedi? Ce l'hai ancora!"
+    ],
+    "DSbop006": [
+      "Non ho mai trovato né pelle né capelli di Keira o Samos.",
+      "Non so dove siano andati."
+    ],
+    "DSbop007": [
+      "Non so dove ci abbia portato quel pazzo veicolo del Rift, ma...",
+      "È una specie di grande città!"
+    ],
+    "DSbop008": [
+      "È un posto difficile, Jak. Ti ricordi",
+      "come combattere, giusto? Prova a rompere quella cassa con un calcio."
+    ],
+    "DSbop009": [
+      "Stai bene, socio! Bel calcio rotante!",
+      "Risolve un po' di quella rabbia, eh?"
+    ],
+    "DSbop010": [
+      "Ci sono molte casse delle Guardie Kremizi",
+      "che aspettano di essere aperte. Rompi quella cassa!"
+    ],
+    "DSbop011": [
+      "Bene! La cassa aveva una scorta di energia all'interno.",
+      "Raccoglila, devi mantenerti in forze, Jak, altrimenti chi combatterà?",
+      "chi combatterà?"
+    ],
+    "DSbop016": [
+      "Se salti e poi ti tuffi, cadrai a terra",
+      "abbastanza duro da rompere un sacco di cose.",
+      "Rompere le cose è divertente, vero?"
+    ],
+    "DSbop017": [
+      "Guardie, Jak! Fai quello che sai fare meglio!"
+    ],
+    "agnt001": [
+      "Ehi ehi, guida con prudenza!"
+    ],
+    "agnt002": [
+      "Attenzione!"
+    ],
+    "agnt003": [
+      "Guardalo!"
+    ],
+    "agnt004": [
+      "Whoa whoa whoa whoa!"
+    ],
+    "agnt005": [
+      "Whoa!"
+    ],
+    "agnt006": [
+      "Sei pazzo!"
+    ],
+    "agnt007": [
+      "Sei fuori di testa!?"
+    ],
+    "agnt008": [
+      "Attento!"
+    ],
+    "agnt009": [
+      "Quello faceva male!"
+    ],
+    "agnt010": [
+      "Stai attento, ci aspetta una parte difficile della città."
+    ],
+    "agnt011": [
+      "Adesso ci siamo!"
+    ],
+    "agnt012": [
+      "Stai sprecando i cittadini!"
+    ],
+    "agnt013": [
+      "Non colpire i civili, amico!"
+    ],
+    "agnt014": [
+      "Amico, stai colpendo la gente!"
+    ],
+    "agnt015": [
+      "Guarda dove stai andando!"
+    ],
+    "agnt016": [
+      "Vai uomo!"
+    ],
+    "agnt017": [
+      "Mantieni la testa giù!"
+    ],
+    "agnt018": [
+      "Ci stanno sparando!"
+    ],
+    "agnt019": [
+      "Siamo morti se non guidi più veloce!"
+    ],
+    "agnt020": [
+      "Continuare!"
+    ],
+    "agnt021": [
+      "Fallo, amico, fallo!"
+    ],
+    "agnt022": [
+      "Sbrigati, amico!"
+    ],
+    "agnt023": [
+      "Non viaggio sul retro, prendi una due posti!"
+    ],
+    "agnt024": [
+      "Comprati una macchina più grande!"
+    ],
+    "agnt025": [
+      "Prendi un veicolo più grande."
+    ],
+    "agnt026": [
+      "Prendine uno con due posti, va bene?"
+    ],
+    "agnt027": [
+      "Prendi un altro veicolo."
+    ],
+    "agnt028": [
+      "Ci stanno addosso."
+    ],
+    "agnt029": [
+      "Siamo seguiti."
+    ],
+    "agnt030": [
+      "Stiamo prendendo una batosta!"
+    ],
+    "agnt031": [
+      "Non possiamo sopportare molto di più!"
+    ],
+    "agnt032": [
+      "Stai cercando di morire!?"
+    ],
+    "agnt033": [
+      "Dove ti ha trovato Torn?"
+    ],
+    "agnt034": [
+      "Sei sicuro di essere dalla nostra parte?"
+    ],
+    "agnt035": [
+      "Girati, GIRA!"
+    ],
+    "agnt036": [
+      "Buona mossa."
+    ],
+    "agnt037": [
+      "Morte al Barone!"
+    ],
+    "agnt038": [
+      "Grazie a Mar sei qui, le guardie Krimzon sono ovunque!"
+    ],
+    "agnt039": [
+      "Era ora, andiamo via di qui!"
+    ],
+    "agnt040": [
+      "Bene, bene, giusto in tempo. VIA! VIA! VIA!"
+    ],
+    "agnt041": [
+      "Finalmente dobbiamo muoverci!"
+    ],
+    "agnt042": [
+      "Cavolo, cominciavo a pensare che non ti saresti fatto vivo."
+    ],
+    "agnt043": [
+      "Non un momento troppo presto, voliamo!"
+    ],
+    "agnt044": [
+      "Portami al mio nuovo rifugio, presto!"
+    ],
+    "agnt045": [
+      "Grazie, buona fortuna!"
+    ],
+    "agnt046": [
+      "Buona guida, vai a salvare il resto dei nostri ragazzi."
+    ],
+    "agnt047": [
+      "OK, sono fuori di qui!"
+    ],
+    "agnt048": [
+      "Ci vediamo al prossimo incontro."
+    ],
+    "agnt049": [
+      "Grazie, sei un salvavita."
+    ],
+    "agnt050": [
+      "Qui è dove scendo."
+    ],
+    "agnt051": [
+      "Sono felice che tu sia dalla nostra parte."
+    ],
+    "agnt052": [
+      "Uffa!"
+    ],
+    "agnt053": [
+      "Che schifo!"
+    ],
+    "agnt054": [
+      "Ah!"
+    ],
+    "agnt055": [
+      "Ahhh!"
+    ],
+    "agnt056": [
+      "Guidare con attenzione!"
+    ],
+    "agnt057": [
+      "Attenzione!"
+    ],
+    "agnt058": [
+      "Guardalo!"
+    ],
+    "agnt059": [
+      "WHOA!"
+    ],
+    "agnt060": [
+      "Sei pazzo!"
+    ],
+    "agnt061": [
+      "Sei fuori di testa?!"
+    ],
+    "agnt062": [
+      "Attento!"
+    ],
+    "agnt063": [
+      "Quello faceva male."
+    ],
+    "agnt064": [
+      "Stai attento, stiamo affrontando una parte difficile della nostra città."
+    ],
+    "agnt065": [
+      "Adesso ci siamo."
+    ],
+    "agnt066": [
+      "State sprecando cittadini!"
+    ],
+    "agnt067": [
+      "Non colpire i civili, amico!"
+    ],
+    "agnt068": [
+      "Amico, stai colpendo la gente!"
+    ],
+    "agnt069": [
+      "Guarda dove stai andando!"
+    ],
+    "agnt070": [
+      "Vai amico, VAI!"
+    ],
+    "agnt071": [
+      "Mantieni la testa giù!"
+    ],
+    "agnt072": [
+      "Ci stanno sparando!"
+    ],
+    "agnt073": [
+      "Siamo morti se non guidi più veloce!"
+    ],
+    "agnt074": [
+      "Continuare!"
+    ],
+    "agnt075": [
+      "Fallo, amico, fallo!"
+    ],
+    "agnt076": [
+      "Sbrigati, amico!"
+    ],
+    "agnt077": [
+      "Non viaggio sul retro, prendi una due posti!"
+    ],
+    "agnt078": [
+      "Prendi un veicolo più grande."
+    ],
+    "agnt079": [
+      "Ci hanno scoperti!"
+    ],
+    "agnt080": [
+      "Siamo seguiti!"
+    ],
+    "agnt081": [
+      "Stiamo prendendo una batosta!"
+    ],
+    "agnt082": [
+      "Non ne possiamo più."
+    ],
+    "agnt083": [
+      "Stai cercando di morire?"
+    ],
+    "agnt084": [
+      "Dove ti ha trovato Torn?"
+    ],
+    "agnt085": [
+      "Sei sicuro di essere dalla nostra parte?"
+    ],
+    "agnt086": [
+      "Gira, gira!"
+    ],
+    "agnt087": [
+      "Buona mossa!"
+    ],
+    "agnt088": [
+      "Morte al Barone!"
+    ],
+    "agnt089": [
+      "Grazie a Mar sei qui, le guardie Krimzon sono ovunque!"
+    ],
+    "agnt090": [
+      "È ora, andiamo via da qui!"
+    ],
+    "agnt091": [
+      "Bene, giusto in tempo, VIA, VIA, VIA!"
+    ],
+    "agnt092": [
+      "Finalmente dobbiamo muoverci!"
+    ],
+    "agnt093": [
+      "Cavolo, cominciavo a pensare che non ti saresti fatto vivo."
+    ],
+    "agnt094": [
+      "Non un momento troppo presto, voliamo!"
+    ],
+    "agnt095": [
+      "Portami al mio nuovo rifugio, presto!"
+    ],
+    "agnt096": [
+      "Grazie, buona fortuna!"
+    ],
+    "agnt097": [
+      "Buona guida, vai a salvare il resto dei nostri ragazzi."
+    ],
+    "agnt098": [
+      "Ok, me ne vado!"
+    ],
+    "agnt099": [
+      "Ci vediamo al prossimo incontro!"
+    ],
+    "agnt100": [
+      "Grazie, mi hai salvato la vita."
+    ],
+    "agnt101": [
+      "Qui è dove scendo."
+    ],
+    "agnt102": [
+      "Sono felice che tu sia dalla nostra parte."
+    ],
+    "agnt103": [
+      "Attenzione!"
+    ],
+    "agnt104": [
+      "EHI!"
+    ],
+    "agnt105": [
+      "Ahia!"
+    ],
+    "agnt106": [
+      "Andiamo amico, stai cercando di uccidermi!?"
+    ],
+    "agnt107": [
+      "Calmati!"
+    ],
+    "agnt108": [
+      "Uffa!"
+    ],
+    "agnt109": [
+      "Uffa!"
+    ],
+    "agnt110": [
+      "Ahhh!"
+    ],
+    "agnt111": [
+      "Uffa!"
+    ],
+    "agnt112": [
+      "Ah!"
+    ],
+    "agnt113": [
+      "Ah!"
+    ],
+    "agnt114": [
+      "Uffa!"
+    ],
+    "agnt115": [
+      "Ok, amico, muoviti!"
+    ],
+    "agnt116": [
+      "Attenzione!"
+    ],
+    "agnt117": [
+      "Tieni gli occhi sulla strada!"
+    ],
+    "agnt118": [
+      "Guardalo!"
+    ],
+    "agnt119": [
+      "Grazie per il passaggio."
+    ],
+    "agnt120": [
+      "Ci vediamo al prossimo incontro."
+    ],
+    "agnt121": [
+      "Bene, andiamo!"
+    ],
+    "agnt122": [
+      "Guida, amico, guida!"
+    ],
+    "agnt123": [
+      "C'è mancato poco!"
+    ],
+    "agnt124": [
+      "Sei sicuro di sapere cosa stai facendo?"
+    ],
+    "agnt125": [
+      "Ok, grazie, buona fortuna."
+    ],
+    "agnt126": [
+      "Grande andiamo."
+    ],
+    "agnt127": [
+      "Guida, amico, guida!"
+    ],
+    "agnt128": [
+      "C'è mancato poco!"
+    ],
+    "agnt129": [
+      "Sei sicuro di sapere cosa stai facendo?"
+    ],
+    "agnt130": [
+      "OK, grazie, buona fortuna!"
+    ],
+    "agnt131": [
+      "Cosa ti ha fatto perdere così tanto tempo?"
+    ],
+    "agnt132": [
+      "Muoviti come se avessi uno scopo, amico!"
+    ],
+    "agnt133": [
+      "Forza, forza, i KG ci hanno scoperto!"
+    ],
+    "agnt134": [
+      "Tenete duro, ci siamo quasi!"
+    ],
+    "agnt135": [
+      "Bene, hai fatto bene, dirò all'Ombra che siamo salvi!"
+    ],
+    "asha001": [
+      "La vendetta è una stronzata, e io lo sono."
+    ],
+    "asha002": [
+      "Attento al culo, sono solo una donna esteriormente."
+    ],
+    "asha003": [
+      "Lascia che ti riduca alle dimensioni...",
+      "Non che tu ne abbia."
+    ],
+    "asha004": [
+      "Le armi piccole non mi fanno andare avanti."
+    ],
+    "asha005": [
+      "È una pistola minuscola..."
+    ],
+    "asha006": [
+      "Non sai con chi hai a che fare."
+    ],
+    "asha007": [
+      "Non ho mai detto che potevi toccarmi lì."
+    ],
+    "asha008": [
+      "Prendi quello!"
+    ],
+    "asha009": [
+      "Eccone alcuni."
+    ],
+    "asha010": [
+      "Pronti per un altro?"
+    ],
+    "asha011": [
+      "Come ti senti?"
+    ],
+    "asha012": [
+      "Sembra che faccia male."
+    ],
+    "asha013": [
+      "Oh, che male."
+    ],
+    "asha014": [
+      "Uffa!"
+    ],
+    "asha015": [
+      "Bene!"
+    ],
+    "asha016": [
+      "Ah!"
+    ],
+    "asha017": [
+      "Ah!"
+    ],
+    "asha018": [
+      "Colpiscimi ancora e perderai qualcosa di veramente prezioso!"
+    ],
+    "asha019": [
+      "Non intelligente!"
+    ],
+    "asha020": [
+      "Ascolta, amico, da che parte stai?"
+    ],
+    "asha021": [
+      "Non farmi del male."
+    ],
+    "asha022": [
+      "Fallo di nuovo e ti metto giù."
+    ],
+    "asha023": [
+      "Impara a controllare la tua pistola, amico."
+    ],
+    "asha024": [
+      "Dove hai imparato a combattere?"
+    ],
+    "asha025": [
+      "Controlla i tuoi obiettivi, signore."
+    ],
+    "asha026": [
+      "Non farlo di nuovo."
+    ],
+    "asha027": [
+      "Forse dovrei essere dietro di te."
+    ],
+    "asha028": [
+      "Non lo accetterò!"
+    ],
+    "asha029": [
+      "Un altro così e canterai come soprano."
+    ],
+    "asha030": [
+      "Riprendine un po'."
+    ],
+    "asha031": [
+      "Non farlo di nuovo!"
+    ],
+    "asha032": [
+      "Bella ripresa."
+    ],
+    "asha033": [
+      "Bel tiro, ragazzo blu."
+    ],
+    "asha034": [
+      "Buon lavoro."
+    ],
+    "asha035": [
+      "Abbattili tutti!"
+    ],
+    "asha036": [
+      "Prendiamoli!"
+    ],
+    "asha037": [
+      "Arrivano!"
+    ],
+    "asha038": [
+      "Ho bisogno di aiuto!"
+    ],
+    "asha039": [
+      "Cavolo, ce ne sono un sacco!"
+    ],
+    "asha040": [
+      "Altri in arrivo."
+    ],
+    "asha041": [
+      "L'ho preso."
+    ],
+    "asha042": [
+      "Più potenza di fuoco!"
+    ],
+    "asha043": [
+      "Ancora uno in meno!"
+    ],
+    "asha044": [
+      "Aiutarmi!"
+    ],
+    "asha045": [
+      "Ci stanno aggirando!"
+    ],
+    "asha046": [
+      "Siamo circondati!"
+    ],
+    "asha047": [
+      "Sparare! Sparare!"
+    ],
+    "asha048": [
+      "Non ha un bell'aspetto."
+    ],
+    "asha049": [
+      "Aiutami!"
+    ],
+    "asha050": [
+      "Eccone uno per mio padre!"
+    ],
+    "asha051": [
+      "Maledetti Metal Head..."
+    ],
+    "asha052": [
+      "Bullseye."
+    ],
+    "asha053": [
+      "Ce ne sono altre di queste cose!"
+    ],
+    "asha054": [
+      "Prendili tutti!"
+    ],
+    "asha055": [
+      "Uffa..."
+    ],
+    "asha056": [
+      "Hm-agh..."
+    ],
+    "asha057": [
+      "Ah... ah..."
+    ],
+    "asht002": [
+      "Avevi ragione, Jak. Ciò che sta facendo mio padre è sbagliato.",
+      "Ho bisogno di aiutare a risolvere questo problema. Se arrivi alla Fabbrica di Armi,",
+      "Forse possiamo fermarlo. Ci vediamo lì."
+    ],
+    "asht006": [
+      "Penso che sia giunto il momento di agire.",
+      "I Metal Heads sono così concentrati nell'attaccare la città,",
+      "potrebbero aver lasciato il loro nido vulnerabile.",
+      "Jak, devi andare nella Zona Desolata",
+      "e sfonda la barriera del Nest in ogni modo possibile.",
+      "Forse se entri e fai fuori il leader dei Metal Head",
+      "l'esercito crollerà. È un azzardo,",
+      "ma potrebbe essere la nostra unica possibilità."
+    ],
+    "bar001": [
+      "Non prestare attenzione alle voci infondate su",
+      "forniture ecologiche basse. Come vostro Barone, vi assicuro,",
+      "la città ha una scorta infinita di negozi ecologici.",
+      "Quelli che direbbero che stiamo finendo,",
+      "stanno solo cercando di spaventare e sovvertire!",
+      "Ho tutto sotto controllo, te lo comando",
+      "non avere paura."
+    ],
+    "bar004": [
+      "Andare!"
+    ],
+    "bb01fail": [
+      "Penso che dovresti esercitarti di più."
+    ],
+    "bb01int": [
+      "Jak, questo è Torn. La metropolitana ha bisogno di buoni autisti",
+      "per le nostre missioni sui veicoli. Dimostra le tue abilità su",
+      "Ring Challenge e forse ti faremo entrare in azione."
+    ],
+    "bb01win": [
+      "Non male, penso che potremmo usarti.",
+      "Ecco una piccola ricompensa per il tuo impegno."
+    ],
+    "bb02fail": [
+      "Sei ancora un po' timido. Riprova."
+    ],
+    "bb02int": [
+      "Vorremmo vederti dimostrare le tue abilità di guida. Affronta",
+      "un'altra Ring Challenge, vediamo cosa hai ottenuto."
+    ],
+    "bb02win": [
+      "Non male. Potresti essere il mio autista per la fuga in qualsiasi momento."
+    ],
+    "bb03fail": [
+      "Sapevo che questo sarebbe stato troppo per te. Continuare a praticare."
+    ],
+    "bb03int": [
+      "La prossima Ring Challenge separerà gli uomini dai ragazzi.",
+      "Vediamo se riesci a gestirlo."
+    ],
+    "bb03win": [
+      "Guida molto piacevole. Comincio a pensare che potresti davvero",
+      "aiutaci, Jak."
+    ],
+    "bb04fail": [
+      "Peccato, speravo che potessi farlo. Continua a provare."
+    ],
+    "bb04int": [
+      "Strappato qui. Non so nemmeno perché ti permetto di provarlo",
+      "Ring Challenge, non l'ho mai battuto io stesso. Immagino di essere morbosamente",
+      "curioso. Batti questo e sarai il miglior pilota",
+      "che la metropolitana abbia mai avuto."
+    ],
+    "bb04win": [
+      "Molto carino, Jak! Sei il miglior pilota che abbiamo mai avuto."
+    ],
+    "bb05fail": [
+      "Non hai preso tutti i Bomb Bot, Jak!"
+    ],
+    "bb05int": [
+      "Jak, si dice che in città ci siano sempre più robot bomba.",
+      "Sono una minaccia pericolosa e ho bisogno che tu li localizzi",
+      "e distruggerli tutti prima che danneggino i nostri interessi."
+    ],
+    "bb05win": [
+      "Buon lavoro! Questo dovrebbe incidere sul bilancio di guerra del Barone."
+    ],
+    "bb06int": [
+      "Jak, abbiamo bisogno che tu elimini un altro gruppo di Bomb Bot.",
+      "Queste armi mobili continuano ad apparire in città, dobbiamo eliminarle il prima possibile."
+    ],
+    "bb06win": [
+      "Un altro mucchio di rottami metallici per il robot bomba per il KG",
+      "compattatori di rifiuti. Missione compiuta, quella della metropolitana",
+      "molto grato per il tuo servizio."
+    ],
+    "bb07fail": [
+      "Hai perso un agente! NON va affatto bene, Jak! Missione fallita!"
+    ],
+    "bb07int": [
+      "Lacerato qui, ho bisogno che tu esca e sposti altri nostri agenti in nuove posizioni in città.",
+      "Le spie dei KG osservano ogni nostra mossa, quindi fai attenzione ai guai. Buona fortuna."
+    ],
+    "bb07win": [
+      "Bel lavoro di navetta! Stai mantenendo in vita la gente là fuori."
+    ],
+    "bb08fail": [
+      "Uno dei nostri migliori agenti è stato arrestato. L'Ombra NON lo sarà",
+      "lieto! Hai fallito."
+    ],
+    "bb08int": [
+      "Jak, alcuni dei nostri agenti sono stati nuovamente compromessi.",
+      "Trovali tutti e portali in nascondigli speciali in città.",
+      "Le pattuglie di guardia sono in massima allerta, quindi sarà dura. Mantieni la testa giù!"
+    ],
+    "bb08win": [
+      "È stata una bella guida, Jak.",
+      "La metropolitana può respirare un po' più facilmente adesso."
+    ],
+    "bb09fail": [
+      "Ci hai messo troppo tempo, Jak. Annulliamo la riunione."
+    ],
+    "bb09int": [
+      "Jak, avremo una riunione clandestina",
+      "con alcuni agenti speciali. Raccogli ogni agente",
+      "e portarli rapidamente al luogo dell'incontro."
+    ],
+    "bb09win": [
+      "Lavoro veloce, Jak! Un giorno, potremmo anche",
+      "invitarvi a questi incontri."
+    ],
+    "bb10fail": [
+      "Non abbastanza veloce, amico! Devi essere veloce",
+      "con quelle consegne."
+    ],
+    "bb10int": [
+      "Jak, devi dimostrare ancora una volta le tue abilità di guida.",
+      "Uno dei nostri agenti ha lasciato un pacco,",
+      "Ho bisogno che venga consegnato al Hideout. Immediatamente."
+    ],
+    "bb10win": [
+      "Buon lavoro, Jak!"
+    ],
+    "bb11fail": [
+      "Il contenuto del pacco non ce l'ha fatta. Vai più veloce la prossima volta!"
+    ],
+    "bb11int": [
+      "Jak, ho bisogno che tu prenda un pacchetto di ecologici",
+      "verso la centrale elettrica. Arrivare rapidamente o il contenuto",
+      "sarà inutile per Vin."
+    ],
+    "bb11win": [
+      "Bella guida, Jak."
+    ],
+    "bb12fail": [
+      "Non hai spinto abbastanza, novellino. Riprova."
+    ],
+    "bb12int": [
+      "Qui è Torn, abbiamo un altro pacco da consegnare",
+      "per lo Stadio. Fai presto!"
+    ],
+    "bb12win": [
+      "Non male alla guida. Dovresti davvero gareggiare",
+      "nel campionato cittadino."
+    ],
+    "bb13fail": [
+      "Devi lavorare sulla velocità, amico."
+    ],
+    "bb13int": [
+      "Ho bisogno che porti un oggetto di valore a Onin.",
+      "Non sarai in grado di guidare per tutta la strada,",
+      "ma devi comunque muoverti velocemente. Buona fortuna."
+    ],
+    "bb13win": [
+      "Questo è il modo per farlo, buon lavoro."
+    ],
+    "bb14fail": [
+      "Troppo tardi, Jak! L'agente annulla la cosa.",
+      "Devi raggiungerlo più velocemente!"
+    ],
+    "bb14int": [
+      "Jak, abbiamo un agente che aspetta la consegna di un pacco.",
+      "Le spie della guardia stanno tenendo d'occhio questo ragazzo,",
+      "quindi se non lo raggiungi velocemente, verrà arrestato.",
+      "Portagli il pacco prima che sia troppo tardi."
+    ],
+    "bb14win": [
+      "Bel lavoro, la consegna è stata un successo. Mi piace il tuo stile, Jak."
+    ],
+    "bb15fail": [
+      "Hai fatto un casino, Jak! Non sei riuscito a raggiungere la zona sicura",
+      "come abbiamo chiesto."
+    ],
+    "bb15farr": [
+      "Scendi dalla bici e allontanati, Jak!!"
+    ],
+    "bb15int": [
+      "Jak, abbiamo trovato una bomba negli Slums",
+      "era destinato all'Ombra.",
+      "Ho bisogno che tu lo vada a prendere e lo porti alla Farm Area",
+      "dove abbiamo contrassegnato una zona sicura dove può esplodere.",
+      "Vai velocemente."
+    ],
+    "bb15win": [
+      "È stato un lavoro fantastico, Jak! Grazie, lo dico davvero."
+    ],
+    "bb16fail": [
+      "Non hai eliminato abbastanza guardie!",
+      "Dobbiamo colpirli più forte!"
+    ],
+    "bb16int": [
+      "Jak, questo è Torn.",
+      "La guardia personale d'élite di Erol si sta muovendo per la città.",
+      "Dobbiamo colpirli e colpirli forte! Tirane fuori abbastanza",
+      "guardie prima di dover annullare la missione.",
+      "Se ci sono troppe poche guardie, avremo perso un'opportunità di",
+      "infliggere danni reali ai nostri nemici."
+    ],
+    "bb16win": [
+      "Bellissimo mordi e fuggi, Jak! Questo invierà un messaggio a Erol."
+    ],
+    "bb17fail": [
+      "Sembra che quella cosa sia troppo difficile da usare. Per ora passiamo."
+    ],
+    "bb17int": [
+      "Stiamo valutando il nuovo JET-Board per l'uso in metropolitana",
+      "missioni. Abbiamo sentito che sei abbastanza bravo con quelle cose,",
+      "mostraci cosa può fare. Segna abbastanza punti con il",
+      "Judge-bot e valuteremo se aggiungerlo al nostro arsenale."
+    ],
+    "bb17win": [
+      "Oh! Puoi davvero fare a pezzi il cemento con quel bambino!",
+      "Buon lavoro."
+    ],
+    "bb18fail": [
+      "Non sono ancora sicuro che la JET-Board sia così utile."
+    ],
+    "bb18int": [
+      "Ecco un altro ottimo posto per valutare le prestazioni",
+      "del consiglio di amministrazione del JET. Cerca di ottenere abbastanza punti anche qui."
+    ],
+    "bb18win": [
+      "Mosse dolci, Jak. Il KG avrebbe avuto difficoltà",
+      "catturandoci su quei bambini."
+    ],
+    "bb19fail": [
+      "Non li hai presi tutti. Riprova."
+    ],
+    "bb19int": [
+      "Stiamo valutando l'uso dei fari di ricerca nelle missioni.",
+      "Raccogli tutti i segnali il più velocemente possibile.",
+      "Devi muoverti velocemente su questo."
+    ],
+    "bb19win": [
+      "Lavoro eccellente. Sei una grande risorsa",
+      "nella metropolitana, Jak."
+    ],
+    "bb20fail": [
+      "Troppo lento, Jak! Quando l'Ombra chiede, devi consegnare."
+    ],
+    "bb20int": [
+      "L'Ombra ha bisogno che tu raccogli dell'eco verde per il suo",
+      "esperimenti. Ottieni tutto prima che l'eco svanisca."
+    ],
+    "bb20win": [
+      "Non male. Metterò una buona parola con l'Ombra."
+    ],
+    "bb21fail": [
+      "Continua a provare. Devi sviluppare le tue abilità qui."
+    ],
+    "bb21int": [
+      "A volte ci piace \"prendere in prestito\" la Krimzon Guard",
+      "attrezzatura. Porta fuori quella moto da pattuglia dei KG a fare un giro",
+      "e colpire tutti i bersagli entro il limite di tempo."
+    ],
+    "bb21win": [
+      "Bella ripresa. La Guardia ti adorerebbe come recluta.",
+      "Ecco invece una piccola ricompensa per restare con noi."
+    ],
+    "bb22fail": [
+      "Non sei arrivato alle cabine abbastanza in fretta, Jak."
+    ],
+    "bb22int": [
+      "Parte della propaganda del Barone è inquietante",
+      "i civili. Togli quelle cabine e fermeremo Praxis",
+      "dal diffondere le sue bugie."
+    ],
+    "bb22win": [
+      "Buon lavoro! Questo dovrebbe far tacere un po' il Barone."
+    ],
+    "bb23fail": [
+      "Hai perso, Jak. Se vuoi vincere,",
+      "faresti meglio a lavorare sulle tue abilità di velocità."
+    ],
+    "bb23int": [
+      "Il miglior pilota di The Underground vuole sfidarti",
+      "a una gara sul Ring Course One.",
+      "Pensi di poter gestire un po' di concorrenza?"
+    ],
+    "bb23win": [
+      "Congratulazioni! Hai battuto lo sfidante!"
+    ],
+    "bb24fail": [
+      "Il nostro ragazzo ti ha portato in questo. La prossima volta sarai più fortunato."
+    ],
+    "bb24int": [
+      "Sei pronto per una piccola gara, Jak?",
+      "Il nostro miglior pilota vuole affrontarti sul Ring Course Two.",
+      "Questo bambino è un po' più difficile.",
+      "Vediamo se riesci a raccogliere la sfida."
+    ],
+    "bb24win": [
+      "L'hai battuto, Jak. Bella guida."
+    ],
+    "bb25fail": [
+      "Sembra che tu non sia il miglior pilota di questa città, Jak.",
+      "Hai perso!"
+    ],
+    "bb25int": [
+      "Il campione della corsa Underground ti vuole ancora,",
+      "questa volta sul difficile percorso Ring Course Three.",
+      "Questo diventerà peloso."
+    ],
+    "bb25win": [
+      "Congratulazioni, hai battuto il nostro miglior pilota. Ben fatto."
+    ],
+    "bb26int": [
+      "Questo è Torn, un buon agente della metropolitana conosce la città",
+      "dentro e fuori, a vista. Vediamo come te la cavi,",
+      "arrivare a questo posto nel limite di tempo indicato",
+      "e riceverai una ricompensa. VIA!"
+    ],
+    "bb27int": [
+      "Ecco un'altra occasione per dimostrare la tua conoscenza della città."
+    ],
+    "bb28int": [
+      "Trova questo posto prima che scada il tempo."
+    ],
+    "bb29int": [
+      "Ecco una cosa difficile, batti il ​​tempo fino a qui."
+    ],
+    "bb30int": [
+      "Riconosci questo posto? Trovalo velocemente e una ricompensa sarà tua."
+    ],
+    "bb31int": [
+      "Ecco un posto poco conosciuto, trovalo velocemente e rimarrai colpito."
+    ],
+    "bb32int": [
+      "Mi piacerebbe vederti trovare questo posto. Impressionami, Jak."
+    ],
+    "bb33int": [
+      "Arriva subito e sorprendimi."
+    ],
+    "bb34int": [
+      "Ecco un'altra destinazione, vieni qui velocemente."
+    ],
+    "bb35int": [
+      "Trova questo posto, velocemente!"
+    ],
+    "bb36int": [
+      "Raggiungi quest'area e sarai ricompensato."
+    ],
+    "bb37int": [
+      "Pensi di poter trovare questo posto?"
+    ],
+    "bb38fail": [
+      "Non così bene, Jak! Forse dovresti calibrare quella scheda."
+    ],
+    "bb38int": [
+      "Stiamo ancora valutando il JET-Board.",
+      "Vediamo se riesci a raccogliere tutti i potenziamenti energetici",
+      "nel termine assegnato."
+    ],
+    "bb38win": [
+      "Belle mosse, ragazzo volante."
+    ],
+    "bb39fail": [
+      "Così vicino, ma in questo settore significa morto."
+    ],
+    "bb39int": [
+      "Metti alla prova il JET-Board su un percorso ad anello.",
+      "Batti il ​​tempo e ti farò tatuare la faccia come la mia."
+    ],
+    "bb39win": [
+      "Buona velocità lungo il percorso, Jak!",
+      "Quello sembrava troppo facile."
+    ],
+    "bb40fail": [
+      "Sembra che tu abbia trovato il tuo partner, Jak!",
+      "Sei stato troppo lento in quel percorso."
+    ],
+    "bb40int": [
+      "Mi piacerebbe vederti portare il JET-Board attraverso un altro",
+      "Corso ad anello. Renderemo questo un po' più interessante,",
+      "vediamo se riesci a completarlo in tempo."
+    ],
+    "bb40win": [
+      "Oh! Anche io avrei problemi con quello, bel lavoro!"
+    ],
+    "bf001": [
+      "Il mio scudo è impermeabile ai tuoi attacchi!"
+    ],
+    "bf002": [
+      "Non puoi farmi del male!"
+    ],
+    "bf003": [
+      "Stupido! Niente può toccarmi!"
+    ],
+    "bf004": [
+      "Sei impotente!"
+    ],
+    "bf005": [
+      "Non c'è niente che tu possa fare!"
+    ],
+    "bf006": [
+      "AH AH AH AH AH AH!"
+    ],
+    "bf007": [
+      "AHAHAHAH!"
+    ],
+    "bf008": [
+      "Vieni a prendermi!"
+    ],
+    "bf009": [
+      "Avvicinati!"
+    ],
+    "bf010": [
+      "Provami adesso!"
+    ],
+    "bf011": [
+      "Rendiamolo personale!"
+    ],
+    "bf012": [
+      "Sorpresa!"
+    ],
+    "bf013": [
+      "Non cadere!"
+    ],
+    "bf014": [
+      "Ti schiaccerò!"
+    ],
+    "bf015": [
+      "Prendi questo!"
+    ],
+    "bf016": [
+      "Eccomi!"
+    ],
+    "bf017": [
+      "Perché non morirai?!"
+    ],
+    "bf018": [
+      "I tuoi poteri dell'Eco Oscuro mi sorprendono!"
+    ],
+    "bf019": [
+      "La tua arroganza sarà la tua rovina!"
+    ],
+    "bf020": [
+      "La Pietra è mia!"
+    ],
+    "bf021": [
+      "Dammi la Pietra!"
+    ],
+    "bf022": [
+      "Rilascialo!"
+    ],
+    "bf023": [
+      "Voglio la Pietra!"
+    ],
+    "bf024": [
+      "Argh, lascia andare!"
+    ],
+    "bf025": [
+      "È mio!"
+    ],
+    "bf026": [
+      "Prova questi per la taglia!"
+    ],
+    "bf027": [
+      "Ecco un piccolo regalo!"
+    ],
+    "bf028": [
+      "Ne vuoi ancora?"
+    ],
+    "bf029": [
+      "Mi stanco di questo, ora muori!"
+    ],
+    "bf030": [
+      "Non puoi scappare da questi!"
+    ],
+    "bf031": [
+      "Permettimi di condividere il dolore!"
+    ],
+    "bf032": [
+      "Adesso sei mio!"
+    ],
+    "bf033": [
+      "Ecco un po' di inferno!"
+    ],
+    "bf034": [
+      "Dì Buonanotte!"
+    ],
+    "bf035": [
+      "Goditi la tua prossima vita!"
+    ],
+    "bf036": [
+      "È finita!"
+    ],
+    "bf037": [
+      "Brucia all'inferno!"
+    ],
+    "bf038": [
+      "La Pietra è mia! Lascia che ti mostri cosa può fare!"
+    ],
+    "bf039": [
+      "Ora vedi il potere della Pietra in mani capaci!"
+    ],
+    "bf040": [
+      "Che ne dici di questa potenza?"
+    ],
+    "bf041": [
+      "Ora capisci!"
+    ],
+    "bf042": [
+      "Sono invincibile adesso!"
+    ],
+    "bf043": [
+      "Non puoi correre per sempre!"
+    ],
+    "bf044": [
+      "Ho tutto il potere di cui ho bisogno!"
+    ],
+    "bf045": [
+      "Non puoi evitarlo!"
+    ],
+    "bf046": [
+      "Ecco qualcosa di speciale!"
+    ],
+    "bf047": [
+      "Vieni da me!"
+    ],
+    "bf048": [
+      "Vieni qui!"
+    ],
+    "bf049": [
+      "Avviciniamoci!"
+    ],
+    "bf050": [
+      "Niente può salvarti adesso!"
+    ],
+    "bf051": [
+      "Sei storia!"
+    ],
+    "bf052": [
+      "Sono io il salvatore della città, non tu!"
+    ],
+    "bf053": [
+      "Morire!"
+    ],
+    "bf054": [
+      "È finita!"
+    ],
+    "bf055": [
+      "Ti ho preso!"
+    ],
+    "bf056": [
+      "Adesso muori!"
+    ],
+    "bf057": [
+      "NOOOOO!"
+    ],
+    "bf058": [
+      "NO!"
+    ],
+    "bf059": [
+      "NO!"
+    ],
+    "bf060": [
+      "Urgh!"
+    ],
+    "bf061": [
+      "Ah!"
+    ],
+    "bf062": [
+      "Ungh!"
+    ],
+    "bf063": [
+      "Raghhh!"
+    ],
+    "bf064": [
+      "Finiamolo adesso!"
+    ],
+    "bf065": [
+      "Mangia questo!"
+    ],
+    "bf066": [
+      "Fermare!"
+    ],
+    "bf067": [
+      "Idiota, non sei all'altezza di me!"
+    ],
+    "bf068": [
+      "Perché non muori!?"
+    ],
+    "bf069": [
+      "Arrenditi e lo farò indolore!"
+    ],
+    "bf070": [
+      "Non puoi vincere!"
+    ],
+    "bf071": [
+      "Ah!"
+    ],
+    "bf072": [
+      "Ahah!"
+    ],
+    "bf073": [
+      "AH!"
+    ],
+    "bf074": [
+      "Urgh!"
+    ],
+    "bf075": [
+      "Puoi fare di meglio!"
+    ],
+    "bf076": [
+      "Sei mio!"
+    ],
+    "bf077": [
+      "Perché non vuoi morire!?"
+    ],
+    "bf078": [
+      "Ho il potere supremo!"
+    ],
+    "bf079": [
+      "Morire!"
+    ],
+    "bf080": [
+      "E' la tua occasione migliore?"
+    ],
+    "bf081": [
+      "Adesso muori!"
+    ],
+    "bf082": [
+      "Scendi dalla mia torre!"
+    ],
+    "bf083": [
+      "Vedremo a riguardo!"
+    ],
+    "bf084": [
+      "Pensi davvero di avere una possibilità?"
+    ],
+    "bf085": [
+      "Temimi!"
+    ],
+    "bf086": [
+      "Non sei nessuno!"
+    ],
+    "bf087": [
+      "Il mio scudo è ora ricaricato!"
+    ],
+    "bf088": [
+      "Prova questi per la taglia!"
+    ],
+    "bf089": [
+      "Avrei dovuto ucciderti molto tempo fa!"
+    ],
+    "bf090": [
+      "Mai un momento di noia, eh?"
+    ],
+    "bf091": [
+      "Stai fermo!"
+    ],
+    "bf092": [
+      "Torna da dove sei venuto!"
+    ],
+    "bf093": [
+      "Morirete entrambi per mano mia!"
+    ],
+    "bf094": [
+      "Avvicinati!"
+    ],
+    "bf095": [
+      "All'estremità!"
+    ],
+    "bf096": [
+      "Non puoi vincere!"
+    ],
+    "bf097": [
+      "Vieni qui!"
+    ],
+    "bf098": [
+      "ARGHHH!"
+    ],
+    "bf099": [
+      "URGHH!"
+    ],
+    "bf100": [
+      "Urgh!"
+    ],
+    "bf101": [
+      "Uffa!"
+    ],
+    "bf102": [
+      "Nooooo!"
+    ],
+    "bf103": [
+      "NO!"
+    ],
+    "bf104": [
+      "Non di nuovo!"
+    ],
+    "bf105": [
+      "Non può essere!"
+    ],
+    "bf106": [
+      "Non questa volta!"
+    ],
+    "bf107": [
+      "Fermare!"
+    ],
+    "bf108": [
+      "Dannazione!"
+    ],
+    "bf109": [
+      "Perché, piccolo...!"
+    ],
+    "bf110": [
+      "Adesso mi hai fatto arrabbiare!"
+    ],
+    "bf111": [
+      "Impressionante, ma proviamoci di nuovo!"
+    ],
+    "bf112": [
+      "L'uomo più forte vince sempre!"
+    ],
+    "bf113": [
+      "La tua perdita era inevitabile, Jak!"
+    ],
+    "bf114": [
+      "Non potresti mai essere un barone!"
+    ],
+    "bf115": [
+      "Lo sapevo che eri debole!"
+    ],
+    "bf116": [
+      "Mhm, mi aspettavo di più da te!"
+    ],
+    "bf117": [
+      "Perdere è per i deboli!"
+    ],
+    "bf118": [
+      "Che patetico!"
+    ],
+    "bf119": [
+      "Era troppo facile!"
+    ],
+    "bf120": [
+      "Scusa, vecchio mio, è solo guerra!"
+    ],
+    "bf121": [
+      "Peccato che tu non abbia quello che serve!"
+    ],
+    "bf122": [
+      "Ha vinto il migliore!"
+    ],
+    "bf123": [
+      "Siamo simili, Jak... oh, tranne che tu sei morto!"
+    ],
+    "bf124": [
+      "Senti la furia della Pietra Precursore!"
+    ],
+    "bf125": [
+      "Con il potere della Pietra sono invincibile!"
+    ],
+    "bf126": [
+      "Tutti mi temeranno adesso!"
+    ],
+    "bf127": [
+      "Tempo di morire!"
+    ],
+    "bf128": [
+      "I miei piccoli amici si prenderanno cura di te!"
+    ],
+    "bf129": [
+      "Non puoi scappare per sempre, Jak!"
+    ],
+    "bf130": [
+      "Ora ho te!"
+    ],
+    "bf131": [
+      "Sorpresa!"
+    ],
+    "bf132": [
+      "Ho di meglio da fare che perdere tempo con te!"
+    ],
+    "bf133": [
+      "Tu non sei niente!"
+    ],
+    "bf134": [
+      "Insetto fastidioso, muori!"
+    ],
+    "bf135": [
+      "Non male, ma lascia che ti mostri cos'è il vero potere!"
+    ],
+    "bf136": [
+      "Senti questo!"
+    ],
+    "bru001": [
+      "Ottimo alito puzzolente di un serpente d'oca!",
+      "Siete eroi per i Lurker!",
+      "Ormai vedo solo molto felice, grazie! Ruhuhuh.",
+      "Siete membri onorari della tribù dei Lurker adesso.",
+      "Non dimentichiamolo: se mai hai bisogno di noi, ti aiutiamo!"
+    ],
+    "bru002": [
+      "Ho sentito che voi due cercate un pezzo del luccicante Sigillo di Mar.",
+      "Anche Brutter ama le cose luccicanti.",
+      "Ho un pezzo, penso. Nelle baraccopoli dell'acqua,",
+      "incombe su di me e tu sei libero di avere.",
+      "Regalo da Brutter!"
+    ],
+    "bru004": [
+      "Bravi voi due! Non c'è guerriero migliore in tutte le tribù dei Lurker!",
+      "Mantieni Sigillo. Ami le cose luccicanti proprio come Brutter."
+    ],
+    "cit001": [
+      "EHI!"
+    ],
+    "cit004": [
+      "Guardalo!"
+    ],
+    "cit008": [
+      "NO!"
+    ],
+    "cit010": [
+      "Argh!"
+    ],
+    "cit016": [
+      "Stai lontano!"
+    ],
+    "cit033": [
+      "EHI!"
+    ],
+    "cit034": [
+      "Attenzione!"
+    ],
+    "cit035": [
+      "Attento!"
+    ],
+    "cit046": [
+      "Andare via!"
+    ],
+    "cit047": [
+      "Lasciami in pace!"
+    ],
+    "cit051": [
+      "Sei pazzo?"
+    ],
+    "cit053": [
+      "Sei pazzo?!"
+    ],
+    "cit055": [
+      "Ehi, quello è il mio veicolo!"
+    ],
+    "cit056": [
+      "Ridammi il mio veicolo!"
+    ],
+    "cit057": [
+      "Cosa fai?"
+    ],
+    "cit058": [
+      "Per favore, non prenderlo!"
+    ],
+    "cit097": [
+      "Uffa!"
+    ],
+    "cit097a": [
+      "Ahhh!"
+    ],
+    "cit097b": [
+      "Aaghhh!"
+    ],
+    "cit097c": [
+      "AAAHHH!!"
+    ],
+    "cit097d": [
+      "AAHHH!"
+    ],
+    "cit098": [
+      "Ah!!"
+    ],
+    "cit098a": [
+      "Urgh!"
+    ],
+    "cit098b": [
+      "Uffa!"
+    ],
+    "cit098c": [
+      "Uffa!"
+    ],
+    "cit098d": [
+      "Ah!"
+    ],
+    "cit099": [
+      "NO!"
+    ],
+    "cit099a": [
+      "Nooooo!"
+    ],
+    "cit099b": [
+      "NO!"
+    ],
+    "cit099c": [
+      "NO!"
+    ],
+    "cit099d": [
+      "Nooo!"
+    ],
+    "cit100": [
+      "Per favore!"
+    ],
+    "cit100a": [
+      "Per favore!"
+    ],
+    "cit100b": [
+      "Per favore!"
+    ],
+    "cit100c": [
+      "Per favore!"
+    ],
+    "cit101": [
+      "Fermare!"
+    ],
+    "cit101a": [
+      "Fermare!"
+    ],
+    "cit101b": [
+      "Fermare!"
+    ],
+    "cit101c": [
+      "Fermare!"
+    ],
+    "cit103": [
+      "Suona l'allarme!"
+    ],
+    "cit103a": [
+      "Suona l'allarme!"
+    ],
+    "cit104": [
+      "Guardie ✔!"
+    ],
+    "cit104a": [
+      "Guardie ✔! Aiutaci!"
+    ],
+    "cit105": [
+      "Aiutaci!"
+    ],
+    "cit120": [
+      "Tienilo lontano da me!"
+    ],
+    "cit120a": [
+      "Tienilo lontano da me!"
+    ],
+    "cit137a": [
+      "Aspettare!"
+    ],
+    "cityv001": [
+      "Lasciando la zona sicura della città."
+    ],
+    "cityv002": [
+      "Lasciare la città a proprio rischio e pericolo."
+    ],
+    "cityv003": [
+      "Uscendo dalla città."
+    ],
+    "cityv004": [
+      "Scudo esterno apribile."
+    ],
+    "cityv005": [
+      "Decontaminazione completata."
+    ],
+    "cityv006": [
+      "Entrando in Haven City."
+    ],
+    "cityv007": [
+      "Rientro in città."
+    ],
+    "cityv008": [
+      "Bentornato."
+    ],
+    "cityv009": [
+      "È bello vederti ancora vivo."
+    ],
+    "cityv010": [
+      "Autorizzazione di sicurezza concessa."
+    ],
+    "cityv011": [
+      "Ingresso negato. Non hai l'autorizzazione appropriata."
+    ],
+    "cityv012": [
+      "Non sono in grado di ottemperare."
+    ],
+    "cityv013": [
+      "Per favore, torna con l'autorizzazione adeguata."
+    ],
+    "cityv014": [
+      "Accesso negato."
+    ],
+    "cityv015": [
+      "Hai bisogno dell'autorizzazione rossa per questo cancello."
+    ],
+    "cityv016": [
+      "Hai bisogno dell'autorizzazione verde per questo cancello."
+    ],
+    "cityv017": [
+      "Hai bisogno dell'autorizzazione gialla per questo cancello."
+    ],
+    "cityv018": [
+      "Hai bisogno dell'autorizzazione blu per questo cancello."
+    ],
+    "cityv019": [
+      "Hai bisogno dell'autorizzazione viola per questo cancello."
+    ],
+    "cityv020": [
+      "Per questa porta è necessaria una speciale autorizzazione nera."
+    ],
+    "cityv021": [
+      "Accesso garantito."
+    ],
+    "cityv022": [
+      "Porta aperta."
+    ],
+    "cityv023": [
+      "Porta chiusa."
+    ],
+    "cityv024": [
+      "Prego entra."
+    ],
+    "cityv025": [
+      "Portale Warp in linea."
+    ],
+    "cityv026": [
+      "Avvertenza: scorte eco scarse."
+    ],
+    "cityv027": [
+      "I sistemi di backup falliscono."
+    ],
+    "cityv028": [
+      "Avvertenza: lo stoccaggio ecologico è al di sotto dei minimi di sicurezza."
+    ],
+    "cityv029": [
+      "Rete ecologica instabile."
+    ],
+    "cityv030": [
+      "Teste di metallo rilevate nel sito minerario."
+    ],
+    "cityv031": [
+      "Metal Head rilevati nel sito di perforazione."
+    ],
+    "cityv032": [
+      "Attendere l'autorizzazione."
+    ],
+    "cityv033": [
+      "Buona giornata."
+    ],
+    "cityv034": [
+      "Benvenuto."
+    ],
+    "cityv035": [
+      "Questa è un'area riservata."
+    ],
+    "cityv036": [
+      "Stai violando l'ordinanza sulla velocità 51d, accosta."
+    ],
+    "cityv037": [
+      "Ho allertato le autorità."
+    ],
+    "cityv038": [
+      "Questo settore è chiuso."
+    ],
+    "cityv039": [
+      "Avviso: evasione dalla prigione in corso."
+    ],
+    "cityv040": [
+      "Allerta: città sotto attacco."
+    ],
+    "cityv041": [
+      "Attacco Metal Head in corso."
+    ],
+    "cityv042": [
+      "Tutti i cittadini vanno in rifugi sicuri."
+    ],
+    "cityv043": [
+      "Eco Grid sempre più instabile."
+    ],
+    "cityv044": [
+      "L'Eco Grid non funziona. Ripeto: l'Eco Grid non funziona."
+    ],
+    "cityv045": [
+      "Allarme rosso: muro difensivo della città compromesso."
+    ],
+    "cityv046": [
+      "Movimento non autorizzato nel sistema fognario."
+    ],
+    "cityv047": [
+      "Questa è un'area riservata. Difese attivate."
+    ],
+    "cityv048": [
+      "Stai sconfinando. Le difese entrano in azione."
+    ],
+    "cityv049": [
+      "Mi pento dell'uso della forza. Inserimento dei sistemi."
+    ],
+    "cityv050": [
+      "Intruso neutralizzato."
+    ],
+    "cityv051": [
+      "Sospettato distrutto."
+    ],
+    "cityv052": [
+      "Sono autorizzato a usare la forza."
+    ],
+    "cityv053": [
+      "Allerta generale: disordini in corso. Guardie Krimzon in viaggio."
+    ],
+    "cityv054": [
+      "Arrenditi. Tu sei sotto arresto."
+    ],
+    "cityv055": [
+      "Non c'è via di fuga."
+    ],
+    "cityv056": [
+      "Ti trovi in ​​un settore riservato. Questo settore è in massima allerta."
+    ],
+    "cityv057": [
+      "Tu sei sotto arresto. Arrenditi."
+    ],
+    "cityv058": [
+      "Questo settore è interdetto."
+    ],
+    "cityv061": [
+      "Tutti i sistemi sono tornati online e in verde."
+    ],
+    "cityv062": [
+      "La corsa sta per iniziare."
+    ],
+    "cityv063": [
+      "Benvenuti nel sistema di trasporto cittadino."
+    ],
+    "cityv064": [
+      "Puoi entrare nel tuo veicolo in qualsiasi momento."
+    ],
+    "cityv065": [
+      "La frenata aiuterà nel controllo del veicolo."
+    ],
+    "cityv067": [
+      "Fare il backup è facile."
+    ],
+    "cityv068": [
+      "Puoi passare il mouse su una delle due zone: bassa e alta."
+    ],
+    "cityv069": [
+      "Prova a cambiare zona al passaggio del mouse."
+    ],
+    "cityv070": [
+      "Cambiare zona al passaggio del mouse può aiutare a evitare il traffico o",
+      "ostacoli al suolo."
+    ],
+    "cityv075": [
+      "Avviso: distruzione del veicolo imminente."
+    ],
+    "cityv076": [
+      "Per favore guida con più attenzione la prossima volta."
+    ],
+    "cityv077": [
+      "Grazie per aver utilizzato il veicolo."
+    ],
+    "cityv078": [
+      "Buona giornata."
+    ],
+    "cityv079": [
+      "Attenzione: sistemi di raffreddamento dei missili danneggiati."
+    ],
+    "cityv080": [
+      "Avviso: guasto del sistema di raffreddamento di riserva.",
+      "Avviati interventi di emergenza."
+    ],
+    "cityv081": [
+      "Sistemi missilistici in sovraccarico critico.",
+      "Il failsafe non risponde."
+    ],
+    "cityv082": [
+      "Pericolo: la detonazione della testata è imminente.",
+      "Evacuare immediatamente."
+    ],
+    "cityv087": [
+      "Arrivo al piano della Sala del Trono."
+    ],
+    "cityv088": [
+      "Arrivo al piano terra."
+    ],
+    "cityv093": [
+      "Sei stato condannato al licenziamento."
+    ],
+    "cityv094": [
+      "Quest'area è riservata.",
+      "Avvio del licenziamento con estremo pregiudizio."
+    ],
+    "cityv095": [
+      "Quest'area è aperta solo al personale della Guardia Krimzon."
+    ],
+    "cityv096": [
+      "La città è in massima allerta."
+    ],
+    "cityv097": [
+      "La città è sotto attacco.",
+      "Tutti i cittadini si dirigono verso rifugi sicuri."
+    ],
+    "cityv098": [
+      "La città è sotto attacco. Per favore, restate nelle vostre case."
+    ],
+    "cityv099": [
+      "Gli aggressori Metal Head si stanno infiltrando nel sistema."
+    ],
+    "cityv100": [
+      "Congratulazioni per aver ricevuto un Security Pass."
+    ],
+    "cityv107": [
+      "Uso non autorizzato della porta della Fortezza.",
+      "Attivazione serbatoio di sicurezza."
+    ],
+    "cityv108": [
+      "Armi Gunpod in arrivo."
+    ],
+    "cityv109": [
+      "Surriscaldamento delle armi."
+    ],
+    "cityv110": [
+      "Armi non funzionanti. Si prega di attendere il raffreddamento."
+    ],
+    "cityv111": [
+      "Le armi sono tornate online."
+    ],
+    "cityv112": [
+      "Il gunpod ha subito gravi danni."
+    ],
+    "cityv130": [
+      "La mappa della città viene visualizzata in basso a destra."
+    ],
+    "cityv132": [
+      "Segui le icone sulla mappa",
+      "per raggiungere mete importanti."
+    ],
+    "cityv134": [
+      "Avviso intruso."
+    ],
+    "cityv135": [
+      "Stand-by."
+    ],
+    "cityv146": [
+      "Sto riscontrando un sovraccarico del circuito.",
+      "Attiva i miei interruttori di bypass entro il limite di tempo",
+      "e sarai ricompensato."
+    ],
+    "cityv147": [
+      "Non sei riuscito ad attivare in tempo la rete di bypass.",
+      "I miei circuiti della Zona C sono sovraccarichi."
+    ],
+    "cityv148": [
+      "Hai attivato con successo il bypass",
+      "per i miei circuiti in tempo.",
+      "Ecco una ricompensa."
+    ],
+    "cityv149": [
+      "Ho bisogno di alimentazione di emergenza per i miei Eco Converter.",
+      "Accendi rapidamente tutti i circuiti disponibili",
+      "per stabilizzare l’Eco Grid."
+    ],
+    "cityv150": [
+      "Non hai raggiunto tutti gli interruttori in tempo.",
+      "L’Eco Grid è ancora instabile."
+    ],
+    "cityv151": [
+      "Hai attivato con successo i circuiti",
+      "per stabilizzare l’Eco Grid.",
+      "Hai guadagnato una ricompensa."
+    ],
+    "cityv152": [
+      "Ho rilevato una fuoriuscita di Eco scuro.",
+      "È necessario rimuovere rapidamente questo pericolo",
+      "prima che la città venga contaminata."
+    ],
+    "cityv153": [
+      "Non hai rimosso tutto l'Eco Oscuro abbastanza velocemente."
+    ],
+    "cityv154": [
+      "Hai rimosso il pericolo dell'Eco Oscuro in tempo.",
+      "La città ti è grata."
+    ],
+    "cityv155": [
+      "I sensori indicano un ammasso di Blue Eco in città.",
+      "Raccogli tutta l'eco prima che si dissipi",
+      "e sarai ricompensato."
+    ],
+    "cityv156": [
+      "Non hai recuperato tutta l'eco."
+    ],
+    "cityv157": [
+      "Hai recuperato con successo l'eco.",
+      "Ecco la tua ricompensa."
+    ],
+    "cityv158": [
+      "Necessaria una risposta di emergenza.",
+      "I robot bomba in fuga sono stati rilevati e si sono diretti verso",
+      "aree popolate. Neutralizza tutti i robot bomba",
+      "prima che sia troppo tardi."
+    ],
+    "cityv159": [
+      "Non sei riuscito a neutralizzare i robot bomba in fuga."
+    ],
+    "cityv160": [
+      "Hai distrutto i robot bomba in fuga.",
+      "La città ringrazia."
+    ],
+    "cityv161": [
+      "Raggiungi rapidamente questo punto del gioco",
+      "e riceverai un premio."
+    ],
+    "cityv162": [
+      "Prova a trovare questo posto."
+    ],
+    "cityv163": [
+      "Puoi identificare questo posto e arrivarci?"
+    ],
+    "cityv164": [
+      "Raggiungilo nel tempo assegnato e la ricompensa sarà tua."
+    ],
+    "cityv165": [
+      "Trova questo posto e riceverai un premio."
+    ],
+    "cityv166": [
+      "Raggiungi questo posto per un premio."
+    ],
+    "cityv167": [
+      "Sono stati rilevati Metal Head nel percorso delle armi.",
+      "Neutralizzateli tutti immediatamente."
+    ],
+    "cityv168": [
+      "Non li hai uccisi tutti."
+    ],
+    "cityv169": [
+      "Scatto eccellente. Minaccia eliminata."
+    ],
+    "cityv170": [
+      "Ottieni un punteggio elevato sul JET-Board e ricevi un premio."
+    ],
+    "cityv171": [
+      "Prova a ottenere un punteggio elevato e ricevi un premio."
+    ],
+    "cityv172": [
+      "Non hai ottenuto un punteggio sufficientemente alto."
+    ],
+    "cityv173": [
+      "Congratulazioni, hai ottenuto un punteggio abbastanza alto."
+    ],
+    "cityv174": [
+      "Benvenuti al computer centrale dello stadio.",
+      "Seleziona la tua sfida."
+    ],
+    "cityv175": [
+      "Attenzione, tutti i cittadini:",
+      "La gara di Classe 1 sta per iniziare."
+    ],
+    "cityv176": [
+      "Attenzione, tutti i cittadini:",
+      "La Gara di Classe 2 sta per iniziare."
+    ],
+    "cityv177": [
+      "Attenzione, tutti i cittadini:",
+      "La Gara di Classe 3 sta per iniziare."
+    ],
+    "cityv178": [
+      "Ti va di provare a battere il record del corso?"
+    ],
+    "cityv179": [
+      "Congratulazioni, hai raggiunto il record d'oro."
+    ],
+    "cityv180": [
+      "Congratulazioni, hai raggiunto il record d'argento."
+    ],
+    "cityv181": [
+      "Congratulazioni, hai raggiunto il record di bronzo."
+    ],
+    "cityv182": [
+      "Ti va di provare a segnare un record?"
+    ],
+    "cityv183": [
+      "Ti piacerebbe provare a ottenere un punteggio elevato?"
+    ],
+    "cityv184": [
+      "Benvenuti alle prove a tempo di corsa."
+    ],
+    "cityv185": [
+      "Vorresti gareggiare per un tempo record?"
+    ],
+    "cityv186": [
+      "Scegli il tuo corso."
+    ],
+    "cityv187": [
+      "Ti piacerebbe provare a ottenere un record del corso?"
+    ],
+    "cityv188": [
+      "Ti piacerebbe utilizzare le sfere per acquistare un segreto?"
+    ],
+    "cityv189": [
+      "Non hai abbastanza sfere per questo segreto."
+    ],
+    "cityv190": [
+      "Segreto attivato."
+    ],
+    "cityv191": [
+      "Tutti i segreti sono attivati."
+    ],
+    "cityv192": [
+      "Per favore, esci dalla tuta da Titano."
+    ],
+    "cityv193": [
+      "Devi uscire dalla tuta da Titano."
+    ],
+    "cityv194": [
+      "I veicoli devono rimanere entro i limiti della città."
+    ],
+    "cityv195": [
+      "Uscita negata. Obiettivi nemici ancora presenti."
+    ],
+    "cityv196": [
+      "Uscita negata. Uova di Metal Head ancora rilevate."
+    ],
+    "cityv197": [
+      "Gli scanner mostrano che le uova di Metal Head sono ancora attive."
+    ],
+    "daxm001": [
+      "Spara alla piattaforma, Jak."
+    ],
+    "daxm002": [
+      "Ci serve qualcosa per attraversare quel cancello!"
+    ],
+    "daxm003": [
+      "Spara a Metal Head quando muove lo scudo!"
+    ],
+    "daxm004": [
+      "Colpiscilo allo stomaco!"
+    ],
+    "daxm005": [
+      "Ehi! Quel sentiero è caduto come uh... una roccia!"
+    ],
+    "daxm006": [
+      "Sbatti la scatola, tesoro!"
+    ],
+    "daxm007": [
+      "Questa è quella che io chiamo una strada rocciosa!"
+    ],
+    "daxm008": [
+      "Dobbiamo arrivare in cima!"
+    ],
+    "daxm009": [
+      "Ce l'abbiamo fatta!!"
+    ],
+    "daxm010": [
+      "Rock n roll!"
+    ],
+    "ds001": [
+      "Dobbiamo trovare il Barone, Jak."
+    ],
+    "ds005": [
+      "Jak, quelli sono Metal Heads!"
+    ],
+    "ds006": [
+      "Finalmente ora possiamo vedere l'Ombra!",
+      "Cosa devi fare in questo posto per farti notare?"
+    ],
+    "ds012": [
+      "Quella deve essere la chiave di rubino della città."
+    ],
+    "ds013": [
+      "Le statue stanno diventando una specie in via di estinzione da queste parti."
+    ],
+    "ds014": [
+      "Quindi questa è la tomba spaventosa di Marte, eh?",
+      "Non sembra così male."
+    ],
+    "ds016": [
+      "Riportiamo i soldi a Krew."
+    ],
+    "ds017": [
+      "Devono essere le munizioni e il missile che Torn ci ha detto di far esplodere!"
+    ],
+    "ds018": [
+      "Prendi il carro armato per sparare al missile!"
+    ],
+    "ds019": [
+      "Rompi quei tubi al centro."
+    ],
+    "ds020": [
+      "Per favore, dimmi che ricordi come rotolare..."
+    ],
+    "ds023": [
+      "Rockeggiamo!"
+    ],
+    "ds024": [
+      "Eccoci qui!"
+    ],
+    "ds025": [
+      "Va bene!"
+    ],
+    "ds026": [
+      "Sì!"
+    ],
+    "ds028": [
+      "O si!"
+    ],
+    "ds029": [
+      "Torniamo in città."
+    ],
+    "ds030": [
+      "Penso che dovremmo tornare in città, Jak."
+    ],
+    "ds031": [
+      "Andiamo a parlare con Torn."
+    ],
+    "ds032": [
+      "Torniamo al nascondiglio sotterraneo."
+    ],
+    "ds043": [
+      "Puoi fare un salto più lungo rotolandoci dentro."
+    ],
+    "ds044": [
+      "Usa un salto in lungo per superare questo divario."
+    ],
+    "ds045": [
+      "Bella forma!"
+    ],
+    "ds046": [
+      "Se ti abbassi prima di saltare, arriverai più in alto.",
+      "Devi saltare più in alto per raggiungere quella sporgenza, Jak."
+    ],
+    "ds047": [
+      "Ooh, è alto.",
+      "Dovrai saltare,",
+      "poi salta di nuovo in aria per arrivare lassù."
+    ],
+    "ds048": [
+      "Colpiscili ancora, Jak!"
+    ],
+    "ds049": [
+      "Fai un calcio rotante!"
+    ],
+    "ds050": [
+      "Robotan, corri!"
+    ],
+    "ds051": [
+      "Ehi, dovremmo restare con il Sig."
+    ],
+    "ds052": [
+      "Ehi, ragazzone, stai vicino, eh?"
+    ],
+    "ds053": [
+      "Siamo troppo lontani dal Sig."
+    ],
+    "ds054": [
+      "Segui il piano, Jak, proteggi Sig!"
+    ],
+    "ds055": [
+      "Uh oh, dov'è Sig?"
+    ],
+    "ds056": [
+      "Wow, che esplosione!"
+    ],
+    "ds057": [
+      "Sig ha una buona mira."
+    ],
+    "ds058": [
+      "Vai ad aiutare Sig!"
+    ],
+    "ds059": [
+      "Bella ripresa, Sig!"
+    ],
+    "ds060": [
+      "Sei il mio eroe!"
+    ],
+    "ds061": [
+      "Oh oh, Sig è nei guai!"
+    ],
+    "ds062": [
+      "C'è un altro Metal Head che insegue il nostro ragazzo!",
+      "Spara, spara!"
+    ],
+    "ds063": [
+      "Tieni Sig al sicuro, Jak!"
+    ],
+    "ds064": [
+      "Whoa, Sig è davvero malmenato!"
+    ],
+    "ds065": [
+      "Sparagli, sparagli!"
+    ],
+    "ds066": [
+      "Sig muori, noi moriamo."
+    ],
+    "ds067": [
+      "Oddio, facciamo schifo..."
+    ],
+    "ds068": [
+      "Dobbiamo tenerli lontani da Sig."
+    ],
+    "ds069": [
+      "Dobbiamo trovare la valvola per riaprire l'acqua."
+    ],
+    "ds094": [
+      "Robotan, corri!"
+    ],
+    "ds095": [
+      "Ecco di nuovo quel carro armato!"
+    ],
+    "ds096": [
+      "Prendi il carro armato per sparare al missile!"
+    ],
+    "ds099": [
+      "Dobbiamo arrivare in cima a quella torre!"
+    ],
+    "ds100": [
+      "Sali sulla torre in rovina, Jak!"
+    ],
+    "ds111": [
+      "Dovremmo tornare con la tuta da titano per fare questo percorso."
+    ],
+    "ds112": [
+      "Hai un pugno meccanico, Jak. Usalo!"
+    ],
+    "ds113": [
+      "Rompi la porta!"
+    ],
+    "ds114": [
+      "Tigorilla da 800 sterline in arrivo!"
+    ],
+    "ds115": [
+      "Lavoro strepitoso, Jak! Oh, è stato divertente."
+    ],
+    "ds116": [
+      "Spara alla piattaforma, Jak."
+    ],
+    "ds117": [
+      "Ci serve qualcosa per oltrepassare quel cancello."
+    ],
+    "ds118": [
+      "Spara al Metal Head quando muove il suo scudo."
+    ],
+    "ds119": [
+      "Colpiscilo allo stomaco."
+    ],
+    "ds120": [
+      "Wow, quel sentiero scendeva come un... sasso!"
+    ],
+    "ds121": [
+      "Sbatti la scatola, tesoro!"
+    ],
+    "ds128": [
+      "Bene, abbiamo finito."
+    ],
+    "ds129": [
+      "Spara, Jak!"
+    ],
+    "ds143": [
+      "Dovremmo mantenere in vita gli uomini di Krew, Jak!"
+    ],
+    "ds144": [
+      "Salvali, Jak!"
+    ],
+    "ds145": [
+      "Non mi piace, Jak..."
+    ],
+    "ds146": [
+      "Dietro di noi, Jak!"
+    ],
+    "ds147": [
+      "Teste di metallo! Ovunque!"
+    ],
+    "ds148": [
+      "Proteggici, Jak! Ma prima io."
+    ],
+    "ds150": [
+      "Prendi un veicolo, Jak! È più veloce."
+    ],
+    "ds151": [
+      "Usa la tua JET-Board!"
+    ],
+    "ds152": [
+      "Abbiamo compagnia, Jak! Molte guardie!"
+    ],
+    "ds160": [
+      "Esatto, siamo cattivi! La Pietra Precursore è nostra!"
+    ],
+    "ds161": [
+      "C'è la pistola di Mar, Jak! Andiamo a dare un'occhiata."
+    ],
+    "ds162": [
+      "Queste sfere Precursor valgono molto ora.",
+      "Potremmo trovarne alcuni nascosti in giro,",
+      "o chiedi ad alcuni di svolgere compiti difficili.",
+      "Potremo comprare cose con loro!"
+    ],
+    "ds163": [
+      "Jak, ora che abbiamo il Palace Security Pass,",
+      "andiamo a divertirci nella culla del grand'uomo!"
+    ],
+    "ds164": [
+      "Torna indietro per uscire dal mech."
+    ],
+    "ds165": [
+      "Siamo liberi, Jak! Grazie a me.",
+      "Bello respirare un po' d'aria fresca, eh?",
+      "Prenderemo quel Barone Praxis, va bene!"
+    ],
+    "ds166": [
+      "Non uscirò da questa capsula",
+      "finché non ucciderai tutti quei pazzi Metal Head volanti!"
+    ],
+    "ds167": [
+      "Mi chiedo perché abbiano voluto che proteggessimo la capanna di Samos.",
+      "Forse ora incontreremo l'Ombra."
+    ],
+    "ds168": [
+      "C'è l'Anello Rift!"
+    ],
+    "ds173": [
+      "Ahhh!"
+    ],
+    "ds174": [
+      "Oooh!"
+    ],
+    "ds175": [
+      "Whoa-whoa-oaa-ah!"
+    ],
+    "ds176": [
+      "Ehi!"
+    ],
+    "ds177": [
+      "EHI!"
+    ],
+    "ds178": [
+      "Ehi, guardalo!"
+    ],
+    "ds179": [
+      "Oh!"
+    ],
+    "ds180": [
+      "Oh ragazzo!"
+    ],
+    "ds181": [
+      "Oh!"
+    ],
+    "ds182": [
+      "Wow, c'era mancato poco!"
+    ],
+    "ds183": [
+      "Oh ragazzo!"
+    ],
+    "ds184": [
+      "SÌ!"
+    ],
+    "ds185": [
+      "Sì!"
+    ],
+    "ds186": [
+      "Ehi, guardalo!"
+    ],
+    "ds187": [
+      "Va bene!"
+    ],
+    "ds188": [
+      "Spostati!"
+    ],
+    "ds189": [
+      "Fulmine arancione in arrivo!"
+    ],
+    "ds190": [
+      "Rotolando con gli amici!"
+    ],
+    "ds191": [
+      "Sei mio!"
+    ],
+    "ds192": [
+      "Sono là!"
+    ],
+    "ds193": [
+      "EHI! Guarda dove guidi!"
+    ],
+    "ds194": [
+      "Come posso guidare questa cosa?"
+    ],
+    "ds195": [
+      "Si, è esatto! Sono cattivo!"
+    ],
+    "ds196": [
+      "Fuori dai piedi!"
+    ],
+    "ds197": [
+      "Fuori dai piedi!"
+    ],
+    "ds198": [
+      "Muoviti o perdilo, amico!"
+    ],
+    "ds199": [
+      "Mm... ciao ciao!"
+    ],
+    "ds200": [
+      "Ultimo giro!"
+    ],
+    "ds201": [
+      "Dai dai!"
+    ],
+    "ds202": [
+      "Dai dai dai!"
+    ],
+    "ds203": [
+      "Accelerare a fondo!"
+    ],
+    "ds204": [
+      "Ooooah, devo recuperare!"
+    ],
+    "ds205": [
+      "Girati e brucia, tesoro!"
+    ],
+    "ds206": [
+      "Oooh, sarà vicino!"
+    ],
+    "ds207": [
+      "Mangia la mia polvere, amico!"
+    ],
+    "ds208": [
+      "Capito!"
+    ],
+    "ds209": [
+      "Questa è la mia traccia, nonna!"
+    ],
+    "ds210": [
+      "Impara a guidare!"
+    ],
+    "ds211": [
+      "Girati, girati!"
+    ],
+    "ds212": [
+      "Passaci sopra!"
+    ],
+    "ds213": [
+      "Oooh, ho vinto, ho vinto!"
+    ],
+    "ds214": [
+      "Sì, è un buon tempo sul giro."
+    ],
+    "ds215": [
+      "O si! Sto spaccando!"
+    ],
+    "ds216": [
+      "Un altro giro nel libro dei record!"
+    ],
+    "ds217": [
+      "Guarda bene la mia coda!"
+    ],
+    "ds218": [
+      "Wahoo!"
+    ],
+    "ds219": [
+      "Ehi, ragazzo zanna, sbrigati ed entra,",
+      "ti portiamo a Brutter!"
+    ],
+    "ds220": [
+      "Ecco il tuo ragazzo, Brutter! Andiamo a prendere un altro animale!"
+    ],
+    "ds221": [
+      "Ehi, amante degli animali, porta il tuo sedere peloso nel veicolo!"
+    ],
+    "ds222": [
+      "Ecco un'altra bestia da soma!"
+    ],
+    "ds223": [
+      "Nel veicolo, amico, possiamo salvarti!"
+    ],
+    "ds224": [
+      "Un altro Lurker liberato."
+    ],
+    "ds225": [
+      "Muoviamoci, respiro eco! Dobbiamo portarti a Brutter."
+    ],
+    "ds226": [
+      "Ehi, Brutter! Guarda cosa ha portato dentro il gatto tacchino."
+    ],
+    "ds227": [
+      "Guarda cosa abbiamo trovato!"
+    ],
+    "ds228": [
+      "Riconosci questo mostro?"
+    ],
+    "ds229": [
+      "Ce l'abbiamo fatta! Li abbiamo salvati tutti!"
+    ],
+    "ds230": [
+      "Prendi il camioncino, Jak!"
+    ],
+    "ds231": [
+      "Distruggi il carro di risaia!"
+    ],
+    "ds232": [
+      "Ancora un po' di danni e siamo fuori!"
+    ],
+    "ds233": [
+      "Sta fumando, Jak! Colpiscilo ancora!"
+    ],
+    "ds234": [
+      "Ciò ha causato qualche danno!"
+    ],
+    "ds235": [
+      "Un altro così e ha finito!"
+    ],
+    "ds236": [
+      "Trova il prossimo veicolo!"
+    ],
+    "ds237": [
+      "Sì, l'abbiamo tolto!"
+    ],
+    "ds238": [
+      "Caccia e distruggi, tesoro!"
+    ],
+    "ds239": [
+      "Colpiscilo, colpiscilo!"
+    ],
+    "ds240": [
+      "Tiralo fuori!"
+    ],
+    "ds241": [
+      "Raccogli il Lurker, Jak!"
+    ],
+    "ds242": [
+      "Prendi il Lurker!"
+    ],
+    "ds243": [
+      "Dobbiamo prendere quel Lurker laggiù."
+    ],
+    "ds244": [
+      "Di solito non mi piace essere così vicino ai Lurkers."
+    ],
+    "ds245": [
+      "Ehehe, sembri un simpatico, uh... animale."
+    ],
+    "ds246": [
+      "Facile, amico. Non mordermi!"
+    ],
+    "ds247": [
+      "Ehi, smettila di sbavare su di me!"
+    ],
+    "ds248": [
+      "Si sta ricaricando!"
+    ],
+    "ds249": [
+      "Ooh, l'abbiamo preso bene quella volta!"
+    ],
+    "ds250": [
+      "Sì, ora sta male!"
+    ],
+    "ds251": [
+      "Bel tiro, Jak!"
+    ],
+    "ds252": [
+      "In arrivo!"
+    ],
+    "ds253": [
+      "Sì, ce l'abbiamo fatta!"
+    ],
+    "ds254": [
+      "Jak, nasconditi dietro i pilastri quando spara!"
+    ],
+    "ds255": [
+      "Ha la Pietra Precursore!"
+    ],
+    "ds256": [
+      "Lanciagli la bomba, Jak!"
+    ],
+    "ds257": [
+      "Quello lo ha colpito!"
+    ],
+    "ds258": [
+      "Attenzione!"
+    ],
+    "ds259": [
+      "Salta il divario!"
+    ],
+    "ds260": [
+      "Sì, l'hai colpito!"
+    ],
+    "ds261": [
+      "Come se non ce ne fosse già abbastanza di Krew."
+    ],
+    "ds262": [
+      "Spara a tutti, Jak! Li sistemeremo più tardi..."
+    ],
+    "ds263": [
+      "C'è il vero Krew! Sparagli!"
+    ],
+    "ds264": [
+      "L'hai preso!"
+    ],
+    "ds265": [
+      "Guardati le spalle, Jak!"
+    ],
+    "ds266": [
+      "Stanno arrivando di nuovo!"
+    ],
+    "ds267": [
+      "Adesso ci hai fatto incazzare."
+    ],
+    "ds268": [
+      "Bel tiro, Jak! Il grand'uomo sta soffrendo adesso."
+    ],
+    "ds269": [
+      "E lo sfidante è a terra!"
+    ],
+    "ds270": [
+      "Continua a muoverti, tesoro! Sparerà!"
+    ],
+    "ds271": [
+      "Evviva, ecco che arrivano i Metallari!"
+    ],
+    "ds272": [
+      "Proteggi il bambino!"
+    ],
+    "ds273": [
+      "Uccidi tutti i Metal Head!"
+    ],
+    "ds274": [
+      "Altri Metal Head!"
+    ],
+    "ds275": [
+      "Spara alle gambe di Kor, Jak!"
+    ],
+    "ds276": [
+      "È a terra, Jak! Colpiscilo in testa!"
+    ],
+    "ds277": [
+      "Stivale alla testa, stivale alla testa!"
+    ],
+    "ds278": [
+      "Penso che dovremmo nasconderci da qualche parte!"
+    ],
+    "ds279": [
+      "Mettiti al riparo prima che esploda!"
+    ],
+    "ds280": [
+      "Sì, quella volta l'hai preso bene!"
+    ],
+    "ds281": [
+      "Oh cavolo, adesso è arrabbiato!"
+    ],
+    "ds282": [
+      "Prendilo, Jak!"
+    ],
+    "ds283": [
+      "Sparerà!"
+    ],
+    "ds284": [
+      "Bel colpo, socio!"
+    ],
+    "ds285": [
+      "Ciò doveva fargli male."
+    ],
+    "ds286": [
+      "Hai combinato guai con gli eroi sbagliati, amico!"
+    ],
+    "ds287": [
+      "Sparagli ancora, Jak!"
+    ],
+    "ds288": [
+      "Jak, stiamo prendendo una batosta!"
+    ],
+    "ds289": [
+      "Stai lontano dall'Eco Oscuro!"
+    ],
+    "ds302": [
+      "L'abbiamo quasi preso, Jak!"
+    ],
+    "ds303": [
+      "Questo è tutto! Ce l'hai fatta!"
+    ],
+    "ds305": [
+      "Spara all'interruttore per cambiare il nastro trasportatore",
+      "direzione!"
+    ],
+    "ds306": [
+      "Devi azionare l'interruttore, Jak!"
+    ],
+    "ds307": [
+      "Trova l'interruttore per cambiare la direzione del trasportatore!"
+    ],
+    "ds321": [
+      "Elimina le torrette!"
+    ],
+    "ds322": [
+      "Colpisci le torrette, Jak!"
+    ],
+    "ds323": [
+      "Stai facendo qualche danno!"
+    ],
+    "ds324": [
+      "Indossa la tuta da Titano!"
+    ],
+    "ds325": [
+      "Spara a quella nave!"
+    ],
+    "ds326": [
+      "Sì, quella nave lo sente adesso!"
+    ],
+    "ds327": [
+      "Ooh, colpi diretti."
+    ],
+    "ds328": [
+      "Penso che ti sia fatto male quella volta!"
+    ],
+    "ds329": [
+      "La nave sta affondando! Ce l'hai fatta, Jak!"
+    ],
+    "ds353": [
+      "Dev'essere il missile che Torn vuole che facciamo esplodere!"
+    ],
+    "ds354": [
+      "Rompi quei tubi al centro, Jak!"
+    ],
+    "ds372": [
+      "Devo guidare il JET-Board su questo, Jak!"
+    ],
+    "ds375": [
+      "Attenti al raggio!"
+    ],
+    "ds378": [
+      "Dobbiamo rompere tutti i cavi di supporto!"
+    ],
+    "ds379": [
+      "Levigare le basi di supporto per rompere i cavi."
+    ],
+    "ds394": [
+      "Ragno! Ragno! Huff... huff... odio i ragni!"
+    ],
+    "ds395": [
+      "Devo correre, devo correre!"
+    ],
+    "ds398": [
+      "Il primo raggio!"
+    ],
+    "ds399": [
+      "La seconda trave! La porta si sta aprendo!"
+    ],
+    "ds404": [
+      "C'è Sig!"
+    ],
+    "ds405": [
+      "Fai entrare i blocchi nelle fessure, Jak!"
+    ],
+    "ds406": [
+      "Spara o calcia i blocchi!"
+    ],
+    "ds407": [
+      "Devi inserire i blocchi negli slot più velocemente!"
+    ],
+    "ds408": [
+      "Corri, come!"
+    ],
+    "ds409": [
+      "Continua a muoverti!"
+    ],
+    "ds410": [
+      "Dobbiamo stare al passo con quella cosa!"
+    ],
+    "ds439": [
+      "Spara a tutte le uova di Metal Head, Jak!"
+    ],
+    "ds440": [
+      "Non abbiamo preso tutte quelle uova disgustose!"
+    ],
+    "ds441": [
+      "Ci siamo persi qualche uovo Metal Head!"
+    ],
+    "ds461": [
+      "Dobbiamo saltare sulla cassa che pende dalla gru!"
+    ],
+    "ds462": [
+      "Usa il tuo hoverboard su questo percorso!"
+    ],
+    "ds463": [
+      "Puoi macinare per attraversare quei tubi usando il tuo",
+      "hoverboard!"
+    ],
+    "ds464": [
+      "Percorri l'half-pipe fino alla fine!"
+    ],
+    "ds466": [
+      "Devi sganciare una bomba in ogni pozzo, Jak!"
+    ],
+    "ds467": [
+      "Usa la rampa per arrivare abbastanza in alto da far cadere la bomba!"
+    ],
+    "ds468": [
+      "Devo saltare più in alto!"
+    ],
+    "ds469": [
+      "Solo un minuto prima del brindisi, Jak!"
+    ],
+    "ds470": [
+      "Mancano 30 secondi, poi facciamo BOOM!"
+    ],
+    "ds471": [
+      "Mancano dieci secondi, Jak!"
+    ],
+    "ds472": [
+      "Ne manca uno, ne mancano cinque!"
+    ],
+    "ds473": [
+      "Due pozzi sono storia, ne restano quattro!"
+    ],
+    "ds474": [
+      "Tre pozzi tagliati, ne restano solo tre!"
+    ],
+    "ds475": [
+      "Questo è il quarto, beh, sono rimasti due ragazzacci!"
+    ],
+    "ds476": [
+      "Hai preso bene il quinto, ne manca solo uno!"
+    ],
+    "ds477": [
+      "Li hai presi tutti, Jak!"
+    ],
+    "ds478": [
+      "L'ultimo pozzo è dove abbiamo salvato Vin!"
+    ],
+    "ds479": [
+      "Ora è vulnerabile!"
+    ],
+    "ds480": [
+      "Portalo fuori!"
+    ],
+    "ds481": [
+      "Prendilo mentre è vulnerabile!"
+    ],
+    "ds482": [
+      "Eccolo che arriva..."
+    ],
+    "ds483": [
+      "Come ci si sente ad avere i pantaloni abbassati, Barone?"
+    ],
+    "ds484": [
+      "Sparategli, sparategli!"
+    ],
+    "ds485": [
+      "Attenzione!"
+    ],
+    "ds487": [
+      "Facile, Jak, dobbiamo portare questo tizio in salvo!"
+    ],
+    "ds488": [
+      "Stiamo subendo un sacco di danni, amico!"
+    ],
+    "ds489": [
+      "Ci stanno prendendo a calci nel sedere!"
+    ],
+    "ds490": [
+      "Forse dovrei guidare..."
+    ],
+    "ds491": [
+      "Andiamo, Wondergoon,",
+      "ti porteremo in un posto sicuro in città!"
+    ],
+    "ds492": [
+      "Ok, il giro è finito, vai fuori!"
+    ],
+    "ds493": [
+      "Tutti a bordo della Metropolitana!",
+      "Prossima fermata: il tuo nuovo rifugio!"
+    ],
+    "ds494": [
+      "Credo che questa sia la tua fermata!"
+    ],
+    "ds495": [
+      "Il servizio taxi dei combattenti per la libertà di Daxter!",
+      "Sbrigati, amico, non abbiamo tutto il giorno."
+    ],
+    "ds496": [
+      "Casa libera, tesoro!",
+      "Non dimenticare di dire a Torn quanto ce la siamo cavata bene!"
+    ],
+    "ds497": [
+      "Cerchi un passaggio, ragazzo combattente?"
+    ],
+    "ds498": [
+      "Ok, è qui che scendi. Quindi... scendi."
+    ],
+    "ds499": [
+      "Ce l'abbiamo fatta, Jak!",
+      "Abbiamo portato tutti i combattenti nei nuovi rifugi!"
+    ],
+    "ds500": [
+      "Le statue stanno diventando una specie in via di estinzione da queste parti."
+    ],
+    "ds501": [
+      "Ho preso un talkbox.",
+      "La gente della città usa queste cose per comunicare",
+      "insieme."
+    ],
+    "ds502": [
+      "Andiamo a vedere Onin e la sua scimmia pazza."
+    ],
+    "ds503": [
+      "Penso che dovremmo tornare in città, Jak."
+    ],
+    "dsek001": [
+      "Ragazzo! Resta con lui, Jak!"
+    ],
+    "dsek002": [
+      "Raggiungili, Jak!"
+    ],
+    "dsek003": [
+      "Dove sono andati?!"
+    ],
+    "dsek004": [
+      "Eccoli di nuovo!"
+    ],
+    "dsek005": [
+      "Uh oh, ecco che arrivano i guai!"
+    ],
+    "dsek006": [
+      "Più guardie!?"
+    ],
+    "dsek007": [
+      "Ragazzo, per favore! Mi stai uccidendo!"
+    ],
+    "dsek008": [
+      "Ecco, cagnolino, cagnolino..."
+    ],
+    "dsek009": [
+      "Ecco di nuovo quel pazzo crocadog...!"
+    ],
+    "dsek010": [
+      "Insegui il bambino!"
+    ],
+    "dsek011": [
+      "Stai al passo con il bambino!"
+    ],
+    "dsek012": [
+      "Coccodrillo!"
+    ],
+    "dsek013": [
+      "Uff, finalmente... portiamo questi due a Kor!"
+    ],
+    "ero001": [
+      "Levatevi dai piedi!"
+    ],
+    "ero002": [
+      "Possiedo questa traccia!"
+    ],
+    "ero003": [
+      "Lascia perdere, eco-maniaco!"
+    ],
+    "ero004": [
+      "Tempo di restituzione."
+    ],
+    "ero005": [
+      "Rendiamolo interessante!"
+    ],
+    "ero006": [
+      "Mangia muro!"
+    ],
+    "ero007": [
+      "Tempo di morire!"
+    ],
+    "ero008": [
+      "Spostati!"
+    ],
+    "ero009": [
+      "Prendimi adesso, perdente!"
+    ],
+    "ero010": [
+      "Sono troppo veloce per te!"
+    ],
+    "ero011": [
+      "Ora stai gareggiando con i grandi!"
+    ],
+    "ero012": [
+      "Eccone uno per il Barone."
+    ],
+    "ero013": [
+      "Prendi questo!"
+    ],
+    "ero014": [
+      "Lo stai rendendo troppo facile!"
+    ],
+    "ero015": [
+      "Ahahah, ciao ciao!"
+    ],
+    "ero016": [
+      "Ne vuoi un po?"
+    ],
+    "ero017": [
+      "Ora capisci perché non perdo mai."
+    ],
+    "ero018": [
+      "La folla mi ama!"
+    ],
+    "ero019": [
+      "Ah!"
+    ],
+    "ero020": [
+      "Ecco un po' di dolore!"
+    ],
+    "ero021": [
+      "Prova a cancellarli!"
+    ],
+    "ero022": [
+      "Come sono i tuoi riflessi?"
+    ],
+    "ero023": [
+      "Troppo per te?!"
+    ],
+    "ero024": [
+      "Aveva abbastanza?"
+    ],
+    "ero025": [
+      "Evitalo, saputello!"
+    ],
+    "ero026": [
+      "Di' buonanotte, maniaco dell'ambiente!"
+    ],
+    "ero027": [
+      "Non puoi battermi!"
+    ],
+    "ero028": [
+      "Morirei prima di lasciarti vincere!"
+    ],
+    "ero029": [
+      "Questo sarà il tuo ultimo giro."
+    ],
+    "ero030": [
+      "Schiantati e brucia!"
+    ],
+    "ero031": [
+      "All'estremità!"
+    ],
+    "ero032": [
+      "Ultimo giro da vivere!"
+    ],
+    "ero033": [
+      "Adesso mettiamo fine a tutto questo!"
+    ],
+    "ero034": [
+      "Non vedrai il traguardo!"
+    ],
+    "ero035": [
+      "MORIRE!"
+    ],
+    "ero036": [
+      "Morire!"
+    ],
+    "ero037": [
+      "Ahahahah!"
+    ],
+    "ero038": [
+      "SÌ!"
+    ],
+    "ero039": [
+      "AH!"
+    ],
+    "ero040": [
+      "NO!"
+    ],
+    "ero041": [
+      "NOOOOO!"
+    ],
+    "ero042": [
+      "AHHHHH!"
+    ],
+    "ero043": [
+      "Eccoci qui."
+    ],
+    "ero044": [
+      "Arrivederci."
+    ],
+    "ero045": [
+      "Scemo! Non puoi sconfiggermi."
+    ],
+    "ero046": [
+      "Ti sei perso uno squillo."
+    ],
+    "ero047": [
+      "Questa gara è mia!"
+    ],
+    "ero048": [
+      "Non potrai mai essere veloce come me!"
+    ],
+    "ero049": [
+      "Keira vuole un vero uomo."
+    ],
+    "ero050": [
+      "Che sfortuna, vecchio mio."
+    ],
+    "ero051": [
+      "Bel tentativo."
+    ],
+    "ero052": [
+      "Spostati!"
+    ],
+    "ero053": [
+      "Levatevi dai piedi!"
+    ],
+    "ero054": [
+      "Attraversando!"
+    ],
+    "ero055": [
+      "Ciao ciao!"
+    ],
+    "ero056": [
+      "Eccomi!"
+    ],
+    "ero057": [
+      "Abituati a guardarmi le spalle!"
+    ],
+    "ero058": [
+      "Questa è la mia città, maniaco dell'ambiente."
+    ],
+    "ero059": [
+      "Sembri sciatto, Jak."
+    ],
+    "ero060": [
+      "Lasciar perdere!"
+    ],
+    "ero061": [
+      "Non questa volta."
+    ],
+    "ero062": [
+      "Sei un po' nervoso?"
+    ],
+    "ero063": [
+      "Torna qui!"
+    ],
+    "ero064": [
+      "Fai largo, lento!"
+    ],
+    "ero065": [
+      "È qui che ti ho battuto."
+    ],
+    "ero066": [
+      "Allungamento finale!"
+    ],
+    "ero067": [
+      "È finita!"
+    ],
+    "ero068": [
+      "Possiedo questa città."
+    ],
+    "ero069": [
+      "Che cosa? Da dove vieni?"
+    ],
+    "ero070": [
+      "Sei solo fortunato."
+    ],
+    "ero071": [
+      "Non puoi gestire la velocità!"
+    ],
+    "ero072": [
+      "Muori, mostro."
+    ],
+    "ero073": [
+      "NO!"
+    ],
+    "ero074": [
+      "FERMARE!"
+    ],
+    "ero075": [
+      "Ahahahah!"
+    ],
+    "ero076": [
+      "AHAHA!"
+    ],
+    "ero077": [
+      "Ahhh!"
+    ],
+    "ero078": [
+      "Bene!"
+    ],
+    "ero079": [
+      "Uffa!"
+    ],
+    "ero080": [
+      "Battilo, mostro!"
+    ],
+    "ero081": [
+      "Ti va di tornare sulla sedia?"
+    ],
+    "ero082": [
+      "Questa gara è stata troppo facile."
+    ],
+    "ero083": [
+      "È stato più facile di quanto pensassi batterti."
+    ],
+    "ero084": [
+      "Neanche lontanamente, Keira sta scommettendo sull'uomo sbagliato."
+    ],
+    "ero085": [
+      "Perdente! Mi disgusti!"
+    ],
+    "ero086": [
+      "Vedi Jak, vinco e ottengo quello che voglio.",
+      "Un giorno sarò Barone, allora la città pagherà davvero!"
+    ],
+    "ero087": [
+      "Avrei dovuto sapere che non saresti stato all'altezza."
+    ],
+    "ero088": [
+      "Se vinco, Keira mi amerà!"
+    ],
+    "ero089": [
+      "Forse dovresti tornare da dove sei venuto."
+    ],
+    "ero090": [
+      "Riceverò un bacio di vittoria da Keira più tardi."
+    ],
+    "ero091": [
+      "Ancora una volta dimostro la mia superiorità."
+    ],
+    "ero092": [
+      "Vedi? Non sei all'altezza di me."
+    ],
+    "ero093": [
+      "Peccato, ho vinto!"
+    ],
+    "ero094": [
+      "Hahahaha, patetico insetto, ho vinto!"
+    ],
+    "ero095": [
+      "Non potrai mai sconfiggermi!"
+    ],
+    "ero096": [
+      "Ahhh!...ahh."
+    ],
+    "ero097": [
+      "Uffa!"
+    ],
+    "ero098": [
+      "Uhhh!"
+    ],
+    "ero099": [
+      "SÌ!"
+    ],
+    "ero100": [
+      "Già!"
+    ],
+    "ero101": [
+      "AUGH!"
+    ],
+    "ero102": [
+      "OW!"
+    ],
+    "ero103": [
+      "DAHHH!"
+    ],
+    "ero104": [
+      "FIGLIA!"
+    ],
+    "erol001": [
+      "Ti sto cercando, maniaco dell'ambiente,",
+      "e quando ti troverò desidererai di essere morto in prigione."
+    ],
+    "erol002": [
+      "Questo è Erol. Sembra che tu sia a corto di amici.",
+      "Li abbiamo arrestati tutti e li abbiamo gettati nella tua",
+      "prigione preferita. A proposito, quella bionda, Tess",
+      "ha urlato così deliziosamente quando è stata arrestata.",
+      "Non vedo l'ora che arrivi il suo turno sulla sedia.",
+      "Ha ha ha ha ha...."
+    ],
+    "erol003": [
+      "Questo è Erol. Ricorda solo che è l'unica ragione per cui te lo permetto",
+      "camminare è così posso affrontarti nella corsa del campionato!"
+    ],
+    "hal001": [
+      "Tranquillo! Ecco che arriva il bel ragazzo."
+    ],
+    "hal002": [
+      "Era ora che ti facessi vedere. Ok, facciamolo."
+    ],
+    "hal003": [
+      "Krew ha detto che ci proteggerai fino alla statua."
+    ],
+    "hal004": [
+      "Scendiamo!"
+    ],
+    "hal006": [
+      "Da questa parte!"
+    ],
+    "hal007": [
+      "AHH! È un Metal Head! Spara, spara!"
+    ],
+    "hal008": [
+      "Resta con noi!"
+    ],
+    "hal009": [
+      "Cavolo, Krew si arrabbierà se sbagli tutto."
+    ],
+    "hal010": [
+      "Non lasciarci morire!"
+    ],
+    "hal011": [
+      "Se ci abbandoni, Krew ti rovinerà!"
+    ],
+    "hal012": [
+      "Dobbiamo stare insieme."
+    ],
+    "hal013": [
+      "Pensavo che questo ragazzo avrebbe dovuto proteggerci!"
+    ],
+    "hal014": [
+      "Questo è tutto! Stiamo annullando la missione,",
+      "non andiamo finché non sei serio."
+    ],
+    "hal015": [
+      "Non verrò ucciso a causa di questo perdente,",
+      "questa missione è finita."
+    ],
+    "hal019": [
+      "Torniamo indietro prima che veniamo uccisi tutti."
+    ],
+    "hal020": [
+      "Uffa, questo posto puzza."
+    ],
+    "hal021": [
+      "Ho una brutta sensazione riguardo questo posto."
+    ],
+    "hal022": [
+      "Oh oh, credo di essermelo fatto addosso."
+    ],
+    "hal023": [
+      "NO! Per favore!"
+    ],
+    "hal024": [
+      "Voglio andare a casa."
+    ],
+    "hal025": [
+      "Uhh, sento delle cose."
+    ],
+    "hal026": [
+      "Torniamo indietro."
+    ],
+    "hal027": [
+      "Muovete le chiappe, o le muovo io per voi!"
+    ],
+    "hal028": [
+      "Questo lavoro è meglio di essere uno spazzino."
+    ],
+    "hal029": [
+      "L'odore dello zolfo non è grandioso?"
+    ],
+    "hal030": [
+      "Copriti le orecchie!"
+    ],
+    "hal031": [
+      "Adoro questo lavoro."
+    ],
+    "hal032": [
+      "Fantastico, ora siamo intrappolati in questa fossa di melma!"
+    ],
+    "hal033": [
+      "Spara, tesoro, spara!"
+    ],
+    "hal034": [
+      "Ah! Il soffitto striscia!"
+    ],
+    "hal035": [
+      "Non posso scappare!"
+    ],
+    "hal036": [
+      "Ce n'è uno che viene dritto verso di me!"
+    ],
+    "hal037": [
+      "Mi vede!"
+    ],
+    "hal038": [
+      "Ah! Stai lontano!"
+    ],
+    "hal039": [
+      "Mi sta colpendo!"
+    ],
+    "hal040": [
+      "Gahh, morirò qui!"
+    ],
+    "hal041": [
+      "Mi sto fulminando!"
+    ],
+    "hal042": [
+      "Questa sarà la mia fine!"
+    ],
+    "hal043": [
+      "Aiutami! Ho otto bambini da sfamare!"
+    ],
+    "hal044": [
+      "Bel lavoro, quelli erano dei Metal Head schifosi."
+    ],
+    "hal045": [
+      "Ecco, perché non ti rendi utile?"
+    ],
+    "hal046": [
+      "Continua a muoverti!"
+    ],
+    "hal047": [
+      "Andiamo avanti, non stiamo diventando più giovani."
+    ],
+    "hal048": [
+      "Ah! Stanno strisciando lungo i muri!"
+    ],
+    "hal049": [
+      "Ben fatto, è qui che entro in gioco."
+    ],
+    "hal050": [
+      "Vuoi dire coprirti il ​​culo! Fuoco nel buco!"
+    ],
+    "hal051": [
+      "Faresti meglio a tenere la testa bassa, tesoro."
+    ],
+    "hal052": [
+      "Il tuo alito cattivo, muoviamoci."
+    ],
+    "hal053": [
+      "Ti ha stirato i capelli, eh?",
+      "Hehe, la prossima volta mi ascolterai. Ok, muoviamoci."
+    ],
+    "hal054": [
+      "Oof, doveva far male.",
+      "Ti avevo detto di stare indietro, ma nessuno ascolta mai Jinx."
+    ],
+    "hal055": [
+      "Altri di quei mostri!"
+    ],
+    "hal056": [
+      "E allora, abbiamo una squadra da sogno qui. Fai le tue cose, Jak!"
+    ],
+    "hal057": [
+      "Jak! Porta il tuo sedere quassù e fai le tue cose."
+    ],
+    "hal058": [
+      "Portali fuori, ragazzo blu."
+    ],
+    "hal059": [
+      "Sei piuttosto brava con quel ferro, biondina."
+    ],
+    "hal060": [
+      "Stai zitto, Mog."
+    ],
+    "hal061": [
+      "Eccoli di nuovo!"
+    ],
+    "hal062": [
+      "Sali qui e guadagnati il ​​tuo mantenimento!"
+    ],
+    "hal063": [
+      "Krew aveva ragione su di te. Hai la magia, amico."
+    ],
+    "hal064": [
+      "Bel litigio, amico, cominci a piacermi."
+    ],
+    "hal065": [
+      "Ok... non sembra una bella cosa. Jak, sei sveglio!"
+    ],
+    "hal066": [
+      "Oh! Raggi di morte!",
+      "Resto qui finché non fai qualcosa a riguardo."
+    ],
+    "hal067": [
+      "Uhh, Jak. Penso che tu sia l'uomo giusto per questo lavoro."
+    ],
+    "hal068": [
+      "Salta le travi, Jak."
+    ],
+    "hal069": [
+      "Belle mosse."
+    ],
+    "hal070": [
+      "Sì... lo desideri, Tubby."
+    ],
+    "hal071": [
+      "Resteremo qui finché non li avrete eliminati quei Metallari."
+    ],
+    "hal072": [
+      "Dolce come una ballerina, ehehehe..."
+    ],
+    "hal073": [
+      "Lasciali scemi, Jak!"
+    ],
+    "hal074": [
+      "Questo sarà rumoroso!"
+    ],
+    "hal075": [
+      "Questo è troppo facile."
+    ],
+    "hal080": [
+      "Non ci muoveremo finché non li ucciderai tutti!"
+    ],
+    "hal081": [
+      "OK, usciamo di qui prima che ne ritornino altri."
+    ],
+    "hal082": [
+      "Ti stai guadagnando i soldi oggi. Finiamola!"
+    ],
+    "hal083": [
+      "Sono impressionato, Jak. Metterò una buona parola con il capo."
+    ],
+    "hal084": [
+      "Sì, fallo, Jinx."
+    ],
+    "hal085": [
+      "Amico, Jinx, cosa hai messo in quei bastoncini?"
+    ],
+    "hal086": [
+      "Guardalo andare."
+    ],
+    "hal087": [
+      "Potrei saltare così."
+    ],
+    "hal088": [
+      "Vattene via da me, mostro pazzo!"
+    ],
+    "hal090": [
+      "È qui che entro io, tappati le orecchie."
+    ],
+    "hal091": [
+      "Fuoco nel buco!"
+    ],
+    "hal092": [
+      "E andiamo avanti."
+    ],
+    "hal093": [
+      "Per favore, permettetemi."
+    ],
+    "hal094": [
+      "Una fogna non intasata, in arrivo."
+    ],
+    "hal095": [
+      "Questo è il mio boom!"
+    ],
+    "hal096": [
+      "Bum, tesoro!"
+    ],
+    "hal097": [
+      "Abbiamo chiarito la questione, muoviamoci."
+    ],
+    "hal101": [
+      "Ah! Lascerà un segno."
+    ],
+    "hal102": [
+      "Morire! Un piccolo aiuto non farebbe male!"
+    ],
+    "hal103": [
+      "Attento, bel ragazzo, o ti risistemano la faccia."
+    ],
+    "hal104": [
+      "Hai un prurito al dito sul grilletto."
+    ],
+    "hal107": [
+      "Pezzo di torta."
+    ],
+    "hal108": [
+      "Vieni qui, Jak!"
+    ],
+    "hal109": [
+      "Stai vicino, bel ragazzo!"
+    ],
+    "hal111": [
+      "Resta con noi, duro!"
+    ],
+    "hal112": [
+      "Sei d'intralcio, Jak, muoviti!"
+    ],
+    "hal113": [
+      "Se fossi in te non starei lì!"
+    ],
+    "hal114": [
+      "Sarà rumoroso."
+    ],
+    "hal115": [
+      "OH!"
+    ],
+    "hal116": [
+      "OH!"
+    ],
+    "hal117": [
+      "EHI!"
+    ],
+    "hal118": [
+      "È una trappola!"
+    ],
+    "hal119": [
+      "Sì, perché ci siamo iscritti a questo?"
+    ],
+    "hal120": [
+      "Ho 30 chiavi di esplosivo ad alto potenziale legate alla schiena...",
+      "Grande..."
+    ],
+    "hal121": [
+      "Chiudi le tue trappole lamentose e continua a muoverti."
+    ],
+    "hal122": [
+      "Uh, dobbiamo?"
+    ],
+    "hal123": [
+      "Uhh, hai sentito?"
+    ],
+    "hal124": [
+      "Siamo proprio morti, amico."
+    ],
+    "hal125": [
+      "Stai zitto! Vado avanti e controllo..."
+    ],
+    "hal126": [
+      "Cavolo, quella cosa è brutta."
+    ],
+    "hal127": [
+      "Prendilo, amico, prima che sia lui a prendere noi."
+    ],
+    "hal128": [
+      "Anche loro arrivano da dietro!"
+    ],
+    "hal129": [
+      "Come sta il mio eroe?"
+    ],
+    "hal130": [
+      "Sembra che abbia fatto benzina."
+    ],
+    "hal131": [
+      "Odio Krew."
+    ],
+    "hal132": [
+      "Sono sicuro che non tornerò così!"
+    ],
+    "hal133": [
+      "Sta arrivando per me!"
+    ],
+    "hal134": [
+      "Penso che mi voglia!"
+    ],
+    "hal135": [
+      "Aiutami, Jak!"
+    ],
+    "hal136": [
+      "Sto per morire!"
+    ],
+    "hal137": [
+      "Mi ha preso!"
+    ],
+    "hal138": [
+      "Come! Salvami!"
+    ],
+    "hal139": [
+      "Uffa! Mi ha preso!"
+    ],
+    "hal140": [
+      "Uh! Quel raggio è intelligente."
+    ],
+    "hal141": [
+      "Mi hanno sparato!"
+    ],
+    "hal142": [
+      "Sono stato colpito!"
+    ],
+    "hal143": [
+      "Uffa!"
+    ],
+    "hal144": [
+      "Oddio! Aiutami!"
+    ],
+    "hal145": [
+      "Ehi amico, guardalo!"
+    ],
+    "hal146": [
+      "Ohh, colpiscimi ancora e ti colpisco!"
+    ],
+    "hal147": [
+      "Nessuno è mio amico..."
+    ],
+    "hal148": [
+      "Uffa!"
+    ],
+    "hal149": [
+      "Uh!"
+    ],
+    "hal150": [
+      "Ah!"
+    ],
+    "hal151": [
+      "Mi ha preso!"
+    ],
+    "hal152": [
+      "Ah!! Non di nuovo!"
+    ],
+    "hal153": [
+      "Sto morendo!"
+    ],
+    "hal154": [
+      "Ancora una volta così, allora sarò storia passata."
+    ],
+    "hal155": [
+      "Mi spareranno!"
+    ],
+    "hal156": [
+      "Sicuro! Perché non uccidi anche me?"
+    ],
+    "hal157": [
+      "Controlla i tuoi obiettivi, fifone!"
+    ],
+    "hal158": [
+      "Spara alle teste lucide, non a me!"
+    ],
+    "hal159": [
+      "Ah!"
+    ],
+    "hal161": [
+      "Uffa!"
+    ],
+    "hal162": [
+      "OH!"
+    ],
+    "hal163": [
+      "OH!"
+    ],
+    "hal164": [
+      "Ah!"
+    ],
+    "hal165": [
+      "Attenzione!"
+    ],
+    "hal166": [
+      "Non lo faremo con un novellino, annullo tutto!"
+    ],
+    "hal167": [
+      "Questo è tutto, abbiamo finito! Torna quando fai sul serio."
+    ],
+    "hal168": [
+      "Sono alle strette!"
+    ],
+    "hal169": [
+      "Mi sparerà!"
+    ],
+    "hal170": [
+      "Jak! Fare qualcosa!"
+    ],
+    "hal171": [
+      "Ah! Mi ha preso!"
+    ],
+    "hal172": [
+      "No no no! Aiuto!"
+    ],
+    "hal173": [
+      "Si stanno avvicinando troppo, Jak!"
+    ],
+    "hal174": [
+      "Mi prenderà!"
+    ],
+    "hal175": [
+      "Mi uccideranno qui!"
+    ],
+    "hal176": [
+      "Jak! Sto per diventare carne di metallo!"
+    ],
+    "hal177": [
+      "Aghh! Quel raggio brucia!"
+    ],
+    "hal178": [
+      "Mi sta sparando!"
+    ],
+    "hal179": [
+      "Attenzione al raggio!"
+    ],
+    "hal180": [
+      "Mi hanno sparato!"
+    ],
+    "hal181": [
+      "Sono intrappolato!"
+    ],
+    "hal182": [
+      "Stai indietro... lo farò esplodere a distanza."
+    ],
+    "hal183": [
+      "Ehi!"
+    ],
+    "hal184": [
+      "Bene!"
+    ],
+    "hal185": [
+      "Andiamo!"
+    ],
+    "hal186": [
+      "Muoviti!"
+    ],
+    "hal187": [
+      "Ci sono un sacco di Metal Heads."
+    ],
+    "hal188": [
+      "Uffa!"
+    ],
+    "hal189": [
+      "Dagh!"
+    ],
+    "hal190": [
+      "Uh..."
+    ],
+    "hal191": [
+      "Krew è morto per avermi coinvolto in questa cosa!"
+    ],
+    "jak001": [
+      "Bene!"
+    ],
+    "jak002": [
+      "Sì!"
+    ],
+    "jak003": [
+      "Whoo!"
+    ],
+    "jak004": [
+      "Eccoci qui!"
+    ],
+    "jak005": [
+      "Carino!"
+    ],
+    "jak006": [
+      "Rock n roll!"
+    ],
+    "jak007": [
+      "Giusto!"
+    ],
+    "jak008": [
+      "Freddo!"
+    ],
+    "jak009": [
+      "Freddo!"
+    ],
+    "jak010": [
+      "O si!"
+    ],
+    "jak011": [
+      "Arrivo!"
+    ],
+    "jak012": [
+      "Attenzione!"
+    ],
+    "jak013": [
+      "Ultimo giro!"
+    ],
+    "jak014": [
+      "Attento!"
+    ],
+    "jak015": [
+      "Ehi!"
+    ],
+    "jak016": [
+      "Ehi!"
+    ],
+    "jak017": [
+      "Aspetta, Dax!"
+    ],
+    "jak018": [
+      "Aspetta, Dax!"
+    ],
+    "jak020": [
+      "Whoa... ragazzo, c'era mancato poco."
+    ],
+    "jak021": [
+      "NO!"
+    ],
+    "jak022": [
+      "Non questa volta."
+    ],
+    "jak023": [
+      "Huargh!"
+    ],
+    "jak024": [
+      "Magra, tesoro, magra!"
+    ],
+    "jak025": [
+      "Catturatelo dall'interno!"
+    ],
+    "jak026": [
+      "Questo è il MIO spettacolo!"
+    ],
+    "jak027": [
+      "Ahah, l'abbiamo preso!"
+    ],
+    "jak028": [
+      "Attento!"
+    ],
+    "jak029": [
+      "Sei morto, Erol!"
+    ],
+    "jak030": [
+      "Ci vediamo!"
+    ],
+    "jak031": [
+      "Ahah!"
+    ],
+    "jak032": [
+      "Whoo!"
+    ],
+    "jak033": [
+      "Ultimo giro!"
+    ],
+    "jak034": [
+      "Dopo."
+    ],
+    "jak035": [
+      "Dobbiamo recuperare il ritardo!"
+    ],
+    "jak036": [
+      "Eccolo!"
+    ],
+    "jak037": [
+      "Avanti, tesoro, mostrami cosa sai fare!"
+    ],
+    "jak038": [
+      "Eccoci qui!"
+    ],
+    "jak039": [
+      "Urgh!"
+    ],
+    "jak040": [
+      "Prendo questo."
+    ],
+    "jak041": [
+      "Ho bisogno di prendere in prestito questo."
+    ],
+    "jak042": [
+      "Spostati, amico!"
+    ],
+    "jak044": [
+      "Fuori dal veicolo!"
+    ],
+    "jak045": [
+      "Fuori dai piedi, amico!"
+    ],
+    "jak046": [
+      "Grazie per il passaggio."
+    ],
+    "jak047": [
+      "Ti dispiace se guido?"
+    ],
+    "jak048": [
+      "Mi piace il colore di questo veicolo."
+    ],
+    "jak049": [
+      "Il mio adesso."
+    ],
+    "jak050": [
+      "«Scusate, ma ne ho bisogno."
+    ],
+    "jak051": [
+      "Fai una passeggiata, amico!"
+    ],
+    "jak052": [
+      "Prova a camminare."
+    ],
+    "jak053": [
+      "Mi spiace, ma ho fretta!"
+    ],
+    "jak054": [
+      "Devo andare!"
+    ],
+    "jak055": [
+      "Prendi un altro veicolo!"
+    ],
+    "jak056": [
+      "Porco della strada!"
+    ],
+    "jak057": [
+      "Frenati!"
+    ],
+    "jak059": [
+      "Ahah, ne vuoi un po'?"
+    ],
+    "jak060": [
+      "Procuratene alcuni!"
+    ],
+    "jak061": [
+      "Sì, sentilo!"
+    ],
+    "jak062": [
+      "Morire!"
+    ],
+    "jak063": [
+      "Un duro in arrivo!"
+    ],
+    "jak064": [
+      "Avere paura. Abbi molta paura."
+    ],
+    "jak065": [
+      "Oooh, deve far male."
+    ],
+    "jak066": [
+      "Questa è la vendetta."
+    ],
+    "jak067": [
+      "La pratica!"
+    ],
+    "jak068": [
+      "Hai finito, Kor!"
+    ],
+    "jak069": [
+      "Questa è la mia città, Kor!"
+    ],
+    "jak070": [
+      "Sorpresa... non puoi uccidermi nella mia forma oscura."
+    ],
+    "jak071": [
+      "Adesso paghi tu!"
+    ],
+    "jak072": [
+      "Torna al passato, Kor! Perché sei storia."
+    ],
+    "jak073": [
+      "Io vinco."
+    ],
+    "jak074": [
+      "Avresti dovuto uccidermi quando ne avevi la possibilità, Praxis."
+    ],
+    "jak075": [
+      "Daxter, stai zitto e guardami le spalle."
+    ],
+    "jak076": [
+      "Comunque, Daxter."
+    ],
+    "jak077": [
+      "La smetterai di blaterare?"
+    ],
+    "jak078": [
+      "Quando sei diventato più piccolo, anche il tuo cervello è diventato più piccolo."
+    ],
+    "jak079": [
+      "Sei sulla MIA spalla. TU sei il compagno."
+    ],
+    "jak080": [
+      "Finché sei sulla MIA spalla, tieni la bocca chiusa."
+    ],
+    "jd001": [
+      "Ehi, ragazzo! Aspettare! Ritorno!",
+      "Dobbiamo proteggerlo!"
+    ],
+    "jk001": [
+      "Aspetta, RAGAZZO!"
+    ],
+    "jk002": [
+      "Eccolo!"
+    ],
+    "jk003": [
+      "Lascialo solo!"
+    ],
+    "jk004": [
+      "RAGAZZO!"
+    ],
+    "jk005": [
+      "Scegli qualcuno della tua taglia!"
+    ],
+    "jk006": [
+      "Ragazzo, attento!"
+    ],
+    "jk007": [
+      "Ti piace quando qualcuno reagisce?"
+    ],
+    "jk008": [
+      "Lascia stare il bambino!"
+    ],
+    "jk009": [
+      "È solo un ragazzino!"
+    ],
+    "jk010": [
+      "Stai lontano da lui!"
+    ],
+    "jk011": [
+      "Adesso mi hai fatto incazzare!"
+    ],
+    "jk012": [
+      "Mangia questo!"
+    ],
+    "jk013": [
+      "Indietro!"
+    ],
+    "jk014": [
+      "Dobbiamo salire sul veicolo con Kid!"
+    ],
+    "jk015": [
+      "Aspettare!"
+    ],
+    "jk016": [
+      "Tieni la testa bassa, ragazzo!"
+    ],
+    "jk017": [
+      "Resta con me, Kid, e sarai al sicuro."
+    ],
+    "jk018": [
+      "Resta con me, ragazzo!"
+    ],
+    "jk019": [
+      "Sali sul veicolo, Dax!"
+    ],
+    "kei001": [
+      "Puoi salire e scendere dal JET-Board in qualsiasi momento."
+    ],
+    "kei002": [
+      "Puoi saltare sul tuo JET-Board!"
+    ],
+    "kei003": [
+      "Salta su quella sporgenza."
+    ],
+    "kei004": [
+      "Prova a saltare su quella cassa."
+    ],
+    "kei005": [
+      "Salta oltre quell'ostacolo."
+    ],
+    "kei006": [
+      "Puoi fare un salto più alto abbassandoti prima di saltare!"
+    ],
+    "kei007": [
+      "Prova a fare un salto con l'anatra oltre quell'ostacolo."
+    ],
+    "kei008": [
+      "Salta e salta ancora un po' dopo essere atterrato",
+      "per un lancio ancora più grande!"
+    ],
+    "kei009": [
+      "Prova ad alzarti sulla sporgenza più alta con un salto potenziato!"
+    ],
+    "kei010": [
+      "Puoi girare in aria!"
+    ],
+    "kei011": [
+      "Ottieni un 360 perfetto per un aumento di velocità!"
+    ],
+    "kei012": [
+      "Bel giro!"
+    ],
+    "kei013": [
+      "È possibile atterrare su una rotaia e poi scivolarci sopra."
+    ],
+    "kei014": [
+      "Prova a macinare su quel binario."
+    ],
+    "kei016": [
+      "Puoi fare delle capriole mentre salti!"
+    ],
+    "kei017": [
+      "Si possono fare anche dei trucchi per divertimento."
+    ],
+    "kei018": [
+      "Prova a mettere insieme una serie di mosse per ottenere punti."
+    ],
+    "kei019": [
+      "Ottieni abbastanza punti per vincere la sfida!"
+    ],
+    "kei020": [
+      "Punti insufficienti! Lavora sulle tue mosse."
+    ],
+    "kei021": [
+      "Buon lavoro!"
+    ],
+    "kei022": [
+      "Vicino, ma non del tutto lì."
+    ],
+    "kei023": [
+      "Riprova."
+    ],
+    "kei024": [
+      "Ancora un po' di lavoro e potresti vincere!"
+    ],
+    "kei025": [
+      "Non buono! Punti insufficienti."
+    ],
+    "kei026": [
+      "La metropolitana ha detto che avevi bisogno di aiuto,",
+      "non sarai in grado di catturare quei Metal Heads nel",
+      "Foresta a piedi, quindi ho lasciato il mio JET-Board alla camera di equilibrio",
+      "vicino all'uscita della città. Dato che stai aiutando la metropolitana,",
+      "Te lo lascerò anche tenere!"
+    ],
+    "kei027": [
+      "Jak, questa è Keira. Non dimenticare: mi servono ancora due artefatti",
+      "per far funzionare Rift Rider! Mi serve la mappa temporale e il file",
+      "Gemma energetica del Cuore di Mar, altrimenti non andremo da nessuna parte!"
+    ],
+    "kei028": [
+      "Mi servono ancora quei due artefatti o questo mucchio di spazzatura",
+      "non si sposterà di un isolato e tanto meno attraverso il Rift",
+      "e torniamo ai nostri tempi!",
+      "Devi trovare il Cuore di Mar e la Mappa del Tempo",
+      "oppure siamo bloccati!"
+    ],
+    "kei029": [
+      "Questa è Keira. Grazie per aver preso gli artefatti, ragazzi.",
+      "È strano... la mappa temporale aveva un sacco di vecchie coordinate",
+      "dentro. Vieni a trovarmi allo Stadio."
+    ],
+    "kg001": [
+      "Chiama rinforzi!"
+    ],
+    "kg001a": [
+      "Chiama rinforzi!"
+    ],
+    "kg002": [
+      "Congelare!"
+    ],
+    "kg002a": [
+      "Congelare!"
+    ],
+    "kg004": [
+      "Fermati!"
+    ],
+    "kg004a": [
+      "Fermati!"
+    ],
+    "kg005": [
+      "Ottieni più incrociatori qui!"
+    ],
+    "kg005a": [
+      "Aggiungi altri cruiser qui!"
+    ],
+    "kg006": [
+      "Resa!"
+    ],
+    "kg006a": [
+      "Resa!"
+    ],
+    "kg007": [
+      "Quì il volo è vietato!"
+    ],
+    "kg007a": [
+      "Quì il volo è vietato!"
+    ],
+    "kg008": [
+      "Fermo!"
+    ],
+    "kg008a": [
+      "Fermo!"
+    ],
+    "kg009": [
+      "Dì Buonanotte!"
+    ],
+    "kg010": [
+      "Chiudete l'area."
+    ],
+    "kg011": [
+      "Fermare il veicolo!"
+    ],
+    "kg011a": [
+      "Fermare il veicolo!"
+    ],
+    "kg012": [
+      "Sei in arresto!"
+    ],
+    "kg012a": [
+      "Sei in arresto!"
+    ],
+    "kg013": [
+      "Ehi, tu!"
+    ],
+    "kg014": [
+      "Ne vuoi un po?!"
+    ],
+    "kg015": [
+      "L'accesso è vietato."
+    ],
+    "kg016": [
+      "Fermare!"
+    ],
+    "kg018": [
+      "EHI!"
+    ],
+    "kg019": [
+      "Lo facciamo nel modo più semplice o nel modo più difficile."
+    ],
+    "kg020": [
+      "Rallentare!"
+    ],
+    "kg020a": [
+      "Rallentare!"
+    ],
+    "kg021": [
+      "Spostati!"
+    ],
+    "kg021a": [
+      "Spostati!"
+    ],
+    "kg022": [
+      "Chiama altri Hellcats!"
+    ],
+    "kg023": [
+      "Richiedo backup!"
+    ],
+    "kg023a": [
+      "Richiedo backup!"
+    ],
+    "kg024": [
+      "Sospettato a piedi!"
+    ],
+    "kg024a": [
+      "Sospettato a piedi!"
+    ],
+    "kg025": [
+      "Sospetto nel veicolo!"
+    ],
+    "kg025a": [
+      "Sospetto nel veicolo!"
+    ],
+    "kg026": [
+      "Il sospetto è fuggito nel settore cinque!"
+    ],
+    "kg026a": [
+      "Il sospetto è fuggito nel settore cinque!"
+    ],
+    "kg027": [
+      "Il sospetto si sta spostando nel settore sei!"
+    ],
+    "kg027a": [
+      "Il sospetto si sta spostando nel settore sei!"
+    ],
+    "kg028": [
+      "Inseguimento ad alta velocità nel settore quattro!"
+    ],
+    "kg028a": [
+      "Inseguimento ad alta velocità nel settore quattro!"
+    ],
+    "kg029": [
+      "Controllo del settore tre."
+    ],
+    "kg029a": [
+      "Controllo del settore tre."
+    ],
+    "kg030": [
+      "Pattugliamento settore nove."
+    ],
+    "kg030a": [
+      "Pattugliamento settore nove."
+    ],
+    "kg031": [
+      "Attenzione, sono a piedi."
+    ],
+    "kg031a": [
+      "Attenzione, sono a piedi."
+    ],
+    "kg032": [
+      "Passo al settore successivo."
+    ],
+    "kg032a": [
+      "Passo al settore successivo."
+    ],
+    "kg033": [
+      "Attività sospetta in questo settore."
+    ],
+    "kg033a": [
+      "Attività sospetta in questo settore."
+    ],
+    "kg034": [
+      "Ricerca sospetti in corso."
+    ],
+    "kg034a": [
+      "Ricerca sospetti in corso."
+    ],
+    "kg035": [
+      "Nulla fin ora."
+    ],
+    "kg035a": [
+      "Nulla fin ora."
+    ],
+    "kg036": [
+      "Roger, lo sto ancora cercando."
+    ],
+    "kg036a": [
+      "Roger, lo sto ancora cercando."
+    ],
+    "kg037": [
+      "Roger, spareremo a vista."
+    ],
+    "kg037a": [
+      "Roger, spareremo a vista."
+    ],
+    "kg038": [
+      "Comunicare la descrizione dei sospetti."
+    ],
+    "kg039": [
+      "Fuori dal veicolo!"
+    ],
+    "kg039a": [
+      "Fuori dal veicolo!"
+    ],
+    "kg040": [
+      "Chiama altri Hellcats!"
+    ],
+    "kg040a": [
+      "Chiama altri Hellcats!"
+    ],
+    "kg041": [
+      "La zona è sicura."
+    ],
+    "kg041a": [
+      "La zona è sicura."
+    ],
+    "kg042": [
+      "Niente da segnalare."
+    ],
+    "kg042a": [
+      "Niente da segnalare."
+    ],
+    "kg043": [
+      "Procedendo come previsto."
+    ],
+    "kg043a": [
+      "Procedendo come previsto."
+    ],
+    "kg044": [
+      "L'ho perso."
+    ],
+    "kg044a": [
+      "L'ho perso."
+    ],
+    "kg045": [
+      "Il soggetto non è in vista."
+    ],
+    "kg045a": [
+      "Soggetto non in vista."
+    ],
+    "kg046": [
+      "Se n'è andato."
+    ],
+    "kg046a": [
+      "È scomparso!"
+    ],
+    "kg047": [
+      "Dov'è andato?"
+    ],
+    "kg047a": [
+      "Dov'è andato?"
+    ],
+    "kg048": [
+      "Contatto visivo perso."
+    ],
+    "kg048a": [
+      "Perdita del contatto visivo."
+    ],
+    "kg049": [
+      "E' semplicemente scappato."
+    ],
+    "kg049a": [
+      "E' semplicemente scappato."
+    ],
+    "kg050": [
+      "E' fuori dalla vista."
+    ],
+    "kg050a": [
+      "E' fuori dalla vista."
+    ],
+    "kg051": [
+      "Lo stiamo perdendo!"
+    ],
+    "kg051a": [
+      "Lo stiamo perdendo!"
+    ],
+    "kg052": [
+      "Continuiamo la nostra ricerca."
+    ],
+    "kg052a": [
+      "Continuiamo la nostra ricerca."
+    ],
+    "kg053": [
+      "Sto cercando nel settore quattro."
+    ],
+    "kg053a": [
+      "Sto cercando nel settore quattro."
+    ],
+    "kg054": [
+      "Ricerca nel settore sette."
+    ],
+    "kg054a": [
+      "Ricerca nel settore sette."
+    ],
+    "kg055": [
+      "Ricerca nel settore tre."
+    ],
+    "kg055a": [
+      "Ricerca nel settore tre."
+    ],
+    "kg056": [
+      "Continuare a cercare."
+    ],
+    "kg056a": [
+      "Continuare a cercare."
+    ],
+    "kg057": [
+      "Deve essere qui da qualche parte."
+    ],
+    "kg057a": [
+      "Deve essere qui da qualche parte."
+    ],
+    "kg058": [
+      "Non riesco a trovarlo."
+    ],
+    "kg058a": [
+      "Non riesco a trovarlo."
+    ],
+    "kg059": [
+      "Nessun segno del soggetto."
+    ],
+    "kg059a": [
+      "Nessun segno del soggetto."
+    ],
+    "kg060": [
+      "Non lo vedo da nessuna parte."
+    ],
+    "kg060a": [
+      "Non lo vedo da nessuna parte."
+    ],
+    "kg061": [
+      "Ancora cercando."
+    ],
+    "kg061a": [
+      "Ancora cercando."
+    ],
+    "kg062": [
+      "Alla ricerca dell'obiettivo."
+    ],
+    "kg062a": [
+      "Alla ricerca dell'obiettivo."
+    ],
+    "kg063": [
+      "Deve essere qui."
+    ],
+    "kg063a": [
+      "Deve essere qui."
+    ],
+    "kg064": [
+      "Era proprio qui."
+    ],
+    "kg064a": [
+      "Era proprio qui."
+    ],
+    "kg065": [
+      "Lo abbiamo perso."
+    ],
+    "kg065a": [
+      "Lo abbiamo perso."
+    ],
+    "kg066": [
+      "Se n'è andato."
+    ],
+    "kg066a": [
+      "Se n'è andato."
+    ],
+    "kg067": [
+      "È fuggito."
+    ],
+    "kg067a": [
+      "È fuggito."
+    ],
+    "kg068": [
+      "Ci ha scosso."
+    ],
+    "kg068a": [
+      "Ci ha scosso."
+    ],
+    "kg069": [
+      "Sembra che se ne sia andato."
+    ],
+    "kg069a": [
+      "Sembra che se ne sia andato."
+    ],
+    "kg070": [
+      "L'ho trovato!"
+    ],
+    "kg070a": [
+      "L'ho trovato!"
+    ],
+    "kg071": [
+      "Eccolo."
+    ],
+    "kg071a": [
+      "Eccolo!"
+    ],
+    "kg072": [
+      "Attenzione, bersaglio in vista."
+    ],
+    "kg072a": [
+      "Attenzione, obiettivo in vista!"
+    ],
+    "kg073": [
+      "Abbiamo un'identificazione positiva."
+    ],
+    "kg073a": [
+      "Abbiamo un'identificazione positiva."
+    ],
+    "kg074": [
+      "Lo vedo!"
+    ],
+    "kg074a": [
+      "Lo vedo!"
+    ],
+    "kg075": [
+      "È laggiù, prendilo!"
+    ],
+    "kg075a": [
+      "E' qui!"
+    ],
+    "kg076": [
+      "Prendilo!"
+    ],
+    "kg076a": [
+      "Prendilo!"
+    ],
+    "kg077": [
+      "Ho riacquisito l'obiettivo!"
+    ],
+    "kg077a": [
+      "Ho riacquisito l'obiettivo!"
+    ],
+    "kg078": [
+      "Mi sto avvicinando."
+    ],
+    "kg078a": [
+      "Mi sto avvicinando!"
+    ],
+    "kg079": [
+      "Gli sto addosso!"
+    ],
+    "kg079a": [
+      "Gli sto addosso!"
+    ],
+    "kg080": [
+      "Sono all'inseguimento!"
+    ],
+    "kg080a": [
+      "Sono all'inseguimento!"
+    ],
+    "kg081": [
+      "Perseguire l'obiettivo."
+    ],
+    "kg081a": [
+      "Perseguire l'obiettivo!"
+    ],
+    "kg082": [
+      "Non lasciarlo scappare!"
+    ],
+    "kg082a": [
+      "Non lasciarlo scappare!"
+    ],
+    "kg083": [
+      "Prendilo!"
+    ],
+    "kg083a": [
+      "Prendilo!"
+    ],
+    "kg084": [
+      "Dopo di lui!"
+    ],
+    "kg084a": [
+      "Dopo di lui!"
+    ],
+    "kg085": [
+      "Ho una visuale!"
+    ],
+    "kg085a": [
+      "Ho una visuale!"
+    ],
+    "kg086": [
+      "Lo vediamo!"
+    ],
+    "kg086a": [
+      "Lo vediamo!"
+    ],
+    "kg087": [
+      "Fermati là!"
+    ],
+    "kg087a": [
+      "Fermati là!"
+    ],
+    "kg088": [
+      "Lo tengo d'occhio!"
+    ],
+    "kg088a": [
+      "Lo tengo d'occhio!"
+    ],
+    "kg089": [
+      "Sono colpito!"
+    ],
+    "kg089a": [
+      "Sono colpito!"
+    ],
+    "kg090": [
+      "Uomo a terra!"
+    ],
+    "kg090a": [
+      "Uomo a terra!"
+    ],
+    "kg091": [
+      "Ho bisogno di rinforzi!"
+    ],
+    "kg091a": [
+      "Ho bisogno di rinforzi!"
+    ],
+    "kg092": [
+      "Fermatelo!"
+    ],
+    "kg092a": [
+      "Fermatelo!"
+    ],
+    "kg093": [
+      "Attenzione!"
+    ],
+    "kg093a": [
+      "Attenzione!"
+    ],
+    "kg094": [
+      "Eccolo, sparagli!"
+    ],
+    "kg094a": [
+      "Eccolo, sparagli!"
+    ],
+    "kg095": [
+      "Portalo fuori!"
+    ],
+    "kg095a": [
+      "Portalo fuori!"
+    ],
+    "kg096": [
+      "Fuga del prigioniero in corso, suona l'allarme!"
+    ],
+    "kg096a": [
+      "Evasione dalla prigione in corso, date l'allarme!"
+    ],
+    "kg097": [
+      "Prigioniero al secondo livello!"
+    ],
+    "kg097a": [
+      "Prigioniero al secondo livello!"
+    ],
+    "kg098": [
+      "Prigioniero trasferito al sottolivello B!"
+    ],
+    "kg098a": [
+      "Prigioniero trasferito al sottolivello B!"
+    ],
+    "kg099": [
+      "Pensiamo che sia nei tubi!"
+    ],
+    "kg099a": [
+      "Pensiamo che sia nei tubi!"
+    ],
+    "kg100": [
+      "Iniziamo la perlustrazione."
+    ],
+    "kg100a": [
+      "Iniziamo la perlustrazione."
+    ],
+    "kg101": [
+      "Abbiamo un prigioniero in vista, entrate!"
+    ],
+    "kg101a": [
+      "Abbiamo un prigioniero in vista, entrate!"
+    ],
+    "kg102": [
+      "Abbiamo movimento al primo livello!"
+    ],
+    "kg102a": [
+      "Abbiamo movimento al primo livello!"
+    ],
+    "kg103": [
+      "Avvicinati!"
+    ],
+    "kg103a": [
+      "Avvicinati!"
+    ],
+    "kg104": [
+      "Ci stiamo trasferendo!"
+    ],
+    "kg104a": [
+      "Ci stiamo trasferendo!"
+    ],
+    "kg105": [
+      "Metti al sicuro il blocco di celle!"
+    ],
+    "kg105a": [
+      "Metti al sicuro il blocco di celle!"
+    ],
+    "kg106": [
+      "Non prendete prigionieri!"
+    ],
+    "kg106a": [
+      "Non prendete prigionieri!"
+    ],
+    "kg107": [
+      "Avvistato il prigioniero, lo abbiamo preso!"
+    ],
+    "kg107a": [
+      "Avvistato il prigioniero, lo abbiamo preso!"
+    ],
+    "kg108": [
+      "Il prigioniero è ancora in libertà!"
+    ],
+    "kg108a": [
+      "Il prigioniero è ancora a piede libero!"
+    ],
+    "kg109": [
+      "Pensiamo che stia per uscire!"
+    ],
+    "kg109a": [
+      "Pensiamo che stia per uscire!"
+    ],
+    "kg110": [
+      "Cercando stanze."
+    ],
+    "kg110a": [
+      "Cercando stanze."
+    ],
+    "kg111": [
+      "Prigioniero libero nel complesso."
+    ],
+    "kg111a": [
+      "Prigioniero libero nel complesso."
+    ],
+    "kg112": [
+      "Sei autorizzato a sparare per uccidere."
+    ],
+    "kg112a": [
+      "Sei autorizzato a sparare per uccidere."
+    ],
+    "kg113": [
+      "Via! Via! Via! Spazza la zona!"
+    ],
+    "kg113a": [
+      "Via! Via! Via! Spazza la zona!"
+    ],
+    "kg114": [
+      "Perquisizione nei sotterranei."
+    ],
+    "kg114a": [
+      "Perquisizione nei sotterranei."
+    ],
+    "kg115": [
+      "Il blocco delle celle è chiaro."
+    ],
+    "kg115a": [
+      "Il blocco delle celle è chiaro."
+    ],
+    "kg116": [
+      "La stanza del serbatoio è libera."
+    ],
+    "kg116a": [
+      "La stanza del serbatoio è libera."
+    ],
+    "kg117": [
+      "Attivare i carri armati antisommossa."
+    ],
+    "kg117a": [
+      "Attiva i carri armati antisommossa."
+    ],
+    "kg118": [
+      "Il carro armato antisommossa ha un prigioniero in vista."
+    ],
+    "kg118a": [
+      "Il carro armato antisommossa ha un prigioniero in vista."
+    ],
+    "kg119": [
+      "Avviso intruso."
+    ],
+    "kg119a": [
+      "Avviso intruso!"
+    ],
+    "kg120": [
+      "Attivazione delle difese di sicurezza."
+    ],
+    "kg120a": [
+      "Attivazione delle difese di sicurezza."
+    ],
+    "kg121": [
+      "Fornire la descrizione dei sospetti."
+    ],
+    "kg121a": [
+      "Fornire la descrizione dei sospetti."
+    ],
+    "kg122": [
+      "Ho dei civili in vista."
+    ],
+    "kg122a": [
+      "Ho dei civili in vista."
+    ],
+    "kg123": [
+      "Ho dei sospetti in vista."
+    ],
+    "kg123a": [
+      "Ho dei sospetti in vista."
+    ],
+    "kg124": [
+      "Odio l'odore di questa parte della città."
+    ],
+    "kg124a": [
+      "Odio l'odore in questa parte della città."
+    ],
+    "kg125": [
+      "Giusto, controlleremo."
+    ],
+    "kg125a": [
+      "Giusto, controlleremo."
+    ],
+    "kg126": [
+      "Confermato, sospettato clandestino neutralizzato."
+    ],
+    "kg126a": [
+      "Confermato, sospettato clandestino neutralizzato."
+    ],
+    "kg127": [
+      "Sono tutti colpevoli!"
+    ],
+    "kg127a": [
+      "Sono tutti colpevoli!"
+    ],
+    "kg128": [
+      "Qui è l'Unità Alfa, siamo in viaggio."
+    ],
+    "kg128a": [
+      "Qui è l'Unità Alfa, siamo in viaggio."
+    ],
+    "kg129": [
+      "Roger, continuiamo la nostra ricerca."
+    ],
+    "kg129a": [
+      "Roger, continuiamo la nostra ricerca."
+    ],
+    "kg130": [
+      "Unità Zulu, in arrivo."
+    ],
+    "kg130a": [
+      "Unità Zulu, in arrivo."
+    ],
+    "kg131": [
+      "Roger, stiamo facendo il nostro giro."
+    ],
+    "kg131a": [
+      "Roger, stiamo facendo il nostro giro."
+    ],
+    "kg132": [
+      "Io dico di sparargli tutti e sistemarli più tardi."
+    ],
+    "kg132a": [
+      "Io dico di sparargli tutti e sistemarli più tardi."
+    ],
+    "kg133": [
+      "Hai il diritto di morire!"
+    ],
+    "kg134": [
+      "Blocca e carica!"
+    ],
+    "kg135": [
+      "Apri il fuoco!"
+    ],
+    "kg136": [
+      "Allerta, allerta!"
+    ],
+    "kg137": [
+      "Non muoverti!"
+    ],
+    "kg138": [
+      "Fallo!"
+    ],
+    "kg139": [
+      "Via! Via! Via!"
+    ],
+    "kg140": [
+      "Affiancateli!"
+    ],
+    "kg141": [
+      "Entra!"
+    ],
+    "kg142": [
+      "Portateli fuori!"
+    ],
+    "kg143": [
+      "Spaccate qualche testa!"
+    ],
+    "kg144": [
+      "Arrestatelo!"
+    ],
+    "kg145": [
+      "Sparagli, sparagli!"
+    ],
+    "kg146": [
+      "Muori, fuorilegge!"
+    ],
+    "kg147": [
+      "Sei storia!"
+    ],
+    "kg148": [
+      "Mangia questo!"
+    ],
+    "kg149": [
+      "Procuratene alcuni!"
+    ],
+    "kg150": [
+      "Fuoco fuoco!"
+    ],
+    "kg151": [
+      "Eccone uno per la Guardia!"
+    ],
+    "kg152": [
+      "Arrenditi, fuorilegge!"
+    ],
+    "kg153": [
+      "Ecco un po' di dolore!"
+    ],
+    "kg154": [
+      "Tempo di rimborso!"
+    ],
+    "kg155": [
+      "Avrei dovuto arrendermi!"
+    ],
+    "kg156": [
+      "Ho bisogno di fuoco di copertura!"
+    ],
+    "kg157": [
+      "Chiama i rinforzi!"
+    ],
+    "kg158": [
+      "Sparo!"
+    ],
+    "kg159": [
+      "Morire!"
+    ],
+    "kg160": [
+      "Ti hanno beccato!"
+    ],
+    "kg161": [
+      "Rivolta in corso!"
+    ],
+    "kg162": [
+      "Invia le truppe!"
+    ],
+    "kg163": [
+      "Lasciar perdere!"
+    ],
+    "kg164": [
+      "Fategliela pagare!"
+    ],
+    "kg165": [
+      "Taggateli e impacchettateli!"
+    ],
+    "kg165a": [
+      "Taggateli e impacchettateli!"
+    ],
+    "kg165b": [
+      "Taggateli e impacchettateli!"
+    ],
+    "kg166": [
+      "Un'altra tacca per la mia pistola."
+    ],
+    "kg166a": [
+      "Un'altra tacca per la mia pistola."
+    ],
+    "kg166b": [
+      "Un'altra tacca per la mia pistola."
+    ],
+    "kg167": [
+      "Questo è stato facile!"
+    ],
+    "kg167a": [
+      "Questo è stato facile!"
+    ],
+    "kg167b": [
+      "Questo è stato facile!"
+    ],
+    "kg168": [
+      "Sospetto neutralizzato."
+    ],
+    "kg168a": [
+      "Sospetto neutralizzato."
+    ],
+    "kg168b": [
+      "Sospetto neutralizzato."
+    ],
+    "kg169": [
+      "Non ho nemmeno sudato."
+    ],
+    "kg169a": [
+      "Non ho nemmeno sudato."
+    ],
+    "kg169b": [
+      "Non ho nemmeno sudato."
+    ],
+    "kg170": [
+      "Portatelo qui per... interrogarlo, eheheh..."
+    ],
+    "kg170a": [
+      "Portatelo qui per... interrogarlo, eheheh..."
+    ],
+    "kg170b": [
+      "Portatelo qui per... interrogarlo, eheheh..."
+    ],
+    "kg171": [
+      "Un altro morde la polvere."
+    ],
+    "kg171a": [
+      "Un altro morde la polvere."
+    ],
+    "kg171b": [
+      "Un altro morde la polvere."
+    ],
+    "kg172": [
+      "Deve aver fatto male."
+    ],
+    "kg172a": [
+      "Deve aver fatto male."
+    ],
+    "kg172b": [
+      "Deve aver fatto male."
+    ],
+    "kg173": [
+      "C'è molto altro da dove viene."
+    ],
+    "kg173a": [
+      "C'è molto altro da dove viene."
+    ],
+    "kg173b": [
+      "C'è molto altro da dove viene."
+    ],
+    "kg174": [
+      "Feccia di cittadino."
+    ],
+    "kg174a": [
+      "Feccia di cittadino."
+    ],
+    "kg174b": [
+      "Feccia di cittadino."
+    ],
+    "kg175": [
+      "Non combattere la legge, figliolo."
+    ],
+    "kg175a": [
+      "Non combattere la legge, figliolo."
+    ],
+    "kg175b": [
+      "Non combattere la legge, figliolo."
+    ],
+    "kg176": [
+      "Tu sei sotto arresto!"
+    ],
+    "kg177": [
+      "Muoviti!"
+    ],
+    "kg178a": [
+      "È scomparso!"
+    ],
+    "kg179": [
+      "Ragazzi, avete sentito degli ultimi attacchi dei Metal Head?"
+    ],
+    "kg179b": [
+      "Oh ragazzi, avete sentito degli ultimi attacchi dei Metal Head?"
+    ],
+    "kg180": [
+      "La settimana scorsa abbiamo perso tre squadre."
+    ],
+    "kg180a": [
+      "La settimana scorsa abbiamo perso tre squadre."
+    ],
+    "kg180b": [
+      "La settimana scorsa abbiamo perso tre squadre."
+    ],
+    "kg181": [
+      "Ho sentito che la metropolitana sta diventando più forte."
+    ],
+    "kg181a": [
+      "Ho sentito che la metropolitana sta diventando più forte."
+    ],
+    "kg181b": [
+      "Ho sentito che la metropolitana sta diventando più forte."
+    ],
+    "kg182": [
+      "Sono solo voci, privato, tieni la bocca chiusa."
+    ],
+    "kg182a": [
+      "Sono solo voci, privato, tieni la bocca chiusa."
+    ],
+    "kg182b": [
+      "Sono solo voci, privato, tieni la bocca chiusa."
+    ],
+    "kg183": [
+      "O noi o loro, non ci sono vie di mezzo."
+    ],
+    "kg183a": [
+      "O noi o loro, non c'è via di mezzo."
+    ],
+    "kg183b": [
+      "O noi o loro, non c'è via di mezzo."
+    ],
+    "kg184": [
+      "Non preoccuparti, il Barone ci salverà."
+    ],
+    "kg184a": [
+      "Non preoccuparti, il Barone ci salverà."
+    ],
+    "kg184b": [
+      "Non preoccuparti, il Barone ci salverà."
+    ],
+    "kg185": [
+      "Non ho fiducia in nessuno."
+    ],
+    "kg185a": [
+      "Non ho fiducia in nessuno."
+    ],
+    "kg185b": [
+      "Non ho fiducia in nessuno."
+    ],
+    "kg186": [
+      "Hai visto quel nuovo pilota JX-7? Dolce giro."
+    ],
+    "kg186a": [
+      "Hai visto quel nuovo pilota JX-7? Dolce giro."
+    ],
+    "kg186b": [
+      "Hai visto quel nuovo pilota JX-7? È un viaggio dolce."
+    ],
+    "kg187": [
+      "Hai visto qualcosa?"
+    ],
+    "kg187a": [
+      "Hai visto qualcosa?"
+    ],
+    "kg187b": [
+      "Hai visto qualcosa?"
+    ],
+    "kg188": [
+      "NO."
+    ],
+    "kg188a": [
+      "NO."
+    ],
+    "kg188b": [
+      "No."
+    ],
+    "kg189": [
+      "Tieni gli occhi aperti."
+    ],
+    "kg189a": [
+      "Tieni gli occhi aperti."
+    ],
+    "kg189b": [
+      "Tieni gli occhi aperti."
+    ],
+    "kg190": [
+      "Ho appena ricevuto un avviso radio, stai calmo."
+    ],
+    "kg190a": [
+      "Ho appena ricevuto un avviso radio, stai calmo."
+    ],
+    "kg190b": [
+      "Ho appena ricevuto un avviso radio, stai calmo."
+    ],
+    "kg191": [
+      "Non fidarsi mai di un civile."
+    ],
+    "kg191a": [
+      "Non fidarsi mai di un civile."
+    ],
+    "kg191b": [
+      "Non fidarsi mai di un civile."
+    ],
+    "kg192": [
+      "Non fidarti mai di nessuno."
+    ],
+    "kg192a": [
+      "Non fidarti mai di nessuno."
+    ],
+    "kg192b": [
+      "Non fidarti mai di nessuno."
+    ],
+    "kg193": [
+      "Viva il KG!"
+    ],
+    "kg193a": [
+      "Viva il KG!"
+    ],
+    "kg193b": [
+      "Viva il KG!"
+    ],
+    "kg194": [
+      "Non c'è stata una rivolta per il cibo da quando abbiamo portato i carri armati."
+    ],
+    "kg194a": [
+      "Non c'è stata una rivolta per il cibo da quando abbiamo portato i carri armati."
+    ],
+    "kg194b": [
+      "Non c'è stata una rivolta per il cibo da quando abbiamo portato i carri armati."
+    ],
+    "kg195": [
+      "Mi annoio, voglio sgranocchiare la testa."
+    ],
+    "kg195a": [
+      "Mi annoio, voglio sgranocchiare la testa."
+    ],
+    "kg195b": [
+      "Mi annoio, ho voglia di schiacciare teste."
+    ],
+    "kg196": [
+      "Voglio fare il culo a qualcuno."
+    ],
+    "kg196a": [
+      "Ugh... voglio dare un calcio a qualcuno."
+    ],
+    "kg196b": [
+      "Voglio dare un calcio a qualcuno."
+    ],
+    "kg197": [
+      "Hai sentito che la metropolitana ha preso le nostre munizioni al quartier generale?"
+    ],
+    "kg197a": [
+      "Hai sentito che è arrivata la metropolitana?",
+      "le nostre munizioni al quartier generale?"
+    ],
+    "kg197b": [
+      "Hai sentito che è arrivata la metropolitana?",
+      "le nostre munizioni al quartier generale?"
+    ],
+    "kg198": [
+      "La vendetta è una stronzata!"
+    ],
+    "kg198a": [
+      "La vendetta è una stronzata!"
+    ],
+    "kg198b": [
+      "La vendetta è una vera stronzata!"
+    ],
+    "kg199": [
+      "Animali!"
+    ],
+    "kg199a": [
+      "Animali!"
+    ],
+    "kg199b": [
+      "Animali!"
+    ],
+    "kg200": [
+      "Ho sentito che l'Ombra è morta da anni."
+    ],
+    "kg200a": [
+      "Ho sentito che l'Ombra è morta da anni."
+    ],
+    "kg200b": [
+      "Ho sentito che l'Ombra è morta da anni."
+    ],
+    "kg201": [
+      "Forse, ma gli altri sono feccia dell'underground",
+      "stanno ancora correndo qua e là."
+    ],
+    "kg201a": [
+      "Forse, ma gli altri sono feccia dell'underground",
+      "stanno ancora correndo qua e là."
+    ],
+    "kg201b": [
+      "Forse, ma gli altri sono feccia dell'underground",
+      "stanno ancora correndo qua e là."
+    ],
+    "kg202": [
+      "Posso sparare a qualcuno adesso?"
+    ],
+    "kg202a": [
+      "Posso sparare a qualcuno adesso?"
+    ],
+    "kg202b": [
+      "Posso sparare a qualcuno adesso?"
+    ],
+    "kg203": [
+      "Mi piace la nuova armatura."
+    ],
+    "kg203a": [
+      "Mi piace la nuova armatura."
+    ],
+    "kg203b": [
+      "Mi piace la nuova armatura."
+    ],
+    "kg204": [
+      "Si, anch'io. Più comfort al cavallo."
+    ],
+    "kg204a": [
+      "Si, anch'io. Più comfort al cavallo."
+    ],
+    "kg204b": [
+      "Si, anch'io. Più comfort al cavallo."
+    ],
+    "kg205": [
+      "Se non succede qualcosa di interessante presto,",
+      "Ora comincerò a spararti."
+    ],
+    "kg205a": [
+      "La prossima volta posso uccidere un civile?"
+    ],
+    "kg205b": [
+      "La prossima volta posso uccidere un civile?"
+    ],
+    "kg206a": [
+      "Se non succede qualcosa di interessante presto,",
+      "Ti sparerò."
+    ],
+    "kg206b": [
+      "Se non succede qualcosa di interessante presto,",
+      "Inizierò a spararti."
+    ],
+    "kg207": [
+      "Hai raccolto le tue mazzette questa settimana?"
+    ],
+    "kg207a": [
+      "Raccoglierai le mazzette questa settimana?"
+    ],
+    "kg207b": [
+      "Raccoglierai le mazzette questa settimana?"
+    ],
+    "kg208": [
+      "Shhh..."
+    ],
+    "kg208a": [
+      "Shhh..."
+    ],
+    "kg209": [
+      "Shh."
+    ],
+    "kg209a": [
+      "Shh."
+    ],
+    "kg209b": [
+      "Shh."
+    ],
+    "kg210": [
+      "Ho sentito che qualcuno sta usando le vecchie camere di equilibrio sul muro.",
+      "Pfft, pazzo bastardo."
+    ],
+    "kg210a": [
+      "Ho sentito che qualcuno sta usando le vecchie camere di equilibrio sul muro.",
+      "Pazzo bastardo."
+    ],
+    "kg210b": [
+      "Ho sentito che qualcuno sta usando le vecchie camere di equilibrio sul muro.",
+      "Pazzo bastardo."
+    ],
+    "kg211": [
+      "Sono stato in servizio per due giorni di fila."
+    ],
+    "kg211a": [
+      "Sono stato in servizio per due giorni di fila."
+    ],
+    "kg211b": [
+      "Sono stato in servizio per due giorni di fila."
+    ],
+    "kg212": [
+      "Pfft, non lamentarti. Ho una pattuglia delle fogne la prossima settimana."
+    ],
+    "kg212a": [
+      "Non lamentarti, ho una pattuglia delle fogne la prossima settimana."
+    ],
+    "kg212b": [
+      "Non lamentarti. Ho una pattuglia delle fogne la prossima settimana."
+    ],
+    "kg213": [
+      "Ahh, povero bastardo. Quale comandante hai fatto incazzare?"
+    ],
+    "kg213a": [
+      "Ahh, povero bastardo. Quale comandante hai fatto incazzare?"
+    ],
+    "kg213b": [
+      "Eheh, povero bastardo. Quale comandante hai fatto incazzare?"
+    ],
+    "kg214": [
+      "Dico morte alla metropolitana."
+    ],
+    "kg214a": [
+      "Dico morte alla metropolitana."
+    ],
+    "kg214b": [
+      "Dico morte alla metropolitana."
+    ],
+    "kg215": [
+      "Voglio davvero uccidere quel ragazzo dell'Ombra."
+    ],
+    "kg215a": [
+      "Voglio uccidere quel ragazzo dell'Ombra!"
+    ],
+    "kg215b": [
+      "Voglio uccidere quel ragazzo dell'Ombra!"
+    ],
+    "kg216": [
+      "E non dimenticare quel traditore di Torn."
+    ],
+    "kg216a": [
+      "E non dimenticare quel traditore, Torn."
+    ],
+    "kg216b": [
+      "Non dimenticare quel traditore, Torn!"
+    ],
+    "kg217": [
+      "La morte è troppo bella per lui."
+    ],
+    "kg217a": [
+      "La morte è troppo bella per lui."
+    ],
+    "kg217b": [
+      "La morte è troppo bella per lui."
+    ],
+    "kg218": [
+      "Perché stiamo cercando un ragazzino?"
+    ],
+    "kg218a": [
+      "Perché stiamo cercando un ragazzino?"
+    ],
+    "kg218b": [
+      "Perché stiamo cercando un ragazzino?"
+    ],
+    "kg219": [
+      "Non lo so, ordini del Barone."
+    ],
+    "kg219a": [
+      "Non lo so, ordini di Baron."
+    ],
+    "kg219b": [
+      "Non lo so, ordini di Baron."
+    ],
+    "kg220": [
+      "Ehi, hanno già trovato la Tomba di Mar?"
+    ],
+    "kg220a": [
+      "Hanno già trovato la Tomba di Mar?"
+    ],
+    "kg220b": [
+      "Hanno già trovato la Tomba di Mar?"
+    ],
+    "kg221": [
+      "Se lo facessero non ce lo direbbero."
+    ],
+    "kg221a": [
+      "No, non ce lo direbbero se lo facessero."
+    ],
+    "kg221b": [
+      "No, non ce lo direbbero se lo facessero."
+    ],
+    "kg222": [
+      "Ho una grossa scommessa sulle prossime gare cittadine."
+    ],
+    "kg222a": [
+      "Ho fatto una grossa scommessa sulle prossime gare cittadine."
+    ],
+    "kg222b": [
+      "Ho una grossa scommessa sulle prossime gare cittadine."
+    ],
+    "kg223": [
+      "Erol è il mio ragazzo. Vince sempre."
+    ],
+    "kg223a": [
+      "Erol è il mio ragazzo. Vince sempre."
+    ],
+    "kg223b": [
+      "Erol è il mio ragazzo. Vince sempre."
+    ],
+    "kg224": [
+      "Andrai alle gare cittadine questa volta?"
+    ],
+    "kg224a": [
+      "Andrai alle gare cittadine questa volta?"
+    ],
+    "kg224b": [
+      "Questa volta andrai alle gare cittadine?"
+    ],
+    "kg225": [
+      "Io ci sarò."
+    ],
+    "kg225a": [
+      "Io ci sarò."
+    ],
+    "kg225b": [
+      "Io ci sarò."
+    ],
+    "kg226": [
+      "Ci sono state alcune gravi vittime tra le guardie questa settimana."
+    ],
+    "kg226a": [
+      "Ci sono state alcune gravi vittime tra le guardie questa settimana."
+    ],
+    "kg226b": [
+      "Ci sono state alcune gravi vittime tra le guardie questa settimana."
+    ],
+    "kg227": [
+      "Sì, qualche combattente ribelle sta fomentando la situazione."
+    ],
+    "kg227a": [
+      "Sì, qualche combattente ribelle sta mescolando bene la situazione."
+    ],
+    "kg227b": [
+      "Qualche combattente ribelle sta mescolando bene la situazione."
+    ],
+    "kg228": [
+      "Mi piacerebbe essere io a portarlo fuori."
+    ],
+    "kg228a": [
+      "Mi piacerebbe essere io a portarlo fuori."
+    ],
+    "kg228b": [
+      "Oh, mi piacerebbe essere io a portarlo fuori."
+    ],
+    "kg229": [
+      "Prendiamo da bere più tardi."
+    ],
+    "kg229a": [
+      "Prendiamo da bere più tardi."
+    ],
+    "kg229b": [
+      "Prendiamo da bere più tardi."
+    ],
+    "kg230": [
+      "Ho una brutta sensazione riguardo a questa guerra."
+    ],
+    "kg230a": [
+      "Ho una brutta sensazione riguardo a questa guerra."
+    ],
+    "kg230b": [
+      "Ho un brutto presentimento su questa guerra."
+    ],
+    "kg231": [
+      "Ho sentito che ci sono altri attacchi di Metal Head",
+      "di quanto il quartier generale ammetta."
+    ],
+    "kg231a": [
+      "Ho sentito che ci sono altri attacchi dei Metal Head",
+      "di quanto il quartier generale ammetta."
+    ],
+    "kg231b": [
+      "Sì, ho sentito che ci sono altri attacchi dei Metal Head",
+      "di quanto il quartier generale ammetta."
+    ],
+    "kg232": [
+      "I resoconti che ho visto non sono buoni.",
+      "Penso che la città sia nei guai."
+    ],
+    "kg232a": [
+      "I resoconti che ho visto non sono buoni.",
+      "Penso che la città sia nei guai."
+    ],
+    "kg232b": [
+      "I resoconti che ho letto non sono buoni.",
+      "Penso che la città sia nei guai."
+    ],
+    "kg233": [
+      "Sono preoccupato per questo nuovo ragazzo",
+      "lottando per la metropolitana."
+    ],
+    "kg233a": [
+      "Sono preoccupato per questo nuovo ragazzo",
+      "lottando per la metropolitana."
+    ],
+    "kg233b": [
+      "Sono preoccupato per questo nuovo ragazzo che combatte per la metropolitana.",
+      "lottando per la metropolitana."
+    ],
+    "kg234": [
+      "Sì, dicono che possa trasformarsi in una specie di... mostro."
+    ],
+    "kg234a": [
+      "Sì, dicono che può trasformarsi in una specie di mostro."
+    ],
+    "kg234b": [
+      "Dicono che possa trasformarsi in una specie di mostro."
+    ],
+    "kg235": [
+      "Non preoccuparti, presto la sua testa sarà sul muro della torre."
+    ],
+    "kg235a": [
+      "Non preoccuparti, presto la sua testa sarà sul muro della torre."
+    ],
+    "kg235b": [
+      "Non preoccuparti, presto la sua testa sarà sul muro della torre."
+    ],
+    "kg236": [
+      "Eheheh."
+    ],
+    "kg236a": [
+      "Eheheh."
+    ],
+    "kg236b": [
+      "Eheheh."
+    ],
+    "kg237a": [
+      "Eheheh..."
+    ],
+    "kg237b": [
+      "Eheheh..."
+    ],
+    "kg238a": [
+      "Hahaha..."
+    ],
+    "kg239a": [
+      "Ah!"
+    ],
+    "kg239b": [
+      "Ah!"
+    ],
+    "kg240a": [
+      "Eheheh..."
+    ],
+    "kg241a": [
+      "Sospetto in un noto veicolo sotterraneo!"
+    ],
+    "kg242a": [
+      "Ha un carico, muoviti!"
+    ],
+    "kg243a": [
+      "Ferma quel veicolo!"
+    ],
+    "kg244a": [
+      "Sei in arresto, accosta!"
+    ],
+    "kg245a": [
+      "Consegnare il veicolo!"
+    ],
+    "kg246a": [
+      "Siamo all'inseguimento!"
+    ],
+    "kg247a": [
+      "Ha un pacco!"
+    ],
+    "kg248a": [
+      "Il sospettato ha un carico sospetto!"
+    ],
+    "kg249a": [
+      "Pensiamo che sia una spedizione illegale."
+    ],
+    "kg250a": [
+      "Tutte le unità si avvicinano al veicolo!"
+    ],
+    "kg251a": [
+      "Il sospetto si muove ad alta velocità!"
+    ],
+    "kg252a": [
+      "Non possiamo tenere il passo!"
+    ],
+    "kg253a": [
+      "E' al porto!"
+    ],
+    "kg254a": [
+      "Se n'è andato!"
+    ],
+    "kg255a": [
+      "Il sospettato ha dato inizio all'inseguimento!"
+    ],
+    "kg256a": [
+      "Veicolo distrutto, l'abbiamo preso!"
+    ],
+    "kg257a": [
+      "Bel lavoro ragazzi, è a terra."
+    ],
+    "kg258a": [
+      "Inseguimento eccellente."
+    ],
+    "kg259a": [
+      "Trasporto di guardia sotto attacco, richiediamo supporto!"
+    ],
+    "kg260a": [
+      "Stiamo subendo danni!"
+    ],
+    "kg261a": [
+      "Ci sta inseguendo!"
+    ],
+    "kg262a": [
+      "Sta cercando di far schiantare il trasporto!"
+    ],
+    "kg263a": [
+      "Abbiamo avuto un'imboscata ai trasporti, le unità rispondono!"
+    ],
+    "kg264a": [
+      "Sta prelevando un prigioniero!"
+    ],
+    "kg265a": [
+      "Abbiamo perso un prigioniero Lurker."
+    ],
+    "kg266a": [
+      "Ha un prigioniero Lurker con sé!"
+    ],
+    "kg267a": [
+      "Tirateli fuori tutti!"
+    ],
+    "kg268a": [
+      "Pensiamo che stia aiutando i Lurker a fuggire!"
+    ],
+    "kg269a": [
+      "Ha già fatto fuori due dei nostri trasporti!"
+    ],
+    "kg270a": [
+      "È di nuovo solo."
+    ],
+    "kg271a": [
+      "Dove sta andando?!"
+    ],
+    "kg272a": [
+      "Terminare con estremo pregiudizio!"
+    ],
+    "kg273a": [
+      "Sta attaccando un altro trasporto!"
+    ],
+    "kg274a": [
+      "Siamo inseguiti, mandate una scorta!"
+    ],
+    "kg275a": [
+      "Abbiamo perso questo passeggero."
+    ],
+    "kg276a": [
+      "Lo stiamo perdendo!"
+    ],
+    "kg277a": [
+      "Li abbiamo presi!"
+    ],
+    "kg278a": [
+      "Li abbiamo presi, ti insegnano a fregare il KG!"
+    ],
+    "kg279a": [
+      "Accostati, amante dei Lurker!"
+    ],
+    "kg280a": [
+      "C'è un ragazzino, guardatelo."
+    ],
+    "kg281a": [
+      "Il Barone vuole che tutti i bambini di questa città vengano arrestati."
+    ],
+    "kg282a": [
+      "Arrenditi al bambino!"
+    ],
+    "kg283a": [
+      "Lascia perdere il ragazzo!"
+    ],
+    "kg284a": [
+      "Se non si arrendono, uccidili tutti!"
+    ],
+    "kg285a": [
+      "Non uccidere il ragazzo."
+    ],
+    "kg286a": [
+      "Il Barone vuole il ragazzo vivo!"
+    ],
+    "kg287a": [
+      "Trova il ragazzo!"
+    ],
+    "kg288a": [
+      "Potrebbe essere quello il ragazzo che il Barone vuole."
+    ],
+    "kg289a": [
+      "Dopo di loro!"
+    ],
+    "kg290a": [
+      "Non muoverti, ragazzo!"
+    ],
+    "kg291a": [
+      "Porta fuori quel bastardino!"
+    ],
+    "kg292a": [
+      "Dovremmo ucciderli tutti!"
+    ],
+    "kg293a": [
+      "Hanno preso un veicolo!"
+    ],
+    "kg294a": [
+      "Se ottieni un tiro nitido, prendilo!"
+    ],
+    "kg295a": [
+      "Il sospettato sta fuggendo a bordo di un veicolo!"
+    ],
+    "kg296a": [
+      "Il veicolo del sospettato attraversa la sezione sette."
+    ],
+    "kg297a": [
+      "Pensiamo che il ragazzo sia con quel mostro della metropolitana."
+    ],
+    "kg298a": [
+      "Eliminateli, ma tenete in vita il ragazzo!"
+    ],
+    "kg299a": [
+      "Sono di nuovo a piedi!"
+    ],
+    "kg300a": [
+      "Cos'è quella cosa?!"
+    ],
+    "kg301a": [
+      "Spara a quella cosa, spara!"
+    ],
+    "kg302a": [
+      "Cosa sta facendo?!"
+    ],
+    "kg303a": [
+      "È quel mostro!"
+    ],
+    "kg304a": [
+      "Le storie sono vere!"
+    ],
+    "kg305a": [
+      "È il mostro oscuro!"
+    ],
+    "kg306a": [
+      "È lui!"
+    ],
+    "kg307a": [
+      "È l'eco-maniaco oscuro!"
+    ],
+    "kg308a": [
+      "Uccidilo, uccidilo!"
+    ],
+    "kg309a": [
+      "Il sospetto si è trasformato in",
+      "una creatura di qualche tipo."
+    ],
+    "kg310a": [
+      "Certo è brutto."
+    ],
+    "kg311a": [
+      "Quella è una brutta creatura."
+    ],
+    "kg312a": [
+      "Attenzione!"
+    ],
+    "kg313a": [
+      "Ricaderci!"
+    ],
+    "kg314a": [
+      "Sta sprecando tutti!"
+    ],
+    "kg315a": [
+      "Non possiamo ucciderlo!"
+    ],
+    "kg316a": [
+      "Mantenete i vostri uomini a terra!"
+    ],
+    "kg317a": [
+      "La Guardia Krimzon non scappa!"
+    ],
+    "kg318a": [
+      "Attenzione ai suoi artigli!"
+    ],
+    "kg319a": [
+      "Stai lontano dai suoi dardi energetici!"
+    ],
+    "kg320a": [
+      "Questo è un raid, non resistere!"
+    ],
+    "kg321a": [
+      "Entra!"
+    ],
+    "kg322a": [
+      "Per ordine del barone Praxis,",
+      "tutti qui devono essere licenziati!"
+    ],
+    "kg323a": [
+      "Arrenditi e non soffrirai molto."
+    ],
+    "kg324a": [
+      "È quel mostro mostruoso della metropolitana!"
+    ],
+    "kg325a": [
+      "Prendilo!"
+    ],
+    "kg326a": [
+      "Tutte le unità convergono su Water Slums!"
+    ],
+    "kg327a": [
+      "Abbiamo un combattente sotterraneo!"
+    ],
+    "kg328a": [
+      "Bruciateli!"
+    ],
+    "kg329a": [
+      "Stare insieme!"
+    ],
+    "kg330a": [
+      "Li abbiamo messi alle strette!"
+    ],
+    "kg331a": [
+      "Il sospettato è stato messo alle strette nella sezione due."
+    ],
+    "kg332a": [
+      "Non c'è via di fuga!"
+    ],
+    "kg333a": [
+      "La resistenza è inutile!"
+    ],
+    "kg334a": [
+      "Rinuncia al manufatto, maniaco dell'eco!"
+    ],
+    "kg335a": [
+      "Li abbiamo tagliati fuori!"
+    ],
+    "kg336a": [
+      "È intrappolato!"
+    ],
+    "kg337a": [
+      "Li abbiamo presi!"
+    ],
+    "kg338a": [
+      "Stiamo subendo un fuoco pesante!"
+    ],
+    "kg339a": [
+      "Stiamo subendo pesanti perdite, inviate rinforzi!"
+    ],
+    "kg340a": [
+      "Questo ragazzo sa come combattere!"
+    ],
+    "kg341a": [
+      "Mantieni la posizione!"
+    ],
+    "kg342a": [
+      "Non ritirarti!"
+    ],
+    "kg343a": [
+      "Abbiamo perso la squadra Beta!"
+    ],
+    "kg344a": [
+      "Abbiamo bisogno di più uomini!"
+    ],
+    "kg345a": [
+      "È sul sentiero a sud!"
+    ],
+    "kg346a": [
+      "È nell'acqua!"
+    ],
+    "kg347a": [
+      "È vicino alla capanna est, tutte le unità convergono!"
+    ],
+    "kg348a": [
+      "Lo perderemo!"
+    ],
+    "kg349a": [
+      "Avviso intruso, suona l'allarme!"
+    ],
+    "kg350a": [
+      "La Fortezza è sotto attacco!"
+    ],
+    "kg351a": [
+      "Questa è casa nostra, ragazzo!"
+    ],
+    "kg352a": [
+      "Gli Ottoni stanno entrando nella nostra Fortezza!"
+    ],
+    "kg353a": [
+      "Non uscirai vivo da qui!"
+    ],
+    "kg354a": [
+      "Grazie per averlo reso facile."
+    ],
+    "kg355a": [
+      "Stiamo subendo pesanti perdite."
+    ],
+    "kg356a": [
+      "Sta penetrando in profondità, fermalo!"
+    ],
+    "kg357a": [
+      "Porta fuori questo tizio, è un ordine!"
+    ],
+    "kg358a": [
+      "Invia la squadra d'assalto!"
+    ],
+    "kg359a": [
+      "Porta la pesante potenza di fuoco!"
+    ],
+    "kg360a": [
+      "Mandate le guardie dello scudo!"
+    ],
+    "kg361a": [
+      "Gli sto addosso!"
+    ],
+    "kg362a": [
+      "Lasciamelo fare!"
+    ],
+    "kg363a": [
+      "Li ho presi!"
+    ],
+    "kg364a": [
+      "Finitelo!"
+    ],
+    "kg365a": [
+      "Si sta muovendo verso la stanza delle munizioni!"
+    ],
+    "kg366a": [
+      "Intercetta l'intruso prima che si avvicini troppo!"
+    ],
+    "kg367a": [
+      "Sta arrestando un sospettato."
+    ],
+    "kg368a": [
+      "Ha un agente della metropolitana con sé!"
+    ],
+    "kg369a": [
+      "Tirateli fuori entrambi!"
+    ],
+    "kg370a": [
+      "Ha arrestato un altro sospettato."
+    ],
+    "kg371a": [
+      "Abbiamo perso il ragazzo che ha lasciato!"
+    ],
+    "kg372a": [
+      "Ha un passeggero."
+    ],
+    "kg373a": [
+      "L'autista sta lavorando con la metropolitana."
+    ],
+    "kg374a": [
+      "Sospetto che il veicolo abbia subito danni, ma sia ancora in movimento."
+    ],
+    "kg375a": [
+      "Dobbiamo tagliarli via!"
+    ],
+    "kg376a": [
+      "Ha un altro agente!"
+    ],
+    "kg377a": [
+      "Il sospetto guida in modo irregolare!"
+    ],
+    "kg378a": [
+      "Il sospettato continua a fuggire!"
+    ],
+    "kg379a": [
+      "Li abbiamo presi questa volta!"
+    ],
+    "kg380a": [
+      "Veicolo sospetto distrutto!"
+    ],
+    "kg381a": [
+      "Sta per prendere un altro veicolo!"
+    ],
+    "kg382a": [
+      "Li abbiamo fatti fuori!"
+    ],
+    "kg383a": [
+      "È fritto!"
+    ],
+    "kg384a": [
+      "Un'altra vittoria per il KG, bel tiro, ragazzi."
+    ],
+    "kg385a": [
+      "Il sospettato è sfuggito alla cattura."
+    ],
+    "kg386a": [
+      "Bene!"
+    ],
+    "kg387a": [
+      "Eh!"
+    ],
+    "kg388a": [
+      "Arghh!"
+    ],
+    "kg389a": [
+      "Uffa!"
+    ],
+    "kg390a": [
+      "Uh!"
+    ],
+    "kg391a": [
+      "Bene!"
+    ],
+    "kg392a": [
+      "Hah!"
+    ],
+    "kg393a": [
+      "Uffa!"
+    ],
+    "kg394a": [
+      "Ah!"
+    ],
+    "kg395a": [
+      "Uffa!"
+    ],
+    "kg396a": [
+      "Ah!"
+    ],
+    "kg397a": [
+      "Uffa!"
+    ],
+    "kg398a": [
+      "Huff!"
+    ],
+    "kg399a": [
+      "Argh!"
+    ],
+    "kg400a": [
+      "Ah!"
+    ],
+    "kg401a": [
+      "Eh!"
+    ],
+    "kg402a": [
+      "Eh!"
+    ],
+    "kg403a": [
+      "Ahah!"
+    ],
+    "kg404a": [
+      "Ah!"
+    ],
+    "kg405a": [
+      "Ahh...!"
+    ],
+    "kg406a": [
+      "Arrgh!"
+    ],
+    "kg407a": [
+      "Oh!"
+    ],
+    "kg408a": [
+      "Uffa...!"
+    ],
+    "kg409a": [
+      "Uffa!"
+    ],
+    "kg410a": [
+      "Nargh!"
+    ],
+    "kg411a": [
+      "Ah!"
+    ],
+    "kg412a": [
+      "Uffa...!"
+    ],
+    "kg413a": [
+      "Ah...!"
+    ],
+    "kg414a": [
+      "Ah!"
+    ],
+    "kg415a": [
+      "Argh!"
+    ],
+    "kg416a": [
+      "Uffa...!"
+    ],
+    "kg417a": [
+      "Ehm..."
+    ],
+    "kg418a": [
+      "Ah...!"
+    ],
+    "kg419a": [
+      "Uffa!"
+    ],
+    "kg420a": [
+      "Ah...!"
+    ],
+    "kg421a": [
+      "Eh...!"
+    ],
+    "kg422a": [
+      "Oddio!"
+    ],
+    "kg423a": [
+      "Hung...!"
+    ],
+    "kg424a": [
+      "Argh!"
+    ],
+    "kg425a": [
+      "Uffa!"
+    ],
+    "kg426a": [
+      "Uffa!"
+    ],
+    "kg427a": [
+      "Uffa!"
+    ],
+    "kg428a": [
+      "Uffa!"
+    ],
+    "kgv001": [
+      "Fermare!"
+    ],
+    "kgv002": [
+      "Apri il fuoco!"
+    ],
+    "kgv003": [
+      "Entra!"
+    ],
+    "kgv004": [
+      "Portateli fuori!"
+    ],
+    "kgv005": [
+      "Portalo giù!"
+    ],
+    "kgv006": [
+      "Sparagli, sparagli!"
+    ],
+    "kgv007": [
+      "Muori, fuorilegge!"
+    ],
+    "kgv008": [
+      "Mangia questo!"
+    ],
+    "kgv009": [
+      "Fuoco fuoco!"
+    ],
+    "kgv010": [
+      "Arrenditi, fuorilegge!"
+    ],
+    "kgv011": [
+      "Chiudete l'area."
+    ],
+    "kgv012": [
+      "Chiama i rinforzi!"
+    ],
+    "kgv013": [
+      "Rivolta in corso!"
+    ],
+    "kgv014": [
+      "Chiama rinforzi!"
+    ],
+    "kgv015": [
+      "Fermare il veicolo!"
+    ],
+    "kgv016": [
+      "Tu sei sotto arresto!"
+    ],
+    "kgv017": [
+      "Fermo!"
+    ],
+    "kgv018": [
+      "Rallentare!"
+    ],
+    "kgv019": [
+      "Spostati!"
+    ],
+    "kgv020": [
+      "Fuori dal veicolo!"
+    ],
+    "kgv021": [
+      "Chiama altri Hellcats!"
+    ],
+    "kgv022": [
+      "Richiedo backup!"
+    ],
+    "kgv023": [
+      "Inseguimento ad alta velocità nel settore quattro!"
+    ],
+    "kgv024": [
+      "Sospetto nel veicolo!"
+    ],
+    "kgv025": [
+      "Il sospetto è fuggito nel settore cinque."
+    ],
+    "kor001": [
+      "Sono così orgoglioso di te Jak, e anche di te, Daxter!",
+      "Insieme avete causato un vero danno al Barone.",
+      "Potremmo anche vincere questa guerra!"
+    ],
+    "kor002": [
+      "Ottimo lavoro, ti stai dimostrando una vera risorsa.",
+      "Senza eco, il Barone presto cadrà,",
+      "e il futuro della città sarà nelle nostre mani."
+    ],
+    "kor004": [
+      "Un altro colpo al Barone, miei buoni amici!",
+      "Molto presto, le nostre fortune cambieranno!"
+    ],
+    "krew001": [
+      "Jak, questo è Krew. Ho appena parlato con il mio cliente delle corse",
+      "e mi ha detto che eri abbastanza bravo con quel JET-Board",
+      "di lei. Le mie fonti dicono che si tratta di un carico di Krimzon Guard",
+      "le apparecchiature di ascolto sono appena arrivate al porto.",
+      "Nessuno di noi, compresa la metropolitana, vuole quei dispositivi",
+      "installato e funzionante. Non va bene per gli affari.",
+      "Sali sul JET-Board fino al porto",
+      "e distruggi tutte le casse della Guardia Krimzon che trovi.",
+      "Ci sarà sicuramente un perimetro di difesa,",
+      "quindi fai attenzione, ehi?"
+    ],
+    "krew002": [
+      "Ottimo lavoro, Jak. Anche io sono impressionato.",
+      "Dovrei mantenere delle guardie Krimzon senza scrupoli",
+      "fuori dalla nostra attività.",
+      "A cosa va il mondo se non puoi riscattare?",
+      "qualche guardia con tangenti?"
+    ],
+    "krew003": [
+      "Ooooh... le favole della buonanotte erano vere!",
+      "Il leggendario Cuore di Mar era nascosto dentro quella brutta statua",
+      "del vecchio ragazzo.",
+      "Niente di rotto, niente di guadagnato! Questo è il mio motto. Hahaha...",
+      "Per la tua fedeltà troverai un eccellente potenziamento per la pistola",
+      "nascosto in una cassa nel porto."
+    ],
+    "krew004": [
+      "Quella è una torretta sotto. Continuare a cercare!"
+    ],
+    "krew005": [
+      "Due torrette. Buon lavoro finora!"
+    ],
+    "krew006": [
+      "Tre torrette sparite. Bene! Continuate così!"
+    ],
+    "krew007": [
+      "Quattro torrette distrutte. Haha... Adorabile, ragazzi! Vai a prenderli!"
+    ],
+    "krew008": [
+      "Cinque torrette in malora! Continuare."
+    ],
+    "krew009": [
+      "Sei torrette fuori servizio.",
+      "Ah, mi piace il modo in cui lavori."
+    ],
+    "krew010": [
+      "Lavori in ottone, ragazzi! Hai distrutto tutte le torrette, eh?",
+      "Ora torna all'Hip Hog."
+    ],
+    "kwbf001": [
+      "Lo sai che non posso giocare onestamente!",
+      "Ho un'arma segreta: il mio campo di duplicità!",
+      "Salutate i miei piccoli amici...",
+      "Ah, moltiplicami! Ahahahah... Che delizia."
+    ],
+    "kwbf002": [
+      "Vorrei presentarvi il mio... \"equipaggio\"."
+    ],
+    "kwbf003": [
+      "Balliamo!"
+    ],
+    "kwbf004": [
+      "Morirai!"
+    ],
+    "kwbf005": [
+      "Arriviamo!"
+    ],
+    "kwbf006": [
+      "Mamma mia, non sono stupendi i miei gemelli?"
+    ],
+    "kwbf007": [
+      "Non puoi fermarci tutti!"
+    ],
+    "kwbf008": [
+      "Sorpresa! Più di me di quanto tu possa gestire."
+    ],
+    "kwbf009": [
+      "Ho alcuni bravi uomini che mi aiutano."
+    ],
+    "kwbf010": [
+      "Prendilo!"
+    ],
+    "kwbf011": [
+      "UARGH! Prova a fermarmi adesso!"
+    ],
+    "kwbf012": [
+      "Finora sei stato fortunato, eh?"
+    ],
+    "kwbf013": [
+      "Mi sto stancando di tutto questo. La finiamo adesso."
+    ],
+    "kwbf014": [
+      "Hm-hm, mi muovo abbastanza velocemente per essere un omone, eh?"
+    ],
+    "kwbf015": [
+      "Galleggio come una farfalla e pungo come un wumpbee!"
+    ],
+    "kwbf016": [
+      "Urgh!"
+    ],
+    "kwbf017": [
+      "Argh!"
+    ],
+    "kwbf018": [
+      "Arghh!"
+    ],
+    "kwbf019": [
+      "Urrghh!"
+    ],
+    "kwbf020": [
+      "Urgh, ow!"
+    ],
+    "kwbf021": [
+      "Morire!"
+    ],
+    "kwbf022": [
+      "Ora ho te!"
+    ],
+    "kwbf023": [
+      "Non puoi vincere, Jak!"
+    ],
+    "kwbf024": [
+      "Ecco un po' di dolore!"
+    ],
+    "kwbf025": [
+      "NO!"
+    ],
+    "kwbf026": [
+      "Stai mettendo a dura prova la mia pazienza!"
+    ],
+    "kwbf027": [
+      "Stai fermo!"
+    ],
+    "kwbf028": [
+      "Ahah, come ti sei sentito?"
+    ],
+    "kwbf029": [
+      "Avresti dovuto andartene quando ne avevi la possibilità."
+    ],
+    "kwbf030": [
+      "Pop questo!"
+    ],
+    "kwbf031": [
+      "Non puoi fermare la bomba, Jak!"
+    ],
+    "kwbf032": [
+      "Ahahahah, è stato bello!"
+    ],
+    "kwbf033": [
+      "Sono il maestro d'armi!"
+    ],
+    "kwbf034": [
+      "Aveva abbastanza?"
+    ],
+    "kwbf035": [
+      "Arriviamo!"
+    ],
+    "kwbf036": [
+      "Balla per me, Jak!"
+    ],
+    "kwbf037": [
+      "Non puoi prenderci tutti!"
+    ],
+    "kwbf038": [
+      "Etichetta! Lo sei."
+    ],
+    "kwbf039": [
+      "Uff. Questo è un po' un allenamento..."
+    ],
+    "kwbf040": [
+      "Qual è il vero me, Jak?"
+    ],
+    "kwbf041": [
+      "Finalmente... posso rimetterti al tuo posto!"
+    ],
+    "kwbf042": [
+      "Arghh! Tu piccolo...!"
+    ],
+    "ora006": [
+      "Portami altre 200 gemme di teschio di testa di metallo",
+      "e ti mostrerò un altro Potere Oscuro."
+    ],
+    "ora007": [
+      "Portami altre 200 gemme del teschio",
+      "e un altro potere sarà tuo da controllare."
+    ],
+    "ora008": [
+      "Portami altre gemme del teschio per ricevere il controllo",
+      "sopra un potere oscuro."
+    ],
+    "ora009": [
+      "Non hai abbastanza gemme del teschio.",
+      "Torna quando ne avrai raccolti di più."
+    ],
+    "ora010": [
+      "Mi servono più gemme del teschio."
+    ],
+    "ora011": [
+      "Non fidarti della tua dipendenza dalle armi."
+    ],
+    "ora012": [
+      "Usa solo il tuo corpo e il tuo cervello per questa sfida."
+    ],
+    "ora013": [
+      "Le armi sono per i deboli."
+    ],
+    "ora014": [
+      "Non devi usare armi in questa sfida."
+    ],
+    "pek001": [
+      "Groark! Non posso credere che tu abbia fatto davvero questa cosa!",
+      "Onin dice che cercherà risposte nelle sequenze temporali",
+      "su queste sacre reliquie. Ti troverò allora."
+    ],
+    "pek002": [
+      "Groark! Whoa... beh sarò lo zio di Moncaw, la Torre della Luce",
+      "esiste davvero! Il raggio di luce splende da qualche parte",
+      "in città! La Tomba di Mar era proprio sotto il nostro naso",
+      "da sempre. E grazie a me l'hai trovato!"
+    ],
+    "pek003": [
+      "Oh! Mentre vivo e muoio, un passo più vicino alla Tomba.",
+      "Non avrei mai pensato che saremmo arrivati ​​a questo punto!"
+    ],
+    "pek010": [
+      "Questa è la ciotola magica di Onin.",
+      "Onin farà apparire dei simboli dalla sua ciotola.",
+      "Quando compaiono i simboli, devi farli scoppiare prima che",
+      "raggiungere il suolo. Devi farli scoppiare velocemente, solo scoppiarli",
+      "i simboli che vedi. Se provi a far apparire un simbolo, lo è",
+      "non c'è, Onin ti darà un rigore! Perdere qualsiasi simbolo",
+      "e sarai penalizzato! Ogni round diventerà più veloce.",
+      "Vediamo quanto lontano arrivi.",
+      "È necessario ottenere un punteggio sufficientemente alto per vincere."
+    ],
+    "pek011": [
+      "Stai andando molto bene!"
+    ],
+    "pek012": [
+      "Eh, non male."
+    ],
+    "pek013": [
+      "Continua così, puoi farcela!"
+    ],
+    "pek014": [
+      "Fai scoppiare non più del numero reale di ciascun simbolo,",
+      "e sarai penalizzato! Groark!"
+    ],
+    "pek015": [
+      "Pronto? Andare!"
+    ],
+    "pek016": [
+      "Quel simbolo non c'era, rigore!"
+    ],
+    "pek017": [
+      "Ah, Onin ti ha preso! Pop solo i simboli che vedi."
+    ],
+    "pek018": [
+      "Ecco un altro giro!",
+      "Dagli un'altra raffica, ragazza Onin!"
+    ],
+    "pek019": [
+      "Ti ha preso di nuovo! Qual è il tuo problema?"
+    ],
+    "pek020": [
+      "Non posso credere che tu sia arrivato fin qui!"
+    ],
+    "pek021": [
+      "Presto! Mancano dei simboli!"
+    ],
+    "pek022": [
+      "Ne hai saltato qualcuno!"
+    ],
+    "pek023": [
+      "Più veloce! Più veloce!"
+    ],
+    "pek024": [
+      "Dammelo, Onin! Di più, Onin, di più!",
+      "Vai, ragazza, scuoti quello che ti ha dato tua mamma!"
+    ],
+    "pek025": [
+      "Mi diverto nel club."
+    ],
+    "pek026": [
+      "Non può farne così tanti!"
+    ],
+    "pek027": [
+      "Che cosa? Ci va ancora?"
+    ],
+    "pek028": [
+      "Vediamo se riesce a gestirlo."
+    ],
+    "pek029": [
+      "Forza! Forza!"
+    ],
+    "pek030": [
+      "Ok, quindi sei a posto."
+    ],
+    "pek031": [
+      "Wow! Niente male."
+    ],
+    "pek032": [
+      "Ebbene, ho deposto un uovo."
+    ],
+    "pek033": [
+      "Sorprendente! Hai vinto davvero!",
+      "Sono senza parole, e questo è raro."
+    ],
+    "pek034": [
+      "Hai abbastanza punti, congratulazioni!"
+    ],
+    "pek035": [
+      "Ultimo rigore! Perdi, perdente."
+    ],
+    "pek036": [
+      "Hai perso! Perché non sono sorpreso?"
+    ],
+    "pek037": [
+      "Hai perso! Vuoi riprovare?"
+    ],
+    "pek038": [
+      "Ahh, hai deposto un uovo. Peccato, così triste."
+    ],
+    "pek039": [
+      "Oooh, così vicino... no! Eheheh..."
+    ],
+    "pek040": [
+      "Hai fatto uno sforzo coraggioso, ma fai schifo!"
+    ],
+    "pek041": [
+      "Game over, finito, fatto, è finita!"
+    ],
+    "prop002": [
+      "Come tutti sapete, sono stato ferito durante l'ultima volta",
+      "glorioso assalto contro il Metal Head Nest",
+      "molti anni fa. Ho sacrificato tutto",
+      "per questa città e pretendo solo lo stesso in cambio!",
+      "La fedeltà sarà premiata,",
+      "la morte attenderà tutti gli altri."
+    ],
+    "prop003": [
+      "L'Eco Oscuro dentro di te alla fine ti ucciderà, Jak.",
+      "I suoi effetti distruttivi non possono essere fermati.",
+      "Una volta che sei nella sua presa caotica, non ti lascerà andare",
+      "finché non scivoli nella follia. Consegnati, e io",
+      "ucciderti misericordiosamente e senza dolore,",
+      "è la tua unica via d'uscita."
+    ],
+    "prop004": [
+      "Non cercare di prendermi in giro, Jak.",
+      "Solo perché non ti ho ancora ucciso, non è così",
+      "significa che non ti capisco. I cittadini di questa città",
+      "adorami perché offro loro sicurezza.",
+      "Tutto ciò che chiedo in cambio è per le loro vite.",
+      "Ti troverò e, quando lo farò, desidererai",
+      "sei morto in prigione."
+    ],
+    "prop005": [
+      "Attenzione, miei fedeli cittadini! Cerchiamo a",
+      "fuggitivo ribelle che ha causato notevoli danni alla città",
+      "danni di recente. Quest'uomo è armato ed estremamente",
+      "pericoloso e può in qualche modo trasformarsi in un mostruoso",
+      "creatura. Abbiamo rapporti che sta lavorando con",
+      "Metal Heads per sovvertire la tua città e la tua sicurezza.",
+      "Segnala immediatamente tutti gli avvistamenti!"
+    ],
+    "prop006": [
+      "Cittadini coraggiosi, oggi è l'anniversario dei grandi",
+      "battaglia che ha rovinato la sezione della nostra città che ora chiamiamo",
+      "Città morta. Ricorda coloro che sono morti",
+      "quel giorno e quanto dobbiamo ai Metal Heads",
+      "per il loro tradimento! Ricorda quanto coraggiosamente ho combattuto",
+      "per salvare quelle povere anime della sezione invasa",
+      "e riflettete su quanto dovreste essere grati per questo",
+      "Krimzon Guard ti tiene al sicuro ogni giorno."
+    ],
+    "prop007": [
+      "Questo è il tuo Barone. I resoconti di un Metal Head",
+      "invasione della città sono ampiamente esagerate.",
+      "Ti assicuro che questa non è che una piccola incursione e la faremo",
+      "sconfiggerlo in breve tempo. Restate nelle vostre case, niente panico,",
+      "o sarai punito!"
+    ],
+    "prop008": [
+      "Attenzione cittadini, qui è il vostro Barone.",
+      "Ci sono stati diversi usi non autorizzati di",
+      "le vecchie serrature delle porte della città. Fortunatamente, queste violazioni",
+      "non hanno provocato contaminazioni, ma lo sappiamo tutti",
+      "quanto è mortale la Zona Contaminata. A nessuno è permesso",
+      "fuori città senza autorizzazione, lasciamo stare",
+      "noto che eventuali trasgressori verranno catturati",
+      "ed eseguito."
+    ],
+    "prop009": [
+      "Servi la tua città."
+    ],
+    "prop010": [
+      "Sacrificatevi per la vostra città e tutto prospererà!"
+    ],
+    "prop011": [
+      "Sei al sicuro, perché mi importa."
+    ],
+    "prop012": [
+      "Tutti i Metal Head devono morire!"
+    ],
+    "prop013": [
+      "Lavora duro e sii grato."
+    ],
+    "prop014": [
+      "Denuncia i disonesti."
+    ],
+    "prop015": [
+      "Ricorda, anche i tuoi amici possono essere i tuoi nemici."
+    ],
+    "prop016": [
+      "Consegnate tutti coloro che sovvertono."
+    ],
+    "prop017": [
+      "La forza è la nostra unica opzione!"
+    ],
+    "prop018": [
+      "Obbedisci e sii felice."
+    ],
+    "prop019": [
+      "Il sacrificio è una cosa che devi fare",
+      "per la tua città."
+    ],
+    "prop020": [
+      "Sacrificati per la tua città."
+    ],
+    "prop021": [
+      "Ricorda, anche gli amici possono essere nemici."
+    ],
+    "prop022": [
+      "La città ha bisogno del tuo sacrificio."
+    ],
+    "prop023": [
+      "Dentro le mura è meglio!"
+    ],
+    "prop024": [
+      "La legge non deve avere pietà."
+    ],
+    "prop025": [
+      "La giustizia è rapida."
+    ],
+    "prop026": [
+      "Il movimento mondo sotterrano è morto!"
+    ],
+    "prop027": [
+      "Unisciti alla Guardia Krimzon e alla tua famiglia",
+      "gli sarà permesso di restare."
+    ],
+    "prop028": [
+      "Una via: La mia via."
+    ],
+    "prop029": [
+      "Comandare è controllare."
+    ],
+    "prop030": [
+      "Rinuncia alla tua libertà e io ti proteggerò."
+    ],
+    "prop031": [
+      "Abbiate fede in me e la Terra Promessa sarà vostra."
+    ],
+    "prop032": [
+      "La città ha bisogno di un capo forte, non di un giovane folle."
+    ],
+    "prop033": [
+      "Non accogliere il volto sconosciuto."
+    ],
+    "prop034": [
+      "Evitate chi mi sfida!"
+    ],
+    "prop035": [
+      "Io sono il volto di Città Rifugio."
+    ],
+    "prop036": [
+      "Senza la mia forza, non ci sarebbe nessuna città."
+    ],
+    "prop037": [
+      "Seguitemi verso un futuro più sicuro!"
+    ],
+    "prop038": [
+      "Con me sei al sicuro tra le mura."
+    ],
+    "prop039": [
+      "Sfidami... e muori."
+    ],
+    "prop040": [
+      "Benvenuti a Città Rifugio.",
+      "Tutte le leggi sono in vigore per la vostra sicurezza.",
+      "Obbeditemi e non sarete puniti."
+    ],
+    "prop041": [
+      "La città è sicura. Non permetterò che ci siano danni",
+      "che ti accada, fidati di me."
+    ],
+    "prop042": [
+      "State sicuri, distruggerò le Teste di Metallo.",
+      "In un modo o nell'altro."
+    ],
+    "prop043": [
+      "A tutti i cittadini, questa piccola rivolta clandestina",
+      "sarà affrontato con tutti i mezzi aggressivi.",
+      "Noi schiacceremo questi arroganti arrivati, ma loro non lo faranno",
+      "non ti è permesso minacciare me o l'ordine di questa città!"
+    ],
+    "prop044": [
+      "Per tutti i cittadini di questa grande città, c'è un mostro",
+      "in mezzo a voi, mascherato da uomo!",
+      "È pericoloso e deve essere distrutto!",
+      "Offro una ricompensa in eco per la sua cattura, o, se tu",
+      "ho una persona cara in prigione, la scambierò con",
+      "questo rinnegato. Lo prometto."
+    ],
+    "prop045": [
+      "A tutti coloro che mi sfidano! Ti sto guardando,",
+      "Sono ovunque, sono questa città!"
+    ],
+    "prop046": [
+      "Questo è il tuo Barone. Sono stato informato dal",
+      "ministero del lavoro estremo che è la produttività dei lavoratori",
+      "giù questo mese! Questo è inaccettabile!",
+      "Ti do sicurezza e tu mi ripaghi così?",
+      "Devi lavorare di più, non in modo più intelligente!",
+      "Libera la mente e il corpo farà come gli viene detto,",
+      "il lavoro forzato ti renderà libero!",
+      "E per aiutarti nella tua motivazione spirituale...",
+      "le quote saranno raddoppiate il prossimo mese!"
+    ],
+    "prop047": [
+      "A causa delle recenti, ehm... difficoltà di \"attrito\",",
+      "questa città ha bisogno di nuove reclute della Guardia Krimzon!",
+      "A tutti è chiesto di offrire volontariato ai membri della propria famiglia!",
+      "Vieni nella tua amichevole struttura della Fortezza.",
+      "O altro!"
+    ],
+    "prop048": [
+      "Come vostro Barone, sto istituendo una regola \"niente hoverboard\".",
+      "nella città! Giovani delinquenti con niente di meglio",
+      "altro da fare che fluttuare e fare acrobazie! Eh!",
+      "Metterò tutti i trasgressori nella Guardia e insegnerò loro",
+      "un po' di disciplina. Niente pattinaggio, è la legge!"
+    ],
+    "prop049": [
+      "Sono deluso dalla mancanza di questa città",
+      "impegno e sacrificio. Lavora di più! Mangia meno!",
+      "Bevi solo quando te lo dico io! Il sonno è facoltativo.",
+      "Siamo in guerra con una minaccia esterna,",
+      "non costringermi a dichiarare guerra anche a te!"
+    ],
+    "prop050": [
+      "Saluti, popolo di questa meravigliosa utopia. Quest'anno",
+      "La gara di campionato inizierà a breve. Tutti i cittadini",
+      "non agli arresti domiciliari sono invitati a recarsi",
+      "allo Stadio e guarda il tuo figlio preferito Erol",
+      "mostra ancora una volta come la Guardia Krimzon sia l'élite",
+      "guerrieri di questa città. Portate tutta la famiglia! Il primo",
+      "mille bambini avranno l'obbligatorietà",
+      "Pacchetto di reclutamento della Guardia Krimzon e diventa",
+      "\"ha chiesto\" di entrare nella Guardia a vita, che meraviglia!"
+    ],
+    "prop051": [
+      "Questo è il tuo Barone, ho ancora il controllo!",
+      "E ti assicuro che non esistono assolutamente i Metal Head",
+      "nella città. Chiunque contraddica questo fatto...",
+      "verrà fucilato! La situazione attuale è semplicemente",
+      "un'elaborata bufala propagandistica, perpetrata da",
+      "la milizia clandestina fuorilegge ci sta provando",
+      "sovvertite le nostre leggi e screditate coloro che vi proteggono",
+      "Mentre dormi! Non prestare attenzione a questa stupida bufala,",
+      "non ci sono Metal Head nel raggio di 100 miglia da questa città!"
+    ],
+    "prop052": [
+      "Questo è il Barone Praxis. Ci siamo ripresi la città",
+      "e i Metal Heads ora stanno fuggendo davanti a noi!",
+      "La vittoria è a portata di mano! Continua a lottare per la libertà",
+      "Un giorno potrei dartelo. Continua a sfidarli",
+      "nemici della mia legge e del mio ordine...",
+      "e continua a morire per me."
+    ],
+    "prop053": [
+      "Non temere gli uomini in rosso. Certo, ce ne sono occasionali",
+      "denunce per la loro polizia eccessivamente aggressiva,",
+      "distruzione sfrenata delle proprietà delle persone durante le incursioni,",
+      "arresti di massa, persone care smarrite e quant'altro.",
+      "Ehi, siamo solo umani! Gestire una città può esserlo",
+      "più dura di quanto sembri, immagina quanto peggio",
+      "lo sarebbe se al comando ci fossero i Metal Heads!"
+    ],
+    "prop054": [
+      "Abbiamo avuto alcuni incidenti con la manodopera delle classi inferiori",
+      "forza ultimamente. Se il tuo Lurker si comporta male, chiama Krimzon",
+      "Controllo degli animali. Il tuo Lurker è su un albero? Bloccato in a",
+      "griglia fognaria? Schiuma alla bocca? Chiamata",
+      "gli ufficiali amichevoli del K.A.C. e si occuperanno",
+      "con il tuo schiavo peloso. con tutto l'amore e la cura",
+      "merita... poi portatelo via per il ricondizionamento.",
+      "Ricorda, i Lurker possono essere pericolosi!"
+    ],
+    "prop055": [
+      "Per favore donate generosamente al fondo eco del Barone.",
+      "La tua munifica donazione verrà utilizzata per una varietà di scopi",
+      "dei bisogni umanitari: bombe, armi da fuoco, armature, genetica",
+      "ricerca di alterazione, tutto in nome della preservazione di questo",
+      "la nostra meravigliosa città. Dona spesso, dona liberamente...",
+      "o ti sarà portato via!"
+    ],
+    "prop056": [
+      "Può essere così solitario in cima e guardare dall'alto",
+      "quassù vedo che questa sporca città è disperata",
+      "bisogno di rivitalizzazione. Quindi, a tal fine, noi",
+      "demoliranno con i bulldozer molte zone della città nel",
+      "prossime settimane! Tutte le denunce contro questo",
+      "l'iniziativa di costruzione può essere portata,",
+      "di persona, alla prigione della Fortezza dove saranno",
+      "\"rivisto.\" Le sezioni della città condannate devono essere",
+      "essere evacuati prima che inizi la rasatura.",
+      "Chiunque sia ancora nelle proprie case verrà ignorato."
+    ],
+    "prop057": [
+      "L'attacco di Metal Head non avrà successo!",
+      "Il vostro Barone ha preso alcune misure",
+      "per garantire che i Metal Head non reggeranno MAI",
+      "questa città per molto tempo. State tranquilli, conquisterò la vittoria",
+      "dalle fauci della sconfitta, costi quel che costi!",
+      "Ho giurato di non lasciare mai che questa città cadesse e intendo mantenerla",
+      "quella promessa. Ciò che deve accadere è per il bene di tutti!",
+      "Ricorda, morire vittoriosi è glorioso",
+      "distintivo d'onore!"
+    ],
+    "prop058": [
+      "Questo è il Barone Praxis. Mentre la nostra città affronta la sua peggiore minaccia",
+      "in trecento anni mi trovo di fronte a cose serie",
+      "decisioni riguardanti il ​​nostro futuro. Mi dispiace di averlo fatto",
+      "restano poche scelte. Comando a tutti voi di ritornare al vostro",
+      "case e salutate le vostre famiglie.",
+      "Siate certi che, in un modo o nell'altro, non perderemo questa battaglia",
+      "oppure un'altra! È giunto il momento di mostrare queste creature",
+      "di cosa siamo capaci quando ogni speranza è perduta!",
+      "È stato un piacere governare su di te",
+      "all'estremità."
+    ],
+    "sam001": [
+      "Questa è Samo. Jak, ho bisogno che tu vada alle rovine",
+      "a Dead Town e visita la mia vecchia capanna. È ora di recuperare",
+      "qualcosa che ho nascosto lì tanto tempo fa, buona fortuna! E Daxter...",
+      "pulisci casa mia mentre sei là fuori!"
+    ],
+    "sam002": [
+      "Questa è Samo. Ora che voi ragazzi siete qui",
+      "Voglio che tu vada alla mia vecchia capanna. C'è qualcosa lì",
+      "di cui abbiamo bisogno! Buona fortuna e tieni d'occhio il nostro Metal Heads."
+    ],
+    "sam003": [
+      "Questo è Samos, Jak. devono aver preso i Metal Heads",
+      "il gigantesco cancello che porta al loro Nido nella Terra Desolata.",
+      "Se mai useranno quell'anello per aprire una spaccatura",
+      "al nostro vecchio villaggio, dobbiamo entrare nel Nido e trovarlo."
+    ],
+    "sam004": [
+      "Hai fatto bene, Jak. Fortunatamente, la Pietra Precursore non c'era",
+      "bomba quando è esplosa, altrimenti nessuno di noi sarebbe stato qui",
+      "Proprio adesso. Torna al garage della gara",
+      "appena puoi."
+    ],
+    "sam005": [
+      "Buon lavoro finora, ragazzi!",
+      "Trova il giovane Samos e dagli il seme della vita."
+    ],
+    "sam006": [
+      "Finalmente sei arrivato qui! Trova il Totem dell'Assaltatore",
+      "e recupera un pezzo del Sigillo di Mar sulla sua sommità."
+    ],
+    "sam007": [
+      "Devi portare il ragazzo sano e salvo alla centrale elettrica, Jak!"
+    ],
+    "sam008": [
+      "Grazie per averci protetto, Jak.",
+      "Ci vediamo al Nest."
+    ],
+    "sigc001": [
+      "Aspetta un attimo, dobbiamo insegnarti come usare questa meraviglia!"
+    ],
+    "sigc002": [
+      "La Scatter Gun è una buona arma a corto raggio",
+      "con un ampio campo di fuoco."
+    ],
+    "sigc003": [
+      "Per sparare con l'arma, premi il grilletto."
+    ],
+    "sigc004": [
+      "Bene! Qualche calcio, eh?"
+    ],
+    "sigc005": [
+      "Tuttavia, non è l'arma che spara più velocemente al mondo."
+    ],
+    "sigc006": [
+      "Puoi riporre l'arma o estrarla in qualsiasi momento."
+    ],
+    "sigc007": [
+      "Prova a mettere via l'arma."
+    ],
+    "sigc008": [
+      "Facile, eh?"
+    ],
+    "sigc009": [
+      "Ora tira fuori l'arma."
+    ],
+    "sigc010": [
+      "Bene!"
+    ],
+    "sigc011": [
+      "Puoi trovare munizioni rosse all'interno delle casse della Guardia Krimzon."
+    ],
+    "sigc012": [
+      "Spara alle casse."
+    ],
+    "sigc013": [
+      "Ottimo, ora sei pronto!"
+    ],
+    "sigc014": [
+      "Vuoi provare il corso Scatter Gun?"
+    ],
+    "sigc015": [
+      "Il blaster è una buona scelta a tutto tondo",
+      "con una buona cadenza di fuoco."
+    ],
+    "sigc016": [
+      "Quest'arma richiede una maggiore abilità di mira."
+    ],
+    "sigc017": [
+      "Puoi cambiare modalità arma in qualsiasi momento."
+    ],
+    "sigc018": [
+      "Puoi trovare munizioni gialle nelle casse."
+    ],
+    "sigc022": [
+      "Ti piacerebbe mettere alla prova le tue abilità nel corso di armi?"
+    ],
+    "sigc023": [
+      "A quale corso vuoi giocare?"
+    ],
+    "sigc024": [
+      "Spara a ogni bersaglio. Più velocemente spari a ogni bersaglio",
+      "più punti otterrai."
+    ],
+    "sigc025": [
+      "Non sparate ai civili.",
+      "Colpisci un bersaglio amico e i punti verranno detratti."
+    ],
+    "sigc026": [
+      "Buona fortuna."
+    ],
+    "sigc027": [
+      "Blocca e carica. Pronti via!"
+    ],
+    "sigc028": [
+      "Perfetto! Puoi essere il mio sostituto ogni giorno."
+    ],
+    "sigc029": [
+      "Ce l'hai fatta, ottimo scatto!"
+    ],
+    "sigc030": [
+      "Bello scatto! Hai del potenziale, ragazzo!"
+    ],
+    "sigc031": [
+      "Non male, lo farai."
+    ],
+    "sigc032": [
+      "Riprova, novellino. Sei ancora un po' arrugginito con quell'hardware."
+    ],
+    "sigc033": [
+      "Non male, ma non buono. Riprova?"
+    ],
+    "sigc034": [
+      "Chiudi, ma nel profondo, la chiusura non basta. Riprova?"
+    ],
+    "sigc035": [
+      "Vuoi riprovare? O tua mamma sta chiamando?"
+    ],
+    "sigc036": [
+      "Non sei ancora al passo con i tempi, riprovare?"
+    ],
+    "sigc037": [
+      "Devi colpire quei bersagli più velocemente!"
+    ],
+    "sigc038": [
+      "Sii la pistola, tesoro!"
+    ],
+    "sigc039": [
+      "È tutta una questione di tempo di reazione."
+    ],
+    "sigc040": [
+      "Diverse modalità di pistola sono utili contro bersagli diversi."
+    ],
+    "sigc041": [
+      "Sii calmo e governerai."
+    ],
+    "sigc043": [
+      "Prova a passare alla pistola a dispersione."
+    ],
+    "sigc053": [
+      "Più veloce sul grilletto, Cherry."
+    ],
+    "sigc054": [
+      "Quello era un civile!"
+    ],
+    "sigc055": [
+      "Ho detto \"non sparare ai civili\", prurito alle dita!"
+    ],
+    "sigc056": [
+      "Ottimo lavoro!"
+    ],
+    "sigc057": [
+      "Fantastico round, mi dispiace già per quei Metal Heads."
+    ],
+    "sigc058": [
+      "È stato un giro carino, lo fai sembrare facile!"
+    ],
+    "sigc059": [
+      "Hai fumato quella portata!"
+    ],
+    "sigc060": [
+      "I Metal Head ti mangeranno vivo, novellino! Falla finita!"
+    ],
+    "sigc061": [
+      "Hai bisogno di un po' di pratica."
+    ],
+    "sigc062": [
+      "Ricordo i miei giorni da rookie, continuo a provarci."
+    ],
+    "sigc063": [
+      "Giro perfetto! Tu sei l'uomo."
+    ],
+    "sigc064": [
+      "Scatto perfetto! Sono impressionato."
+    ],
+    "sigc065": [
+      "Whoa, rock'n'roll, tesoro! È stato un giro perfetto."
+    ],
+    "sigc066": [
+      "Bel tiro!"
+    ],
+    "sigc067": [
+      "Li hai sprecati!"
+    ],
+    "sigc068": [
+      "Molto bello! Mi ricorda me stesso."
+    ],
+    "sigc069": [
+      "Fai in modo che ti temano."
+    ],
+    "sigc070": [
+      "Buona combinazione!"
+    ],
+    "sigc071": [
+      "Adoro vederti lavorare!"
+    ],
+    "sigc072": [
+      "Ora torna al Blaster."
+    ],
+    "sigc073": [
+      "Puoi combinare i tuoi attacchi calciando,",
+      "poi sparando con la tua arma."
+    ],
+    "sigc074": [
+      "Prova una combinazione di colpi di calcio."
+    ],
+    "sigc075": [
+      "Calcia il primo bersaglio, poi spara mentre calci",
+      "per colpire automaticamente il secondo bersaglio."
+    ],
+    "sigc076": [
+      "Ottima mossa!"
+    ],
+    "sigc077": [
+      "Non proprio, riprova. Calcia e poi tira, quasi contemporaneamente."
+    ],
+    "sigc078": [
+      "Assicurati di sparare mentre stai calciando per ottenere la combo."
+    ],
+    "sigc079": [
+      "Provatelo ancora."
+    ],
+    "sigc080": [
+      "Questa è una mossa di Wastelander!",
+      "Non sapranno cosa li ha colpiti!"
+    ],
+    "sigc081": [
+      "Pensi di poter gestire il corso Blaster?"
+    ],
+    "sigf001": [
+      "Li hai sprecati tutti! Non sono ancora sicuro del perché combattere i Metal Heads",
+      "stanno esplorando così vicino alla città. Ad essere onesti,",
+      "Non ero sicuro che saresti riuscito a gestire questo concerto, bel lavoro!"
+    ],
+    "sigt003": [
+      "Eccoci qui!"
+    ],
+    "sigt004": [
+      "Seguimi!"
+    ],
+    "sigt005": [
+      "Stai dietro di me mentre brindo a quel serbatoio."
+    ],
+    "sigt006": [
+      "Sbrigati ragazzo, non ho tutto il giorno!"
+    ],
+    "sigt007": [
+      "Da questa parte!"
+    ],
+    "sigt008": [
+      "Brinda a quei cattivi ragazzi più avanti."
+    ],
+    "sigt009": [
+      "Presto! Abbassa il ponte!"
+    ],
+    "sigt010": [
+      "Saltate su e afferrate il ponte per abbatterlo."
+    ],
+    "sigt011": [
+      "Attraversiamo il ponte prima che tornino."
+    ],
+    "sigt012": [
+      "Ecco il nostro primo obiettivo: tenere indietro le altre creature",
+      "mentre carico il Peacemaker."
+    ],
+    "sigt013": [
+      "Quello è un Metal Head fritto."
+    ],
+    "sigt014": [
+      "Passiamo al prossimo obiettivo."
+    ],
+    "sigt015": [
+      "Con i Metal Heads dico prima di sparare, poi di fare domande."
+    ],
+    "sigt017": [
+      "Resta con me!"
+    ],
+    "sigt019": [
+      "Sprechi i polloni!"
+    ],
+    "sigt020": [
+      "Fantastico, ragazzo, fantastico! Non essere arrogante."
+    ],
+    "sigt021": [
+      "C'è il secondo pezzo di merda, seduto carino."
+    ],
+    "sigt022": [
+      "Coprimi!"
+    ],
+    "sigt023": [
+      "Bum, tesoro! Un Metal Head in meno a cui pensare."
+    ],
+    "sigt024": [
+      "Prossimo obiettivo."
+    ],
+    "sigt025": [
+      "Guardami mentre brindo a questo cattivone.",
+      "Il trucco è non colpire i tubi."
+    ],
+    "sigt026": [
+      "Ecco, questo è ciò che chiamo far impazzire qualcuno."
+    ],
+    "sigt027": [
+      "Questa volta devo infilare l'ago."
+    ],
+    "sigt028": [
+      "Hahaha, Metal Head in fiamme."
+    ],
+    "sigt029": [
+      "Attenti! Abbiamo compagnia!"
+    ],
+    "sigt030": [
+      "Dannazione! La mia pistola è inceppata, prendi il comando!"
+    ],
+    "sigt031": [
+      "Prendili mentre aggiusto la mia pistola!"
+    ],
+    "sigt032": [
+      "Ok, il Peacemaker è di nuovo online. Muoviamoci!"
+    ],
+    "sigt033": [
+      "Ultimo obiettivo, poi torniamo a casa."
+    ],
+    "sigt036": [
+      "Arrivano i guai."
+    ],
+    "sigt037": [
+      "Ti sono mancato?"
+    ],
+    "sigt038": [
+      "Di' \"buonanotte\", tesoro."
+    ],
+    "sigt039": [
+      "Grazie per avermi coperto il sedere, ci sono andato vicino!"
+    ],
+    "sigt043": [
+      "Resta con me!"
+    ],
+    "sigt044": [
+      "Stai vicino o moriremo entrambi!"
+    ],
+    "sigt045": [
+      "Vieni qui e stai vicino!"
+    ],
+    "sigt046": [
+      "Vuoi giocare, eh?"
+    ],
+    "sigt047": [
+      "Oh, hai dei giochi?"
+    ],
+    "sigt049": [
+      "Voi ciliegie non potete gestire questa missione, abbiamo finito!"
+    ],
+    "sigt052": [
+      "Non lavoro con i dilettanti!"
+    ],
+    "sigt053": [
+      "Sei più un problema di quanto vali!"
+    ],
+    "sigt054": [
+      "Torna quando fai sul serio!"
+    ],
+    "sigt056": [
+      "Vuoi un po 'di questo?!"
+    ],
+    "sigt057": [
+      "Lascia cadere il cappuccio dell'ascensore mentre li tengo a bada."
+    ],
+    "sigt058": [
+      "Tirateli fuori tutti!"
+    ],
+    "sigt059": [
+      "Ottimo, non c'è tempo per festeggiare."
+    ],
+    "sigt060": [
+      "Se non riesco a girarlo, è un problema di qualcun altro.",
+      "Fai qualcosa con quei blocchi."
+    ],
+    "sigt061": [
+      "Devi capire come funzionano i blocchi, amico."
+    ],
+    "sigt062": [
+      "Hai sentito qualcosa?"
+    ],
+    "sigt063": [
+      "Quello è un grosso e brutto Metal Head."
+    ],
+    "sigt064": [
+      "Sparare a questo lo farà solo arrabbiare, corri!"
+    ],
+    "sigt065": [
+      "Ci vediamo dall'altra parte!"
+    ],
+    "sigt066": [
+      "Via col vento."
+    ],
+    "sigt067": [
+      "Più tardi alligatore."
+    ],
+    "sigt068": [
+      "Penso che sarà l'ultima volta che lo vedremo."
+    ],
+    "sigt069": [
+      "Se risolvi questa cosa, ti coprirò il sedere."
+    ],
+    "sigt070": [
+      "Questo è il tuo concerto, tesoro. Risolvilo, così possiamo tornare a casa."
+    ],
+    "sigt071": [
+      "Ottimo, ecco che arriva di nuovo quel cattivone. Muoviti!"
+    ],
+    "sigt072": [
+      "Correre!"
+    ],
+    "sigt073": [
+      "Via! Via! Via!"
+    ],
+    "sigt074": [
+      "Sta guadagnando!"
+    ],
+    "sigt075": [
+      "Continua a muoverti!"
+    ],
+    "sigt076": [
+      "Più veloce!"
+    ],
+    "sigt077": [
+      "Sarà vicino!"
+    ],
+    "sigt078": [
+      "Muovi il sedere!"
+    ],
+    "sigt082": [
+      "Amico, non vuoi farmi incazzare."
+    ],
+    "sigt083": [
+      "Hai un desiderio di morte?!"
+    ],
+    "sigt087": [
+      "Senti un po' di dolore alla schiena!"
+    ],
+    "sigt089": [
+      "Non fidarsi mai di un novellino."
+    ],
+    "sigt090": [
+      "Abbiamo finito finché voi ragazzi non fate sul serio."
+    ],
+    "sigt091": [
+      "Questa missione è ovviamente fuori dalla tua portata."
+    ],
+    "sigt092": [
+      "Mi stai facendo perdere tempo, questa missione è finita."
+    ],
+    "sigt093": [
+      "Uhh... uff...."
+    ],
+    "sigt100": [
+      "Prima la rabbia e poi la bellezza, amico."
+    ],
+    "sigt101": [
+      "Muoviamoci!"
+    ],
+    "sigt102": [
+      "Adoro l'odore del metallo che brucia!"
+    ],
+    "sigt103": [
+      "Basta una passeggiata nel parco."
+    ],
+    "sigt104": [
+      "Seguimi!"
+    ],
+    "sigt105": [
+      "Andiamo!"
+    ],
+    "sigt106": [
+      "Da questa parte!"
+    ],
+    "sigt107": [
+      "Qui!"
+    ],
+    "sigt108": [
+      "Rotolando, tesoro!"
+    ],
+    "sigt109": [
+      "Mandagli un bacio mortale."
+    ],
+    "sigt110": [
+      "Adoro i deadhead!"
+    ],
+    "sigt111": [
+      "Di' addio al tuo sedere lucente!"
+    ],
+    "sigt112": [
+      "Nato per uccidere, tesoro!"
+    ],
+    "sigt113": [
+      "Due al petto, uno alla testa."
+    ],
+    "spot004": [
+      "Vieni fuori e tifa per me mentre distruggo ancora una volta la concorrenza in pista.",
+      "La finale di gara di quest'anno sarà indimenticabile, garantisco più emozioni e più avventure.",
+      "Questa volta voglio sangue!...Porta i bambini."
+    ],
+    "tess001": [
+      "Hey ragazzi! Questa è Tess. Prima che Krew se ne andasse, l'ho visto nascondersi",
+      "qualcosa nella macchina da gioco qui. Conoscendo Krew,",
+      "probabilmente è qualcosa di prezioso.",
+      "Potresti venire a dare un'occhiata."
+    ],
+    "tor001": [
+      "L'operazione è stata un successo. Tutti i membri della metropolitana sono al sicuro.",
+      "Torna al nascondiglio, ho una nuova missione per te mentre aspettiamo che questo allarme finisca."
+    ],
+    "tor002": [
+      "Questo dovrebbe togliere un po' di calore dalle strade. Ottimo lavoro, non avrei potuto fare di meglio."
+    ],
+    "tor003": [
+      "Questo è tutto, Jak, sei pronto! Cerca di non far scattare alcun allarme, le guardie della guarnigione saranno tenaci.",
+      "Raggiungi il blocco delle celle della prigione e trova i prigionieri. Una volta lì, attiveremo il Portale Warp all'interno per riportarvi tutti fuori. Buona fortuna."
+    ],
+    "tor004": [
+      "Ok, i miei vecchi codici di accesso dovrebbero aiutare Vin a disattivare il sigillo magnetico della porta della Fortezza."
+    ],
+    "tor005": [
+      "Jak, qui Torn, la città è sotto attacco da parte dei Metal Head. C'è una grande forza che si muove verso le mura della città dall'oceano.",
+      "Abbiamo bisogno di persone che maneggino i gunpod della torre per fermare quell'assalto. Incontriamoci alla diga oceanica del porto, sbrigati!",
+      "Abbiamo bisogno di ogni uomo possibile!"
+    ],
+    "tor007": [
+      "Jak, c'è un posto di blocco delle guardie, vattene da lì!"
+    ],
+    "tor008": [
+      "Hanno creato un posto di blocco, ti stanno addosso!"
+    ],
+    "torn024": [
+      "Altri in arrivo!"
+    ],
+    "tswm001": [
+      "Puoi farcela, Daxter!"
+    ],
+    "tswm002": [
+      "Continua così, Daxter."
+    ],
+    "tswm003": [
+      "Via! Via! Via!"
+    ],
+    "tswm004": [
+      "Oh! Che animale!"
+    ],
+    "tswm005": [
+      "Avete capito bene!"
+    ],
+    "tswm006": [
+      "Bel colpo!"
+    ],
+    "tswm007": [
+      "Ooh oh oh, tesoro!"
+    ],
+    "tswm008": [
+      "Bellissimo scatto, Daxter!"
+    ],
+    "tswm009": [
+      "Ci sei quasi!"
+    ],
+    "tswm010": [
+      "Puoi vincere, tesoro!"
+    ],
+    "tswm011": [
+      "Mio eroe!"
+    ],
+    "tswm012": [
+      "Guardalo, vai!"
+    ],
+    "tswm013": [
+      "Sei un Fulmine Arancione!"
+    ],
+    "tswm014": [
+      "Solo qualche altro!"
+    ],
+    "tswm015": [
+      "Colpiscilo ancora!"
+    ],
+    "tswm016": [
+      "SÌ!"
+    ],
+    "tswm017": [
+      "Questo è il mio ottsel birichino!"
+    ],
+    "tswm018": [
+      "OH!"
+    ],
+    "tswm019": [
+      "Non andava bene."
+    ],
+    "tswm020": [
+      "Non colpire quelli rossi!"
+    ],
+    "tswm021": [
+      "Oh!"
+    ],
+    "tswm022": [
+      "Ciò ha portato via punti!"
+    ],
+    "tswm023": [
+      "Ce l'hai fatta!"
+    ],
+    "tswm024": [
+      "Daxter, hai vinto!"
+    ],
+    "tswm025": [
+      "Sì! Tu sei l'uomo! Voglio dire... l'animale."
+    ],
+    "tswm026": [
+      "Hai vinto il gioco, Daxter!"
+    ],
+    "tswm027": [
+      "Dove hai imparato a battere in quel modo?"
+    ],
+    "tswm028": [
+      "È stato fantastico!"
+    ],
+    "tswm029": [
+      "Abbastanza buono per una piccola palla di pelo."
+    ],
+    "tswm030": [
+      "Ooh... Punti insufficienti!"
+    ],
+    "tswm031": [
+      "NO! Hai perso..."
+    ],
+    "tswm032": [
+      "Awww... Hai perso ancora!"
+    ],
+    "tswm033": [
+      "Così vicino!"
+    ],
+    "tswm034": [
+      "Un'altra volta."
+    ],
+    "tswm035": [
+      "Puoi farlo!"
+    ],
+    "tswm036": [
+      "Devi riprovare!"
+    ],
+    "tswm037": [
+      "Devi vincere il gioco, Daxter."
+    ],
+    "tswm038": [
+      "Riprova!"
+    ],
+    "tswm039": [
+      "Ah! Quella è stata una brutta cosa!"
+    ],
+    "tswm040": [
+      "Non colpire quelli cattivi, Daxter."
+    ],
+    "tswm041": [
+      "Hai colpito un brutto Metal Head."
+    ],
+    "tswm042": [
+      "Non di nuovo!"
+    ],
+    "tswm043": [
+      "Oh no!"
+    ],
+    "tswm044": [
+      "Daxter...! Hai bisogno di più punti!"
+    ],
+    "tswm045": [
+      "Continuare...!"
+    ],
+    "tswm046": [
+      "Oh, Daxter... ti sei bruciacchiato i baffi?"
+    ],
+    "tswm047": [
+      "Segnerai!"
+    ],
+    "tswm048": [
+      "Ci sei quasi...!"
+    ],
+    "tswm049": [
+      "Ancora un po'!"
+    ],
+    "tswm050": [
+      "Abbiamo un vincitore!"
+    ],
+    "tswm051": [
+      "OH! Quella è stata una brutta cosa."
+    ],
+    "tswm052": [
+      "Non colpire quelli cattivi, Daxter."
+    ],
+    "tswm053": [
+      "Daxter, hai colpito un brutto Metal Head!"
+    ],
+    "tswm054": [
+      "Daxter, hai vinto!!"
+    ],
+    "tswm055": [
+      "Ce l'hai fatta, ragazzo peloso!"
+    ],
+    "tswm056": [
+      "SÌ!! Hai battuto il gioco!"
+    ],
+    "tswm057": [
+      "Sapevo che potevi farcela."
+    ],
+    "vin002": [
+      "Ok, la rete elettrica della zona B è di nuovo online.",
+      "Divertiti a farti uccidere nel Palazzo."
+    ],
+    "vin003": [
+      "Hai distrutto l'ultima delle uova di Metal Head!",
+      "Questo dovrebbe darci un po’ più di eco per la città.",
+      "Buon lavoro!"
+    ],
+    "vin004": [
+      "Non hai ancora preso tutte le uova di Metal Head!",
+      "Assicurati di prenderli tutti, altrimenti lo farò io",
+      "un esaurimento nervoso!"
+    ],
+    "vin011": [
+      "Grazie a Dio hai fatto saltare in aria quei pozzi.",
+      "Di sicuro non voglio che altri Metal Head vengano da queste parti.",
+      "Buon lavoro, ragazzi! Te ne devo uno."
+    ],
+    "vin012": [
+      "Buon lavoro, ragazzi! Meno uova di Metal Head",
+      "permettiamo che si schiudano, il minor numero di quei mostri cattivi",
+      "dovremo combattere!"
+    ],
+    "vin013": [
+      "Come... Kor...",
+      "Sito di costruzione...",
+      "..."
+    ],
+    "vin014": [
+      "Ancora una volta ragazzi, mi avete salvato il sedere!",
+      "Forse adesso avrò un aumento. O una lunga vacanza.",
+      "Dio sa che mi servirebbe uno. Grazie per l'aiuto!"
+    ],
+    "vin015": [
+      "Il muro di scudi è crollato! Ripeto: il muro di scudi è abbattuto!",
+      "Sabotaggio! Kor ce l'ha fatta!",
+      "Sapevo che i Metal Heads sarebbero stati la mia fine!",
+      "OH NO! I Metal Head sono alle porte!!",
+      "Stanno sfondando!!",
+      "Troppi!! Jak!!! AHHHH!!!"
+    ],
+    "ys001": [
+      "Ottimo lavoro, ragazzi! Torna al nascondiglio,",
+      "Ho un altro compito per te."
+    ],
+    "ys002": [
+      "Bel tiro, ragazzo mio!",
+      "Buon lavoro, Jak!",
+      "Dormiremo tutti un po' più tranquilli stanotte."
+    ]
+  },
+  "speakers": {
+    "agent": "Agente",
+    "ashelin": "Ashelin",
+    "baron": "Barone Praxis",
+    "brutter": "Rotto",
+    "citizen-female": "Cittadino",
+    "citizen-male": "Cittadino",
+    "computer": "Computer",
+    "darkjak": "Jak oscuro",
+    "daxter": "Daxter",
+    "errol": "Erol",
+    "grim": "Cupo",
+    "guard": "Guardia Krimzon",
+    "guard-a": "Guardia A",
+    "guard-b": "Guardia B",
+    "jak": "Come",
+    "jinx": "Jinx",
+    "keira": "Keira",
+    "keira-before-class-3": "Meccanico",
+    "kid": "Ragazzo",
+    "kor": "Kor",
+    "krew": "Sangue",
+    "metalkor": "Metallo Kor",
+    "metalkor-before-consite": "Leader della testa di metallo",
+    "metalkor-intro": "???",
+    "mog": "Mog",
+    "onin": "Uno",
+    "oracle": "Oracolo",
+    "pecker": "Pecker",
+    "precursor": "Precursore",
+    "samos": "Samo",
+    "sig": "Dire",
+    "tess": "Tess",
+    "torn": "Strappato",
+    "vin": "Vin",
+    "youngsamos": "Samos giovane",
+    "youngsamos-before-rescue": "Samo"
+  }
+}

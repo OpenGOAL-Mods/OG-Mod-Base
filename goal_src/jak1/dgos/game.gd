@@ -30,6 +30,7 @@
   "dma-buffer.o"
   "dma-bucket.o"
   "dma-disasm.o"
+  "pc-cheats.o" ;; added
   "pckernel-h.o" ;; added
   "mod-settings-h.o" ;; added
   "pckernel-impl.o" ;; added
@@ -203,7 +204,7 @@
   "speedruns.o" ;; added
   "pckernel-common.o" ;; added
   "pckernel.o" ;; added
-  "input-display.o" ;;added
+  "input-display.o" ;; mod-base-change added
   "mood-tables.o"
   "mood.o"
   "weather-part.o"
@@ -353,7 +354,9 @@
   "mod-text-render.o" ;; added
   "mod-remote-interaction.o" ;; added
   "mod-common-functions.o" ;; added
+  "orb-placer.o" ;; added
   "mod-custom-code.o" ;; added
+  "mod-debug.o" ;; added
   ;; keep zoomer stuff loaded
   "target-racer-h.o"
   "racer-part.o"
@@ -370,4 +373,8 @@
   "target-flut.o"
   "flut-saddle-ag.go"
   "eichar-flut+0-ag.go"
+  ;; keep blocking-plane stuff loaded
+  "blocking-plane.o"
+  "blocking-plane-modded.o"
+  "ef-plane-ag.go"
  ))

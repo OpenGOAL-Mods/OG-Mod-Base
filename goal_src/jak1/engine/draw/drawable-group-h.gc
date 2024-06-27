@@ -1,9 +1,7 @@
 ;;-*-Lisp-*-
 (in-package goal)
-
-;; name: drawable-group-h.gc
-;; name in dgo: drawable-group-h
-;; dgos: GAME, ENGINE
+(bundles "ENGINE.CGO" "GAME.CGO")
+(require "engine/draw/drawable-h.gc")
 
 ;; drawable-group is the base class for some drawable containers.
 ;; it is itself a drawable, though it typically doesn't have an ID.
@@ -13,15 +11,14 @@
 ;; note that in general you shouldn't assume that calling "draw" on a group will actually call "draw" on all the members -
 ;; different children classes may specialize these methods. (same goes for all the methods)
 
+;; decomp begins
+
 (deftype drawable-group (drawable)
-  ((length  int16       :offset 6)
-   (data    drawable 1  :offset-assert 32) ;; note that you get 1 drawable in the type, the rest run off the end.
+  ((length int16 :offset 6)
+   (data   drawable 1) ;; note that you get 1 drawable in the type, the rest run off the end.
    )
   (:methods
-    (new (symbol type int) _type_)
-    )
-  :flag-assert #x1200000024
-  )
+   (new (symbol type int) _type_)))
 
 ;; unused
 (define *collide-nodes* 0)

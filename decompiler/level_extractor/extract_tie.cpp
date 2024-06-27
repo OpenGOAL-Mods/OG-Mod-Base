@@ -356,6 +356,10 @@ struct TieFrag {
   } prog_info;
 };
 
+struct TimeOfDayColor {
+  math::Vector<u8, 4> rgba[8];
+};
+
 // main instance type
 // unlike the GOAL type, we store all instances info in here too.
 struct TieProtoInfo {
@@ -364,8 +368,8 @@ struct TieProtoInfo {
   u32 proto_flag;
   float stiffness = 0;  // wind
   std::optional<AdgifInfo> envmap_adgif;
-  std::vector<tfrag3::TimeOfDayColor> time_of_day_colors;  // c++ type for time of day data
-  std::vector<TieFrag> frags;                              // the fragments of the prototype
+  std::vector<TimeOfDayColor> time_of_day_colors;  // c++ type for time of day data
+  std::vector<TieFrag> frags;                      // the fragments of the prototype
 };
 
 /*!
@@ -1456,7 +1460,7 @@ struct NrmDebug {
   int ip2 = 0;
 };
 
-void emulate_tie_instance_program(std::vector<TieProtoInfo>& protos) {
+void emulate_tie_instance_program(std::vector<TieProtoInfo>& protos, GameVersion version) {
   for (auto& proto : protos) {
     //    bool first_instance = true;
     //    for (auto& instance : proto.instances) {
@@ -1622,7 +1626,10 @@ void emulate_tie_instance_program(std::vector<TieProtoInfo>& protos) {
           vertex_info.nrm = frag.get_normal_if_present(normal_table_offset++);
 
           bool inserted = frag.vertex_by_dest_addr.insert({(u32)dest_ptr, vertex_info}).second;
-          ASSERT(inserted);
+          // TODO hack
+          if (version != GameVersion::Jak3) {
+            ASSERT(inserted);
+          }
           nd.bp1++;
 
           if (reached_target) {
@@ -2091,7 +2098,7 @@ std::string dump_full_to_obj(const std::vector<TieProtoInfo>& protos) {
 // and this tells us an index in the time of day palette.
 
 struct BigPalette {
-  std::vector<tfrag3::TimeOfDayColor> colors;
+  std::vector<TimeOfDayColor> colors;
 };
 
 // combine all individual time of day palettes into one giant one.
@@ -2119,6 +2126,21 @@ BigPalette make_big_palette(std::vector<TieProtoInfo>& protos) {
 
   ASSERT(result.colors.size() < UINT16_MAX);
   return result;
+}
+
+tfrag3::PackedTimeOfDay pack_big_palette(const BigPalette& in) {
+  tfrag3::PackedTimeOfDay out;
+  out.color_count = (in.colors.size() + 3) & (~3);
+  out.data.resize(out.color_count * 8 * 4);
+
+  for (u32 color = 0; color < in.colors.size(); color++) {
+    for (u32 palette = 0; palette < 8; palette++) {
+      for (u32 channel = 0; channel < 4; channel++) {
+        out.read(color, palette, channel) = in.colors.at(color).rgba[palette][channel];
+      }
+    }
+  }
+  return out;
 }
 
 /*!
@@ -2542,6 +2564,7 @@ void add_vertices_and_static_draw(tfrag3::TieTree& tree,
         info = get_jak1_tie_category(proto.proto_flag);
         break;
       case GameVersion::Jak2:
+      case GameVersion::Jak3:
         info = get_jak2_tie_category(proto.proto_flag);
         break;
       default:
@@ -2763,12 +2786,12 @@ void extract_tie(const level_tools::DrawableTreeInstanceTie* tree,
     auto info =
         collect_instance_info(as_instance_array, &tree->prototypes.prototype_array_tie.data, geo);
     update_proto_info(&info, tex_map, tree->prototypes.prototype_array_tie.data, geo, version);
-    if (version != GameVersion::Jak2) {
+    if (version < GameVersion::Jak2) {
       check_wind_vectors_zero(info, tree->prototypes.wind_vectors);
     }
     // determine draws from VU program
     emulate_tie_prototype_program(info);
-    emulate_tie_instance_program(info);
+    emulate_tie_instance_program(info, version);
     emulate_kicks(info);
 
     // debug save to .obj
@@ -2819,7 +2842,7 @@ void extract_tie(const level_tools::DrawableTreeInstanceTie* tree,
 
     merge_groups(this_tree.packed_vertices.matrix_groups);
 
-    this_tree.colors = full_palette.colors;
+    this_tree.colors = pack_big_palette(full_palette);
     out.tie_trees[geo].push_back(std::move(this_tree));
   }
 }

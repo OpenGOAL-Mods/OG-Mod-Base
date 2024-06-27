@@ -1,3 +1,5 @@
+#include "insert_lets.h"
+
 #include <algorithm>
 #include <array>
 #include <limits>
@@ -7,10 +9,10 @@
 #include "common/log/log.h"
 #include "common/util/Assert.h"
 #include "common/util/print_float.h"
+
 #include "decompiler/IR2/GenericElementMatcher.h"
 #include "decompiler/IR2/bitfields.h"
 #include "decompiler/util/DecompilerTypeSystem.h"
-#include "insert_lets.h"
 
 namespace decompiler {
 
@@ -316,7 +318,6 @@ FormElement* rewrite_as_send_event(LetElement* in,
   // (let ((block-var (new 'stack-no-clear 'event-message-block))
   auto block_var = in->entries().at(0).dest;
   const auto& block_var_reg = block_var.reg();
-  auto block_var_name = env.get_variable_name(block_var);
   auto block_src = in->entries().at(0).src->try_as_element<StackStructureDefElement>();
   if (!block_src) {
     return nullptr;
@@ -348,6 +349,7 @@ FormElement* rewrite_as_send_event(LetElement* in,
           Matcher::any_reg(1));
       break;
     case GameVersion::Jak2:
+    case GameVersion::Jak3:
       // in jak 2, the event message block holds a ppointer instead.
       set_from_matcher = Matcher::set(
           Matcher::deref(Matcher::reg(block_var_reg), false, {DerefTokenMatcher::string("from")}),
@@ -367,6 +369,7 @@ FormElement* rewrite_as_send_event(LetElement* in,
             Matcher::any(1));
         break;
       case GameVersion::Jak2:
+      case GameVersion::Jak3:
         set_from_form_matcher = Matcher::set(
             Matcher::deref(Matcher::any_reg(0), false, {DerefTokenMatcher::string("from")}),
             Matcher::op_fixed(FixedOperatorKind::PROCESS_TO_PPOINTER, {Matcher::any(1)}));
@@ -484,6 +487,10 @@ FormElement* rewrite_as_send_event(LetElement* in,
             {"'color-effect", {1}},
             {"'set-alert-duration", {0}},
         };
+
+        // enum to cast to.
+        EnumType* enum_ts = nullptr;
+
         auto float_arg_settings = jak2_float_args.find(msg_str);
         auto time_frame_arg_settings = jak2_time_frame_args.find(msg_str);
         if ((float_arg_settings != jak2_float_args.end() &&
@@ -500,39 +507,34 @@ FormElement* rewrite_as_send_event(LetElement* in,
                 pool.form<ConstantTokenElement>(seconds_to_string(val)));
           }
         } else if (param_idx == 0 && (msg_str == "'get-pickup" || msg_str == "'test-pickup")) {
-          auto enum_ts = env.dts->ts.try_enum_lookup("pickup-type");
-          if (enum_ts) {
-            param_val = cast_to_int_enum(enum_ts, pool, env, val);
-          }
+          enum_ts = env.dts->ts.try_enum_lookup("pickup-type");
         } else if (param_idx == 1 &&
                    (param_values.at(0)->to_string(env) == "'error" ||
                     param_values.at(0)->to_string(env) == "'done") &&
                    msg_str == "'notify") {
-          auto enum_ts = env.dts->ts.try_enum_lookup("mc-status-code");
-          if (enum_ts) {
-            param_val = cast_to_int_enum(enum_ts, pool, env, val);
-          }
+          enum_ts = env.dts->ts.try_enum_lookup("mc-status-code");
         } else if (param_idx == 0 &&
                    (msg_str == "'deactivate-by-type" || msg_str == "'set-object-reserve-count" ||
                     msg_str == "'set-object-target-count" ||
                     msg_str == "'set-object-auto-activate" || msg_str == "'end-pursuit-by-type" ||
                     msg_str == "'get-object-remaining-count")) {
-          auto enum_ts = env.dts->ts.try_enum_lookup("traffic-type");
-          if (enum_ts) {
-            param_val = cast_to_int_enum(enum_ts, pool, env, val);
-          }
+          enum_ts = env.dts->ts.try_enum_lookup("traffic-type");
         } else if (param_idx == 0 &&
                    (msg_str == "'clear-slave-option" || msg_str == "'set-slave-option" ||
                     msg_str == "'toggle-slave-option")) {
-          auto enum_ts = env.dts->ts.try_enum_lookup("cam-slave-options");
-          if (enum_ts) {
-            param_val = cast_to_bitfield_enum(enum_ts, pool, env, val);
-          }
+          enum_ts = env.dts->ts.try_enum_lookup("cam-slave-options");
         } else if (param_idx == 2 && param_values.at(0)->to_string(env) == "'darkjak" &&
                    msg_str == "'change-mode") {
-          auto enum_ts = env.dts->ts.try_enum_lookup("darkjak-stage");
-          if (enum_ts) {
+          enum_ts = env.dts->ts.try_enum_lookup("darkjak-stage");
+        } else if (param_idx == 2 && param_values.at(0)->to_string(env) == "'gun" &&
+                   msg_str == "'change-mode") {
+          enum_ts = env.dts->ts.try_enum_lookup("pickup-type");
+        }
+        if (enum_ts) {
+          if (enum_ts->is_bitfield()) {
             param_val = cast_to_bitfield_enum(enum_ts, pool, env, val);
+          } else {
+            param_val = cast_to_int_enum(enum_ts, pool, env, val);
           }
         }
       }
@@ -1148,13 +1150,13 @@ FormElement* rewrite_as_case_with_else(LetElement* in, const Env& env, FormPool&
   return pool.alloc_element<CaseElement>(in->entries().at(0).src, entries, cond->else_ir);
 }
 
-bool var_name_equal(const Env& env, const std::string& a, std::optional<RegisterAccess> b) {
+bool var_equal(const Env& env, RegisterAccess a, std::optional<RegisterAccess> b) {
   ASSERT(b);
-  return env.get_variable_name(*b) == a;
+  return env.get_variable_name_name_only(*b) == env.get_variable_name_name_only(a);
 }
 
 Form* match_ja_set(const Env& env,
-                   const std::string& ch_var_name,
+                   RegisterAccess ch_var,
                    const std::string& field_name,
                    int arr_idx,
                    Form* in,
@@ -1179,9 +1181,9 @@ Form* match_ja_set(const Env& env,
     return nullptr;
   }
 
-  if (!var_name_equal(env, ch_var_name, mr.maps.regs.at(0))) {
-    lg::error("[{}] JA MACRO ERROR channel var not {} in set {} {}", env.func->name(), ch_var_name,
-              field_name, arr_idx);
+  if (!var_equal(env, ch_var, mr.maps.regs.at(0))) {
+    lg::error("[{}] JA MACRO ERROR channel var not {} in set {} {}", env.func->name(),
+              env.get_variable_name(ch_var), field_name, arr_idx);
     *bad = true;
     return nullptr;
   }
@@ -1226,8 +1228,7 @@ FormElement* rewrite_joint_macro(LetElement* in, const Env& env, FormPool& pool)
 
   // look for setting a var to (-> self skel root-channel ,channel).
   // yes, channel is actually not always just 0!
-  auto ra = in->entries().at(0).dest;
-  auto var = env.get_variable_name(ra);
+  auto chan = in->entries().at(0).dest;
   auto mr_chan = match(
       Matcher::deref(Matcher::s6(), false,
                      {DerefTokenMatcher::string("skel"), DerefTokenMatcher::string("root-channel"),
@@ -1238,17 +1239,20 @@ FormElement* rewrite_joint_macro(LetElement* in, const Env& env, FormPool& pool)
   }
   auto channel_form = mr_chan.int_or_form_to_form(pool, 0);
 
-  // now we checks for set!'s. the actual contents of the macro are not very complicated to match.
+  // now we check for set!'s. the actual contents of the macro are not very complicated to match.
   // there is just a LOT to match. and then to write!
   bool bad = false;
   int idx = 0;
-  auto set_fi = match_ja_set(env, var, "frame-interp", -1, in->body(), &idx, &bad);
-  auto set_dist = match_ja_set(env, var, "dist", -1, in->body(), &idx, &bad);
-  auto set_fg = match_ja_set(env, var, "frame-group", -1, in->body(), &idx, &bad);
-  auto set_p0 = match_ja_set(env, var, "param", 0, in->body(), &idx, &bad);
-  auto set_p1 = match_ja_set(env, var, "param", 1, in->body(), &idx, &bad);
-  auto set_nf = match_ja_set(env, var, "num-func", -1, in->body(), &idx, &bad);
-  auto set_fn = match_ja_set(env, var, "frame-num", -1, in->body(), &idx, &bad);
+  auto set_fi = match_ja_set(env, chan, "frame-interp", -1, in->body(), &idx, &bad);
+  auto set_fi1 = match_ja_set(env, chan, "frame-interp", 1, in->body(), &idx, &bad);
+  auto set_fi0 = match_ja_set(env, chan, "frame-interp", 0, in->body(), &idx, &bad);
+  auto set_dist = match_ja_set(env, chan, "dist", -1, in->body(), &idx, &bad);
+  auto set_fg = match_ja_set(env, chan, "frame-group", -1, in->body(), &idx, &bad);
+  auto set_p0 = match_ja_set(env, chan, "param", 0, in->body(), &idx, &bad);
+  auto set_p1 = match_ja_set(env, chan, "param", 1, in->body(), &idx, &bad);
+  auto set_p2 = match_ja_set(env, chan, "param", 2, in->body(), &idx, &bad);
+  auto set_nf = match_ja_set(env, chan, "num-func", -1, in->body(), &idx, &bad);
+  auto set_fn = match_ja_set(env, chan, "frame-num", -1, in->body(), &idx, &bad);
 
   // lastly, match the function call.
   enum { NO_FUNC, EVAL, NO_EVAL } func_status = NO_FUNC;
@@ -1261,7 +1265,7 @@ FormElement* rewrite_joint_macro(LetElement* in, const Env& env, FormPool& pool)
               in->body()->at(idx));
     if (mr_func.matched) {
       // NOTE : it's actually fine for there to be no func. we just forgo setting the num! param.
-      if (!var_name_equal(env, var, mr_func.maps.regs.at(0))) {
+      if (!var_equal(env, chan, mr_func.maps.regs.at(0))) {
         return nullptr;
       }
 
@@ -1284,7 +1288,7 @@ FormElement* rewrite_joint_macro(LetElement* in, const Env& env, FormPool& pool)
       }
 
       auto group_lisp = strip_cast("art-joint-anim", arg_group)->to_form(env);
-      if (group_lisp.is_symbol() && group_lisp.as_symbol()->name == "#f") {
+      if (group_lisp.is_symbol() && group_lisp.as_symbol() == "#f") {
         arg_group = nullptr;
       }
 
@@ -1293,7 +1297,7 @@ FormElement* rewrite_joint_macro(LetElement* in, const Env& env, FormPool& pool)
   }
 
   // PSYCHE! there may actually be a second frame-num set. for some reason. sigh...
-  auto set_fn2 = match_ja_set(env, var, "frame-num", -1, in->body(), &idx, &bad);
+  auto set_fn2 = match_ja_set(env, chan, "frame-num", -1, in->body(), &idx, &bad);
 
   if (bad) {
     // an error occurred
@@ -1332,14 +1336,19 @@ FormElement* rewrite_joint_macro(LetElement* in, const Env& env, FormPool& pool)
                 Matcher::any_reg(0), false,
                 {DerefTokenMatcher::string("frame-group"), DerefTokenMatcher::string("frames"),
                  DerefTokenMatcher::string("num-frames")});
+  auto matcher_new_group_max_frames =
+      env.version == GameVersion::Jak1
+          ? Matcher::deref(Matcher::any(1), false,
+                           {DerefTokenMatcher::string("data"), DerefTokenMatcher::integer(0),
+                            DerefTokenMatcher::string("length")})
+          : Matcher::deref(
+                Matcher::any(1), false,
+                {DerefTokenMatcher::string("frames"), DerefTokenMatcher::string("num-frames")});
   auto matcher_max_num = Matcher::cast(
-      "float", Matcher::op_fixed(FixedOperatorKind::ADDITION,
-                                 {form_fg ? Matcher::deref(Matcher::any(1), false,
-                                                           {DerefTokenMatcher::string("data"),
-                                                            DerefTokenMatcher::integer(0),
-                                                            DerefTokenMatcher::string("length")})
-                                          : matcher_cur_group_max_frames,
-                                  Matcher::integer(-1)}));
+      "float",
+      Matcher::op_fixed(FixedOperatorKind::ADDITION,
+                        {form_fg ? matcher_new_group_max_frames : matcher_cur_group_max_frames,
+                         Matcher::integer(-1)}));
 
   // DONE CHECKING EVERYTHING!!! Now write the goddamn macro.
   std::vector<Form*> args;
@@ -1361,14 +1370,15 @@ FormElement* rewrite_joint_macro(LetElement* in, const Env& env, FormPool& pool)
     Form* num_form = nullptr;
     // check the num! arg
     if (prelim_num == "identity") {
-      if (env.version == GameVersion::Jak2 && set_fn && !set_fn2) {
+      if (env.version >= GameVersion::Jak2 && set_fn && !set_fn2) {
         // jak 2-specific made-up thing!
         // this has only appeared once so far.
         if (set_fn->to_form(env).is_float(0.0)) {
           num_form = pool.form<ConstantTokenElement>("zero");
           set_fn = nullptr;
         } else {
-          return nullptr;
+          num_form = pool.form<GenericElement>(
+              GenericOperator::make_function(pool.form<ConstantTokenElement>(prelim_num)), set_fn);
         }
       } else if (set_fn2) {
         auto obj_fn2 = set_fn2->to_form(env);
@@ -1378,7 +1388,7 @@ FormElement* rewrite_joint_macro(LetElement* in, const Env& env, FormPool& pool)
           auto mr = match(matcher_max_num, set_fn2);
           if (mr.matched &&
               ((form_fg && mr.maps.forms.at(1)->to_form(env) == form_fg->to_form(env)) ||
-               (!form_fg && var_name_equal(env, var, mr.maps.regs.at(0))))) {
+               (!form_fg && var_equal(env, chan, mr.maps.regs.at(0))))) {
             num_form = pool.form<ConstantTokenElement>("max");
           } else {
             num_form = pool.form<GenericElement>(
@@ -1398,7 +1408,7 @@ FormElement* rewrite_joint_macro(LetElement* in, const Env& env, FormPool& pool)
           auto mr = match(matcher_max_num, set_p0);
           if (mr.matched &&
               ((form_fg && mr.maps.forms.at(1)->to_form(env) == form_fg->to_form(env)) ||
-               (!form_fg && var_name_equal(env, var, mr.maps.regs.at(0))))) {
+               (!form_fg && var_equal(env, chan, mr.maps.regs.at(0))))) {
             num_form = pool.form<GenericElement>(
                 GenericOperator::make_function(pool.form<ConstantTokenElement>(prelim_num)),
                 pool.form<ConstantTokenElement>("max"));
@@ -1432,7 +1442,7 @@ FormElement* rewrite_joint_macro(LetElement* in, const Env& env, FormPool& pool)
       // (the float (1- (-> ja-ch frame-group data 0 length)))
       auto mr = match(matcher_max_num, set_p0);
       if (!mr.matched || (form_fg && mr.maps.forms.at(1)->to_form(env) != form_fg->to_form(env)) ||
-          (!form_fg && !var_name_equal(env, var, mr.maps.regs.at(0)))) {
+          (!form_fg && !var_equal(env, chan, mr.maps.regs.at(0)))) {
         // did not match default
         seek_args.push_back(set_p0);
       }
@@ -1466,19 +1476,24 @@ FormElement* rewrite_joint_macro(LetElement* in, const Env& env, FormPool& pool)
   if (set_fn) {
     auto mr = match(matcher_max_num, set_fn);
     if (mr.matched && ((form_fg && mr.maps.forms.at(1)->to_form(env) == form_fg->to_form(env)) ||
-                       (!form_fg && var_name_equal(env, var, mr.maps.regs.at(0))))) {
+                       (!form_fg && var_equal(env, chan, mr.maps.regs.at(0))))) {
       set_fn = pool.form<ConstantTokenElement>("max");
     }
   }
 
   // other generic args
   ja_push_form_to_args(pool, args, set_fi, "frame-interp");
+  ja_push_form_to_args(pool, args, set_fi0, "frame-interp0");
+  ja_push_form_to_args(pool, args, set_fi1, "frame-interp1");
   ja_push_form_to_args(pool, args, set_dist, "dist");
   // ja_push_form_to_args(pool, args, form_fg, "frame-group");
   ja_push_form_to_args(pool, args, set_p0, "param0");
   ja_push_form_to_args(pool, args, set_p1, "param1");
+  ja_push_form_to_args(pool, args, set_p2, "param2");
   ja_push_form_to_args(pool, args, set_nf, "num-func");
-  ja_push_form_to_args(pool, args, set_fn, "frame-num");
+  if (arg_num_func != "num-func-identity") {
+    ja_push_form_to_args(pool, args, set_fn, "frame-num");
+  }
 
   // TODO
   if (set_fn2) {
@@ -1500,6 +1515,164 @@ FormElement* rewrite_joint_macro(LetElement* in, const Env& env, FormPool& pool)
       args);
 }
 
+FormElement* rewrite_part_tracker_new(const std::string& type,
+                                      LetElement* in,
+                                      const Env& env,
+                                      FormPool& pool) {
+  // (let ((s4-11 (get-process *default-dead-pool* part-tracker #x4000 0)))
+  //   (when s4-11
+  //     (let ((t9-26 (method-of-type part-tracker activate)))
+  //       (t9-26 (the-as part-tracker s4-11) s5-1 "part-tracker" (the-as pointer #x70004000))
+  //       )
+  //     (let ((t9-27 run-function-in-process)
+  //           (a0-84 s4-11)
+  //           (a1-36 part-tracker-init)
+  //           )
+  //       (set! (-> *part-tracker-params-default* group) (-> this collect-effect))
+  //       (set! (-> *part-tracker-params-default* duration) 0)
+  //       (set! (-> *part-tracker-params-default* callback) part-tracker-track-target)
+  //       (set! (-> *part-tracker-params-default* userdata) (the-as uint #f))
+  //       (set! (-> *part-tracker-params-default* target) #f)
+  //       (set! (-> *part-tracker-params-default* mat-joint) *launch-matrix*)
+  //       ((the-as (function object object object none) t9-27) a0-84 a1-36
+  //       *part-tracker-params-default*)
+  //       )
+  //     (-> s4-11 ppointer)
+  //     )
+  //   )
+  auto cond = dynamic_cast<CondNoElseElement*>(in->body()->at(0));
+  if (!cond) {
+    return nullptr;
+  }
+  auto when_body = cond->entries.at(0).body;
+  auto activate_let = dynamic_cast<LetElement*>(when_body->at(0));
+  if (!activate_let) {
+    return nullptr;
+  }
+  auto activate_matcher = Matcher::let(
+      false,
+      {LetEntryMatcher::any(Matcher::op(GenericOpMatcher::fixed(FixedOperatorKind::METHOD_OF_TYPE),
+                                        {Matcher::any(), Matcher::constant_token("activate")}),
+                            0)},
+      {Matcher::func(Matcher::reg(Register(Reg::GPR, Reg::T9)),
+                     {Matcher::any(), Matcher::any(1), Matcher::any(2), Matcher::any()})});
+  auto activate_mr = match(activate_matcher, when_body->at(0));
+  if (!activate_mr.matched) {
+    return nullptr;
+  }
+  auto name = activate_mr.maps.forms.find(2);
+  auto to = activate_mr.maps.forms.find(1);
+  auto params_let = dynamic_cast<LetElement*>(when_body->at(1));
+  if (!params_let) {
+    return nullptr;
+  }
+  auto part_tracker_subsampler_params_body_matcher = {
+      Matcher::set(Matcher::deref(Matcher::symbol("*part-tracker-subsampler-params-default*"),
+                                  false, {DerefTokenMatcher::string("group")}),
+                   Matcher::any(0)),
+      Matcher::set(Matcher::deref(Matcher::symbol("*part-tracker-subsampler-params-default*"),
+                                  false, {DerefTokenMatcher::string("duration")}),
+                   Matcher::any(1)),
+      Matcher::set(Matcher::deref(Matcher::symbol("*part-tracker-subsampler-params-default*"),
+                                  false, {DerefTokenMatcher::string("callback")}),
+                   Matcher::any(2)),
+      Matcher::set(Matcher::deref(Matcher::symbol("*part-tracker-subsampler-params-default*"),
+                                  false, {DerefTokenMatcher::string("userdata")}),
+                   Matcher::any(3)),
+      Matcher::set(Matcher::deref(Matcher::symbol("*part-tracker-subsampler-params-default*"),
+                                  false, {DerefTokenMatcher::string("target")}),
+                   Matcher::any(4)),
+      Matcher::set(Matcher::deref(Matcher::symbol("*part-tracker-subsampler-params-default*"),
+                                  false, {DerefTokenMatcher::string("mat-joint")}),
+                   Matcher::any(5)),
+      Matcher::set(Matcher::deref(Matcher::symbol("*part-tracker-subsampler-params-default*"),
+                                  false, {DerefTokenMatcher::string("subsample-num")}),
+                   Matcher::any(6)),
+      Matcher::any()};
+  auto part_tracker_params_body_matcher = {
+      Matcher::set(Matcher::deref(Matcher::symbol("*part-tracker-params-default*"), false,
+                                  {DerefTokenMatcher::string("group")}),
+                   Matcher::any(0)),
+      Matcher::set(Matcher::deref(Matcher::symbol("*part-tracker-params-default*"), false,
+                                  {DerefTokenMatcher::string("duration")}),
+                   Matcher::any(1)),
+      Matcher::set(Matcher::deref(Matcher::symbol("*part-tracker-params-default*"), false,
+                                  {DerefTokenMatcher::string("callback")}),
+                   Matcher::any(2)),
+      Matcher::set(Matcher::deref(Matcher::symbol("*part-tracker-params-default*"), false,
+                                  {DerefTokenMatcher::string("userdata")}),
+                   Matcher::any(3)),
+      Matcher::set(Matcher::deref(Matcher::symbol("*part-tracker-params-default*"), false,
+                                  {DerefTokenMatcher::string("target")}),
+                   Matcher::any(4)),
+      Matcher::set(Matcher::deref(Matcher::symbol("*part-tracker-params-default*"), false,
+                                  {DerefTokenMatcher::string("mat-joint")}),
+                   Matcher::any(5)),
+      Matcher::any()};
+  auto params_body_matcher = type == "part-tracker-subsampler"
+                                 ? part_tracker_subsampler_params_body_matcher
+                                 : part_tracker_params_body_matcher;
+  auto params_matcher = Matcher::unmerged_let(
+      {LetEntryMatcher::any(Matcher::symbol("run-function-in-process")),
+       LetEntryMatcher::any(Matcher::any()), LetEntryMatcher::any(Matcher::any())},
+      params_body_matcher);
+  auto params_mr = match(params_matcher, when_body->at(1));
+  if (!params_mr.matched) {
+    return nullptr;
+  }
+
+  std::vector<Form*> macro_args;
+  macro_args.push_back(pool.form<ConstantTokenElement>(type));
+  macro_args.push_back(pool.form<ConstantTokenElement>(":to"));
+  macro_args.push_back(to->second);
+  auto name_str = dynamic_cast<StringConstantElement*>(name->second->try_as_single_element());
+  if (name_str && name_str->value() != type) {
+    macro_args.push_back(pool.form<ConstantTokenElement>(":name"));
+    macro_args.push_back(name->second);
+  }
+  auto group = params_mr.maps.forms.find(0);
+  macro_args.push_back(pool.form<ConstantTokenElement>(":group"));
+  macro_args.push_back(group->second);
+  auto duration = params_mr.maps.forms.find(1);
+  if (duration->second->to_string(env) != "0") {
+    macro_args.push_back(pool.form<ConstantTokenElement>(":duration"));
+    macro_args.push_back(duration->second);
+  }
+  auto callback = params_mr.maps.forms.find(2);
+  if (callback->second->to_string(env) != "#f") {
+    macro_args.push_back(pool.form<ConstantTokenElement>(":callback"));
+    macro_args.push_back(callback->second);
+  }
+  auto userdata = params_mr.maps.forms.find(3);
+  if (userdata->second->to_string(env) != "(the-as uint #f)") {
+    macro_args.push_back(pool.form<ConstantTokenElement>(":userdata"));
+    macro_args.push_back(userdata->second);
+  }
+  auto target = params_mr.maps.forms.find(4);
+  if (target->second->to_string(env) != "#f") {
+    macro_args.push_back(pool.form<ConstantTokenElement>(":target"));
+    macro_args.push_back(target->second);
+  }
+  auto mat_joint = params_mr.maps.forms.find(5);
+  if (mat_joint->second->to_string(env) != "*launch-matrix*") {
+    macro_args.push_back(pool.form<ConstantTokenElement>(":mat-joint"));
+    macro_args.push_back(mat_joint->second);
+  }
+  if (type == "part-tracker-subsampler") {
+    auto subsample_num = params_mr.maps.forms.find(6);
+    if (subsample_num->second->to_string(env) != "1.0") {
+      macro_args.push_back(pool.form<ConstantTokenElement>(":subsample-num"));
+      macro_args.push_back(subsample_num->second);
+    }
+  }
+
+  return pool
+      .form<GenericElement>(
+          GenericOperator::make_function(pool.form<ConstantTokenElement>("part-tracker-spawn")),
+          macro_args)
+      ->try_as_single_element();
+}
+
 FormElement* rewrite_proc_new(LetElement* in, const Env& env, FormPool& pool) {
   // this function checks for the process-spawn macros.
   // it uses recursive form scanning to wrap the macro inside a potential "shell"
@@ -1510,19 +1683,27 @@ FormElement* rewrite_proc_new(LetElement* in, const Env& env, FormPool& pool) {
     return nullptr;
   }
 
-  auto test = in->to_form(env).print();
-
   // look for setting a var to (get-process *default-dead-pool* logo-slave #x4000)
   auto ra = in->entries().at(0).dest;
-  auto var = env.get_variable_name(ra);
-  auto mr_get_proc = match(
-      Matcher::func("get-process", {Matcher::any(0), Matcher::any_symbol(1), Matcher::any(2)}),
-      in->entries().at(0).src);
+  std::vector<Matcher> get_process_args = {Matcher::any(0), Matcher::any_symbol(1),
+                                           Matcher::any(2)};
+  if (env.version >= GameVersion::Jak3) {
+    // this flag appears unused...
+    get_process_args.push_back(Matcher::any_integer(3));
+  }
+  auto mr_get_proc = match(Matcher::func("get-process", get_process_args), in->entries().at(0).src);
   if (!mr_get_proc.matched) {
     return nullptr;
   }
 
   const auto& proc_type = mr_get_proc.maps.strings.at(1);
+
+  // part-tracker-spawn macro for jak 3
+  if (env.version >= GameVersion::Jak3 &&
+      (proc_type == "part-tracker" || proc_type == "part-tracker-subsampler")) {
+    return rewrite_part_tracker_new(proc_type, in, env, pool);
+  }
+
   auto macro_form =
       is_full_let ? in->body()->at(0) : in->entries().at(1).src->try_as_single_element();
 
@@ -1626,6 +1807,7 @@ FormElement* rewrite_proc_new(LetElement* in, const Env& env, FormPool& pool) {
             expected_name = fmt::format("'{}", proc_type);
             break;
           case GameVersion::Jak2:
+          case GameVersion::Jak3:
             expected_name = fmt::format("(symbol->string (-> {} symbol))", proc_type);
             break;
           default:
@@ -1653,6 +1835,14 @@ FormElement* rewrite_proc_new(LetElement* in, const Env& env, FormPool& pool) {
         }
         if (!mr_get_proc.maps.forms.at(2)->to_form(env).is_int(0x4000)) {
           ja_push_form_to_args(pool, args, mr_get_proc.maps.forms.at(2), "stack-size");
+        }
+        if (env.version >= GameVersion::Jak3) {
+          if (mr_get_proc.maps.ints.at(3) != 1) {
+            // TODO better name
+            args.push_back(pool.form<ConstantTokenElement>(":unk"));
+            args.push_back(
+                pool.form<ConstantTokenElement>(fmt::format("{}", mr_get_proc.maps.ints.at(3))));
+          }
         }
 
         return pool.form<GenericElement>(
@@ -1690,8 +1880,6 @@ FormElement* rewrite_attack_info(LetElement* in, const Env& env, FormPool& pool)
     return nullptr;
   }
 
-  auto test = in->to_form(env).print();
-
   // (let ((block-var (new 'static 'attack-info))
   auto block_src = in->entries().at(0).src->try_as_element<DecompiledDataElement>();
   if (!block_src) {
@@ -1705,34 +1893,137 @@ FormElement* rewrite_attack_info(LetElement* in, const Env& env, FormPool& pool)
 
   const auto& label = block_src->label();
   const auto& words = env.file->words_by_seg.at(label.target_segment);
-  u32 mask = words.at((label.offset + 64) / 4).data;
+  // offset of `mask` field in `attack-info`
+  int mask_field_offset = 64;
+  if (env.version >= GameVersion::Jak2) {
+    mask_field_offset = 88;
+  }
+  u32 mask = words.at((label.offset + mask_field_offset) / 4).data;
   u32 mask_implicit = 0;
 
   auto block_var = in->entries().at(0).dest;
   const auto& block_var_reg = block_var.reg();
-  auto block_var_name = env.get_variable_name(block_var);
 
-  const static std::map<std::string, std::pair<int, bool>> possible_args = {
-      {"vector", {1, true}},    {"mode", {5, false}},     {"shove-back", {6, false}},
-      {"shove-up", {7, false}}, {"control", {10, false}}, {"angle", {11, false}}};
+  enum AttackInfoFieldKind { DEFAULT, VECTOR, METERS, DEGREES };
+
+  const static std::map<std::string, std::pair<int, AttackInfoFieldKind>> possible_args_jak1 = {
+      {"vector", {1, VECTOR}},      {"attacker", {3, DEFAULT}}, {"mode", {5, DEFAULT}},
+      {"shove-back", {6, DEFAULT}}, {"shove-up", {7, DEFAULT}}, {"control", {10, DEFAULT}},
+      {"angle", {11, DEFAULT}},
+  };
+  const static std::map<std::string, std::pair<int, AttackInfoFieldKind>> possible_args_jak2 = {
+      {"vector", {1, VECTOR}},
+      {"intersection", {2, VECTOR}},
+      {"attacker", {3, DEFAULT}},
+      {"invinc-time", {5, DEFAULT}},
+      {"mode", {6, DEFAULT}},
+      {"shove-back", {7, DEFAULT}},
+      {"shove-up", {8, DEFAULT}},
+      {"speed", {9, DEFAULT}},
+      {"control", {11, DEFAULT}},
+      {"angle", {12, DEFAULT}},
+      {"id", {15, DEFAULT}},
+      {"count", {16, DEFAULT}},
+      {"penetrate-using", {17, DEFAULT}},
+      {"attacker-velocity", {18, VECTOR}},
+      {"damage", {19, DEFAULT}},
+      {"shield-damage", {20, DEFAULT}},
+      {"knock", {21, DEFAULT}},
+      {"test", {22, DEFAULT}},
+  };
+  const static std::map<std::string, std::pair<int, AttackInfoFieldKind>> possible_args_jak3 = {
+      {"vector", {1, VECTOR}},
+      {"intersection", {2, VECTOR}},
+      {"attacker", {3, DEFAULT}},
+      {"invinc-time", {5, DEFAULT}},
+      {"mode", {6, DEFAULT}},
+      {"shove-back", {7, DEFAULT}},
+      {"shove-up", {8, DEFAULT}},
+      {"speed", {9, DEFAULT}},
+      {"control", {11, DEFAULT}},
+      {"angle", {12, DEFAULT}},
+      {"id", {15, DEFAULT}},
+      {"count", {16, DEFAULT}},
+      {"penetrate-using", {17, DEFAULT}},
+      {"attacker-velocity", {18, VECTOR}},
+      {"damage", {19, DEFAULT}},
+      {"shield-damage", {20, DEFAULT}},
+      {"vehicle-damage-factor", {21, DEFAULT}},
+      {"vehicle-impulse-factor", {21, DEFAULT}},
+      {"knock", {23, DEFAULT}},
+      {"test", {24, DEFAULT}},
+  };
+
+  auto possible_args = possible_args_jak1;
+  if (env.version == GameVersion::Jak2) {
+    possible_args = possible_args_jak2;
+  }
+  if (env.version == GameVersion::Jak3) {
+    possible_args = possible_args_jak3;
+  }
 
   std::vector<std::pair<std::string, Form*>> args_in_info;
   for (int i = 0; i < in->body()->size() - 1; ++i) {
     auto s_elt = dynamic_cast<SetFormFormElement*>(in->body()->at(i));
+
+    //                      v--v
+    // (set! (-> v1-2 mode) arg2)
+    Form* s_src = nullptr;  // the source form. we use a separate variable since we might want to
+                            // change this (e.g. into (new-attack-id))
     if (!s_elt) {
-      lg::error("attack info err elt {} not a set!: {}", i, in->body()->at(i)->to_string(env));
-      return nullptr;
+      // lg::error("attack info err elt {} not a set!: {}", i, in->body()->at(i)->to_string(env));
+      // lg::error("checking if (new-attack-id)...");
+      auto l_elt = dynamic_cast<LetElement*>(in->body()->at(i));
+      if (l_elt) {
+        const auto match_let_for_new_attack_id = Matcher::let(
+            false, {LetEntryMatcher::any(Matcher::symbol("*game-info*"), 0)},
+            {Matcher::let(
+                false,
+                {LetEntryMatcher::any(
+                    Matcher::op_fixed(FixedOperatorKind::ADDITION,
+                                      {Matcher::deref(Matcher::same_var(0), false,
+                                                      {DerefTokenMatcher::string("attack-id")}),
+                                       Matcher::integer(1)}),
+                    1)},
+                {Matcher::set(Matcher::deref(Matcher::same_var(0), false,
+                                             {DerefTokenMatcher::string("attack-id")}),
+                              Matcher::same_var(1)),
+                 Matcher::set(Matcher::deref(Matcher::reg(block_var_reg), false,
+                                             {DerefTokenMatcher::string("id")}),
+                              Matcher::same_var(1))})});
+        auto mr_let = match(match_let_for_new_attack_id, l_elt, &env);
+
+        if (mr_let.matched) {
+          s_src = pool.form<GenericElement>(
+              GenericOperator::make_function(pool.form<ConstantTokenElement>("new-attack-id")));
+          s_elt = dynamic_cast<SetFormFormElement*>(
+              dynamic_cast<LetElement*>(l_elt->body()->at(0))->body()->at(1));
+        }
+      }
+      if (!s_src) {
+        lg::error("attack info err elt {} not a set! or (new-attack-id): {}", i,
+                  in->body()->at(i)->to_string(env));
+        return nullptr;
+      }
+    } else {
+      s_src = s_elt->src();
     }
 
     auto d_elt = s_elt->dst()->try_as_element<DerefElement>();
+    // (set! (-> v1-2 mode) arg2)
+    //       ^------------^
     if (!d_elt) {
       lg::error("attack info err elt {} dst not a deref: {}", i, s_elt->dst()->to_string(env));
       return nullptr;
     }
+    // (set! (-> v1-2 mode) arg2)
+    //           ^--^ ^--^
     if (d_elt->tokens().size() != 1 && d_elt->tokens().size() != 2) {
       lg::error("attack info err elt {} invalid token len: {}", i, d_elt->to_string(env));
       return nullptr;
     }
+    // (set! (-> v1-2 mode) arg2)
+    //                ^--^
     if (d_elt->tokens().at(0).kind() != DerefToken::Kind::FIELD_NAME) {
       lg::error("attack info err elt {} invalid token kind: {}", i, d_elt->to_string(env));
       return nullptr;
@@ -1740,7 +2031,8 @@ FormElement* rewrite_attack_info(LetElement* in, const Env& env, FormPool& pool)
     const auto& field_name = d_elt->tokens().at(0).field_name();
     auto arg_it = possible_args.find(field_name);
     if (arg_it == possible_args.end()) {
-      lg::error("attack info unknown field {}", field_name);
+      lg::error("attack info unknown field `{}`, static-attack-info could not be generated",
+                field_name);
       return nullptr;
     }
     if (arg_it->second.second &&
@@ -1753,25 +2045,25 @@ FormElement* rewrite_attack_info(LetElement* in, const Env& env, FormPool& pool)
     }
 
     if (arg_it->second.second) {
-      auto d_src = s_elt->src()->try_as_element<DerefElement>();
+      auto d_src = s_src->try_as_element<DerefElement>();
       if (d_src) {
         if (d_src->tokens().size() == 1 && d_src->tokens().at(0).is_field_name("quad")) {
           args_in_info.push_back({field_name, d_src->base()});
         } else {
           d_src->tokens().pop_back();
-          args_in_info.push_back({field_name, s_elt->src()});
+          args_in_info.push_back({field_name, s_src});
         }
       }
     } else {
       if ((field_name == "shove-back" || field_name == "shove-up") &&
-          s_elt->src()->to_form(env).is_float()) {
+          s_src->to_form(env).is_float()) {
         args_in_info.push_back(
             {field_name, pool.form<GenericElement>(GenericOperator::make_function(
                                                        pool.form<ConstantTokenElement>("meters")),
                                                    pool.form<ConstantTokenElement>(meters_to_string(
-                                                       s_elt->src()->to_form(env).as_float())))});
+                                                       s_src->to_form(env).as_float())))});
       } else {
-        args_in_info.push_back({field_name, s_elt->src()});
+        args_in_info.push_back({field_name, s_src});
       }
     }
     mask_implicit |= 1 << arg_it->second.first;
@@ -2110,16 +2402,16 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
   }
 
   // dma buffer part can be anything, really.
-  auto buf_reg = in->entries().at(0).dest;
-  auto buf_dst = env.get_variable_name(buf_reg);
-  auto bucket_dst = env.get_variable_name(in->entries().at(1).dest);
+  auto buf_dst = in->entries().at(0).dest;
+  auto bucket_dst = in->entries().at(1).dest;
   auto buf_src = in->entries().at(0).src;
   // check for (-> buf_dst base) now
   auto mr_buf_base = match(dma_buf_base_matcher, in->entries().at(1).src);
   if (!mr_buf_base.matched) {
     return nullptr;
   }
-  if (!var_name_equal(env, buf_dst, mr_buf_base.maps.regs.at(0))) {
+
+  if (!var_equal(env, buf_dst, mr_buf_base.maps.regs.at(0))) {
     lg::print("dma buf bad name\n");
     return nullptr;
   }
@@ -2134,22 +2426,65 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
 
   last_part = dynamic_cast<LetElement*>(in->body()->at(in->body()->size() - 1));
   if (!last_part) {
-    // lg::error("NO LAST PART AHH wtf!!");
     return nullptr;
   }
 
-  if (last_part->entries().size() != 1 || last_part->body()->size() != 2) {
+  // New for Jak 3: they check to see if nothing was added, and skip adding an empty DMA transfer
+  // if so. This means the usual 2 ending let body forms are now wrapped in a `when`.
+  const int expected_last_let_body_size = env.version == GameVersion::Jak3 ? 1 : 2;
+  if (last_part->entries().size() != 1 ||
+      last_part->body()->size() != expected_last_let_body_size) {
     return nullptr;
   }
-  auto buf_end_dst = env.get_variable_name(last_part->entries().at(0).dest);
+  auto buf_end_dst = last_part->entries().at(0).dest;
 
-  auto dmatag_let = dynamic_cast<LetElement*>(last_part->body()->at(0));
+  LetElement* dmatag_let;
+  FormElement* insert_tag_call;
+
+  if (env.version == GameVersion::Jak3) {
+    // check for the when:
+    auto outer_when = dynamic_cast<CondNoElseElement*>(last_part->body()->at(0));
+    if (!outer_when) {
+      // lg::error(" P no cond-no-else:\n{}\n", last_part->body()->at(0)->to_string(env));
+      return nullptr;
+    }
+    if (outer_when->entries.size() != 1) {
+      // lg::error(" P cond-no-else bad entry count");
+      return nullptr;
+    }
+    auto& entry = outer_when->entries.at(0);
+    auto matcher = Matcher::op(GenericOpMatcher::fixed(FixedOperatorKind::NEQ),
+                               {Matcher::any_reg(0), Matcher::any_reg(1)});
+    auto mr = match(matcher, entry.condition);
+    if (!mr.matched) {
+      // lg::error(" P no match: {}\n", entry.condition->to_string(env));
+      return nullptr;
+    }
+
+    if (!var_equal(env, bucket_dst, mr.maps.regs.at(0)) ||
+        !var_equal(env, buf_end_dst, mr.maps.regs.at(1))) {
+      // lg::error(" P bad vars");
+      return nullptr;
+    }
+
+    auto body = entry.body;
+    if (body->size() != 2) {
+      // lg::error(" P bad inner body size");
+      return nullptr;
+    }
+
+    dmatag_let = dynamic_cast<LetElement*>(body->at(0));
+    insert_tag_call = body->at(1);
+  } else {
+    dmatag_let = dynamic_cast<LetElement*>(last_part->body()->at(0));
+    insert_tag_call = last_part->body()->at(1);
+  }
 
   if (!dmatag_let || dmatag_let->entries().size() != 1 || dmatag_let->body()->size() != 4) {
     return nullptr;
   }
 
-  auto dmatag_dst = env.get_variable_name(dmatag_let->entries().at(0).dest);
+  auto dmatag_dst = dmatag_let->entries().at(0).dest;
 
   auto mr_last_part = match(dma_buf_base_matcher, last_part->entries().at(0).src);
   auto mr_dmatag = match(dma_buf_base_matcher, dmatag_let->entries().at(0).src);
@@ -2157,8 +2492,8 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
     lg::print("dma buf bad match 2\n");
     return nullptr;
   }
-  if (!var_name_equal(env, buf_dst, mr_last_part.maps.regs.at(0)) ||
-      !var_name_equal(env, buf_dst, mr_dmatag.maps.regs.at(0))) {
+  if (!var_equal(env, buf_dst, mr_last_part.maps.regs.at(0)) ||
+      !var_equal(env, buf_dst, mr_dmatag.maps.regs.at(0))) {
     lg::print("dma buf bad name 2\n");
     return nullptr;
   }
@@ -2178,7 +2513,7 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
       Matcher::set(Matcher::deref(Matcher::cast("(pointer int64)", Matcher::any_reg(0)), false, {}),
                    Matcher::integer(0x20000000)),
       set_dmatag_hdr);
-  if (!mr_dmatag_hdr.matched || !var_name_equal(env, dmatag_dst, mr_dmatag_hdr.maps.regs.at(0))) {
+  if (!mr_dmatag_hdr.matched || !var_equal(env, dmatag_dst, mr_dmatag_hdr.maps.regs.at(0))) {
     return nullptr;
   }
 
@@ -2186,7 +2521,7 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
       set_dmatag_w1->op()->store_size() != 4 || !set_dmatag_w1->op()->value().is_int(0) ||
       set_dmatag_w1->op()->addr().kind() != SimpleExpression::Kind::ADD ||
       set_dmatag_w1->op()->addr().args() != 2 || !set_dmatag_w1->op()->addr().get_arg(0).is_var() ||
-      !var_name_equal(env, dmatag_dst, set_dmatag_w1->op()->addr().get_arg(0).var()) ||
+      !var_equal(env, dmatag_dst, set_dmatag_w1->op()->addr().get_arg(0).var()) ||
       !set_dmatag_w1->op()->addr().get_arg(1).is_int(8)) {
     return nullptr;
   }
@@ -2194,7 +2529,7 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
       set_dmatag_w2->op()->store_size() != 4 || !set_dmatag_w2->op()->value().is_int(0) ||
       set_dmatag_w2->op()->addr().kind() != SimpleExpression::Kind::ADD ||
       set_dmatag_w2->op()->addr().args() != 2 || !set_dmatag_w2->op()->addr().get_arg(0).is_var() ||
-      !var_name_equal(env, dmatag_dst, set_dmatag_w2->op()->addr().get_arg(0).var()) ||
+      !var_equal(env, dmatag_dst, set_dmatag_w2->op()->addr().get_arg(0).var()) ||
       !set_dmatag_w2->op()->addr().get_arg(1).is_int(12)) {
     return nullptr;
   }
@@ -2204,8 +2539,8 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
                    Matcher::op_fixed(FixedOperatorKind::ADDITION_PTR,
                                      {Matcher::any_reg(0), Matcher::integer(16)})),
       set_dmatag_push);
-  if (!mr_dmatag_push.matched || !var_name_equal(env, dmatag_dst, mr_dmatag_push.maps.regs.at(0)) ||
-      !var_name_equal(env, buf_dst, mr_dmatag_push.maps.regs.at(1))) {
+  if (!mr_dmatag_push.matched || !var_equal(env, dmatag_dst, mr_dmatag_push.maps.regs.at(0)) ||
+      !var_equal(env, buf_dst, mr_dmatag_push.maps.regs.at(1))) {
     return nullptr;
   }
 
@@ -2217,10 +2552,10 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
                            DerefTokenMatcher::string("bucket-group")}),
            Matcher::any(1), Matcher::any_reg(2),
            Matcher::cast("(pointer dma-tag)", Matcher::any_reg(3))}),
-      last_part->body()->at(1));
+      insert_tag_call);
   if (!mr_bucket_add_tag_func.matched ||
-      !var_name_equal(env, bucket_dst, mr_bucket_add_tag_func.maps.regs.at(2)) ||
-      !var_name_equal(env, buf_end_dst, mr_bucket_add_tag_func.maps.regs.at(3))) {
+      !var_equal(env, bucket_dst, mr_bucket_add_tag_func.maps.regs.at(2)) ||
+      !var_equal(env, buf_end_dst, mr_bucket_add_tag_func.maps.regs.at(3))) {
     return nullptr;
   }
   auto mr_submatch = match(
@@ -2241,8 +2576,118 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
   }
 
   auto elt = pool.alloc_element<WithDmaBufferAddBucketElement>(
-      buf_reg, buf_src, mr_bucket_add_tag_func.maps.forms.at(1),
+      buf_dst, buf_src, mr_bucket_add_tag_func.maps.forms.at(1),
       pool.alloc_sequence_form(nullptr, body));
+  elt->parent_form = in->parent_form;
+  return elt;
+}
+
+FormElement* rewrite_launch_particles(LetElement* in, const Env& env, FormPool& pool) {
+  /*
+   * (let ((t9-0 sp-launch-particles-var)
+   *       (a0-1 *sp-particle-system-2d*)
+   *       (a1-0 (-> *part-id-table* 539))
+   *       (a2-0 *launch-matrix*)
+   *       )
+   *   (set! (-> a2-0 trans quad) (-> arg0 quad))
+   *   (t9-0 a0-1 a1-0 a2-0 (the-as sparticle-launch-state #f) (the-as sparticle-launch-control
+   * #f) 1.0)
+   *   )
+   * to:
+   * (launch-particles (-> *part-id-table* 539) arg0)
+   */
+
+  if (in->entries().size() != 4) {
+    return nullptr;
+  }
+
+  if (in->body()->elts().size() != 2) {
+    return nullptr;
+  }
+
+  auto& func = in->entries().at(0);
+  if (func.src->elts().at(0)->to_string(env) != "sp-launch-particles-var") {
+    return nullptr;
+  }
+
+  auto set_elt = dynamic_cast<SetFormFormElement*>(in->body()->at(0));
+  if (!set_elt) {
+    return nullptr;
+  }
+
+  auto func_elt = dynamic_cast<GenericElement*>(in->body()->at(1));
+  if (!func_elt) {
+    return nullptr;
+  }
+
+  auto& part_system = in->entries().at(1);
+  auto system = part_system.src->at(0)->to_string(env);
+  if (system != "*sp-particle-system-2d*" && system != "*sp-particle-system-3d*") {
+    return nullptr;
+  }
+
+  auto part_form = in->entries().at(2).src;
+  auto part = dynamic_cast<DerefElement*>(part_form->elts().at(0));
+  if (!part) {
+    return nullptr;
+  }
+
+  auto part_id_table = part->base()->to_string(env);
+  if (part_id_table != "*part-id-table*") {
+    return nullptr;
+  }
+
+  auto& launch_matrix = in->entries().at(3);
+  if (launch_matrix.src->at(0)->to_string(env) != "*launch-matrix*") {
+    return nullptr;
+  }
+
+  auto origin = dynamic_cast<DerefElement*>(set_elt->src()->elts().at(0));
+  if (!origin) {
+    return nullptr;
+  }
+  auto tokens = origin->tokens().size();
+  Form* origin_form;
+  // remove only the quad if there are multiple derefs
+  if (tokens > 1) {
+    origin_form = pool.form<DerefElement>(origin->base(), false, origin->tokens());
+    auto orig = dynamic_cast<DerefElement*>(origin_form->elts().at(0));
+    orig->tokens().pop_back();
+  } else {
+    origin_form = origin->base();
+  }
+
+  auto launch_state = func_elt->elts().at(func_elt->elts().size() - 3);
+  auto mr_launch_state =
+      match(Matcher::cast("sparticle-launch-state", Matcher::symbol("#f")), launch_state);
+  auto launch_control = func_elt->elts().at(func_elt->elts().size() - 2);
+  auto mr_launch_control =
+      match(Matcher::cast("sparticle-launch-control", Matcher::symbol("#f")), launch_control);
+
+  auto rate = func_elt->elts().at(func_elt->elts().size() - 1)->to_string(env);
+
+  // build the macro
+  std::vector<Form*> macro;
+  if (system != "*sp-particle-system-2d*") {
+    macro.push_back(pool.form<ConstantTokenElement>(":system"));
+    macro.push_back(pool.form<ConstantTokenElement>(system));
+  }
+  macro.push_back(part_form);
+  if (!mr_launch_state.matched) {
+    macro.push_back(pool.form<ConstantTokenElement>(":launch-state"));
+    macro.push_back(launch_state);
+  }
+  if (!mr_launch_control.matched) {
+    macro.push_back(pool.form<ConstantTokenElement>(":launch-control"));
+    macro.push_back(launch_control);
+  }
+  macro.push_back(origin_form);
+  if (rate != "1.0") {
+    macro.push_back(pool.form<ConstantTokenElement>(":rate"));
+    macro.push_back(pool.form<ConstantTokenElement>(rate));
+  }
+  auto elt = pool.alloc_element<GenericElement>(
+      GenericOperator::make_function(pool.form<ConstantTokenElement>("launch-particles")), macro);
   elt->parent_form = in->parent_form;
   return elt;
 }
@@ -2268,6 +2713,14 @@ FormElement* rewrite_multi_let(LetElement* in,
     if (as_proc_new) {
       stats.proc_new++;
       return as_proc_new;
+    }
+  }
+
+  if (in->entries().size() >= 4) {
+    auto as_launch_particles = rewrite_launch_particles(in, env, pool);
+    if (as_launch_particles) {
+      stats.launch_particles++;
+      return as_launch_particles;
     }
   }
 
@@ -2322,28 +2775,27 @@ FormElement* rewrite_dma_buffer_add_gs_set(const std::vector<LetElement*>& in,
   // (set! (-> v1-0 base) (&+ a0-2 16))
   u16 dma_qwc = 0;
   bool flusha = false;
-  auto check_vifcode_set = [&](StoreElement* store, const std::string& varname, int size,
-                               int addr) {
+  auto check_vifcode_set = [&](StoreElement* store, const RegisterAccess& var, int size, int addr) {
     return store->op()->kind() == StoreOp::Kind::INTEGER && store->op()->store_size() == size &&
            // store->op()->value().is_int(0) &&
            store->op()->addr().kind() == SimpleExpression::Kind::ADD &&
            store->op()->addr().args() == 2 && store->op()->addr().get_arg(0).is_var() &&
            store->op()->addr().get_arg(1).is_int(addr) &&
-           var_name_equal(env, varname, store->op()->addr().get_arg(0).var());
+           var_equal(env, var, store->op()->addr().get_arg(0).var());
   };
-  const auto match_buf_push = [&env](FormElement* elt, const std::string& reg_buf,
-                                     const std::string& reg_base, int amt) {
+  const auto match_buf_push = [&env](FormElement* elt, const RegisterAccess& reg_buf,
+                                     const RegisterAccess& reg_base, int amt) {
     auto mr = match(Matcher::set(Matcher::deref(Matcher::any_reg(0), false,
                                                 {DerefTokenMatcher::string("base")}),
                                  Matcher::op_fixed(FixedOperatorKind::ADDITION_PTR,
                                                    {Matcher::any_reg(1), Matcher::integer(amt)})),
                     elt);
-    return mr.matched && var_name_equal(env, reg_buf, mr.maps.regs.at(0)) &&
-           var_name_equal(env, reg_base, mr.maps.regs.at(1));
+    return mr.matched && var_equal(env, reg_buf, mr.maps.regs.at(0)) &&
+           var_equal(env, reg_base, mr.maps.regs.at(1));
   };
   {
-    auto dmatag_buf = env.get_variable_name(let0->entries().at(0).dest);
-    auto dmatag_ptr = env.get_variable_name(let0->entries().at(1).dest);
+    auto dmatag_buf = let0->entries().at(0).dest;
+    auto dmatag_ptr = let0->entries().at(1).dest;
     auto set_dmatag_hdr = dynamic_cast<SetFormFormElement*>(let0->body()->at(0));
     auto set_dmatag_vif0 = dynamic_cast<StoreElement*>(let0->body()->at(1));
     auto let_dmatag_vif0 = dynamic_cast<LetElement*>(let0->body()->at(1));
@@ -2388,7 +2840,7 @@ FormElement* rewrite_dma_buffer_add_gs_set(const std::vector<LetElement*>& in,
                   Matcher::deref(Matcher::cast("(pointer int64)", Matcher::any_reg(0)), false, {}),
                   Matcher::any_integer(1)),
               set_dmatag_hdr);
-    if (!mr_dmatag_hdr.matched || !var_name_equal(env, dmatag_ptr, mr_dmatag_hdr.maps.regs.at(0))) {
+    if (!mr_dmatag_hdr.matched || !var_equal(env, dmatag_ptr, mr_dmatag_hdr.maps.regs.at(0))) {
       lg::error("rewrite_dma_buffer_add_gs_set: bad dmatag set");
       return nullptr;
     }
@@ -2435,8 +2887,8 @@ FormElement* rewrite_dma_buffer_add_gs_set(const std::vector<LetElement*>& in,
   //   (set! (-> v1-1 base) (&+ a0-4 16))
   //   )
   {
-    auto giftag_buf = env.get_variable_name(let1->entries().at(0).dest);
-    auto giftag_ptr = env.get_variable_name(let1->entries().at(1).dest);
+    auto giftag_buf = let1->entries().at(0).dest;
+    auto giftag_ptr = let1->entries().at(1).dest;
     auto set_giftag_hdr = dynamic_cast<SetFormFormElement*>(let1->body()->at(0));
     auto let_giftag_regs = dynamic_cast<LetElement*>(let1->body()->at(1));
     auto set_giftag_push = dynamic_cast<SetFormFormElement*>(let1->body()->at(2));
@@ -2458,7 +2910,7 @@ FormElement* rewrite_dma_buffer_add_gs_set(const std::vector<LetElement*>& in,
               set_giftag_hdr);
     if (!mr_giftag_hdr.matched || (mr_giftag_hdr.maps.ints.at(1) & 0x0fffffffffffffff) != 0x8001 ||
         ((mr_giftag_hdr.maps.ints.at(1) >> 60) & 0xf) != dma_qwc - 1 ||
-        !var_name_equal(env, giftag_ptr, mr_giftag_hdr.maps.regs.at(0))) {
+        !var_equal(env, giftag_ptr, mr_giftag_hdr.maps.regs.at(0))) {
       return nullptr;
     }
     auto giftag_regs_elt = let_giftag_regs->entries().at(0).src->try_as_element<CastElement>();
@@ -2517,8 +2969,8 @@ FormElement* rewrite_dma_buffer_add_gs_set(const std::vector<LetElement*>& in,
   //   (set! (-> v1-2 base) (&+ a0-6 96))
   //   )
   {
-    auto gsregs_buf = env.get_variable_name(let2->entries().at(0).dest);
-    auto gsregs_ptr = env.get_variable_name(let2->entries().at(1).dest);
+    auto gsregs_buf = let2->entries().at(0).dest;
+    auto gsregs_ptr = let2->entries().at(1).dest;
     auto set_gsregs_push =
         dynamic_cast<SetFormFormElement*>(let2->body()->at(let2->body()->size() - 1));
     // check dma buffer base set
@@ -2528,7 +2980,7 @@ FormElement* rewrite_dma_buffer_add_gs_set(const std::vector<LetElement*>& in,
       return nullptr;
     }
     bool error = false;
-    auto get_int_from_form = [&](FormElement* elt, const std::string& ptr_name, int offset) {
+    auto get_int_from_form = [&](FormElement* elt, const RegisterAccess& ptr_name, int offset) {
       auto as_set = dynamic_cast<SetFormFormElement*>(elt);
       if (as_set) {
         auto mr_set = match(
@@ -2539,7 +2991,7 @@ FormElement* rewrite_dma_buffer_add_gs_set(const std::vector<LetElement*>& in,
                     false, {}),
                 Matcher::any_integer(1)),
             as_set);
-        if (!mr_set.matched || !var_name_equal(env, gsregs_ptr, mr_set.maps.regs.at(0))) {
+        if (!mr_set.matched || !var_equal(env, gsregs_ptr, mr_set.maps.regs.at(0))) {
           error = true;
           return (s64)0;
         }
@@ -2563,8 +3015,7 @@ FormElement* rewrite_dma_buffer_add_gs_set(const std::vector<LetElement*>& in,
         auto store_in_let = dynamic_cast<StoreElement*>(as_let->body()->at(0));
         if (!store_in_let || !check_vifcode_set(store_in_let, ptr_name, 8, offset) ||
             !store_in_let->op()->value().is_var() ||
-            !var_name_equal(env, env.get_variable_name(as_let->entries().at(0).dest),
-                            store_in_let->op()->value().var())) {
+            !var_equal(env, as_let->entries().at(0).dest, store_in_let->op()->value().var())) {
           error = true;
           return (s64)0;
         }
@@ -2589,7 +3040,7 @@ FormElement* rewrite_dma_buffer_add_gs_set(const std::vector<LetElement*>& in,
       error = true;
       return (s64)0;
     };
-    auto get_src_form = [&](FormPool& pool, FormElement* elt, const std::string& ptr_name,
+    auto get_src_form = [&](FormPool& pool, FormElement* elt, const RegisterAccess& ptr_name,
                             int offset) -> Form* {
       auto as_set = dynamic_cast<SetFormFormElement*>(elt);
       if (as_set) {
@@ -2601,7 +3052,7 @@ FormElement* rewrite_dma_buffer_add_gs_set(const std::vector<LetElement*>& in,
                     false, {}),
                 Matcher::any()),
             as_set);
-        if (!mr_set.matched || !var_name_equal(env, gsregs_ptr, mr_set.maps.regs.at(0))) {
+        if (!mr_set.matched || !var_equal(env, gsregs_ptr, mr_set.maps.regs.at(0))) {
           return nullptr;
         }
         return as_set->src();
@@ -2621,8 +3072,7 @@ FormElement* rewrite_dma_buffer_add_gs_set(const std::vector<LetElement*>& in,
         auto store_in_let = dynamic_cast<StoreElement*>(as_let->body()->at(0));
         if (!store_in_let || !check_vifcode_set(store_in_let, ptr_name, 8, offset) ||
             !store_in_let->op()->value().is_var() ||
-            !var_name_equal(env, env.get_variable_name(as_let->entries().at(0).dest),
-                            store_in_let->op()->value().var())) {
+            !var_equal(env, as_let->entries().at(0).dest, store_in_let->op()->value().var())) {
           return nullptr;
         }
         return as_let->entries().at(0).src;

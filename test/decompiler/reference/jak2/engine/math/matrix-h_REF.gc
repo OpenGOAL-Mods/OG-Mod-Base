@@ -3,87 +3,93 @@
 
 ;; definition of type matrix
 (deftype matrix (structure)
-  ((data   float   16        :offset-assert   0)
-   (vector vector  4 :inline :offset          0)
-   (quad   uint128 4         :offset          0)
-   (trans  vector  :inline   :offset         48)
+  "A 4x4 matrix, stored in row-major order.
+some, but not all, functions assume that a matrix is an affine transform.
+others assume that the rotation has no scale or shear (and that its inverse is its transpose)."
+  ((data    float    16)
+   (vector  vector   4 :inline :overlay-at (-> data 0))
+   (quad    uint128  4         :overlay-at (-> data 0))
+   (trans   vector   :inline   :overlay-at (-> data 12))
    )
-  :method-count-assert 10
-  :size-assert         #x40
-  :flag-assert         #xa00000040
   (:methods
-    (transform-vectors! (_type_ (inline-array vector) (inline-array vector) int) none 9)
+    (transform-vectors! (_type_ (inline-array vector) (inline-array vector) int) none)
     )
   )
 
 ;; definition for method 3 of type matrix
-(defmethod inspect matrix ((obj matrix))
-  (when (not obj)
-    (set! obj obj)
+;; INFO: this function exists in multiple non-identical object files
+(defmethod inspect ((this matrix))
+  (when (not this)
+    (set! this this)
     (goto cfg-4)
     )
-  (format #t "[~8x] ~A~%" obj 'matrix)
-  (format #t "~1Tdata[16] @ #x~X~%" (-> obj vector))
-  (format #t "~1Tvector[4] @ #x~X~%" (-> obj vector))
-  (format #t "~1Tquad[4] @ #x~X~%" (-> obj vector))
-  (format #t "~1Ttrans: #<vector @ #x~X>~%" (-> obj trans))
+  (format #t "[~8x] ~A~%" this 'matrix)
+  (format #t "~1Tdata[16] @ #x~X~%" (-> this vector))
+  (format #t "~1Tvector[4] @ #x~X~%" (-> this vector))
+  (format #t "~1Tquad[4] @ #x~X~%" (-> this vector))
+  (format #t "~1Ttrans: #<vector @ #x~X>~%" (-> this trans))
   (label cfg-4)
-  obj
+  this
   )
 
 ;; definition of type matrix3
 (deftype matrix3 (structure)
-  ((data   float   12        :offset-assert   0)
-   (vector vector  3 :inline :offset          0)
-   (quad   uint128 3         :offset          0)
+  "A 3x3 matrix, stored in row-major order.
+NOTE: the rows each have an extra 4-bytes of padding,
+so this is really a 3x4 matrix.
+This type is rarely used."
+  ((data    float    12)
+   (vector  vector   3 :inline :overlay-at (-> data 0))
+   (quad    uint128  3         :overlay-at (-> data 0))
    )
-  :method-count-assert 9
-  :size-assert         #x30
-  :flag-assert         #x900000030
   )
 
 ;; definition for method 3 of type matrix3
-(defmethod inspect matrix3 ((obj matrix3))
-  (when (not obj)
-    (set! obj obj)
+;; INFO: this function exists in multiple non-identical object files
+(defmethod inspect ((this matrix3))
+  (when (not this)
+    (set! this this)
     (goto cfg-4)
     )
-  (format #t "[~8x] ~A~%" obj 'matrix3)
-  (format #t "~1Tdata[12] @ #x~X~%" (-> obj vector))
-  (format #t "~1Tvector[3] @ #x~X~%" (-> obj vector))
-  (format #t "~1Tquad[3] @ #x~X~%" (-> obj vector))
+  (format #t "[~8x] ~A~%" this 'matrix3)
+  (format #t "~1Tdata[12] @ #x~X~%" (-> this vector))
+  (format #t "~1Tvector[3] @ #x~X~%" (-> this vector))
+  (format #t "~1Tquad[3] @ #x~X~%" (-> this vector))
   (label cfg-4)
-  obj
+  this
   )
 
 ;; definition of type matrix4h
 (deftype matrix4h (structure)
-  ((data     int16    16        :offset-assert   0)
-   (vector4h vector4h 4 :inline :offset          0)
-   (long     int64    4         :offset          0)
+  "A matrix stored using 16-bit integers.
+Note that these usually have different scaling for the 4th row which
+contains the translation in an affine transform.
+So you generally should not unpack these to floats without knowing where they came from
+and how they were originally packed (for example, in tie/shrub)."
+  ((data      int16     16)
+   (vector4h  vector4h  4 :inline :overlay-at (-> data 0))
+   (long      int64     4         :overlay-at (-> data 0))
    )
-  :method-count-assert 9
-  :size-assert         #x20
-  :flag-assert         #x900000020
   )
 
 ;; definition for method 3 of type matrix4h
-(defmethod inspect matrix4h ((obj matrix4h))
-  (when (not obj)
-    (set! obj obj)
+(defmethod inspect ((this matrix4h))
+  (when (not this)
+    (set! this this)
     (goto cfg-4)
     )
-  (format #t "[~8x] ~A~%" obj 'matrix4h)
-  (format #t "~1Tdata[16] @ #x~X~%" (-> obj data))
-  (format #t "~1Tvector4h[4] @ #x~X~%" (-> obj data))
-  (format #t "~1Tlong[4] @ #x~X~%" (-> obj data))
+  (format #t "[~8x] ~A~%" this 'matrix4h)
+  (format #t "~1Tdata[16] @ #x~X~%" (-> this data))
+  (format #t "~1Tvector4h[4] @ #x~X~%" (-> this data))
+  (format #t "~1Tlong[4] @ #x~X~%" (-> this data))
   (label cfg-4)
-  obj
+  this
   )
 
 ;; definition for function matrix-copy!
 ;; INFO: Used lq/sq
 (defun matrix-copy! ((arg0 matrix) (arg1 matrix))
+  "Copy arg1 to arg0"
   (let ((v1-0 (-> arg1 quad 0))
         (a2-0 (-> arg1 quad 1))
         (a3-0 (-> arg1 quad 2))

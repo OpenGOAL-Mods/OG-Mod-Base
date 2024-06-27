@@ -60,7 +60,7 @@
   (shadow 0)
   (kerning 1)
   (middle 2)
-  (left 3)
+  (middle-vert 3)
   (right 4)
   (large 5)
   (pc-hack 6)
@@ -119,27 +119,24 @@
    (mat        matrix             :offset-assert  72)
    (start-line uint32             :offset-assert  76)
    (alpha      float              :offset-assert  80)
-   (context-vec vector  :inline   :offset  48) ;; added
-   (color-s32  int32              :offset 64) ;; added for asm
-   (flags-signed int32            :offset        72) ;; added for asm
    )
   :method-count-assert 21
   :size-assert         #x54
   :flag-assert         #x1500000054
   (:methods
-    (new (symbol type matrix int int float font-color font-flags) _type_ 0)
-    (set-mat! (font-context matrix) font-context 9)
-    (set-origin! (font-context int int) font-context 10)
-    (set-depth! (font-context int) font-context 11)
-    (set-w! (font-context float) font-context 12)
-    (set-width! (font-context int) font-context 13)
-    (set-height! (font-context int) font-context 14)
-    (set-projection! (font-context float) font-context 15)
-    (set-color! (font-context font-color) font-context 16)
-    (set-flags! (font-context font-flags) font-context 17)
-    (set-start-line! (font-context uint) font-context 18)
-    (set-scale! (font-context float) font-context 19)
-    (set-alpha! (font-context float) font-context 20)
+    (new (symbol type matrix int int float font-color font-flags) _type_)
+    (set-mat! (font-context matrix) font-context)
+    (set-origin! (font-context int int) font-context)
+    (set-depth! (font-context int) font-context)
+    (set-w! (font-context float) font-context)
+    (set-width! (font-context int) font-context)
+    (set-height! (font-context int) font-context)
+    (set-projection! (font-context float) font-context)
+    (set-color! (font-context font-color) font-context)
+    (set-flags! (font-context font-flags) font-context)
+    (set-start-line! (font-context uint) font-context)
+    (set-scale! (font-context float) font-context)
+    (set-alpha! (font-context float) font-context)
     )
   )
 
@@ -304,15 +301,7 @@
    (buf                 basic                     :offset-assert 2872)
    (str-ptr             uint32                    :offset-assert 2876)
    (flags               font-flags                :offset-assert 2880)
-   (reg-save            uint32         5          :offset-assert 2884)   
-   (small-font-lo-tmpl-qw uint128            :offset 80)
-   (small-font-hi-tmpl-qw uint128            :offset 96)
-   (large-font-lo-tmpl-qw uint128            :offset 112)
-   (large-font-hi-tmpl-qw uint128            :offset 128)
-   (last-color-32      int32                  :offset 2864)
-   (save-last-color-32 int32                  :offset 2868) ;; added
-   (str-ptr-signed     (pointer uint8)        :offset 2876) ;; added
-   (flags-signed       int32                  :offset 2880) ;; added
+   (reg-save            uint32         5          :offset-assert 2884)
    )
   :method-count-assert 9
   :size-assert         #xb58

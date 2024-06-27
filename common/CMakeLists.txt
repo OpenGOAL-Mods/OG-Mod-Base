@@ -51,7 +51,7 @@ add_library(common
         repl/config.cpp
         repl/nrepl/ReplClient.cpp
         repl/nrepl/ReplServer.cpp
-        repl/util.cpp
+        repl/repl_wrapper.cpp
         serialization/subtitles/subtitles_v1.cpp
         serialization/subtitles/subtitles_v2.cpp
         serialization/subtitles/subtitles.cpp
@@ -66,6 +66,7 @@ add_library(common
         type_system/TypeSpec.cpp
         type_system/TypeSystem.cpp
         util/Assert.cpp
+        util/ast_util.cpp
         util/BitUtils.cpp
         util/compress.cpp
         util/crc32.cpp
@@ -86,10 +87,11 @@ add_library(common
         util/term_util.cpp
         util/Timer.cpp
         util/unicode_util.cpp
+        util/gltf_util.cpp
         versions/versions.cpp
         )
 
-target_link_libraries(common fmt lzokay replxx libzstd_static tree-sitter sqlite3 libtinyfiledialogs)
+target_link_libraries(common fmt lzokay replxx libzstd_static tree-sitter sqlite3 libtinyfiledialogs tiny_gltf)
 
 if(WIN32)
     target_link_libraries(common wsock32 ws2_32 windowsapp)

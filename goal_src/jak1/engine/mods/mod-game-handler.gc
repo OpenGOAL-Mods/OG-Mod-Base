@@ -592,8 +592,8 @@
     (camera-rot-copy! *tmp-continue-point* (-> *camera-combiner* inv-camera-rot))
 
     (set! *full-hp?* (and (!= *target* #f)
-                  (= (-> *target* fact-info-target health) 3.0)
-                  (= (-> *target* fact-info-target eco-pill) 50.0)
+                  (= (-> *target* fact health) 3.0)
+                  (= (-> *target* fact eco-pill) 50.0)
                   ))
     (set! *tmp-flut?* #f)
     (set! *tmp-zoomer?* #f)

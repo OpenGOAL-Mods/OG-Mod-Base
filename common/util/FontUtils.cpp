@@ -16,13 +16,14 @@
 
 #include "common/util/Assert.h"
 
-#include "third-party/fmt/core.h"
-#include "third-party/fmt/format.h"
+#include "fmt/core.h"
+#include "fmt/format.h"
 
 const std::unordered_map<std::string, GameTextVersion> sTextVerEnumMap = {
     {"jak1-v1", GameTextVersion::JAK1_V1},
     {"jak1-v2", GameTextVersion::JAK1_V2},
-    {"jak2", GameTextVersion::JAK2}};
+    {"jak2", GameTextVersion::JAK2},
+    {"jak3", GameTextVersion::JAK3}};
 
 const std::string& get_text_version_name(GameTextVersion version) {
   for (auto& [name, ver] : sTextVerEnumMap) {
@@ -261,7 +262,8 @@ bool GameTextFontBank::valid_char_range(const char in) const {
     return ((in >= '0' && in <= '9') || (in >= 'A' && in <= 'Z') ||
             m_passthrus->find(in) != m_passthrus->end()) &&
            in != '\\';
-  } else if (m_version == GameTextVersion::JAK2) {
+  } else if (m_version == GameTextVersion::JAK2 || m_version == GameTextVersion::JAK3 ||
+             m_version == GameTextVersion::JAKX) {
     return ((in >= '0' && in <= '9') || (in >= 'A' && in <= 'Z') || (in >= 'a' && in <= 'z') ||
             m_passthrus->find(in) != m_passthrus->end()) &&
            in != '\\';
@@ -550,6 +552,13 @@ static std::vector<ReplaceInfo> s_replace_info_jak1 = {
     {"E~Y~-6H~+2V,~Z", "Ę"},
     {"L~Y~-16H~+0V/~Z", "Ł"},
     {"Z~Y~-21H~-5Vº~Z", "Ż"},
+    {"E~Y~-20H~-5Vº~Z", "Ė"},
+    {"C~Y~-20H~-4Vˇ~Z", "Č"},
+    {"S~Y~-22H~-4Vˇ~Z", "Š"},
+    {"Z~Y~-22H~-4Vˇ~Z", "Ž"},
+    {"U~Y~-13H~+2V,~Z", "Ų"},
+    {"U~Y~-18H~-10V-~Z", "Ū"},
+    {"I~Y~-8H~+1V,~Z", "Į"},
 
     // tildes
     {"N~Y~-22H~-4V<TIL>~Z", "Ñ"},
@@ -906,7 +915,9 @@ GameTextFontBank g_font_bank_jak1_v2(GameTextVersion::JAK1_V2,
  * GAME TEXT FONT BANK - JAK 2
  * ================================
  * This font is used in:
- * - Jak 2 - NTSC - v1
+ * - Jak II
+ * - Jak II: Renegade
+ * - ジャックＸダクスター2
  */
 
 static std::unordered_set<char> s_passthrus_jak2 = {'~', ' ', ',', '.', '-', '+', '(', ')',
@@ -918,6 +929,43 @@ static std::vector<ReplaceInfo> s_replace_info_jak2 = {
     {"A~Y~-21H~-5Vº~Z", "Å"},
     {"N~Y~-6Hº~Z~+10H", "Nº"},
     {"~+4Vç~-4V", ",c"},
+
+    // added for translations TODO - check these for jak 2
+    {"O~Y~-25H~-1V/~Z", "Ø"},
+    {"o~Y~-23H~+4V/~Z", "ø"},
+    {"A~Y~-13H~+8V,~Z", "Ą"},
+    {"a~Y~-8H~+6V,~Z", "ą"},
+    {"E~Y~-6H~+8V,~Z", "Ę"},
+    {"e~Y~-10H~+7V,~Z", "ę"},
+    {"L~Y~-21H~+0V/~Z", "Ł"},
+    {"l~Y~-16H~+0V/~Z", "ł"},  // TODO - this one is ugly, font character addition (small slash)
+    {"Z~Y~-25H~-11Vº~Z", "Ż"},
+    {"z~Y~-23H~-5Vº~Z", "ż"},
+    {"a~Y~-25H~-5Vº~Z", "å"},
+    {"S~Y~-21H~-5V'~Z", "Ś"},
+    {"s~Y~-25H~-5V'~Z", "ś"},
+    {"n~Y~-25H~-5V'~Z", "ń"},
+    {"c~Y~-25H~-5V'~Z", "ć"},
+    {"o~Y~-24H~-4V<TIL>~Z", "õ"},
+    {"a~Y~-24H~-4V<TIL>~Z", "ã"},
+    {"O~Y~-28H~-4V'~-9H'~Z", "Ő"},
+    {"U~Y~-27H~-4V'~-12H'~Z", "Ű"},
+    {"o~Y~-28H~-4V'~-9H'~Z", "ő"},
+    {"u~Y~-28H~-4V'~-9H'~Z", "ű"},
+    {"E~Y~-22H~-11Vº~Z", "Ė"},
+    {"e~Y~-25H~-5Vº~Z", "ė"},
+    {"C~Y~-27H~-10Vˇ~Z", "Č"},
+    {"c~Y~-25H~-5Vˇ~Z", "č"},
+    {"S~Y~-24H~-10Vˇ~Z", "Š"},
+    {"s~Y~-22H~-4Vˇ~Z", "š"},
+    {"Z~Y~-25H~-10Vˇ~Z", "Ž"},
+    {"z~Y~-23H~-4Vˇ~Z", "ž"},
+    {"U~Y~-15H~+5V,~Z", "Ų"},
+    {"u~Y~-15H~+5V,~Z", "ų"},
+    {"U~Y~-20H~-18V-~Z", "Ū"},
+    {"u~Y~-18H~-15V-~Z", "ū"},
+    {"I~Y~-8H~+4V,~Z", "Į"},
+    {"i~Y~-8H~+4V,~Z", "į"},
 
     // tildes
     {"N~Y~-22H~-4V<TIL>~Z", "Ñ"},
@@ -937,12 +985,14 @@ static std::vector<ReplaceInfo> s_replace_info_jak2 = {
     {"o~Y~-26H~-4V'~Z", "ó"},
     {"U~Y~-24H~-3V'~Z", "Ú"},
     {"u~Y~-24H~-3V'~Z", "ú"},
+    {"Z~Y~-24H~-3V'~Z", "Ź"},
+    {"z~Y~-24H~-3V'~Z", "ź"},
 
     // circumflex
     {"A~Y~-20H~-4V^~Z", "Â"},
     {"a~Y~-24H~-5V^~Z", "â"},
     {"E~Y~-20H~-5V^~Z", "Ê"},
-    {"e~Y~-25H~-4V^~Zt", "ê"},
+    {"e~Y~-25H~-4V^~Z", "ê"},
     {"I~Y~-19H~-5V^~Z", "Î"},
     {"i~Y~-19H~-8V^~Z", "î"},
     {"O~Y~-20H~-4V^~Z", "Ô"},
@@ -967,6 +1017,7 @@ static std::vector<ReplaceInfo> s_replace_info_jak2 = {
     {"a~Y~-25H~-5V¨~Z", "ä"},
     {"E~Y~-20H~-5V¨~Z", "Ë"},
     {"I~Y~-19H~-5V¨~Z", "Ï"},
+    {"i~Y~-26H~-4V¨~Z", "ï"},
     {"O~Y~-26H~-8V¨~Z", "Ö"},
     {"o~Y~-26H~-4V¨~Z", "ö"},
     {"U~Y~-25H~-8V¨~Z", "Ü"},
@@ -1124,8 +1175,46 @@ static std::vector<ReplaceInfo> s_replace_info_jak2 = {
     {"~Y~-6Hº~Z~+10H", "°"},
 
     // Color / Emphasis
+    {"~[~0L", "<COLOR_DEFAULT>"},
     {"~[~1L", "<COLOR_WHITE>"},
-    {"~[~32L", "<COLOR_DEFAULT>"}};
+    {"~[~2L", "<COLOR_TRANSPARENT>"},
+    {"~[~3L", "<COLOR_RED>"},
+    {"~[~4L", "<COLOR_ORANGE>"},
+    {"~[~5L", "<COLOR_YELLOW>"},
+    {"~[~6L", "<COLOR_GREEN>"},
+    {"~[~7L", "<COLOR_BLUE>"},
+    {"~[~8L", "<COLOR_CYAN>"},
+    {"~[~9L", "<COLOR_PINK>"},
+    {"~[~10L", "<COLOR_MENU-SELECTED>"},
+    {"~[~11L", "<COLOR_MENU-SELECTED-PARENT>"},
+    {"~[~12L", "<COLOR_MENU>"},
+    {"~[~13L", "<COLOR_MENU-PARENT>"},
+    {"~[~14L", "<COLOR_MENU-FUNC-BAD>"},
+    {"~[~15L", "<COLOR_MENU-FLAG-ON>"},
+    {"~[~16L", "<COLOR_MENU-FLAG-ON-PARENT>"},
+    {"~[~17L", "<COLOR_MENU-FLAG-OFF>"},
+    {"~[~18L", "<COLOR_MENU-FLAG-OFF-PARENT>"},
+    {"~[~19L", "<COLOR_MENU-INVALID>"},
+    {"~[~20L", "<COLOR_FLAT-YELLOW>"},
+    {"~[~21L", "<COLOR_COLOR-21>"},
+    {"~[~22L", "<COLOR_PAD-BACK>"},
+    {"~[~23L", "<COLOR_PAD-SHINE>"},
+    {"~[~24L", "<COLOR_PAD-SQUARE>"},
+    {"~[~25L", "<COLOR_PAD-CIRCLE>"},
+    {"~[~26L", "<COLOR_PAD-TRIANGLE>"},
+    {"~[~27L", "<COLOR_PAD-CROSS>"},
+    {"~[~28L", "<COLOR_PROGRESS-OLD-BLUE>"},
+    {"~[~29L", "<COLOR_PROGRESS-OLD-YELLOW>"},
+    {"~[~30L", "<COLOR_PROGRESS-OLD-SELECTED>"},
+    {"~[~31L", "<COLOR_PROGRESS-OLD-PERCENT>"},
+    {"~[~32L", "<COLOR_PROGRESS>"},
+    {"~[~33L", "<COLOR_PROGRESS-SELECTED>"},
+    {"~[~34L", "<COLOR_PROGRESS-FORCE-SELECTED>"},
+    {"~[~35L", "<COLOR_PROGRESS-OPTION-OFF>"},
+    {"~[~36L", "<COLOR_COLOR-36>"},
+    {"~[~37L", "<COLOR_CREDITS-STAFF-TITLE-1>"},
+    {"~[~38L", "<COLOR_CREDITS-STAFF-TITLE-2>"},
+    {"~[~39L", "<COLOR_COLOR-39>"}};
 
 static std::vector<EncodeInfo> s_encode_info_jak2 = {
     {"ˇ", {0x10}},      // caron
@@ -1823,6 +1912,21 @@ GameTextFontBank g_font_bank_jak2(GameTextVersion::JAK2,
                                   &s_passthrus_jak2);
 
 /*!
+ * ================================
+ * GAME TEXT FONT BANK - JAK 3
+ * ================================
+ * This font is used in:
+ * - Jak 3
+ */
+
+// TODO cyrillic
+
+GameTextFontBank g_font_bank_jak3(GameTextVersion::JAK3,
+                                  &s_encode_info_jak2,
+                                  &s_replace_info_jak2,
+                                  &s_passthrus_jak2);
+
+/*!
  * ========================
  * GAME TEXT FONT BANK LIST
  * ========================
@@ -1832,10 +1936,25 @@ GameTextFontBank g_font_bank_jak2(GameTextVersion::JAK2,
 std::map<GameTextVersion, GameTextFontBank*> g_font_banks = {
     {GameTextVersion::JAK1_V1, &g_font_bank_jak1_v1},
     {GameTextVersion::JAK1_V2, &g_font_bank_jak1_v2},
-    {GameTextVersion::JAK2, &g_font_bank_jak2}};
+    {GameTextVersion::JAK2, &g_font_bank_jak2},
+    {GameTextVersion::JAK3, &g_font_bank_jak3}};
 
 const GameTextFontBank* get_font_bank(GameTextVersion version) {
   return g_font_banks.at(version);
+}
+
+const GameTextFontBank* get_font_bank_from_game_version(GameVersion version) {
+  // Jak 1 has been patched to use V2
+  switch (version) {
+    case GameVersion::Jak1:
+      return get_font_bank(GameTextVersion::JAK1_V2);
+    case GameVersion::Jak2:
+      return get_font_bank(GameTextVersion::JAK2);
+    case GameVersion::Jak3:
+      return get_font_bank(GameTextVersion::JAK3);
+    default:
+      ASSERT_MSG(false, "Unsupported game for get_font_bank_from_game_version");
+  }
 }
 
 const GameTextFontBank* get_font_bank(const std::string& name) {

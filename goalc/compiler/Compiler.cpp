@@ -14,7 +14,7 @@
 #include "goalc/regalloc/Allocator.h"
 #include "goalc/regalloc/Allocator_v2.h"
 
-#include "third-party/fmt/core.h"
+#include "fmt/core.h"
 
 using namespace goos;
 
@@ -25,8 +25,9 @@ Compiler::Compiler(GameVersion version,
     : m_version(version),
       m_goos(user_profile),
       m_debugger(&m_listener, &m_goos.reader, version),
+      m_make(repl_config, user_profile),
       m_repl(std::move(repl)),
-      m_make(repl_config, user_profile) {
+      m_symbol_info(&m_goos.reader.db) {
   m_listener.add_debugger(&m_debugger);
   m_listener.set_default_port(version);
   m_ts.add_builtin_types(m_version);
@@ -57,16 +58,14 @@ Compiler::Compiler(GameVersion version,
 
   // add built-in forms to symbol info
   for (const auto& [builtin_name, builtin_info] : g_goal_forms) {
-    SymbolInfo::Metadata sym_meta;
-    sym_meta.docstring = builtin_info.first;
-    m_symbol_info.add_builtin(builtin_name, sym_meta);
+    m_symbol_info.add_builtin(builtin_name, builtin_info.first);
   }
 
   // load auto-complete history, only if we are running in the interactive mode.
   if (m_repl) {
     m_repl->load_history();
     // init repl
-    m_repl->print_welcome_message();
+    m_repl->print_welcome_message(m_make.get_loaded_projects());
     auto& examples = m_repl->examples;
     auto& regex_colors = m_repl->regex_colors;
     m_repl->init_settings();
@@ -166,10 +165,10 @@ std::unique_ptr<FunctionEnv> Compiler::compile_top_level_function(const std::str
     // the compiler doesn't waste much time.
     // the actual source code is (top-level ...) right now though so we need some tricks.
     code.as_pair()->cdr = PairObject::make_new(
-        PairObject::make_new(SymbolObject::make_new(m_goos.reader.symbolTable, "when"),
-                             PairObject::make_new(SymbolObject::make_new(m_goos.reader.symbolTable,
-                                                                         "*debug-segment*"),
-                                                  code.as_pair()->cdr)),
+        PairObject::make_new(
+            Object::make_symbol(&m_goos.reader.symbolTable, "when"),
+            PairObject::make_new(Object::make_symbol(&m_goos.reader.symbolTable, "*debug-segment*"),
+                                 code.as_pair()->cdr)),
         Object::make_empty_list());
     result = compile_error_guard(code, fe.get());
   }
@@ -196,8 +195,10 @@ Val* Compiler::compile_error_guard(const goos::Object& code, Env* env) {
       bool term;
       auto loc_info = m_goos.reader.db.get_info_for(code, &term);
       if (term) {
+        lg::print(fg(fmt::color::yellow) | fmt::emphasis::bold, "Function:\n");
+        lg::print("{}\n", env->function_env()->name());
         lg::print(fg(fmt::color::yellow) | fmt::emphasis::bold, "Location:\n");
-        lg::print(loc_info);
+        lg::print("{}", loc_info);
       }
 
       lg::print(fg(fmt::color::yellow) | fmt::emphasis::bold, "Code:\n");
@@ -212,7 +213,7 @@ Val* Compiler::compile_error_guard(const goos::Object& code, Env* env) {
       }
       std::string line(80, '-');
       line.push_back('\n');
-      lg::print(line);
+      lg::print("{}", line);
     }
     throw ce;
   }
@@ -223,8 +224,10 @@ Val* Compiler::compile_error_guard(const goos::Object& code, Env* env) {
     bool term;
     auto loc_info = m_goos.reader.db.get_info_for(code, &term);
     if (term) {
+      lg::print(fg(fmt::color::yellow) | fmt::emphasis::bold, "Function:\n");
+      lg::print("{}\n", env->function_env()->name());
       lg::print(fg(fmt::color::yellow) | fmt::emphasis::bold, "Location:\n");
-      lg::print(loc_info);
+      lg::print("{}", loc_info);
     }
 
     lg::print(fg(fmt::color::yellow) | fmt::emphasis::bold, "Code:\n");
@@ -240,7 +243,7 @@ Val* Compiler::compile_error_guard(const goos::Object& code, Env* env) {
     }
     std::string line(80, '-');
     line.push_back('\n');
-    lg::print(line);
+    lg::print("{}", line);
     throw ce;
   }
 }
@@ -252,7 +255,7 @@ void Compiler::color_object_file(FileEnv* env) {
     input.is_asm_function = f->is_asm_func;
     for (auto& i : f->code()) {
       input.instructions.push_back(i->to_rai());
-      input.debug_instruction_names.push_back(i->print());
+      // input.debug_instruction_names.push_back(i->print());
     }
 
     for (auto& reg_val : f->reg_vals()) {
@@ -324,13 +327,14 @@ std::vector<u8> Compiler::codegen_object_file(FileEnv* env) {
 
 bool Compiler::codegen_and_disassemble_object_file(FileEnv* env,
                                                    std::vector<u8>* data_out,
-                                                   std::string* asm_out) {
+                                                   std::string* asm_out,
+                                                   bool omit_ir) {
   auto debug_info = &m_debugger.get_debug_info_for_object(env->name());
   debug_info->clear();
   CodeGenerator gen(env, debug_info, m_version);
   *data_out = gen.run(&m_ts);
   bool ok = true;
-  *asm_out = debug_info->disassemble_all_functions(&ok, &m_goos.reader);
+  *asm_out = debug_info->disassemble_all_functions(&ok, &m_goos.reader, omit_ir);
   return ok;
 }
 
@@ -385,7 +389,7 @@ void Compiler::setup_goos_forms() {
     va_check(form, args, {goos::ObjectType::SYMBOL}, {});
     std::vector<Object> enum_vals;
 
-    const auto& enum_name = args.unnamed.at(0).as_symbol()->name;
+    const auto& enum_name = args.unnamed.at(0).as_symbol().name_ptr;
     auto enum_type = m_ts.try_enum_lookup(enum_name);
     if (!enum_type) {
       throw_compiler_error(form, "Unknown enum {} in get-enum-vals", enum_name);
@@ -393,7 +397,8 @@ void Compiler::setup_goos_forms() {
 
     std::vector<std::pair<std::string, s64>> sorted_values;
     for (auto& val : enum_type->entries()) {
-      sorted_values.emplace_back(val.first, val.second);
+      sorted_values.emplace_back(val.first,
+                                 enum_type->is_bitfield() ? (u64)1 << val.second : val.second);
     }
 
     std::sort(sorted_values.begin(), sorted_values.end(),
@@ -457,6 +462,10 @@ void Compiler::asm_file(const CompilationOptions& options) {
     file_path = candidate_paths.at(0).string();
   }
 
+  // Evict any symbols we have indexed for this file, this is what
+  // helps to ensure we have an up to date and accurate symbol index
+  m_symbol_info.evict_symbols_using_file_index(file_path);
+
   auto code = m_goos.reader.read_from_file({file_path});
 
   std::string obj_file_name = file_path;
@@ -481,9 +490,9 @@ void Compiler::asm_file(const CompilationOptions& options) {
     std::vector<u8> data;
     std::string disasm;
     if (options.disassemble) {
-      codegen_and_disassemble_object_file(obj_file, &data, &disasm);
+      codegen_and_disassemble_object_file(obj_file, &data, &disasm, options.disasm_code_only);
       if (options.disassembly_output_file.empty()) {
-        printf("%s\n", disasm.c_str());
+        lg::print("{}\n", disasm);
       } else {
         file_util::write_text_file(options.disassembly_output_file, disasm);
       }
@@ -496,7 +505,7 @@ void Compiler::asm_file(const CompilationOptions& options) {
       if (m_listener.is_connected()) {
         m_listener.send_code(data, obj_file_name);
       } else {
-        printf("WARNING - couldn't load because listener isn't connected\n");  // todo log warn
+        lg::print("WARNING - couldn't load because listener isn't connected\n");  // todo log warn
       }
     }
 
@@ -509,15 +518,15 @@ void Compiler::asm_file(const CompilationOptions& options) {
     }
   } else {
     if (options.load) {
-      printf("WARNING - couldn't load because coloring is not enabled\n");
+      lg::print("WARNING - couldn't load because coloring is not enabled\n");
     }
 
     if (options.write) {
-      printf("WARNING - couldn't write because coloring is not enabled\n");
+      lg::print("WARNING - couldn't write because coloring is not enabled\n");
     }
 
     if (options.disassemble) {
-      printf("WARNING - couldn't disassemble because coloring is not enabled\n");
+      lg::print("WARNING - couldn't disassemble because coloring is not enabled\n");
     }
   }
 }

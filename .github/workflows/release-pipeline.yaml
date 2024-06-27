@@ -5,6 +5,9 @@ on:
     tags:
       - v*
 
+permissions:
+  contents: write
+
 jobs:
   # Windows
   build_windows_clang:
@@ -42,7 +45,7 @@ jobs:
     needs:
       - build_windows_clang
       - build_linux_clang
-      - build_macos_intel
+#      - build_macos_intel
     name: "Upload Artifacts"
     runs-on: ubuntu-latest
     steps:
@@ -94,11 +97,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG_VAL=$(echo ${{ github.REF }} | awk -F'refs/tags/' '{print $2}')
-          gh release upload "${TAG_VAL}" ${{ github.WORKSPACE }}/ci-artifacts/final/* --repo JoKronk/teamruns-jak-project --clobber
+          gh release upload "${TAG_VAL}" ${{ github.WORKSPACE }}/ci-artifacts/final/* --repo ${{ github.repository }} --clobber
 
       - name: Publish Release
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_PAT }}
         run: |
           TAG_VAL=$(echo ${{ github.REF }} | awk -F'refs/tags/' '{print $2}')
-          gh release edit ${TAG_VAL} --draft=false --repo JoKronk/teamruns-jak-project
+          gh release edit ${TAG_VAL} --draft=false --repo ${{ github.repository }}
