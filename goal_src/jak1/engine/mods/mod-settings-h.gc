@@ -161,7 +161,7 @@
   )
   :pack-me
   (:methods
-    (new (symbol type) _type_ 0)
+    (new (symbol type) _type_)
     )
   )
 
@@ -178,7 +178,7 @@
   )
   :pack-me
   (:methods
-    (new (symbol type) _type_ 0)
+    (new (symbol type) _type_)
     )
   )
   
@@ -195,7 +195,7 @@
   )
   :pack-me
   (:methods
-    (new (symbol type) _type_ 0)
+    (new (symbol type) _type_)
     )
   )
   
@@ -206,7 +206,7 @@
   )
   :pack-me
   (:methods
-    (new (symbol type) _type_ 0)
+    (new (symbol type) _type_)
     )
   )
 
@@ -216,7 +216,7 @@
   )
   :pack-me
   (:methods
-    (new (symbol type) _type_ 0)
+    (new (symbol type) _type_)
     )
   )
 
@@ -243,7 +243,7 @@
   )
   :pack-me
   (:methods
-    (new (symbol type) _type_ 0)
+    (new (symbol type) _type_)
     )
   )
 
@@ -260,7 +260,7 @@
   )
   :pack-me
   (:methods
-    (new (symbol type) _type_ 0)
+    (new (symbol type) _type_)
     )
   )
   
@@ -275,6 +275,6 @@
   (notification         notification-info :inline)
   )
   (:methods
-    (new (symbol type) _type_ 0)
+    (new (symbol type) _type_)
     )
   )

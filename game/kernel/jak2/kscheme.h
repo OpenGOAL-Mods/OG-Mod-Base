@@ -3,6 +3,7 @@
 
 #include "game/kernel/common/Ptr.h"
 #include "game/kernel/common/Symbol4.h"
+#include "game/kernel/common/kmalloc.h"
 #include "game/kernel/common/kscheme.h"
 
 namespace jak2 {
@@ -56,9 +57,16 @@ u64 load(u32 file_name_in, u32 heap_in);
 u64 loadb(u32 file_name_in, u32 heap_in, u32 param3);
 u64 loado(u32 file_name_in, u32 heap_in);
 u64 unload(u32 name);
+s64 load_and_link(const char* filename, char* decode_name, kheapinfo* heap, u32 flags);
 u64 call_method_of_type(u32 arg, Ptr<Type> type, u32 method_id);
 u64 call_goal_function_by_name(const char* name);
 u64 alloc_heap_memory(u32 heap, u32 size);
 u64 alloc_heap_object(u32 heap, u32 type, u32 size, u32 pp);
 u32 u32_in_fixed_sym(u32 offset);
+
+template <typename T>
+const char* symbol_name_cstr(const Symbol4<T>& sym) {
+  return (const char*)(g_ee_main_mem + 4 +
+                       *reinterpret_cast<const u32*>(&sym.foo + jak2::SYM_TO_STRING_OFFSET));
+}
 }  // namespace jak2

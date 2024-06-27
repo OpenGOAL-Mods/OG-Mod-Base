@@ -26,8 +26,8 @@ EXPECTED OUTPUT
 
 #include "gtest/gtest.h"
 
-#include "third-party/fmt/color.h"
-#include "third-party/fmt/core.h"
+#include "fmt/color.h"
+#include "fmt/core.h"
 
 struct TestDefinition {
   std::string name;
@@ -56,7 +56,7 @@ std::vector<TestDefinition> get_test_definitions(const fs::path& file_path) {
     if (!curr_test.name.empty() && line.empty()) {
       i++;
       while (true) {
-        if (contents.at(i) == "---") {
+        if (str_util::trim(contents.at(i)) == "---") {
           i++;
           curr_test.input = str_util::trim(curr_test.input);
           break;
@@ -90,6 +90,8 @@ bool has_important_tests(const fs::path& file_path) {
   return false;
 }
 
+// TODO - consider adding a test that auto-formats all of goal_src (there should be no errors)
+
 bool run_tests(const fs::path& file_path, const bool only_important_tests) {
   const auto& tests = get_test_definitions(file_path);
   // Run the tests, report successes and failures
@@ -100,7 +102,15 @@ bool run_tests(const fs::path& file_path, const bool only_important_tests) {
     if (only_important_tests && !str_util::starts_with(test.name, "!")) {
       continue;
     }
+    if (str_util::contains(test.name, "TODO")) {
+      // ignore the output
+      fmt::print("  ⚠️ - {}\n", test.name);
+      continue;
+    }
     const auto formatted_result = formatter::format_code(test.input);
+    if (formatted_result && str_util::starts_with(test.name, "!?")) {
+      fmt::print("FORMATTED RESULT:\n\n{}\n\n", formatted_result.value());
+    }
     if (!formatted_result) {
       // Unable to parse, was that expected?
       if (test.output == "__THROWS__") {
@@ -122,6 +132,7 @@ bool run_tests(const fs::path& file_path, const bool only_important_tests) {
 }
 
 bool find_and_run_tests() {
+  // TODO - fails when it finds no tests
   try {
     // Enumerate test files
     const auto test_files = file_util::find_files_recursively(

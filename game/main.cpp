@@ -44,7 +44,7 @@ void setup_logging(const std::string& game_name, bool verbose, bool disable_ansi
     lg::set_flush_level(lg::level::debug);
   } else {
     lg::set_file_level(lg::level::debug);
-    lg::set_stdout_level(lg::level::warn);
+    lg::set_stdout_level(lg::level::info);
     lg::set_flush_level(lg::level::warn);
   }
   if (disable_ansi_colors) {
@@ -72,11 +72,12 @@ std::string game_arg_documentation() {
   output += "  -level [name]  Used to inform the game to boot a specific level the default level is `#f`\n";
   // Jak 1 Related
   output += fmt::format(fmt::emphasis::bold | fmt::fg(fmt::color::orange), "Jak 1:\n");
-  output += "  -demo          Used to pass the message `demo` to the gkernel in the DebugBootMessage (instead of play)\n";
+  output += "  -demo          Boot the game in demo mode\n";
   // Jak 2 only
   output += fmt::format(fmt::emphasis::bold | fmt::fg(fmt::color::purple), "Jak 2:\n");
-  output += "  -kiosk         A demo mode, TODO on specifics\n";
-  output += "  -preview       A demo mode, TODO on specifics\n";
+  output += "  -demo          Boot the game in demo mode\n";
+  output += "  -kiosk         Boot the game in kiosk demo mode\n";
+  output += "  -preview       Boot the game in preview demo mode\n";
   output += "  -debug-boot    Used to boot the game in retail mode, but with debug segments\n";
   output += "  -user [name]   Specify the debugging username, the default is `unknown`\n";
   output += "  -art [name]    Specify the art-group name to set `DebugBootArtGroup`, there is no default\n";
@@ -96,13 +97,16 @@ int main(int argc, char** argv) {
   bool verbose_logging = false;
   bool disable_avx2 = false;
   bool disable_display = false;
-  bool enable_debug_vm = false;
   bool enable_profiling = false;
+  bool enable_portable = false;
+  bool disable_save_location_override = false;
+  std::string profile_until_event = "";
   std::string gpu_test = "";
   std::string gpu_test_out_path = "";
   int port_number = -1;
   int socket_port = 8111;
   fs::path project_path_override;
+  fs::path user_config_dir_override;
   std::vector<std::string> game_args;
   CLI::App app{"OpenGOAL Game Runtime"};
   app.add_flag("--version", show_version, "Display the built revision");
@@ -111,18 +115,26 @@ int main(int argc, char** argv) {
   app.add_flag(
       "--port", port_number,
       "Specify port number for listener connection (default is 8112 for Jak 1 and 8113 for Jak 2)");
-  app.add_option("--socketport", socket_port,
-                 "Specify socket port.  Defaults to 8111");
-  app.add_flag("--no-avx2", verbose_logging, "Disable AVX2 for testing");
+  app.add_option("--socketport", socket_port, "Specify socket port.  Defaults to 8111");
+  app.add_flag("--no-avx2", disable_avx2, "Disable AVX2 for testing");
   app.add_flag("--no-display", disable_display, "Disable video display");
-  app.add_flag("--vm", enable_debug_vm, "Enable debug PS2 VM (defaulted to off)");
   app.add_flag("--profile", enable_profiling, "Enables profiling immediately from startup");
+  app.add_flag("--portable", enable_portable,
+               "Save settings and saves relative to the game's executable, takes precedence over "
+               "--config-path");
+  app.add_flag("--disable_save_location_override", disable_save_location_override,
+               "If --config-path is provided along with this flag, saves will still be loaded and "
+               "stored to the default location");
+  app.add_option("--profile-until-event", profile_until_event,
+                 "Stops recording profile events once an event with this name is seen");
   app.add_option("--gpu-test", gpu_test,
                  "Tests for minimum graphics requirements.  Valid Options are: [opengl]");
   app.add_option("--gpu-test-out-path", gpu_test_out_path,
                  "Where to store the gpu test result file");
   app.add_option("--proj-path", project_path_override,
                  "Specify the location of the 'data/' folder");
+  app.add_option("--config-path", user_config_dir_override,
+                 "Override the location where all user configuration and saves are saved");
   app.footer(game_arg_documentation());
   app.add_option("Game Args", game_args,
                  "Remaining arguments (after '--') that are passed-through to the game itself");
@@ -130,10 +142,21 @@ int main(int argc, char** argv) {
   app.allow_extras();
   CLI11_PARSE(app, argc, argv);
 
+  // Override the user's config dir, potentially (either because it was explicitly provided
+  // or because it's portable mode)
+  if (enable_portable) {
+    lg::info("Portable mod enabled");
+    user_config_dir_override = fs::path(file_util::get_current_executable_path()).parent_path();
+  }
+  if (!user_config_dir_override.empty()) {
+    lg::info("Overriding config directory with: {}", user_config_dir_override.string());
+    file_util::override_user_config_dir(user_config_dir_override, !disable_save_location_override);
+  }
+
   start_socket(socket_port);
 
   if (show_version) {
-    lg::print(build_revision());
+    lg::print("{}", build_revision());
     return 0;
   }
 
@@ -149,10 +172,10 @@ int main(int argc, char** argv) {
   }
 
   prof().set_enable(enable_profiling);
+  prof().set_waiting_for_event(profile_until_event);
 
   // Create struct with all non-kmachine handled args to pass to the runtime
   GameLaunchOptions game_options;
-  game_options.disable_debug_vm = !enable_debug_vm;
   game_options.disable_display = disable_display;
   game_options.game_version = game_name_to_version(game_name);
   game_options.server_port =

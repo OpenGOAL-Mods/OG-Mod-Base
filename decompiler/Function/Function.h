@@ -188,11 +188,14 @@ class Function {
     std::string debug_form_string;
     bool print_debug_forms = false;
     bool expressions_succeeded = false;
+    bool skip_final_none = false;
   } ir2;
 
   std::optional<std::string> mips2c_output;
 
   std::vector<std::string> types_defined;
+
+  int process_stack_size = 0;
 
  private:
   void check_epilogue(const LinkedObjectFile& file);

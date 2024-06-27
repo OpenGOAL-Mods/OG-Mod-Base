@@ -7,7 +7,7 @@
 #include "common/goos/Reader.h"
 #include "common/log/log.h"
 
-#include "third-party/fmt/core.h"
+#include "fmt/core.h"
 
 ///////////////////
 // Env
@@ -116,6 +116,10 @@ std::vector<std::string> GlobalEnv::list_files_with_prefix(const std::string& pr
     }
   }
   return matches;
+}
+
+std::vector<std::unique_ptr<FileEnv>>& GlobalEnv::get_files() {
+  return m_files;
 }
 
 ///////////////////
@@ -254,7 +258,7 @@ RegVal* FunctionEnv::make_ireg(const TypeSpec& ts, RegClass reg_class) {
   IRegister ireg;
   ireg.reg_class = reg_class;
   ireg.id = m_iregs.size();
-  auto rv = std::make_unique<RegVal>(ireg, coerce_to_reg_type(ts));
+  auto rv = std::make_unique<RegVal>(ireg, ts);
   m_iregs.push_back(std::move(rv));
   ASSERT(reg_class != RegClass::INVALID);
   return m_iregs.back().get();
@@ -278,7 +282,7 @@ RegVal* FunctionEnv::lexical_lookup(goos::Object sym) {
     throw std::runtime_error("invalid symbol in lexical_lookup");
   }
 
-  auto kv = params.find(sym.as_symbol()->name);
+  auto kv = params.find(sym.as_symbol());
   if (kv == params.end()) {
     return parent()->lexical_lookup(sym);
   }
@@ -350,7 +354,7 @@ RegVal* LexicalEnv::lexical_lookup(goos::Object sym) {
     throw std::runtime_error("invalid symbol in lexical_lookup");
   }
 
-  auto kv = vars.find(sym.as_symbol()->name);
+  auto kv = vars.find(sym.as_symbol());
   if (kv == vars.end()) {
     return parent()->lexical_lookup(sym);
   }

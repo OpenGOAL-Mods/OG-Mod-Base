@@ -44,20 +44,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defmethod get-speaker subtitle2-text-info ((obj subtitle2-text-info) (speaker pc-subtitle2-speaker))
+(defmethod get-speaker ((obj subtitle2-text-info) (speaker pc-subtitle2-speaker))
   "get the translated string for that speaker"
   (if (and (> speaker (pc-subtitle2-speaker none)) (< speaker (-> obj speaker-length)))
       (-> obj speaker-names speaker)
       (the string #f))
   )
 
-(defmethod get-scene-by-name subtitle2-text-info ((obj subtitle2-text-info) (name string))
+(defmethod get-scene-by-name ((obj subtitle2-text-info) (name string))
   "get a subtitle scene info with the corresponding name. #f = none found"
 
   ;; invalid name so return invalid scene.
   (if (not name)
       (return (the subtitle2-scene #f)))
-  
+
   ;; bounds checking
   (when (> (length name) (-> *vag-temp-string* allocated-length))
       (format 0 "vag temp string is too short!! wanted: ~D chars~%" (length name)))
@@ -77,10 +77,10 @@
   (the subtitle2-scene #f))
 
 
-(defmethod get-line-at-pos subtitle2-scene ((obj subtitle2-scene) (pos float) (index int))
+(defmethod get-line-at-pos ((obj subtitle2-scene) (pos float) (index int))
   "return the subtitle line at that position. #f = none found
    index is which line to return, since you can have multiple lines that cover the same position."
-   
+
   (let ((found 0))
 
       (dotimes (i (length obj))
@@ -90,7 +90,7 @@
             (return (-> obj lines i)))
           (1+! found)
           )))
-  
+
   (the subtitle2-line #f))
 
 
@@ -220,21 +220,21 @@
   )
 
 
-(defmethod clear-line subtitle2-queue-element ((obj subtitle2-queue-element))
+(defmethod clear-line ((obj subtitle2-queue-element))
   "make this queue element invalid"
 
   (set! (-> obj gui) #f)
   (set! (-> obj id) (new 'static 'sound-id))
   0)
 
-(defmethod clear-queue subtitle2 ((obj subtitle2))
+(defmethod clear-queue ((obj subtitle2))
   "mark all slots in the gui queue as available"
 
   (dotimes (i PC_SUBTITLE_QUEUE_SIZE)
     (clear-line (-> obj queue i)))
   0)
 
-(defmethod update-gui-connections subtitle2 ((obj subtitle2))
+(defmethod update-gui-connections ((obj subtitle2))
   "mark all inactive slots in the gui queue as available"
 
   (dotimes (i PC_SUBTITLE_QUEUE_SIZE)
@@ -245,7 +245,7 @@
           (clear-line (-> obj queue i)))))
   0)
 
-(defmethod gui-queued? subtitle2 ((obj subtitle2) (gui gui-connection))
+(defmethod gui-queued? ((obj subtitle2) (gui gui-connection))
   "return #t is the gui is in the queue"
 
   (dotimes (i PC_SUBTITLE_QUEUE_SIZE)
@@ -253,7 +253,7 @@
         (return #t)))
   #f)
 
-(defmethod get-empty-queue subtitle2 ((obj subtitle2))
+(defmethod get-empty-queue ((obj subtitle2))
   "return the first available gui queue slot"
 
   (dotimes (i PC_SUBTITLE_QUEUE_SIZE)
@@ -263,7 +263,7 @@
   0
   )
 
-(defmethod add-to-queue subtitle2 ((obj subtitle2) (gui gui-connection))
+(defmethod add-to-queue ((obj subtitle2) (gui gui-connection))
   "add a gui connection to the first empty queue slot available"
 
   (let ((slot (get-empty-queue obj)))
@@ -272,7 +272,7 @@
   gui)
 
 
-(defmethod set-params! subtitle2-line-queue-element ((obj subtitle2-line-queue-element) (line subtitle2-line) (y float))
+(defmethod set-params! ((obj subtitle2-line-queue-element) (line subtitle2-line) (y float))
   "set the parameters for this line queue element"
 
   (set! (-> obj line) line)
@@ -297,7 +297,7 @@
   speaker)
 
 
-(defmethod get-active-subtitles subtitle2 ((obj subtitle2))
+(defmethod get-active-subtitles ((obj subtitle2))
   "collect active subtitles and add them to the queue
    if a gui connection is already in the queue,
    it will stay in the same slot when it was first added"
@@ -324,7 +324,7 @@
   0)
 
 
-(defmethod subtitle-format subtitle2 ((obj subtitle2) (line subtitle2-line))
+(defmethod subtitle-format ((obj subtitle2) (line subtitle2-line))
   "format the string for a subtitle line to *temp-string*"
 
   (when (subtitle2-flags? line merge)
@@ -365,7 +365,7 @@
   (set-origin! font (the int (/ (- 512.0 (-> font width)) 2))
                     (the int (* (if (-> self have-message?) 0.524 0.698) 416)))
   (set-height! font (the int (* (-> *SUBTITLE2-bank* lines) 44)))
-  
+
   ;; if we have the minimap, set the right border to 74.4% of screen width. shrink if larger than that.
   ;; TODO scale this with aspect.
   (when (and (-> self have-minimap?)
@@ -376,9 +376,9 @@
   )
 
 
-(defmethod draw-subtitles subtitle2 ((self subtitle2))
+(defmethod draw-subtitles ((self subtitle2))
   "do the subtitle drawing"
-  
+
   ;; check the gui queue for lines to add to the line queue
   (let ((line-queue-old (if (zero? (-> self line-queue-idx)) (-> self lines 0) (-> self lines 1)))
         (line-queue     (if (zero? (-> self line-queue-idx)) (-> self lines 1) (-> self lines 0)))
@@ -488,20 +488,20 @@
       (1+! lines-done)
       )
     )
-  
+
   (set! (-> self have-subtitles?) subtitles-drawn?)
   (when (not (-> self have-subtitles?))
     (set-action! *gui-control* (gui-action hidden) (-> self gui-id)
                 (gui-channel none) (gui-action none) (the-as string #f) (the-as (function gui-connection symbol) #f) (the-as process #f)))
 
   (set! (-> self font origin y) start-y)))
-  
+
   0)
 
 (when *debug-segment*
-(defmethod debug-print-queue subtitle2 ((self subtitle2))
+(defmethod debug-print-queue ((self subtitle2))
   "print the queue to *stdcon0*"
-  
+
   (format *stdcon0* "q: ~%")
   (dotimes (i PC_SUBTITLE_QUEUE_SIZE)
     (if (-> self queue i gui)
@@ -518,9 +518,9 @@
 
   0)
 
-(defmethod debug-print-speakers subtitle2 ((self subtitle2))
+(defmethod debug-print-speakers ((self subtitle2))
   "print all speakers onscreen"
-  
+
   (if (not *subtitle2-text*)
       (return 0))
 
@@ -542,12 +542,12 @@
   0)
 )
 
-(defmethod start-gui subtitle2 ((self subtitle2))
+(defmethod start-gui ((self subtitle2))
   "start gui queueing"
   (set! (-> self gui-id) (add-process *gui-control* self (gui-channel subtitle-pc) (gui-action hidden) "subtitle2" (meters 20) 0))
   )
 
-(defmethod stop-gui subtitle2 ((self subtitle2))
+(defmethod stop-gui ((self subtitle2))
   "stop gui queueing"
   (set-action! *gui-control* (gui-action stop) (-> self gui-id)
                              (gui-channel none)
@@ -635,20 +635,19 @@
         (set! (-> self movie-mode?) #f)
         (clear-queue self))
       )
-
-    (none))
+    )
 
   :post (behavior ()
 
     (draw-subtitles self)
-    
+
     (when *debug-segment*
       (if *display-subtitle-speakers*
           (debug-print-speakers self))
       (if PC_SUBTITLE_DEBUG
           (debug-print-queue self))
       )
-    
+
     (when (-> self movie-mode?)
       (set! (-> self movie-gui) #f)
       (set! (-> self movie-mode?) #f)
@@ -667,7 +666,7 @@
     :exit (behavior ()
       (unless (= (-> self next-state name) 'subtitle2-debug-checking-lines)
         (process-mask-set! (-> self mask) pause))
-      (none))
+      )
 
     :trans (behavior ()
 
@@ -745,8 +744,7 @@
           (set-master-mode 'game)
           (go subtitle2-process)
           )
-
-      (none))
+      )
 
     :code (-> subtitle2-process code)
     :post (behavior ()
@@ -771,7 +769,7 @@
       (set! (-> self have-minimap?) #f)
       (set! (-> self have-subtitles?) #f)
       (setup-subtitle2-font (-> self font))
-      (none))
+      )
 
     :code (behavior ()
       (protect ((-> *pc-settings* subtitle-speaker?))
@@ -820,7 +818,7 @@
 
 
 
-(defmethod deactivate subtitle2 ((self subtitle2))
+(defmethod deactivate ((self subtitle2))
 
   (stop-gui self)
   ;; not sure this works...
@@ -837,7 +835,7 @@
   (process-mask-clear! (-> self mask) menu)
 
   (set! (-> self font) (new 'process 'font-context *font-default-matrix*
-                            0 0 0.0 (font-color default) (font-flags shadow kerning left middle large)))
+                            0 0 0.0 (font-color default) (font-flags shadow kerning middle-vert middle large)))
   (clear-queue self)
   (dotimes (i PC_SUBTITLE_MAX_LINES)
     (set! (-> self lines 0 elts i line) #f)

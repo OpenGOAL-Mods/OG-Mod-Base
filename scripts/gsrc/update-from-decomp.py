@@ -36,22 +36,13 @@
 # - there are likely ways to make this more efficient
 
 import argparse
-import os
 from code_retention.all_types_retention import update_alltypes_named_blocks
+from code_retention.code_retention import is_line_start_of_form, has_form_ended
 from utils import get_gsrc_path_from_filename
-from code_retention.code_retention import *
-import shutil
-from pathlib import Path
-import subprocess
 
 parser = argparse.ArgumentParser("update-from-decomp")
 parser.add_argument("--game", help="The name of the game", type=str)
 parser.add_argument("--file", help="The name of the file", type=str)
-parser.add_argument(
-    "--preserve",
-    help="Attempt to preserve comments and marked blocks",
-    action="store_true",
-)
 parser.add_argument(
     "--debug", help="Output debug metadata on every block", action="store_true"
 )
@@ -69,7 +60,6 @@ comments = []
 debug_lines = []
 decomp_ignore_forms = ["defmethod inspect"]
 decomp_ignore_errors = False
-update_with_merge = False
 
 with open(gsrc_path) as f:
     lines_temp = f.readlines()
@@ -83,27 +73,7 @@ with open(gsrc_path) as f:
             decomp_ignore_errors = True
         if "og:ignore-form" in line:
             decomp_ignore_forms.append(line.partition("ignore-form:")[2].strip())
-        if "og:update-with-merge" in line:
-            update_with_merge = True
         lines.append(line)
-    if args.preserve:
-        comments, debug_lines = process_original_lines(lines)
-
-# If we are going to `update_with_merge` then make a backup of the file, and
-# an empty file to use as the common ancestor.
-#
-# This means that all changes will be flagged as a conflict and will not be able to be
-# merged into the repo without being explicitly resolved
-if update_with_merge:
-    subprocess.run(
-        [
-            "git",
-            "restore",
-            gsrc_path
-        ]
-    )
-    shutil.copyfile(gsrc_path, gsrc_path.replace(".gc", ".before.gc"))
-    Path(gsrc_path.replace(".gc", ".empty.gc")).touch()
 
 if args.debug:
     with open(gsrc_path, "w") as f:
@@ -190,25 +160,14 @@ with open(decomp_file_path) as f:
 
 # Step 3: Start merging the new code + comments
 final_lines = []
-if args.preserve:
-    merge_retained_code_and_new_code(gsrc_path, decomp_lines, final_lines)
-else:
-    with open(gsrc_path) as f:
-        lines = f.readlines()
-        for line in lines:
-            final_lines.append(line)
-            if line.lower().startswith(";; decomp begins"):
-                break
-        for line in decomp_lines:
-            final_lines.append(line)
-
-# Step 3.b: Handle any remaining top level comments
-# If we can't find a code line that meets a threshold, default to their line number
-# - Why is this done after: if a comment is associated with nothing but code, we have no
-#   guarantee where it should go, so we have to wait until all code is populated
-# This is SUPER inefficient, so hopefully we've processed nearly all comments by this point
-if args.preserve:
-    handle_dangling_blocks(comments, final_lines, debug_lines)
+with open(gsrc_path) as f:
+    lines = f.readlines()
+    for line in lines:
+        final_lines.append(line)
+        if line.lower().startswith(";; decomp begins"):
+            break
+    for line in decomp_lines:
+        final_lines.append(line)
 
 # Step 4.a: Remove excessive new-lines from the end of the output, only leave a single empty new-line
 lines_to_ignore = 0
@@ -225,29 +184,3 @@ with open(gsrc_path, "w") as f:
     while i + lines_to_ignore < len(final_lines):
         f.write(final_lines[i])
         i = i + 1
-
-# If we need to merge, now is the time!
-if update_with_merge:
-    shutil.move(gsrc_path, gsrc_path.replace(".gc", ".after.gc"))
-    shutil.move(gsrc_path.replace(".gc", ".before.gc"), gsrc_path)
-    subprocess.run(
-        [
-            "git",
-            "merge-file",
-            gsrc_path,
-            gsrc_path.replace(".gc", ".empty.gc"),
-            gsrc_path.replace(".gc", ".after.gc"),
-            "-L",
-            "Before Updating",
-            "-L",
-            "ignored",
-            "-L",
-            "After Updating",
-        ]
-    )
-    if os.path.exists(gsrc_path.replace(".gc", ".empty.gc")):
-        os.remove(gsrc_path.replace(".gc", ".empty.gc"))
-    if os.path.exists(gsrc_path.replace(".gc", ".before.gc")):
-        os.remove(gsrc_path.replace(".gc", ".before.gc"))
-    if os.path.exists(gsrc_path.replace(".gc", ".after.gc")):
-        os.remove(gsrc_path.replace(".gc", ".after.gc"))

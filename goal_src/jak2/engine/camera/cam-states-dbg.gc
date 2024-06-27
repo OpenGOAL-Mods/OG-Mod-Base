@@ -8,25 +8,23 @@
 ;; DECOMP BEGINS
 
 (deftype cam-point-watch-bank (basic)
-  ((speed     float    :offset-assert   4)
-   (rot-speed degrees  :offset-assert   8)
+  ((speed      float)
+   (rot-speed  degrees)
    )
-  :method-count-assert 9
-  :size-assert         #xc
-  :flag-assert         #x90000000c
   )
 
 
 (define *CAM_POINT_WATCH-bank* (new 'static 'cam-point-watch-bank :speed 1600.0 :rot-speed (degrees 0.6)))
 
 (defstate cam-point-watch (camera-slave)
-  :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
-    (let ((v1-0 event-type))
-      (the-as object (if (= v1-0 'teleport)
-                         #f
-                         (the-as symbol (cam-standard-event-handler proc arg1 event-type event))
-                         )
-              )
+  :event (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
+    (case message
+      (('teleport)
+       #f
+       )
+      (else
+        (cam-standard-event-handler proc argc message block)
+        )
       )
     )
   :enter (behavior ()
@@ -35,7 +33,6 @@
       (set! (-> self blend-from-type) (the-as uint 1))
       (set! (-> self blend-to-type) (camera-blend-to-type unknown-1))
       )
-    (none)
     )
   :code (behavior ()
     (until #f
@@ -84,17 +81,13 @@
       0
       )
     #f
-    (none)
     )
   )
 
 (deftype cam-free-bank (basic)
-  ((speed     float    :offset-assert   4)
-   (rot-speed degrees  :offset-assert   8)
+  ((speed      float)
+   (rot-speed  degrees)
    )
-  :method-count-assert 9
-  :size-assert         #xc
-  :flag-assert         #x90000000c
   )
 
 
@@ -347,8 +340,9 @@
         (when (not (logtest? (-> *camera* settings master-options) (cam-master-options IGNORE_ANALOG)))
           (let ((f28-14 (analog-input (the-as int (-> *cpad-list* cpads arg3 leftx)) 128.0 48.0 110.0 -1.0))
                 (f30-14 (analog-input (the-as int (-> *cpad-list* cpads arg3 lefty)) 128.0 48.0 110.0 -1.0))
-                (f26-0 (analog-input (the-as int (-> *cpad-list* cpads arg3 rightx)) 128.0 48.0 110.0 -1.0))
-                (f0-60 (analog-input (the-as int (-> *cpad-list* cpads arg3 righty)) 128.0 48.0 110.0 -1.0))
+                ;; og:preserve-this
+                (f26-0 (analog-input-horizontal-first (the-as int (-> *cpad-list* cpads arg3 rightx)) 128.0 48.0 110.0 -1.0))
+                (f0-60 (analog-input-vertical-first (the-as int (-> *cpad-list* cpads arg3 righty)) 128.0 48.0 110.0 -1.0))
                 )
             (cond
               ((and (not s3-0) (cpad-hold? arg3 r2))
@@ -387,14 +381,11 @@
   )
 
 (deftype camera-free-floating-move-info (structure)
-  ((rv vector :inline :offset-assert   0)
-   (tv vector :inline :offset-assert  16)
-   (up vector :inline :offset-assert  32)
-   (tm matrix :inline :offset-assert  48)
+  ((rv  vector  :inline)
+   (tv  vector  :inline)
+   (up  vector  :inline)
+   (tm  matrix  :inline)
    )
-  :method-count-assert 9
-  :size-assert         #x70
-  :flag-assert         #x900000070
   )
 
 
@@ -436,13 +427,14 @@
   )
 
 (defstate cam-free-floating (camera-slave)
-  :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
-    (let ((v1-0 event-type))
-      (the-as object (if (= v1-0 'teleport)
-                         #f
-                         (the-as symbol (cam-standard-event-handler proc arg1 event-type event))
-                         )
-              )
+  :event (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
+    (case message
+      (('teleport)
+       #f
+       )
+      (else
+        (cam-standard-event-handler proc argc message block)
+        )
       )
     )
   :enter (behavior ()
@@ -451,7 +443,6 @@
       (set! (-> self blend-to-type) (camera-blend-to-type unknown-1))
       (send-event *camera-combiner* 'stop-tracking)
       )
-    (none)
     )
   :code (behavior ()
     (until #f
@@ -469,6 +460,5 @@
       (suspend)
       )
     #f
-    (none)
     )
   )

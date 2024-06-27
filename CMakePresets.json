@@ -59,6 +59,16 @@
       }
     },
     {
+      "name": "base-linux-debug",
+      "hidden": true,
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build/Release/bin",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}"
+      }
+    },
+    {
       "name": "base-macos-release",
       "hidden": true,
       "inherits": "base",
@@ -97,6 +107,16 @@
       "displayName": "Windows Debug (clang)",
       "description": "Build with Clang with Debug Symbols",
       "inherits": ["base-windows-debug", "base-clang"]
+    },
+    {
+      "name": "Debug-windows-clang-static",
+      "displayName": "Windows Static Debug (clang)",
+      "description": "Build with Clang as Debug but statically linked",
+      "inherits": ["base-windows-debug", "base-clang"],
+      "cacheVariables": {
+        "STATICALLY_LINK": "true",
+        "ZYDIS_BUILD_SHARED_LIB": "OFF"
+      }
     },
     {
       "name": "RelWithDebInfo-windows-clang",
@@ -168,6 +188,16 @@
       "displayName": "Linux Static Release (clang)",
       "description": "Build with Clang as Release without Debug Symbols but statically linked",
       "inherits": ["base-linux-release", "base-clang"],
+      "cacheVariables": {
+        "STATICALLY_LINK": "true",
+        "ZYDIS_BUILD_SHARED_LIB": "OFF"
+      }
+    },
+    {
+      "name": "Debug-linux-clang-static",
+      "displayName": "Linux Static Release (clang)",
+      "description": "Build with Clang as Release without Debug Symbols but statically linked",
+      "inherits": ["base-linux-debug", "base-clang"],
       "cacheVariables": {
         "STATICALLY_LINK": "true",
         "ZYDIS_BUILD_SHARED_LIB": "OFF"

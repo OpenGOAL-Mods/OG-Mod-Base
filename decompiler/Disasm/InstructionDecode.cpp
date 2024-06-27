@@ -10,7 +10,7 @@
 
 #include "decompiler/ObjectFile/LinkedObjectFile.h"
 
-#include "third-party/fmt/core.h"
+#include "fmt/core.h"
 
 namespace decompiler {
 // utility class to extract fields of an opcode.
@@ -37,7 +37,10 @@ struct OpcodeFields {
   uint32_t sa() { return (data >> 6) & 0x1f; }
 
   // 0 - 5
+  // TODO - remove once we update clang-format
+  // clang-format off
   uint32_t function() { return (data)&0x3f; }
+  // clang-format on
 
   ////////////////
   // Immediates //
@@ -556,8 +559,10 @@ static InstructionKind decode_mmi3(OpcodeFields fields) {
     case 0b11011:
       ASSERT(fields.rs() == 0);
       return IK::PCPYH;
+    case 0b11110:
+      return IK::PEXCW;
     default:
-      ASSERT(false);
+      ASSERT_MSG(false, fmt::format("unknown mmi3: 0b{:b}\n", fields.MMI_func()));
       return IK::UNKNOWN;
   }
 }

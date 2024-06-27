@@ -49,6 +49,7 @@ int ext_resume = 0;
 
 CmdDgo sLoadDgo;  // renamed from scmd to sLoadDGO in Jak 2
 static RPC_Dgo_Cmd sRPCBuff[1];
+constexpr int kRpcBuffSize = sizeof(RPC_Dgo_Cmd);
 VagDir gVagDir;
 
 /// The main buffer used for reading data and doing blzo decompression.
@@ -241,7 +242,7 @@ void IsoQueueVagStream(VagCmd* cmd, int param_2) {
     new_cmd->id = cmd->id;
 
     new_cmd->plugin_id = cmd->plugin_id;
-    new_cmd->unk_136 = cmd->unk_136;
+    new_cmd->sound_handler = cmd->sound_handler;
     new_cmd->unk_176 = cmd->unk_176;
     new_cmd->unk_288 = cmd->unk_288;
     new_cmd->unk_292 = cmd->unk_292;
@@ -676,7 +677,11 @@ u32 ISOThread() {
       pLVar14 = (VagStrListNode*)NewStreamsList.next;
       do {
         if (pLVar14->id != 0) {
-          QueueVAGStream(pLVar14);
+          if (g_game_version != GameVersion::Jak3) {
+            // doesn't work.
+            printf("jak3 skipping vag stream\n");
+            QueueVAGStream(pLVar14);
+          }
         }
         pLVar14 = (VagStrListNode*)pLVar14->list.next;
         iVar4 = iVar4 + 1;
@@ -689,7 +694,7 @@ u32 ISOThread() {
     do {
       if ((((cmd_iter->byte11 == false) && (cmd_iter->sb_scanned == false)) &&
            (cmd_iter->id != 0)) ||
-          ((StopPluginStreams == 1 && (cmd_iter->unk_136) != 0))) {
+          ((StopPluginStreams == 1 && (cmd_iter->sound_handler) != 0))) {
         // CpuSuspendIntr(&local_2c);
         bVar1 = false;
         if (cmd_iter->id == 0) {
@@ -1097,7 +1102,8 @@ u32 DGOThread() {
   CpuDisableIntr();
   sceSifInitRpc(0);
   sceSifSetRpcQueue(&dq, GetThreadId());
-  sceSifRegisterRpc(&serve, DGO_RPC_ID[g_game_version], RPC_DGO, sRPCBuff, nullptr, nullptr, &dq);
+  sceSifRegisterRpc(&serve, DGO_RPC_ID[g_game_version], RPC_DGO, sRPCBuff, kRpcBuffSize, nullptr,
+                    nullptr, &dq);
   CpuEnableIntr();
   sceSifRpcLoop(&dq);
   return 0;

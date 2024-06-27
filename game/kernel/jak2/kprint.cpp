@@ -5,6 +5,7 @@
 
 #include "common/goal_constants.h"
 #include "common/listener_common.h"
+#include "common/log/log.h"
 #include "common/symbols.h"
 
 #include "game/kernel/common/fileio.h"
@@ -516,12 +517,15 @@ s32 format_impl_jak2(uint64_t* args) {
         default:
           MsgErr("format: unknown code 0x%02x\n", format_ptr[1]);
           MsgErr("input was %s\n", format_cstring);
-          ASSERT(false);
+          // ASSERT(false);
+          goto copy_char_hack;
           break;
       }
       format_ptr++;
     } else {
-      // got normal char, just copy it
+    // got normal char, just copy it
+    copy_char_hack:  // we goto here if we get a bad code for ~, which sort of backtracks and falls
+                     // back to regular character copying
       *output_ptr = *format_ptr;
       output_ptr++;
     }
@@ -541,8 +545,9 @@ s32 format_impl_jak2(uint64_t* args) {
     if (DiskBoot) {
       // however, we are going to disable it anyway because it spams the console and is annoying
       if (false) {
-        printf("%s", PrintPendingLocal3);
-        fflush(stdout);
+        lg::print("{}", PrintPendingLocal3);
+        // printf("%s", PrintPendingLocal3);
+        // fflush(stdout);
       }
       PrintPending = make_ptr(PrintPendingLocal2).cast<u8>();
       // if we don't comment this line, our output gets cleared
@@ -557,8 +562,9 @@ s32 format_impl_jak2(uint64_t* args) {
     *PrintPendingLocal3 = 0;
     return string;
   } else if (original_dest == 0) {
-    printf("%s", PrintPendingLocal3);
-    fflush(stdout);
+    lg::print("{}", PrintPendingLocal3);
+    // printf("%s", PrintPendingLocal3);
+    // fflush(stdout);
     PrintPending = make_ptr(PrintPendingLocal2).cast<u8>();
     *PrintPendingLocal3 = 0;
     return 0;

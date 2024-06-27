@@ -16,7 +16,7 @@ emitter::Register Compiler::parse_register(const goos::Object& code) {
 
   auto nas = code.as_symbol();
   for (int i = 0; i < 32; i++) {
-    if (nas->name == reg_names[i]) {
+    if (std::string_view(nas.name_ptr) == reg_names[i]) {
       return emitter::Register(i);
     }
   }
@@ -60,7 +60,7 @@ Val* Compiler::compile_rlet(const goos::Object& form, const goos::Object& rest, 
     // figure out the class
     RegClass register_class = RegClass::GPR_64;
     if (def_args.has_named("class")) {
-      auto& class_name = def_args.named.at("class").as_symbol()->name;
+      auto& class_name = def_args.named.at("class").as_symbol();
       if (class_name == "gpr") {
         register_class = RegClass::GPR_64;
       } else if (class_name == "fpr") {
@@ -70,7 +70,7 @@ Val* Compiler::compile_rlet(const goos::Object& form, const goos::Object& rest, 
       } else if (class_name == "i128") {
         register_class = RegClass::INT_128;
       } else {
-        throw_compiler_error(o, "Register class {} is unknown.", class_name);
+        throw_compiler_error(o, "Register class {} is unknown.", class_name.name_ptr);
       }
     }
 
@@ -119,7 +119,7 @@ Val* Compiler::compile_rlet(const goos::Object& form, const goos::Object& rest, 
       }
     }
 
-    lenv->vars[new_place_name.as_symbol()->name] = new_place_reg;
+    lenv->vars[new_place_name.as_symbol()] = new_place_reg;
   });
 
   if (!reset_regs.empty()) {
@@ -218,13 +218,12 @@ Val* Compiler::compile_asm_load_sym(const goos::Object& form, const goos::Object
   va_check(
       form, args, {{}, {goos::ObjectType::SYMBOL}},
       {{"sext", {false, goos::ObjectType::SYMBOL}}, {"color", {false, goos::ObjectType::SYMBOL}}});
-  auto& sym_name = args.unnamed.at(1).as_symbol()->name;
-  auto sym_kv = m_symbol_types.find(sym_name);
-  if (sym_kv == m_symbol_types.end()) {
-    throw_compiler_error(form, "Cannot find a symbol named {}.", sym_name);
+  auto& sym_name = args.unnamed.at(1).as_symbol();
+  const auto* sym_ts = m_symbol_types.lookup(sym_name);
+  if (!sym_ts) {
+    throw_compiler_error(form, "Cannot find a symbol named {}.", sym_name.name_ptr);
   }
-  auto ts = sym_kv->second;
-  bool sext = m_ts.lookup_type(ts)->get_load_signed();
+  bool sext = m_ts.lookup_type(*sym_ts)->get_load_signed();
   if (args.has_named("sext")) {
     sext = get_true_or_false(form, args.named.at("sext"));
   }
@@ -239,7 +238,7 @@ Val* Compiler::compile_asm_load_sym(const goos::Object& form, const goos::Object
     throw_compiler_error(form, "Cannot .load-sym this. Got a {}.", dest->print());
   }
 
-  env->emit_ir<IR_GetSymbolValueAsm>(form, color, dest, sym_name, sext);
+  env->emit_ir<IR_GetSymbolValueAsm>(form, color, dest, sym_name.name_ptr, sext);
   return get_none();
 }
 
@@ -1233,17 +1232,17 @@ Val* Compiler::compile_asm_div_vf(const goos::Object& form, const goos::Object& 
   // Why do we even bother using VDIVPS instead of FDIV? Because otherwise in x86, you have to use
   // the FPU stack Registers are nicer.
 
-  // Save one temp reg, use the destination as one
-  auto temp_reg = env->make_vfr(dest->type());
+  auto temp_reg1 = env->make_vfr(dest->type());
+  auto temp_reg2 = env->make_vfr(dest->type());
 
-  // Splat src1's value into the dest reg, keep it simple, this way no matter which vector component
+  // Splat src1's value into a temp reg, keep it simple, this way no matter which vector component
   // is accessed from the final result will be the correct answer
-  env->emit_ir<IR_SplatVF>(form, color, dest, src1, ftf_fsf_to_vector_element(fsf));
+  env->emit_ir<IR_SplatVF>(form, color, temp_reg1, src1, ftf_fsf_to_vector_element(fsf));
   // Splat src1's value into the the temp reg
-  env->emit_ir<IR_SplatVF>(form, color, temp_reg, src2, ftf_fsf_to_vector_element(ftf));
+  env->emit_ir<IR_SplatVF>(form, color, temp_reg2, src2, ftf_fsf_to_vector_element(ftf));
 
   // Perform the Division
-  env->emit_ir<IR_VFMath3Asm>(form, color, dest, dest, temp_reg, IR_VFMath3Asm::Kind::DIV);
+  env->emit_ir<IR_VFMath3Asm>(form, color, dest, temp_reg1, temp_reg2, IR_VFMath3Asm::Kind::DIV);
   return get_none();
 }
 

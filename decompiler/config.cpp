@@ -6,10 +6,23 @@
 
 #include "decompiler/util/config_parsers.h"
 
-#include "third-party/fmt/core.h"
-#include "third-party/json.hpp"
+#include "fmt/core.h"
 
 namespace decompiler {
+
+void from_json(const nlohmann::json& j, TexInfo& info) {
+  j.at("name").get_to(info.name);
+  j.at("tpage_name").get_to(info.tpage_name);
+  j.at("idx").get_to(info.idx);
+}
+
+void to_json(nlohmann::json& j, const TexInfo& info) {
+  j = {
+      {"name", info.name},
+      {"tpage_name", info.tpage_name},
+      {"idx", info.idx},
+  };
+}
 
 namespace {
 /*!
@@ -25,7 +38,7 @@ nlohmann::json read_json_file_from_config(const nlohmann::json& json, const std:
 Config make_config_via_json(nlohmann::json& json) {
   Config config;
   int version_int = json.at("game_version").get<int>();
-  ASSERT(version_int == 1 || version_int == 2);
+  ASSERT(version_int == 1 || version_int == 2 || version_int == 3);
   config.game_version = (GameVersion)version_int;
   config.text_version = json.at("text_version").get<GameTextVersion>();
   config.game_name = json.at("game_name").get<std::string>();
@@ -35,13 +48,20 @@ Config make_config_via_json(nlohmann::json& json) {
   config.all_types_file = json.at("all_types_file").get<std::string>();
 
   auto inputs_json = read_json_file_from_config(json, "inputs_file");
-  config.dgo_names = inputs_json.at("dgo_names").get<std::vector<std::string>>();
+  config.dgo_names = json.contains("dgo_names")
+                         ? json.at("dgo_names").get<std::vector<std::string>>()
+                         : inputs_json.at("dgo_names").get<std::vector<std::string>>();
   config.object_file_names = inputs_json.at("object_file_names").get<std::vector<std::string>>();
   config.str_file_names = inputs_json.at("str_file_names").get<std::vector<std::string>>();
 
   if (inputs_json.contains("str_texture_file_names")) {
     config.str_texture_file_names =
         inputs_json.at("str_texture_file_names").get<std::vector<std::string>>();
+  }
+
+  if (inputs_json.contains("str_art_file_names")) {
+    config.str_art_file_names =
+        inputs_json.at("str_art_file_names").get<std::vector<std::string>>();
   }
 
   config.audio_dir_file_name = inputs_json.at("audio_dir_file_name").get<std::string>();
@@ -56,15 +76,34 @@ Config make_config_via_json(nlohmann::json& json) {
     config.art_group_info_dump = serialized;
   }
 
+  if (json.contains("joint_node_dump_file")) {
+    auto json_data = file_util::read_text_file(
+        file_util::get_file_path({json.at("joint_node_dump_file").get<std::string>()}));
+    std::unordered_map<std::string, std::unordered_map<int, std::string>> serialized =
+        parse_commented_json(json_data, "joint_node_dump_file");
+    config.jg_info_dump = serialized;
+  }
+
+  if (json.contains("tex_dump_file")) {
+    auto json_data = file_util::read_text_file(
+        file_util::get_file_path({json.at("tex_dump_file").get<std::string>()}));
+    std::unordered_map<u32, TexInfo> serialized = parse_commented_json(json_data, "tex_dump_file");
+    config.texture_info_dump = serialized;
+  }
+
   if (json.contains("obj_file_name_map_file")) {
     config.obj_file_name_map_file = json.at("obj_file_name_map_file").get<std::string>();
   }
   config.disassemble_code = json.at("disassemble_code").get<bool>();
   config.decompile_code = json.at("decompile_code").get<bool>();
+  if (json.contains("format_code")) {
+    config.format_code = json.at("format_code").get<bool>();
+  }
   config.write_hex_near_instructions = json.at("write_hex_near_instructions").get<bool>();
   config.write_scripts = json.at("write_scripts").get<bool>();
   config.disassemble_data = json.at("disassemble_data").get<bool>();
   config.process_tpages = json.at("process_tpages").get<bool>();
+  config.write_tpage_imports = json.at("write_tpage_imports").get<bool>();
   config.process_game_text = json.at("process_game_text").get<bool>();
   config.process_game_count = json.at("process_game_count").get<bool>();
   config.process_art_groups = json.at("process_art_groups").get<bool>();
@@ -75,6 +114,8 @@ Config make_config_via_json(nlohmann::json& json) {
     config.process_subtitle_images = json.at("process_subtitle_images").get<bool>();
   }
   config.dump_art_group_info = json.at("dump_art_group_info").get<bool>();
+  config.dump_joint_geo_info = json.at("dump_joint_geo_info").get<bool>();
+  config.dump_tex_info = json.at("dump_tex_info").get<bool>();
   config.hexdump_code = json.at("hexdump_code").get<bool>();
   config.hexdump_data = json.at("hexdump_data").get<bool>();
   config.find_functions = json.at("find_functions").get<bool>();
@@ -87,6 +128,9 @@ Config make_config_via_json(nlohmann::json& json) {
   config.generate_all_types = json.at("generate_all_types").get<bool>();
   if (json.contains("read_spools")) {
     config.read_spools = json.at("read_spools").get<bool>();
+  }
+  if (json.contains("ignore_var_name_casts")) {
+    config.ignore_var_name_casts = json.at("ignore_var_name_casts").get<bool>();
   }
   if (json.contains("old_all_types_file")) {
     config.old_all_types_file = json.at("old_all_types_file").get<std::string>();
@@ -147,29 +191,31 @@ Config make_config_via_json(nlohmann::json& json) {
       config.anon_function_types_by_obj_by_id[obj_file_name][id] = type_name;
     }
   }
-  auto var_names_json = read_json_file_from_config(json, "var_names_file");
-  for (auto& kv : var_names_json.items()) {
-    auto& function_name = kv.key();
-    auto arg = kv.value().find("args");
-    if (arg != kv.value().end()) {
-      for (auto& x : arg.value()) {
-        config.function_arg_names[function_name].push_back(x);
-      }
-    }
-
-    auto var = kv.value().find("vars");
-    if (var != kv.value().end()) {
-      for (auto& vkv : var->get<std::unordered_map<std::string, nlohmann::json>>()) {
-        LocalVarOverride override;
-        if (vkv.second.is_string()) {
-          override.name = vkv.second.get<std::string>();
-        } else if (vkv.second.is_array()) {
-          override.name = vkv.second[0].get<std::string>();
-          override.type = vkv.second[1].get<std::string>();
-        } else {
-          throw std::runtime_error("Invalid function var override.");
+  if (!config.ignore_var_name_casts) {
+    auto var_names_json = read_json_file_from_config(json, "var_names_file");
+    for (auto& kv : var_names_json.items()) {
+      auto& function_name = kv.key();
+      auto arg = kv.value().find("args");
+      if (arg != kv.value().end()) {
+        for (auto& x : arg.value()) {
+          config.function_arg_names[function_name].push_back(x);
         }
-        config.function_var_overrides[function_name][vkv.first] = override;
+      }
+
+      auto var = kv.value().find("vars");
+      if (var != kv.value().end()) {
+        for (auto& vkv : var->get<std::unordered_map<std::string, nlohmann::json>>()) {
+          LocalVarOverride override;
+          if (vkv.second.is_string()) {
+            override.name = vkv.second.get<std::string>();
+          } else if (vkv.second.is_array()) {
+            override.name = vkv.second[0].get<std::string>();
+            override.type = vkv.second[1].get<std::string>();
+          } else {
+            throw std::runtime_error("Invalid function var override.");
+          }
+          config.function_var_overrides[function_name][vkv.first] = override;
+        }
       }
     }
   }
@@ -286,14 +332,23 @@ Config make_config_via_json(nlohmann::json& json) {
   }
 
   auto art_info_json = read_json_file_from_config(json, "art_info_file");
-  config.art_groups_by_file =
-      art_info_json.at("files").get<std::unordered_map<std::string, std::string>>();
-  config.art_groups_by_function =
-      art_info_json.at("functions").get<std::unordered_map<std::string, std::string>>();
+  config.art_group_type_remap =
+      art_info_json.at("type_remap").get<std::unordered_map<std::string, std::string>>();
+  if (art_info_json.contains("file_override")) {
+    config.art_group_file_override =
+        art_info_json.at("file_override")
+            .get<std::unordered_map<std::string, std::unordered_map<std::string, std::string>>>();
+  }
+  config.joint_node_hacks =
+      art_info_json.at("joint_node_hacks").get<std::unordered_map<std::string, std::string>>();
 
   auto import_deps = read_json_file_from_config(json, "import_deps_file");
   config.import_deps_by_file =
       import_deps.get<std::unordered_map<std::string, std::vector<std::string>>>();
+
+  if (json.contains("rip_collision")) {
+    config.rip_collision = json.at("rip_collision").get<bool>();
+  }
 
   config.write_patches = json.at("write_patches").get<bool>();
   config.apply_patches = json.at("apply_patches").get<bool>();
@@ -305,6 +360,10 @@ Config make_config_via_json(nlohmann::json& json) {
     new_pch.patch_file = pch.at("out").get<std::string>();
     config.object_patches.insert({obj, new_pch});
   }
+
+  auto process_stack_size_json = read_json_file_from_config(json, "process_stack_size_file");
+  config.process_stack_size_overrides =
+      process_stack_size_json.get<std::unordered_map<std::string, int>>();
 
   return config;
 }
@@ -332,9 +391,9 @@ Config read_config_file(const fs::path& path_to_config_file,
 
   // Then, update any config overrides
   if (override_json != "{}" && !override_json.empty()) {
-    lg::info("Config Overide: '{}'", override_json);
+    lg::info("Config Override: '{}'", override_json);
     auto cfg_override = parse_commented_json(override_json, "");
-    json.update(cfg_override);
+    json.update(cfg_override, true);
   }
 
   // debugging, dump the JSON config to a file

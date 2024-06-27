@@ -1,8 +1,10 @@
+#include "atomic_op_builder.h"
+
 #include <memory>
 
-#include "atomic_op_builder.h"
 #include "common/log/log.h"
 #include "common/symbols.h"
+
 #include "decompiler/Disasm/DecompilerLabel.h"
 #include "decompiler/Disasm/InstructionMatching.h"
 #include "decompiler/Function/Function.h"
@@ -160,7 +162,7 @@ std::unique_ptr<AtomicOp> make_standard_load(const Instruction& i0,
                                              int idx,
                                              int load_size,
                                              LoadVarOp::Kind kind) {
-  if (i0.get_dst(0).is_reg(rra()) || i0.get_dst(0).is_reg(Register(Reg::GPR, Reg::SP))) {
+  if (i0.get_dst(0).is_reg(Register(Reg::GPR, Reg::SP))) {
     return std::make_unique<AsmOp>(i0, idx);
   }
   auto dst = make_dst_var(i0, idx);
@@ -364,6 +366,7 @@ std::unique_ptr<AtomicOp> make_asm_op(const Instruction& i0, int idx) {
     case InstructionKind::PMADDH:
     case InstructionKind::PMULTH:
     case InstructionKind::PEXEW:
+    case InstructionKind::PEXCW:
     case InstructionKind::PNOR:
     case InstructionKind::PCPYH:
     case InstructionKind::PINTEH:
@@ -1795,6 +1798,7 @@ std::unique_ptr<AtomicOp> convert_5(const Instruction& i0,
       process_offset = 44;
       break;
     case GameVersion::Jak2:
+    case GameVersion::Jak3:
       process_offset = 48;
       break;
     default:

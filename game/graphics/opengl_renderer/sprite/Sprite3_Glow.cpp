@@ -183,7 +183,6 @@ void Sprite3::glow_dma_and_draw(DmaFollower& dma,
                                 ScopedProfilerNode& prof) {
   auto maybe_consts_setup = dma.read_and_advance();
   if (maybe_consts_setup.size_bytes != sizeof(SpriteGlowConsts)) {
-    fmt::print("no consts...\n");
     return;
   }
   SpriteGlowConsts consts;
@@ -220,6 +219,9 @@ void Sprite3::glow_dma_and_draw(DmaFollower& dma,
     ASSERT(shader_xfer.size_bytes == 5 * 16);
 
     if (m_enable_glow) {
+      if (m_glow_renderer.at_max_capacity()) {
+        m_glow_renderer.flush(render_state, prof);
+      }
       auto* out = m_glow_renderer.alloc_sprite();
       if (!glow_math(&consts, m_glow_renderer.new_mode, vecdata_xfer.data, shader_xfer.data, out)) {
         m_glow_renderer.cancel_sprite();

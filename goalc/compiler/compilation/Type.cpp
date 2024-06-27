@@ -3,11 +3,12 @@
 #include "common/type_system/deftype.h"
 #include "common/type_system/state.h"
 #include "common/util/math_util.h"
+#include "common/util/string_util.h"
 
 #include "goalc/compiler/Compiler.h"
 #include "goalc/emitter/CallingConvention.h"
 
-#include "third-party/fmt/core.h"
+#include "fmt/core.h"
 
 namespace {
 
@@ -86,6 +87,33 @@ RegVal* Compiler::compile_get_method_of_object(const goos::Object& form,
     } else {
       throw_compiler_error(form, "Type {} has no method {}", compile_time_type.print(),
                            method_name);
+    }
+  }
+
+  if (m_settings.check_for_requires) {
+    std::vector<symbol_info::SymbolInfo*> symbol_info =
+        m_symbol_info.lookup_exact_method_name(method_info.name, compile_time_type.base_type());
+    // TODO - check for virtual state requirement, if i could track the defining form!
+    // if (symbol_info.empty()) {
+    //  // maybe it's a virtual state
+    //  symbol_info = m_symbol_info.lookup_exact_virtual_state_name(method_info.name,
+    //                                                              compile_time_type.base_type());
+    //  if (!symbol_info.empty()) {
+    //    int x = 0;
+    //  }
+    //}
+    if (!symbol_info.empty()) {
+      const auto& result = symbol_info.at(0);
+      if (result->m_def_location.has_value() &&
+          !env->file_env()->m_missing_required_files.contains(result->m_def_location->file_path) &&
+          env->file_env()->m_required_files.find(result->m_def_location->file_path) ==
+              env->file_env()->m_required_files.end() &&
+          !str_util::ends_with(result->m_def_location->file_path,
+                               env->file_env()->name() + ".gc")) {
+        lg::warn("Missing require in {} for {} over {}", env->file_env()->name(),
+                 result->m_def_location->file_path, method_info.name);
+        env->file_env()->m_missing_required_files.insert(result->m_def_location->file_path);
+      }
     }
   }
 
@@ -170,7 +198,24 @@ void Compiler::generate_field_description(const goos::Object& form,
     format_args.push_back(get_field_of_structure(type, reg, f.name(), env)->to_gpr(form, env));
   } else if (m_ts.tc(m_ts.make_typespec("structure"), f.type())) {
     // Structure
-    str_template += fmt::format("{}{}: #<{} @ #x~X>~%", tabs, f.name(), f.type().print());
+    auto ts = m_ts.lookup_type_no_throw(f.type());
+    if (ts) {
+      // try to use print method if the structure implements it
+      // TODO see if this can be done without a hardcoded list
+      std::vector<std::string> has_print = {
+          "vector",      "vector2",     "vector4w",           "vec4s",
+          "connectable", "connection",  "connection-minimap", "transform",
+          "transformq",  "entity-links"};
+      if (ts->get_parent() == "basic" ||
+          (ts->get_parent() == "structure" &&
+           std::find(has_print.begin(), has_print.end(), f.type().print()) != has_print.end())) {
+        str_template += fmt::format("{}{}: ~`{}`P~%", tabs, f.name(), f.type().print());
+      } else {
+        str_template += fmt::format("{}{}: #<{} @ #x~X>~%", tabs, f.name(), f.type().print());
+      }
+    } else {
+      str_template += fmt::format("{}{}: #<{} @ #x~X>~%", tabs, f.name(), f.type().print());
+    }
     format_args.push_back(get_field_of_structure(type, reg, f.name(), env)->to_gpr(form, env));
   } else if (f.type() == TypeSpec("seconds")) {
     // seconds
@@ -369,32 +414,32 @@ Val* Compiler::compile_deftype(const goos::Object& form, const goos::Object& res
   auto result = parse_deftype(rest, &m_ts, &m_global_constants);
 
   // look up the type name
-  auto kv = m_symbol_types.find(result.type.base_type());
-  if (kv != m_symbol_types.end() && kv->second.base_type() != "type") {
+  auto kv = m_symbol_types.lookup(m_goos.intern_ptr(result.type.base_type()));
+  if (kv && kv->base_type() != "type") {
     // we already have something that's not a type with the same name, this is bad.
     lg::print("[Warning] deftype will redefine {} from {} to a type.\n", result.type.base_type(),
-              kv->second.print());
+              kv->print());
   }
   // remember that this is a type
-  m_symbol_types[result.type.base_type()] = m_ts.make_typespec("type");
+  m_symbol_types.set(m_goos.intern_ptr(result.type.base_type()), m_ts.make_typespec("type"));
 
   // add declared states
   for (auto& state : result.type_info->get_states_declared_for_type()) {
-    auto existing_type = m_symbol_types.find(state.first);
-    if (existing_type != m_symbol_types.end() && existing_type->second != state.second) {
+    auto interned_state_first = m_goos.intern_ptr(state.first);
+    auto existing_type = m_symbol_types.lookup(interned_state_first);
+    if (existing_type && *existing_type != state.second) {
       if (m_throw_on_define_extern_redefinition) {
         throw_compiler_error(form, "deftype would redefine the type of state {} from {} to {}.",
-                             state.first, existing_type->second.print(), state.second.print());
+                             state.first, existing_type->print(), state.second.print());
       } else {
         print_compiler_warning(
             "[Warning] deftype has redefined the type of state {}\npreviously: {}\nnow: "
             "{}\n",
-            state.first.c_str(), existing_type->second.print().c_str(),
-            state.second.print().c_str());
+            state.first.c_str(), existing_type->print().c_str(), state.second.print().c_str());
       }
     }
 
-    m_symbol_types[state.first] = state.second;
+    m_symbol_types.set(interned_state_first, state.second);
     m_symbol_info.add_fwd_dec(state.first, form);
   }
 
@@ -423,7 +468,7 @@ Val* Compiler::compile_deftype(const goos::Object& form, const goos::Object& res
     }
   }
 
-  m_symbol_info.add_type(result.type.base_type(), form);
+  m_symbol_info.add_type(result.type.base_type(), result.type_info, form);
 
   // return none, making the value of (deftype..) unusable
   return get_none();
@@ -436,30 +481,39 @@ Val* Compiler::compile_defmethod(const goos::Object& form, const goos::Object& _
   auto fe = env->function_env();
   auto* rest = &_rest;
 
-  auto& method_name = pair_car(*rest);
+  auto& method_name_obj = pair_car(*rest);
   rest = &pair_cdr(*rest);
-  auto& type_name = pair_car(*rest);
-  rest = &pair_cdr(*rest);
+  if (!method_name_obj.is_symbol()) {
+    throw_compiler_error(form, "Method name must be a symbol, got {}", method_name_obj.print());
+  }
+  auto method_name = symbol_string(method_name_obj);
+
+  std::string type_name;
+  if (!pair_car(*rest).is_pair()) {
+    auto& type_name_obj = pair_car(*rest);
+    rest = &pair_cdr(*rest);
+    if (!type_name_obj.is_symbol()) {
+      throw_compiler_error(form, "Method type must be a symbol, got {}", type_name_obj.print());
+    }
+    type_name = symbol_string(type_name_obj);
+  }
+
   auto& arg_list = pair_car(*rest);
   auto body = &pair_cdr(*rest);
-
-  if (!method_name.is_symbol()) {
-    throw_compiler_error(form, "Method name must be a symbol, got {}", method_name.print());
-  }
-  if (!type_name.is_symbol()) {
-    throw_compiler_error(form, "Method type must be a symbol, got {}", method_name.print());
-  }
 
   auto place = fe->alloc_val<LambdaVal>(get_none()->type(), false);
   auto& lambda = place->lambda;
   auto lambda_ts = m_ts.make_typespec("function");
 
-  // parse the argument list. todo, we could check the type of the first argument here?
+  // parse the argument list. type of first argument determines the type the method belongs to.
   for_each_in_list(arg_list, [&](const goos::Object& o) {
     if (o.is_symbol()) {
       // if it has no type, assume object.
       lambda.params.push_back({symbol_string(o), m_ts.make_typespec("object")});
       lambda_ts.add_arg(m_ts.make_typespec("object"));
+      if (type_name.empty()) {
+        throw_compiler_error(form, "Method type could not be inferred");
+      }
     } else {
       // type of argument is specified
       auto param_args = get_va(o, o);
@@ -471,14 +525,21 @@ Val* Compiler::compile_defmethod(const goos::Object& form, const goos::Object& _
       // before substituting _type_
       lambda_ts.add_arg(parm.type);
 
+      if (type_name.empty() && method_name != "new") {
+        type_name = parm.type.print();
+      }
+
       // replace _type_ as needed for inside this function.
-      parm.type = parm.type.substitute_for_method_call(symbol_string(type_name));
+      parm.type = parm.type.substitute_for_method_call(type_name);
       lambda.params.push_back(parm);
     }
   });
+  if (type_name.empty()) {
+    throw_compiler_error(form, "Method type could not be inferred");
+  }
   ASSERT(lambda.params.size() == lambda_ts.arg_count());
   // todo, verify argument list types (check that first arg is _type_ for methods that aren't "new")
-  lambda.debug_name = fmt::format("(method {} {})", method_name.print(), type_name.print());
+  lambda.debug_name = fmt::format("(method {} {})", method_name, type_name);
 
   std::optional<std::string> docstring;
   if (body->as_pair()->car.is_string() && !body->as_pair()->cdr.is_empty_list()) {
@@ -491,7 +552,10 @@ Val* Compiler::compile_defmethod(const goos::Object& form, const goos::Object& _
 
   auto new_func_env = std::make_unique<FunctionEnv>(env, lambda.debug_name, &m_goos.reader);
   new_func_env->set_segment(env->function_env()->segment_for_static_data());
-  new_func_env->method_of_type_name = symbol_string(type_name);
+  new_func_env->method_of_type_name = type_name;
+  auto method_info = m_ts.lookup_method(type_name, method_name);
+  new_func_env->method_id = method_info.id;
+  new_func_env->method_function_type = method_info.type;
 
   // set up arguments
   if (lambda.params.size() > 8) {
@@ -517,7 +581,6 @@ Val* Compiler::compile_defmethod(const goos::Object& form, const goos::Object& _
     reset_args_for_coloring.push_back(ireg_arg);
   }
 
-  auto method_info = m_ts.lookup_method(symbol_string(type_name), symbol_string(method_name));
   auto behavior = method_info.type.try_get_tag("behavior");
   if (behavior) {
     auto self_var = new_func_env->make_gpr(m_ts.make_typespec(*behavior));
@@ -528,10 +591,10 @@ Val* Compiler::compile_defmethod(const goos::Object& form, const goos::Object& _
     self_var->set_rlet_constraint(constr.desired_register);
     new_func_env->constrain(constr);
 
-    if (new_func_env->params.find("self") != new_func_env->params.end()) {
+    if (new_func_env->params.find(m_goos.intern_ptr("self")) != new_func_env->params.end()) {
       throw_compiler_error(form, "Cannot have an argument named self in a behavior");
     }
-    new_func_env->params["self"] = self_var;
+    new_func_env->params[m_goos.intern_ptr("self")] = self_var;
     reset_args_for_coloring.push_back(self_var);
     lambda_ts.add_new_tag("behavior", *behavior);
   }
@@ -549,7 +612,7 @@ Val* Compiler::compile_defmethod(const goos::Object& form, const goos::Object& _
     auto ireg = new_func_env->make_ireg(
         lambda.params.at(i).type, arg_regs.at(i).is_gpr() ? RegClass::GPR_64 : RegClass::INT_128);
     ireg->mark_as_settable();
-    if (!new_func_env->params.insert({lambda.params.at(i).name, ireg}).second) {
+    if (!new_func_env->params.insert({m_goos.intern_ptr(lambda.params.at(i).name), ireg}).second) {
       throw_compiler_error(form, "defmethod has multiple arguments named {}",
                            lambda.params.at(i).name);
     }
@@ -559,22 +622,24 @@ Val* Compiler::compile_defmethod(const goos::Object& form, const goos::Object& _
   // compile the function!
   Val* result = nullptr;
   bool first_thing = true;
+  const goos::Object* result_obj = nullptr;
   for_each_in_list(lambda.body, [&](const goos::Object& o) {
     result = compile_error_guard(o, func_block_env);
-    if (!dynamic_cast<None*>(result)) {
-      result = result->to_reg(o, func_block_env);
-    }
+    result_obj = &o;
     if (first_thing) {
       first_thing = false;
       // you could probably cheat and do a (begin (blorp) (declare ...)) to get around this.
       new_func_env->settings.is_set = true;
     }
   });
+  if (result_obj && !dynamic_cast<None*>(result)) {
+    result = result->to_reg(*result_obj, func_block_env);
+  }
 
   if (new_func_env->is_asm_func) {
     // don't add return automatically!
     lambda_ts.add_arg(new_func_env->asm_func_return_type);
-  } else if (result && !dynamic_cast<None*>(result)) {
+  } else if (result && !dynamic_cast<None*>(result) && result->type() != TypeSpec("none")) {
     RegVal* final_result;
     emitter::Register ret_hw_reg = emitter::gRegInfo.get_gpr_ret_reg();
     if (m_ts.lookup_type(result->type())->get_load_size() == 16) {
@@ -613,14 +678,13 @@ Val* Compiler::compile_defmethod(const goos::Object& form, const goos::Object& _
   }
   place->set_type(lambda_ts);
 
-  auto info = m_ts.define_method(symbol_string(type_name), symbol_string(method_name), lambda_ts,
-                                 docstring);
-  auto type_obj = compile_get_symbol_value(form, symbol_string(type_name), env)->to_gpr(form, env);
+  auto info = m_ts.define_method(type_name, method_name, lambda_ts, docstring);
+  auto type_obj = compile_get_symbol_value(form, type_name, env)->to_gpr(form, env);
   auto id_val = compile_integer(info.id, env)->to_gpr(form, env);
   auto method_val = place->to_gpr(form, env);
   auto method_set_val = compile_get_symbol_value(form, "method-set!", env)->to_gpr(form, env);
 
-  m_symbol_info.add_method(symbol_string(method_name), lambda.params, info, form);
+  m_symbol_info.add_method(method_name, lambda.params, info, form);
   return compile_real_function_call(form, method_set_val, {type_obj, id_val, method_val}, env);
 }
 
@@ -746,7 +810,7 @@ Val* Compiler::compile_deref(const goos::Object& form, const goos::Object& _rest
           // special case (-> <state> enter) should return the appropriate function type.
           if (in_type.arg_count() > 0 && in_type.base_type() == "state") {
             if (field_name == "enter" || field_name == "code") {
-              result->set_type(state_to_go_function(in_type, TypeSpec("none")));
+              result->set_type(state_to_go_function(in_type, TypeSpec("object")));
             }
           }
 
@@ -971,7 +1035,7 @@ Val* Compiler::compile_heap_new(const goos::Object& form,
                                 const goos::Object& type,
                                 const goos::Object* rest,
                                 Env* env) {
-  bool making_boxed_array = unquote(type).as_symbol()->name == "boxed-array";
+  bool making_boxed_array = unquote(type).as_symbol() == "boxed-array";
   TypeSpec main_type;
   if (!making_boxed_array) {
     main_type = parse_typespec(unquote(type), env);
@@ -1038,7 +1102,7 @@ Val* Compiler::compile_heap_new(const goos::Object& form,
       if (making_boxed_array && !got_content_type) {
         got_content_type = true;
         if (o.is_symbol()) {
-          content_type = o.as_symbol()->name;
+          content_type = o.as_symbol().name_ptr;
           args.push_back(compile_get_symbol_value(form, content_type, env)->to_reg(form, env));
         } else {
           throw_compiler_error(form, "Invalid boxed-array type {}", o.print());
@@ -1066,7 +1130,7 @@ Val* Compiler::compile_static_new(const goos::Object& form,
                                   const goos::Object* rest,
                                   Env* env) {
   auto unquoted_type = unquote(type);
-  const auto& sym_name = unquoted_type.as_symbol()->name;
+  const auto& sym_name = unquoted_type.as_symbol();
   // Check if the type is an array or a subtype of 'array'
   bool is_array = sym_name == "boxed-array" || sym_name == "array" || sym_name == "inline-array";
   if (!is_array) {
@@ -1100,7 +1164,9 @@ Val* Compiler::compile_stack_new(const goos::Object& form,
                                  Env* env,
                                  bool call_constructor,
                                  bool use_singleton) {
-  auto type_of_object = parse_typespec(unquote(type), env);
+  auto type_str = symbol_string(unquote(type));
+  auto type_of_object =
+      type_str == "boxed-array" ? TypeSpec("array") : parse_typespec(unquote(type), env);
   auto fe = env->function_env();
   auto st_type_info = dynamic_cast<StructureType*>(m_ts.lookup_type(type_of_object));
   if (st_type_info && st_type_info->is_always_stack_singleton()) {
@@ -1111,14 +1177,16 @@ Val* Compiler::compile_stack_new(const goos::Object& form,
     }
   }
   if (type_of_object == TypeSpec("inline-array") || type_of_object == TypeSpec("array")) {
-    if (call_constructor) {
-      throw_compiler_error(form, "Constructing stack arrays is not yet supported");
+    if (type_str == "array" && call_constructor && type_of_object == TypeSpec("array")) {
+      throw_compiler_error(form, "Use 'boxed-array instead of 'array for boxed stack arrays.");
     }
     if (use_singleton) {
       throw_compiler_error(form, "Singleton stack arrays are not yet supported");
     }
     bool is_inline = type_of_object == TypeSpec("inline-array");
-    auto elt_type = quoted_sym_as_string(pair_car(*rest));
+    auto elt_type = call_constructor && type_of_object == TypeSpec("array")
+                        ? symbol_string(pair_car(*rest))
+                        : quoted_sym_as_string(pair_car(*rest));
     rest = &pair_cdr(*rest);
 
     auto count_obj = pair_car(*rest);
@@ -1135,8 +1203,42 @@ Val* Compiler::compile_stack_new(const goos::Object& form,
       throw_compiler_error(form, "New array form got more arguments than expected");
     }
 
-    auto ts = is_inline ? m_ts.make_inline_array_typespec(elt_type)
-                        : m_ts.make_pointer_typespec(elt_type);
+    TypeSpec ts;
+    if (call_constructor && type_of_object == TypeSpec("array")) {
+      ts = m_ts.make_array_typespec("array", elt_type);
+    } else if (is_inline) {
+      ts = m_ts.make_inline_array_typespec(elt_type);
+    } else {
+      ts = m_ts.make_pointer_typespec(elt_type);
+    }
+
+    if (type_str == "boxed-array" && call_constructor && type_of_object == TypeSpec("array")) {
+      auto ti = m_ts.lookup_type(elt_type);
+      RegVal* mem;
+      std::vector<RegVal*> args;
+      int elt_size = ti->is_reference() ? 4 : ti->get_size_in_memory();
+      int mem_size =
+          m_ts.lookup_type(type_of_object)->get_size_in_memory() + constant_count * elt_size;
+      mem = fe->allocate_aligned_stack_variable(ts, mem_size, 16)->to_gpr(form, env);
+
+      // the new method actually takes a "symbol" according to the type system. So we have to cheat
+      // it.
+      mem->set_type(TypeSpec("symbol"));
+      args.push_back(mem);
+      // type
+      args.push_back(
+          compile_get_symbol_value(form, type_of_object.base_type(), env)->to_reg(form, env));
+      // element type
+      args.push_back(compile_get_symbol_value(form, elt_type, env)->to_reg(form, env));
+      // size
+      args.push_back(compile_integer(constant_count, env)->to_reg(form, env));
+
+      auto new_method = compile_get_method_of_type(form, type_of_object, "new", env);
+      auto new_obj = compile_real_function_call(form, new_method, args, env);
+      new_obj->set_type(ts);
+      return new_obj;
+    }
+
     auto info = m_ts.get_deref_info(ts);
     if (!info.can_deref) {
       throw_compiler_error(form, "Cannot make an {} of {}\n", type_of_object.print(), ts.print());
@@ -1305,6 +1407,47 @@ Val* Compiler::compile_method_of_type(const goos::Object& form,
   return get_none();
 }
 
+Val* Compiler::compile_method_id_of_type(const goos::Object& form,
+                                         const goos::Object& rest,
+                                         Env* env) {
+  auto args = get_va(form, rest);
+  va_check(form, args, {{goos::ObjectType::SYMBOL}, {goos::ObjectType::SYMBOL}}, {});
+  auto arg = args.unnamed.at(0);
+  if (m_ts.fully_defined_type_exists(symbol_string(arg))) {
+    auto info = m_ts.lookup_method(symbol_string(arg), symbol_string(args.unnamed.at(1)));
+    return compile_integer(info.id, env);
+  } else if (m_ts.partially_defined_type_exists(symbol_string(arg))) {
+    throw_compiler_error(
+        form, "The method-id-of-type form is ambiguous when used on a forward declared type.");
+  } else {
+    throw_compiler_error(form, "unknown type");
+  }
+}
+
+Val* Compiler::compile_cast_to_method_type(const goos::Object& form,
+                                           const goos::Object& rest,
+                                           Env* env) {
+  auto args = get_va(form, rest);
+  va_check(form, args, {{goos::ObjectType::SYMBOL}, {goos::ObjectType::SYMBOL}, {}}, {});
+  auto arg = args.unnamed.at(0);
+  if (m_ts.fully_defined_type_exists(symbol_string(arg))) {
+    auto info = m_ts.lookup_method(symbol_string(arg), symbol_string(args.unnamed.at(1)));
+
+    auto base = compile_error_guard(args.unnamed.at(2), env);
+    auto result = env->function_env()->alloc_val<AliasVal>(info.type, base);
+    if (base->settable()) {
+      result->mark_as_settable();
+    }
+
+    return result;
+  } else if (m_ts.partially_defined_type_exists(symbol_string(arg))) {
+    throw_compiler_error(
+        form, "The cast-to-method-type form is ambiguous when used on a forward declared type.");
+  } else {
+    throw_compiler_error(form, "unknown type");
+  }
+}
+
 Val* Compiler::compile_method_of_object(const goos::Object& form,
                                         const goos::Object& rest,
                                         Env* env) {
@@ -1324,16 +1467,16 @@ Val* Compiler::compile_declare_type(const goos::Object& form, const goos::Object
   va_check(form, args, {goos::ObjectType::SYMBOL, goos::ObjectType::SYMBOL}, {});
 
   auto kind = symbol_string(args.unnamed.at(1));
-  auto type_name = symbol_string(args.unnamed.at(0));
+  auto type_name = args.unnamed.at(0).as_symbol();
 
-  m_ts.forward_declare_type_as(type_name, kind);
+  m_ts.forward_declare_type_as(type_name.name_ptr, kind);
 
-  auto existing_type = m_symbol_types.find(type_name);
-  if (existing_type != m_symbol_types.end() && existing_type->second != TypeSpec("type")) {
-    throw_compiler_error(form, "Cannot forward declare {} as a type: it is already a {}", type_name,
-                         existing_type->second.print());
+  auto existing_type = m_symbol_types.lookup(type_name);
+  if (existing_type && *existing_type != TypeSpec("type")) {
+    throw_compiler_error(form, "Cannot forward declare {} as a type: it is already a {}",
+                         type_name.name_ptr, existing_type->print());
   }
-  m_symbol_types[type_name] = TypeSpec("type");
+  m_symbol_types.set(type_name, TypeSpec("type"));
 
   return get_none();
 }
@@ -1349,7 +1492,11 @@ Val* Compiler::compile_defenum(const goos::Object& form, const goos::Object& res
   (void)form;
   (void)env;
 
-  parse_defenum(rest, &m_ts, {});
+  DefinitionMetadata def_metadata;
+  const auto new_enum = parse_defenum(rest, &m_ts, &def_metadata);
+  new_enum->m_metadata.definition_info = m_goos.reader.db.get_short_info_for(form);
+  m_symbol_info.add_enum(new_enum, form,
+                         def_metadata.docstring.has_value() ? def_metadata.docstring.value() : "");
   return get_none();
 }
 
@@ -1362,7 +1509,8 @@ u64 Compiler::enum_lookup(const goos::Object& form,
   if (e->is_bitfield()) {
     uint64_t value = 0;
     for_each_in_list(rest, [&](const goos::Object& o) {
-      auto kv = e->entries().find(symbol_string(o));
+      const auto test = symbol_string(o);
+      auto kv = e->entries().find(test);
       if (kv == e->entries().end()) {
         if (throw_on_error) {
           throw_compiler_error(form, "The value {} was not found in enum.", o.print());
@@ -1428,15 +1576,15 @@ int Compiler::get_size_for_size_of(const goos::Object& form, const goos::Object&
   auto args = get_va(form, rest);
   va_check(form, args, {goos::ObjectType::SYMBOL}, {});
 
-  auto type_to_look_for = args.unnamed.at(0).as_symbol()->name;
+  auto type_to_look_for = args.unnamed.at(0).as_symbol();
 
-  if (!m_ts.fully_defined_type_exists(type_to_look_for)) {
+  if (!m_ts.fully_defined_type_exists(type_to_look_for.name_ptr)) {
     throw_compiler_error(
         form, "The type or enum {} given to size-of could not be found, or was not fully defined",
         args.unnamed.at(0).print());
   }
 
-  auto type = m_ts.lookup_type(type_to_look_for);
+  auto type = m_ts.lookup_type(type_to_look_for.name_ptr);
   auto as_value = dynamic_cast<ValueType*>(type);
   auto as_structure = dynamic_cast<StructureType*>(type);
 
@@ -1464,4 +1612,28 @@ Compiler::ConstPropResult Compiler::const_prop_size_of(const goos::Object& form,
 
 Val* Compiler::compile_psize_of(const goos::Object& form, const goos::Object& rest, Env* env) {
   return compile_integer((get_size_for_size_of(form, rest) + 0xf) & ~0xf, env);
+}
+
+Val* Compiler::compile_current_method_id(const goos::Object& form,
+                                         const goos::Object& rest,
+                                         Env* env) {
+  auto args = get_va(form, rest);
+  va_check(form, args, {}, {});
+  auto* fe = env->function_env();
+  if (!fe->method_id) {
+    throw_compiler_error(form, "current-method-id wasn't called from a method.");
+  }
+  return compile_integer(*fe->method_id, env);
+}
+
+Val* Compiler::compile_current_method_type(const goos::Object& form,
+                                           const goos::Object& rest,
+                                           Env* env) {
+  auto args = get_va(form, rest);
+  va_check(form, args, {}, {});
+  auto* fe = env->function_env();
+  if (!fe->method_id || fe->method_of_type_name.empty()) {
+    throw_compiler_error(form, "current-method-type wasn't called from a method.");
+  }
+  return compile_get_symbol_value(form, fe->method_of_type_name, env);
 }

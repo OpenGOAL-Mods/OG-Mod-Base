@@ -43,6 +43,7 @@
  *
  */
 
+#include <cstring>
 #include <map>
 #include <memory>
 #include <stdexcept>
@@ -54,11 +55,9 @@
 
 #include "common/common_types.h"
 #include "common/util/Assert.h"
+#include "common/util/crc32.h"
 
 namespace goos {
-
-using FloatType = double;
-using IntType = s64;
 
 /*!
  * All objects have one of these kinds
@@ -71,9 +70,9 @@ enum class ObjectType : u8 {
   INTEGER,
   FLOAT,
   CHAR,
+  SYMBOL,
 
   // allocated
-  SYMBOL,
   STRING,
   PAIR,
   ARRAY,
@@ -87,6 +86,29 @@ enum class ObjectType : u8 {
 std::string object_type_to_string(ObjectType kind);
 
 // Some objects are "fixed", meaning they are stored inline in the Object, and not heap allocated.
+// These use value semantics and are copied on object assignment.
+
+// For int/float, these are simply double/int64_t
+using FloatType = double;
+using IntType = s64;
+
+// For symbols, we simply store a pointer to the symbol's name string.
+// this is wrapped in a type just to avoid confusion with normal const char*.
+struct InternedSymbolPtr {
+  const char* name_ptr;
+
+  struct hash {
+    auto operator()(const InternedSymbolPtr& x) const {
+      return std::hash<const void*>()((const void*)x.name_ptr);
+    }
+  };
+  bool operator==(const char* msg) const { return strcmp(msg, name_ptr) == 0; }
+  bool operator!=(const char* msg) const { return strcmp(msg, name_ptr) != 0; }
+  bool operator==(const std::string& str) const { return str == name_ptr; }
+  bool operator!=(const std::string& str) const { return str != name_ptr; }
+  bool operator==(const InternedSymbolPtr& other) const { return other.name_ptr == name_ptr; }
+  bool operator!=(const InternedSymbolPtr& other) const { return other.name_ptr != name_ptr; }
+};
 
 /*!
  * By default, convert a fixed object data to string with std::to_string.
@@ -115,6 +137,31 @@ std::string fixed_to_string<char>(char);
 template <>
 std::string fixed_to_string<IntType>(IntType);
 
+template <>
+std::string fixed_to_string<InternedSymbolPtr>(InternedSymbolPtr);
+
+class SymbolTable {
+ public:
+  SymbolTable(const SymbolTable&) = delete;
+  SymbolTable& operator=(const SymbolTable&) = delete;
+  SymbolTable();
+  ~SymbolTable();
+  InternedSymbolPtr intern(const char* str);
+
+ private:
+  void resize();
+  int m_power_of_two_size = 0;
+  struct Entry {
+    u32 hash = 0;
+    const char* name = nullptr;
+  };
+  std::vector<Entry> m_entries;
+  int m_used_entries = 0;
+  int m_next_resize = 0;
+  u32 m_mask = 0;
+  static constexpr float kMaxUsed = 0.7;
+};
+
 /*!
  * Common implementation for a fixed object
  */
@@ -139,6 +186,8 @@ class FixedObject {
       return object_type_to_string(ObjectType::INTEGER);
     if (std::is_same<T, char>())
       return object_type_to_string(ObjectType::CHAR);
+    if (std::is_same<T, InternedSymbolPtr>())
+      return object_type_to_string(ObjectType::SYMBOL);
     throw std::runtime_error("Unsupported FixedObject type");
   }
 };
@@ -149,6 +198,7 @@ class FixedObject {
 using IntegerObject = FixedObject<int64_t>;
 using FloatObject = FixedObject<double>;
 using CharObject = FixedObject<char>;
+using SymbolObject = FixedObject<InternedSymbolPtr>;
 
 // Other objects are separate allocated on the heap. These objects should be HeapObjects.
 
@@ -162,7 +212,6 @@ class HeapObject {
 // forward declare all HeapObjects
 class PairObject;
 class EnvironmentObject;
-class SymbolObject;
 class StringObject;
 class LambdaObject;
 class MacroObject;
@@ -180,6 +229,7 @@ class Object {
     IntegerObject integer_obj;
     FloatObject float_obj;
     CharObject char_obj;
+    SymbolObject symbol_obj;
   };
 
   ObjectType type = ObjectType::INVALID;
@@ -192,6 +242,8 @@ class Object {
         return float_obj.print();
       case ObjectType::CHAR:
         return char_obj.print();
+      case ObjectType::SYMBOL:
+        return symbol_obj.print();
       case ObjectType::EMPTY_LIST:
         return "()";
       default:
@@ -207,6 +259,8 @@ class Object {
         return float_obj.inspect();
       case ObjectType::CHAR:
         return char_obj.inspect();
+      case ObjectType::SYMBOL:
+        return symbol_obj.inspect();
       case ObjectType::EMPTY_LIST:
         return "[empty list] ()\n";
       default:
@@ -244,15 +298,29 @@ class Object {
     return o;
   }
 
+  static Object make_symbol(SymbolTable* table, const char* name) {
+    Object o;
+    o.type = ObjectType::SYMBOL;
+    o.symbol_obj.value = table->intern(name);
+    return o;
+  }
+
   PairObject* as_pair() const;
   EnvironmentObject* as_env() const;
   std::shared_ptr<EnvironmentObject> as_env_ptr() const;
-  SymbolObject* as_symbol() const;
   StringObject* as_string() const;
   LambdaObject* as_lambda() const;
   MacroObject* as_macro() const;
   ArrayObject* as_array() const;
   StringHashTableObject* as_string_hash_table() const;
+
+  const InternedSymbolPtr& as_symbol() const {
+    if (type != ObjectType::SYMBOL) {
+      throw std::runtime_error("as_symbol called on a " + object_type_to_string(type) + " " +
+                               print());
+    }
+    return symbol_obj.value;
+  }
 
   IntType& as_int() {
     if (type != ObjectType::INTEGER) {
@@ -313,56 +381,6 @@ class Object {
 
   bool operator==(const Object& other) const;
   bool operator!=(const Object& other) const { return !((*this) == other); }
-};
-
-class SymbolTable;
-
-/*!
- * A Symbol Object, which is just a wrapper around a string.
- * The make_new function will correctly
- */
-class SymbolObject : public HeapObject {
- public:
-  std::string name;
-  explicit SymbolObject(std::string _name) : name(std::move(_name)) {}
-  static Object make_new(SymbolTable& st, const std::string& name);
-
-  std::string print() const override { return name; }
-
-  std::string inspect() const override { return "[symbol] " + name + "\n"; }
-
-  ~SymbolObject() = default;
-};
-
-/*!
- * A Symbol Table, which holds all symbols.
- */
-class SymbolTable {
- public:
-  std::shared_ptr<HeapObject> intern(const std::string& name) {
-    const auto& kv = table.find(name);
-    if (kv == table.end()) {
-      auto iter = table.insert({name, std::make_shared<SymbolObject>(name)});
-      return (*iter.first).second;
-    } else {
-      return kv->second;
-    }
-  }
-
-  HeapObject* intern_ptr(const std::string& name) {
-    const auto& kv = table.find(name);
-    if (kv == table.end()) {
-      auto iter = table.insert({name, std::make_shared<SymbolObject>(name)});
-      return (*iter.first).second.get();
-    } else {
-      return kv->second.get();
-    }
-  }
-
-  ~SymbolTable() = default;
-
- private:
-  std::unordered_map<std::string, std::shared_ptr<HeapObject>> table;
 };
 
 class StringObject : public HeapObject {
@@ -439,14 +457,131 @@ class PairObject : public HeapObject {
   ~PairObject() = default;
 };
 
+template <typename T>
+class InternedPtrMap {
+ public:
+  InternedPtrMap(const InternedPtrMap&) = delete;
+  InternedPtrMap& operator=(const InternedPtrMap&) = delete;
+  InternedPtrMap() { clear(); }
+
+  T* lookup(InternedSymbolPtr str) {
+    if (m_entries.size() < 10) {
+      for (auto& e : m_entries) {
+        if (e.key == str.name_ptr) {
+          return &e.value;
+        }
+      }
+      return nullptr;
+    }
+    u32 hash = crc32((const u8*)&str.name_ptr, sizeof(const char*));
+
+    // probe
+    for (u32 i = 0; i < m_entries.size(); i++) {
+      u32 slot_addr = (hash + i) & m_mask;
+      auto& slot = m_entries[slot_addr];
+      if (!slot.key) {
+        return nullptr;
+      } else {
+        if (slot.key != str.name_ptr) {
+          continue;  // bad hash
+        }
+        return &slot.value;
+      }
+    }
+
+    // should be impossible to reach.
+    ASSERT_NOT_REACHED();
+  }
+  void set(InternedSymbolPtr ptr, const T& obj) {
+    u32 hash = crc32((const u8*)&ptr.name_ptr, sizeof(const char*));
+
+    // probe
+    for (u32 i = 0; i < m_entries.size(); i++) {
+      u32 slot_addr = (hash + i) & m_mask;
+      auto& slot = m_entries[slot_addr];
+      if (!slot.key) {
+        // not found, insert!
+        slot.key = ptr.name_ptr;
+        slot.value = obj;
+        m_used_entries++;
+
+        if (m_used_entries >= m_next_resize) {
+          resize();
+        }
+        return;
+      } else {
+        if (slot.key == ptr.name_ptr) {
+          slot.value = obj;
+          return;
+        }
+      }
+    }
+
+    // should be impossible to reach.
+    ASSERT_NOT_REACHED();
+  }
+  void clear() {
+    m_entries.clear();
+    m_power_of_two_size = 3;  // 2 ^ 3 = 8
+    m_entries.resize(8);
+    m_used_entries = 0;
+    m_next_resize = (m_entries.size() * kMaxUsed);
+    m_mask = 0b111;
+  }
+
+ private:
+  struct Entry {
+    const char* key = nullptr;
+    T value;
+  };
+  std::vector<Entry> m_entries;
+
+  void resize() {
+    m_power_of_two_size++;
+    m_mask = (1U << m_power_of_two_size) - 1;
+
+    std::vector<Entry> new_entries(m_entries.size() * 2);
+    for (const auto& old_entry : m_entries) {
+      if (old_entry.key) {
+        bool done = false;
+        u32 hash = crc32((const u8*)&old_entry.key, sizeof(const char*));
+        for (u32 i = 0; i < new_entries.size(); i++) {
+          u32 slot_addr = (hash + i) & m_mask;
+          auto& slot = new_entries[slot_addr];
+          if (!slot.key) {
+            slot.key = old_entry.key;
+            slot.value = std::move(old_entry.value);
+            done = true;
+            break;
+          }
+        }
+        ASSERT(done);
+      }
+    }
+
+    m_entries = std::move(new_entries);
+    m_next_resize = kMaxUsed * m_entries.size();
+  }
+  int m_power_of_two_size = 0;
+  int m_used_entries = 0;
+  int m_next_resize = 0;
+  u32 m_mask = 0;
+  static constexpr float kMaxUsed = 0.7;
+};
+
+using EnvironmentMap = InternedPtrMap<Object>;
+
 class EnvironmentObject : public HeapObject {
  public:
   std::string name;
   std::shared_ptr<EnvironmentObject> parent_env;
 
-  // the symbols will be stored in the symbol table and never removed, so we don't need shared
-  // pointers here.
-  std::unordered_map<HeapObject*, Object> vars;
+  // note: this is keyed on the address in the symbol table.
+  EnvironmentMap vars;
+
+  // this find work by any name string
+  Object* find(const char* n, SymbolTable* st) { return vars.lookup(st->intern(n)); }
+  Object* find(InternedSymbolPtr ptr) { return vars.lookup(ptr); }
 
   EnvironmentObject() = default;
 
@@ -478,11 +613,8 @@ class EnvironmentObject : public HeapObject {
 
   std::string inspect() const override {
     std::string result = "[environment]\n  name: " + name +
-                         "\n  parent: " + (parent_env ? parent_env->print() : "NONE") +
-                         "\n  vars:\n";
-    for (const auto& kv : vars) {
-      result += "    " + kv.first->print() + ": " + kv.second.print() + "\n";
-    }
+                         "\n  parent: " + (parent_env ? parent_env->print() : "NONE") + "\n";
+
     return result;
   }
 };
@@ -660,14 +792,6 @@ inline std::shared_ptr<EnvironmentObject> Object::as_env_ptr() const {
     throw std::runtime_error("as_env called on a " + object_type_to_string(type) + " " + print());
   }
   return std::dynamic_pointer_cast<EnvironmentObject>(heap_obj);
-}
-
-inline SymbolObject* Object::as_symbol() const {
-  if (type != ObjectType::SYMBOL) {
-    throw std::runtime_error("as_symbol called on a " + object_type_to_string(type) + " " +
-                             print());
-  }
-  return static_cast<SymbolObject*>(heap_obj.get());
 }
 
 inline StringObject* Object::as_string() const {

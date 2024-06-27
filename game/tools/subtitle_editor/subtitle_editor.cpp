@@ -10,7 +10,7 @@
 
 #include "game/runtime.h"
 
-#include "third-party/fmt/core.h"
+#include "fmt/core.h"
 #include "third-party/imgui/imgui.h"
 #include "third-party/imgui/imgui_stdlib.h"
 
@@ -197,7 +197,7 @@ void SubtitleEditor::draw_repl_options() {
       ImGui::Text("REPL Connected, should be good to go!");
       ImGui::PopStyleColor();
     } else {
-      if (ImGui::Button("Connect to REPL")) {
+      if (ImGui::Button("Connect to REPL on Port 8181")) {
         m_repl.connect();
         if (!m_repl.is_connected()) {
           ImGui::PushStyleColor(ImGuiCol_Text, m_error_text_color);
@@ -463,14 +463,18 @@ void SubtitleEditor::draw_subtitle_options(GameSubtitleSceneInfo& scene, bool cu
       if (!line_meta.merge) {
         if (ImGui::BeginCombo(
                 "Speaker",
-                m_subtitle_db.m_banks[m_current_language]->m_speakers.at(line_speaker).c_str())) {
+                fmt::format("{} ({})",
+                            m_subtitle_db.m_banks[m_current_language]->m_speakers.at(line_speaker),
+                            line_speaker)
+                    .c_str())) {
           for (const auto& [speaker_id, localized_name] :
                m_subtitle_db.m_banks[m_current_language]->m_speakers) {
             const bool is_selected = speaker_id == line_speaker;
             if (is_selected) {
               ImGui::SetItemDefaultFocus();
             }
-            if (ImGui::Selectable(localized_name.c_str(), is_selected)) {
+            if (ImGui::Selectable(fmt::format("{} ({})", localized_name, speaker_id).c_str(),
+                                  is_selected)) {
               line_meta.speaker = speaker_id;
             }
           }
@@ -524,14 +528,16 @@ void SubtitleEditor::draw_new_scene_line_form() {
     current_speaker =
         m_subtitle_db.m_banks[m_current_language]->m_speakers.at(m_current_scene_speaker);
   }
-  if (ImGui::BeginCombo("Speaker", current_speaker.c_str())) {
+  if (ImGui::BeginCombo("Speaker",
+                        fmt::format("{} ({})", current_speaker, m_current_scene_speaker).c_str())) {
     for (const auto& [speaker_id, localized_name] :
          m_subtitle_db.m_banks[m_current_language]->m_speakers) {
       const bool is_selected = speaker_id == m_current_scene_speaker;
       if (is_selected) {
         ImGui::SetItemDefaultFocus();
       }
-      if (ImGui::Selectable(localized_name.c_str(), is_selected)) {
+      if (ImGui::Selectable(fmt::format("{} ({})", localized_name, speaker_id).c_str(),
+                            is_selected)) {
         m_current_scene_speaker = speaker_id;
       }
     }

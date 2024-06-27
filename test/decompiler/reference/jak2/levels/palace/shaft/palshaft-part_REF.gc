@@ -4,23 +4,19 @@
 ;; definition of type palshaft-part
 (deftype palshaft-part (part-spawner)
   ()
-  :heap-base #x30
-  :method-count-assert 16
-  :size-assert         #xb0
-  :flag-assert         #x10003000b0
   )
 
 ;; definition for method 3 of type palshaft-part
-(defmethod inspect palshaft-part ((obj palshaft-part))
-  (when (not obj)
-    (set! obj obj)
+(defmethod inspect ((this palshaft-part))
+  (when (not this)
+    (set! this this)
     (goto cfg-4)
     )
   (let ((t9-0 (method-of-type part-spawner inspect)))
-    (t9-0 obj)
+    (t9-0 this)
     )
   (label cfg-4)
-  obj
+  this
   )
 
 ;; failed to figure out what this is:
@@ -796,7 +792,7 @@
 ;; WARN: Return type mismatch int vs none.
 (defun palshaft-deactivate ()
   "Sets [[palshaft.bigmap-id]] to `20`"
-  (set! (-> palshaft bigmap-id) (bigmap-id bigmap-id-20))
+  (set! (-> palshaft bigmap-id) (bigmap-id city))
   0
   (none)
   )

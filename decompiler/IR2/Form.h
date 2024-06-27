@@ -438,6 +438,7 @@ class SetFormFormElement : public FormElement {
   const std::optional<TypeSpec>& cast_for_define() const { return m_cast_for_define; }
   void set_cast_for_set(const std::optional<TypeSpec>& ts) { m_cast_for_set = ts; }
   void set_cast_for_define(const std::optional<TypeSpec>& ts) { m_cast_for_define = ts; }
+  FormElement* make_set_time(const Env& env, FormPool& pool, FormStack& stack);
 
  private:
   int m_real_push_count = 0;
@@ -598,6 +599,10 @@ class ConditionElement : public FormElement {
                                                   FormPool& pool,
                                                   const std::vector<Form*>& source_forms,
                                                   const std::vector<TypeSpec>& types);
+  FormElement* make_time_elapsed(const Env& env,
+                                 FormPool& pool,
+                                 const std::vector<Form*>& source_forms,
+                                 const std::vector<TypeSpec>& types);
   bool allow_in_if() const override { return false; }
 
  private:
@@ -1173,6 +1178,7 @@ class StringConstantElement : public FormElement {
                          FormStack& stack,
                          std::vector<FormElement*>* result,
                          bool allow_side_effects) override;
+  const std::string& value() const { return m_value; }
 
  private:
   std::string m_value;
@@ -1294,7 +1300,9 @@ class DerefElement : public FormElement {
 
  private:
   ConstantTokenElement* try_as_art_const(const Env& env, FormPool& pool);
-  GenericElement* try_as_curtime(FormPool& pool);
+  GenericElement* try_as_joint_node_index(const Env& env, FormPool& pool);
+  GenericElement* try_as_curtime(const Env& env, FormPool& pool);
+  GenericElement* try_as_seconds_per_frame(const Env& env, FormPool& pool);
 
   Form* m_base = nullptr;
   bool m_is_addr_of = false;
@@ -1654,6 +1662,7 @@ class DefstateElement : public FormElement {
   };
   DefstateElement(const std::string& process_type,
                   const std::string& state_name,
+                  const std::string& parent_name,
                   const std::vector<Entry>& entries,
                   bool is_virtual,
                   bool is_override);
@@ -1673,6 +1682,7 @@ class DefstateElement : public FormElement {
  private:
   std::string m_process_type;
   std::string m_state_name;
+  std::string m_parent_name;
   std::vector<Entry> m_entries;
   bool m_is_virtual = false;
   bool m_is_override = false;
@@ -1680,8 +1690,33 @@ class DefstateElement : public FormElement {
 
 class DefskelgroupElement : public FormElement {
  public:
+  struct ClothParams {
+    u16 mesh;
+    float gravity;
+    float wind;
+    u16 width;
+    u16 sphere_constraints;
+    u16 disc_constraints;
+    u16 anchor_points;
+    u64 flags;
+    std::string tex_name;
+    std::string tex_name2;
+    std::string tex_name3;
+    std::string alt_tex_name;
+    std::string alt_tex_name2;
+    std::string alt_tex_name3;
+    float thickness;
+    u16 xform;
+    float drag;
+    float ball_collision_radius;
+    u8 iterations;
+    u8 timestep_freq;
+    u64 secret;
+
+    goos::Object to_list(const std::string& ag_name, const Env& env) const;
+  };
   struct StaticInfo {
-    std::string name;  // jak 2
+    std::string name;  // jak 2/3
     std::string art_group_name;
     math::Vector4f bounds;
     int max_lod;
@@ -1693,6 +1728,9 @@ class DefskelgroupElement : public FormElement {
     s8 origin_joint_index;
     s8 shadow_joint_index;
     s8 light_index;
+    // jak 3
+    s8 global_effects;
+    std::vector<ClothParams> clothing;
   };
   struct Entry {
     Form* mgeo = nullptr;
@@ -1782,9 +1820,10 @@ class DefpartElement : public FormElement {
           case GameVersion::Jak1:
             return field_id == 67;
           case GameVersion::Jak2:
+          case GameVersion::Jak3:
             return field_id == 72;
           default:
-            ASSERT_MSG(false, fmt::format("unknown version {} for is_sp_end"));
+            ASSERT_MSG(false, fmt::format("unknown version for is_sp_end"));
             return false;
         }
       }

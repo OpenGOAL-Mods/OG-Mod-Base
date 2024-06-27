@@ -157,7 +157,7 @@
         ((type-type? (-> cur-enemy type) pelican)
           (let ((a0-2 (handle->process (-> (the-as pelican cur-enemy) fuel-cell))))
             (if (and a0-2 (!= (-> (the-as pelican cur-enemy) state name) 'pelican-circle))
-                (send-event a0-2 'trans (-> (the-as pelican cur-enemy) root-override trans))
+                (send-event a0-2 'trans (-> (the-as pelican cur-enemy) root trans))
                 )
             )
           (if (!= (-> (the-as pelican cur-enemy) state name) 'pelican-explode)
@@ -660,7 +660,7 @@
 (defun give-buzzer-from-level ((buzzer-id float) (level string))
     (cond
       ((name= (-> (level-get-target-inside *level*) name) level)
-        (pickup-collectable! (-> *target* fact-info-target) (pickup-type buzzer) buzzer-id (process->handle *target*))
+        (pickup-collectable! (-> *target* fact) (pickup-type buzzer) buzzer-id (process->handle *target*))
         )
       (else
         (adjust (-> *target* game) 'buzzer buzzer-id (process->handle *target*))
@@ -1501,6 +1501,7 @@
         )
       )
     )
+    (none)
   )
 
 (defun handle-remote-interaction ((remote-player remote-player-info) (tgt-idx int))

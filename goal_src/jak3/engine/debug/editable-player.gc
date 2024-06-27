@@ -1,0 +1,12 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; name: editable-player.gc
+;; name in dgo: editable-player
+;; dgos: GAME
+
+(define-extern editable-player-init (function symbol none :behavior editable-player))
+(define-extern *editable-menu-context* debug-menu-context)
+
+;; DECOMP BEGINS
+

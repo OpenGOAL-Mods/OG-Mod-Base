@@ -5,14 +5,15 @@
 #include <fstream>
 #include <thread>
 #include <chrono>
-//#include <SFML/Audio.hpp>
-//#include <SFML/Audio/Music.hpp>
 
+#define MINIAUDIO_IMPLEMENTATION
+#include "third-party/miniaudio.h"
 
 #include "common/global_profiler/GlobalProfiler.h"
 #include "common/log/log.h"
 #include "common/symbols.h"
 #include "common/util/FileUtil.h"
+#include "common/util/FontUtils.h"
 #include "common/util/Timer.h"
 #include "common/util/string_util.h"
 
@@ -20,6 +21,7 @@
 #include "game/multiplayer.h"
 #include "game/graphics/display.h"
 #include "game/graphics/gfx.h"
+#include "game/graphics/screenshot.h"
 #include "game/kernel/common/Ptr.h"
 #include "game/kernel/common/kernel_types.h"
 #include "game/kernel/common/kprint.h"
@@ -29,7 +31,6 @@
 #include "game/sce/libpad.h"
 #include "game/sce/libscf.h"
 #include "game/sce/sif_ee.h"
-#include "game/system/vm/vm.h"
 
 /*!
  * Where does OVERLORD load its data from?
@@ -51,6 +52,10 @@ u32 vblank_interrupt_handler = 0;
 
 Timer ee_clock_timer;
 
+ma_engine maEngine;
+std::map<std::string, ma_sound> maSoundMap;
+ma_sound* mainMusicSound;
+
 void kmachine_init_globals_common() {
   memset(pad_dma_buf, 0, sizeof(pad_dma_buf));
   isodrv = fakeiso;  // changed. fakeiso is the only one that works in opengoal.
@@ -59,6 +64,8 @@ void kmachine_init_globals_common() {
   vif1_interrupt_handler = 0;
   vblank_interrupt_handler = 0;
   ee_clock_timer = Timer();
+
+  ma_engine_init(NULL, &maEngine);
 }
 
 /*!
@@ -111,68 +118,125 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
   return cpad_info;
 }
 
+// Function to stop all currently playing sounds.
+void stopAllSounds() {
+  for (auto& pair : maSoundMap) {
+    ma_sound_stop(&pair.second);
+  }
+  maSoundMap.clear();
+}
 
-/*
-void playMP3(u32 filePathu32, u32 volume)
-{
- 
+// Function to get the names of currently playing files.
+std::vector<std::string> getPlayingFileNames() {
+  std::vector<std::string> playingFileNames;
+  for (const auto& pair : maSoundMap) {
+    playingFileNames.push_back(pair.first);
+  }
+  return playingFileNames;
+}
 
-    // Spawn a new thread to play the music.
-    std::thread thread([=]() {
+std::mutex activeMusicsMutex;  // Mutex to synchronize access to activeMusics
+
+// Declare a mutex for synchronizing access to mainMusicInstance
+std::mutex mainMusicMutex;
+
+void playMP3_internal(u32 filePathu32, u32 volume, bool isMainMusic) {
+  std::thread thread([=]() {
     std::string filePath = Ptr<String>(filePathu32).c()->data();
-    std::cout << "Playing MP3: " << filePath << std::endl;
+    std::cout << "Playing file: " << filePath << std::endl;
 
-    sf::Music music;
-    if (!music.openFromFile(filePath))
-    {
-        std::cout << "Failed to load: " << filePath << std::endl;
-        return;
+    ma_result result;
+    ma_sound sound;
+
+    result = ma_sound_init_from_file(&maEngine, filePath.c_str(), 0, NULL, NULL, &sound);
+    if (result != MA_SUCCESS) {
+      std::cout << "Failed to load: " << filePath << std::endl;
+      return;
     }
-        music.setVolume(volume);
-        music.play();
-        while (music.getStatus() == sf::Music::Playing)
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
 
-        music.stop();
-    });
+    ma_sound_set_volume(&sound, ((float)volume) / 100.0);
 
-    // Detach the thread so it can run independently.
-    thread.detach();
-}*/
+    if (isMainMusic) {
+      ma_sound_set_looping(&sound, MA_TRUE);
+      mainMusicMutex.lock();
+      mainMusicSound = &sound;
+      mainMusicMutex.unlock();
+    }
 
-// void playMP3(u32 filePathu32, u32 volume)
-// {
+    ma_sound_start(&sound);
 
-//     std::string filePath = Ptr<String>(filePathu32).c()->data();
-//     std::cout << "Playing MP3: " << filePath << std::endl;
-//     sf::Music music;
+    {
+      std::lock_guard<std::mutex> lock(activeMusicsMutex);
+      maSoundMap.insert(std::make_pair(filePath, sound));
+    }
 
-//     std::ifstream file(filePath);
-//     if (!file)
-//     {
-//         std::cout << "Invalid file path: " << filePath << std::endl;
-//         return;
-//     }
+    // loop until we're no longer main music, or we reach the end of non-looping sound
+    while (mainMusicSound == &sound || !ma_sound_at_end(&sound)) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
 
-//     if (!music.openFromFile(filePath))
-//     {
-//         printf("Failed to load: %s\n", filePath.c_str());
-//         std::cout << "Failed to load: " << filePath << std::endl;
-//         return;
-//     }
+    ma_sound_stop(&sound);
+    ma_sound_uninit(&sound);
+    std::cout << "Finished playing file: " << filePath << std::endl;
 
-//     music.setVolume(volume);
-//     music.play();
+    {
+      std::lock_guard<std::mutex> lock(activeMusicsMutex);
+      maSoundMap.erase(filePath);
+    }
+  });
 
-//     while (music.getStatus() == sf::Music::Playing)
-//     {
-//         sf::sleep(sf::milliseconds(100));
-//        sf::sleep(sf::milliseconds(100));
-//     }
-// }
+  thread.detach();
+}
 
+void playMP3(u32 filePathu32, u32 volume) {
+  playMP3_internal(filePathu32, volume, false);
+}
+
+// Function to stop the Main Music.
+void stopMainMusic() {
+  mainMusicMutex.lock();
+  if (mainMusicSound && ma_sound_is_playing(mainMusicSound)) {
+    std::cout << "Stopping Main Music..." << std::endl;
+    ma_sound_stop(mainMusicSound);
+    mainMusicSound = NULL;
+    std::cout << "Stopped Main Music " << std::endl;
+  }
+  mainMusicMutex.unlock();
+}
+
+// Function to play the Main Music.
+void playMainMusic(u32 filePathu32, u32 volume) {
+  stopMainMusic();
+
+  std::cout << "Playing Main Music" << std::endl;
+
+  playMP3_internal(filePathu32, volume, true);
+}
+
+void pauseMainMusic() {
+  mainMusicMutex.lock();
+  if (mainMusicSound && ma_sound_is_playing(mainMusicSound)) {
+    ma_sound_stop(mainMusicSound);
+  }
+  mainMusicMutex.unlock();
+}
+
+void resumeMainMusic() {
+  mainMusicMutex.lock();
+  if (mainMusicSound && !ma_sound_is_playing(mainMusicSound)) {
+    ma_sound_start(mainMusicSound);
+  }
+  mainMusicMutex.unlock();
+}
+
+// Function to change the volume of the Main Music.
+void changeMainMusicVolume(u32 volume) {
+  mainMusicMutex.lock();
+  if (mainMusicSound) {
+    ma_sound_set_volume(mainMusicSound, ((float)volume) / 100.0);
+  }
+  mainMusicMutex.unlock();
+}
 
 /*!
  * Not checked super carefully for jak 2, but looks the same
@@ -300,7 +364,7 @@ void InstallHandler(u32 handler_idx, u32 handler_func) {
       vif1_interrupt_handler = handler_func;
       break;
     default:
-      printf("unknown handler: %d\n", handler_idx);
+      lg::error("unknown handler: {}\n", handler_idx);
       ASSERT(false);
   }
 }
@@ -518,15 +582,24 @@ u64 pc_get_mips2c(u32 name) {
   return Mips2C::gLinkedFunctionTable.get(n);
 }
 
-u64 pc_get_display_name(u32 id) {
+u64 pc_get_display_name(u32 id, u32 str_dest_ptr) {
   std::string name = "";
   if (Display::GetMainDisplay()) {
     name = Display::GetMainDisplay()->get_display_manager()->get_connected_display_name(id);
   }
   if (name.empty()) {
-    return s7.offset;
+    return bool_to_symbol(false);
   }
-  return g_pc_port_funcs.make_string_from_c(str_util::to_upper(name).c_str());
+  if (g_game_version == GameVersion::Jak1) {
+    // The Jak 1 font has only caps
+    name = str_util::to_upper(name).c_str();
+  }
+  // Encode the string to the game font
+  const auto encoded_name = get_font_bank_from_game_version(g_game_version)
+                                ->convert_utf8_to_game(str_util::titlize(name).c_str());
+  strcpy(Ptr<String>(str_dest_ptr).c()->data(), encoded_name.c_str());
+  strcpy(Ptr<String>(str_dest_ptr).c()->data(), str_util::titlize(encoded_name).c_str());
+  return bool_to_symbol(true);
 }
 
 u32 pc_get_display_mode() {
@@ -573,13 +646,13 @@ void pc_get_active_display_size(u32 w_ptr, u32 h_ptr) {
     return;
   }
   if (w_ptr) {
-    auto w_out = Ptr<u32>(w_ptr).c();
+    auto w_out = Ptr<s64>(w_ptr).c();
     if (w_out) {
       *w_out = Display::GetMainDisplay()->get_display_manager()->get_screen_width();
     }
   }
   if (h_ptr) {
-    auto h_out = Ptr<u32>(h_ptr).c();
+    auto h_out = Ptr<s64>(h_ptr).c();
     if (h_out) {
       *h_out = Display::GetMainDisplay()->get_display_manager()->get_screen_height();
     }
@@ -598,13 +671,13 @@ void pc_get_window_size(u32 w_ptr, u32 h_ptr) {
     return;
   }
   if (w_ptr) {
-    auto w = Ptr<u32>(w_ptr).c();
+    auto w = Ptr<s64>(w_ptr).c();
     if (w) {
       *w = Display::GetMainDisplay()->get_display_manager()->get_window_width();
     }
   }
   if (h_ptr) {
-    auto h = Ptr<u32>(h_ptr).c();
+    auto h = Ptr<s64>(h_ptr).c();
     if (h) {
       *h = Display::GetMainDisplay()->get_display_manager()->get_window_height();
     }
@@ -651,32 +724,43 @@ s64 pc_get_num_resolutions() {
 void pc_get_resolution(u32 id, u32 w_ptr, u32 h_ptr) {
   if (Display::GetMainDisplay()) {
     auto res = Display::GetMainDisplay()->get_display_manager()->get_resolution(id);
-    auto w = Ptr<u32>(w_ptr).c();
+    auto w = Ptr<s64>(w_ptr).c();
     if (w) {
       *w = res.width;
     }
-    auto h = Ptr<u32>(h_ptr).c();
+    auto h = Ptr<s64>(h_ptr).c();
     if (h) {
       *h = res.height;
     }
   }
 }
 
-u64 pc_get_controller_name(u32 id) {
+u64 pc_get_controller_name(u32 id, u32 str_dest_ptr) {
   std::string name = "";
   if (Display::GetMainDisplay()) {
     name = Display::GetMainDisplay()->get_input_manager()->get_controller_name(id);
   }
   if (name.empty()) {
-    return s7.offset;
+    return bool_to_symbol(false);
   }
-  return g_pc_port_funcs.make_string_from_c(str_util::to_upper(name).c_str());
+
+  if (g_game_version == GameVersion::Jak1) {
+    // The Jak 1 font has only caps
+    name = str_util::to_upper(name).c_str();
+  }
+  // Encode the string to the game font
+  const auto encoded_name = get_font_bank_from_game_version(g_game_version)
+                                ->convert_utf8_to_game(str_util::titlize(name).c_str());
+  strcpy(Ptr<String>(str_dest_ptr).c()->data(), encoded_name.c_str());
+  strcpy(Ptr<String>(str_dest_ptr).c()->data(), str_util::titlize(encoded_name).c_str());
+  return bool_to_symbol(true);
 }
 
-u64 pc_get_current_bind(s32 bind_assignment_info) {
+u64 pc_get_current_bind(s32 bind_assignment_info, u32 str_dest_ptr) {
   if (!Display::GetMainDisplay()) {
     // TODO - return something that lets the runtime use a translatable string if unknown
-    return g_pc_port_funcs.make_string_from_c(str_util::to_upper("unknown").c_str());
+    strcpy(Ptr<String>(str_dest_ptr).c()->data(), str_util::to_upper("unknown").c_str());
+    return bool_to_symbol(true);
   }
 
   auto info = bind_assignment_info ? Ptr<BindAssignmentInfo>(bind_assignment_info).c() : NULL;
@@ -690,12 +774,21 @@ u64 pc_get_current_bind(s32 bind_assignment_info) {
     auto name = Display::GetMainDisplay()->get_input_manager()->get_current_bind(
         port, (InputDeviceType)device_type, for_button, input_idx, analog_min_range);
     if (name.empty()) {
-      return s7.offset;
+      return bool_to_symbol(false);
     }
-    return g_pc_port_funcs.make_string_from_c(str_util::to_upper(name).c_str());
+    if (g_game_version == GameVersion::Jak1) {
+      // The Jak 1 font has only caps
+      name = str_util::to_upper(name).c_str();
+    }
+    // Encode the string to the game font
+    const auto encoded_name = get_font_bank_from_game_version(g_game_version)
+                                  ->convert_utf8_to_game(str_util::titlize(name).c_str());
+    strcpy(Ptr<String>(str_dest_ptr).c()->data(), encoded_name.c_str());
+    return bool_to_symbol(true);
   }
   // TODO - return something that lets the runtime use a translatable string if unknown
-  return g_pc_port_funcs.make_string_from_c(str_util::to_upper("unknown").c_str());
+  strcpy(Ptr<String>(str_dest_ptr).c()->data(), str_util::to_upper("unknown").c_str());
+  return bool_to_symbol(true);
 }
 
 u64 pc_get_controller_count() {
@@ -705,10 +798,24 @@ u64 pc_get_controller_count() {
   return 0;
 }
 
-void pc_get_controller(u32 controller_id, u32 port) {
+u64 pc_get_controller_index(u32 port) {
+  if (Display::GetMainDisplay()) {
+    return Display::GetMainDisplay()->get_input_manager()->get_controller_index(port);
+  }
+  return 0;
+}
+
+void pc_set_controller(u32 controller_id, u32 port) {
   if (Display::GetMainDisplay()) {
     Display::GetMainDisplay()->get_input_manager()->set_controller_for_port(controller_id, port);
   }
+}
+
+u32 pc_get_keyboard_enabled() {
+  if (Display::GetMainDisplay()) {
+    return bool_to_symbol(Display::GetMainDisplay()->get_input_manager()->is_keyboard_enabled());
+  }
+  return bool_to_symbol(false);
 }
 
 void pc_set_keyboard_enabled(u32 sym_val) {
@@ -835,7 +942,7 @@ void pc_renderer_tree_set_lod(Gfx::RendererTreeType tree, int lod) {
   }
 }
 
-void pc_set_collision_mask(GfxGlobalSettings::CollisionRendererMode mode, int mask, u32 symptr) {
+void pc_set_collision_mask(GfxGlobalSettings::CollisionRendererMode mode, s64 mask, u32 symptr) {
   if (symbol_to_bool(symptr)) {
     Gfx::CollisionRendererSetMask(mode, mask);
   } else {
@@ -843,7 +950,7 @@ void pc_set_collision_mask(GfxGlobalSettings::CollisionRendererMode mode, int ma
   }
 }
 
-u32 pc_get_collision_mask(GfxGlobalSettings::CollisionRendererMode mode, int mask) {
+u32 pc_get_collision_mask(GfxGlobalSettings::CollisionRendererMode mode, s64 mask) {
   return Gfx::CollisionRendererGetMask(mode, mask) ? s7.offset + true_symbol_offset(g_game_version)
                                                    : s7.offset;
 }
@@ -899,6 +1006,22 @@ u32 pc_rand() {
   return (u32)extra_random_generator();
 }
 
+void pc_treat_pad0_as_pad1(u32 symptr) {
+  Gfx::g_debug_settings.treat_pad0_as_pad1 = symbol_to_bool(symptr);
+}
+
+u32 pc_is_imgui_visible() {
+  return bool_to_symbol(Gfx::g_debug_settings.show_imgui);
+}
+
+void pc_screen_shot() {
+  g_want_screenshot = true;
+}
+
+void pc_register_screen_shot_settings(u32 ptr) {
+  register_screen_shot_settings(Ptr<ScreenShotSettings>(ptr).c());
+}
+
 /// Initializes all functions that are common across all game versions
 /// These functions have the same implementation and do not use any game specific functions (other
 /// than the one to create a function in the first place)
@@ -946,7 +1069,9 @@ void init_common_pc_port_functions(
   make_func_symbol_func("pc-get-controller-name", (void*)pc_get_controller_name);
   make_func_symbol_func("pc-get-current-bind", (void*)pc_get_current_bind);
   make_func_symbol_func("pc-get-controller-count", (void*)pc_get_controller_count);
-  make_func_symbol_func("pc-set-controller!", (void*)pc_get_controller);
+  make_func_symbol_func("pc-get-controller-index", (void*)pc_get_controller_index);
+  make_func_symbol_func("pc-set-controller!", (void*)pc_set_controller);
+  make_func_symbol_func("pc-get-keyboard-enabled?", (void*)pc_get_keyboard_enabled);
   make_func_symbol_func("pc-set-keyboard-enabled!", (void*)pc_set_keyboard_enabled);
   make_func_symbol_func("pc-set-mouse-options!", (void*)pc_set_mouse_options);
   make_func_symbol_func("pc-set-mouse-camera-sens!", (void*)pc_set_mouse_camera_sens);
@@ -980,13 +1105,27 @@ void init_common_pc_port_functions(
   // Return the current OS as a symbol. Actually returns what it was compiled for!
   make_func_symbol_func("pc-get-os", (void*)pc_get_os);
   make_func_symbol_func("pc-get-unix-timestamp", (void*)pc_get_unix_timestamp);
+  make_func_symbol_func("pc-treat-pad0-as-pad1", (void*)pc_treat_pad0_as_pad1);
+  make_func_symbol_func("pc-is-imgui-visible?", (void*)pc_is_imgui_visible);
 
   // file related functions
   make_func_symbol_func("pc-filepath-exists?", (void*)pc_filepath_exists);
   make_func_symbol_func("pc-mkdir-file-path", (void*)pc_mkdir_filepath);
 
   //Play sound file
-  //make_func_symbol_func("play-rand-sound", (void*)playMP3);  
+  make_func_symbol_func("play-sound-file", (void*)playMP3);  
+
+  //Stop sound file
+  make_func_symbol_func("stop-sound-file", (void*)stopAllSounds);  
+
+  //Main music stuff
+  make_func_symbol_func("play-main-music", (void*)playMainMusic);
+  make_func_symbol_func("pause-main-music", (void*)pauseMainMusic);
+  make_func_symbol_func("stop-main-music", (void*)stopMainMusic);
+  make_func_symbol_func("resume-main-music", (void*)resumeMainMusic);
+
+  make_func_symbol_func("main-music-volume", (void*)changeMainMusicVolume);
+
   // discord rich presence
   make_func_symbol_func("pc-discord-rpc-set", (void*)set_discord_rpc);
 
@@ -998,10 +1137,7 @@ void init_common_pc_port_functions(
 
   // debugging tools
   make_func_symbol_func("pc-filter-debug-string?", (void*)pc_filter_debug_string);
-
-  // init ps2 VM
-  if (VM::use) {
-    make_func_symbol_func("vm-ptr", (void*)VM::get_vm_ptr);
-    VM::vm_init();
-  }
+  make_func_symbol_func("pc-screen-shot", (void*)pc_screen_shot);
+  make_func_symbol_func("pc-register-screen-shot-settings",
+                        (void*)pc_register_screen_shot_settings);
 }
