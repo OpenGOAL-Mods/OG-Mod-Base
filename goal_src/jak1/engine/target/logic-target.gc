@@ -13,7 +13,7 @@
 
 ;; target-start is modified due to changing the size of the stack in gkernel.gc
 
-(define-extern remote-target-in-loaded-environment? (function target int symbol))
+(define-extern remote-target-in-loaded-environment? (function target symbol))
 
 ;; DECOMP BEGINS
 
@@ -755,7 +755,7 @@
 
 (defbehavior target-compute-edge target ()
   (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-    (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self tgt-idx))  ;; figure out target/collide-edge-work idx
+    (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self))  ;; figure out target/collide-edge-work idx
       (let ((s5-0 (-> *edge-grab-info-list* tgt-idx)))
         (if (not (edge-grab-info-method-9 s5-0 tgt-idx)) (send-event self 'end-mode))
         (if *display-edge-collision-marks* (debug-draw s5-0))
@@ -792,7 +792,7 @@
 
 (defbehavior target-compute-edge-rider target ()
   (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-    (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self tgt-idx))  ;; figure out target/collide-edge-work idx
+    (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self))  ;; figure out target/collide-edge-work idx
       (let ((gp-0 (-> *edge-grab-info-list* tgt-idx)))
         (if (not (edge-grab-info-method-9 gp-0 tgt-idx)) (send-event self 'end-mode))
         (if *display-edge-collision-marks* (debug-draw gp-0))
@@ -966,7 +966,7 @@
                    (new 'static 'rgba :r #x40 :b #x40 :a #x80)))
       (set! (-> self control reaction) target-collision-reaction)
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self tgt-idx))
+        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self))
           (fill-cache-integrate-and-collide! (-> self control) (-> self control transv) (-> self control root-prim collide-with) *collide-cache* *collide-work*)
           (if (logtest? (-> self control root-prim prim-core action) (collide-action edgegrab-possible))
             (find-edge-grabs! self (-> *edge-collide-cache-list* tgt-idx) tgt-idx))))
@@ -1011,7 +1011,7 @@
                    'draw
                    (new 'static 'rgba :r #x40 :b #x40 :a #x80)))
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self tgt-idx))
+        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self))
       (fill-cache-integrate-and-collide! (-> self control) (-> self control transv) (-> self control root-prim collide-with) *collide-cache* *collide-work*)
       (if (logtest? (-> self control root-prim prim-core action) (collide-action edgegrab-possible))
         (find-edge-grabs! self (-> *edge-collide-cache-list* tgt-idx) tgt-idx))))
@@ -1051,7 +1051,7 @@
                    'draw
                    (new 'static 'rgba :r #x40 :b #x40 :a #x80)))
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self tgt-idx))
+        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self))
       (fill-cache-integrate-and-collide! (-> self control) (-> self control transv) (-> self control root-prim collide-with) *collide-cache* *collide-work*)
       (if (logtest? (-> self control root-prim prim-core action) (collide-action edgegrab-possible))
         (find-edge-grabs! self (-> *edge-collide-cache-list* tgt-idx) tgt-idx))))
@@ -1131,7 +1131,7 @@
                    'draw
                    (new 'static 'rgba :r #x40 :b #x40 :a #x80)))
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self tgt-idx))
+        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self))
       (fill-cache-integrate-and-collide! (-> self control) (-> self control transv) (-> self control root-prim collide-with) *collide-cache* *collide-work*)
       (if (logtest? (-> self control root-prim prim-core action) (collide-action edgegrab-possible))
         (find-edge-grabs! self (-> *edge-collide-cache-list* tgt-idx) tgt-idx))))

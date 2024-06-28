@@ -431,7 +431,7 @@
     )
   )
   
-(defun remote-target-in-loaded-environment? ((remote-target target) (tgt-idx int))
+(defun remote-target-in-loaded-environment? ((remote-target target))
   (or 
     (= remote-target *target*) 
     (is-target-in-any-active-level? remote-target)  

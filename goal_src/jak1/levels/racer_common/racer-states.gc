@@ -10,6 +10,7 @@
 (define-extern *race-track-surface* surface)
 (define-extern runs-on-zoomer-entry (function none))
 (define-extern runs-on-zoomer-exit (function none))
+(define-extern remote-target-in-loaded-environment? (function target symbol))
 
 ;; DECOMP BEGINS
 
@@ -231,8 +232,9 @@
                         (let ((v0-2 (new 'process 'joint-mod (joint-mod-handler-mode rotate) self 7)))
                           (set! (-> (the-as target (-> gp-0 0)) racer tail) v0-2)
                           v0-2)))))
-      (set-twist! (-> self racer front-blade) (the-as float #f) (- (-> self racer front-rot)) (the-as float #f))
-      (set-twist! (-> self racer bottom-blade) (the-as float #f) (the-as float #f) (- (-> self racer bottom-rot)))
+      (when (or (= self *target*) (remote-target-in-loaded-environment? self))
+        (set-twist! (-> self racer front-blade) (the-as float #f) (- (-> self racer front-rot)) (the-as float #f))
+        (set-twist! (-> self racer bottom-blade) (the-as float #f) (the-as float #f) (- (-> self racer bottom-rot))))
       (remove-exit)
       (runs-on-zoomer-entry)
       (go target-racing-get-on arg0))
@@ -351,7 +353,7 @@
   :post
     (behavior ()
       (if (= (-> self next-state name) 'target-racing) (set-time! (-> self racer racing-time)))
-      (target-racing-post)))
+      (if (or (= self *target*) (remote-target-in-loaded-environment? self)) (target-racing-post))))
 
 (defstate target-racing-jump (target)
   :event
@@ -772,7 +774,7 @@
                              (vector-float*! (-> self control transv) (-> self control dynam gravity-normal) f28-0)
                              (vector-float*! s5-3 s5-3 (/ f0-38 f1-12)))))
                (suspend))))
-         (camera-change-to (the-as string 'base) 0 #f)))
+        (camera-change-to (the-as string 'base) 0 #f)))
       (set! (-> self control transv quad) (the-as uint128 0))
       (set! (-> self control unknown-float01) 0.0)
       (set! (-> self post-hook) target-no-stick-post)
@@ -784,7 +786,10 @@
               (and (time-elapsed? (-> self state-time) (seconds 1))
                    (not (logtest? (-> *kernel-context* prevent-from-run) (process-mask movie))))))
       (go target-stance))
-  :post target-racing-post)
+  :post 
+    (behavior ()
+      (if (or (= self *target*) (remote-target-in-loaded-environment? self))
+        (target-racing-post))))
 
 (defstate target-racing-get-on (target)
   :event target-generic-event-handler
@@ -832,8 +837,9 @@
             (set! (-> self racer front-rot)
                   (the float (sar (shl (the int (+ (-> self racer front-rot) (* (-> self racer front-rotv) (seconds-per-frame)))) 48) 48)))
             (+! (-> self racer bottom-rot) (* 364088.88 (seconds-per-frame)))
+            (when (or (= self *target*) (remote-target-in-loaded-environment? self))
             (set-twist! (-> self racer front-blade) (the-as float #f) (- (-> self racer front-rot)) (the-as float #f))
-            (set-twist! (-> self racer bottom-blade) (the-as float #f) (the-as float #f) (- (-> self racer bottom-rot))))
+            (set-twist! (-> self racer bottom-blade) (the-as float #f) (the-as float #f) (- (-> self racer bottom-rot)))))
           (suspend)
           (ja :num! (seek! (ja-aframe 77.0 0)))))
       (logclear! (-> self state-flags) (state-flags use-alt-cam-pos))
@@ -875,7 +881,7 @@
         (set! (-> self racer bike-trans y)
               (lerp (the-as float (-> self control unknown-uint30)) (+ 4096.0 (the-as float (-> self control unknown-uint30))) f30-1)))
       (if (= self *target*) (hide-hud-quick))
-    (target-no-move-post)))
+      (if (or (= self *target*) (remote-target-in-loaded-environment? self)) (target-no-move-post))))
 
 (defstate target-racing-get-off (target)
   :event target-generic-event-handler
@@ -905,7 +911,10 @@
           (seek! (-> self control unknown-vector11 y) 6144.0 (* 3.0 (seconds-per-frame)))
           (suspend)))
       (go target-racing-get-off-jump arg0))
-  :post target-racing-post)
+  :post
+    (behavior ()
+      (if (or (= self *target*) (remote-target-in-loaded-environment? self))
+        (target-racing-post))))
 
 (defstate target-racing-get-off-jump (target)
   :event target-generic-event-handler
@@ -963,8 +972,9 @@
         (set! (-> self racer front-rotv) 0.0)
         (set! (-> self racer front-rot) (-> *RACER-bank* default-front-blade)))
       (+! (-> self racer bottom-rot) (* 364088.88 (seconds-per-frame)))
-      (set-twist! (-> self racer front-blade) (the-as float #f) (- (-> self racer front-rot)) (the-as float #f))
-      (set-twist! (-> self racer bottom-blade) (the-as float #f) (the-as float #f) (- (-> self racer bottom-rot)))
+      (when (or (= self *target*) (remote-target-in-loaded-environment? self))
+        (set-twist! (-> self racer front-blade) (the-as float #f) (- (-> self racer front-rot)) (the-as float #f))
+        (set-twist! (-> self racer bottom-blade) (the-as float #f) (the-as float #f) (- (-> self racer bottom-rot))))
       (let ((gp-0 (new 'stack-no-clear 'vector))
             (f30-0 (fmax 0.0 (fmin 1.0 (* 0.004761905 (+ -150.0 (the float (- (current-time) (-> self state-time)))))))))
         (fmax 0.0 (fmin 1.0 (* 0.006666667 (+ -225.0 (the float (- (current-time) (-> self state-time)))))))
@@ -984,7 +994,7 @@
       (quaternion-copy! (the-as quaternion (-> self racer bike-quat)) (-> self control quat))
       (set! (-> self racer bike-scale quad) (-> self control scale quad))
       (if (= self *target*) (hide-hud))
-    (target-no-move-post)))
+      (if (or (= self *target*) (remote-target-in-loaded-environment? self)) (target-no-move-post))))
 
 (defstate target-racing-get-off-hit-ground (target)
   :event target-standard-event-handler
@@ -1042,7 +1052,10 @@
         (target-racing-turn-anim)
         (set-forward-vel 0.0)
         (suspend)))
-  :post target-racing-post)
+  :post
+    (behavior ()
+      (if (or (= self *target*) (remote-target-in-loaded-environment? self))
+        (target-racing-post))))
 
 (defstate target-racing-clone-anim (target)
   :event
