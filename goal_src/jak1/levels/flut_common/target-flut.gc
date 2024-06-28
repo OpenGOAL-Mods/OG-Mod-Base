@@ -1437,12 +1437,12 @@
         enter)
   :exit
     (behavior ()
-      (send-event (ppointer->process (-> self sidekick)) 'matrix #f)
+      (if (= *target* self) (send-event (ppointer->process (-> self sidekick)) 'matrix #f))
       ((-> target-clone-anim exit))
       ((-> target-flut-start exit)))
   :code
     (behavior ((arg0 handle))
-      (send-event (ppointer->process (-> self sidekick)) 'matrix 'play-anim)
+      (if (= *target* self) (send-event (ppointer->process (-> self sidekick)) 'matrix 'play-anim))
       (clone-anim arg0 33 #t "")
       (go target-flut-stance))
   :post
