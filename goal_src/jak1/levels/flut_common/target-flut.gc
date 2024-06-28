@@ -9,6 +9,7 @@
 (require "engine/common-obs/nav-enemy-h.gc")
 
 (define-extern is-interactive? (function int symbol))
+(define-extern remote-target-in-loaded-environment? (function target symbol))
 (define-extern *multiplayer-info* multiplayer-info)
 (define-extern *enable-remote-target-yellow-eco-blasts* symbol)
 
@@ -185,8 +186,9 @@
   (none))
 
 (defbehavior target-flut-post target ()
-  (target-post)
-  (target-flut-post-post)
+  (when (or (= self *target*) (remote-target-in-loaded-environment? self))
+    (target-post)
+    (target-flut-post-post))
   0
   (none))
 
@@ -1291,7 +1293,7 @@
                            (-> self control unknown-quaternion02)
                            (-> self control unknown-quaternion03)
                            f30-0))
-      (target-no-move-post)))
+      (if (or (= self *target*) (remote-target-in-loaded-environment? self)) (target-no-move-post))))
 
 (defstate target-flut-get-off (target)
   :event target-generic-event-handler
@@ -1309,8 +1311,9 @@
       (go target-flut-get-off-jump arg0))
   :post
     (behavior ()
-      (target-no-stick-post)
-      (target-flut-post-post)))
+      (when (or (= self *target*) (remote-target-in-loaded-environment? self))
+        (target-no-stick-post)
+        (target-flut-post-post))))
 
 (defstate target-flut-get-off-jump (target)
   :event target-generic-event-handler
@@ -1374,7 +1377,7 @@
       (vector+! (-> self flut flut-trans) (-> self control trans) (-> self control unknown-vector12))
       (quaternion-copy! (the-as quaternion (-> self flut flut-quat)) (-> self control quat))
       (set! (-> self flut flut-scale quad) (-> self control scale quad))
-      (target-no-move-post)))
+      (if (or (= self *target*) (remote-target-in-loaded-environment? self)) (target-no-move-post))))
 
 (defstate target-flut-get-off-hit-ground (target)
   :event target-standard-event-handler
@@ -1420,8 +1423,9 @@
         code)
   :post
     (behavior ()
-      (target-no-stick-post)
-      (target-flut-post-post)))
+      (when (or (= self *target*) (remote-target-in-loaded-environment? self))
+        (target-no-stick-post)
+        (target-flut-post-post))))
 
 (defstate target-flut-clone-anim (target)
   :event

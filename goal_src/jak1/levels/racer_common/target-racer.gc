@@ -9,6 +9,8 @@
 
 ;; DECOMP BEGINS
 
+(define-extern remote-target-in-loaded-environment? (function target symbol))
+
 (define *racer-mods*
   (new 'static
        'surface
@@ -658,7 +660,8 @@
             (-> self racer turn-anim-targ)
             (-> self racer tail-anim-vel)
             (-> self racer tail-anim-frame)))
-  (set-twist! (-> self racer tail) (the-as float #f) (the-as float #f) (* -273.06668 (-> self racer tail-anim-frame)))
+  (if (or (= self *target*) (remote-target-in-loaded-environment? self))
+    (set-twist! (-> self racer tail) (the-as float #f) (the-as float #f) (* -273.06668 (-> self racer tail-anim-frame))))
   (let ((f30-2 (fmin 1.0 (* 2.0 (fabs (-> self racer slide-shift-x))))))
     (ja :num-func num-func-identity :frame-num (ja-aframe (-> self racer turn-anim-frame) 0))
     (ja :chan 1 :num! (chan 0) :frame-interp (+ 0.5 (* 0.025 (-> self racer tail-anim-frame))))
@@ -880,8 +883,10 @@
   (racer-sounds)
   (rot->dir-targ! (-> self control))
   (racer-bend-gravity)
-  (ja-post)
-  (joint-points)
+  (when (or (= self *target*) (remote-target-in-loaded-environment? self))
+    (ja-post)
+    (joint-points)
+    )
   (do-target-shadow)
   (target-powerup-process)
   (vector+! (-> self racer bike-trans) (-> self control trans) (-> self control unknown-vector12))

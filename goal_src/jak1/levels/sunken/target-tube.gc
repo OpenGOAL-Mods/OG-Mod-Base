@@ -297,7 +297,7 @@
                    (new 'static 'rgba :r #x40 :b #x40 :a #x80)))
       (set! (-> self control reaction) target-collision-reaction)
       (dotimes (tgt-idx MAX_MULTIPLAYER_COUNT)
-        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self tgt-idx))
+        (when (and (get-target tgt-idx) (= self (get-target tgt-idx)) (remote-target-in-loaded-environment? self))
           (fill-cache-integrate-and-collide! (-> self control) (-> self control transv) (-> self control root-prim collide-with) *collide-cache* *collide-work*)
           (if (logtest? (-> self control root-prim prim-core action) (collide-action edgegrab-possible))
             (find-edge-grabs!  self (-> *edge-collide-cache-list* tgt-idx) tgt-idx))))
