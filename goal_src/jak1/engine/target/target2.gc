@@ -1789,13 +1789,13 @@
     (behavior ((arg0 string) (arg1 handle))
       (let ((gp-0 (the-as art-joint-anim (lookup-art (-> self draw art-group) arg0 art-joint-anim))))
         (when gp-0
-          (send-event (ppointer->process (-> self sidekick)) 'matrix 'play-anim)
+          (if (= *target* self) (send-event (ppointer->process (-> self sidekick)) 'matrix 'play-anim))
           (ja-channel-set! 1)
           (ja-no-eval :group! gp-0 :num! (seek!) :frame-num 0.0)
           (until (ja-done? 0)
             (suspend)
             (ja :num! (seek!)))
-          (send-event (ppointer->process (-> self sidekick)) 'matrix 'normal)))
+          (if (= *target* self) (send-event (ppointer->process (-> self sidekick)) 'matrix 'normal))))
       (go target-stance))
   :post target-no-stick-post)
 
@@ -1813,11 +1813,12 @@
       (logior! (-> self state-flags) (state-flags grabbed))
       (vector-reset! (-> self control transv))
       (set! (-> self neck flex-blend) 0.0)
-      (send-event (ppointer->process (-> self sidekick)) 'shadow #t))
+      (if (= *target* self) (send-event (ppointer->process (-> self sidekick)) 'shadow #t)))
   :exit
     (behavior ()
-      (send-event (ppointer->process (-> self sidekick)) 'matrix 'normal)
-      (send-event (ppointer->process (-> self sidekick)) 'shadow #t)
+      (when (= *target* self) 
+        (send-event (ppointer->process (-> self sidekick)) 'matrix 'normal)
+        (send-event (ppointer->process (-> self sidekick)) 'shadow #t))
       (let ((gp-0 (joint-node eichar-lod0-jg main))
             (a1-2 (&-> (-> self control) unknown-qword00)))
         (cond

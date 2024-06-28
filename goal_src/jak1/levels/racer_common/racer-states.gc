@@ -1069,7 +1069,7 @@
     (behavior ()
       (set! (-> self control unknown-vector11 y) (the-as float (-> self control unknown-uint20)))
       (set! (-> self control unknown-vector12 y) (-> self control unknown-vector11 y))
-      (send-event (ppointer->process (-> self sidekick)) 'matrix #f)
+      (if (= *target* self) (send-event (ppointer->process (-> self sidekick)) 'matrix #f))
       ((-> target-clone-anim exit))
       ((-> target-racing-start exit))
       (vector-reset! (-> self control transv)))
@@ -1077,7 +1077,7 @@
     (behavior ((arg0 handle))
       (set! (-> self control unknown-uint20) (the-as uint (-> self control unknown-vector11 y)))
       (set! (-> self control unknown-vector11 y) 0.0)
-      (send-event (ppointer->process (-> self sidekick)) 'matrix 'play-anim)
+      (if (= *target* self) (send-event (ppointer->process (-> self sidekick)) 'matrix 'play-anim))
       (clone-anim arg0 33 #t "")
       (go target-racing))
   :post

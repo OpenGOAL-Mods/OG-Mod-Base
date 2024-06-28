@@ -109,7 +109,7 @@
         v0-0)))
     (('sidekick)
      (cond
-       ((and (-> arg3 param 0) (not (-> self sidekick)))
+       ((and (= *target* self) (-> arg3 param 0) (not (-> self sidekick)))
         (let ((gp-2 (get-process *default-dead-pool* sidekick #x4000)))
           (set! v0-0
                 (when gp-2
@@ -138,7 +138,7 @@
        (set! (-> v1-105 param 4) (-> arg3 param 4))
        (set! (-> v1-105 param 5) (-> arg3 param 5))
        (set! (-> v1-105 param 6) (-> arg3 param 6))
-       (send-event-function (ppointer->process (-> self sidekick)) v1-105)))
+       (if (= *target* self) (send-event-function (ppointer->process (-> self sidekick)) v1-105))))
     (('shadow)
      (cond
        ((-> arg3 param 0)
