@@ -9,7 +9,7 @@
 
 ;; DECOMP BEGINS
 
-(define-extern remote-target-in-loaded-environment? (function target symbol))
+(define-extern remote-target-in-close-by-environment? (function target symbol))
 
 (define *racer-mods*
   (new 'static
@@ -660,7 +660,7 @@
             (-> self racer turn-anim-targ)
             (-> self racer tail-anim-vel)
             (-> self racer tail-anim-frame)))
-  (if (or (= self *target*) (remote-target-in-loaded-environment? self))
+  (if (or (= self *target*) (remote-target-in-close-by-environment? self))
     (set-twist! (-> self racer tail) (the-as float #f) (the-as float #f) (* -273.06668 (-> self racer tail-anim-frame))))
   (let ((f30-2 (fmin 1.0 (* 2.0 (fabs (-> self racer slide-shift-x))))))
     (ja :num-func num-func-identity :frame-num (ja-aframe (-> self racer turn-anim-frame) 0))
@@ -883,7 +883,7 @@
   (racer-sounds)
   (rot->dir-targ! (-> self control))
   (racer-bend-gravity)
-  (when (or (= self *target*) (remote-target-in-loaded-environment? self))
+  (when (or (= self *target*) (remote-target-in-close-by-environment? self))
     (ja-post)
     (joint-points)
     )
