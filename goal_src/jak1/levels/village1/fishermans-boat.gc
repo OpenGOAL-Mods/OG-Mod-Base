@@ -782,7 +782,7 @@
             (set! (-> *camera* cam-entity) (the-as entity #t))
             (send-event *camera* 'clear-entity)
             )
-        (load-commands-set! *level* '())
+          (load-commands-set! *level* '())
           (load-state-want-display-level 'village1 'display)
           (load-state-want-force-vis 'village1 #f)
           (go fishermans-boat-docked-village)))
@@ -928,7 +928,8 @@
               (set! (-> *camera* cam-entity) (the-as entity #t))
               (send-event *camera* 'clear-entity)
               (go fishermans-boat-docked-misty)))
-          (else (go fishermans-boat-docked-misty))))
+          (else (go fishermans-boat-docked-misty)
+          )))
       (rider-trans))
   :code
     (behavior ()
@@ -1066,10 +1067,7 @@
   (set! (-> this auto-pilot) #f)
   (cond 
     ((-> *pause-handler* in_pause_menu_buffer?)
-      (if (= (-> *game-info* current-continue level) 'misty)
-          (fishermans-boat-set-dock-point 0)
-          (fishermans-boat-set-dock-point 4)
-          )
+      (if (= (-> *game-info* current-continue level) 'misty) (fishermans-boat-set-dock-point 0) (fishermans-boat-set-dock-point 4))
       )
     (else
       (if (= (-> *game-info* current-continue level) 'misty) (fishermans-boat-set-dock-point 4) (fishermans-boat-set-dock-point 0))))
@@ -1139,11 +1137,7 @@
   (rigid-body-platform-method-31 this)
   (cond 
     ((-> *pause-handler* in_pause_menu_buffer?)
-      (if (= (-> *game-info* current-continue level) 'misty)
-          (go fishermans-boat-docked-village)
-          (go fishermans-boat-docked-misty)
-          )
-      )
+      (if (= (-> *game-info* current-continue level) 'misty) (go fishermans-boat-docked-village) (go fishermans-boat-docked-misty)))
     (else
       (if (= (-> *game-info* current-continue level) 'misty) (go fishermans-boat-docked-misty) (go fishermans-boat-docked-village))))
   (none))
@@ -1330,12 +1324,11 @@
           (send-event (ppointer->process (-> *target* sidekick)) 'matrix 'play-anim)
           (send-event *target* 'blend-shape #t)
           (let ((v1-20 (process-spawn othercam self 5 #f #t :to self))) (send-event (ppointer->process v1-20) 'mask 2048))
-          (set! (-> self draw force-lod) 0)
+          (set! (-> self draw force-lod) 0))
           (ja-play-spooled-anim (-> self anim)
                                 (the-as art-joint-anim fishermans-boat-idle-ja)
                                 (the-as art-joint-anim #f)
                                 (the-as (function process-drawable symbol) false-func))
-          )
         (when *enable-ingame-cutscenes?*
           (set! (-> self draw force-lod) -1)
           (send-event *target* 'blend-shape #f)
