@@ -12,7 +12,7 @@
 
 ;; DECOMP BEGINS
 
-(define-extern *pause-handler* pause-handler)
+(define-extern *pause-handler* time-handler)
 
 (defun sphere-cull ((arg0 vector))
   #t
@@ -1159,8 +1159,8 @@
     (toggle-pause))
   (when (or (not *progress-process*) (can-go-back? (-> *progress-process* 0)))
     (if (or (cpad-pressed? 0 select r3 start) ;; push pause
-            (and (-> *pause-handler* in_pause_menu_buffer?)  ;; buffered pause from spool anim playing
-                  (>= (-> *display* base-frame-counter) (-> *pause-handler* buffer_time)))
+            (and (-> *pause-handler* active?)  ;; buffered pause from spool anim playing
+                  (>= (-> *display* base-frame-counter) (-> *pause-handler* active_time)))
             (and (logtest? (-> *cpad-list* cpads 0 valid) 128) ;; controller lost
                  (= *master-mode* 'game)
                  (>= (-> *display* base-frame-counter) (-> *game-info* blackout-time))
