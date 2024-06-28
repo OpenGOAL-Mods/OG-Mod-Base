@@ -738,11 +738,9 @@
 
 (defbehavior ja-abort-spooled-anim process-drawable ((arg0 spool-anim) (arg1 art-joint-anim) (arg2 int))
   "Abort a spooled animation."
-  (if (and
-        (or (not (type-type? (-> self type) fuel-cell)) (not (name= (-> self name) "remote-cell"))) ;; skip restoring load-state after remote cell pickup
-        (or (not (type-type? (-> self type) target)) (= self *target*)) ;; skip restoring load-state after remote target idle animation (idle deloads from remote targets)
-        )
-      (restore-load-state-and-cleanup *load-state*)
+  (if (or (= self *target*) ;; skip restoring load-state after remote target idle animation (idle deloads from remote targets)
+          (and (type-type? (-> self type) fuel-cell) (not (name= (-> self name) "remote-cell")))) ;; skip restoring load-state after remote cell pickup
+    (restore-load-state-and-cleanup *load-state*)
     )
   (str-play-stop (-> arg0 name))
   (set! (-> *art-control* active-stream) #f)
