@@ -11,7 +11,7 @@
 (define-extern remote-target-fake-cpad-circle-pressed? (function target basic))
 (define-extern target-in-level-sphere? (function symbol basic))
 (define-extern has-camera-type? (function symbol basic))
-(define-extern *pause-handler* pause-handler)
+(define-extern *pause-handler* time-handler)
 
 ;; DECOMP BEGINS
 
@@ -1066,7 +1066,7 @@
   (set! (-> this cam-tracker) (the-as handle #f))
   (set! (-> this auto-pilot) #f)
   (cond 
-    ((-> *pause-handler* in_pause_menu_buffer?)
+    ((-> *pause-handler* active?)
       (if (= (-> *game-info* current-continue level) 'misty) (fishermans-boat-set-dock-point 0) (fishermans-boat-set-dock-point 4))
       )
     (else
@@ -1136,7 +1136,7 @@
   (process-drawable-from-entity! this arg0)
   (rigid-body-platform-method-31 this)
   (cond 
-    ((-> *pause-handler* in_pause_menu_buffer?)
+    ((-> *pause-handler* active?)
       (if (= (-> *game-info* current-continue level) 'misty) (go fishermans-boat-docked-village) (go fishermans-boat-docked-misty)))
     (else
       (if (= (-> *game-info* current-continue level) 'misty) (go fishermans-boat-docked-misty) (go fishermans-boat-docked-village))))

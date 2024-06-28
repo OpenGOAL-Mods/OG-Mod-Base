@@ -207,10 +207,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     )
   )
 
-(defmethod new pause-handler ((allocation symbol) (type-to-make type))
+(defmethod new time-handler ((allocation symbol) (type-to-make type))
   (let ((obj (object-new allocation type-to-make (the-as int (-> type-to-make size)))))
-    (set! (-> obj in_pause_menu_buffer?) #f)
-    (set! (-> obj buffer_time) 0)
+    (set! (-> obj active?) #f)
+    (set! (-> obj active_time) 0)
     obj
     )
   )

@@ -210,9 +210,9 @@
     )
   )
 
-(deftype pause-handler (structure)
- ((in_pause_menu_buffer? symbol)
-  (buffer_time int32)
+(deftype time-handler (structure)
+ ((active? symbol)
+  (active_time int32)
   )
   :pack-me
   (:methods

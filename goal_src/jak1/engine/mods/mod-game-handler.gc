@@ -30,7 +30,7 @@
 (define *self-player-info* (the-as remote-player-info #f))
 
 ;; teamruns data
-(define *pause-handler* (new 'global 'pause-handler)) ;;handles killing spool anims on pause
+(define *pause-handler* (new 'global 'time-handler)) ;;handles killing spool anims on pause
 
 ;; multiplayer fixes
 (define *allow-cell-pickup?* #t)
