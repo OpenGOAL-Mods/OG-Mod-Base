@@ -141,7 +141,7 @@
   ;; Disable any active cheats
   (set! (-> *pc-settings* cheats) (the-as pc-cheats #x0))
   ;; ensure PS2 actor vis is enabled
-  (set! (-> *pc-settings* ps2-actor-vis?) #t)
+  (set! (-> *pc-settings* ps2-actor-vis?) #f)
   ;; ensure FPS set to `60`
   (when (!= (-> *pc-settings* target-fps) 60)
     (set-frame-rate! *pc-settings* 60 #t)
