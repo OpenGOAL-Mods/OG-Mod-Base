@@ -48,7 +48,7 @@ struct Config {
       {KeyBind::Modifier::CTRL, "B", "Displays the most recently caught backtrace", "(:di)"},
       {KeyBind::Modifier::CTRL, "N", "Full build of the game", "(mi)"}};
   bool per_game_history = true;
-  bool permissive_redefinitions = false;
+  bool permissive_redefinitions = true; // modbase change
 
   int get_nrepl_port() {
     if (temp_nrepl_port != -1) {

@@ -61,7 +61,6 @@ void from_json(const json& j, Config& obj) {
   if (j.contains("perGameHistory")) {
     j.at("perGameHistory").get_to(obj.per_game_history);
   }
-  obj.permissive_redefinitions = "true";// mod-base-change
   if (j.contains("permissiveRedefinitions")) {
     j.at("permissiveRedefinitions").get_to(obj.permissive_redefinitions);
   }
