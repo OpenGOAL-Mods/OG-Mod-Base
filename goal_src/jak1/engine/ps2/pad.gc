@@ -313,6 +313,7 @@
 
 (defmacro cpad-hold? (pad-idx &rest buttons)
   `(logtest? (cpad-hold ,pad-idx) (pad-buttons ,@buttons)))
+  
 (defmacro cpad-clear! (pad-idx &rest buttons)
   `(begin
     (logclear! (cpad-pressed ,pad-idx) (pad-buttons ,@buttons))

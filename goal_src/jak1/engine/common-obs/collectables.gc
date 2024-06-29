@@ -733,8 +733,6 @@
           (if (-> *pc-settings* money-starburst?) (spawn (-> self part) (-> self root root-prim world-sphere))))
         (suspend))))
 
-
-
 (defstate pickup (money)
   :virtual #t
   :code
