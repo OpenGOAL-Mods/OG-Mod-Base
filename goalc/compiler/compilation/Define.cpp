@@ -74,17 +74,17 @@ Val* Compiler::compile_define(const goos::Object& form, const goos::Object& rest
   if (!existing_type) {
     m_symbol_types.set(sym.as_symbol(), in_gpr->type());
   } else {
-    if (!explicit_no_typecheck) { // && m_repl && m_repl->repl_config.permissive_redefinitions) {
+    if (!explicit_no_typecheck && m_repl && m_repl->repl_config.permissive_redefinitions) {
       // Permissive redefinitions are allowed
       if (in_gpr->type() != *existing_type) {
         lg::warn("Redefining {}", sym.as_symbol().name_ptr);
       }
       m_symbol_types.set(sym.as_symbol(), in_gpr->type());
-    } // else if (!explicit_no_typecheck) {
-    //   // Type check is required
-    //   typecheck(form, *existing_type, in_gpr->type(),
-    //             fmt::format("define on existing symbol {}", sym.as_symbol().name_ptr));
-    // }
+    } else if (!explicit_no_typecheck) {
+      // Type check is required
+      typecheck(form, *existing_type, in_gpr->type(),
+                fmt::format("define on existing symbol {}", sym.as_symbol().name_ptr));
+    }
   }
 
   if (!as_lambda) {

@@ -492,7 +492,7 @@
    "village_common/oracle.gc"
 
    "common/blocking-plane.gc"
-   "common/blocking-plane-modded.gc" ;; mod-base-change
+   "common/blocking-plane-b.gc" ;; mod-base-change
    "common/launcherdoor.gc"
    "common/battlecontroller.gc"
 

@@ -6,9 +6,9 @@
 
 ;; DECOMP BEGINS
 
-(deftype blocking-plane (process-drawable) ()
+(deftype blocking-plane-b (process-drawable) ()
   (:states
-   blocking-plane-idle))
+   blocking-plane-b-idle))
 
 (defskelgroup *ef-plane-sg*
   ef-plane
@@ -17,7 +17,7 @@
   ((ef-plane-lod0-mg (meters 999999)))
   :bounds (static-spherem 0 0 0 30))
 
-(defstate blocking-plane-idle (blocking-plane)
+(defstate blocking-plane-b-idle (blocking-plane-b)
   :trans
     (behavior ()
       (if (and *debug-segment* *display-path-marks*)
@@ -31,7 +31,7 @@
           (logior! (-> self mask) (process-mask sleep)))
         (suspend))))
 
-(defbehavior blocking-plane-init-by-other blocking-plane ((vec-pair (inline-array vector)) (height float))
+(defbehavior blocking-plane-b-init-by-other blocking-plane-b ((vec-pair (inline-array vector)) (height float))
   "Rewritten based on Jak II implementation - sets up plane given 2 vectors and a height"
   (if (not vec-pair) (deactivate self))
   (let ((s5-0 (-> vec-pair 0))
@@ -64,30 +64,30 @@
       (matrix->quaternion (-> self root quat) s4-2)))
   (initialize-skeleton self *ef-plane-sg* '())
   (logior! (-> self draw status) (draw-status skip-bones))
-  (go blocking-plane-idle)
+  (go blocking-plane-b-idle)
   (none))
 
-;; Use the below function to spawn a blocking-plane between 2 vectors with a given height.
+;; Use the below function to spawn a blocking-plane-b between 2 vectors with a given height.
 ;;
 ;; Example (spawn):
 ;;
-;; (when (not (process-by-name "test-blocking-plane-1" *active-pool*))
+;; (when (not (process-by-name "test-blocking-plane-b-1" *active-pool*))
 ;;   (let ((verts (new 'stack-no-clear 'inline-array 'vector 2)))
 ;;     (set-vector-meters! (-> verts 0) 194.39  10.62 -1587.11) ;; near geologist
 ;;     (set-vector-meters! (-> verts 1) 214.60  10.31 -1590.41)
-;;     (blocking-plane-spawn-simple verts (meters 30.0) "test-blocking-plane-1")
+;;     (blocking-plane-b-spawn-simple verts (meters 30.0) "test-blocking-plane-b-1")
 ;;     )
 ;;   )
 ;;
 ;; Example (despawn):
 ;;
-;; (let ((plane (process-by-name "test-blocking-plane-1" *active-pool*)))
+;; (let ((plane (process-by-name "test-blocking-plane-b-1" *active-pool*)))
 ;;   (when plane (deactivate plane))
 ;;   )
-(defun blocking-plane-spawn-simple ((verts (inline-array vector)) (height float) (name string))
-  (process-spawn blocking-plane verts height :to *active-pool* :name name))
+(defun blocking-plane-b-spawn-simple ((verts (inline-array vector)) (height float) (name string))
+  (process-spawn blocking-plane-b verts height :to *active-pool* :name name))
 
-(defbehavior blocking-plane-spawn process ((arg0 curve-control))
+(defbehavior blocking-plane-b-spawn process ((arg0 curve-control))
   (cond
     ((or (not arg0) (logtest? (-> arg0 flags) (path-control-flag not-found))))
     (else
@@ -97,17 +97,17 @@
        (while (< s4-0 s5-0)
          (eval-path-curve-div! arg0 (-> s2-0 0) (the float s4-0) 'exact)
          (eval-path-curve-div! arg0 (-> s2-0 1) (+ 1.0 (the float s4-0)) 'exact)
-         (process-spawn blocking-plane s2-0 122880.0 :to self)
+         (process-spawn blocking-plane-b s2-0 122880.0 :to self)
          (+! s4-0 2)))))
   0
   (none))
 
-(defun blocking-plane-destroy ()
+(defun blocking-plane-b-destroy ()
   (with-pp
     (let ((gp-0 (-> pp child)))
       (while gp-0
         (let ((s5-0 (ppointer->process gp-0)))
           (set! gp-0 (-> gp-0 0 brother))
-          (if (type-type? (-> s5-0 type) blocking-plane) (deactivate s5-0)))))
+          (if (type-type? (-> s5-0 type) blocking-plane-b) (deactivate s5-0)))))
     0
     (none)))
