@@ -55,6 +55,48 @@
        'boxed-array
        :type
        game-task
+       (game-task training-gimmie)
+       (game-task training-door)
+       (game-task training-climb)
+       (game-task training-buzzer)
+       (game-task village1-mayor-money)
+       (game-task village1-uncle-money)
+       (game-task village1-yakow)
+       (game-task village1-oracle-money1)
+       (game-task village1-oracle-money2)
+       (game-task village1-buzzer)
+       (game-task beach-ecorocks)
+       (game-task beach-flutflut)
+       (game-task beach-pelican)
+       (game-task beach-seagull)
+       (game-task beach-cannon)
+       (game-task beach-gimmie)
+       (game-task beach-sentinel)
+       (game-task beach-buzzer)
+       (game-task jungle-lurkerm)
+       (game-task jungle-tower)
+       (game-task jungle-eggtop)
+       (game-task jungle-plant)
+       (game-task jungle-fishgame)
+       (game-task jungle-canyon-end)
+       (game-task jungle-temple-door)
+       (game-task jungle-buzzer)
+       (game-task misty-muse)
+       (game-task misty-boat)
+       (game-task misty-cannon)
+       (game-task misty-warehouse)
+       (game-task misty-bike)
+       (game-task misty-bike-jump)
+       (game-task misty-eco-challenge)
+       (game-task misty-buzzer)
+       (game-task firecanyon-end)
+       (game-task firecanyon-buzzer)))
+
+(define *hub2-cell-list*
+  (new 'static
+       'boxed-array
+       :type
+       game-task
        (game-task village2-gambler-money)
        (game-task village2-geologist-money)
        (game-task village2-warrior-money)
