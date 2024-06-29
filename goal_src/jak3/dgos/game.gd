@@ -446,7 +446,6 @@
   "airlock.o"
   "water-anim.o"
   "blocking-plane.o"
-  "blocking-plane-modded.o"
   "idle-control.o"
   "proc-focusable-spawner.o"
   "enemy-h.o"
