@@ -63,7 +63,7 @@ void kmachine_init_globals_common() {
   vif1_interrupt_handler = 0;
   vblank_interrupt_handler = 0;
   ee_clock_timer = Timer();
-
+  ma_engine_uninit(&maEngine);
   ma_engine_init(NULL, &maEngine);
 }
 
@@ -1112,10 +1112,10 @@ void init_common_pc_port_functions(
   make_func_symbol_func("pc-mkdir-file-path", (void*)pc_mkdir_filepath);
 
   //Play sound file
-  make_func_symbol_func("play-sound-file", (void*)playMP3);  
+  make_func_symbol_func("play-sound-file", (void*)playMP3);
 
   //Stop sound file
-  make_func_symbol_func("stop-sound-file", (void*)stopAllSounds);  
+  make_func_symbol_func("stop-sound-file", (void*)stopAllSounds);
 
   //Main music stuff
   make_func_symbol_func("play-main-music", (void*)playMainMusic);
