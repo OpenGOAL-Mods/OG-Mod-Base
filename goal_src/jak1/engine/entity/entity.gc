@@ -166,6 +166,10 @@
   "Get the process for the entity with the given name. If there is no entity or process, #f."
   (let ((v1-0 (entity-by-name arg0))) (if v1-0 (-> v1-0 extra process))))
 
+(defun process-drawable-by-ename ((arg0 string))
+  "Get the process-drawable for the entity with the given name. If there is no entity or process, #f."
+  (let ((v1-0 (entity-by-name arg0))) (if v1-0 (the-as process-drawable (-> v1-0 extra process)))))
+
 (defun entity-process-count ((arg0 symbol))
   "Count the number of entities with a process. If arg0 is 'vis, will count visible entities."
   (let ((gp-0 0))
