@@ -135,17 +135,6 @@
       }
     },
     {
-      "trans": [-5.41, 3.5, 28.42], // translation
-      "etype": "test-actor",  // actor type
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat": [0, 0, 0, 1], // quaternion
-      "bsphere": [-7.41, 3.5, 28.42, 10], // bounding sphere
-      "lump": {
-        "name": "test-actor"
-      }
-    },
-    {
-      "aid": 40000,
       "trans": [-7.3159, 1.0468, 20.3499],
       "etype": "babak",
       "game_task": 0,
@@ -167,6 +156,16 @@
         "nav-mesh-sphere": ["vector4m", // You can define spheres that will be added to the navmesh of the enemy. Enemies of the navmesh will avoid these spheres - like they avoid each other.
           [-5.3159, 1.0468, 16.3499, 1.0]
           ]
+      }
+    },
+    {
+      "trans": [-5.41, 3.5, 28.42], // translation
+      "etype": "test-actor",  // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 1], // quaternion
+      "bsphere": [-7.41, 3.5, 28.42, 10], // bounding sphere
+      "lump": {
+        "name": "test-actor"
       }
     }
     // {
