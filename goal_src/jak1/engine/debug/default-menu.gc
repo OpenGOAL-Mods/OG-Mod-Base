@@ -2418,6 +2418,7 @@
                                                                  (flag "Camera Info" *display-camera-info* dm-boolean-toggle-pick-func)
                                                                  (flag "Geometry Marks" *display-geo-marks* dm-boolean-toggle-pick-func)
                                                                  (flag "Nav Marks" *display-nav-marks* dm-boolean-toggle-pick-func)
+                                                                 (flag "Nav Marks Extras" *display-nav-marks-extras* dm-boolean-toggle-pick-func)
                                                                  (flag "Path Marks" *display-path-marks* dm-boolean-toggle-pick-func)
                                                                  (flag "Vol Marks" *display-vol-marks* dm-boolean-toggle-pick-func)
                                                                  (menu "Ambient Marks"
