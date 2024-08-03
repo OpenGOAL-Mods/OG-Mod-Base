@@ -32,6 +32,7 @@ linux-default/
 *.bin
 *.log
 *.p2s
+out/
 savestate-out/
 savestate_out/
 failures/
@@ -39,6 +40,7 @@ ee-results*.json
 search-results.json
 .env
 /search-results.json
+comp-diff-report.md
 
 # graphics debug
 debug_out/
@@ -57,6 +59,11 @@ node_modules/
 # custom_assets/jak1/texture_replacements/*
 # custom_assets/jak2/texture_replacements/*
 # custom_assets/jak3/texture_replacements/*
+
+# merc replacements
+custom_assets/jak1/merc_replacements/*
+custom_assets/jak2/merc_replacements/*
+custom_assets/jak3/merc_replacements/*
 
 # merc replacements
 custom_assets/jak1/merc_replacements/*
