@@ -368,7 +368,7 @@
     #f))
 
 (defun recursive-inside-poly ((arg0 nav-mesh) (arg1 nav-node) (arg2 vector) (arg3 float))
-  (if (not (-> arg0 custom-hacky?)) ;; This function crashes our custom navmeshes, so we just skip it for them. Doesn't seem to be important anyway.
+  (when (not (true? (-> arg0 custom-hacky?))) ;; This function crashes our custom navmeshes, so we just skip it for them. Doesn't seem to be important anyway.
     (when (point-inside-rect? arg1 arg2 arg3)
       (cond
         ((zero? (-> arg1 type))
