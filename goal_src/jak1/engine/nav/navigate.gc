@@ -934,7 +934,9 @@
         (format #t "WARNING:  nav-mesh only contains gap triangles (~D triangles total). " s5-0)
         (set! gp-0 #t))
       (when gp-0
-        (if pp (format #t "current process is ~A~%" (-> pp name)) (format #t "(no current process).~%"))))
+        (if pp (format #t "current process is ~A~%" (-> pp name)) (format #t "(no current process).~%")))
+      (when (zero? (-> this custom-hacky?))
+        (set! (-> this custom-hacky?) #f)))
     0
     (none)))
 
