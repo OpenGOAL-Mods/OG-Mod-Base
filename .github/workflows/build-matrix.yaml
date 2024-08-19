@@ -3,10 +3,10 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
   merge_group: {}
 
 jobs:
@@ -52,7 +52,7 @@ jobs:
       cmakePreset: "Release-macos-clang"
       cachePrefix: ""
 
-  # Q4 2023 there will hopefully be native arm64 runners 
+  # Q4 2023 there will hopefully be native arm64 runners
   # https://github.com/github/roadmap/issues/528
   # build_macos_arm:
   #   name: "🍎 MacOS"
