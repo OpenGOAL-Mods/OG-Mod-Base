@@ -1,13 +1,36 @@
 #include "kmachine.h"
 
-#include <random>
-#include <iostream>
-#include <fstream>
-#include <thread>
 #include <chrono>
+#include <fstream>
+#include <iostream>
+#include <random>
+#include <thread>
 
 #define MINIAUDIO_IMPLEMENTATION
+// NOTE - this is needed, because on macOS, there is a file called `MacTypes.h`
+// inside it, it defines something named `Ptr`
+// Our `Ptr` is not namespaced, so there is ambiguity.
+//
+// Second fix is because miniaudio redefines functions in the stdlib based on bad pre-processor
+// assumptions AppleClang apparently does not define POSIX macros, leading to future ambiguity
+namespace MiniAudioLib {
+#if defined(__APPLE__)
+#if !defined(_POSIX_C_SOURCE)
+#define _POSIX_C_SOURCE 200809L
 #include "third-party/miniaudio.h"
+#undef _POSIX_C_SOURCE
+#else
+// It should work if it's defined, but for some reason it didn't this is the unlikely branch
+// but lets maintain the original value
+#define NOT_REAL_OLD_POSIX_C_SOURCE _POSIX_C_SOURCE
+#include "third-party/miniaudio.h"
+#define _POSIX_C_SOURCE NOT_REAL_OLD_POSIX_C_SOURCE
+#undef NOT_REAL_OLD_POSIX_C_SOURCE
+#endif
+#else
+#include "third-party/miniaudio.h"
+#endif
+}  // namespace MiniAudioLib
 
 #include "common/global_profiler/GlobalProfiler.h"
 #include "common/log/log.h"
@@ -51,9 +74,9 @@ u32 vblank_interrupt_handler = 0;
 
 Timer ee_clock_timer;
 
-ma_engine maEngine;
-std::map<std::string, ma_sound> maSoundMap;
-ma_sound* mainMusicSound;
+MiniAudioLib::ma_engine maEngine;
+std::map<std::string, MiniAudioLib::ma_sound> maSoundMap;
+MiniAudioLib::ma_sound* mainMusicSound;
 
 void kmachine_init_globals_common() {
   memset(pad_dma_buf, 0, sizeof(pad_dma_buf));
@@ -63,10 +86,10 @@ void kmachine_init_globals_common() {
   vif1_interrupt_handler = 0;
   vblank_interrupt_handler = 0;
   ee_clock_timer = Timer();
-  #ifdef _WIN32  // only do this on windows, because it only works on windows?
-    ma_engine_uninit(&maEngine);
-  #endif
-  ma_engine_init(NULL, &maEngine);
+#ifdef _WIN32  // only do this on windows, because it only works on windows?
+  MiniAudioLib::ma_engine_uninit(&maEngine);
+#endif
+  MiniAudioLib::ma_engine_init(NULL, &maEngine);
 }
 
 /*!
@@ -122,7 +145,7 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
 // Function to stop all currently playing sounds.
 void stopAllSounds() {
   for (auto& pair : maSoundMap) {
-    ma_sound_stop(&pair.second);
+    MiniAudioLib::ma_sound_stop(&pair.second);
   }
   maSoundMap.clear();
 }
@@ -146,25 +169,26 @@ void playMP3_internal(u32 filePathu32, u32 volume, bool isMainMusic) {
     std::string filePath = Ptr<String>(filePathu32).c()->data();
     std::cout << "Playing file: " << filePath << std::endl;
 
-    ma_result result;
-    ma_sound sound;
+    MiniAudioLib::ma_result result;
+    MiniAudioLib::ma_sound sound;
 
-    result = ma_sound_init_from_file(&maEngine, filePath.c_str(), 0, NULL, NULL, &sound);
-    if (result != MA_SUCCESS) {
+    result =
+        MiniAudioLib::ma_sound_init_from_file(&maEngine, filePath.c_str(), 0, NULL, NULL, &sound);
+    if (result != MiniAudioLib::MA_SUCCESS) {
       std::cout << "Failed to load: " << filePath << std::endl;
       return;
     }
 
-    ma_sound_set_volume(&sound, ((float)volume) / 100.0);
+    MiniAudioLib::ma_sound_set_volume(&sound, ((float)volume) / 100.0);
 
     if (isMainMusic) {
-      ma_sound_set_looping(&sound, MA_TRUE);
+      MiniAudioLib::ma_sound_set_looping(&sound, MA_TRUE);
       mainMusicMutex.lock();
       mainMusicSound = &sound;
       mainMusicMutex.unlock();
     }
 
-    ma_sound_start(&sound);
+    MiniAudioLib::ma_sound_start(&sound);
 
     {
       std::lock_guard<std::mutex> lock(activeMusicsMutex);
@@ -172,12 +196,12 @@ void playMP3_internal(u32 filePathu32, u32 volume, bool isMainMusic) {
     }
 
     // loop until we're no longer main music, or we reach the end of non-looping sound
-    while (mainMusicSound == &sound || !ma_sound_at_end(&sound)) {
+    while (mainMusicSound == &sound || !MiniAudioLib::ma_sound_at_end(&sound)) {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
-    ma_sound_stop(&sound);
-    ma_sound_uninit(&sound);
+    MiniAudioLib::ma_sound_stop(&sound);
+    MiniAudioLib::ma_sound_uninit(&sound);
     std::cout << "Finished playing file: " << filePath << std::endl;
 
     {
@@ -196,9 +220,9 @@ void playMP3(u32 filePathu32, u32 volume) {
 // Function to stop the Main Music.
 void stopMainMusic() {
   mainMusicMutex.lock();
-  if (mainMusicSound && ma_sound_is_playing(mainMusicSound)) {
+  if (mainMusicSound && MiniAudioLib::ma_sound_is_playing(mainMusicSound)) {
     std::cout << "Stopping Main Music..." << std::endl;
-    ma_sound_stop(mainMusicSound);
+    MiniAudioLib::ma_sound_stop(mainMusicSound);
     mainMusicSound = NULL;
     std::cout << "Stopped Main Music " << std::endl;
   }
@@ -216,16 +240,16 @@ void playMainMusic(u32 filePathu32, u32 volume) {
 
 void pauseMainMusic() {
   mainMusicMutex.lock();
-  if (mainMusicSound && ma_sound_is_playing(mainMusicSound)) {
-    ma_sound_stop(mainMusicSound);
+  if (mainMusicSound && MiniAudioLib::ma_sound_is_playing(mainMusicSound)) {
+    MiniAudioLib::ma_sound_stop(mainMusicSound);
   }
   mainMusicMutex.unlock();
 }
 
 void resumeMainMusic() {
   mainMusicMutex.lock();
-  if (mainMusicSound && !ma_sound_is_playing(mainMusicSound)) {
-    ma_sound_start(mainMusicSound);
+  if (mainMusicSound && !MiniAudioLib::ma_sound_is_playing(mainMusicSound)) {
+    MiniAudioLib::ma_sound_start(mainMusicSound);
   }
   mainMusicMutex.unlock();
 }
@@ -234,7 +258,7 @@ void resumeMainMusic() {
 void changeMainMusicVolume(u32 volume) {
   mainMusicMutex.lock();
   if (mainMusicSound) {
-    ma_sound_set_volume(mainMusicSound, ((float)volume) / 100.0);
+    MiniAudioLib::ma_sound_set_volume(mainMusicSound, ((float)volume) / 100.0);
   }
   mainMusicMutex.unlock();
 }
@@ -1129,13 +1153,13 @@ void init_common_pc_port_functions(
   make_func_symbol_func("pc-filepath-exists?", (void*)pc_filepath_exists);
   make_func_symbol_func("pc-mkdir-file-path", (void*)pc_mkdir_filepath);
 
-  //Play sound file
+  // Play sound file
   make_func_symbol_func("play-sound-file", (void*)playMP3);
 
-  //Stop sound file
+  // Stop sound file
   make_func_symbol_func("stop-sound-file", (void*)stopAllSounds);
 
-  //Main music stuff
+  // Main music stuff
   make_func_symbol_func("play-main-music", (void*)playMainMusic);
   make_func_symbol_func("pause-main-music", (void*)pauseMainMusic);
   make_func_symbol_func("stop-main-music", (void*)stopMainMusic);
