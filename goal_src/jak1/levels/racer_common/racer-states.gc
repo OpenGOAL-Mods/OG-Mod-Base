@@ -249,6 +249,17 @@
       ((-> target-racing-start exit)))
   :trans
      (behavior ()
+      (when (!= (-> self control ground-pat material) (pat-material waterbottom))
+        ;; if not on water, reverse velocity and bonk
+        (*! (-> self control transv x) -1.0)
+        (*! (-> self control transv z) -1.0)
+        (*! (-> self control unknown-vector00 x) -1.0)
+        (*! (-> self control unknown-vector00 z) -1.0)
+        (go target-racing-smack (-> self control unknown-float01) #t))
+
+      ;; if we made it here we aren't stuck smack-ing
+      (set-time! (-> self racer unstuck-time))
+
        ;; og:preserve-this - High FPS Fix
       (if (and (recently-pressed? l1 r1)
                (or (not (time-elapsed? (-> self control unknown-dword11) (seconds 0.1)))
@@ -468,6 +479,10 @@
         event)
   :enter
     (behavior ((arg0 float) (arg1 symbol))
+      ;; if stuck, explode
+      (when (time-elapsed? (-> self racer unstuck-time) (seconds 5))
+        (send-event self 'attack #f (static-attack-info ((mode 'heat)))))
+
       (sound-play "smack-surface")
       (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.5))
       (set! (-> self racer heavy) arg1)

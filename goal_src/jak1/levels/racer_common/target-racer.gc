@@ -787,7 +787,8 @@
                              (else (let ((f1-5 (+ 910.2222 (fabs f1-3)))) (fmax (fmin f0-29 f1-5) (- f1-5))))))))
             (+! (-> self racer rot z) (* 0.05 (deg-diff (-> self racer rot z) (fmax -7281.778 (fmin 7281.778 f0-33))))))
           (racer-xz f30-0 f28-1)
-          (racer-thrust (the-as basic f30-0) f28-1)))
+          (when (= (-> self control ground-pat material) (pat-material waterbottom)) ;; must be on water to thrust
+            (racer-thrust (the-as basic f30-0) f28-1))))
       (racer-calc-gravity)
       (add-gravity)
       (reverse-conversions (-> self control transv))
