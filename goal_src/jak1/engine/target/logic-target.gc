@@ -154,6 +154,7 @@
   0
   (none))
 
+(define-extern target-print-racer-stats (function target none))
 ;; WARN: Stack slot load at 160 mismatch: defined as size 4, got size 16
 ;; WARN: Stack slot load at 176 mismatch: defined as size 4, got size 16
 ;; WARN: Stack slot load at 160 mismatch: defined as size 4, got size 16
@@ -168,6 +169,8 @@
     (sv-144 string)
     (sv-160 float)
     (sv-176 float))
+  (target-print-racer-stats arg0)
+
   (when (and *display-ground-stats* arg0)
     (let ((s4-0 format)
           (s3-0 arg1)
@@ -612,10 +615,18 @@
     ((logtest? (-> self control status) (cshape-moving-flags onsurf))
      (set-time! (-> self control unknown-dword11))
      (set! (-> self control unknown-vector52 quad) (-> self control trans quad))
-     (if (and (>= (-> self control coverage) 1.0)
+     (cond
+      ((logtest? (-> self control root-prim prim-core action) (collide-action racer))
+        ;; when on jetski, last-known-safe-ground should be on water
+        (if (and (>= (-> self control coverage) 1.0)
+              (logtest? (-> self control status) (cshape-moving-flags on-water)))
+          (set! (-> self control last-known-safe-ground quad) (-> self control trans quad))))
+      (else 
+        ;; otherwise, normal check on ground
+        (if (and (>= (-> self control coverage) 1.0)
               (not (logtest? (-> self control status) (cshape-moving-flags t-act on-water)))
               (logtest? (-> self control status) (cshape-moving-flags onground)))
-       (set! (-> self control last-known-safe-ground quad) (-> self control trans quad)))
+          (set! (-> self control last-known-safe-ground quad) (-> self control trans quad)))))
      ((-> self control unknown-surface01 touch-hook)))
     (else
      (let ((v1-25 (-> self control trans)))

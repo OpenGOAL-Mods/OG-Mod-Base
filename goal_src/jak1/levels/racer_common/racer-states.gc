@@ -221,6 +221,41 @@
       (go target-racing-get-on arg0))
   :post target-post)
 
+(defun target-print-racer-stats ((arg0 target))
+  ;; jetski debug info
+  (when (and *debug-segment* (logtest? (-> arg0 control root-prim prim-core action) (collide-action racer)))
+    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id debug))
+      (draw-string-xy
+        (string-format "~S ~D ~%~M ~%~2,,2m ~2,,2m ~2,,2m"
+          (pat-material->string (-> arg0 control ground-pat)) (- (current-time) (-> arg0 racer unstuck-time))
+          (-> arg0 control unknown-float01)
+          (-> arg0 control transv x) (-> arg0 control transv y) (-> arg0 control transv z))
+        buf
+        0
+        (- 220 (* 8 7))
+        (font-color flat-yellow)
+        (font-flags shadow kerning))
+      (draw-string-xy
+        (string-format "~2,,2m ~2,,2m ~2,,2m ~%~2,,2m ~2,,2m ~2,,2m "
+          (-> arg0 control unknown-vector00 x) (-> arg0 control unknown-vector00 y) (-> arg0 control unknown-vector00 z)
+          (-> arg0 control unknown-vector70 x) (-> arg0 control unknown-vector70 y) (-> arg0 control unknown-vector70 z))
+        buf
+        0
+        (- 220 (* 8 4))
+        (font-color flat-yellow)
+        (font-flags shadow kerning))
+      (draw-string-xy
+        (string-format "~2,,2m ~2,,2m ~2,,2m ~%~2,,2m ~2,,2m ~2,,2m"
+          (-> arg0 control unknown-vector10 x) (-> arg0 control unknown-vector10 y) (-> arg0 control unknown-vector10 z)
+          (-> arg0 control last-known-safe-ground x) (-> arg0 control last-known-safe-ground y) (-> arg0 control last-known-safe-ground z))
+        buf
+        0
+        (- 220 (* 8 2))
+        (font-color flat-yellow)
+        (font-flags shadow kerning))
+      ))
+  (none))
+
 (defbehavior target-racing-smack-check target ()
   (if (and (< 20480.0 (-> self control unknown-float01))
            (and (logtest? (-> self control status) (cshape-moving-flags twall))
@@ -234,6 +269,32 @@
                   (vector-xz-normalize! s5-0 1.0)
                   (< 0.87 (vector-dot gp-1 s5-0)))))
     (go target-racing-smack (-> self control unknown-float01) #t))
+
+  (when (and (!= (-> self control ground-pat material) (pat-material waterbottom))
+             (not (and *debug-segment* (cpad-hold? 0 circle))))
+    ;; not on water (and not debug+circle)
+
+    ;; if stuck, explode
+    (when (time-elapsed? (-> self racer unstuck-time) (seconds 8))
+      (send-event self 'attack #f (static-attack-info ((mode 'heat)))))
+
+    ;; play warning sound if close to exploding
+    (when (and (time-elapsed? (-> self racer unstuck-time) (seconds 5))
+               (time-elapsed? (-> self racer heat-sound-time) (seconds 1)))
+     (set-time! (-> self racer heat-sound-time))
+     (sound-play "warning"))
+
+    ;; reverse velocity and bonk
+    (*! (-> self control transv x) -1.0)
+    (*! (-> self control transv z) -1.0)
+    (*! (-> self control unknown-vector00 x) -1.0)
+    (*! (-> self control unknown-vector00 z) -1.0)
+    (vector-copy! (-> self control unknown-vector70) (-> self root trans)) ;; last bonk spot?
+    (vector-! (-> self control transv) (-> self control last-known-safe-ground) (-> self control trans))
+    (go target-racing-smack (-> self control unknown-float01) #t))
+
+  ;; if we made it here we aren't stuck smack-ing
+  (set-time! (-> self racer unstuck-time))
   (none))
 
 (defstate target-racing (target)
@@ -249,17 +310,6 @@
       ((-> target-racing-start exit)))
   :trans
      (behavior ()
-      (when (!= (-> self control ground-pat material) (pat-material waterbottom))
-        ;; if not on water, reverse velocity and bonk
-        (*! (-> self control transv x) -1.0)
-        (*! (-> self control transv z) -1.0)
-        (*! (-> self control unknown-vector00 x) -1.0)
-        (*! (-> self control unknown-vector00 z) -1.0)
-        (go target-racing-smack (-> self control unknown-float01) #t))
-
-      ;; if we made it here we aren't stuck smack-ing
-      (set-time! (-> self racer unstuck-time))
-
        ;; og:preserve-this - High FPS Fix
       (if (and (recently-pressed? l1 r1)
                (or (not (time-elapsed? (-> self control unknown-dword11) (seconds 0.1)))
@@ -479,10 +529,6 @@
         event)
   :enter
     (behavior ((arg0 float) (arg1 symbol))
-      ;; if stuck, explode
-      (when (time-elapsed? (-> self racer unstuck-time) (seconds 5))
-        (send-event self 'attack #f (static-attack-info ((mode 'heat)))))
-
       (sound-play "smack-surface")
       (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.5))
       (set! (-> self racer heavy) arg1)
