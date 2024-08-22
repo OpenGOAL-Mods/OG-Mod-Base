@@ -379,7 +379,8 @@
   :enter
     (behavior ()
       (set-time! (-> self state-time))
-      (set! (-> self control unknown-surface00) *walk-mods*))
+      (set! (-> self control unknown-surface00) *walk-mods*)
+      (set! *has-landed?* #t))
   :exit
     (behavior ()
       (target-effect-exit)
