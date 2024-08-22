@@ -154,7 +154,6 @@
   0
   (none))
 
-(define-extern target-print-racer-stats (function target none))
 ;; WARN: Stack slot load at 160 mismatch: defined as size 4, got size 16
 ;; WARN: Stack slot load at 176 mismatch: defined as size 4, got size 16
 ;; WARN: Stack slot load at 160 mismatch: defined as size 4, got size 16
@@ -169,7 +168,38 @@
     (sv-144 string)
     (sv-160 float)
     (sv-176 float))
-  (target-print-racer-stats arg0)
+  ;; jetski debug info - but we don't know about `racer` type here so it doesnt recognize unstuck-time, whatever
+  ;; (when (and *debug-segment* (logtest? (-> arg0 control root-prim prim-core action) (collide-action racer)))
+  ;;   (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id debug))
+  ;;     (draw-string-xy
+  ;;       (string-format "~S ~D ~%~M ~%~2,,2m ~2,,2m ~2,,2m"
+  ;;         (pat-material->string (-> arg0 control ground-pat)) (- (current-time) (-> arg0 racer unstuck-time))
+  ;;         (-> arg0 control unknown-float01)
+  ;;         (-> arg0 control transv x) (-> arg0 control transv y) (-> arg0 control transv z))
+  ;;       buf
+  ;;       0
+  ;;       (- 220 (* 8 7))
+  ;;       (font-color flat-yellow)
+  ;;       (font-flags shadow kerning))
+  ;;     (draw-string-xy
+  ;;       (string-format "~2,,2m ~2,,2m ~2,,2m ~%~2,,2m ~2,,2m ~2,,2m "
+  ;;         (-> arg0 control unknown-vector00 x) (-> arg0 control unknown-vector00 y) (-> arg0 control unknown-vector00 z)
+  ;;         (-> arg0 control unknown-vector70 x) (-> arg0 control unknown-vector70 y) (-> arg0 control unknown-vector70 z))
+  ;;       buf
+  ;;       0
+  ;;       (- 220 (* 8 4))
+  ;;       (font-color flat-yellow)
+  ;;       (font-flags shadow kerning))
+  ;;     (draw-string-xy
+  ;;       (string-format "~2,,2m ~2,,2m ~2,,2m ~%~2,,2m ~2,,2m ~2,,2m"
+  ;;         (-> arg0 control unknown-vector10 x) (-> arg0 control unknown-vector10 y) (-> arg0 control unknown-vector10 z)
+  ;;         (-> arg0 control last-known-safe-ground x) (-> arg0 control last-known-safe-ground y) (-> arg0 control last-known-safe-ground z))
+  ;;       buf
+  ;;       0
+  ;;       (- 220 (* 8 2))
+  ;;       (font-color flat-yellow)
+  ;;       (font-flags shadow kerning))
+  ;;     ))
 
   (when (and *display-ground-stats* arg0)
     (let ((s4-0 format)
