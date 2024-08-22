@@ -5,7 +5,7 @@
 (require "pc/pckernel-common.gc")
 (require "pc/features/autosplit-h.gc")
 (define *speedrun-info* (new 'static 'speedrun-info-jak1 :should-display? #t :needs-post-blackout-setup? #f))
-
+(define *has-landed?* #f)
 (define-extern *mod-version-text* string)
 
 (define *hub1-cell-list*
@@ -451,13 +451,15 @@
   "Draw speedrun related settings in the bottom left corner"
   (when (and (-> *pc-settings* speedrunner-mode?) (not (paused?)) (-> *speedrun-info* should-display?))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id subtitle))
-      (draw-string-xy (string-format "Speedrunner Mode ~%ModBase ~S ~%Category: ~S ~%Cutscene Skips ~A"
+      (draw-string-xy (string-format "Speedrunner Mode ~%ModBase ~S ~%Category: ~S ~%Cutscene Skips ~A~%Has Landed? ~A"
                                      *mod-version-text*
                                      (enum->string speedrun-category (-> *speedrun-info* category))
-                                     (-> *pc-settings* skip-movies?))
+                                     (-> *pc-settings* skip-movies?)
+                                     *has-landed?*
+                                     )
                       buf
                       0
-                      (- 220 (* 8 4))
+                      (- 220 (* 8 5))
                       (font-color flat-yellow)
                       (font-flags shadow kerning))))
   (none))
