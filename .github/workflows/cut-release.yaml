@@ -28,10 +28,7 @@ jobs:
       metadataAuthors: "barg,vaser"
       metadataTags: "rng,gameplay-mod"
       metadataWebsiteUrl: "https://www.example.com/this/is/optional"
-      skipMacOS: true
-      skipLinux: true
-      toolingBinaryDir: "out/build/Release/bin"
+      toolingRepo: "OpenGOAL-Mods/OG-Mod-Base"
       gameAssetsDir: "game/assets"
-      copyEntireBinaryDir: true
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
