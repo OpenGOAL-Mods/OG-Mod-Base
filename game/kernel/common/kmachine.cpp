@@ -142,10 +142,36 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
   return cpad_info;
 }
 
+// Mutex to synchronize access to activeMusics
+std::mutex activeMusicsMutex;
+
+// Declare a mutex for synchronizing access to mainMusicInstance
+std::mutex mainMusicMutex;
+
+// Function to stop specific sound by filepath
+void stopMP3(u32 filePathu32) {
+  std::string filePath = Ptr<String>(filePathu32).c()->data();
+  std::cout << "Trying to stop file: " << filePath << std::endl;
+
+  auto it = maSoundMap.find(filePath);
+  if (it == maSoundMap.end()) {
+    std::cerr << "Couldn't find sound to stop: " << filePath << std::endl;
+  } else {
+    if (MiniAudioLib::ma_sound_stop(&it->second) != MiniAudioLib::MA_SUCCESS) {
+      std::cerr << "Failed to stop sound: " << filePath << std::endl;
+    }
+    MiniAudioLib::ma_sound_uninit(&it->second);
+
+    std::lock_guard<std::mutex> lock(activeMusicsMutex);
+    maSoundMap.erase(filePath);
+  }
+}
+
 // Function to stop all currently playing sounds.
 void stopAllSounds() {
   for (auto& pair : maSoundMap) {
     MiniAudioLib::ma_sound_stop(&pair.second);
+    MiniAudioLib::ma_sound_uninit(&pair.second);
   }
   maSoundMap.clear();
 }
@@ -159,54 +185,53 @@ std::vector<std::string> getPlayingFileNames() {
   return playingFileNames;
 }
 
-std::mutex activeMusicsMutex;  // Mutex to synchronize access to activeMusics
-
-// Declare a mutex for synchronizing access to mainMusicInstance
-std::mutex mainMusicMutex;
-
 void playMP3_internal(u32 filePathu32, u32 volume, bool isMainMusic) {
   std::thread thread([=]() {
     std::string filePath = Ptr<String>(filePathu32).c()->data();
-    std::cout << "Playing file: " << filePath << std::endl;
+    if (maSoundMap.contains(filePath)) {
+      std::cout << "File is already playing: " << filePath << std::endl;
+    } else {
+      std::cout << "Playing file: " << filePath << std::endl;
 
-    MiniAudioLib::ma_result result;
-    MiniAudioLib::ma_sound sound;
+      MiniAudioLib::ma_result result;
+      MiniAudioLib::ma_sound sound;
 
-    result =
-        MiniAudioLib::ma_sound_init_from_file(&maEngine, filePath.c_str(), 0, NULL, NULL, &sound);
-    if (result != MiniAudioLib::MA_SUCCESS) {
-      std::cout << "Failed to load: " << filePath << std::endl;
-      return;
-    }
+      result =
+          MiniAudioLib::ma_sound_init_from_file(&maEngine, filePath.c_str(), 0, NULL, NULL, &sound);
+      if (result != MiniAudioLib::MA_SUCCESS) {
+        std::cout << "Failed to load: " << filePath << std::endl;
+        return;
+      }
 
-    MiniAudioLib::ma_sound_set_volume(&sound, ((float)volume) / 100.0);
+      MiniAudioLib::ma_sound_set_volume(&sound, ((float)volume) / 100.0);
 
-    if (isMainMusic) {
-      MiniAudioLib::ma_sound_set_looping(&sound, MA_TRUE);
-      mainMusicMutex.lock();
-      mainMusicSound = &sound;
-      mainMusicMutex.unlock();
-    }
+      if (isMainMusic) {
+        MiniAudioLib::ma_sound_set_looping(&sound, MA_TRUE);
+        mainMusicMutex.lock();
+        mainMusicSound = &sound;
+        mainMusicMutex.unlock();
+      }
 
-    MiniAudioLib::ma_sound_start(&sound);
+      MiniAudioLib::ma_sound_start(&sound);
 
-    {
-      std::lock_guard<std::mutex> lock(activeMusicsMutex);
-      maSoundMap.insert(std::make_pair(filePath, sound));
-    }
+      {
+        std::lock_guard<std::mutex> lock(activeMusicsMutex);
+        maSoundMap.insert(std::make_pair(filePath, sound));
+      }
 
-    // loop until we're no longer main music, or we reach the end of non-looping sound
-    while (mainMusicSound == &sound || !MiniAudioLib::ma_sound_at_end(&sound)) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+      // loop until we're no longer main music, or we reach the end of non-looping sound
+      while (mainMusicSound == &sound || !MiniAudioLib::ma_sound_at_end(&sound)) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      }
 
-    MiniAudioLib::ma_sound_stop(&sound);
-    MiniAudioLib::ma_sound_uninit(&sound);
-    std::cout << "Finished playing file: " << filePath << std::endl;
+      MiniAudioLib::ma_sound_stop(&sound);
+      MiniAudioLib::ma_sound_uninit(&sound);
+      std::cout << "Finished playing file: " << filePath << std::endl;
 
-    {
-      std::lock_guard<std::mutex> lock(activeMusicsMutex);
-      maSoundMap.erase(filePath);
+      {
+        std::lock_guard<std::mutex> lock(activeMusicsMutex);
+        maSoundMap.erase(filePath);
+      }
     }
   });
 
@@ -1157,7 +1182,10 @@ void init_common_pc_port_functions(
   make_func_symbol_func("play-sound-file", (void*)playMP3);
 
   // Stop sound file
-  make_func_symbol_func("stop-sound-file", (void*)stopAllSounds);
+  make_func_symbol_func("stop-sound-file", (void*)stopMP3);
+
+  // Stop all sounds
+  make_func_symbol_func("stop-all-sounds", (void*)stopAllSounds);
 
   // Main music stuff
   make_func_symbol_func("play-main-music", (void*)playMainMusic);
