@@ -142,12 +142,42 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
   return cpad_info;
 }
 
+// Mutex to synchronize access to activeMusics
+std::mutex activeMusicsMutex;
+
+// Declare a mutex for synchronizing access to mainMusicInstance
+std::mutex mainMusicMutex;
+
+// Function to stop specific sound by filepath
+void stopMP3(u32 filePathu32) {
+  std::string filePath = Ptr<String>(filePathu32).c()->data();
+  std::cout << "Trying to stop file: " << filePath << std::endl;
+
+  auto it = maSoundMap.find(filePath);
+  if (it == maSoundMap.end()) {
+    std::cerr << "Couldn't find sound to stop: " << filePath << std::endl;
+  } else {
+    if (MiniAudioLib::ma_sound_stop(&it->second) != MiniAudioLib::MA_SUCCESS) {
+      std::cerr << "Failed to stop sound: " << filePath << std::endl;
+    }
+    MiniAudioLib::ma_sound_uninit(&it->second);
+
+    std::lock_guard<std::mutex> lock(activeMusicsMutex);
+    maSoundMap.erase(filePath);
+  }
+}
+
 // Function to stop all currently playing sounds.
 void stopAllSounds() {
   for (auto& pair : maSoundMap) {
-    MiniAudioLib::ma_sound_stop(&pair.second);
+    if (MiniAudioLib::ma_sound_stop(&pair.second) != MiniAudioLib::MA_SUCCESS) {
+      std::cerr << "Failed to stop sound: " << pair.first << std::endl;
+    }
+    MiniAudioLib::ma_sound_uninit(&pair.second);
+    std::lock_guard<std::mutex> lock(activeMusicsMutex);
+    maSoundMap.erase(pair.first);
   }
-  maSoundMap.clear();
+  //maSoundMap.clear();
 }
 
 // Function to get the names of currently playing files.
@@ -158,11 +188,6 @@ std::vector<std::string> getPlayingFileNames() {
   }
   return playingFileNames;
 }
-
-std::mutex activeMusicsMutex;  // Mutex to synchronize access to activeMusics
-
-// Declare a mutex for synchronizing access to mainMusicInstance
-std::mutex mainMusicMutex;
 
 void playMP3_internal(u32 filePathu32, u32 volume, bool isMainMusic) {
   std::thread thread([=]() {
@@ -1157,7 +1182,10 @@ void init_common_pc_port_functions(
   make_func_symbol_func("play-sound-file", (void*)playMP3);
 
   // Stop sound file
-  make_func_symbol_func("stop-sound-file", (void*)stopAllSounds);
+  make_func_symbol_func("stop-sound-file", (void*)stopMP3);
+
+  // Stop all sounds
+  make_func_symbol_func("stop-all-sounds", (void*)stopAllSounds);
 
   // Main music stuff
   make_func_symbol_func("play-main-music", (void*)playMainMusic);

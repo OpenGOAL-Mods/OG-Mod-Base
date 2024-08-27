@@ -249,7 +249,8 @@
 ;;main music end
 
 (define-extern play-sound-file (function string int none))
-(define-extern stop-sound-file (function none))
+(define-extern stop-sound-file (function string none))
+(define-extern stop-all-sounds (function none))
 
 (define-extern pc-filepath-exists? (function string symbol))
 (define-extern pc-mkdir-file-path (function string none))
