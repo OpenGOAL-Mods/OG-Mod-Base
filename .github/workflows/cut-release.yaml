@@ -25,9 +25,9 @@ jobs:
       metadataName: "Platformia"
       metadataDescription: "Platformia"
       metadataSupportedGames: "jak1"
-      metadataAuthors: "Grateful Forest,barg"
-      metadataTags: "rng,custom-level"
-      metadataWebsiteUrl: "https://github.com/dallmeyer/OG-Platformia"
+      metadataAuthors: "Grateful Forest"
+      metadataTags: "custom-level"
+      metadataWebsiteUrl: "https://github.com/Grateful-Forest/"
       toolingRepo: "OpenGOAL-Mods/OG-Mod-Base"
       gameAssetsDir: "game/assets"
     secrets:
