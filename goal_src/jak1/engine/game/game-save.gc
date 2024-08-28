@@ -609,7 +609,8 @@
                     (&+ (the-as pointer save-data) (logand -16 (+ (* (the-as int (-> save-data elt-size)) (-> save-data elt-count)) 31)))))))
   ;; if we're a new game, set our checkpoint.
   (when (nonzero? (-> save new-game))
-    (set-continue! this "game-start")
+    (set-continue! this "test-zone-start")
+    ;; (set-continue! this "game-start")
     (set! save save)
     (goto cfg-134))
   ;; loop over all tags
