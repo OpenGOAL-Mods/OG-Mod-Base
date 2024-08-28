@@ -22,12 +22,12 @@ jobs:
     uses: open-goal/mod-bundling-tools/.github/workflows/mod-bundler.yml@v1
     with:
       semverBump: ${{ inputs.bump }}
-      metadataName: "Test Mod Bundle"
-      metadataDescription: "This is a test mod bundle. 2"
+      metadataName: "Platformia"
+      metadataDescription: "Platformia"
       metadataSupportedGames: "jak1"
-      metadataAuthors: "barg,vaser"
-      metadataTags: "rng,gameplay-mod"
-      metadataWebsiteUrl: "https://www.example.com/this/is/optional"
+      metadataAuthors: "Grateful Forest,barg"
+      metadataTags: "rng,custom-level"
+      metadataWebsiteUrl: "https://github.com/dallmeyer/OG-Platformia"
       toolingRepo: "OpenGOAL-Mods/OG-Mod-Base"
       gameAssetsDir: "game/assets"
     secrets:
