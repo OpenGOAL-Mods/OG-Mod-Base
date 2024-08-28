@@ -87,7 +87,7 @@
              'continue-point
              :name "game-start"
              :level 'training
-             :flags (continue-flags warp game-start)
+             :flags (continue-flags warp) ;; game-start)
              :trans
              (new 'static 'vector :x -5393740.5 :y 28259.533 :z 4360945.5 :w 1.0)
              :quat
@@ -2487,15 +2487,16 @@
        '()
        :mood '*default-mood*
        :mood-func 'update-mood-default
-       :ocean #f
+       :ocean '*ocean-map-village1*
        :sky #t
        :continues
        '((new 'static
              'continue-point
              :name "test-zone-start"
              :level 'test-zone
+             :flags (continue-flags game-start)
              :trans
-             (new 'static 'vector :x 0.0 :y (meters 10.) :z (meters 10.) :w 1.0)
+             (new 'static 'vector :x (meters 875.96) :y (meters 40.63) :z (meters 683.8) :w 1.0)
              :quat
              (new 'static 'quaternion :w 1.0)
              :camera-trans
@@ -2508,7 +2509,7 @@
              :lev0 'test-zone
              :disp0 'display
              :lev1 'village1
-             :disp1 'display))
+             :disp1 #f))
        :tasks
        '()
        :priority 100
