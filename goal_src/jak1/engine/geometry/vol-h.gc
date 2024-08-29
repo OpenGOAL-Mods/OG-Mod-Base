@@ -47,7 +47,7 @@
       (goto cfg-13))
     (set! (-> (the-as vol-control gp-0) process) arg0)
     (let* ((s5-1 (the-as res-lump (-> (the-as vol-control gp-0) process entity)))
-           (s4-0 (-> ((method-of-type res-lump lookup-tag-idx) (the-as entity-actor s5-1) 'vol 'exact 0.0) lo)))
+           (s4-0 (-> ((method-of-type res-lump lookup-tag-idx) (the-as entity-actor s5-1) 'vol 'base 0.0) lo)))
       (when (>= (the-as int s4-0) 0)
         (let ((s3-0 (the-as int s4-0))
               (s2-0 (-> s5-1 tag s4-0)))
