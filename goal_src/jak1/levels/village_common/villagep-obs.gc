@@ -58,8 +58,7 @@
       (until (ja-done? 0)
         (suspend)
         (ja :num! (seek!)))
-      (target-falling-anim -1 (seconds 0.33))
-    )
+      (target-falling-anim -1 (seconds 0.33)))
   :post target-no-move-post)
 
 (defstate idle (warp-gate)
