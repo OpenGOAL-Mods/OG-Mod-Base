@@ -307,7 +307,8 @@
         (ja-play-spooled-anim (-> self anim)
                               (the-as art-joint-anim #f)
                               (the-as art-joint-anim #f)
-                              (the-as (function process-drawable symbol) false-func))))
+                              (the-as (function process-drawable symbol) false-func))
+        (move-by-vector! (-> self root) (static-vectorm 10 0 0))))
   :post
     (-> (method-of-type logo startup)
         post))
