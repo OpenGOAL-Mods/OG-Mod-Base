@@ -277,6 +277,10 @@
                      (if (= (-> *setting-control* current aspect-ratio) 'aspect16x9) -1228.8 0.0)
                      0.0
                      1.0)
+      (if (= (-> *setting-control* current aspect-ratio) 'aspect16x9)           
+        (vector+! a1-0 a1-0 (static-vectorm 16 0 0)))
+      (if (= (-> *setting-control* current aspect-ratio) 'aspect4x3)           
+        (vector+! a1-0 a1-0 (static-vectorm 16 0 0)))
         (set-trs! (-> self main-joint) a1-0 (the-as quaternion #f) a3-0))
       (ja-post)))
 
@@ -307,8 +311,7 @@
         (ja-play-spooled-anim (-> self anim)
                               (the-as art-joint-anim #f)
                               (the-as art-joint-anim #f)
-                              (the-as (function process-drawable symbol) false-func))
-        (move-by-vector! (-> self root) (static-vectorm 10 0 0))))
+                              (the-as (function process-drawable symbol) false-func))))
   :post
     (-> (method-of-type logo startup)
         post))
