@@ -59,7 +59,6 @@
         (suspend)
         (ja :num! (seek!)))
       (target-falling-anim -1 (seconds 0.33))
-      ;;(set! *has-landed?* #t))
     )
   :post target-no-move-post)
 

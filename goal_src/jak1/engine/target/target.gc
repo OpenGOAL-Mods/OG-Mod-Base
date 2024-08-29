@@ -380,7 +380,6 @@
     (behavior ()
       (set-time! (-> self state-time))
       (set! (-> self control unknown-surface00) *walk-mods*)
-      ;;(set! *has-landed?* #t)
       )
   :exit
     (behavior ()
@@ -1190,8 +1189,8 @@
                                   (the-as float 102400.0))
                       600
                       1500)
-                      (set! *has-landed?* #t)
-                      )
+      (set! *has-landed?* #t)
+      )
   :trans
      (behavior ()
        ;; og:preserve-this - High FPS Fix
