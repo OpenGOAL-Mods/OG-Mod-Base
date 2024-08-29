@@ -1187,9 +1187,7 @@
                                   (the-as float 40960.0)
                                   (the-as float 102400.0))
                       600
-                      1500)
-      (set! *has-landed?* #t)
-      )
+                      1500))
   :trans
      (behavior ()
        ;; og:preserve-this - High FPS Fix

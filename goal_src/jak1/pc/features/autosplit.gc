@@ -283,6 +283,6 @@
   (none))
 
 (defun update-autosplit-jak1-new-game ()
-  (set! *has-landed?* #f)
+  (false! *has-landed?*)
   (set! (-> *autosplit-info-jak1* game-hash) (pc-get-unix-timestamp))
   (none))
