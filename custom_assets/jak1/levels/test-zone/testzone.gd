@@ -4,6 +4,8 @@
   "plat-ag.go"
   "plat-eco-ag.go"
   "water-anim-village1-ag.go"
+  "sharkey.o"
+  "sharkey-ag.go"
   "test-zone-obs.o"
   "test-zone.go"
   )
