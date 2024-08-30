@@ -278,9 +278,9 @@
                      0.0
                      1.0)
       (if (= (-> *setting-control* current aspect-ratio) 'aspect16x9)           
-        (vector+! a1-0 a1-0 (static-vectorm 9.75 0 0)))
+        (vector+! a1-0 a1-0 (static-vectorm 11.5 0 0)))
       (if (= (-> *setting-control* current aspect-ratio) 'aspect4x3)           
-        (vector+! a1-0 a1-0 (static-vectorm 9.75 0 0)))
+        (vector+! a1-0 a1-0 (static-vectorm 11.5 0 0)))
         (set-trs! (-> self main-joint) a1-0 (the-as quaternion #f) a3-0))
       (ja-post)))
 
