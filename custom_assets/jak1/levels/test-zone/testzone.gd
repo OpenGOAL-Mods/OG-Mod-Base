@@ -6,6 +6,7 @@
   "water-anim-village1-ag.go"
   "sharkey.o"
   "sharkey-ag.go"
+  "village2-part.o"
   "test-zone-obs.o"
   "test-zone.go"
   )
