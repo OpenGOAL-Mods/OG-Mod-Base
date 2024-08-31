@@ -27,7 +27,7 @@ jobs:
       metadataSupportedGames: "jak1"
       metadataAuthors: "barg,vaser"
       metadataTags: "rng,gameplay-mod"
-      metadataWebsiteUrl: "https://www.example.com/this/is/optional"
+      metadataWebsiteUrl: "https://www.example.com/please/change/me"
       toolingRepo: "OpenGOAL-Mods/OG-Mod-Base"
       gameAssetsDir: "game/assets"
     secrets:
