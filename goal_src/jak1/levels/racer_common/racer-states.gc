@@ -248,8 +248,8 @@
       (target-racing-center-anim)
       ((-> target-racing-start exit)))
   :trans
-     (behavior ()
-       ;; og:preserve-this - High FPS Fix
+    (behavior ()
+      ;; og:preserve-this - High FPS Fix
       (if (and (recently-pressed? l1 r1)
                (or (not (time-elapsed? (-> self control unknown-dword11) (seconds 0.1)))
                    (< (vector-dot (-> self control dynam gravity-normal)
