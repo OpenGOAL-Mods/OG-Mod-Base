@@ -3,7 +3,7 @@
   "static-screen.o"
   "plat-ag.go"
   "plat-eco-ag.go"
-  "water-anim-village1-ag.go"
+  "water-anim-village2-ag.go"
   "sharkey.o"
   "sharkey-ag.go"
   "village2-part.o"

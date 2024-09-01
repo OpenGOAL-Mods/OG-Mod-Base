@@ -22972,7 +22972,7 @@
           ],
         "name": "water",
         "water-height": ["float", 4993.45, 2048.0, 8192.0, 1048588.0],
-        "look": ["int32", 44],
+        "look": ["int32", 47],
         "vis-dist":  ["meters", 200.0]
       }
     },
