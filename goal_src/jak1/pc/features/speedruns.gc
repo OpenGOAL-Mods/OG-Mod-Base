@@ -5,7 +5,9 @@
 (require "pc/pckernel-common.gc")
 (require "pc/features/autosplit-h.gc")
 (define *speedrun-info* (new 'static 'speedrun-info-jak1 :should-display? #t :needs-post-blackout-setup? #f))
+
 (define *has-landed?* #f)
+
 (define-extern *mod-version-text* string)
 
 (define *hub1-cell-list*
@@ -184,10 +186,8 @@
   (set! (-> *pc-settings* ps2-actor-vis?) #t)
   ;; ensure FPS set to `60`
   (when (!= (-> *pc-settings* target-fps) 60)
-    (set-frame-rate! *pc-settings* 60 #t)
-    )
-  (none)
-  )
+    (set-frame-rate! *pc-settings* 60 #t))
+  (none))
 
 (defun start-speedrun ((category speedrun-category))
   ;; randomize game id so the autosplitter knows to restart
@@ -451,18 +451,16 @@
   "Draw speedrun related settings in the bottom left corner"
   (when (and (-> *pc-settings* speedrunner-mode?) (not (paused?)) (-> *speedrun-info* should-display?))
     ;; check if we've landed (either we're on ground/surface/water, or about to target-hit-ground)
-    (when (and *target* 
-              (or (logtest? (-> *target* control status) (cshape-moving-flags onground onsurf on-water))
-                  (= (-> *target* next-state name) 'target-hit-ground)))
+    (when (and *target*
+               (or (logtest? (-> *target* control status) (cshape-moving-flags onground onsurf on-water))
+                   (= (-> *target* next-state name) 'target-hit-ground)))
       (true! *has-landed?*))
-    
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id subtitle))
       (draw-string-xy (string-format "Speedrunner Mode ~%ModBase ~S ~%Category: ~S ~%Cutscene Skips ~A~%Has Landed? ~A"
                                      *mod-version-text*
                                      (enum->string speedrun-category (-> *speedrun-info* category))
                                      (-> *pc-settings* skip-movies?)
-                                     *has-landed?*
-                                     )
+                                     *has-landed?*)
                       buf
                       0
                       (- 220 (* 8 5))
