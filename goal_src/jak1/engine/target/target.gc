@@ -865,7 +865,7 @@
     (behavior ()
       (set! (-> self control unknown-float123)
             (fmax (-> self control unknown-float123)
-                  (* 0.003921569 (the float (-> *cpad-list* cpads (-> self control unknown-cpad-info00 number) abutton 6)))))
+                  (* 0.003921569 (the float (-> *cpad-list* cpads (-> self control unknown-cpad-info00 number) abutton (abutton-idx x)))))) ;; og:preserve-this abutton indexing
       (target-falling-trans #f (the-as time-frame (if (ja-group? eichar-jump-loop-ja) 15 -1)))
       (if (and (cpad-pressed? (-> self control unknown-cpad-info00 number) x)
                (< (vector-dot (-> self control dynam gravity-normal) (-> self control transv)) 12288.0)
