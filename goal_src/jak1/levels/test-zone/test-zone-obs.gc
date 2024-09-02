@@ -85,9 +85,9 @@
   :trans
     (behavior ()
       (let ((threshold 0.001))
-        (if (< (fabs (- 1.0 (-> self path-pos))) threshold)
+        (when (and (< (fabs (- 1.0 (-> self path-pos))) threshold) (-> self loop-direction) 'forwards)
            (set! (-> self loop-direction) 'backwards))
-        (if (< (fabs (-> self path-pos)) threshold)
+        (when (and (< (fabs (-> self path-pos)) threshold) (-> self loop-direction) 'backwards)
            (set! (-> self loop-direction) 'forwards)))
       (when (and (= (-> self loop-direction) 'forwards) (= (-> self master-direction) 'forwards))
         (seek! (-> self path-pos) 1.0 (* 0.16 (seconds-per-frame))))
