@@ -168,6 +168,7 @@ struct Config {
   std::unordered_map<std::string, int> bad_format_strings;
 
   std::unordered_set<std::string> animated_textures;
+  std::unordered_set<std::string> common_art_groups;
   std::unordered_set<int> common_tpages;
 
   std::vector<std::string> levels_to_extract;
