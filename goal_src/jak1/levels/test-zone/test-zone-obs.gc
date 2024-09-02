@@ -2,9 +2,7 @@
 (in-package goal)
 
 (deftype CustomPlat (plat-eco)
-  ((facing         vector :inline)
-   (tangent        vector :inline)
-   (noticepos      vector :inline)))
+  ())
 
 (defmethod init-from-entity! ((this CustomPlat) (arg0 entity-actor))
   (logior! (-> this mask) (process-mask platform))
@@ -73,3 +71,38 @@
       (update-transforms! (-> self root))
       (anim-loop))
   :post ja-post)
+
+(deftype SeekPlat (plat)
+  ((master-direction symbol)
+   (loop-direction   symbol)))
+
+(defstate plat-path-active (SeekPlat)
+  :virtual #t
+  :event plat-event
+  :exit
+    (behavior ()
+      (sound-stop (-> self sound-id)))
+  :trans
+    (behavior ()
+      (let ((threshold 0.001))
+        (if (< (fabs (- 1.0 (-> self path-pos))) threshold)
+           (set! (-> self loop-direction) 'backwards))
+        (if (< (fabs (-> self path-pos)) threshold)
+           (set! (-> self loop-direction) 'forwards)))
+      (when (and (= (-> self loop-direction) 'forwards) (= (-> self master-direction) 'forwards))
+        (seek! (-> self path-pos) 1.0 (* 0.16 (seconds-per-frame))))
+      (when (and (= (-> self loop-direction) 'backwards) (= (-> self master-direction) 'forwards))
+        (seek! (-> self path-pos) 0.0 (* 0.16 (seconds-per-frame))))
+      (when (and (= (-> self loop-direction) 'backwards) (= (-> self master-direction) 'backwards))
+        (seek! (-> self path-pos) 1.0 (* 0.16 (seconds-per-frame))))
+      (when (and (= (-> self loop-direction) 'forwards) (= (-> self master-direction) 'backwards))
+        (seek! (-> self path-pos) 0.0 (* 0.16 (seconds-per-frame))))
+      (eval-path-curve! (-> self path) (-> self basetrans) (-> self path-pos) 'interp)
+      (if (< (vector-vector-distance (-> self root trans) (ear-trans)) 81920.0)
+        (sound-play "eco-plat-hover" :id (-> self sound-id) :position (the-as symbol (-> self root trans))))
+      (plat-trans))
+  :code
+    (the-as (function plat object)
+            anim-loop)
+  :post plat-post)
+
