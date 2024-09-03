@@ -85,7 +85,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.cut-release.outputs.new_tag }}
           fetch-tags: true
           fetch-depth: 0
 
