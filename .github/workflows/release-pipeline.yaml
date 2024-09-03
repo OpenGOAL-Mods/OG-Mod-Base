@@ -86,6 +86,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.cut-release.outputs.new_tag }}
+          fetch-tags: true
+          fetch-depth: 0
 
       - name: Prepare Artifact Folder
         run: mkdir -p ./ci-artifacts/final
