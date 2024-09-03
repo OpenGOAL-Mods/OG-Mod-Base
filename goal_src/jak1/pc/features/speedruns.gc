@@ -456,8 +456,8 @@
                    (= (-> *target* next-state name) 'target-hit-ground)))
       (true! *has-landed?*))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id subtitle))
-      (draw-string-xy (string-format "Speedrunner Mode ~%ModBase ~S ~%Category: ~S ~%Cutscene Skips ~A~%Has Landed? ~A"
-                                     *pc-settings-built-sha* / *mod-version-text*
+      (draw-string-xy (string-format "Speedrunner Mode ~%ModBase ~S / ~S ~%Category: ~S ~%Cutscene Skips ~A~%Has Landed? ~A"
+                                     *pc-settings-built-sha* *mod-version-text*
                                      (enum->string speedrun-category (-> *speedrun-info* category))
                                      (-> *pc-settings* skip-movies?)
                                      *has-landed?*)
