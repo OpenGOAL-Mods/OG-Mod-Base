@@ -8,6 +8,8 @@
 (define-extern process-close? (function process-drawable float basic))
 (define-extern *remote-stuck-release-timestamp* time-frame)
 (define-extern *remote-stuck-released* symbol)
+(define-extern *allow-orb-pickup?* symbol)
+(define-extern *allow-fly-pickup?* symbol)
 
 ;; DECOMP BEGINS
 
@@ -15,27 +17,32 @@
   (local-vars (v0-0 object))
   (case arg2
     (('get-pickup)
-     (when (not (logtest? (-> self state-flags) (state-flags dying)))
-       (let ((s4-0 (-> arg3 param 0))
-             (f28-0 (the-as float (-> arg3 param 1))))
-            (let ((trigger-runs-on-pickup ;; needs to be checked before for vent pickup logic
-                    (and 
-                      (= self *target*)
-                      (!= (the-as pickup-type s4-0) (pickup-type none))
-                      (!= (the-as pickup-type s4-0) (pickup-type eco-pill-random))
-                      (!= (the-as pickup-type s4-0) (pickup-type eco-pill))
-                      (!= (the-as pickup-type s4-0) (pickup-type fuel-cell)) ;; is instead taken from task-control
-                      ;; makes sure eco vents only runs on enter and not every frame after, can/will cause bugs with remotes standing inside and shooting yellow eco shots as they'll run out eventually with this
-                      (or (not (type-type? (-> arg0 type) vent)) (< 50 (the int (- (-> *display* game-frame-counter) (- (+ (-> self fact eco-pickup-time) (-> self fact eco-timeout)) (-> *FACT-bank* eco-full-timeout))))))
-                      )
-                    )
-                  (pickup-result (if (!= (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) (the-as float 0.0) (the-as handle #f))
-                          (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) f28-0 (process->handle arg0)))
-                    #t
-                    'full)))
-              (if trigger-runs-on-pickup ;; needs to be executed after to have correct *game-info* money and buzzer count
-                (runs-on-pickup (the-as pickup-type s4-0) f28-0 arg0))
-              pickup-result))))
+      (let ((s4-0 (-> arg3 param 0))
+            (f28-0 (the-as float (-> arg3 param 1))))
+        ;; Teamruns same-level pickup flag
+        (when (and (or (!= (the-as pickup-type s4-0) (pickup-type money)) *allow-orb-pickup?*) 
+                  (or (!= (the-as pickup-type s4-0) (pickup-type buzzer)) *allow-fly-pickup?*))
+          (when (not (logtest? (-> self state-flags) (state-flags dying)))
+            (let ((s4-0 (-> arg3 param 0))
+                  (f28-0 (the-as float (-> arg3 param 1))))
+                  (let ((trigger-runs-on-pickup ;; needs to be checked before for vent pickup logic
+                          (and 
+                            (= self *target*)
+                            (!= (the-as pickup-type s4-0) (pickup-type none))
+                            (!= (the-as pickup-type s4-0) (pickup-type eco-pill-random))
+                            (!= (the-as pickup-type s4-0) (pickup-type eco-pill))
+                            (!= (the-as pickup-type s4-0) (pickup-type fuel-cell)) ;; is instead taken from task-control
+                            ;; makes sure eco vents only runs on enter and not every frame after, can/will cause bugs with remotes standing inside and shooting yellow eco shots as they'll run out eventually with this
+                            (or (not (type-type? (-> arg0 type) vent)) (< 50 (the int (- (-> *display* game-frame-counter) (- (+ (-> self fact eco-pickup-time) (-> self fact eco-timeout)) (-> *FACT-bank* eco-full-timeout))))))
+                            )
+                          )
+                        (pickup-result (if (!= (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) (the-as float 0.0) (the-as handle #f))
+                                (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) f28-0 (process->handle arg0)))
+                          #t
+                          'full)))
+                    (if trigger-runs-on-pickup ;; needs to be executed after to have correct *game-info* money and buzzer count
+                      (runs-on-pickup (the-as pickup-type s4-0) f28-0 arg0))
+                    pickup-result))))))
     (('reset-pickup) (reset! (-> self fact) (the-as symbol (-> arg3 param 0))))
     (('reset-collide)
      (cond
