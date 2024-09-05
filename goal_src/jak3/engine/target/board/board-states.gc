@@ -622,13 +622,8 @@
              )
         (go target-board-duck-stance)
         )
-    (when (and (logtest? (logior (logior (-> *cpad-list* cpads (-> self control cpad number) button0-rel 0)
-                                         (-> *cpad-list* cpads (-> self control cpad number) button0-rel 1)
-                                         )
-                                 (-> *cpad-list* cpads (-> self control cpad number) button0-rel 2)
-                                 )
-                         (pad-buttons x)
-                         )
+      ;; og:preserve-this - High FPS Fix
+      (when (and (recently-pressed? x)
                (can-jump? 'board)
                )
       (let ((gp-0 (vector-flatten!
@@ -814,13 +809,8 @@
              )
         (go target-board-stance)
         )
-    (when (and (logtest? (logior (logior (-> *cpad-list* cpads (-> self control cpad number) button0-rel 0)
-                                         (-> *cpad-list* cpads (-> self control cpad number) button0-rel 1)
-                                         )
-                                 (-> *cpad-list* cpads (-> self control cpad number) button0-rel 2)
-                                 )
-                         (pad-buttons x)
-                         )
+      ;; og:preserve-this - High FPS Fix
+      (when (and (recently-pressed? x)
                (can-jump? 'board)
                )
       (let ((gp-0 (vector-flatten!
@@ -1082,7 +1072,7 @@
     (set! (-> self control unknown-float36)
           (fmax
             (-> self control unknown-float36)
-            (* 0.003921569 (the float (-> *cpad-list* cpads (-> self control cpad number) abutton 6)))
+            (* 0.003921569 (the float (-> *cpad-list* cpads (-> self control cpad number) abutton (abutton-idx x)))) ;; og:preserve-this abutton indexing
             )
           )
     (mod-var-jump #t #f (cpad-hold? (-> self control cpad number) x) (-> self control transv))
@@ -1668,7 +1658,7 @@
         (set! (-> self control unknown-float36)
               (fmax
                 (-> self control unknown-float36)
-                (* 0.003921569 (the float (-> *cpad-list* cpads (-> self control cpad number) abutton 6)))
+                (* 0.003921569 (the float (-> *cpad-list* cpads (-> self control cpad number) abutton (abutton-idx x)))) ;; og:preserve-this abutton indexing
                 )
               )
         (mod-var-jump #t #f (cpad-hold? (-> self control cpad number) x) (-> self control transv))
@@ -1820,7 +1810,7 @@
         (set! (-> self control unknown-float36)
               (fmax
                 (-> self control unknown-float36)
-                (* 0.003921569 (the float (-> *cpad-list* cpads (-> self control cpad number) abutton 6)))
+                (* 0.003921569 (the float (-> *cpad-list* cpads (-> self control cpad number) abutton (abutton-idx x)))) ;; og:preserve-this abutton indexing
                 )
               )
         (mod-var-jump #t #f (cpad-hold? (-> self control cpad number) x) (-> self control transv))
@@ -2056,7 +2046,7 @@
         (set! (-> self control unknown-float36)
               (fmax
                 (-> self control unknown-float36)
-                (* 0.003921569 (the float (-> *cpad-list* cpads (-> self control cpad number) abutton 6)))
+                (* 0.003921569 (the float (-> *cpad-list* cpads (-> self control cpad number) abutton (abutton-idx x)))) ;; og:preserve-this abutton indexing
                 )
               )
         (mod-var-jump #t #f (cpad-hold? (-> self control cpad number) x) (-> self control transv))
@@ -2183,7 +2173,7 @@
       (set! (-> self control unknown-float36)
             (fmax
               (-> self control unknown-float36)
-              (* 0.003921569 (the float (-> *cpad-list* cpads (-> self control cpad number) abutton 6)))
+              (* 0.003921569 (the float (-> *cpad-list* cpads (-> self control cpad number) abutton (abutton-idx x)))) ;; og:preserve-this abutton indexing
               )
             )
       (mod-var-jump #t #f (cpad-hold? (-> self control cpad number) x) (-> self control transv))
@@ -2271,13 +2261,8 @@
              )
         (go target-board-duck-stance)
         )
-    (when (and (logtest? (logior (logior (-> *cpad-list* cpads (-> self control cpad number) button0-rel 0)
-                                         (-> *cpad-list* cpads (-> self control cpad number) button0-rel 1)
-                                         )
-                                 (-> *cpad-list* cpads (-> self control cpad number) button0-rel 2)
-                                 )
-                         (pad-buttons x)
-                         )
+    ;; og:preserve-this - High FPS Fix
+    (when (and (recently-pressed? x)
                (can-jump? 'board)
                )
       (flush-trick-list (-> self board))
@@ -2366,13 +2351,8 @@
     )
   :exit target-board-exit
   :trans (behavior ()
-    (when (and (logtest? (logior (logior (-> *cpad-list* cpads (-> self control cpad number) button0-rel 0)
-                                         (-> *cpad-list* cpads (-> self control cpad number) button0-rel 1)
-                                         )
-                                 (-> *cpad-list* cpads (-> self control cpad number) button0-rel 2)
-                                 )
-                         (pad-buttons x)
-                         )
+    ;; og:preserve-this - High FPS Fix
+    (when (and (recently-pressed? x)
                (can-jump? 'board)
                )
       (flush-trick-list (-> self board))
@@ -2410,13 +2390,8 @@
     (target-board-exit)
     )
   :trans (behavior ()
-    (when (and (logtest? (logior (logior (-> *cpad-list* cpads (-> self control cpad number) button0-rel 0)
-                                         (-> *cpad-list* cpads (-> self control cpad number) button0-rel 1)
-                                         )
-                                 (-> *cpad-list* cpads (-> self control cpad number) button0-rel 2)
-                                 )
-                         (pad-buttons x)
-                         )
+    ;; og:preserve-this - High FPS Fix
+    (when (and (recently-pressed? x)
                (can-jump? 'board)
                )
       (flush-trick-list (-> self board))
@@ -2625,13 +2600,8 @@
       )
     )
   :trans (behavior ()
-    (when (and (logtest? (logior (logior (-> *cpad-list* cpads (-> self control cpad number) button0-rel 0)
-                                         (-> *cpad-list* cpads (-> self control cpad number) button0-rel 1)
-                                         )
-                                 (-> *cpad-list* cpads (-> self control cpad number) button0-rel 2)
-                                 )
-                         (pad-buttons x)
-                         )
+    ;; og:preserve-this - High FPS Fix
+    (when (and (recently-pressed? x)
                (can-jump? 'board)
                )
       (let ((v1-15 (/ (- (current-time) (-> self board ride-start-time)) 300)))

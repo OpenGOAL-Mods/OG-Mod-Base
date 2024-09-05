@@ -14,7 +14,7 @@
 
 (define-extern runs-on-orb-pickup (function process-tree none))
 
-(define-extern runs-on-fly-pickup (function float none))
+(define-extern runs-on-fly-pickup (function none))
 
 (define-extern runs-on-cell-pickup (function symbol none))
 
@@ -755,8 +755,6 @@
           (if (-> *pc-settings* money-starburst?) (spawn (-> self part) (-> self root root-prim world-sphere))))
         (suspend))))
 
-
-
 (defstate pickup (money)
   :virtual #t
   :code
@@ -1322,7 +1320,7 @@
       (logclear! (-> self mask) (process-mask actor-pause))
       (process-entity-status! self (entity-perm-status complete) #t)
       (sound-play "buzzer-pickup")
-      (runs-on-fly-pickup (-> self fact pickup-amount))
+      (runs-on-fly-pickup)
       (case (-> (level-get-target-inside *level*) name)
         (('training)
          (level-hint-spawn (text-id training-buzzer-hint) "asstvb44" (the-as entity #f) *entity-pool* (game-task none)))

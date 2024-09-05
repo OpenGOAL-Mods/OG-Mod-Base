@@ -790,13 +790,12 @@
   (input-opts-binds-unknown #x1615)
   (progress-no-other-resolution-options #x1616)
   (input-opts-controller-led-reflect-heat #x1617)
-
   ;; mod text mod-base-change
   (pad-triangle #x2000)
   (pad-circle #x2001)
   (pad-x #x2002)
   (pad-square #x2003)
-;; GAME-TEXT-ID ENUM ENDS
+  ;; GAME-TEXT-ID ENUM ENDS
   )
 
 ;; DECOMP BEGINS

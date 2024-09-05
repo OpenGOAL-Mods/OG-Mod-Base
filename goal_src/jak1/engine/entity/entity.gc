@@ -166,6 +166,10 @@
   "Get the process for the entity with the given name. If there is no entity or process, #f."
   (let ((v1-0 (entity-by-name arg0))) (if v1-0 (-> v1-0 extra process))))
 
+(defun process-drawable-by-ename ((arg0 string))
+  "Get the process-drawable for the entity with the given name. If there is no entity or process, #f."
+  (let ((v1-0 (entity-by-name arg0))) (if v1-0 (the-as process-drawable (-> v1-0 extra process)))))
+
 (defun entity-process-count ((arg0 symbol))
   "Count the number of entities with a process. If arg0 is 'vis, will count visible entities."
   (let ((gp-0 0))
@@ -821,6 +825,91 @@
 (defmacro this-etype? (&rest types)
   `(or ,@(apply (lambda (x) `(begin (define-extern ,x type) (type-type? (-> this etype) ,x))) types)))
 
+(defun custom-nav-mesh-check-and-setup ((this entity-actor))
+  (case (-> this aid)
+    ((40000) ;; test-babak
+     (set! (-> this nav-mesh)
+           (new 'static
+                'nav-mesh
+                :custom-hacky? #t
+                ;; Our hack. This will neutralize the function that caused trouble.
+                :origin
+                (new 'static 'vector :x (meters -7.2681) :y (meters 1.0468) :z (meters 16.3255) :w 1.0000) ;; Location of the navmesh.
+                :bounds
+                (new 'static 'sphere :x (meters -7.2681) :y (meters 1.0468) :z (meters 16.3255) :w (meters 20.0)) ;; Some kind of boundary. It should cover the whole navmesh. Enemies won't go to parts it doesn't cover.
+                :vertex-count 4
+                ;; If this is missing, then debug drawing of the vertexes will not be possible.
+                :vertex
+                (new 'static
+                     'inline-array
+                     nav-vertex
+                     4 ;; The vertexes, we can use these to form our triangles.
+                     (new 'static 'nav-vertex :x (meters 5.8046) :y (meters 0.1945) :z (meters 6.6462) :w 1.0000) ;; All coordinates are relative to the origin of the navmesh...
+                     (new 'static 'nav-vertex :x (meters 5.5363) :y (meters 0.4561) :z (meters -6.1448) :w 1.0000) ;; ...which is good news for us, we can easily copy navmeshes and just change the origin (and bounds).
+                     (new 'static 'nav-vertex :x (meters -4.8047) :y (meters -0.1945) :z (meters -6.6463) :w 1.0000)
+                     (new 'static 'nav-vertex :x (meters -4.5910) :y (meters -0.5481) :z (meters 6.0990) :w 1.0000))
+                :poly-count 2
+                ;; For some weird reason, you need to define this, otherwise it will think that there are 0 polys. Even though it could just tell from the array below...
+                :poly
+                (new 'static
+                     'inline-array
+                     nav-poly
+                     2 ;; Here we define our polygons (only triangles).
+                     (new 'static
+                          'nav-poly
+                          :id #x0
+                          ;; It needs a unique ID, because we need to refer to it at some places. It is possible that this gets assigned automatically if you don't write it here. But it is better to have it here for clarity.
+                          :vertex
+                          (new 'static 'array uint8 3 #x0 #x1 #x3) ;; You pick your 3 vertexes here, from among the ones we defined earlier. You need to pick them in an okay order. Because of the normals. Logs will warn you if it is wrong.
+                          :adj-poly
+                          (new 'static 'array uint8 3 #xff #x1 #xff) ;; You can (or should) define any adjecent triangles here. I am sure this is important. The order may or may not matter - I tried to respect the order here.
+                          ;;:pat 0 ;; This is 0 by default. The so called "gap triangles" have it set to 1. But to get gap triangles working properly, you need proper route data. Which we have in existing navmeshes, but not in fully custom ones.
+                          )
+                     (new 'static
+                          'nav-poly
+                          :id #x1
+                          :vertex
+                          (new 'static 'array uint8 3 #x1 #x2 #x3)
+                          :adj-poly
+                          (new 'static 'array uint8 3 #xff #xff #x0)))
+                ;; Optional. I don't understand this. It might impact enemy behaviour/movement on the navmesh, but not sure how. Even the smallest navmesh has at least one of these.
+                ;; Commenting it out, but leaving it here because it may be useful for something.
+                ;; Also I probably have redundancy among the properties (for example I am not sure if radius-x is needed if we have radius, and vice-versa).
+                #|
+:nodes (new 'static 'inline-array nav-node 1 
+                  (new 'static 'nav-node :center-x (meters 0.4020) :center-y (meters -0.2929) :center-z (meters -0.0592)
+                  :type 1
+                  :parent-offset 0
+                  :center (new 'static 'vector :x (meters 0.4020) :y (meters -0.2929) :z (meters -0.0592) :w 0.0000)
+                  :radius-x (meters 20.6370)
+                  :radius-y (meters 0.3081)
+                  :radius-z (meters 20.6425)
+                  :radius (new 'static 'vector :x (meters 20.6370) :y (meters 0.3081) :z (meters 20.6425) :w 0.0000)
+                  :left-offset 2
+                  :right-offset 0
+                  :num-tris 2
+                  :scale-x (meters 0.1309)
+                  :scale-z (meters 0.1157)
+                  :scale (new 'static 'vector :x (meters 30.1309) :y 0.0000 :z (meters 3.1157) :w 0.0000)
+                  :first-tris (new 'static 'array uint8 4 #x0 #x1 #x0 #x0)
+                  :last-tris (new 'static 'array uint8 4 #x0 #x0 #x0 #x0))
+          )
+                |#
+                ;; Route is essential (game crashes without it), Not sure how it works exactly. Also not sure how to determine the array length. Seems to be poly-count*2?
+                ;; It is needed if you want the gap triangles to work. But it seems gibberish even in existing navmeshes. Maybe the type is wrong?
+                ;; The simplest navmeshese have this exact same route data as seen below, so I am using it in our example.
+                :route
+                (new 'static
+                     'inline-array
+                     vector4ub
+                     4
+                     (new 'static 'vector4ub :data (new 'static 'array uint8 4 #xff #x0 #x0 #x0))
+                     (new 'static 'vector4ub :data (new 'static 'array uint8 4 #x0 #x0 #x0 #x0))
+                     (new 'static 'vector4ub :data (new 'static 'array uint8 4 #x0 #x0 #x0 #x0))
+                     (new 'static 'vector4ub :data (new 'static 'array uint8 4 #x0 #x0 #x0 #x0)))))
+     (entity-nav-login this) ;; I don't need to know what this does, all I know is that this is needed - the navmesh won't be okay without it.
+     )))
+
 (defmethod birth! ((this entity-actor))
   "Create a process for this entity and start it."
   ;; temp
@@ -835,6 +924,7 @@
   ;;   (return this)
   ;;   )
   ;;(birth-log "call to birth! on ~A~%" this)
+  (custom-nav-mesh-check-and-setup this)
   (let* ((entity-type (-> this etype))
          (info (entity-info-lookup entity-type))
          (entity-process (get-process *default-dead-pool* entity-type (if info (-> info heap-size) #x4000))))
