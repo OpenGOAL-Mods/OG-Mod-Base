@@ -5,6 +5,7 @@
 
 #include "ObjectFileDB.h"
 
+#include "common/formatter/formatter.h"
 #include "common/goos/PrettyPrinter.h"
 #include "common/link_types.h"
 #include "common/log/log.h"

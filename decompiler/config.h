@@ -102,8 +102,6 @@ struct Config {
   std::vector<std::string> str_file_names;
   std::vector<std::string> str_texture_file_names;
   std::vector<std::string> str_art_file_names;
-
-  std::string audio_dir_file_name;
   std::vector<std::string> streamed_audio_file_names;
 
   std::string obj_file_name_map_file;
@@ -170,11 +168,13 @@ struct Config {
   std::unordered_map<std::string, int> bad_format_strings;
 
   std::unordered_set<std::string> animated_textures;
+  std::unordered_set<std::string> common_art_groups;
   std::unordered_set<int> common_tpages;
 
   std::vector<std::string> levels_to_extract;
   bool levels_extract;
   bool save_texture_pngs = false;
+  bool rip_streamed_audio = false;
 
   DecompileHacks hacks;
 

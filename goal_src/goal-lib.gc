@@ -658,6 +658,12 @@
 (defmacro false! (var)
   `(set! ,var #f))
 
+(defmacro true? (thing)
+  `(eq? ,thing #t))
+
+(defmacro false? (thing)
+  `(eq? ,thing #f))
+
 (defmacro max! (val maxval)
   `(set! ,val (max ,val ,maxval)))
 (defmacro min! (val minval)
@@ -1133,6 +1139,10 @@
   "Checks if the value is NOT within 0.000000000000000001 of zero (to solve float comparison bugs)"
   `(> (fabs (- ,val 0.0))
        0.000000000000000001))
+
+(defmacro fequal-epsilon? (a b epsilon)
+  `(< (fabs (- ,a ,b))
+      ,epsilon))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; user stuf

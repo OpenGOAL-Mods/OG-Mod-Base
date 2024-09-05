@@ -42,7 +42,12 @@ JAK1_AUTO_REPLACEMENTS = {
     "–": "-",
     "​": "",
     "„": ",,",
-    "”": "\""
+    "”": "\"",
+    "　": " ",
+    "！": "!",
+    "（": "(",
+    "）": ")",
+    "。": "."
 }
 
 # TODO - check for korean text
@@ -72,7 +77,7 @@ JAK2_ALLOWED_CHARACTERS = [
 
 JAK2_ALLOWED_CODES = [
     "<TIL>", "<SUPERSCRIPT_QUOTE>",
-    "<PAD_X>", "<PAD_TRIANGLE>", "<PAD_CIRCLE>", "<PAD_SQUARE>", "<PAD_DPAD_UP>", "<PAD_DPAD_DOWN>", "<PAD_DPAD_ANY>", "<PAD_L1>", "<PAD_R1>", "<PAD_R2>", "<PAD_L2>", "<PAD_ANALOG_ANY>", "<PAD_ANALOG_LEFT_RIGHT>", "<PAD_ANALOG_UP_DOWN>", "<ICON_MISSION_COMPLETE>", "<ICON_MISSION_TODO>", "<FLAG_ITALIAN>", "<FLAG_SPAIN>", "<FLAG_GERMAN>", "<FLAG_FRANCE>", "<FLAG_UK>", "<FLAG_USA>", "<FLAG_KOREA>", "<FLAG_JAPAN>"
+    "<PAD_X>", "<PAD_TRIANGLE>", "<PAD_CIRCLE>", "<PAD_SQUARE>", "<PAD_DPAD_UP>", "<PAD_DPAD_DOWN>", "<PAD_DPAD_ANY>", "<PAD_L1>", "<PAD_R1>", "<PAD_R2>", "<PAD_L2>", "<PAD_ANALOG_ANY>", "<PAD_ANALOG_LEFT_RIGHT>", "<PAD_ANALOG_UP_DOWN>", "<ICON_MISSION_COMPLETE>", "<ICON_MISSION_TODO>", "<FLAG_ITALIAN>", "<FLAG_SPAIN>", "<FLAG_GERMAN>", "<FLAG_FRANCE>", "<FLAG_UK>", "<FLAG_USA>", "<FLAG_KOREA>", "<FLAG_JAPAN>", "<FLAG_FINLAND>", "<FLAG_SWEDEN>", "<FLAG_DENMARK>", "<FLAG_NORWAY>", "<FLAG_ICELAND>"
 ]
 
 JAK2_AUTO_REPLACEMENTS = {
@@ -83,7 +88,13 @@ JAK2_AUTO_REPLACEMENTS = {
     "–": "-",
     "​": "",
     "„": ",,",
-    "”": "\""
+    "”": "\"",
+    "　": " ",
+    "！": "!",
+    "（": "(",
+    "）": ")",
+    "〜": "~",
+    "。": "."
 }
 # fmt: on
 
@@ -145,6 +156,7 @@ def lint_jak1_characters(text):
                             character, text
                         )
                     )
+                    # text = jak1_replace_character(text, pos, "?")
                     invalid_characters_found = True
                 pos = pos + 1
             else:
@@ -258,6 +270,7 @@ def lint_jak2_characters(text):
                             character, text
                         )
                     )
+                    # text = jak2_replace_character(text, pos, "?")
                     invalid_characters_found = True
                 pos = pos + 1
             else:

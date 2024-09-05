@@ -126,7 +126,8 @@
    (vertex              (inline-array nav-vertex))
    (poly-count          int32)
    (poly                (inline-array nav-poly))
-   (route               (inline-array vector4ub)))
+   (route               (inline-array vector4ub))
+   (custom-hacky?       symbol))
   (:methods
    (tri-centroid-world (_type_ nav-poly vector) vector) ;; finds the centroid of the given triangle, in the "world" coordinate system.
    (tri-centroid-local (_type_ nav-poly vector) vector) ;; finds the centroid of the given triangle, in the local nav-mesh coordinate system.
@@ -163,6 +164,172 @@
    ;; checks to see if the triangle is in the mesh or not.
    ;; not sure why it's separate from 27 (and such a different implementation). there might be some details I'm missing here.
    (is-in-mesh? (_type_ vector float meters) symbol)))
+
+(defmethod inspect nav-mesh
+  ((obj nav-mesh))
+  (format #t "(new 'static 'nav-mesh~%" obj (-> obj type))
+  (format #t
+          "~T:bounds (new 'static 'sphere :x (meters ~f) :y (meters ~f) :z (meters ~f) :w (meters ~f))~%"
+          (/ (-> obj bounds x) 4096)
+          (/ (-> obj bounds y) 4096)
+          (/ (-> obj bounds z) 4096)
+          (/ (-> obj bounds w) 4096))
+  (format #t
+          "~T:origin (new 'static 'vector :x (meters ~f) :y (meters ~f) :z (meters ~f) :w ~f)~%"
+          (/ (-> obj origin x) 4096)
+          (/ (-> obj origin y) 4096)
+          (/ (-> obj origin z) 4096)
+          (-> obj origin w))
+  #|
+(format #t "~Tnode-count: ~D~%" (-> obj node-count))
+  (let ((i 0))
+    (while (< i (-> obj node-count))
+      (format #t "~T--NODE ~d:~%" i)
+      (format #t "~T~Tcenter-x: ~f~%" (-> obj nodes i center-x))
+      (format #t "~T~Tcenter-y: ~f~%" (-> obj nodes i center-y))
+      (format #t "~T~Tcenter-z: ~f~%" (-> obj nodes i center-z))
+      (format #t "~T~Ttype: ~D~%" (-> obj nodes i type))
+      (format #t "~T~Tparent-offset: ~D~%" (-> obj nodes i parent-offset))
+      (format #t "~T~Tcenter: #<vector @ #x~X>~%" (&-> obj nodes i center-x))
+      (format #t "~T~Tradius-x: ~f~%" (-> obj nodes i radius-x))
+      (format #t "~T~Tradius-y: ~f~%" (-> obj nodes i radius-y))
+      (format #t "~T~Tradius-z: ~f~%" (-> obj nodes i radius-z))
+      (format #t "~T~Tleft-offset: ~D~%" (-> obj nodes i left-offset))
+      (format #t "~T~Tright-offset: ~D~%" (-> obj nodes i right-offset))
+      (format #t "~T~Tnum-tris: ~D~%" (-> obj nodes i num-tris))
+      (format #t "~T~Tradius: #<vector @ #x~X>~%" (&-> obj nodes i radius-x))
+      (format #t "~T~Tscale-x: ~f~%" (-> obj nodes i scale-x))
+      (format #t "~T~Tfirst-tris[4] @ #x~X~%" (-> obj nodes i first-tris))
+      (format #t "~T~Tscale-z: ~f~%" (-> obj nodes i scale-z))
+      (format #t "~T~Tlast-tris[4] @ #x~X~%" (-> obj nodes i last-tris))
+      (format #t "~T~Tscale: #<vector @ #x~X>~%" (&-> obj nodes i scale-x))
+      (format #t "~T----------~%" (&-> obj nodes i scale-x))
+      (+! i 1)
+      )
+    )
+  |#
+  (format #t "~T:vertex-count ~D~%" (-> obj vertex-count))
+  (format #t "~T:vertex (new 'static 'inline-array nav-vertex ~D~%" (-> obj vertex-count))
+  (let ((i 0))
+    (while (< i (-> obj vertex-count))
+      (format #t
+              "~T~T(new 'static 'nav-vertex :x (meters ~f) :y (meters ~f) :z (meters ~f) :w ~f)~%"
+              (/ (-> obj vertex i x) 4096)
+              (/ (-> obj vertex i y) 4096)
+              (/ (-> obj vertex i z) 4096)
+              (-> obj vertex i w))
+      (+! i 1)))
+  (format #t "~T)~%")
+  (format #t "~T:poly-count ~D~%" (-> obj poly-count))
+  (format #t "~T:poly (new 'static 'inline-array nav-poly ~D~%" (-> obj poly-count))
+  (let ((i 0))
+    (while (< i (-> obj poly-count))
+      (format #t "~T~T(new 'static 'nav-poly~%")
+      (format #t "~T~T:id #x~X~%" (-> obj poly i id))
+      (format #t
+              "~T~T:vertex (new 'static 'array uint8 3 #x~X #x~X #x~X)~%"
+              (-> obj poly i vertex 0)
+              (-> obj poly i vertex 1)
+              (-> obj poly i vertex 2))
+      (format #t
+              "~T~T:adj-poly (new 'static 'array uint8 3 #x~X #x~X #x~X)~%"
+              (-> obj poly i adj-poly 0)
+              (-> obj poly i adj-poly 1)
+              (-> obj poly i adj-poly 2))
+      (format #t "~T~T:pat ~D~%" (-> obj poly i pat))
+      (format #t "~T~T)~%")
+      (+! i 1)))
+  (format #t "~T)~%")
+  (format #t "~T:node-count ~D~%" (-> obj node-count))
+  (format #t "~T:nodes (new 'static 'inline-array nav-node ~d~%" (-> obj node-count))
+  (let ((i 0))
+    (while (< i (-> obj node-count))
+      (format #t
+              "~T~T(new 'static 'nav-node :center-x (meters ~f) :center-y (meters ~f) :center-z (meters ~f) :type ~d :parent-offset ~d~%"
+              (/ (-> obj nodes i center-x) 4096)
+              (/ (-> obj nodes i center-y) 4096)
+              (/ (-> obj nodes i center-z) 4096)
+              (-> obj nodes i type)
+              (-> obj nodes i parent-offset))
+      (format #t
+              "~T~T:center (new 'static 'vector :x (meters ~f) :y (meters ~f) :z (meters ~f) :w ~f)~%"
+              (/ (-> obj nodes i center x) 4096)
+              (/ (-> obj nodes i center y) 4096)
+              (/ (-> obj nodes i center z) 4096)
+              (-> obj nodes i center w))
+      (format #t
+              "~T~T:radius-x (meters ~f) :radius-y (meters ~f) :radius-z (meters ~f)~%"
+              (/ (-> obj nodes i radius-x) 4096)
+              (/ (-> obj nodes i radius-y) 4096)
+              (/ (-> obj nodes i radius-z) 4096))
+      (format #t
+              "~T~T:left-offset ~d :right-offset ~d :num-tris ~d~%"
+              (-> obj nodes i left-offset)
+              (-> obj nodes i right-offset)
+              (-> obj nodes i num-tris))
+      (format #t
+              "~T~T:radius (new 'static 'vector :x (meters ~f) :y (meters ~f) :z (meters ~f) :w ~f) :scale-x (meters ~f)~%"
+              (/ (-> obj nodes i radius x) 4096)
+              (/ (-> obj nodes i radius y) 4096)
+              (/ (-> obj nodes i radius z) 4096)
+              (-> obj nodes i radius w)
+              (/ (-> obj nodes i scale-x) 4096))
+      (format #t
+              "~T~T:first-tris (new 'static 'array uint8 4 #x~X #x~X #x~X #x~X) :scale-z (meters ~f)~%"
+              (-> obj nodes i first-tris 0)
+              (-> obj nodes i first-tris 1)
+              (-> obj nodes i first-tris 2)
+              (-> obj nodes i first-tris 3)
+              (/ (-> obj nodes i scale-z) 4096))
+      (format #t
+              "~T~T:last-tris (new 'static 'array uint8 4 #x~X #x~X #x~X #x~X)~%"
+              (-> obj nodes i last-tris 0)
+              (-> obj nodes i last-tris 1)
+              (-> obj nodes i last-tris 2)
+              (-> obj nodes i last-tris 3))
+      (format #t
+              "~T~T:scale (new 'static 'vector :x (meters ~f) :y ~f :z (meters ~f) :w ~f))~%"
+              (/ (-> obj nodes i scale x) 4096)
+              (-> obj nodes i scale y)
+              (/ (-> obj nodes i scale z) 4096)
+              (-> obj nodes i scale w))
+      (+! i 1)))
+  #|
+(deftype nav-node (structure)
+  ((center-x      float           :offset-assert 0)
+   (center-y      float           :offset-assert 4)
+   (center-z      float           :offset-assert 8)
+   (type          uint16          :offset-assert 12)
+   (parent-offset uint16          :offset-assert 14)
+   (center        vector  :inline :offset 0)
+   (radius-x      float           :offset-assert 16)
+   (radius-y      float           :offset-assert 20)
+   (radius-z      float           :offset-assert 24)
+   (left-offset   uint16          :offset-assert 28)
+   (right-offset  uint16          :offset-assert 30)
+   (num-tris      uint32          :offset 28)
+   (radius        vector  :inline :offset 16)
+   (scale-x       float           :offset-assert 32)
+   (first-tris    uint8 4         :offset-assert 36)
+   (scale-z       float           :offset-assert 40)
+   (last-tris     uint8 4         :offset-assert 44)
+   (scale         vector  :inline :offset 32)
+   )
+  |#
+  (format #t "~T)~%")
+  (format #t "~T:route (new 'static 'inline-array vector4ub ~d~%" (* (-> obj poly-count) 2))
+  (let ((i 0))
+    (while (< i (* (-> obj poly-count) 2))
+      (format #t
+              "~T~T(new 'static 'vector4ub :data (new 'static 'array uint8 4 #x~X #x~X #x~X #x~X))~%"
+              (-> obj route i data 0)
+              (-> obj route i data 1)
+              (-> obj route i data 2)
+              (-> obj route i data 3))
+      (+! i 1)))
+  (format #t "~T)~%")
+  (format #t ")~%")
+  obj)
 
 (define-extern *default-nav-mesh* nav-mesh)
 

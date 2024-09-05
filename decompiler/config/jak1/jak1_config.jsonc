@@ -122,6 +122,15 @@
   // save game textures as .png files to decompiler_out/<game>/textures
   "save_texture_pngs": false,
 
+  // whether or not to dump out streamed audio files to decompiler_out/<game>/audio
+  "rip_streamed_audio": false,
+
+  // art groups that should always be possible to access, e.g. "common_art_groups": ["eichar-racer+0-ag", "racer-ag", "ef-plane-ag"]
+  "common_art_groups": [],
+
+  // tpages that should always be possible to access, e.g. "common_tpages": [1119],
+  "common_tpages": [],
+
   ////////////////////////////
   // PATCHING OPTIONS
   ////////////////////////////

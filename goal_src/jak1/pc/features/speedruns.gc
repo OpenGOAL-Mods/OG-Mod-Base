@@ -8,9 +8,53 @@
 (require "pc/features/autosplit-h.gc")
 (define *speedrun-info* (new 'static 'speedrun-info-jak1 :should-display? #t :needs-post-blackout-setup? #f))
 
+(define *has-landed?* #f)
+
 (define-extern *mod-version-text* string)
 
 (define *hub1-cell-list*
+  (new 'static
+       'boxed-array
+       :type
+       game-task
+       (game-task training-gimmie)
+       (game-task training-door)
+       (game-task training-climb)
+       (game-task training-buzzer)
+       (game-task village1-mayor-money)
+       (game-task village1-uncle-money)
+       (game-task village1-yakow)
+       (game-task village1-oracle-money1)
+       (game-task village1-oracle-money2)
+       (game-task village1-buzzer)
+       (game-task beach-ecorocks)
+       (game-task beach-flutflut)
+       (game-task beach-pelican)
+       (game-task beach-seagull)
+       (game-task beach-cannon)
+       (game-task beach-gimmie)
+       (game-task beach-sentinel)
+       (game-task beach-buzzer)
+       (game-task jungle-lurkerm)
+       (game-task jungle-tower)
+       (game-task jungle-eggtop)
+       (game-task jungle-plant)
+       (game-task jungle-fishgame)
+       (game-task jungle-canyon-end)
+       (game-task jungle-temple-door)
+       (game-task jungle-buzzer)
+       (game-task misty-muse)
+       (game-task misty-boat)
+       (game-task misty-cannon)
+       (game-task misty-warehouse)
+       (game-task misty-bike)
+       (game-task misty-bike-jump)
+       (game-task misty-eco-challenge)
+       (game-task misty-buzzer)
+       (game-task firecanyon-end)
+       (game-task firecanyon-buzzer)))
+
+(define *hub2-cell-list*
   (new 'static
        'boxed-array
        :type
@@ -144,10 +188,8 @@
   (set! (-> *pc-settings* ps2-actor-vis?) #f)
   ;; ensure FPS set to `60`
   (when (!= (-> *pc-settings* target-fps) 60)
-    (set-frame-rate! *pc-settings* 60 #t)
-    )
-  (none)
-  )
+    (set-frame-rate! *pc-settings* 60 #t))
+  (none))
 
 (defun start-speedrun ((category speedrun-category))
   ;; randomize game id so the autosplitter knows to restart
@@ -412,16 +454,22 @@
   (when (and (-> *pc-settings* speedrunner-mode?)
              (not (paused?))
              (-> *speedrun-info* should-display?))
+    ;; check if we've landed (either we're on ground/surface/water, or about to target-hit-ground)
+    (when (and *target*
+               (or (logtest? (-> *target* control status) (cshape-moving-flags onground onsurf on-water))
+                   (= (-> *target* next-state name) 'target-hit-ground)))
+      (true! *has-landed?*))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
                                       (bucket-id subtitle))
       (draw-string-xy (string-format "Speedrunner Mode ~%OpenGOAL Version: ~S ~%TR Client Version: ~S ~%Category: ~S ~%Cutscene Skips ~A"
                                      *pc-settings-built-sha*
                                      (-> *multiplayer-info* client_version)
                                      (enum->string speedrun-category (-> *speedrun-info* category))
-                                     (-> *pc-settings* skip-movies?))
+                                     (-> *pc-settings* skip-movies?)
+                                     *has-landed?*)
                       buf
                       0
-                      (- 213 (* 8 4))
+                      (- 220 (* 8 5))
                       (font-color flat-yellow)
                       (font-flags shadow kerning))))
   (none))

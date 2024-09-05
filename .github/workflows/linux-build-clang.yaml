@@ -23,6 +23,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Install Package Dependencies
         run: |
@@ -35,7 +38,7 @@ jobs:
             libudev-dev libopenal-dev libflac-dev libogg-dev libvorbis-dev
 
       - name: Setup sccache
-        uses: hendrikmuhs/ccache-action@v1.2.13
+        uses: hendrikmuhs/ccache-action@v1.2.14
         with:
           variant: sccache
           key: linux-ubuntu-20.04-${{ inputs.cachePrefix }}-${{ inputs.cmakePreset }}-${{ github.sha }}

@@ -1,13 +1,37 @@
 #include "kmachine.h"
 
-#include <random>
-#include <iostream>
-#include <fstream>
-#include <thread>
 #include <chrono>
+#include <fstream>
+#include <iostream>
+#include <random>
+#include <thread>
+#include <list>
 
 #define MINIAUDIO_IMPLEMENTATION
+// NOTE - this is needed, because on macOS, there is a file called `MacTypes.h`
+// inside it, it defines something named `Ptr`
+// Our `Ptr` is not namespaced, so there is ambiguity.
+//
+// Second fix is because miniaudio redefines functions in the stdlib based on bad pre-processor
+// assumptions AppleClang apparently does not define POSIX macros, leading to future ambiguity
+namespace MiniAudioLib {
+#if defined(__APPLE__)
+#if !defined(_POSIX_C_SOURCE)
+#define _POSIX_C_SOURCE 200809L
 #include "third-party/miniaudio.h"
+#undef _POSIX_C_SOURCE
+#else
+// It should work if it's defined, but for some reason it didn't this is the unlikely branch
+// but lets maintain the original value
+#define NOT_REAL_OLD_POSIX_C_SOURCE _POSIX_C_SOURCE
+#include "third-party/miniaudio.h"
+#define _POSIX_C_SOURCE NOT_REAL_OLD_POSIX_C_SOURCE
+#undef NOT_REAL_OLD_POSIX_C_SOURCE
+#endif
+#else
+#include "third-party/miniaudio.h"
+#endif
+}  // namespace MiniAudioLib
 
 #include "common/global_profiler/GlobalProfiler.h"
 #include "common/log/log.h"
@@ -52,9 +76,9 @@ u32 vblank_interrupt_handler = 0;
 
 Timer ee_clock_timer;
 
-ma_engine maEngine;
-std::map<std::string, ma_sound> maSoundMap;
-ma_sound* mainMusicSound;
+MiniAudioLib::ma_engine maEngine;
+std::map<std::string, std::list<MiniAudioLib::ma_sound>> maSoundMap;
+MiniAudioLib::ma_sound* mainMusicSound;
 
 void kmachine_init_globals_common() {
   memset(pad_dma_buf, 0, sizeof(pad_dma_buf));
@@ -64,8 +88,10 @@ void kmachine_init_globals_common() {
   vif1_interrupt_handler = 0;
   vblank_interrupt_handler = 0;
   ee_clock_timer = Timer();
-
-  ma_engine_init(NULL, &maEngine);
+#ifdef _WIN32  // only do this on windows, because it only works on windows?
+  MiniAudioLib::ma_engine_uninit(&maEngine);
+#endif
+  MiniAudioLib::ma_engine_init(NULL, &maEngine);
 }
 
 /*!
@@ -118,10 +144,42 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
   return cpad_info;
 }
 
+// Mutex to synchronize access to activeMusics
+std::mutex activeMusicsMutex;
+
+// Declare a mutex for synchronizing access to mainMusicInstance
+std::mutex mainMusicMutex;
+
+// Function to stop all instances of specific sound by filepath
+void stopMP3(u32 filePathu32) {
+  std::string filePath = Ptr<String>(filePathu32).c()->data();
+  std::cout << "Trying to stop file: " << filePath << std::endl;
+
+  std::lock_guard<std::mutex> lock(activeMusicsMutex);
+  auto it = maSoundMap.find(filePath);
+  if (it == maSoundMap.end()) {
+    std::cerr << "Couldn't find sound to stop: " << filePath << std::endl;
+  } else {
+    // stop all instances of this sound
+    for (auto sound : it->second) {
+      if (MiniAudioLib::ma_sound_stop(&sound) != MiniAudioLib::MA_SUCCESS) {
+        std::cerr << "Failed to stop sound: " << filePath << std::endl;
+      }
+      // let the thread finish and handle ma_sound_uninit
+    }
+    // clear list of sounds for this filepath
+    it->second.clear();
+  }
+}
+
 // Function to stop all currently playing sounds.
 void stopAllSounds() {
   for (auto& pair : maSoundMap) {
-    ma_sound_stop(&pair.second);
+    // stop all instances of this sound
+    for (auto sound : pair.second) {
+      MiniAudioLib::ma_sound_stop(&sound);
+    }
+    pair.second.clear();
   }
   maSoundMap.clear();
 }
@@ -135,53 +193,58 @@ std::vector<std::string> getPlayingFileNames() {
   return playingFileNames;
 }
 
-std::mutex activeMusicsMutex;  // Mutex to synchronize access to activeMusics
-
-// Declare a mutex for synchronizing access to mainMusicInstance
-std::mutex mainMusicMutex;
-
 void playMP3_internal(u32 filePathu32, u32 volume, bool isMainMusic) {
   std::thread thread([=]() {
     std::string filePath = Ptr<String>(filePathu32).c()->data();
+    std::string fullFilePath = fs::path(file_util::get_jak_project_dir() / "custom_assets" /
+                                    game_version_names[g_game_version] / "audio" / filePath).string();
+
     std::cout << "Playing file: " << filePath << std::endl;
 
-    ma_result result;
-    ma_sound sound;
+    MiniAudioLib::ma_result result;
+    MiniAudioLib::ma_sound sound;
 
-    result = ma_sound_init_from_file(&maEngine, filePath.c_str(), 0, NULL, NULL, &sound);
-    if (result != MA_SUCCESS) {
+    result = MiniAudioLib::ma_sound_init_from_file(&maEngine, fullFilePath.c_str(), 0, NULL, NULL,
+                                                    &sound);
+    if (result != MiniAudioLib::MA_SUCCESS) {
       std::cout << "Failed to load: " << filePath << std::endl;
       return;
     }
 
-    ma_sound_set_volume(&sound, ((float)volume) / 100.0);
+    MiniAudioLib::ma_sound_set_volume(&sound, ((float)volume) / 100.0);
 
     if (isMainMusic) {
-      ma_sound_set_looping(&sound, MA_TRUE);
+      MiniAudioLib::ma_sound_set_looping(&sound, MA_TRUE);
       mainMusicMutex.lock();
       mainMusicSound = &sound;
       mainMusicMutex.unlock();
     }
 
-    ma_sound_start(&sound);
+    MiniAudioLib::ma_sound_start(&sound);
 
-    {
+    if (!isMainMusic) {
       std::lock_guard<std::mutex> lock(activeMusicsMutex);
-      maSoundMap.insert(std::make_pair(filePath, sound));
+      if (maSoundMap.find(filePath) == maSoundMap.end()) {
+        maSoundMap.insert(std::make_pair(filePath, std::list<MiniAudioLib::ma_sound>()));
+      }
+      maSoundMap[filePath].push_back(sound);
     }
 
-    // loop until we're no longer main music, or we reach the end of non-looping sound
-    while (mainMusicSound == &sound || !ma_sound_at_end(&sound)) {
+    // sleep/loop until we're no longer main music, or non-looping sound is stopped/ends
+    while (mainMusicSound == &sound || MiniAudioLib::ma_sound_is_playing(&sound)) {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
-    ma_sound_stop(&sound);
-    ma_sound_uninit(&sound);
+    MiniAudioLib::ma_sound_stop(&sound);
+    MiniAudioLib::ma_sound_uninit(&sound);
     std::cout << "Finished playing file: " << filePath << std::endl;
 
-    {
+    if (!isMainMusic) {
       std::lock_guard<std::mutex> lock(activeMusicsMutex);
-      maSoundMap.erase(filePath);
+      if (maSoundMap.find(filePath) != maSoundMap.end()) {
+        maSoundMap[filePath].remove_if(
+            [&](MiniAudioLib::ma_sound l_sound) { return &sound == &l_sound; });
+      }
     }
   });
 
@@ -195,9 +258,9 @@ void playMP3(u32 filePathu32, u32 volume) {
 // Function to stop the Main Music.
 void stopMainMusic() {
   mainMusicMutex.lock();
-  if (mainMusicSound && ma_sound_is_playing(mainMusicSound)) {
+  if (mainMusicSound && MiniAudioLib::ma_sound_is_playing(mainMusicSound)) {
     std::cout << "Stopping Main Music..." << std::endl;
-    ma_sound_stop(mainMusicSound);
+    MiniAudioLib::ma_sound_stop(mainMusicSound);
     mainMusicSound = NULL;
     std::cout << "Stopped Main Music " << std::endl;
   }
@@ -215,16 +278,16 @@ void playMainMusic(u32 filePathu32, u32 volume) {
 
 void pauseMainMusic() {
   mainMusicMutex.lock();
-  if (mainMusicSound && ma_sound_is_playing(mainMusicSound)) {
-    ma_sound_stop(mainMusicSound);
+  if (mainMusicSound && MiniAudioLib::ma_sound_is_playing(mainMusicSound)) {
+    MiniAudioLib::ma_sound_stop(mainMusicSound);
   }
   mainMusicMutex.unlock();
 }
 
 void resumeMainMusic() {
   mainMusicMutex.lock();
-  if (mainMusicSound && !ma_sound_is_playing(mainMusicSound)) {
-    ma_sound_start(mainMusicSound);
+  if (mainMusicSound && !MiniAudioLib::ma_sound_is_playing(mainMusicSound)) {
+    MiniAudioLib::ma_sound_start(mainMusicSound);
   }
   mainMusicMutex.unlock();
 }
@@ -233,7 +296,7 @@ void resumeMainMusic() {
 void changeMainMusicVolume(u32 volume) {
   mainMusicMutex.lock();
   if (mainMusicSound) {
-    ma_sound_set_volume(mainMusicSound, ((float)volume) / 100.0);
+    MiniAudioLib::ma_sound_set_volume(mainMusicSound, ((float)volume) / 100.0);
   }
   mainMusicMutex.unlock();
 }
@@ -582,6 +645,19 @@ u64 pc_get_mips2c(u32 name) {
   return Mips2C::gLinkedFunctionTable.get(n);
 }
 
+u64 pc_get_display_id() {
+  if (Display::GetMainDisplay()) {
+    return Display::GetMainDisplay()->get_display_manager()->get_active_display_id();
+  }
+  return 0;
+}
+
+void pc_set_display_id(u64 display_id) {
+  if (Display::GetMainDisplay()) {
+    Display::GetMainDisplay()->get_display_manager()->enqueue_set_display_id(display_id);
+  }
+}
+
 u64 pc_get_display_name(u32 id, u32 str_dest_ptr) {
   std::string name = "";
   if (Display::GetMainDisplay()) {
@@ -603,17 +679,16 @@ u64 pc_get_display_name(u32 id, u32 str_dest_ptr) {
 }
 
 u32 pc_get_display_mode() {
-  auto display_mode = WindowDisplayMode::Windowed;
+  auto display_mode = game_settings::DisplaySettings::DisplayMode::Windowed;
   if (Display::GetMainDisplay()) {
-    display_mode = Display::GetMainDisplay()->get_display_manager()->get_window_display_mode();
+    display_mode = Display::GetMainDisplay()->get_display_manager()->get_display_mode();
   }
   switch (display_mode) {
-    case WindowDisplayMode::Borderless:
+    case game_settings::DisplaySettings::DisplayMode::Borderless:
       return g_pc_port_funcs.intern_from_c("borderless").offset;
-    case WindowDisplayMode::Fullscreen:
+    case game_settings::DisplaySettings::DisplayMode::Fullscreen:
       return g_pc_port_funcs.intern_from_c("fullscreen").offset;
     default:
-    case WindowDisplayMode::Windowed:
       return g_pc_port_funcs.intern_from_c("windowed").offset;
   }
 }
@@ -624,13 +699,13 @@ void pc_set_display_mode(u32 symptr) {
   }
   if (symptr == g_pc_port_funcs.intern_from_c("windowed").offset || symptr == s7.offset) {
     Display::GetMainDisplay()->get_display_manager()->enqueue_set_window_display_mode(
-        WindowDisplayMode::Windowed);
+        game_settings::DisplaySettings::DisplayMode::Windowed);
   } else if (symptr == g_pc_port_funcs.intern_from_c("borderless").offset) {
     Display::GetMainDisplay()->get_display_manager()->enqueue_set_window_display_mode(
-        WindowDisplayMode::Borderless);
+        game_settings::DisplaySettings::DisplayMode::Borderless);
   } else if (symptr == g_pc_port_funcs.intern_from_c("fullscreen").offset) {
     Display::GetMainDisplay()->get_display_manager()->enqueue_set_window_display_mode(
-        WindowDisplayMode::Fullscreen);
+        game_settings::DisplaySettings::DisplayMode::Fullscreen);
   }
 }
 
@@ -702,12 +777,6 @@ void pc_get_window_scale(u32 x_ptr, u32 y_ptr) {
   }
 }
 
-void pc_get_fullscreen_display(u64 display_id) {
-  if (Display::GetMainDisplay()) {
-    Display::GetMainDisplay()->get_display_manager()->enqueue_set_fullscreen_display_id(display_id);
-  }
-}
-
 void pc_set_window_size(u64 width, u64 height) {
   if (Display::GetMainDisplay()) {
     Display::GetMainDisplay()->get_display_manager()->enqueue_set_window_size(width, height);
@@ -733,6 +802,14 @@ void pc_get_resolution(u32 id, u32 w_ptr, u32 h_ptr) {
       *h = res.height;
     }
   }
+}
+
+u64 pc_is_supported_resolution(u64 width, u64 height) {
+  if (Display::GetMainDisplay()) {
+    return bool_to_symbol(
+        Display::GetMainDisplay()->get_display_manager()->is_supported_resolution(width, height));
+  }
+  return bool_to_symbol(false);
 }
 
 u64 pc_get_controller_name(u32 id, u32 str_dest_ptr) {
@@ -1046,9 +1123,11 @@ void init_common_pc_port_functions(
 
   // -- DISPLAY RELATED --
   // Returns the name of the display with the given id or #f if not found / empty
+  make_func_symbol_func("pc-get-display-id", (void*)pc_get_display_id);
+  make_func_symbol_func("pc-set-display-id!", (void*)pc_set_display_id);
   make_func_symbol_func("pc-get-display-name", (void*)pc_get_display_name);
   make_func_symbol_func("pc-get-display-mode", (void*)pc_get_display_mode);
-  make_func_symbol_func("pc-set-display-mode", (void*)pc_set_display_mode);
+  make_func_symbol_func("pc-set-display-mode!", (void*)pc_set_display_mode);
   make_func_symbol_func("pc-get-display-count", (void*)pc_get_display_count);
   // Returns resolution of the monitor's current display mode
   make_func_symbol_func("pc-get-active-display-size", (void*)pc_get_active_display_size);
@@ -1059,10 +1138,10 @@ void init_common_pc_port_functions(
   make_func_symbol_func("pc-get-window-size", (void*)pc_get_window_size);
   // Returns scale of window. This is for DPI stuff.
   make_func_symbol_func("pc-get-window-scale", (void*)pc_get_window_scale);
-  make_func_symbol_func("pc-set-fullscreen-display", (void*)pc_get_fullscreen_display);
-  make_func_symbol_func("pc-set-window-size", (void*)pc_set_window_size);
+  make_func_symbol_func("pc-set-window-size!", (void*)pc_set_window_size);
   make_func_symbol_func("pc-get-num-resolutions", (void*)pc_get_num_resolutions);
   make_func_symbol_func("pc-get-resolution", (void*)pc_get_resolution);
+  make_func_symbol_func("pc-is-supported-resolution?", (void*)pc_is_supported_resolution);
 
   // -- INPUT RELATED --
   // Returns the name of the display with the given id or #f if not found / empty
@@ -1112,13 +1191,16 @@ void init_common_pc_port_functions(
   make_func_symbol_func("pc-filepath-exists?", (void*)pc_filepath_exists);
   make_func_symbol_func("pc-mkdir-file-path", (void*)pc_mkdir_filepath);
 
-  //Play sound file
-  make_func_symbol_func("play-sound-file", (void*)playMP3);  
+  // Play sound file
+  make_func_symbol_func("play-sound-file", (void*)playMP3);
 
-  //Stop sound file
-  make_func_symbol_func("stop-sound-file", (void*)stopAllSounds);  
+  // Stop sound file (all instances)
+  make_func_symbol_func("stop-sound-file", (void*)stopMP3);
 
-  //Main music stuff
+  // Stop all sounds
+  make_func_symbol_func("stop-all-sounds", (void*)stopAllSounds);
+
+  // Main music stuff
   make_func_symbol_func("play-main-music", (void*)playMainMusic);
   make_func_symbol_func("pause-main-music", (void*)pauseMainMusic);
   make_func_symbol_func("stop-main-music", (void*)stopMainMusic);
