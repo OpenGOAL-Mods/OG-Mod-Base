@@ -8,7 +8,6 @@
   "eichar-racer+0-ag.go"
   "tpage-1119.go"
   "blocking-plane.o"
-  "blocking-plane-modded.o"
   "firecanyon-obs.o"
   "ogre-part.o"
   "ogreboss.o"

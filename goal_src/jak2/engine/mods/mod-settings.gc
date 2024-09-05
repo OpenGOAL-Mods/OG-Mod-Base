@@ -37,7 +37,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 ;; Define Settings to use in mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define startingDebugContinuePoint "village1-hut")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Custom Settings Variables to use in mods
@@ -45,3 +44,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 ;; Change #f to #t here to show the input display by default
 (define *show-input-display* #f)
+
+;; do NOT change %MODVERSIONPLACEHOLDER% below, otherwise the mod-bundling-tools
+;;   will be unable to automatically add version info to the speedrun display
+(define *mod-version-text* "%MODVERSIONPLACEHOLDER%")

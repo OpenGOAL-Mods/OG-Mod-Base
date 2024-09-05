@@ -64,7 +64,6 @@ Config make_config_via_json(nlohmann::json& json) {
         inputs_json.at("str_art_file_names").get<std::vector<std::string>>();
   }
 
-  config.audio_dir_file_name = inputs_json.at("audio_dir_file_name").get<std::string>();
   config.streamed_audio_file_names =
       inputs_json.at("streamed_audio_file_names").get<std::vector<std::string>>();
 
@@ -321,10 +320,17 @@ Config make_config_via_json(nlohmann::json& json) {
   if (json.contains("save_texture_pngs")) {
     config.save_texture_pngs = json.at("save_texture_pngs").get<bool>();
   }
+  if (json.contains("rip_streamed_audio")) {
+    config.rip_streamed_audio = json.at("rip_streamed_audio").get<bool>();
+  }
 
   if (inputs_json.contains("animated_textures")) {
     config.animated_textures =
         inputs_json.at("animated_textures").get<std::unordered_set<std::string>>();
+  }
+
+  if (json.contains("common_art_groups")) {
+    config.common_art_groups = json.at("common_art_groups").get<std::unordered_set<std::string>>();
   }
 
   if (inputs_json.contains("common_tpages")) {
