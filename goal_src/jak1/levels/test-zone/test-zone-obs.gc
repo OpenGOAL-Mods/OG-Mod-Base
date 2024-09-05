@@ -78,6 +78,9 @@
 
 (defstate plat-path-active (SeekPlat)
   :virtual #t
+  :enter
+    (behavior ()
+      (set! (-> self path-pos) (get-current-phase (-> self sync))))
   :event plat-event
   :exit
     (behavior ()
