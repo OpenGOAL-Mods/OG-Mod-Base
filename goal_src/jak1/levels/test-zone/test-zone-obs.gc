@@ -84,27 +84,37 @@
       (sound-stop (-> self sound-id)))
   :trans
     (behavior ()
-      (format 0 "loop-direction is now ~S ~%" (-> self loop-direction))
-      (format 0 "master-direction is now ~S ~%" (-> self master-direction))
       (let ((threshold 0.1))
+
+      ;; CALCULATE REGULAR BACK AND FORTH ALONG LINE
+
+        ;; WHEN REACHES END OF PATH
         (when (< (fabs (- 1.0 (-> self path-pos))) threshold)
           (when (and (= (-> self master-direction) 'backwards) (-> self loop-direction) 'backwards)
-            (set! (-> self loop-direction) 'forwards))
+            (set! (-> self loop-direction) 'forwards)) ;; IF YOU WERE GOING BACKWARDS LOOP IS NOW FORWARDS
           (when (and (= (-> self master-direction) 'forwards) (-> self loop-direction) 'forwards)
-            (set! (-> self loop-direction) 'backwards)))
+            (set! (-> self loop-direction) 'backwards))) ;; IF YOU WERE GOING FORWARDS LOOP IS NOW BACKWARDS
+
+        ;; WHEN REACHES BEGINNING OF PATH
         (when (< (fabs (-> self path-pos)) threshold)
           (when (and (= (-> self master-direction) 'forwards) (-> self loop-direction) 'backwards)
-            (set! (-> self loop-direction) 'forwards))
+            (set! (-> self loop-direction) 'forwards)) ;; IF YOU WERE GOING FORWARDS LOOP IS NOW FORWARDS
           (when (and (= (-> self master-direction) 'backwards) (-> self loop-direction) 'forwards)
-            (set! (-> self loop-direction) 'backwards))))
+            (set! (-> self loop-direction) 'backwards)))) ;; IF YOU WERE GOING BACKWARDS LOOP IS NOW BACKWARDS
+
+      ;; UPDATE POSITION BASED ON STATE
+
       (when (and (= (-> self loop-direction) 'forwards) (= (-> self master-direction) 'forwards))
-        (seek! (-> self path-pos) 1.0 (* 0.16 (seconds-per-frame))))
+        (seek! (-> self path-pos) 1.0 (* 0.16 (seconds-per-frame)))) ;; MOVE TOWARDS END
       (when (and (= (-> self loop-direction) 'backwards) (= (-> self master-direction) 'forwards))
-        (seek! (-> self path-pos) 0.0 (* 0.16 (seconds-per-frame))))
+        (seek! (-> self path-pos) 0.0 (* 0.16 (seconds-per-frame)))) ;; MOVE TOWARDS BEGINNING
       (when (and (= (-> self loop-direction) 'backwards) (= (-> self master-direction) 'backwards))
-        (seek! (-> self path-pos) 1.0 (* 0.16 (seconds-per-frame))))
+        (seek! (-> self path-pos) 1.0 (* 0.16 (seconds-per-frame)))) ;; MOVE TOWARDS END
       (when (and (= (-> self loop-direction) 'forwards) (= (-> self master-direction) 'backwards))
-        (seek! (-> self path-pos) 0.0 (* 0.16 (seconds-per-frame))))
+        (seek! (-> self path-pos) 0.0 (* 0.16 (seconds-per-frame)))) ;; MOVE TOWARDS BEGINNING
+
+      ;; REGULAR PLATFORM CODE
+
       (eval-path-curve! (-> self path) (-> self basetrans) (-> self path-pos) 'interp)
       (if (< (vector-vector-distance (-> self root trans) (ear-trans)) 81920.0)
         (sound-play "eco-plat-hover" :id (-> self sound-id) :position (the-as symbol (-> self root trans))))
