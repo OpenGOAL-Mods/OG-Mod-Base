@@ -329,6 +329,10 @@ Config make_config_via_json(nlohmann::json& json) {
         inputs_json.at("animated_textures").get<std::unordered_set<std::string>>();
   }
 
+  if (json.contains("common_art_groups")) {
+    config.common_art_groups = json.at("common_art_groups").get<std::unordered_set<std::string>>();
+  }
+
   if (inputs_json.contains("common_tpages")) {
     config.common_tpages = inputs_json.at("common_tpages").get<std::unordered_set<int>>();
   }
