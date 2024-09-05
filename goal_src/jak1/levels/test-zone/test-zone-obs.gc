@@ -103,7 +103,6 @@
             (set! (-> self loop-direction) 'backwards)))) ;; IF YOU WERE GOING BACKWARDS LOOP IS NOW BACKWARDS
 
       ;; UPDATE POSITION BASED ON STATE
-
       (when (and (= (-> self loop-direction) 'forwards) (= (-> self master-direction) 'forwards))
         (seek! (-> self path-pos) 1.0 (* 0.16 (seconds-per-frame)))) ;; MOVE TOWARDS END
       (when (and (= (-> self loop-direction) 'backwards) (= (-> self master-direction) 'forwards))
@@ -114,7 +113,6 @@
         (seek! (-> self path-pos) 0.0 (* 0.16 (seconds-per-frame)))) ;; MOVE TOWARDS BEGINNING
 
       ;; REGULAR PLATFORM CODE
-
       (eval-path-curve! (-> self path) (-> self basetrans) (-> self path-pos) 'interp)
       (if (< (vector-vector-distance (-> self root trans) (ear-trans)) 81920.0)
         (sound-play "eco-plat-hover" :id (-> self sound-id) :position (the-as symbol (-> self root trans))))
