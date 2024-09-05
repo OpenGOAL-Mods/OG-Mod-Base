@@ -94,3 +94,7 @@ goalc-report.html
 
 # third-party lib documentations
 /third-party/asio/doc/**
+out/build/Release/bin/decompiler.exe
+out/build/Release/bin/extractor.exe
+out/build/Release/bin/gk.exe
+out/build/Release/bin/goalc.exe
