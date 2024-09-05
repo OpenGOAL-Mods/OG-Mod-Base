@@ -25,6 +25,8 @@
 (define-extern process-close? (function process-drawable float basic))
 (define-extern cancel-current-spool-anim (function none))
 (define-extern *allow-cell-pickup?* symbol)
+(define-extern *allow-orb-pickup?* symbol)
+(define-extern *allow-fly-pickup?* symbol)
 (define-extern *enable-remote-target-buzzer-pickup* symbol)
 (define-extern *enable-remote-target-money-pickup* symbol)
 (define-extern *enable-remote-target-eco-pickup* symbol)
@@ -323,14 +325,14 @@
                  (and (logtest? (-> self flags) (collectable-flags can-collect))
                       (time-elapsed? (-> self birth-time) (-> self collect-timeout))
                       (!= (-> self next-state name) 'pickup)
-                      (and (or (= *target* proc)
-                              (and
+                      (and (or (= *target* proc)  ;; Local target pickup
+                              (and  ;; Remote target pickup
                                 (or *enable-remote-target-eco-pickup*  (and (!= (-> self fact pickup-type) (pickup-type eco-blue)) 
                                   (!= (-> self fact pickup-type) (pickup-type eco-red)) 
                                   (!= (-> self fact pickup-type) (pickup-type eco-yellow)))
-                                  ) 
-                                (or *enable-remote-target-buzzer-pickup* (!= (-> self fact pickup-type) (pickup-type buzzer)))
-                                (or *enable-remote-target-money-pickup* (!= (-> self fact pickup-type) (pickup-type money)))
+                                  )
+                                (or (and *allow-orb-pickup?* *enable-remote-target-money-pickup*) (!= (-> self fact pickup-type) (pickup-type money))) 
+                                (or (and *allow-fly-pickup?* *enable-remote-target-buzzer-pickup*) (!= (-> self fact pickup-type) (pickup-type buzzer)))
                               )
                             )
                         (send-event proc 'get-pickup (-> self fact pickup-type) (-> self fact pickup-amount)))))
@@ -340,6 +342,8 @@
         ((= message 'eco-blue)
          (when (and (not (logtest? (-> self flags) (collectable-flags fading ignore-blue)))
                     (!= (-> self next-state name) 'pickup)
+                    (or *allow-orb-pickup?* (!= (-> self fact pickup-type) (pickup-type money))) 
+                    (or *allow-fly-pickup?* (!= (-> self fact pickup-type) (pickup-type buzzer)))
                     (begin
                       (check-blue-suck (the-as process-drawable proc))
                       #t)

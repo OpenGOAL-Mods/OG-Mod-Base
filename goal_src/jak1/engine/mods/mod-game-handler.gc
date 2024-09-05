@@ -34,6 +34,8 @@
 
 ;; multiplayer fixes
 (define *allow-cell-pickup?* #t)
+(define *allow-orb-pickup?* #t)
+(define *allow-fly-pickup?* #t)
 (define *allow-final-boss?* #t)
 (define *allow-one-time-citadel-skip?* #t)
 (define *current-boss-phase* 10)
