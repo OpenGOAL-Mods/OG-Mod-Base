@@ -56,12 +56,12 @@
   // "symbol-list": ["symbol", "sym-1", "sym-2"]
 
   // The base actor id for your custom level. If you have multiple levels, this should be unique!
-  "base_id": 100,
+  "base_id": 10000,
 
   // All art groups you want to use in your custom level. Will add their models and corresponding textures to the FR3 file.
   // Note: You will still have to add them to your level's .gd file.
   // "art_groups": ["plat-ag"],
-  "art_groups": ["babak-ag"],
+  "art_groups": ["babak-ag", "plat-ag", "plat-eco-ag"],
 
   // If you have any custom models in the "custom_assets/jak1/models/custom_levels" folder that you want to use in your level, add them to this list.
   // Note: Like with art groups, these should also be added to your level's .gd file.
@@ -167,16 +167,127 @@
       "lump": {
         "name": "test-actor"
       }
+    },
+
+    {
+      "trans": [0.0, 50.0, 10.0],
+      "etype": "linear-plat",
+      "game_task": 0,
+      "quat": [0, 0, 0, 1],
+      "bsphere": [0.0, 50.0, 10.0, 10],
+      "lump": {
+        "name": "linear-plat-0",
+        "path": ["vector4m",
+          [0.0, 50.0, 10.0, 1.0],
+          [0.0, 50.0, 10.0, 1.0],
+          [0.0, 60.0, 10.0, 1.0],
+          [0.0, 50.0, 10.0, 1.0],
+          [0.0, 50.0, 10.0, 1.0],
+          [0.0, 60.0, 10.0, 1.0],
+          [0.0, 50.0, 10.0, 1.0]
+          ],
+        "timings": ["float",
+          0.0, // offset before starting
+          2.0, // down to up (out)
+          2.0, // up to down (out)
+          6.0, // stay down
+          2.0, // down to up (back)
+          2.0, // up to down (back)
+          0.0 // immediately start back up
+          ],
+        "sync": ["float", 14, 0.0]
+      }
+    },
+
+    {
+      "trans": [0.0, 50.0, 17.0],
+      "etype": "linear-plat",
+      "game_task": 0,
+      "quat": [0, 0, 0, 1],
+      "bsphere": [0.0, 50.0, 17.0, 10],
+      "lump": {
+        "name": "linear-plat-1",
+        "path": ["vector4m",
+          [0.0, 50.0, 17.0, 1.0],
+          [0.0, 50.0, 17.0, 1.0],
+          [0.0, 60.0, 17.0, 1.0],
+          [0.0, 50.0, 17.0, 1.0],
+          [0.0, 50.0, 17.0, 1.0],
+          [0.0, 60.0, 17.0, 1.0],
+          [0.0, 50.0, 17.0, 1.0]
+        ],
+        "timings": ["float",
+          1.0, // offset before starting
+          2.0, // down to up (out)
+          2.0, // up to down (out)
+          4.0, // stay down
+          2.0, // down to up (back)
+          2.0, // up to down (back)
+          1.0 // immediately start back up
+          ],
+        "sync": ["float", 14, 0.0]
+      }
+    },
+
+    {
+      "trans": [0.0, 50.0, 24.0],
+      "etype": "linear-plat",
+      "game_task": 0,
+      "quat": [0, 0, 0, 1],
+      "bsphere": [0.0, 50.0, 24.0, 10],
+      "lump": {
+        "name": "linear-plat-2",
+        "path": ["vector4m",
+          [0.0, 50.0, 24.0, 1.0],
+          [0.0, 50.0, 24.0, 1.0],
+          [0.0, 60.0, 24.0, 1.0],
+          [0.0, 50.0, 24.0, 1.0],
+          [0.0, 50.0, 24.0, 1.0],
+          [0.0, 60.0, 24.0, 1.0],
+          [0.0, 50.0, 24.0, 1.0]
+          ],
+        "timings": ["float",
+          2.0, // offset before starting
+          2.0, // down to up (out)
+          2.0, // up to down (out)
+          2.0, // stay down
+          2.0, // down to up (back)
+          2.0, // up to down (back)
+          2.0 // immediately start back up
+          ],
+        "sync": ["float", 14, 0.0]
+      }
+    },
+
+    {
+      "trans": [0.0, 50.0, 31.0],
+      "etype": "linear-plat",
+      "game_task": 0,
+      "quat": [0, 0, 0, 1],
+      "bsphere": [0.0, 50.0, 31.0, 10],
+      "lump": {
+        "name": "linear-plat-3",
+        "path": ["vector4m",
+          [0.0, 50.0, 31.0, 1.0],
+          [0.0, 50.0, 31.0, 1.0],
+          [0.0, 60.0, 31.0, 1.0],
+          [0.0, 50.0, 31.0, 1.0],
+          [0.0, 50.0, 31.0, 1.0],
+          [0.0, 60.0, 31.0, 1.0],
+          [0.0, 50.0, 31.0, 1.0]
+        ],
+        "timings": ["float",
+          3.0, // offset before starting
+          2.0, // down to up (out)
+          2.0, // up to down (out)
+          0.0, // stay down
+          2.0, // down to up (back)
+          2.0, // up to down (back)
+          0.0 // immediately start back up
+          ],
+        "sync": ["float", 14, 0.0]
+      }
     }
-    // {
-    //   "trans": [-7.41, 3.5, 28.42], // translation
-    //   "etype": "plat",  // actor type
-    //   "game_task": "(game-task none)", // associated game task (for powercells, etc)
-    //   "quat": [0, 0, 0, 1], // quaternion
-    //   "bsphere": [-7.41, 3.5, 28.42, 10], // bounding sphere
-    //   "lump": {
-    //     "name": "test-plat"
-    //   }
-    // }
+
   ]
 }
