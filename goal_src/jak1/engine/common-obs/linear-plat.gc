@@ -10,24 +10,24 @@
   
   define path array of vector4m as usual, probably you want first and last positions to be the same
     "path": ["vector4m",
-      [808.94, 941.07, 500.18, 1.0],
-      [808.94, 941.07, 500.18, 1.0],
-      [808.94, 999.02, 500.18, 1.0],
-      [808.94, 941.07, 500.18, 1.0],
-      [808.94, 941.07, 500.18, 1.0],
-      [808.94, 999.02, 500.18, 1.0],
-      [808.94, 941.07, 500.18, 1.0]
+        [0.0, 50.0, 10.0, 1.0],
+        [0.0, 50.0, 10.0, 1.0],
+        [0.0, 60.0, 10.0, 1.0],
+        [0.0, 50.0, 10.0, 1.0],
+        [0.0, 50.0, 10.0, 1.0],
+        [0.0, 60.0, 10.0, 1.0],
+        [0.0, 50.0, 10.0, 1.0]
       ],
  
   define timings array, which says how long in seconds it should take to transition between path positions
     "timings": ["float",
-      0.0, // offset before starting
-      2.0, // down to up (out)
-      2.0, // up to down (out)
-      6.0, // stay down
-      2.0, // down to up (back)
-      2.0, // up to down (back)
-      0.0 // immediately start back up
+        0.0, // offset before starting
+        2.0, // down to up (out)
+        2.0, // up to down (out)
+        6.0, // stay down
+        2.0, // down to up (back)
+        2.0, // up to down (back)
+        0.0 // immediately start back up
       ],
 
   define sync with proper period (duration of the whole path). offset is ignored
