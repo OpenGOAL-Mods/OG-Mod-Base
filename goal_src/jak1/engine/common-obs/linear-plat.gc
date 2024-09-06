@@ -40,7 +40,7 @@
   (let* ((cur-time (mod (the-as uint (current-time)) (-> this sync period)))
          (pos 0))
     (while (< pos (-> this path curve num-cverts))
-      (let ((timing (seconds (-> this timings pos))))
+      (let ((timing (fsec (-> this timings pos))))
         (when (< cur-time timing)
           ;; we should be between pos and pos+1
           (return (+ (the float pos) (/ (the float cur-time) (the float timing)))))
