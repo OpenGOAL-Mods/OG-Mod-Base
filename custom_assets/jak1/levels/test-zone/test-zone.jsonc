@@ -43,6 +43,18 @@
   "actors" : [
 
     {
+      "trans": [875.96, 659.49, 683.8],
+      "etype": "ecovent",
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1],
+      "bsphere": [875.96, 659.49, 683.8, 10],
+      "lump": {
+        "name":"ecovent",
+        "eco-info": ["int32", 3, 1]
+      }
+    },
+
+    {
       "aid": 40000,
       "trans": [867.05, 0.22, 691.41],
       "etype": "sharkey",
@@ -25710,18 +25722,6 @@
         "water-height": ["float", 4993.45, 2048.0, 8192.0, 1048588.0],
         "look": ["int32", 47],
         "vis-dist":  ["meters", 200.0]
-      }
-    },
-
-    {
-      "trans": [875.96, 659.49, 683.8],
-      "etype": "ecovent",
-      "game_task": 0,
-      "quat" : [0, 0, 0, 1],
-      "bsphere": [875.96, 659.49, 683.8, 10],
-      "lump": {
-        "name":"ecovent",
-        "eco-info": ["int32", 3, 1]
       }
     },
 
