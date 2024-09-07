@@ -2509,6 +2509,26 @@
              :lev0 'test-zone
              :disp0 'display
              :lev1 'village1
+             :disp1 #f)
+        (new 'static
+             'continue-point
+             :name "test-zone-start-2"
+             :level 'test-zone
+             :flags (continue-flags game-start)
+             :trans
+             (new 'static 'vector :x (meters 875.96) :y (meters 40.63) :z (meters 683.8) :w 1.0)
+             :quat
+             (new 'static 'quaternion :w 1.0)
+             :camera-trans
+             (new 'static 'vector :x 0.0 :y 4096.0 :z 0.0 :w 1.0)
+             :camera-rot
+             (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+             :load-commands
+             '()
+             :vis-nick 'none
+             :lev0 'test-zone
+             :disp0 'display
+             :lev1 'village1
              :disp1 #f))
        :tasks
        '()
