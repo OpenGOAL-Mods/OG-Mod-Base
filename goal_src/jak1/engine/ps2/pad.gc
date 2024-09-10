@@ -397,8 +397,7 @@
 (defmacro cpad-pressed? (pad-idx &rest buttons)
   `(logtest? (cpad-pressed ,pad-idx) (pad-buttons ,@buttons)))
 
-;; TeamRuns addition
-(defenum taunt-menu-idx
+(defenum dpad-idx
   (none)
   (up)
   (right)
@@ -409,17 +408,13 @@
 (defun cpad-dpad-pressed? ((idx int))
   (cond
     ((cpad-pressed? idx up)
-      ; (format 0 "up~%")
-      (return (taunt-menu-idx up)))
+      (return (dpad-idx up)))
     ((cpad-pressed? idx down)
-      ; (format 0 "down~%")
-      (return (taunt-menu-idx down)))
+      (return (dpad-idx down)))
     ((cpad-pressed? idx left)
-      ; (format 0 "left~%")
-      (return (taunt-menu-idx left)))
+      (return (dpad-idx left)))
     ((cpad-pressed? idx right)
-      ; (format 0 "right~%")
-      (return (taunt-menu-idx right)))
+      (return (dpad-idx right)))
   )
   #f
 )
