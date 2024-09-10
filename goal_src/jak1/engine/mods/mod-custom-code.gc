@@ -358,11 +358,50 @@
   )
 )
 
+(defun taunt-idx->name ((idx int))
+  (case idx
+    ((1) 
+     (the-as string "BIL-AM05"))
+    ((2) 
+     (the-as string "BIL-AM1A"))
+    ((3) 
+     (the-as string "BIL-LO03"))
+    ((4) 
+     (the-as string "BIL-TA09"))
+    ((5) 
+     (the-as string "sksp0022"))
+    ((6) 
+     (the-as string "sksp0069"))
+    ((7) 
+     (the-as string "sksp0089"))
+    ((8) 
+     (the-as string "sksp009f"))
+    ((9) 
+     (the-as string "FAR-LO1A"))
+    ((10) 
+     (the-as string "GEO-AM05"))
+    ((11) 
+     (the-as string "ASSTLP32"))
+    ((12) 
+     (the-as string "FIS-LO01"))
+    ((13) 
+     (the-as string "BIR-AM02"))
+    ((14) 
+     (the-as string "BIR-AM04"))
+    ((15) 
+     (the-as string "BIR-AM06"))
+    ((16) 
+     (the-as string "BIR-AM12"))
+    (else 
+     (the-as string "st-lose"))
+  )
+)
+
 (defbehavior do-taunt-proc process ()
-   (when (-> *setting-control* current hint) 
-     (begin 
-       (kill-current-level-hint '() '() 'exit)
-       (suspend)))
+  (when (-> *setting-control* current hint) 
+    (begin 
+      (kill-current-level-hint '() '() 'exit)
+      (suspend)))
   (case (* taunt-requested -1)
     ((1) ;; UpTaunt1
     (ambient-hint-spawn "BIL-AM05" (the-as vector #f) *entity-pool* 'ambient)
@@ -415,12 +454,14 @@
   )
   (add-interaction-to-buffer 
     (interaction-type taunt)
-    (the-as float (* taunt-requested -1))
     0.0
-    "none"
+    0.0
+    (the-as string (taunt-idx->name (* taunt-requested -1)))
     "none"
     "none"
     )
+  (format 0 "Taunt Interaction Added!~%~T~S~%" (the-as string (taunt-idx->name (* taunt-requested -1))))
+  (none)
 )
 
 (defun do-taunt! ()
