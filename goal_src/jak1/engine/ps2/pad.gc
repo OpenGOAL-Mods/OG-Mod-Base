@@ -398,20 +398,28 @@
   `(logtest? (cpad-pressed ,pad-idx) (pad-buttons ,@buttons)))
 
 ;; TeamRuns addition
+(defenum taunt-menu-idx
+  (none)
+  (up)
+  (right)
+  (down)
+  (left)
+  )
+
 (defun cpad-dpad-pressed? ((idx int))
-  (cond 
+  (cond
     ((cpad-pressed? idx up)
-      (format 0 "up~%")
-      (return (pad-buttons up)))
+      ; (format 0 "up~%")
+      (return (taunt-menu-idx up)))
     ((cpad-pressed? idx down)
-      (format 0 "down~%")
-      (return (pad-buttons down)))
+      ; (format 0 "down~%")
+      (return (taunt-menu-idx down)))
     ((cpad-pressed? idx left)
-      (format 0 "left~%")
-      (return (pad-buttons left)))
+      ; (format 0 "left~%")
+      (return (taunt-menu-idx left)))
     ((cpad-pressed? idx right)
-      (format 0 "right~%")
-      (return (pad-buttons right)))
+      ; (format 0 "right~%")
+      (return (taunt-menu-idx right)))
   )
   #f
 )
