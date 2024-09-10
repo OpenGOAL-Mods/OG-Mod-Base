@@ -3,6 +3,7 @@
     ;; name in dgo: mod-remote-interaction
     ;; dgos: TODO
 
+(define-extern taunt-idx->name (function int string))
 
 (defun safe-release-from-grab ()
   ;;don't release if not grabbed (as this escapes certain states and cutscenes) and not if in freecam
@@ -1505,6 +1506,7 @@
   )
 
 (defun handle-remote-taunt ((target-idx int) (name string))
+  (format 0 "handle-remote-taunt debug:~%~Ttarget-idx: ~D~%~Tname: ~S~%" target-idx name)
   (if (process-close? (the process-drawable (handle->process (-> *remote-targets* target-idx))) 500000.0)
     (send-event (handle->process (-> *remote-targets* target-idx)) 'taunt name)
     (format 0 "remote-target ~D too far away!~%" target-idx)
