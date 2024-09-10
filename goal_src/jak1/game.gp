@@ -2106,7 +2106,7 @@
 
 (goal-src "engine/mods/input-display.gc")
 (goal-src "engine/mods/orb-placer.gc")
-
+(goal-src "engine/mods/taunt-menu.gc")
 
 (goal-src-sequence
  ;; prefix

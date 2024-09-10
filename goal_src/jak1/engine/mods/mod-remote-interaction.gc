@@ -1612,7 +1612,7 @@
         (safe-boss-up-to-phase (-> remote-player inter_name) (the int (-> remote-player inter_amount)) (= (-> remote-player inter_status) 1))
         )
       (((interaction-type taunt))
-          (handle-remote-taunt tgt-idx (-> remote-player inter_name))
+        (handle-remote-taunt tgt-idx (-> remote-player inter_name))
         )
       )
     )
