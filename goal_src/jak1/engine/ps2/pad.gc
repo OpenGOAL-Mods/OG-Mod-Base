@@ -397,6 +397,25 @@
 (defmacro cpad-pressed? (pad-idx &rest buttons)
   `(logtest? (cpad-pressed ,pad-idx) (pad-buttons ,@buttons)))
 
+;; TeamRuns addition
+(defun cpad-dpad-pressed? ((idx int))
+  (cond 
+    ((cpad-pressed? idx up)
+      (format 0 "up~%")
+      (return (pad-buttons up)))
+    ((cpad-pressed? idx down)
+      (format 0 "down~%")
+      (return (pad-buttons down)))
+    ((cpad-pressed? idx left)
+      (format 0 "left~%")
+      (return (pad-buttons left)))
+    ((cpad-pressed? idx right)
+      (format 0 "right~%")
+      (return (pad-buttons right)))
+  )
+  #f
+)
+
 (defmacro cpad-hold? (pad-idx &rest buttons)
   `(logtest? (cpad-hold ,pad-idx) (pad-buttons ,@buttons)))
 

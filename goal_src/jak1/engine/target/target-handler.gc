@@ -509,6 +509,8 @@
     )
     
   (case arg2
+    (('taunt)
+     (ambient-hint-spawn (the-as string (-> arg3 param 0)) (the-as vector #f) *entity-pool* 'ambient))
     (('attack 'attack-or-shove 'attack-invinc)
      (target-attacked arg2
                       (the-as attack-info (-> arg3 param 1))

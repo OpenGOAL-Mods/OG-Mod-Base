@@ -347,6 +347,164 @@
   (none)
   )
 
+(define taunt-requested 0)
+
+(define *taunt-array*
+  (new 'static 'array (pointer string) 4 
+    (new 'static 'array string 4 "Medicine" "YEAH HA HA" "*SNORES*" "A little further") ;; UpTaunt1 UpTaunt2 UpTaunt3 UpTaunt4
+    (new 'static 'array string 4 "YEEHAW!" "GET SOME!" "Grrr!" "Animal lover") ;; RightTaunt1 RightTaunt2 RightTaunt3 RightTaunt4
+    (new 'static 'array string 4 "Mud" "AMBUSH!" "Nasty Lurkers" "That wasnt gentle!") ;; DownTaunt1 DownTaunt2 DownTaunt3 DownTaunt4
+    (new 'static 'array string 4 "SOUIEE!" "I wish slept in" "Oh my..." "OHH!") ;; LeftTaunt1 LeftTaunt2 LeftTaunt3 LeftTaunt4
+  )
+)
+
+(defbehavior do-taunt-proc process ()
+   (when (-> *setting-control* current hint) 
+     (begin 
+       (kill-current-level-hint '() '() 'exit)
+       (suspend)))
+  (case (* taunt-requested -1)
+    ((1) ;; UpTaunt1
+    (ambient-hint-spawn "BIL-AM05" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((2) ;; DownTaunt1
+    (ambient-hint-spawn "BIL-AM1A" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((3) ;; LeftTaunt1
+    (ambient-hint-spawn "BIL-LO03" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((4) ;; RightTaunt1
+    (ambient-hint-spawn "BIL-TA09" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((5) ;; UpTaunt2
+    (ambient-hint-spawn "sksp0022" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((6) ;; DownTaunt2
+    (ambient-hint-spawn "sksp0069" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((7) ;; LeftTaunt2
+    (ambient-hint-spawn "sksp0089" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((8) ;; RightTaunt2
+    (ambient-hint-spawn "sksp009f" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((9) ;; UpTaunt3
+    (ambient-hint-spawn "FAR-LO1A" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((10) ;; DownTaunt3
+    (ambient-hint-spawn "GEO-AM05" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((11) ;; LeftTaunt3
+    (ambient-hint-spawn "ASSTLP32" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((12) ;; RightTaunt3
+    (ambient-hint-spawn "FIS-LO01" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((13) ;; UpTaunt4
+    (ambient-hint-spawn "BIR-AM02" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((14) ;; DownTaunt4
+    (ambient-hint-spawn "BIR-AM04" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((15) ;; LeftTaunt4
+    (ambient-hint-spawn "BIR-AM06" (the-as vector #f) *entity-pool* 'ambient)
+    )
+    ((16) ;; RightTaunt4
+    (ambient-hint-spawn "BIR-AM12" (the-as vector #f) *entity-pool* 'ambient)
+    )
+  )
+  (add-interaction-to-buffer 
+    (interaction-type taunt)
+    (the-as float (* taunt-requested -1))
+    0.0
+    "none"
+    "none"
+    "none"
+    )
+)
+
+(defun do-taunt! ()
+  (format 0 "taunt-requested: ~D~%" taunt-requested)
+  (process-spawn-function process do-taunt-proc) 
+  (none)
+)
+
+(defun draw-taunt-menu ()
+  "Draw a multiplayer taunt menu, if applicable"
+
+  (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id subtitle))
+    (draw-string-xy (string-format "Up: ~S"
+                                    (-> *taunt-array* 0 (the int (/ taunt-requested 4))))
+                    buf 0 
+                    (- 150 (* 8 8)) 
+                    (font-color green) 
+                    (font-flags shadow kerning))
+    (draw-string-xy (string-format "Right: ~S"
+                                    (-> *taunt-array* 1 (the int (/ taunt-requested 4))))
+                    buf 0 
+                    (- 150 (* 8 7)) 
+                    (font-color red) 
+                    (font-flags shadow kerning))
+    (draw-string-xy (string-format "Down: ~S"
+                                    (-> *taunt-array* 2 (the int (/ taunt-requested 4))))
+                    buf 0 
+                    (- 150 (* 8 6)) 
+                    (font-color blue) 
+                    (font-flags shadow kerning))
+    (draw-string-xy (string-format "Left: ~S"
+                                    (-> *taunt-array* 3 (the int (/ taunt-requested 4))))
+                    buf 0 
+                    (- 150 (* 8 5)) 
+                    (font-color pink) 
+                    (font-flags shadow kerning))
+  )
+  (none)
+)
+
+(defun taunt-menu ()
+  "Run the multiplayer taunt system"
+
+  ;; Ignore dpad inputs and dont draw menu unless in "game" mode
+  (when (= *master-mode* 'game)
+    (let ((dpad-in (cpad-dpad-pressed? 0)))
+      (when (!= dpad-in #f)
+        ;; new dpad input received
+        (format 0 "~%dpad-in: ~A~%~%" dpad-in)
+        (if (> taunt-requested 0)
+          ;; taunt was just picked, update taunt-requested and play it!
+          (begin
+            (case dpad-in
+              (((pad-buttons down))
+                (+! taunt-requested 1))
+              (((pad-buttons left))
+                (+! taunt-requested 2))
+              (((pad-buttons right))
+                (+! taunt-requested 3))
+            )
+            ;; Invert taunt-requested to disable taunt-menu until next dpad press
+            (set! taunt-requested (* taunt-requested -1))
+            (do-taunt!))
+          ;; menu was just requested, update taunt-requested
+          (begin
+            (case dpad-in
+              (((pad-buttons up))
+                (set! taunt-requested 1)) ;; TauntSet1
+              (((pad-buttons down))
+                (set! taunt-requested 5)) ;; TauntSet2
+              (((pad-buttons left))
+                (set! taunt-requested 9)) ;; TauntSet3
+              (((pad-buttons right))
+                (set! taunt-requested 13)))) ;; TauntSet4
+        )
+      )
+    )
+    (when (> taunt-requested 0)
+      (draw-taunt-menu)
+    )
+  )
+  (none)
+)
+
 
 (defun runs-every-frame ()
   ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
@@ -448,6 +606,10 @@
       )
 
     )
+  
+  ;; TeamRuns taunt menu
+  (taunt-menu)
+
   (none)
   )
 
