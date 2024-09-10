@@ -533,8 +533,7 @@
        ;     )
        ;   )
        )
-     )
-     (format 0 "Taunt was just attempted in process:~%~S~%" (-> arg0 name)))
+    )
     (('attack 'attack-or-shove 'attack-invinc)
      (target-attacked arg2
                       (the-as attack-info (-> arg3 param 1))

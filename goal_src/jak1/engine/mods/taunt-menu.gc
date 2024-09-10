@@ -17,7 +17,7 @@
 (define *taunts*
   (new 'static 'boxed-array :type taunt
     (static-taunt "Medicine" "BIL-AM05" up up)
-    (static-taunt "YEEHAW!" "BIL-AM1A" up right)
+    (static-taunt "YEEHAW!" "BIL-TA09" up right)
     (static-taunt "Mud" "BIL-AM1A" up down)
     (static-taunt "SOUIEE!" "BIL-LO03" up left)
 
@@ -27,12 +27,12 @@
     (static-taunt "OHH!" "BIR-AM06" right left)
 
     (static-taunt "YEAH HA HA" "sksp0022" down up)
-    (static-taunt "GET SOME!" "sksp0069" down right)
+    (static-taunt "GET SOME!" "sksp009F" down right)
     (static-taunt "AMBUSH!" "sksp0069" down down)
     (static-taunt "I wish I slept in" "sksp0089" down left)
 
     (static-taunt "*SNORES*" "FAR-LO1A" left up)
-    (static-taunt "Grrr!" "GEO-AM05" left right)
+    (static-taunt "Grrr!" "FIS-LO01" left right)
     (static-taunt "Nasty Lurkers!" "GEO-AM05" left down)
     (static-taunt "Oh my..." "ASSTLP32" left left)
     )
