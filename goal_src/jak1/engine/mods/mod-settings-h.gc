@@ -126,6 +126,7 @@
   (on-remote-level-update)
   (enable-debug-mode)
   (disable-debug-mode)
+  (disable-play-hints)
 )
 
 (deftype remote-player-info (structure)
