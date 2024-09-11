@@ -98,3 +98,7 @@ out/build/Release/bin/decompiler.exe
 out/build/Release/bin/extractor.exe
 out/build/Release/bin/gk.exe
 out/build/Release/bin/goalc.exe
+out/build/Release/bin/decompiler.exe
+out/build/Release/bin/extractor.exe
+out/build/Release/bin/gk.exe
+out/build/Release/bin/goalc.exe
