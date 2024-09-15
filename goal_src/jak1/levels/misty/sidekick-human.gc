@@ -1360,7 +1360,7 @@
         ;; extra stuff when skipping cutscene
         (when (and (= (get-response (-> self query)) 'no) (or (not (= *cheat-mode* 'debug)) (not (cpad-hold? 0 r1))))
           (close-specific-task! (game-task intro) (task-status need-resolution))
-          (start 'play (get-continue-by-name *game-info* "test-zone-start"))
+          (start 'play (get-continue-by-name *game-info* "plat-start"))
           ;; (start 'play (get-continue-by-name *game-info* "game-start"))
           (set-blackout-frames (seconds 0.1))
           (set! (-> *time-of-day-proc* 0 time-ratio) 300.0)
@@ -1512,7 +1512,7 @@
         ;; extra stuff when skipping cutscene
         (when (and (= (get-response (-> self query)) 'no) (or (not (= *cheat-mode* 'debug)) (not (cpad-hold? 0 r1))))
           (close-specific-task! (game-task intro) (task-status need-resolution))
-          (start 'play (get-continue-by-name *game-info* "test-zone-start"))
+          (start 'play (get-continue-by-name *game-info* "plat-start"))
           ;; (start 'play (get-continue-by-name *game-info* "game-start"))
           (set-blackout-frames (seconds 0.1))
           (set! (-> *time-of-day-proc* 0 time-ratio) 300.0)
