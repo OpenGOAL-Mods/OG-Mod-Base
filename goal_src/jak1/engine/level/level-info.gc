@@ -2487,16 +2487,15 @@
        '()
        :mood '*default-mood*
        :mood-func 'update-mood-default
-       :ocean '*ocean-map-village1*
+       :ocean #f
        :sky #t
        :continues
        '((new 'static
              'continue-point
              :name "test-zone-start"
              :level 'test-zone
-             :flags (continue-flags game-start)
              :trans
-             (new 'static 'vector :x (meters 875.96) :y (meters 40.63) :z (meters 683.8) :w 1.0)
+             (new 'static 'vector :x 0.0 :y (meters 10.) :z (meters 10.) :w 1.0)
              :quat
              (new 'static 'quaternion :w 1.0)
              :camera-trans
@@ -2509,14 +2508,70 @@
              :lev0 'test-zone
              :disp0 'display
              :lev1 'village1
-             :disp1 #f)
+             :disp1 'display))
+       :tasks
+       '()
+       :priority 100
+       :load-commands
+       '()
+       :alt-load-commands
+       '()
+       :bsp-mask #xffffffffffffffff
+       :bsphere
+       (new 'static 'sphere :w 167772160000.0)
+       :bottom-height (meters -20)
+       :run-packages
+       '()
+       :wait-for-load #t))
+
+(define plat-1
+  (new 'static
+       'level-load-info
+       :index 26
+       :name 'plat-1
+       :visname 'plat-1-vis
+       ;; name + -vis
+       :nickname 'pl1
+       ;; nickname
+       :packages
+       '()
+       :sound-banks
+       '()
+       :music-bank #f
+       :ambient-sounds
+       '()
+       :mood '*default-mood*
+       :mood-func 'update-mood-default
+       :ocean '*ocean-map-village1*
+       :sky #t
+       :continues
+       '((new 'static
+             'continue-point
+             :name "plat-start"
+             :level 'plat-1
+             :flags (continue-flags game-start)
+             :trans
+             (new 'static 'vector :x (meters 1123.1) :y (meters 40.63) :z (meters 1154.27) :w 1.0)
+             :quat
+             (new 'static 'quaternion :w 1.0)
+             :camera-trans
+             (new 'static 'vector :x 0.0 :y 4096.0 :z 0.0 :w 1.0)
+             :camera-rot
+             (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+             :load-commands
+             '()
+             :vis-nick 'none
+             :lev0 'plat-1
+             :disp0 'display
+             :lev1 'plat-2
+             :disp1 'display)
         (new 'static
              'continue-point
-             :name "test-zone-start-2"
-             :level 'test-zone
+             :name "plat-checkpoint"
+             :level 'plat-1
              :flags (continue-flags game-start)
              :trans
-             (new 'static 'vector :x (meters 875.96) :y (meters 40.63) :z (meters 683.8) :w 1.0)
+             (new 'static 'vector :x (meters 1123.1) :y (meters 40.63) :z (meters 1154.27) :w 1.0)
              :quat
              (new 'static 'quaternion :w 1.0)
              :camera-trans
@@ -2526,10 +2581,47 @@
              :load-commands
              '()
              :vis-nick 'none
-             :lev0 'test-zone
+             :lev0 'plat-1
              :disp0 'display
-             :lev1 'village1
-             :disp1 #f))
+             :lev1 'plat-2
+             :disp1 'display))
+       :tasks
+       '()
+       :priority 100
+       :load-commands
+       '()
+       :alt-load-commands
+       '()
+       :bsp-mask #xffffffffffffffff
+       :bsphere
+       (new 'static 'sphere :w 167772160000.0)
+       :bottom-height (meters -20)
+       :run-packages
+       '()
+       :wait-for-load #t))
+
+(define plat-2
+  (new 'static
+       'level-load-info
+       :index 26
+       :name 'plat-2
+       :visname 'plat-2-vis
+       ;; name + -vis
+       :nickname 'pl2
+       ;; nickname
+       :packages
+       '()
+       :sound-banks
+       '()
+       :music-bank #f
+       :ambient-sounds
+       '()
+       :mood '*default-mood*
+       :mood-func 'update-mood-default
+       :ocean '*ocean-map-village1*
+       :sky #t
+       :continues
+       '()
        :tasks
        '()
        :priority 100
@@ -2546,3 +2638,5 @@
        :wait-for-load #t))
 
 (cons! *level-load-list* 'test-zone)
+(cons! *level-load-list* 'plat-1)
+(cons! *level-load-list* 'plat-2)
