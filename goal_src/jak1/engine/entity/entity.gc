@@ -869,9 +869,7 @@
   ;;   (return this)
   ;;   )
   ;;(birth-log "call to birth! on ~A~%" this)
-
   (custom-nav-mesh-check-and-setup this)
-
   (let* ((entity-type (-> this etype))
          (info (entity-info-lookup entity-type))
          (entity-process (get-process *default-dead-pool* entity-type (if info (-> info heap-size) #x4000))))

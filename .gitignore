@@ -62,19 +62,9 @@ node_modules/
 # custom_assets/jak3/texture_replacements/*
 
 # merc replacements
-custom_assets/jak1/merc_replacements/*
-custom_assets/jak2/merc_replacements/*
-custom_assets/jak3/merc_replacements/*
-
-# merc replacements
-custom_assets/jak1/merc_replacements/*
-custom_assets/jak2/merc_replacements/*
-custom_assets/jak3/merc_replacements/*
-
-# merc replacements
-custom_assets/jak1/merc_replacements/*
-custom_assets/jak2/merc_replacements/*
-custom_assets/jak3/merc_replacements/*
+# custom_assets/jak1/merc_replacements/*
+# custom_assets/jak2/merc_replacements/*
+# custom_assets/jak3/merc_replacements/*
 
 # generated cmake files
 svnrev.h
