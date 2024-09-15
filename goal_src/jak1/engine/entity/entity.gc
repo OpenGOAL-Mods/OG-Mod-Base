@@ -831,24 +831,24 @@
       (set! (-> this nav-mesh)
         (new 'static 'nav-mesh
           :custom-hacky? #t
-          :bounds (new 'static 'sphere :x (meters 870.72) :y (meters 0.22) :z (meters 690.0) :w (meters 663.7))
-          :origin (new 'static 'vector :x (meters 870.72) :y (meters 0.22) :z (meters 690.0) :w 1.0000)
+          :bounds (new 'static 'sphere :x (meters 1102.14) :y (meters 0.22) :z (meters 1139.35) :w (meters 1747.86))
+          :origin (new 'static 'vector :x (meters 1102.14) :y (meters 0.22) :z (meters 1139.35) :w 1.0000)
           :vertex-count 4
           :vertex (new 'static 'inline-array nav-vertex 4
-            (new 'static 'nav-vertex :x (meters -431.875) :y (meters 0.0) :z (meters 500.2885) :w 1.0000)
-            (new 'static 'nav-vertex :x (meters -436.1313) :y (meters 0.0) :z (meters -496.5344) :w 1.0000)
-            (new 'static 'nav-vertex :x (meters 436.1313) :y (meters 0.0) :z (meters 496.5344) :w 1.0000)
-            (new 'static 'nav-vertex :x (meters 431.8751) :y (meters 0.0) :z (meters -500.2885) :w 1.0000))
+            (new 'static 'nav-vertex :x (meters -1225.9939) :y (meters 0.0) :z (meters 1229.9733) :w 1.0000)
+            (new 'static 'nav-vertex :x (meters -1241.8412) :y (meters 0.0) :z (meters -1221.3508) :w 1.0000)
+            (new 'static 'nav-vertex :x (meters 1241.8418) :y (meters 0.0) :z (meters 1221.3507) :w 1.0000)
+            (new 'static 'nav-vertex :x (meters 1225.9932) :y (meters 0.0) :z (meters -1229.9731) :w 1.0000))
           :poly-count 2
           :poly (new 'static 'inline-array nav-poly 2
             (new 'static 'nav-poly
             :id #x0
-            :vertex (new 'static 'array uint8 3 #x1 #x2 #x3)
+            :vertex (new 'static 'array uint8 3 #x3 #x0 #x2)
             :adj-poly (new 'static 'array uint8 3 #x1 #xff #xff)
             :pat 0)
             (new 'static 'nav-poly
             :id #x1
-            :vertex (new 'static 'array uint8 3 #x1 #x0 #x2)
+            :vertex (new 'static 'array uint8 3 #x3 #x1 #x0)
             :adj-poly (new 'static 'array uint8 3 #xff #xff #x0)
             :pat 0))
           :route (new 'static 'inline-array vector4ub 1
