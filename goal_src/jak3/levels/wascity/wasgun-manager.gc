@@ -1218,6 +1218,7 @@
             (+! (-> self score) 200)
             )
            )
+
          (+! (-> gp-0 point-queue) (* (-> self mult) (-> self score)))
          (set-time! (-> gp-0 last-hit-time))
          )
@@ -1349,6 +1350,14 @@
           )
         )
       )
+                                (add-debug-text-3d
+    #t
+    (bucket-id debug-no-zbuf1)
+    (string-format "~D" (* 1.0 (-> self score)))
+    (-> self root trans)
+    (font-color white)
+    (new 'static 'vector2h :y 8)
+    )
     (transform-post)
     )
   )
@@ -1574,6 +1583,7 @@
             (-> self root trans)
             )
           )
+
       )
     (when (-> self minimap)
       (logior! (-> self minimap flags) (minimap-flag fade-out))
@@ -1981,8 +1991,8 @@
     (set-time! (-> this added-points-time))
     (cond
       ((< 33 (-> this point-queue))
-       (+! (-> this score) 33)
-       (+! (-> this point-queue) -33)
+       (+! (-> this score) (-> this point-queue))
+       (+! (-> this point-queue) (* -1 (-> this point-queue)))
        (cond
          ((< 1650 (-> this point-queue))
           (+! (-> this score) 330)
@@ -2550,7 +2560,7 @@
                  )
                )
         )
-    (set! *wasgun-speedmult* f30-0)
+    (set! *wasgun-speedmult* (* f30-0 2.0))
     (send-event (handle->process (-> this wct)) 'speed-mult f30-0)
     f30-0
     )

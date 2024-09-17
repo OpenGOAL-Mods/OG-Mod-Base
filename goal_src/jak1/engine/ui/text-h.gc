@@ -765,6 +765,9 @@
   (speedrun-hub2-100 #x1522)
   (speedrun-hub3-100 #x1523)
   (speedrun-all-cutscenes #x1524)
+
+  (speedrun-low-collect         #x1525)
+
   ;; input options
   (input-options #x1600)
   (input-opts-select-controller #x1601)

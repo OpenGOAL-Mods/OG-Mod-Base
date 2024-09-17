@@ -34,6 +34,7 @@
   (hub2-100 118) ;; Hub 2 100% (all of Hub 1 completed)
   (hub3-100 119) ;; Hub 3 100% (all of Hub 1+2 completed)
   (all-cutscenes 120) ;; All Cutscenes
+  (low-collect-prac 121)
   )
 
 (deftype speedrun-info-jak1 (structure)

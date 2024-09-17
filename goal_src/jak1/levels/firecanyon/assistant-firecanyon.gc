@@ -164,6 +164,7 @@
                      (ja :num! (seek!))))))))))))
 
 (defmethod should-display? ((this assistant-firecanyon))
+(close-specific-task! (game-task firecanyon-assistant) (task-status need-reward-speech))
   (first-any (-> this tasks) #t)
   (= (current-status (-> this tasks)) (task-status need-reward-speech)))
 

@@ -53,3 +53,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 ;; do NOT change %MODVERSIONPLACEHOLDER% below, otherwise the mod-bundling-tools
 ;;   will be unable to automatically add version info to the speedrun display
 (define *mod-version-text* "%MODVERSIONPLACEHOLDER%")
+
+(defconstant TIME_TO_STORE_LEVEL 300)
+
+(defconstant TIME_TO_PLAY_SAVE_SOUND 120)

@@ -273,26 +273,26 @@
      ;; get/lose a life, just modify the life field
      (if (>= amount 0.0) (seek! (-> this life) (-> this life-max) amount) (seek! (-> this life) 0.0 (- amount)))
      (-> this life))
-    (('money)
-     (if (and (< 0.0 amount) (= (+ (-> this money) amount) (-> *GAME-bank* money-task-inc)))
-       ;; got enough orbs to trade, display a hint
-       (level-hint-spawn (text-id sidekick-reminder-money) "sksp0014" (the-as entity #f) *entity-pool* (game-task none)))
-     ;; need to update the various orb counters
-     (when (< 0.0 amount)
-       (let ((proc (handle->process source)))
-         (when (and proc (-> proc entity))
-           ;; we have task data for this level!
-           (when (>= (-> *level-task-data-remap* length) (-> proc entity extra level info index))
-             ;; get the level index
-             (let ((level-idx (-> *level-task-data-remap* (+ (-> proc entity extra level info index) -1))))
-               ;; increment the level money count
-               (+! (-> this money-per-level level-idx) (the int amount))
-               ;; increment our total money in the game (out of the 2000 max orbs)
-               (+! (-> this money-total) amount)
-               ;; if we have all the money in our level, display the all orbs graphic
-               (if (= (-> this money-per-level level-idx) (-> (get-game-count level-idx) money-count)) (activate-orb-all level-idx)))))))
-     ;; increment our current money count
-     (+! (-> this money) amount))
+    ;; (('money)
+    ;;  (if (and (< 0.0 amount) (= (+ (-> this money) amount) (-> *GAME-bank* money-task-inc)))
+    ;;    ;; got enough orbs to trade, display a hint
+    ;;    (level-hint-spawn (text-id sidekick-reminder-money) "sksp0014" (the-as entity #f) *entity-pool* (game-task none)))
+    ;;  ;; need to update the various orb counters
+    ;;  (when (< 0.0 amount)
+    ;;    (let ((proc (handle->process source)))
+    ;;      (when (and proc (-> proc entity))
+    ;;        ;; we have task data for this level!
+    ;;        (when (>= (-> *level-task-data-remap* length) (-> proc entity extra level info index))
+    ;;          ;; get the level index
+    ;;          (let ((level-idx (-> *level-task-data-remap* (+ (-> proc entity extra level info index) -1))))
+    ;;            ;; increment the level money count
+    ;;            (+! (-> this money-per-level level-idx) (the int amount))
+    ;;            ;; increment our total money in the game (out of the 2000 max orbs)
+    ;;            (+! (-> this money-total) amount)
+    ;;            ;; if we have all the money in our level, display the all orbs graphic
+    ;;            (if (= (-> this money-per-level level-idx) (-> (get-game-count level-idx) money-count)) (activate-orb-all level-idx)))))))
+    ;;  ;; increment our current money count
+    ;;  (+! (-> this money) amount))
     (('fuel-cell)
      ;; got a power cell!
      ;; in this case, the amount is actually the index of the power cell's task
@@ -446,7 +446,7 @@
          ;; get a big health.
          (pickup-collectable! this (pickup-type eco-green) (-> *FACT-bank* health-small-inc) (process->handle (-> this process)))))
      (-> this eco-pill))
-    (((pickup-type money))
+    (((pickup-type eco-pill))
      ;; get money.
      (when (< 0.0 amount)
        (#when PC_PORT
@@ -456,6 +456,7 @@
        (if (time-elapsed? (-> this money-pickup-time) (seconds 0.05)) (sound-play "money-pickup"))
        (set-time! (-> this money-pickup-time)))
      (adjust (-> (the-as target (-> this process)) game) 'money amount source-handle))
+     ;;0.0))
     (((pickup-type fuel-cell))
      ;; the amount is actually the index of the task.
      (let ((s4-2 (the int amount)))

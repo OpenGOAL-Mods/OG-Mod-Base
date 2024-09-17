@@ -7,7 +7,7 @@
 (declare-type crate-buzzer crate)
 
 ;; DECOMP BEGINS
-
+(defun-extern on-slide-flut-racer? symbol)
 (defskelgroup *crate-barrel-sg*
   crate
   crate-barrel-lod0-jg
@@ -459,7 +459,30 @@
              (increment-success-for-hint (text-id sidekick-hint-crate-iron))
              (increment-success-for-hint (text-id training-ironcrate))
              (send-event arg0 'get-attack-count 1)
-             (go-virtual die #f (the-as int s5-0)))
+
+
+                          (if  (or
+                          (= (-> self fact pickup-type) (pickup-type buzzer))
+                          )
+    (begin
+     (format #t "L 466 buzzer crates")
+     (go-virtual die #f (the-as int s5-0))
+    )
+     (oh-shit-an-orb)
+
+
+             )
+
+
+            ;;  (if  (and (not (on-slide-flut-racer?)) (!= (-> self fact pickup-type) (pickup-type buzzer)))
+
+            ;;  (go-virtual die #f (the-as int s5-0))
+            ;;               (begin
+            ;;  (format #t "L 464 crates")
+            ;;  (oh-shit-an-orb)
+            ;;               )
+            ;;  )
+             )
             (else
              (when (and (!= s4-0 (-> self incomming-attack-id)) (= (-> self root trans y) (-> self base y)))
                (if (not (and (!= *kernel-boot-message* 'play) (= (-> *setting-control* current language) (language-enum japanese))))
@@ -490,7 +513,11 @@
                                  (the-as entity #f)
                                  *entity-pool*
                                  (game-task none)))
-             (go-virtual die #f (the-as int s5-0)))
+                                 (if (and (not (on-slide-flut-racer?)) (!= (-> self fact pickup-type) (pickup-type buzzer)))
+            (go-virtual die #f (the-as int s5-0))
+                      (begin (format #t "501 crates")
+                       (oh-shit-an-orb)))
+             )
             (else
              (when (and (!= s4-0 (-> self incomming-attack-id)) (= (-> self root trans y) (-> self base y)))
                (level-hint-spawn (text-id sidekick-hint-crate-steel) "sksp0006" (the-as entity #f) *entity-pool* (game-task none))

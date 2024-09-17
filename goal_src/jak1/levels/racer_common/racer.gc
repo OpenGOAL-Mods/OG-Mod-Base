@@ -175,12 +175,35 @@
               (let ((v1-24 gp-0)) (set! (-> v1-24 width) (the float 440)))
               (let ((v1-25 gp-0)) (set! (-> v1-25 height) (the float 80)))
               (set! (-> gp-0 flags) (font-flags shadow kerning large))
-              (print-game-text (lookup-text! *common-text* (text-id press-to-use) #f) gp-0 #f 128 22))
-            (if *allow-zoomer-anywhere* ;; if "self" is passed instead of #f, deloading level/zoomer will crash ;;mod-base-change
-              (if (and (or (cpad-pressed? 0 circle) (= (-> self condition) 4)) (send-event *target* 'change-mode 'racing #f))
-                (go-virtual pickup (the-as (state collectable) (method-of-object self wait-for-return))))
-              (if (and (or (cpad-pressed? 0 circle) (= (-> self condition) 4)) (send-event *target* 'change-mode 'racing self))
-                (go-virtual pickup (the-as (state collectable) (method-of-object self wait-for-return)))))))
+              ;;(print-game-text (lookup-text! *common-text* (text-id press-to-use) #f) gp-0 #f 128 22)
+              (cond
+                ((and  (<= 20 (-> *game-info* buzzer-total))
+                      (= (-> (level-get-target-inside *level*) name) 'firecanyon)
+                      (!= (-> *game-info* current-continue) (get-continue-by-name *game-info* "firecanyon-end")))
+                  ;; skip FCS for low-collect-prac
+                  (print-game-text (lookup-text! *common-text* (text-id press-to-warp) #f)  gp-0 #f 128 22)
+                  (if (cpad-pressed? 0 circle)
+                    (send-event *target* 'continue (get-continue-by-name *game-info* "firecanyon-end"))))
+
+
+                        ((and  (<= 20 (-> *game-info* buzzer-total))
+                      (= (-> (level-get-target-inside *level*) name) 'firecanyon)
+                      )
+                  ;; skip FCS for low-collect-prac
+                  (print-game-text (lookup-text! *common-text* (text-id press-to-use) #f)  gp-0 #f 128 22)
+                  (if (cpad-pressed? 0 circle)
+                          (if (and (or (cpad-pressed? 0 circle) (= (-> self condition) 4)) (send-event *target* 'change-mode 'racing #f))
+                    (go-virtual pickup (the-as (state collectable) (method-of-object self wait-for-return))))))
+
+
+                (*allow-zoomer-anywhere* ;; if "self" is passed instead of #f, deloading level/zoomer will crash
+                  (print-game-text (lookup-text! *common-text* (text-id press-to-use) #f) gp-0 #f 128 22)
+                  (if (and (or (cpad-pressed? 0 circle) (= (-> self condition) 4)) (send-event *target* 'change-mode 'racing #f))
+                    (go-virtual pickup (the-as (state collectable) (method-of-object self wait-for-return)))))
+                (else
+                  ;; vanilla
+                  (print-game-text  (string-format "GET ~D MORE FLIES LMAO" (- 20 (-> *game-info* buzzer-total))) gp-0 #f 128 22)
+              )))))
         (racer-effect)
         (suspend))))
   :post ja-post)

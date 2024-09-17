@@ -4,8 +4,9 @@
 (require "engine/target/logic-target.gc")
 (define-extern target-powerup-effect (function symbol none :behavior target))
 
+(define *global-continue* #f)
 ;; DECOMP BEGINS
-
+(defun-extern oh-shit-an-orb none)
 (defbehavior target-generic-event-handler target ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (local-vars (v0-0 object))
   (case arg2
@@ -13,10 +14,18 @@
      (when (not (logtest? (-> self state-flags) (state-flags dying)))
        (let ((s4-0 (-> arg3 param 0))
              (f28-0 (the-as float (-> arg3 param 1))))
+             (when (= (the-as pickup-type s4-0) (pickup-type money))
+              (format #t "L18 handler")
+             (oh-shit-an-orb)
+             (return #f)
+             )
+
+
          (if (!= (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) (the-as float 0.0) (the-as handle #f))
                  (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) f28-0 (process->handle arg0)))
            #t
-           'full))))
+           'full)))
+           )
     (('reset-pickup) (reset! (-> self fact) (the-as symbol (-> arg3 param 0))))
     (('reset-collide)
      (cond
@@ -41,7 +50,12 @@
      (set! v0-0 (+ (-> self control unknown-dword51) (-> arg3 param 0)))
      (set! (-> self control unknown-dword51) (the-as int v0-0))
      v0-0)
-    (('continue) (go target-continue (the-as continue-point (-> arg3 param 0))))
+          (('continue)
+      (if (and (not *global-continue*) (!= (-> *target* state name) 'target-continue))
+       (go target-continue (the-as continue-point (-> arg3 param 0)))
+
+      )
+       )
     (('query)
      (case (-> arg3 param 0)
        (('powerup) (and (= (-> self fact eco-type) (-> arg3 param 1)) (< 0.0 (-> self fact eco-level))))

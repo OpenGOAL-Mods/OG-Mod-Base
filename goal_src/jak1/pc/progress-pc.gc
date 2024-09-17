@@ -806,6 +806,7 @@
        (new 'static 'game-option :option-type (game-option-type button) :name (text-id speedrun-hub2-100) :scale #t)
        (new 'static 'game-option :option-type (game-option-type button) :name (text-id speedrun-hub3-100) :scale #t)
        (new 'static 'game-option :option-type (game-option-type button) :name (text-id speedrun-all-cutscenes) :scale #t)
+       (new 'static 'game-option :option-type (game-option-type button) :name (text-id speedrun-low-collect) :scale #t)
        (new 'static 'game-option :option-type (game-option-type button) :name (text-id back) :scale #t)))
 
 (define *secrets-title*
@@ -2508,7 +2509,8 @@
                  (((text-id speedrun-hub1-100)) (progress-fast-save-and-start-speedrun (speedrun-category hub1-100)))
                  (((text-id speedrun-hub2-100)) (progress-fast-save-and-start-speedrun (speedrun-category hub2-100)))
                  (((text-id speedrun-hub3-100)) (progress-fast-save-and-start-speedrun (speedrun-category hub3-100)))
-                 (((text-id speedrun-all-cutscenes)) (progress-fast-save-and-start-speedrun (speedrun-category all-cutscenes))))
+                 (((text-id speedrun-all-cutscenes)) (progress-fast-save-and-start-speedrun (speedrun-category all-cutscenes)))
+                 (((text-id speedrun-low-collect)) (progress-fast-save-and-start-speedrun (speedrun-category low-collect-prac))))
                (commit-to-file *pc-settings*)
                ;; other behaviors are hardcoded elsewhere because screw you.
                )

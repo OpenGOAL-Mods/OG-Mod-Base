@@ -861,7 +861,9 @@
          (if (-> self mushroom)
            (increment-success-for-hint (text-id citadel-generator))
            (increment-success-for-hint (text-id citadel-generator-no-mushroom)))
-         (go citb-generator-break))
+         (if  (task-closed? (game-task village3-button) (task-status need-hint))  (go citb-generator-break) (oh-shit-an-orb))
+
+         )
         (('trigger) #t)))
   :exit
     (behavior ()

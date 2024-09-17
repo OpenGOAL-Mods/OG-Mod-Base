@@ -20,8 +20,206 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Begin function defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define *test-val* 0)
+
+(define k 1.0)
+
+(defun exponent ((base float) (power float))
+  (let ((result 1.0)
+        (is-negative (< power 0)))  ;; Check if the power is negative
+    (dotimes (i (if is-negative (the-as int (- 0 power)) (the-as int power)))  ;; Loop based on absolute value of power
+      (set! result (* result base)))
+    (if is-negative
+        (/ 1.0 result)  ;; If power was negative, return the reciprocal of the result
+        result)))       ;; Otherwise, return the result as is
+
+(defun simiod ((x int))
+  (let ((k 1.0))  ;; Define k for the steepness of the sigmoid function
+    (/ 1
+       (+ 1 (exponent 2.71828 (the-as float (* -1 k (- x 180))))))))
+
+
+  ;; 180 and above, always true (deadly)
+
+
+
+
+(defun got-extra-item? ()
+(if (> (-> *game-info* money-total) 0.0)
+(return #t)
+)
+
+(if (> (-> *game-info* fuel) 7.0)
+(return #t))
+
+(if (and (not (task-closed? (game-task village3-button) (task-status need-hint)) ) (task-closed? (game-task jungle-fishgame) (task-status need-resolution)) )
+(return #t)
+)
+;; (task-closed? (game-task village3-button) (task-status need-hint))   red sage button pressed
+;;(task-closed? (game-task jungle-fishgame) (task-status need-resolution)) is fish done
+#f
+)
+
+
+(defun is-cell-ok ((task game-task))
+
+(if (= task (game-task firecanyon-end))
+(return #t)
+)
+
+(if (= task (game-task training-buzzer))
+(return #t)
+)
+(if (= task (game-task training-gimmie))
+(return #t)
+)
+(if (= task (game-task training-climb))
+(return #t)
+)
+(if (= task (game-task training-door))
+(return #t)
+)
+
+(if (= task (game-task citadel-sage-green))
+(return #t)
+)
+
+(if (= task (game-task jungle-fishgame))
+(return #t)
+)
+
+#f
+)
+(defun get-extra-collect-count-from-mem ()
+  ;;(format #t "getting unlock level it is ~D~%" (-> *game-info* money-per-level 3))
+  (the int (-> *game-info* money-per-level 5) )
+)
+
+(defun reset-extra-collect-count()
+(when (nonzero? (get-extra-collect-count-from-mem))
+(set! (-> *game-info* money-per-level 5) 0)
+)
+(none))
+
+(defun update-extra-collect-in-mem ((arg1 int))
+
+  (set! (-> *game-info* money-per-level 5) (+ (-> *game-info* money-per-level 5) (the-as uint arg1)))
+  (when *debug-segment*
+    (format #t "Adding extra-collect to mem stored value is now  ~D~%" (-> *game-info* money-per-level 5))
+  )
+
+  (none)
+)
+
+(define *started-oh-shit-orb?* #f)
+(defun oh-shit-an-orb ()
+;;punish a player if they get a orb
+ (format #t "oh shit an orb~%")
+(when (and *target* (not *started-oh-shit-orb?*))
+(update-extra-collect-in-mem 1)
+
+(send-event *target* 'continue *continue-30-second-ago*)
+
+
+)
+(set! *started-oh-shit-orb?* #f)
+(none))
+
+(defun should-cell-autosave? ((task game-task))
+;; (when (or (= task 69);;firecanyon end
+;;           (= task 94);;geyser climb
+
+
+;;       )
+;;     (if *cheat-mode* (sound-play "bigshark-bite"))
+;;     (return #t)
+;; )
+#f)
+
+(defun time-until-store-new-level ()
+  (let* ((current-time-seconds (- (/ (current-time) (seconds 1)) 1000))
+         (remainder (mod current-time-seconds TIME_TO_STORE_LEVEL)))
+    (if (zero? remainder)
+        0
+        (- TIME_TO_STORE_LEVEL remainder))))
+(define *are-we-playing-save-hint* #f)
+
+(defun gross-autosave-reminder-function ()
+(when (> (/ (current-time) 300.0) 1020)
+(when (= (mod (- (/  (current-time) (seconds 1)) 1000) TIME_TO_PLAY_SAVE_SOUND) 0)
+(when (and (not *are-we-playing-save-hint*) (= (rand-vu-int-range 0 3) 2))
+(play-sound-file "a.mp3" 100)
+(set! *are-we-playing-save-hint* #t)
+)
+)
+(when (not (= (mod (- (/  (current-time) (seconds 1)) 1000) TIME_TO_PLAY_SAVE_SOUND) 0))
+(set! *are-we-playing-save-hint* #f)
+)
+)
+(none))
+
+(defun on-slide-flut-racer? ()
+
+          (aif *target*
+               (case (-> it next-state name)
+                 (('target-racing 'target-racing-bounce
+                                 'target-racing-death
+                                 'target-racing-falling
+                                 'target-racing-grab
+                                 'target-racing-hit
+                                 'target-racing-jump
+                                 'target-racing-smack
+                                 'target-racing-start)
+                  (return #t))))
+
+          (aif *target*
+               (case (-> it next-state name)
+                 (('target-flut-air-attack 'target-flut-air-attack-hit-ground
+                                          'target-flut-double-jump
+                                          'target-flut-falling
+                                          'target-flut-grab
+                                          'target-flut-hit
+                                          'target-flut-hit-ground
+                                          'target-flut-jump
+                                          'target-flut-running-attack
+                                          'target-flut-stance
+                                          'target-flut-start
+                                          'target-flut-walk)
+                  (return #t))))
+
+                            (aif *target*
+               (case (-> it next-state name)
+                 (('target-tube
+                 'target-tube-hit
+                 'target-tube-jump
+                 'target-tube-start)
+                  (return #t))))
+
+
+                  #f)
+
+
+
 
 (defun runs-every-frame ()
+
+(if (= *continue-30-second-ago* (the-as continue-point #f))
+(set! *continue-30-second-ago* (get-continue-by-name *game-info* "training-start"))
+)
+
+(if (= *continue-30-second-ago* (get-continue-by-name *game-info* "title-start"))
+(set! *continue-30-second-ago* (get-continue-by-name *game-info* "training-start"))
+)
+
+(when (= (mod (- (/  (current-time) (seconds 1)) 1000) TIME_TO_STORE_LEVEL) 0)
+(set! *test-val* (- (/  (current-time) (seconds 1)) 1000))
+(if (not (=  (-> *game-info* current-continue level) (-> *continue-30-second-ago* level)))
+(set! *continue-30-second-ago* (-> *game-info* current-continue))
+)
+
+)
+
+(gross-autosave-reminder-function)
   ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
   (if *show-input-display* (input-display-on) (input-display-off))
   ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
@@ -71,7 +269,7 @@
        ;; Code here runs as soon as you pickup small green eco
        )
       (((pickup-type eco-green))
-       ;; Code here runs as soon as you pickup big green eco 
+       ;; Code here runs as soon as you pickup big green eco
        ))
     (when from-vent?
       ;; Code here runs only if the eco was picked up from a vent

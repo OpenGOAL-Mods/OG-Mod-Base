@@ -270,6 +270,10 @@
      (set! (-> *pc-settings* skip-movies?) #f)
      ;; spawn at the geyser warp gate checkpoint
      (initialize! *game-info* 'game (the-as game-save #f) "intro-start"))
+    (((speedrun-category low-collect-prac))
+      ;; spawn at the geyser warp gate checkpoint
+      (initialize! *game-info* 'game (the-as game-save #f) "game-start")
+      )
     (else
      (format 0 "start-speedrun: unrecognized category ~S~%" (enum->string speedrun-category (-> *speedrun-info* category)))))
   (enforce-speedrun-pc-settings)
@@ -430,6 +434,7 @@
   (set! (-> *speedrun-info* should-display?) #f)
   (none))
 
+(defun-extern low-collect-draw-settings-debug none)
 (defun speedrun-mode-update ()
   "A per frame update for speedrunning related stuff"
   (when (-> *pc-settings* speedrunner-mode?)
@@ -437,6 +442,7 @@
     (update-autosplit-info-jak1)
     ;; Draw info to the screen
     (speedrun-draw-settings)
+    (low-collect-draw-settings-debug)
     (enforce-speedrun-pc-settings)
     ;; Run after-blackout speedrun setup (if needed)
     (setup-speedrun-post-blackout))
@@ -464,6 +470,30 @@
                       buf
                       0
                       (- 220 (* 8 5))
+                      (font-color flat-yellow)
+                      (font-flags shadow kerning))))
+  (none))
+
+(defun-extern time-until-store-new-level int)
+(define *continue-30-second-ago* (the-as continue-point #f))
+
+  (defun low-collect-draw-settings-debug ()
+  "Draw speedrun related settings in the bottom left corner"
+  (when (and *cheat-mode* (-> *pc-settings* speedrunner-mode?) (not (paused?)) )
+    ;; check if we've landed (either we're on ground/surface/water, or about to target-hit-ground)
+    (when (and *target*
+               (or (logtest? (-> *target* control status) (cshape-moving-flags onground onsurf on-water))
+                   (= (-> *target* next-state name) 'target-hit-ground)))
+      (true! *has-landed?*))
+    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id subtitle))
+      (draw-string-xy (string-format "Speedrunner Mode ~%ModBase ~S / ~S ~%Category: ~S ~%Stored Continue ~A~%Has Landed? ~D"
+                                     *pc-settings-built-sha* *mod-version-text*
+                                     (enum->string speedrun-category (-> *speedrun-info* category))
+                                     (-> *continue-30-second-ago* name)
+                                     (time-until-store-new-level))
+                      buf
+                      200
+                      (- 50 (* 8 5))
                       (font-color flat-yellow)
                       (font-flags shadow kerning))))
   (none))

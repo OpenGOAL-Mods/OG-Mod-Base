@@ -7,7 +7,7 @@
 (require "pc/pckernel.gc")
 (require "engine/common-obs/collectables-part.gc")
 (require "engine/entity/entity.gc")
-
+(defun-extern is-cell-ok game-task symbol)
 ;; name: collectables.gc
 ;; name in dgo: collectables
 ;; dgos: GAME, ENGINE
@@ -316,7 +316,8 @@
                  (and (logtest? (-> self flags) (collectable-flags can-collect))
                       (time-elapsed? (-> self birth-time) (-> self collect-timeout))
                       (!= (-> self next-state name) 'pickup)
-                      (send-event proc 'get-pickup (-> self fact pickup-type) (-> self fact pickup-amount))))
+                      (send-event proc 'get-pickup (-> self fact pickup-type) (-> self fact pickup-amount))
+                      ))
         (logclear! (-> self mask) (process-mask actor-pause))
         (go-virtual pickup #f (process->handle proc)))
       (cond
@@ -737,13 +738,14 @@
   :virtual #t
   :code
     (behavior ((arg0 object) (arg1 handle))
-      ;; og:preserve-this added
+      ;;og:preserve-this added
       (if (nonzero? (-> self part)) (kill-and-free-particles (-> self part)))
       (logclear! (-> self mask) (process-mask actor-pause))
       (clear-collide-with-as (-> self root))
       (process-entity-status! self (entity-perm-status dead) #t)
       (runs-on-orb-pickup (ppointer->process (-> self parent))) ;; trigger hook for mod base
-      (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* money)))))
+      (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* money))))
+      )
   :exit
     (behavior ()
       ;; refresh orb-placer list in debug mode
@@ -945,6 +947,7 @@
               (fuel-cell-animate)
               (suspend)
               (ja :num! (loop! f30-1))))))))
+(defun-extern should-cell-autosave? game-task symbol)
 
 (defstate pickup (fuel-cell)
   :virtual #t
@@ -953,6 +956,9 @@
       (set-time! (-> self state-time))
       (set! (-> self state-object) #t)
       (let ((t9-1 (-> (the-as (state eco-collectable) (find-parent-state)) enter))) (if t9-1 (t9-1))))
+
+
+
   :trans
     (behavior ()
       (let ((f30-0 (the-as float
@@ -968,6 +974,11 @@
                              ((string= (-> self victory-anim name) "fuel-cell-racer-victory-1") 88.0)
                              ((string= (-> self victory-anim name) "fuel-cell-flut-victory-1") 150.0)
                              (else 5000.0)))))
+
+            ;;                             (oh-shit-an-orb)
+            ;;  (return #f)
+
+
         (when (and (logtest? (-> self skel status) (janim-status spool)) (and (>= (ja-aframe-num 0) f30-0) (-> self state-object)))
           (set! (-> self state-object) #f)
           (kill-and-free-particles (-> self part))
@@ -979,6 +990,13 @@
   :code
     (behavior ((arg0 object) (arg1 handle))
       (local-vars (sv-96 res-tag))
+    (when (not (is-cell-ok (the game-task (-> self fact pickup-amount))))
+            (oh-shit-an-orb)
+
+             (format #t "L 996  cell")
+             (return #f)
+    )
+
       (sound-play "pu-powercell")
       (clear-collide-with-as (-> self root))
       (logclear! (-> self mask) (process-mask actor-pause))
@@ -1021,7 +1039,8 @@
       (add-setting! 'sfx-volume 'rel (-> *setting-control* current sfx-volume-movie) 0)
       (add-setting! 'ambient-volume 'rel (-> *setting-control* current ambient-volume-movie) 0)
       (process-spawn othercam self 10 #f #t :to self)
-      (auto-save-command 'auto-save 0 0 *default-pool*)
+
+
       (ja-play-spooled-anim (-> self victory-anim)
                             (the-as art-joint-anim fuel-cell-idle-ja)
                             (the-as art-joint-anim #f)
@@ -1108,6 +1127,9 @@
         (((game-task jungle-eggtop) (game-task snow-eggtop) (game-task snow-ball) (game-task sunken-slide)))
         (else (send-event (ppointer->process (-> *hud-parts* fuel-cell)) 'show)))
       (runs-on-cell-pickup 'cutscene-end)
+            (if (should-cell-autosave? (the game-task (-> self fact pickup-amount)))
+        (auto-save-command 'auto-save 0 0 *default-pool*)
+      )
       (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* fuel-cell)))))
   :post
     (behavior ()

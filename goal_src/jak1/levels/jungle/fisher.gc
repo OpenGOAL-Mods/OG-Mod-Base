@@ -1156,7 +1156,11 @@
     ((and (< (-> self params vel) 0.0) (>= 0.0 (-> self spawner)))
      (set! (-> self params vel) (- (-> self params vel)))
      (set! (-> self spawner) 0.0)))
-  (when (and (nonzero? (-> self params period)) (time-elapsed? (-> self spawn-time) (-> self params period)))
+
+
+  (when (and
+    (task-closed? (game-task village3-button) (task-status need-hint))
+  (nonzero? (-> self params period)) (time-elapsed? (-> self spawn-time) (-> self params period)))
     (let ((gp-0 (cond
                   ((rand-vu-percent? (-> self params powerup-percent))
                    (if (and (time-elapsed? (-> self ambient-big-one) (seconds 30))
@@ -1172,6 +1176,34 @@
       (set-time! (-> self spawn-time))
       (sound-play "fish-spawn" :vol 70)
       (fisher-spawn-ambient)
+      (process-spawn fisher-fish gp-0 (-> self spawner) (* 1.85 (-> self params fish-vel)) :to self)))
+
+  (when (and
+    (not (task-closed? (game-task village3-button) (task-status need-hint)) )
+  (nonzero? (-> self params period)) (time-elapsed? (-> self spawn-time) (-> self params period)))
+    (let ((gp-0 (cond
+                  ((rand-vu-percent? (-> self params powerup-percent))
+                   (if (and (time-elapsed? (-> self ambient-big-one) (seconds 30))
+                            (play-ambient (-> self ambient) "FIS-TA03" #t (-> self root trans)))
+                     (set-time! (-> self ambient-big-one)))
+                   'powerup)
+                  ((rand-vu-percent? (-> self params bad-percent)) 'bad)
+                  ((rand-vu-percent? (-> self params deadly-percent)) 'deadly)
+                  (else 'normal))))
+      (if (and (!= gp-0 'bad) (< 0.8 (fabs (- (-> self spawner-last) (-> self spawner)))))
+        (set! (-> self spawner) (* 0.5 (+ (-> self spawner-last) (-> self spawner)))))
+      (set! (-> self spawner-last) (-> self spawner))
+      (set-time! (-> self spawn-time))
+      (sound-play "fish-spawn" :vol 70)
+      (fisher-spawn-ambient)
+      ;;(if (< 180 (-> self caught))(set! gp-0 'deadly))
+      ;;(format #t "~F ~F ~%" (/ (the float (-> self caught)) 180.0) (-> self caught) )
+      (when (> (-> self caught) 100)(if (> (/ (the float (-> self caught)) 180.0) (rand-vu-float-range
+      0.0 1.0))
+
+(set! gp-0 'deadly)
+
+      ))
       (process-spawn fisher-fish gp-0 (-> self spawner) (* 1.85 (-> self params fish-vel)) :to self)))
   (let ((f1-14 (analog-input (the-as int (-> *cpad-list* cpads 0 leftx)) 128.0 32.0 110.0 28.0)))
     (+! (-> self paddle-vel) (* f1-14 (seconds-per-frame))))
