@@ -22,12 +22,12 @@ jobs:
     uses: open-goal/mod-bundling-tools/.github/workflows/mod-bundler.yml@v1
     with:
       semverBump: ${{ inputs.bump }}
-      metadataName: "Test Mod Bundle"
-      metadataDescription: "This is a test mod bundle. 2"
+      metadataName: "Test Modsadd Bundle"
+      metadataDescription: "This is adasd test mod bundle. 2"
       metadataSupportedGames: "jak1"
       metadataAuthors: "barg,vaser"
       metadataTags: "rng,gameplay-mod"
-      metadataWebsiteUrl: "https://www.example.com/please/change/me"
+      metadataWebsiteUrl: "https://www.exampladsae.com/please/change/me"
       toolingRepo: "OpenGOAL-Mods/OG-Mod-Base"
       gameAssetsDir: "game/assets"
     secrets:
