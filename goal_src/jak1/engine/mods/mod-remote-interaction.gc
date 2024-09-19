@@ -659,7 +659,7 @@
 
 (defun give-buzzer-from-level ((buzzer-id float) (level string))
     (cond
-      ((name= (-> (level-get-target-inside *level*) name) level)
+      ((is-same-level? (-> (level-get-target-inside *level*) name) (string->symbol level))
         (pickup-collectable! (-> *target* fact) (pickup-type buzzer) buzzer-id (process->handle *target*))
         )
       (else
