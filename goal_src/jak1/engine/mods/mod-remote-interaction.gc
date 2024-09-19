@@ -3,7 +3,6 @@
     ;; name in dgo: mod-remote-interaction
     ;; dgos: TODO
 
-
 (defun safe-release-from-grab ()
   ;;don't release if not grabbed (as this escapes certain states and cutscenes) and not if in freecam
   (when (and (is-grabbed?) (not (has-camera-type? 'cam-free-floating)))
@@ -1504,6 +1503,15 @@
     (none)
   )
 
+(defun handle-remote-taunt ((target-idx int) (name string))
+  (format 0 "handle-remote-taunt debug:~%~Ttarget-idx: ~D~%~Tname: ~S~%" target-idx name)
+  (if (process-close? (the process-drawable (handle->process (-> *remote-targets* target-idx))) 500000.0)
+    (send-event (handle->process (-> *remote-targets* target-idx)) 'taunt name)
+    (format 0 "remote-target ~D too far away!~%" target-idx)
+  )
+  (none)
+)
+
 (defun handle-remote-interaction ((remote-player remote-player-info) (tgt-idx int))
   (when (!= (-> remote-player inter_type) (interaction-type none))
     (case (-> remote-player inter_type)
@@ -1600,6 +1608,9 @@
         )
       (((interaction-type boss-phase))
         (safe-boss-up-to-phase (-> remote-player inter_name) (the int (-> remote-player inter_amount)) (= (-> remote-player inter_status) 1))
+        )
+      (((interaction-type taunt))
+        (handle-remote-taunt tgt-idx (-> remote-player inter_name))
         )
       )
     )

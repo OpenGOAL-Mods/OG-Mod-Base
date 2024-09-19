@@ -509,6 +509,31 @@
     )
     
   (case arg2
+    (('taunt)
+     (let ((hint (the (pointer level-hint) (ambient-hint-spawn (the string (-> arg3 param 0)) (-> self control trans) *entity-pool* 'ambient))))
+       ; (when hint
+       ;   (process-spawn-function process
+       ;     (lambda ((h (pointer level-hint)) (t vector))
+       ;       (until (not (ppointer->process h))
+       ;         (let* ((hint-proc (the level-hint (ppointer->process h)))
+       ;                (hint-id (-> hint-proc sound-id))
+       ;                ; (hint-id (current-str-id))
+       ;                (buf (the sound-rpc-set-param (get-sound-buffer-entry)))
+       ;                )
+       ;           (set! (-> buf command) (sound-command set-param))
+       ;           (set! (-> buf id) hint-id)
+       ;           (sound-trans-convert (-> buf parms trans) t)
+       ;           (set! (-> buf parms mask) (sound-mask trans))
+       ;           )
+       ;         (suspend)
+       ;         )
+       ;       )
+       ;     hint
+       ;     (-> self control trans)
+       ;     )
+       ;   )
+       )
+    )
     (('attack 'attack-or-shove 'attack-invinc)
      (target-attacked arg2
                       (the-as attack-info (-> arg3 param 1))

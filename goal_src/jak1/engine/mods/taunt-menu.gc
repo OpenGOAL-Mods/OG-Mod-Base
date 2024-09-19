@@ -1,0 +1,271 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(defun-extern add-interaction-to-buffer interaction-type float float string string string none)
+
+(deftype taunt (structure)
+  ((menu-name string)
+   (ambient-name string)
+   (menu-idx dpad-idx)
+   (play-idx dpad-idx)
+   )
+  )
+
+(defmacro static-taunt (name ambient dpad play)
+  `(new 'static 'taunt :menu-name ,name :ambient-name ,ambient :menu-idx (dpad-idx ,dpad) :play-idx (dpad-idx ,play)))
+
+(define *taunts*
+  (new 'static 'boxed-array :type taunt
+    (static-taunt "YEEHAW!" "BIL-TA09" up up)
+    (static-taunt "Mud" "BIL-AM1A" up right)
+    (static-taunt "WE MADE IT!" "SKSP0095" up down)
+    (static-taunt "Fish in the mornin" "FIS-AM04" up left)
+
+    (static-taunt "Waiting" "SKSP0444" right up)
+    (static-taunt "*SNORES*" "FAR-LO1A" right right)
+    (static-taunt "Anybody there?" "RED-AM01" right down)
+    (static-taunt "DIG!" "MSH-AM02" right left)
+
+    (static-taunt "*SOBBING*" "WAR-LO1B" down up)
+    (static-taunt "Catastrophe!" "CHI-AM01" down right)
+    (static-taunt "This isnt good..." "SAGELP31" down down)
+    (static-taunt "help would be good!" "BLU-AM01" down left)
+
+    (static-taunt "Open road" "EXP-AM03" left up)
+    (static-taunt "Im hungry" "MTA-AM03" left right)
+    (static-taunt "Oh my..." "ASSTLP32" left down)
+    (static-taunt "Nasty lurkers" "GEO-AM05" left left)
+    )
+)
+
+(deftype taunt-menu (process)
+  ((state-time time-frame)
+   (menu-fade time-frame)
+   (selected-menu dpad-idx)
+   (play-input dpad-idx)
+   (requested-taunt taunt)
+   (up-menu (array taunt))
+   (right-menu (array taunt))
+   (down-menu (array taunt))
+   (left-menu (array taunt))
+   (ambient handle)
+   )
+  (:methods
+    (reset! (_type_) object)
+    (set-up-menus! (_type_) object)
+    (get-menu (_type_ dpad-idx) (array taunt))
+    (get-taunt (_type_ dpad-idx dpad-idx) taunt)
+    (draw-menu (_type_ dpad-idx) object)
+    (handle-input (_type_) object)
+    (send-to-remotes (_type_) object)
+    )
+  (:state-methods
+    idle
+    menu
+    playing
+    )
+  )
+
+(define-perm *taunt-menu* (pointer taunt-menu) (the (pointer taunt-menu) #f))
+
+(defmethod get-menu ((this taunt-menu) (idx dpad-idx))
+  (case idx
+    (((dpad-idx up))
+     (-> this up-menu)
+     )
+    (((dpad-idx down))
+     (-> this down-menu)
+     )
+    (((dpad-idx left))
+     (-> this left-menu)
+     )
+    (((dpad-idx right))
+     (-> this right-menu)
+     )
+    )
+  )
+
+(defmethod get-taunt ((this taunt-menu) (menu-idx dpad-idx) (taunt-idx dpad-idx))
+  (let ((m (get-menu this menu-idx)))
+    (dotimes (i (-> m length))
+      (if (= taunt-idx (-> m i play-idx))
+        (return (-> m i))
+        )
+      )
+    )
+  (the taunt #f)
+  )
+
+(defmethod handle-input ((this taunt-menu))
+  (let ((dpad (cpad-dpad-pressed? 0)))
+    (when dpad
+      (set! (-> this play-input) (the dpad-idx dpad))
+      (set! (-> this requested-taunt) (get-taunt this (-> this selected-menu) (the dpad-idx dpad)))
+      )
+    )
+  )
+
+(defun set-up-single-menu! ((menu (array taunt)) (idx dpad-idx))
+  (let ((cur-idx 0))
+    (dotimes (i (-> *taunts* length))
+      (when (= idx (-> *taunts* i menu-idx))
+        (set! (-> menu cur-idx) (-> *taunts* i))
+        (1+! cur-idx)
+        )
+      )
+    )
+  )
+
+(defmethod relocate ((this taunt-menu) (off int))
+  (if (nonzero? (-> this up-menu)) (&+! (-> this up-menu) off))
+  (if (nonzero? (-> this down-menu)) (&+! (-> this down-menu) off))
+  (if (nonzero? (-> this left-menu)) (&+! (-> this left-menu) off))
+  (if (nonzero? (-> this right-menu)) (&+! (-> this right-menu) off))
+  (call-parent-method this off)
+  )
+
+(defmethod set-up-menus! ((this taunt-menu))
+  (set! (-> this up-menu) (new 'process 'boxed-array taunt 4))
+  (set! (-> this down-menu) (new 'process 'boxed-array taunt 4))
+  (set! (-> this left-menu) (new 'process 'boxed-array taunt 4))
+  (set! (-> this right-menu) (new 'process 'boxed-array taunt 4))
+  (set-up-single-menu! (-> this up-menu) (dpad-idx up))
+  (set-up-single-menu! (-> this down-menu) (dpad-idx down))
+  (set-up-single-menu! (-> this left-menu) (dpad-idx left))
+  (set-up-single-menu! (-> this right-menu) (dpad-idx right))
+  )
+
+(defmethod send-to-remotes ((this taunt-menu))
+  (add-interaction-to-buffer
+    (interaction-type taunt)
+    0.0
+    0.0
+    (-> this requested-taunt ambient-name)
+    "none"
+    "none"
+    )
+  )
+
+(defmethod draw-menu ((this taunt-menu) (idx dpad-idx))
+  "Draw a multiplayer taunt menu, if applicable"
+  (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id subtitle))
+    (let ((up (get-taunt this idx (dpad-idx up)))
+          (down (get-taunt this idx (dpad-idx down)))
+          (left (get-taunt this idx (dpad-idx left)))
+          (right (get-taunt this idx (dpad-idx right)))
+          )
+      (draw-string-xy (string-format "Up: ~S" (-> up menu-name))
+                      buf
+                      0
+                      (- 150 (* 8 8))
+                      (font-color green)
+                      (font-flags shadow kerning))
+      (draw-string-xy (string-format "Right: ~S" (-> right menu-name))
+                      buf
+                      0
+                      (- 150 (* 8 7))
+                      (font-color red)
+                      (font-flags shadow kerning))
+      (draw-string-xy (string-format "Down: ~S" (-> down menu-name))
+                      buf
+                      0
+                      (- 150 (* 8 6))
+                      (font-color blue)
+                      (font-flags shadow kerning))
+      (draw-string-xy (string-format "Left: ~S" (-> left menu-name))
+                      buf
+                      0
+                      (- 150 (* 8 5))
+                      (font-color pink)
+                      (font-flags shadow kerning))
+      )
+  )
+)
+
+(defmethod reset! ((this taunt-menu))
+  (set! (-> this selected-menu) (dpad-idx none))
+  (set! (-> this requested-taunt) (the taunt #f))
+  (set! (-> this state-time) 0)
+  (set! (-> this play-input) (dpad-idx none))
+  (when (handle->process (-> this ambient))
+    (deactivate (handle->process (-> this ambient)))
+    )
+  (set! (-> this ambient) INVALID_HANDLE)
+  )
+
+(defbehavior taunt-menu-init-by-other taunt-menu ()
+  (set! (-> self ambient) INVALID_HANDLE)
+  (set! (-> self menu-fade) (seconds 2))
+  (reset! self)
+  (set-up-menus! self)
+  (go-virtual idle)
+  )
+
+(defbehavior taunt-menu-post taunt-menu ()
+  ; (format *stdcon* "taunt menu active (~A)~%" (-> self next-state name))
+  ; (format *stdcon* "menu time active ~D~%" (-> self state-time))
+  ; (format *stdcon* "requested taunt ~A~%" (if (-> self requested-taunt) (-> self requested-taunt menu-name)))
+  (none))
+
+(defstatehandler taunt-menu :post taunt-menu-post)
+
+(defstate idle (taunt-menu)
+  :virtual #t
+  :trans (behavior ()
+    (let ((dpad (cpad-dpad-pressed? 0)))
+      (when (and dpad
+                 (= *master-mode* 'game)
+                 *target*
+                 (not (logtest? (-> *target* state-flags) (state-flags grabbed))))
+        (set! (-> self selected-menu) (the dpad-idx dpad))
+        (go-virtual menu)
+        )
+      )
+    )
+  :code anim-loop
+  )
+
+(defstate menu (taunt-menu)
+  :virtual #t
+  :enter (behavior ()
+    (set-time! (-> self state-time))
+    )
+  :trans (behavior ()
+    (draw-menu self (-> self selected-menu))
+    (when (and (time-elapsed? (-> self state-time) (seconds 0.1)) (= (-> self play-input) (dpad-idx none)))
+      (handle-input self)
+      )
+    (when (time-elapsed? (-> self state-time) (-> self menu-fade))
+      (reset! self)
+      (go-virtual idle)
+      )
+    )
+  :code (behavior ()
+    (until (-> self requested-taunt)
+      (suspend)
+      )
+    (go-virtual playing)
+    )
+  )
+
+(defstate playing (taunt-menu)
+  :virtual #t
+  :enter (behavior ()
+    (when (-> *setting-control* current hint)
+      (kill-current-level-hint '() '() 'exit)
+      )
+    )
+  :code (behavior ()
+    (suspend)
+    (set! (-> self ambient)
+      (ppointer->handle (ambient-hint-spawn (-> self requested-taunt ambient-name) (the vector #f) *entity-pool* 'ambient)))
+    (send-to-remotes self)
+    (until (not (handle->process (-> self ambient)))
+      (suspend)
+      )
+    (go-virtual idle)
+    )
+  :exit (behavior ()
+    (reset! self)
+    )
+  )
