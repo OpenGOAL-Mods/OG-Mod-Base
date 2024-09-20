@@ -530,6 +530,7 @@
                 )
               )
           (target-sync-state (-> p tgt_state) t (-> p inter_name))
+          (update-transforms! (-> t control))
           )
         )
         ;; cleanup after sync state as some states uses interaction, don't cleanup on warp out as we skip interactions during this to avoid crashes
