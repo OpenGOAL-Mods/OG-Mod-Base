@@ -167,6 +167,7 @@
       (let* ((remote-cell (birth-pickup-at-point (-> remote-target control trans) (pickup-type fuel-cell) 1.0 #f remote-target (the-as fact-info #f))))
         (safe-deactivate-remote-cell)
         (set! (-> (the-as fuel-cell (ppointer->process remote-cell)) name) "remote-cell")
+        (process-grab? remote-target)
         (go-virtual-process (the-as fuel-cell (ppointer->process remote-cell)) pickup #f (process->handle remote-target))
       )
     )
