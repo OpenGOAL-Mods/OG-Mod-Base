@@ -10,5 +10,6 @@
   "plat-eco-ag.go"
   "test-actor-ag.go"
   "babak-ag.go"
+  "tpage-401.go" ;; for sky (make sure that your level's mood is updating the sky texture)
   "test-zone.go"
  ))
