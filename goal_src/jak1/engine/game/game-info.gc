@@ -22,9 +22,6 @@
 
 (define-extern runs-on-jak-death (function symbol none))
 
-;;Forward declaration Variable for mod base settings
-(define-extern startingDebugContinuePoint (string))
-
 ;; DECOMP BEGINS
 
 ;;;;;;;;;;;;;;;;;;
@@ -185,7 +182,6 @@
                     (cond
                       (continue-point-override (empty) continue-point-override)
                       ((!= *kernel-boot-message* 'play) "demo-start")
-                      ((and *debug-segment* (not (string= startingDebugContinuePoint "village1-hut"))) startingDebugContinuePoint) ;; mod-base-change
                       (*debug-segment* "village1-hut")
                       (else "title-start")))
      (set! (-> this auto-save-count) 0)
