@@ -70,7 +70,7 @@ jobs:
   cut_mod_release:
     name: "Cut Mod Release"
     needs: prep_vars
-    uses: .github/workflows/mod-release-pipeline.yml
+    uses: ./.github/workflows/mod-release-pipeline.yml
     with:
       semverBump: ${{ inputs.bump }}
       metadataSupportedGames: ${{ needs.prep_vars.outputs.supported_games }}
