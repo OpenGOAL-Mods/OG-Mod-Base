@@ -1,4 +1,4 @@
-name: ⭐ Cut Mod Release ⭐
+name: Cut Mod Release ⭐
 
 on:
   workflow_dispatch:
