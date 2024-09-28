@@ -434,14 +434,14 @@
   )
   
 (defun remote-target-in-close-by-environment? ((remote-target target))
-  (if (and
+  (if 
+    ;(and (process-close? remote-target 500000.0) ;; prevents some crashing in recording tool, but causes remote targets to freeze if they're on zoomer and far away
       (or 
         (= remote-target *target*) 
         (is-target-in-any-active-level? remote-target)  
         (and (is-target-current-level-alive? (the int (-> remote-target saved-owner))) (< (remote-target-move-dist remote-target (seconds 1.5)) 250000.0))
         )
-      (process-close? remote-target 500000.0)
-      )
+      ;)
     #t
     #f
     )

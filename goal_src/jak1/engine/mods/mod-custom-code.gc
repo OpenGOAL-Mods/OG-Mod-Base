@@ -289,6 +289,7 @@
       (start 'play (get-continue-by-name *game-info* "village1-hut"))
       (set! (-> *time-of-day-proc* 0 time-ratio) 0.0)
       (set! (-> *time-of-day-proc* 0 hour) 7)
+      (turnoffplayhints)
       )
     (((teamrun-command start-run))
       (safe-release-from-grab)
@@ -342,6 +343,9 @@
       (set! *debug-segment* #f)
       (set! *cheat-mode* #f)
       )
+    (((teamrun-command disable-play-hints))
+      (turnoffplayhints)
+      )
     )
   (pc-clear-mp-command)
   (none)
@@ -356,85 +360,85 @@
 
   (when (and (!= *target* #f) (!= *pause-multiplayer-logic* #t) (!= (-> (level-get-target-inside *level*) name) 'title))
   
-  ;; setup our own remote-player-info if we haven't yet
-  (set-up-self-remote-if-null)
+    ;; setup our own remote-player-info if we haven't yet
+    (set-up-self-remote-if-null)
 
-  (when (and *target* (>= (-> *multiplayer-info* player_num) 0) (!= (-> *self-player-info* mp_state) (mp-tgt-state mp-tgt-disconnected)) (>= (-> *display* base-frame-counter) (-> *game-info* blackout-time)))
+    (when (and *target* (>= (-> *multiplayer-info* player_num) 0) (!= (-> *self-player-info* mp_state) (mp-tgt-state mp-tgt-disconnected)) (>= (-> *display* base-frame-counter) (-> *game-info* blackout-time)))
 
-    ;; inside other player check for collision re-enabling
-    (when (and *remote-stuck-released* (>= (-> *display* base-frame-counter) *remote-stuck-release-timestamp*) (!= (-> *target* state name) 'target-fishing))
-      (cond
-        ((any-interactive-remote-target-close-to-target? 6000.0)
-          (set! *remote-stuck-release-timestamp* (+ (current-time) (seconds 0.5)))
-          )
-        (else
-          (set! *remote-stuck-released* #f)
-          (logior! (-> *target* control root-prim collide-with) (collide-kind target-remote))
+      ;; inside other player check for collision re-enabling
+      (when (and *remote-stuck-released* (>= (-> *display* base-frame-counter) *remote-stuck-release-timestamp*) (!= (-> *target* state name) 'target-fishing))
+        (cond
+          ((any-interactive-remote-target-close-to-target? 6000.0)
+            (set! *remote-stuck-release-timestamp* (+ (current-time) (seconds 0.5)))
+            )
+          (else
+            (set! *remote-stuck-released* #f)
+            (logior! (-> *target* control root-prim collide-with) (collide-kind target-remote))
+            )
           )
         )
-      )
 
-    (check-set-interaction-from-buffer)
+      (check-set-interaction-from-buffer)
 
-    (when (not (string= (-> *multiplayer-info* force_continue) ""))
-      (start 'play (get-continue-by-name *game-info* (-> *multiplayer-info* force_continue)))
-      (set! (-> *multiplayer-info* force_continue) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
-      )
-    (when *run-remote-level-update-check-next-frame*
-      (set! *run-remote-level-update-check-next-frame* #f)
-      (runs-on-level-enter)
-      )
-    (if (!= (-> *multiplayer-info* teamrun_command) (teamrun-command none)) (execute-teamrun-command))
-
-    ;; on player movement
-    (when (or *has-none-position-update?*
-        (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
-        (!= (-> *self-player-info* trans_y) (-> *target* root trans y))
-        (!= (-> *self-player-info* trans_z) (-> *target* root trans z))
-        (!= (-> *self-player-info* tgt_state) (-> *target* state name))
+      (when (not (string= (-> *multiplayer-info* force_continue) ""))
+        (start 'play (get-continue-by-name *game-info* (-> *multiplayer-info* force_continue)))
+        (set! (-> *multiplayer-info* force_continue) (new 'global 'string INTERACTION_STRING_LEN (the-as string #f)))
         )
+      (when *run-remote-level-update-check-next-frame*
+        (set! *run-remote-level-update-check-next-frame* #f)
+        (runs-on-level-enter)
+        )
+      (if (!= (-> *multiplayer-info* teamrun_command) (teamrun-command none)) (execute-teamrun-command))
 
-      ;; update this player's position
-      (update-self-multiplayer-info)
-      ;; (update-debug-self-multiplayer-info)
-      
-      ;; send updated player info to client
-      (pc-update-position)
+      ;; on player movement
+      (when (or *has-none-position-update?*
+          (!= (-> *self-player-info* trans_x) (-> *target* root trans x))
+          (!= (-> *self-player-info* trans_y) (-> *target* root trans y))
+          (!= (-> *self-player-info* trans_z) (-> *target* root trans z))
+          (!= (-> *self-player-info* tgt_state) (-> *target* state name))
+          )
 
-
-      ;; clean none position updates
-      (when *has-none-position-update?*
-        (set! *has-none-position-update?* #f)
+        ;; update this player's position
+        (update-self-multiplayer-info)
+        ;; (update-debug-self-multiplayer-info)
         
-        ;; update flags
-        (set! (-> *teamrun-info* has_state_update?) 0)
-        (set! (-> *teamrun-levels-info* has_level_update?) 0)
-        (set! (-> *teamrun-info* just_loaded?) 0)
-        (set! (-> *teamrun-info* just_saved?) 0)
-        (when (!= (-> *teamrun-info* just_spawned?) 0)
-          (set! (-> *teamrun-info* just_spawned?) 0)
-          (runs-after-jak-spawn)
+        ;; send updated player info to client
+        (pc-update-position)
+
+
+        ;; clean none position updates
+        (when *has-none-position-update?*
+          (set! *has-none-position-update?* #f)
+          
+          ;; update flags
+          (set! (-> *teamrun-info* has_state_update?) 0)
+          (set! (-> *teamrun-levels-info* has_level_update?) 0)
+          (set! (-> *teamrun-info* just_loaded?) 0)
+          (set! (-> *teamrun-info* just_saved?) 0)
+          (when (!= (-> *teamrun-info* just_spawned?) 0)
+            (set! (-> *teamrun-info* just_spawned?) 0)
+            (runs-after-jak-spawn)
+            )
+          )
+
+
+        (when (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
+          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-interactive))
+          (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state_check) (mp-tgt-state mp-tgt-interactive))
           )
         )
-
-
-      (when (= (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-disconnected))
-        (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state) (mp-tgt-state mp-tgt-interactive))
-        (set! (-> *multiplayer-info* players (-> *multiplayer-info* player_num) mp_state_check) (mp-tgt-state mp-tgt-interactive))
+      
+      ;; cleanup self interaction data
+      (if (!= (-> *self-player-info* inter_type) (interaction-type none))
+        (clean-up-interaction-data *self-player-info*)
         )
+
+      (render-targets)
+
+      ;; color ourselves
+      (color-target *target* (-> *self-player-info* color))
+
       )
-    
-    ;; cleanup self interaction data
-    (if (!= (-> *self-player-info* inter_type) (interaction-type none))
-      (clean-up-interaction-data *self-player-info*)
-      )
-
-    (render-targets)
-
-    ;; color ourselves
-    (color-target *target* (-> *self-player-info* color))
-
-    )
 
     (when (not (paused?)) 
       ;; render teamrun UI
