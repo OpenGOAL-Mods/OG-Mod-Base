@@ -7,6 +7,8 @@
 #include <thread>
 #include <list>
 
+#include "game/multiplayer.h"
+
 #define MINIAUDIO_IMPLEMENTATION
 // NOTE - this is needed, because on macOS, there is a file called `MacTypes.h`
 // inside it, it defines something named `Ptr`
@@ -42,7 +44,6 @@ namespace MiniAudioLib {
 #include "common/util/string_util.h"
 
 #include "game/external/discord.h"
-#include "game/multiplayer.h"
 #include "game/graphics/display.h"
 #include "game/graphics/gfx.h"
 #include "game/graphics/screenshot.h"
