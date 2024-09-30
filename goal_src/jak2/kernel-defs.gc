@@ -240,7 +240,7 @@
 (define-extern pc-init-autosplitter-struct (function none))
 
 ;;main music start
-(define-extern play-sound-file (function string int none))
+(define-extern play-sound-file (function string int symbol))
 (define-extern play-main-music (function string int none))
 (define-extern pause-main-music (function none))
 (define-extern stop-main-music (function none))
@@ -248,7 +248,6 @@
 (define-extern main-music-volume (function int none))
 ;;main music end
 
-(define-extern play-sound-file (function string int none))
 (define-extern stop-sound-file (function string none))
 (define-extern stop-all-sounds (function none))
 
