@@ -141,12 +141,32 @@
     )
   )
 
+;; og:modbase set to #t to enable sound-replacements. disabled by default to avoid extra PC function calls
+;; e.g. replace "skill-pickup" with custom_assets/jak3/audio/sound_replacements/skill-pickup.mp3
+(define *enable-sound-replacements?* #f)
+;; og:modbase temp-string to be used by sound-play replacements only
+(define *sound-play-temp-string* (new 'global 'string 2048 (the string #f)))
+;; same as string-format but will only use the specified temp-string provided when called
+(defmacro temp-string-format (temp-str &rest args)
+  `(begin
+    (format (clear ,temp-str) ,@args)
+    ,temp-str))
+
 ;; TODO change macro back once sound-group is figured out for jak 3
-(defmacro sound-play (name &key (id (new-sound-id))
-                           &key (vol 100.0) &key (pitch 0) &key (bend 0)
-                           &key (group sfx)
-                           &key (position #t))
-  `(sound-play-by-name (static-sound-name ,name) ,id (the int (* (/ 1024.0 100.0) ,vol)) (the int (* 1524.0 ,pitch)) ,bend (sound-group) ,position))
+;; og:modbase try to play replacement sound, nonzero results means it wasnt found, so fall back to playing original sound
+;; force-vanilla? flag lets you force vanilla sound for specific caller
+(defmacro sound-play (name &key (id (new-sound-id)) &key (vol 100.0) &key (pitch 0) &key (bend 0) &key (group sfx) &key (position #t) &key (force-vanilla? #f))
+  `(let ((sound-played? (and *enable-sound-replacements?* (not ,force-vanilla?)
+                             (play-sound-file (temp-string-format *sound-play-temp-string* "sound_replacements/~S.mp3" ,name) 50))))
+    ;; the below line would use vanilla volume instead, if you're sure your custom sounds won't be too loud
+    ;; (the-as sound-id (play-sound-file filepath (the int (* (/ 1024.0 100.0) ,vol))))
+    (cond
+      (sound-played?
+        ;; Custom sound was found
+        (the-as sound-id sound-played?))
+      (else
+        ;; Custom sound not found, play the original instead
+        (sound-play-by-name (static-sound-name ,name) ,id (the int (* (/ 1024.0 100.0) ,vol)) (the int (* 1524.0 ,pitch)) ,bend (sound-group ,group) ,position)))))
 
 (defmacro sound-vol (vol)
   "convert to sound volume units"

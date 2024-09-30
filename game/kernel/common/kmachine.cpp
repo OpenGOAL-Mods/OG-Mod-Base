@@ -192,11 +192,17 @@ std::vector<std::string> getPlayingFileNames() {
   return playingFileNames;
 }
 
-void playMP3_internal(u32 filePathu32, u32 volume, bool isMainMusic) {
+u64 playMP3_internal(u32 filePathu32, u32 volume, bool isMainMusic) {
+  std::string filePath = Ptr<String>(filePathu32).c()->data();
+  std::string fullFilePath = fs::path(file_util::get_jak_project_dir() / "custom_assets" /
+                                  game_version_names[g_game_version] / "audio" / filePath).string();
+  
+  if (!file_util::file_exists(fullFilePath)) {
+    // file doesn't exist, let GOAL side know we didn't find it
+    return bool_to_symbol(false);
+  }
+
   std::thread thread([=]() {
-    std::string filePath = Ptr<String>(filePathu32).c()->data();
-    std::string fullFilePath = fs::path(file_util::get_jak_project_dir() / "custom_assets" /
-                                    game_version_names[g_game_version] / "audio" / filePath).string();
 
     std::cout << "Playing file: " << filePath << std::endl;
 
@@ -248,10 +254,11 @@ void playMP3_internal(u32 filePathu32, u32 volume, bool isMainMusic) {
   });
 
   thread.detach();
+  return bool_to_symbol(true);
 }
 
-void playMP3(u32 filePathu32, u32 volume) {
-  playMP3_internal(filePathu32, volume, false);
+u64 playMP3(u32 filePathu32, u32 volume) {
+  return playMP3_internal(filePathu32, volume, false);
 }
 
 // Function to stop the Main Music.

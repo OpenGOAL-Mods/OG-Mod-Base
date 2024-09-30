@@ -234,8 +234,7 @@
 (define-extern resume-main-music (function none))
 (define-extern main-music-volume (function int none))
 ;;main music end
-
-(define-extern play-sound-file (function string int none))
+(define-extern play-sound-file (function string int symbol))
 (define-extern stop-sound-file (function string none))
 (define-extern stop-all-sounds (function none))
 (define-extern pc-init-autosplitter-struct (function none))
