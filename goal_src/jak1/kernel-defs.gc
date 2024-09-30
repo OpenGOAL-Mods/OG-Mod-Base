@@ -548,7 +548,6 @@
 
 ;;main music end
 
-;; nonzero return value means file was not found
 (define-extern play-sound-file (function string int symbol))
 
 (define-extern stop-sound-file (function string none))
