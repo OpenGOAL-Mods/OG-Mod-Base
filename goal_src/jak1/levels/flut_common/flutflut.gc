@@ -157,11 +157,8 @@
               (let ((v1-35 gp-0)) (set! (-> v1-35 height) (the float 80)))
               (set! (-> gp-0 flags) (font-flags shadow kerning large))
               (print-game-text (lookup-text! *common-text* (text-id press-to-use) #f) gp-0 #f 128 22))
-            (if *allow-flutflut-anywhere* ;; if "self" is passed instead of #f, deloading level/flutflut will crash
-              (if (and (cpad-pressed? 0 circle) (send-event *target* 'change-mode 'flut #f))
-                (go-virtual pickup (method-of-object self wait-for-return)))
               (if (and (cpad-pressed? 0 circle) (send-event *target* 'change-mode 'flut self))
-                (go-virtual pickup (method-of-object self wait-for-return))))))
+                (go-virtual pickup (method-of-object self wait-for-return)))))
         (flutflut-effect)
         (suspend)
         (ja :num! (loop!))))

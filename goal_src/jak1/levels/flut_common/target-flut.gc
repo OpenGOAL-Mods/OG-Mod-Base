@@ -337,7 +337,9 @@
       (set! (-> self flut stick-lock) #f)
       (set! (-> self flut flap-sound-id) (new-sound-id))
       (set! (-> self flut entity) #f)
-      (let ((v1-11 (handle->process arg0))) (if v1-11 (set! (-> self flut entity) (-> v1-11 entity))))
+      (let ((v1-11 (handle->process arg0)))
+        (if (and (not *allow-flutflut-anywhere*) v1-11) ;; OG-modbase dont track entity, prevents crash on level deload
+          (set! (-> self flut entity) (-> v1-11 entity))))
       (target-collide-set! 'flut (the-as float 0.0))
       (set! (-> self control transv quad) (the-as uint128 0))
       (set! (-> self control unknown-float01) 0.0)
