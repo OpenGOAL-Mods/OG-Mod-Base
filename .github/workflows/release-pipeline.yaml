@@ -110,7 +110,7 @@ jobs:
           mkdir -p ./ci-artifacts/linux
           ./.github/scripts/releases/extract_build_unix.sh ./ci-artifacts/linux ./ci-artifacts/opengoal-linux-static ./
           pushd ci-artifacts/linux
-          TAG_VAL=${{ needs.cut-release.outputs.new_tag }}
+          TAG_VAL=${{ needs.cut_release.outputs.new_tag }}
           tar czf ../final/opengoal-linux-${TAG_VAL}.tar.gz .
           popd
           chmod +x ./ci-artifacts/opengoal-linux-static/lsp/lsp
@@ -120,7 +120,7 @@ jobs:
         run: |
           mkdir -p ./ci-artifacts/windows
           ./.github/scripts/releases/extract_build_windows.sh ./ci-artifacts/windows ./ci-artifacts/opengoal-windows-static ./
-          TAG_VAL=${{ needs.cut-release.outputs.new_tag }}
+          TAG_VAL=${{ needs.cut_release.outputs.new_tag }}
           7z a -tzip ./ci-artifacts/final/opengoal-windows-${TAG_VAL}.zip ./ci-artifacts/windows/*
           cp ./ci-artifacts/opengoal-windows-static/lsp.exe ./ci-artifacts/final/opengoal-lsp-windows-${TAG_VAL}.exe
 
@@ -129,7 +129,7 @@ jobs:
           mkdir -p ./ci-artifacts/macos
           ./.github/scripts/releases/extract_build_unix.sh ./ci-artifacts/macos ./ci-artifacts/opengoal-macos-static ./
           pushd ci-artifacts/macos
-          TAG_VAL=${{ needs.cut-release.outputs.new_tag }}
+          TAG_VAL=${{ needs.cut_release.outputs.new_tag }}
           tar czf ../final/opengoal-macos-intel-${TAG_VAL}.tar.gz .
           popd
           chmod +x ./ci-artifacts/opengoal-macos-static/lsp/lsp
@@ -139,10 +139,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload ${{ needs.cut-release.outputs.new_tag }} ${{ github.WORKSPACE }}/ci-artifacts/final/* --repo ${{ github.repository }} --clobber
+          gh release upload ${{ needs.cut_release.outputs.new_tag }} ${{ github.WORKSPACE }}/ci-artifacts/final/* --repo ${{ github.repository }} --clobber
 
       - name: Publish Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release edit ${{ needs.cut-release.outputs.new_tag }} --draft=false --repo ${{ github.repository }}
+          gh release edit ${{ needs.cut_release.outputs.new_tag }} --draft=false --repo ${{ github.repository }}
