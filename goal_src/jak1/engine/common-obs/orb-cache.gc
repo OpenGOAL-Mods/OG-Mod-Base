@@ -99,6 +99,8 @@
         (when (zero? (-> this money))
           (set! f30-0 2048.0)
           (set! s3-0 #t))
+        (when (not s3-0)
+
         (when (and (< f30-0 15155.2)
                    (and *target* (>= 16384.0 (vector-vector-distance (-> this root trans) (-> *target* control trans))))
                    (< (-> (target-pos 0) y) (-> this basetrans y)))
@@ -114,6 +116,7 @@
           (set! (-> s4-1 y) (-> this money-pos-actual s2-0))
           (set! (-> s4-1 y) (+ -8192.0 (-> this root-pos))))
         (send-event (handle->process (-> this money-list s2-0)) 'trans s4-1))
+      )
       (set! s3-0 (and s5-1 s3-0))
       (if s3-0 (go orb-cache-top-complete #f)))
     s5-1))
