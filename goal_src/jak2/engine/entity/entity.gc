@@ -2235,7 +2235,7 @@
                     (set! sv-48 (-> s3-4 data s1-1))
                     (cond
                         ;; og:preserve-this entity blacklist
-                        ((and (#if PC_PORT (or (with-pc (and (not (-> *pc-settings* ps2-actor-vis?))
+                        ((and (#if PC_PORT (or (with-pc (and (-> *pc-settings* ps2-actor-vis?)
                                                              ;; ban specific entities
                                                              (not (let ((name (res-lump-struct (-> sv-48 entity) 'name string)))
                                                                   (or (string= name "fort-entry-gate-11")

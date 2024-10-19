@@ -40,6 +40,7 @@ math::Vector4f vector_from_json(const nlohmann::json& json) {
 
 std::unique_ptr<Res> res_from_json_array(const std::string& name,
                                          const nlohmann::json& json_array) {
+  fmt::print("Working on this: {}\n", name);
   ASSERT(json_array.size() > 0);
   std::string array_type = json_array[0].get<std::string>();
   if (array_type == "int32") {

@@ -15886,13 +15886,13 @@
     )
   )
 
-  (define lavatubeb
+  (define lavatubec
   (new 'static 'level-load-info
     :index #x9e
-    :name 'lavatubeb
-    :visname 'lavatubeb-vis
+    :name 'lavatubec
+    :visname 'lavatubec-vis
     :nickname 'ltb
-    :dbname 'lavatubeb
+    :dbname 'lavatubec
     :taskname 'default
     :packages '()
     :memory-mode (load-buffer-mode small-edge)
@@ -15905,8 +15905,8 @@
     :use-camera-other #f
     :part-engine-max 16
     :continues '((new 'static 'continue-point
-        :name "lavatubeb-start"
-        :level 'lavatubeb
+        :name "lavatubec-start"
+        :level 'lavatubec
         :trans (new 'static 'vector :x 5511317.0 :y 159871.8 :z -14621239.0 :w 1.0)
         :quat (new 'static 'vector :y 0.061 :w 0.9981)
         :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
@@ -16147,7 +16147,8 @@
     :continues '((new 'static 'continue-point
         :name "beach-start"
         :level 'beachc
-        :trans (new 'static 'vector :x -504960.22 :y 9477.325 :z -223513.81 :w 1.0)
+        ;;:trans (new 'static 'vector :x -504960.22 :y 9477.325 :z -223513.81 :w 1.0)
+        :trans (new 'static 'vector :x 1592492.9 :y 91648.0 :z -6328677.0 :w 1.0) ;;village2warp
         :quat (new 'static 'vector :y 0.061 :w 0.9981)
         :camera-trans (new 'static 'vector :x 0.0 :y (meters 1) :z 0.0 :w 1.0)
         :camera-rot (new 'static 'inline-array vector3s 3
@@ -16608,7 +16609,7 @@
     )
   )
 
-  
+
 (define hub2
   (new 'static 'level-load-info
     :index #x9e
@@ -16688,9 +16689,9 @@
     :extra-sound-bank #f
     )
   )
-  
 
-  
+
+
 (define rollingc
   (new 'static 'level-load-info
     :index #x9e
@@ -16770,9 +16771,9 @@
     :extra-sound-bank #f
     )
   )
-  
 
-  
+
+
 (define swampc
   (new 'static 'level-load-info
     :index #x9e
@@ -16852,9 +16853,9 @@
     :extra-sound-bank #f
     )
   )
-  
 
-  
+
+
 (define sunkenc
   (new 'static 'level-load-info
     :index #x9e
@@ -16934,9 +16935,9 @@
     :extra-sound-bank #f
     )
   )
-  
 
-  
+
+
 (define ogrec
   (new 'static 'level-load-info
     :index #x9e
@@ -17016,9 +17017,9 @@
     :extra-sound-bank #f
     )
   )
-  
 
-  
+
+
 (define rockvic
   (new 'static 'level-load-info
     :index #x9e
@@ -17098,7 +17099,7 @@
     :extra-sound-bank #f
     )
   )
-  
+
 
 
 (define hub3
@@ -17180,7 +17181,7 @@
     :extra-sound-bank #f
     )
   )
-  
+
 
 
 (define snowc
@@ -17343,9 +17344,9 @@
     :extra-sound-bank #f
     )
   )
-  
 
-  
+
+
 (define volcanc
   (new 'static 'level-load-info
     :index #x9e
@@ -17425,9 +17426,9 @@
     :extra-sound-bank #f
     )
   )
-  
 
-  
+
+
 (define hub4
   (new 'static 'level-load-info
     :index #x9e
@@ -17507,9 +17508,9 @@
     :extra-sound-bank #f
     )
   )
-  
 
-  
+
+
 (define citadelc
   (new 'static 'level-load-info
     :index #x9e
@@ -17589,12 +17590,12 @@
     :extra-sound-bank #f
     )
   )
-  
 
-  
+
+
 (#when PC_PORT
   (cons! *level-load-list* 'test-zone)
-  
+
   ;; HUB 1
   (cons! *level-load-list* 'vi12)
   (cons! *level-load-list* 'hub1)
@@ -17622,7 +17623,7 @@
 
   ;; ;; HUB 4
   (cons! *level-load-list* 'hub4)
-  (cons! *level-load-list* 'lavatubeb)
+  (cons! *level-load-list* 'lavatubec)
   (cons! *level-load-list* 'citadelc)
-  
+
   )

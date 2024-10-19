@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
   bool auto_find_user = false;
   std::string cmd = "";
   std::string username = "#f";
-  std::string game = "jak1";
+  std::string game = "jak2";
   int nrepl_port = -1;
   fs::path project_path_override;
 

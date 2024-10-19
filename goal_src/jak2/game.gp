@@ -307,9 +307,9 @@
 ;; the DGO file
 (custom-level-cgo "LTA.DGO" "lavatubea/lavatubea.gd")
 
-(build-custom-level "lavatubeb")
+(build-custom-level "lavatubec")
 ;; the DGO file
-(custom-level-cgo "LTB.DGO" "lavatubeb/lavatubeb.gd")
+(custom-level-cgo "LTB.DGO" "lavatubec/lavatubec.gd")
 
 (build-custom-level "hub1")
 ;; the DGO file

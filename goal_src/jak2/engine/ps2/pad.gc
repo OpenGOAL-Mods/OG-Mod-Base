@@ -536,6 +536,10 @@ The cpad-set-buzz! function can be used for vibration.
   `(-> *cpad-list* cpads ,pad-idx button0-abs 0)
   )
 
+  (defmacro cpad-held (pad-idx)
+  `(-> *cpad-list* cpads ,pad-idx button0-abs 0)
+  )
+
 (defmacro cpad-pressed? (pad-idx &rest buttons)
   `(logtest? (cpad-pressed ,pad-idx) (pad-buttons ,@buttons))
   )

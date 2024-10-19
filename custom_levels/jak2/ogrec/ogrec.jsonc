@@ -43,9 +43,5 @@
    // by setting "save_texture_pngs" to true in the decompiler config.
    "textures": [],
 
-  "actors" : [
-    
-
-
-  ]
+  "actors" :[]
 }

@@ -19,7 +19,7 @@
 ;; Useful GOAL modding documentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-#| 
+#|
 Checks the condition and if it is true it does first argument if false it does optional second argument
 (if (condition) (do if true) (do if false))
 
@@ -53,7 +53,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defmacro set-current-cell-count (count)
   `(set! (-> *game-info* fuel) ,count)
   )
-  
+
 (defun increase-power-cell-by-one ()
   (set-current-cell-count (+ (current-cell-count) 1))
   ;; with the two macros defined above, this is equivalent to
@@ -83,7 +83,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defmacro current-level-name ()
   `(-> (level-get-target-inside *level*) name)
   )
-  
+
 (defmacro current-orb-count ()
   `(-> *game-info* money)
   )
@@ -102,14 +102,14 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (when actor
         (case (-> actor type)
           ((skill)
-           
+
               (set-vector! (-> entity-actor trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> entity-actor extra trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> (the process-drawable actor) root trans) (meters x) (meters y) (meters z) 1.0)
               (set-vector! (-> (the money actor) base) (meters x) (meters y) (meters z) 1.0)
-         
-   
-              
+
+
+
             )
           ((crate)
             ;; only move crates if they're not jumping
@@ -168,7 +168,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (none)
     )
 
-    
+
   )
 )
 
@@ -275,11 +275,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 ;;This returns true or false depending on if jak is within a provided distance from an actor
 (defun close? ((actor-ename string) (dist float))
-  (and 
+  (and
     (process-by-ename actor-ename)
-    (<= 
-      (vector-vector-distance 
-        (target-pos 0) 
+    (<=
+      (vector-vector-distance
+        (target-pos 0)
         (-> (the process-drawable (process-by-ename actor-ename)) root trans)
         )
       dist
@@ -290,9 +290,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 ;;This returns true or false if jak is within a bubble defined by coordiantes and width
 (defun in-bubble? ((x float) (y float) (z float) (w float))
-  (<= 
-    (vector-vector-distance 
-      (target-pos 0) 
+  (<=
+    (vector-vector-distance
+      (target-pos 0)
       (set-vector! (new-stack-vector0) x y z 1.0)
       )
     (/ w 2.0)
@@ -304,20 +304,52 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (stop-main-music)
       (case *wanted-level*
          (('beach)
-          (play-main-music "SND/beachmain.mp3" 100)
+          (play-main-music "SND/beachmain.mp3" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
           )
                    (('jungle)
-          (play-main-music "SND/junglemain.mp3" 100)
+          (play-main-music "SND/junglemain.mp3" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
           )
                              (('firecanyon)
-          (play-main-music "SND/firecanyonmain.mp3" 100)
+          (play-main-music "SND/firecanyonmain.mp3" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
           )
-          
-          
-          
+                                       (('misty)
+          (play-main-music "SND/mistymain.mp3" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
+          )
+
+                                       (('training)
+          (play-main-music "SND/vi1main.mp3" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
+          )
+                                       (('sunken)
+          (play-main-music "SND/sunkenmain.mp3" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
+          )
+                                       (('swamp)
+          (play-main-music "SND/swampmain.mp3" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
+          )
+
+                                       (('rolling)
+          (play-main-music "SND/rollingmain.mp3" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
+          )                                   (('ogre)
+          (play-main-music "SND/ogremain.mp3" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
+          )
+
+                                             (('cave)
+          (play-main-music "SND/cavemain.mp3" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
+          )
+                                             (('snow)
+          (play-main-music "SND/snowmain.mp3" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
+          )
+                                             (('lavatube)
+          (play-main-music "SND/lavatubemain.mp3" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
+          )
+
+                                             (('citadel)
+          (play-main-music "SND/citadelmain.mp3" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
+          )
+
+
          ;;Add more cases here for each level
          (else
-          (play-main-music "" 100)
+          (play-main-music "" (the-as int (*  (-> *setting-control* user-current music-volume) 100)))
           ;;(stop-main-music) This function is broken but playing a invalid sound does the same thing
          )
       )

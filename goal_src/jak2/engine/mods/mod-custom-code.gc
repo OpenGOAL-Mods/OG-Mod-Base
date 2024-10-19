@@ -38,12 +38,18 @@
           )
         )
   )
-  
+
 (define *closest-sphere-pos-global* (new 'static 'vector :x (meters   -5143243243248.5894) :y (meters     -25435435435.2520) :z (meters   -55435435345487.5171)))
 (define *wanted-level* 'NA)
+;; (define-extern *spots-list* (array (array vector)))
+;; (define-extern *beach-spots* (array vector))
+;; (define *spots-list* (new 'static 'boxed-array :type (array vector)
+;; *beach-spots*
+;; *training-spots*
+;; *firecanyon-spots*
+;; ))
 
-
-(define *beach-spots* (new 'static 'boxed-array :type vector 
+(define *beach-spots* (new 'static 'boxed-array :type vector
 (new 'static 'vector :x (meters   -518.5894) :y (meters     -2.2520) :z (meters   -587.5171))
 (new 'static 'vector :x (meters   -517.3105) :y (meters     72.6228) :z (meters   -586.3430))
 (new 'static 'vector :x (meters   -436.6849) :y (meters     -2.5174) :z (meters   -446.1119))
@@ -160,7 +166,7 @@
 
 ))
 
-(define *firecanyon-spots* (new 'static 'boxed-array :type vector 
+(define *firecanyon-spots* (new 'static 'boxed-array :type vector
 (new 'static 'vector :x (meters    -13.8207) :y (meters      6.0457) :z (meters    -93.5404))
 (new 'static 'vector :x (meters     -4.9223) :y (meters     19.1562) :z (meters   -106.5609))
 (new 'static 'vector :x (meters    -60.8102) :y (meters     32.5038) :z (meters   -124.6014))
@@ -279,16 +285,16 @@
 (new 'static 'vector :x (meters    221.7904) :y (meters     37.4056) :z (meters   -893.0056))
 (new 'static 'vector :x (meters    165.8321) :y (meters     32.5640) :z (meters   -926.6889))
 ))
-(define *training-spots* (new 'static 'boxed-array :type vector 
+(define *training-spots* (new 'static 'boxed-array :type vector
 (new 'static 'vector :x (meters  -1317.6112) :y (meters      6.9499) :z (meters   1065.5915))
 ))
 
-(define *misty-spots* (new 'static 'boxed-array :type vector 
+(define *misty-spots* (new 'static 'boxed-array :type vector
 (new 'static 'vector :x (meters     39.4536) :y (meters      3.6524) :z (meters    826.8192))
 ))
 
 
-(define *jungle-spots* (new 'static 'boxed-array :type vector 
+(define *jungle-spots* (new 'static 'boxed-array :type vector
 (new 'static 'vector :x (meters    162.1731) :y (meters      1.2968) :z (meters   -147.2938))
 (new 'static 'vector :x (meters    176.4970) :y (meters      1.8095) :z (meters   -101.1030))
 (new 'static 'vector :x (meters    191.5196) :y (meters      2.2257) :z (meters    -48.7668))
@@ -328,31 +334,124 @@
 (new 'static 'vector :x (meters    172.9282) :y (meters     18.8332) :z (meters   -157.7038))
 ))
 
+(define *sunken-spots* (new 'static 'boxed-array :type vector (new 'static 'vector :x (meters    529.2602) :y (meters     -0.6520) :z (meters  -1633.8883))
+(new 'static 'vector :x (meters    529.8210) :y (meters     -0.6520) :z (meters  -1629.6425))
+(new 'static 'vector :x (meters    528.2506) :y (meters     -0.6520) :z (meters  -1626.9349))
+(new 'static 'vector :x (meters    523.1776) :y (meters     -0.6521) :z (meters  -1625.9155))
+(new 'static 'vector :x (meters    519.8240) :y (meters     -0.6521) :z (meters  -1630.5943))
+(new 'static 'vector :x (meters    523.0172) :y (meters     -0.6521) :z (meters  -1635.9697))
+(new 'static 'vector :x (meters    527.1214) :y (meters     -0.6521) :z (meters  -1635.8194))
+(new 'static 'vector :x (meters    530.0592) :y (meters     -0.6521) :z (meters  -1631.5214))
+(new 'static 'vector :x (meters    527.5261) :y (meters     -0.6521) :z (meters  -1626.4437))
+(new 'static 'vector :x (meters    521.8291) :y (meters     -0.6521) :z (meters  -1626.6866))
+(new 'static 'vector :x (meters    519.2990) :y (meters   -144.9769) :z (meters  -1646.9177))
+(new 'static 'vector :x (meters    519.2990) :y (meters   -144.9769) :z (meters  -1646.9177))))
+
+(define *rolling-spots* (new 'static 'boxed-array :type vector  (new 'static 'vector :x
+(meters    104.1919) :y (meters     11.8141) :z (meters  -1601.3944))
+(new 'static 'vector :x (meters    102.4294) :y (meters     10.9399) :z (meters  -1668.7178))
+(new 'static 'vector :x (meters     29.2593) :y (meters     24.6441) :z (meters  -1615.6177))
+(new 'static 'vector :x (meters    -24.9009) :y (meters     24.7547) :z (meters  -1614.5948))
+(new 'static 'vector :x (meters    -33.6708) :y (meters     25.7693) :z (meters  -1590.0588))
+(new 'static 'vector :x (meters    -30.9078) :y (meters     25.5070) :z (meters  -1553.5601))
+(new 'static 'vector :x (meters    -30.3165) :y (meters     24.0069) :z (meters  -1532.0484))
+(new 'static 'vector :x (meters    -29.1167) :y (meters     24.5546) :z (meters  -1500.3862))
+(new 'static 'vector :x (meters    -16.9625) :y (meters     28.7965) :z (meters  -1473.3806))
+(new 'static 'vector :x (meters    -10.5222) :y (meters     23.8836) :z (meters  -1432.7391))
+(new 'static 'vector :x (meters    -20.6323) :y (meters     25.3690) :z (meters  -1429.0289))
+(new 'static 'vector :x (meters    -34.0147) :y (meters     27.7495) :z (meters  -1426.1813))
+(new 'static 'vector :x (meters    -55.7614) :y (meters     25.1180) :z (meters  -1434.7867))
+(new 'static 'vector :x (meters    -69.3533) :y (meters     27.5625) :z (meters  -1436.3470))
+(new 'static 'vector :x (meters    -87.9370) :y (meters     24.2200) :z (meters  -1449.0714))
+(new 'static 'vector :x (meters    -96.6431) :y (meters     24.9361) :z (meters  -1460.2271))
+(new 'static 'vector :x (meters   -119.2433) :y (meters     21.3390) :z (meters  -1474.0695))
+(new 'static 'vector :x (meters   -131.4676) :y (meters     22.8443) :z (meters  -1459.9458))
+(new 'static 'vector :x (meters   -139.3479) :y (meters     22.3161) :z (meters  -1453.1669))
+(new 'static 'vector :x (meters   -156.9638) :y (meters     26.3430) :z (meters  -1434.1119))
+(new 'static 'vector :x (meters   -164.5989) :y (meters     26.9480) :z (meters  -1429.5432))
+(new 'static 'vector :x (meters   -194.7471) :y (meters     25.5871) :z (meters  -1421.0416))
+(new 'static 'vector :x (meters   -215.7006) :y (meters     26.4082) :z (meters  -1424.7517))
+(new 'static 'vector :x (meters   -235.2687) :y (meters     40.1309) :z (meters  -1418.7003))
+(new 'static 'vector :x (meters   -248.9488) :y (meters     40.0262) :z (meters  -1418.8426))
+(new 'static 'vector :x (meters   -283.8880) :y (meters     25.7944) :z (meters  -1413.8302))
+(new 'static 'vector :x (meters   -303.4255) :y (meters     31.3578) :z (meters  -1406.7478))
+(new 'static 'vector :x (meters   -326.6475) :y (meters     28.4270) :z (meters  -1404.3748))
+(new 'static 'vector :x (meters   -332.7280) :y (meters     24.6361) :z (meters  -1434.5472))
+(new 'static 'vector :x (meters   -347.1265) :y (meters     27.3821) :z (meters  -1451.5511))
+(new 'static 'vector :x (meters   -374.9368) :y (meters     27.6952) :z (meters  -1485.2678))
+(new 'static 'vector :x (meters   -394.2881) :y (meters     25.7046) :z (meters  -1505.1224))
+(new 'static 'vector :x (meters   -404.0355) :y (meters     24.6225) :z (meters  -1518.9077))
+(new 'static 'vector :x (meters   -395.2369) :y (meters     27.1535) :z (meters  -1541.9460))
+(new 'static 'vector :x (meters   -386.4504) :y (meters     25.1116) :z (meters  -1567.9173))
+(new 'static 'vector :x (meters   -380.3009) :y (meters     27.9001) :z (meters  -1597.1364))
+(new 'static 'vector :x (meters   -387.4592) :y (meters     27.8880) :z (meters  -1630.6588))
+(new 'static 'vector :x (meters   -397.5704) :y (meters     23.1302) :z (meters  -1655.0377))
+(new 'static 'vector :x (meters   -404.1547) :y (meters     18.6586) :z (meters  -1675.2926))
+(new 'static 'vector :x (meters   -397.7486) :y (meters     18.9535) :z (meters  -1686.4348))
+(new 'static 'vector :x (meters   -398.2876) :y (meters     16.5726) :z (meters  -1731.7935))
+(new 'static 'vector :x (meters   -379.3412) :y (meters     20.7457) :z (meters  -1752.8723))
+(new 'static 'vector :x (meters   -364.4296) :y (meters     19.7362) :z (meters  -1764.5794))
+(new 'static 'vector :x (meters   -333.5793) :y (meters     20.9581) :z (meters  -1762.2454))
+(new 'static 'vector :x (meters   -324.4107) :y (meters     18.9011) :z (meters  -1753.6695))
+(new 'static 'vector :x (meters   -301.9873) :y (meters     22.9032) :z (meters  -1742.9699))
+(new 'static 'vector :x (meters   -289.5411) :y (meters     24.9769) :z (meters  -1723.5556))
+(new 'static 'vector :x (meters   -277.8037) :y (meters     24.8079) :z (meters  -1702.9754))
+(new 'static 'vector :x (meters   -245.7691) :y (meters     28.7044) :z (meters  -1695.9688))
+(new 'static 'vector :x (meters   -217.1686) :y (meters     24.5083) :z (meters  -1691.6280))
+(new 'static 'vector :x (meters   -177.3045) :y (meters     22.9875) :z (meters  -1676.1618))
+(new 'static 'vector :x (meters   -150.8338) :y (meters     23.9519) :z (meters  -1678.5528))
+(new 'static 'vector :x (meters    -99.9121) :y (meters     24.9339) :z (meters  -1764.4207))
+(new 'static 'vector :x (meters   -115.2512) :y (meters     24.2713) :z (meters  -1781.1506))
+(new 'static 'vector :x (meters   -135.3122) :y (meters     24.5969) :z (meters  -1790.0920))
+))
+
+(define *swamp-spots* (new 'static 'boxed-array :type vector
+(new 'static 'vector :x (meters     332132132139.4536) :y (meters      3.6524) :z (meters    826.8192))
+))
+
+(define *ogre-spots* (new 'static 'boxed-array :type vector
+(new 'static 'vector :x (meters     39432432432432432432.4536) :y (meters      3.6524) :z (meters    826.8192))
+))
+
+(define *cave-spots* (new 'static 'boxed-array :type vector
+(new 'static 'vector :x (meters     344234324324324329.4536) :y (meters      3.6524) :z (meters    826.8192))
+))
+
+(define *snow-spots* (new 'static 'boxed-array :type vector
+(new 'static 'vector :x (meters     34234324324324234324239.4536) :y (meters      3.6524) :z (meters    826.8192))
+))
+
+(define *lavatube-spots* (new 'static 'boxed-array :type vector
+(new 'static 'vector :x (meters     343243243243243243249.4536) :y (meters      3.6524) :z (meters    826.8192))
+))
+(define *citadel-spots* (new 'static 'boxed-array :type vector
+(new 'static 'vector :x (meters     33243243243243243242342349.4536) :y (meters      3.6524) :z (meters    826.8192))
+))
 
 (defun draw-spheres ()
-  
+
   (dotimes (i (length *beach-spots*))
   (add-debug-sphere #t (bucket-id debug-no-zbuf1) (-> *beach-spots* i) (meters 1.2) *color-dark-yellow*)
-  
+
   )
 
     (dotimes (i (length *firecanyon-spots*))
   (add-debug-sphere #t (bucket-id debug-no-zbuf1) (-> *firecanyon-spots* i) (meters 1.2) *color-dark-red*)
-  
+
   )
 
     (dotimes (i (length *jungle-spots*))
   (add-debug-sphere #t (bucket-id debug-no-zbuf1) (-> *jungle-spots* i) (meters 1.2) *color-light-green*)
-  
+
   )
-  
+
   (none))
 
 
 (defun find-closest-sphere-jak ()
 
   (dotimes (i (length *beach-spots*))
-  
+
   (when (> (vector-vector-xz-distance (-> *target* root trans) *closest-sphere-pos-global*) (vector-vector-xz-distance (-> *target* root trans) (-> *beach-spots* i)))
   (set! *closest-sphere-pos-global* (-> *beach-spots* i))
   (set! *wanted-level* 'beach)
@@ -362,7 +461,7 @@
   )
 
   (dotimes (i (length *firecanyon-spots*))
-  
+
   (when (> (vector-vector-xz-distance (-> *target* root trans) *closest-sphere-pos-global*) (vector-vector-xz-distance (-> *target* root trans) (-> *firecanyon-spots* i)))
   (set! *closest-sphere-pos-global* (-> *firecanyon-spots* i))
   (set! *wanted-level* 'firecanyon)
@@ -372,7 +471,7 @@
   )
 
   (dotimes (i (length *jungle-spots*))
-  
+
   (when (> (vector-vector-xz-distance (-> *target* root trans) *closest-sphere-pos-global*) (vector-vector-xz-distance (-> *target* root trans) (-> *jungle-spots* i)))
   (set! *closest-sphere-pos-global* (-> *jungle-spots* i))
   (set! *wanted-level* 'jungle)
@@ -382,7 +481,7 @@
   )
 
     (dotimes (i (length *training-spots*))
-  
+
   (when (> (vector-vector-xz-distance (-> *target* root trans) *closest-sphere-pos-global*) (vector-vector-xz-distance (-> *target* root trans) (-> *training-spots* i)))
   (set! *closest-sphere-pos-global* (-> *training-spots* i))
   (set! *wanted-level* 'training)
@@ -392,7 +491,7 @@
   )
 
       (dotimes (i (length *misty-spots*))
-  
+
   (when (> (vector-vector-xz-distance (-> *target* root trans) *closest-sphere-pos-global*) (vector-vector-xz-distance (-> *target* root trans) (-> *misty-spots* i)))
   (set! *closest-sphere-pos-global* (-> *misty-spots* i))
   (set! *wanted-level* 'misty)
@@ -400,6 +499,88 @@
   )
 
   )
+
+        (dotimes (i (length *sunken-spots*))
+
+  (when (> (vector-vector-xz-distance (-> *target* root trans) *closest-sphere-pos-global*) (vector-vector-xz-distance (-> *target* root trans) (-> *sunken-spots* i)))
+  (set! *closest-sphere-pos-global* (-> *sunken-spots* i))
+  (set! *wanted-level* 'sunken)
+
+  )
+
+  )
+
+          (dotimes (i (length *rolling-spots*))
+
+  (when (> (vector-vector-xz-distance (-> *target* root trans) *closest-sphere-pos-global*) (vector-vector-xz-distance (-> *target* root trans) (-> *rolling-spots* i)))
+  (set! *closest-sphere-pos-global* (-> *rolling-spots* i))
+  (set! *wanted-level* 'rolling)
+
+  )
+
+  )
+
+  ;;           (dotimes (i (length *swamp-spots*))
+
+  ;; (when (> (vector-vector-xz-distance (-> *target* root trans) *closest-sphere-pos-global*) (vector-vector-xz-distance (-> *target* root trans) (-> *swamp-spots* i)))
+  ;; (set! *closest-sphere-pos-global* (-> *swamp-spots* i))
+  ;; (set! *wanted-level* 'swmap)
+
+  ;; )
+
+  ;; )
+  ;;           (dotimes (i (length *ogre-spots*))
+
+  ;; (when (> (vector-vector-xz-distance (-> *target* root trans) *closest-sphere-pos-global*) (vector-vector-xz-distance (-> *target* root trans) (-> *ogre-spots* i)))
+  ;; (set! *closest-sphere-pos-global* (-> *ogre-spots* i))
+  ;; (set! *wanted-level* 'ogre)
+
+  ;; )
+
+  ;; )
+
+  ;;           (dotimes (i (length *cave-spots*))
+
+  ;; (when (> (vector-vector-xz-distance (-> *target* root trans) *closest-sphere-pos-global*) (vector-vector-xz-distance (-> *target* root trans) (-> *cave-spots* i)))
+  ;; (set! *closest-sphere-pos-global* (-> *cave-spots* i))
+  ;; (set! *wanted-level* 'cave)
+
+  ;; )
+
+  ;; )
+
+
+  ;;           (dotimes (i (length *snow-spots*))
+
+  ;; (when (> (vector-vector-xz-distance (-> *target* root trans) *closest-sphere-pos-global*) (vector-vector-xz-distance (-> *target* root trans) (-> *snow-spots* i)))
+  ;; (set! *closest-sphere-pos-global* (-> *snow-spots* i))
+  ;; (set! *wanted-level* 'snow)
+
+  ;; )
+
+  ;; )
+
+
+  ;;           (dotimes (i (length *lavatube-spots*))
+
+  ;; (when (> (vector-vector-xz-distance (-> *target* root trans) *closest-sphere-pos-global*) (vector-vector-xz-distance (-> *target* root trans) (-> *lavatube-spots* i)))
+  ;; (set! *closest-sphere-pos-global* (-> *lavatube-spots* i))
+  ;; (set! *wanted-level* 'lavatube)
+
+  ;; )
+
+  ;; )
+
+  ;; (dotimes (i (length *citadel-spots*))
+
+  ;; (when (> (vector-vector-xz-distance (-> *target* root trans) *closest-sphere-pos-global*) (vector-vector-xz-distance (-> *target* root trans) (-> *citadel-spots* i)))
+  ;; (set! *closest-sphere-pos-global* (-> *citadel-spots* i))
+  ;; (set! *wanted-level* 'citadel)
+
+  ;; )
+
+  ;; )
+
 
   (add-debug-sphere #t (bucket-id debug-no-zbuf1) *closest-sphere-pos-global* (meters 1.2) *color-dark-yellow*)
 (none)
@@ -442,6 +623,7 @@
 (load-lvl 'hub2 'sunkenc 'rockvic #f #f #f)
 )
 
+;;Need to add 'hub2-no-swamp
 (if (= *wanted-level* 'ogre)
 (load-lvl 'hub2 'rockvic 'ogrec #f #f #f)
 )
@@ -455,7 +637,7 @@
 )
 
 (if (= *wanted-level* 'lavatube)
-(load-lvl 'lavatubea 'lavatubeb 'lavatubec #f #f #f)
+ (load-lvl 'hub3 'volcanc 'lavatubec #f #f #f)
 )
 
 (if (= *wanted-level* 'citadel)
@@ -469,12 +651,50 @@
 
 (none))
 
+;; (string-format "~8D [~4D]" (-> *sound-iop-info* freemem)      (shr (-> *sound-iop-info* freemem) 10))
+
+(defun print-level-sphere-point-name ()
+     (format 0 "(new 'static 'vector :x (meters  ~F) :y (meters      ~F) :z (meters   ~F))~%"(-> *target* root trans x) (-> *target* root trans y) (-> *target* root trans z) )
+)
+(define *auto-load-lvl* #f)
 (define old-level #f)
 
-    (defun runs-every-frame ()
-      ;; (increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
-    
 
+(defun draw-jak1-in-2-stuff ()
+  (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
+                               (bucket-id debug-no-zbuf1))
+    ;; reset bucket settings prior to drawing - font won't do this for us, and
+    ;; draw-raw-image can sometimes mess them up.
+    (dma-buffer-add-gs-set-flusha buf
+                                  (alpha-1 (new 'static 'gs-alpha :b #x1 :d #x1))
+                                  (tex1-1 (new 'static 'gs-tex1 :mmag #x1 :mmin #x1)))
+    (clear *pc-encoded-temp-string*)
+    (clear *temp-string*)
+    (format *temp-string* "<COLOR_WHITE>HOLD L1 AND PRESS SQUARE TO TOGGLE~%AUTO LOAD LEVELS: ~S~%WANTED LEVEL: ~A~%" (if *auto-load-lvl* "TRUE" "FALSE") *wanted-level*)
+    (pc-encode-utf8-string *temp-string* *pc-encoded-temp-string*)
+    (let ((font-ctx (new 'stack 'font-context *font-default-matrix* 2 203 0.0 (font-color default) (font-flags shadow kerning large))))
+        (set! (-> font-ctx scale) 0.325)
+        (draw-string-adv *pc-encoded-temp-string* buf font-ctx))))
+
+
+  (defun zero-volume? ()
+  "Returns true if the volume of main music should be set to 0 This is a hack."
+  (or (not (= *master-mode* 'game) )
+  (= (-> (level-get-target-inside *level*)name) 'title)
+  )
+  )
+
+
+    (defun runs-every-frame ()
+    (main-music-volume (the int  (the-as int (*  (-> *setting-control* user-current music-volume) 100)) ))
+    (if (or (zero-volume?) (not *auto-load-lvl*))  (pause-main-music)  (resume-main-music))
+    (draw-jak1-in-2-stuff)
+      ;; (increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
+
+    (when (and (cpad-hold? 0 l1) (cpad-pressed? 0 square))
+    (sound-play "skill-pickup")
+    (set! *auto-load-lvl* (not *auto-load-lvl*))
+    )
 
     (if (!= old-level *wanted-level*)
         (process-spawn-function process music-manager-proc)
@@ -482,41 +702,41 @@
 
     (when *target*
     (if *wanted-level*
-     (set! old-level *wanted-level*) 
-     
+     (set! old-level *wanted-level*)
+
     )
     )
-    
-    
+
+    (when *auto-load-lvl*
     (when *target*
         (find-closest-sphere-jak)
     )
 
     (when *target*
     (load-level-from-symbol)
-    
+
     )
-    
+    )
      ;; (draw-spheres)
       ;; Sample code to turn jak pink whenever he's doing the jetboard hover glitch
-      ;; (when *target* 
+      ;; (when *target*
       ;;   (if (board-hovering?)
       ;;     (draw-pink *target*)
       ;;     (draw-normal *target*)
       ;;     )
       ;;   )
 
-      (when (and (cpad-pressed? 0 down) (= *master-mode* 'game))
+      (when (and (cpad-pressed? 0 down) (= *master-mode* 'game) *target*)
       (format #t "(new 'static 'vector :x (meters~F) :y (meters~F) :z (meters~F))~%" (/ (-> *target* root trans x) 4096.0) (/ (-> *target* root trans y) 4096.0)(/ (-> *target* root trans z) 4096.0))
-      
+
       )
 
 
-      (if *show-input-display* 
+      (if *show-input-display*
         (input-display-on)
         (input-display-off)
         )
-      
+
       (none)
       )
 
@@ -527,7 +747,7 @@
       )
 
     (defun runs-on-task-close ()
-    
+
 
       (none)
       )
@@ -537,25 +757,25 @@
         ;; Code here runs as soon as you pickup ANY eco
 
         (case eco-type
-          (((pickup-type eco-yellow))      
+          (((pickup-type eco-yellow))
             ;; Code here runs as soon as you pickup yellow eco
 
             )
-          (((pickup-type eco-red))      
+          (((pickup-type eco-red))
             ;; Code here runs as soon as you pickup red eco
 
             )
-          (((pickup-type eco-blue))      
+          (((pickup-type eco-blue))
             ;; Code here runs as soon as you pickup blue eco
 
             )
 
-          (((pickup-type eco-green))      
-            ;; Code here runs as soon as you pickup big green eco 
+          (((pickup-type eco-green))
+            ;; Code here runs as soon as you pickup big green eco
 
             )
           )
-        
+
         (when from-vent?
           ;; Code here runs only if the eco was picked up from a vent
 
@@ -566,7 +786,7 @@
       )
 
     (defun runs-on-jak-spawn ()
-      ;; Code here runs every time jak spawns (loading a file new game or death)   
+      ;; Code here runs every time jak spawns (loading a file new game or death)
         (process-spawn-function process music-manager-proc)
       (none)
       )
@@ -575,14 +795,14 @@
       (case death-event
         (('dying)
           ;; Code here runs immediately every time jak dies, before any death animation or death cutscene
-          
+
           )
         (('blackout)
           ;; Code here runs after jak dies (and any death cutscene finishes), during the blackout before he spawns
 
           )
         )
-      
+
       (none)
       )
 
