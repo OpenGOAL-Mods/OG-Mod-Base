@@ -829,7 +829,8 @@
   (progress-graphics-msaa-off #x1338)
   (progress-graphics-display #x1339)
   (language-name-finnish #x133a)  
-  
+  (progress-hint-subtitles #x133b)
+
   ;; mod text
   (pad-triangle #x2000)
   (pad-circle #x2001)
