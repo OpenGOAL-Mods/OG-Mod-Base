@@ -105,3 +105,10 @@ out/jak2/fr3.rar
 
 *.diff
 goalc-report.html
+third-party/fmt/support/.gradle/8.9/checksums/checksums.lock
+third-party/fmt/support/.gradle/8.9/dependencies-accessors/gc.properties
+third-party/fmt/support/.gradle/8.9/fileHashes/fileHashes.lock
+third-party/fmt/support/.gradle/8.9/gc.properties
+third-party/fmt/support/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+third-party/fmt/support/.gradle/buildOutputCleanup/cache.properties
+third-party/fmt/support/.gradle/vcs-1/gc.properties

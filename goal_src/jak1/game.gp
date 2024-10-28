@@ -1659,6 +1659,69 @@
 ;; the DGO file
 (custom-level-cgo "TSZ.DGO" "test-zone/testzone.gd")
 
+;; TAGMORT
+
+(build-custom-level "block-world")
+(custom-level-cgo "BWD.DGO" "block-world/block-world.gd")
+
+(build-custom-level "islands")
+(custom-level-cgo "ISL.DGO" "islands/islands.gd")
+
+(build-custom-level "monument")
+(custom-level-cgo "MON.DGO" "monument/monument.gd")
+
+(build-custom-level "pyramid")
+(custom-level-cgo "PYR.DGO" "pyramid/pyramid.gd")
+
+(build-custom-level "garden")
+(custom-level-cgo "GAR.DGO" "garden/garden.gd")
+
+(build-custom-level "space-bird")
+(custom-level-cgo "SPA.DGO" "space-bird/space-bird.gd")
+
+(build-custom-level "holly-wood")
+(custom-level-cgo "HOL.DGO" "holly-wood/holly-wood.gd")
+
+(build-custom-level "ice-canyon")
+(custom-level-cgo "CAN.DGO" "ice-canyon/ice-canyon.gd")
+
+(build-custom-level "cathedral")
+(custom-level-cgo "CAT.DGO" "cathedral/cathedral.gd")
+
+(build-custom-level "ice-slide")
+(custom-level-cgo "SLI.DGO" "ice-slide/ice-slide.gd")
+
+(build-custom-level "block-man")
+(custom-level-cgo "MAN.DGO" "block-man/block-man.gd")
+
+(build-custom-level "cold-pipe")
+(custom-level-cgo "COL.DGO" "cold-pipe/cold-pipe.gd")
+
+(build-custom-level "chem-fac")
+(custom-level-cgo "CHE.DGO" "chem-fac/chem-fac.gd")
+
+(build-custom-level "glass-toe")
+(custom-level-cgo "GLA.DGO" "glass-toe/glass-toe.gd")
+
+(build-custom-level "villa-cube")
+(custom-level-cgo "VIL.DGO" "villa-cube/villa-cube.gd")
+
+(build-custom-level "cube-face")
+(custom-level-cgo "FAC.DGO" "cube-face/cube-face.gd")
+
+(build-custom-level "fac-cross")
+(custom-level-cgo "CRO.DGO" "fac-cross/fac-cross.gd")
+
+(build-custom-level "coins")
+(custom-level-cgo "COI.DGO" "coins/coins.gd")
+
+(build-custom-level "chicks")
+(custom-level-cgo "CHI.DGO" "chicks/chicks.gd")
+
+;;title and loading screens
+(build-custom-level "mort-title")
+(custom-level-cgo "MTI.DGO" "mort-title/mort-title.gd")
+
 ;; generate the art group for a custom actor.
 ;; requires a .glb model file in custom_assets/jak1/models/custom_levels
 ;; to also generate a collide-mesh, add :gen-mesh #t
