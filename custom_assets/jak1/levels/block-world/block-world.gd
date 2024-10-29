@@ -3,11 +3,11 @@
 "static-screen.o"
 "block-world.go"
 ;;Put back at some point once crash is figured out;;Start of "default" package for mort levels
-;; "training-part.o"
+"training-part.o"
 "warp-gate-switch-ag.go"
 "warpgate-ag.go"
 "flutflutegg.o"
-;;"warpgate.o"
+"warpgate.o"
 "flutflut-ag.go"
 "flutflutegg-ag.go"
 
