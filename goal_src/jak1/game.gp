@@ -490,7 +490,6 @@
 
    "village_common/villagep-obs.gc"
    "village_common/oracle.gc"
-   "village_common/warpgate.gc"
 
    "common/blocking-plane.gc"
    "common/blocking-plane-b.gc" ;; mod-base-change
@@ -2183,6 +2182,15 @@
  "mods/mod-custom-code.gc"
  "mods/mod-debug.gc"
 )
+
+(goal-src-sequence
+  "levels/"
+   :deps ;; no idea what these depend on, make it depend on the whole engine
+   ("$OUT/obj/mod-settings.o")
+
+   "village_common/warpgate.gc"
+
+   )
 
 (goal-src "levels/test-zone/test-zone-obs.gc" "process-drawable")
 

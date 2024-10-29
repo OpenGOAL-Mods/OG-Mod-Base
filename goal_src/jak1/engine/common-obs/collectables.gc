@@ -22,6 +22,8 @@
 
 (define-extern orb-placer-list-maintenace (function symbol none))
 
+(defun-extern run-this-when-cell-grab  process-drawable none)
+
 (declare-type vent process-drawable)
 
 (declare-type eco eco-collectable)
@@ -985,7 +987,8 @@
       (logclear! (-> self draw status) (draw-status hidden))
       (process-entity-status! self (entity-perm-status dead) #t)
       (stop! (-> self sound))
-      (while (handle->process (-> *game-info* other-camera-handle))
+      (run-this-when-cell-grab self)
+     (while (handle->process (-> *game-info* other-camera-handle))
         (format #t
                 "WARNING: fuel-cell stall ~D ~A ~A~%"
                 (current-time)

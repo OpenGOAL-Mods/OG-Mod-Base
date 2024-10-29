@@ -122,6 +122,229 @@
 
       )
       (none))
+
+      (defun move-samos-butts ()
+(vector-copy! (-> (the sage (process-by-ename "crate-3256"))root trans) (new 'static 'vector :x (meters 3025.28) :y (meters 485.76) :z (meters -4821.85)))
+(vector-copy! (-> (the sage (process-by-ename "crate-3258"))root trans) (new 'static 'vector :x (meters 3065.19) :y (meters 485.76) :z (meters -4859.85)))
+(vector-copy! (-> (the sage (process-by-ename "crate-3259"))root trans) (new 'static 'vector :x (meters 2985.19) :y (meters 485.76) :z (meters -4859.85)))
+(vector-copy! (-> (the sage (process-by-ename "crate-3250"))root trans) (new 'static 'vector :x (meters 3017.5074) :y (meters 485.76) :z (meters -4896.85)))
+
+(none))
+
+
+(defun find-best-master-mark ()
+  (set! old-point-to-jak (meters 3729817398217391279))
+  (dotimes (i 32)
+    (let* ((current-ball-pos (-> *camera*  target-spline point i position))
+            (dist-target-meters (/ (vector-vector-distance current-ball-pos (-> *target* root trans)) 40964))
+            (valid? (not (or (> dist-target-meters 1.0) (< dist-target-meters 0.27))))
+            (less-than-stored-pos (< dist-target-meters old-point-to-jak)))
+      ;; Too close to jak red/ignore them
+      (if (not valid?)
+          (none)
+          ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *color-black*)
+         ;; show all possible indexes for debugging
+         ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) current-ball-pos (font-color red) (the-as vector2h #f))
+         )
+      ;; Corrected part to update the closest position and distance
+      (if (and valid? less-than-stored-pos)
+            (begin
+              (set! *sphere-color* *color-green*)
+              ;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *sphere-color*)
+              (if less-than-stored-pos
+                  ;; If our current point is closer than our last point, store it and update closest known distance
+                  (begin
+                    (set! *closest-pos-index* i)
+                    (set! old-point-to-jak dist-target-meters)
+                  )
+              )
+            )
+      )
+    )
+  )
+  ;; Draw the closest position
+  ;;(format #t "WARNING: fuel-cell stall on not cloning. ~F~%" old-point-to-jak)
+  ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*)
+  ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" *closest-pos-index*) (-> *camera*  target-spline point *closest-pos-index* position)  (font-color green) (the-as vector2h #f))
+  (-> *camera*  target-spline point *closest-pos-index* position)
+  )
+
+
+(defun eco-manager ()
+
+;;Eco-chicken start
+(when (send-event *target* 'query 'powerup (pickup-type eco-chicken))
+(set! *has-chicken-eco* #t)
+
+)
+
+(when (not (send-event *target* 'query 'powerup (pickup-type eco-chicken)))
+(set! *has-chicken-eco* #f)
+
+)
+;;Ice eco start
+(when (send-event *target* 'query 'powerup (pickup-type eco-ice))
+
+;;Turn on the ice slide
+(set! (-> *stone-surface* slope-slip-angle) 16384.0)(set! (-> *stone-surface* slip-factor) 0.7)(set! (-> *stone-surface* transv-max) 1.5)(set! (-> *stone-surface* transv-max) 1.5)(set! (-> *stone-surface* turnv) 0.5)(set! (-> *stone-surface* nonlin-fric-dist) 4091904.0)(set! (-> *stone-surface* fric) 23756.8)
+
+;;snow
+(run-next-time-in-process (the process (activate (get-process *default-dead-pool* process #x4000) *default-pool* 'process (the pointer #x70004000))) (lambda () (dotimes (i 7) (if (send-event *target* 'query 'powerup (pickup-type eco-ice)) (if *target* (update-snow *target*)) (suspend)))))
+
+;;Stop custom music
+(when (not custom-music-eco-paused?)
+(set!  (-> (-> (level-get-target-inside *level*)info)music-bank) 'snow)
+(stop-main-music)
+(set! custom-music-eco-paused? #t)
+)
+)
+;; The condition for slip-angle is a disgusting hack so we arent consitantly setting a new jump-height
+(when  (and (not (send-event *target* 'query 'powerup (pickup-type eco-ice))) (= (-> *stone-surface* slope-slip-angle) 16384.0))
+(set! (-> *stone-surface* slope-slip-angle) 8192.0)(set! (-> *stone-surface* slip-factor) 1.0)(set! (-> *stone-surface* transv-max) 1.0)(set! (-> *stone-surface* turnv) 1.0)(set! (-> *stone-surface* nonlin-fric-dist) 5120.0)(set! (-> *stone-surface* fric) 153600.0)
+(music-manager)
+;;We should prob store the previous music-bank instead of assuming it was #f
+(set!  (-> (-> (level-get-target-inside *level*)info)music-bank) #f)
+(set! custom-music-eco-paused? #f)
+)
+;;Ice eco end
+
+;;Low gravity eco is in logic-target.gc 836, due to the values it sets being overridden.
+
+(none))
+
+(defun reset-chicken-targets ()
+;; wtf man just code normal please stupd hack stupid-hacks-every-frame
+(when (not (-> *speedrun-info* should-display?))
+(vector-identity! (-> *chicken-0* target-pos))
+(vector-identity! (-> *chicken-1* target-pos))
+(vector-identity! (-> *chicken-2* target-pos))
+(vector-identity! (-> *chicken-3* target-pos))
+(vector-identity! (-> *chicken-4* target-pos))
+(vector-identity! (-> *chicken-5* target-pos))
+(vector-identity! (-> *chicken-6* target-pos))
+(vector-identity! (-> *chicken-7* target-pos))
+(vector-identity! (-> *chicken-8* target-pos))
+(vector-identity! (-> *chicken-9* target-pos))
+(vector-identity! (-> *chicken-10* target-pos))
+(vector-identity! (-> *chicken-11* target-pos))
+
+)
+(format #t "RESETING CHICKEN TARGETS")
+(none)
+)
+
+
+(defun restore-cells ()
+
+;;Loop the flock and restore all the Cells
+(dotimes (i (get-current-chicks))
+(set-or-clear-status! (the entity-actor (entity-by-name (-> (get-chick-from-flock i) parent-cell-name))) (entity-perm-status dead) #f)
+)
+(reset-chicken-targets)
+
+
+;;Clear the flock to 0
+(set! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 0)
+
+)
+
+
+(defun draw-origin ()
+(when *show-debug*
+  (add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-orange*)
+  (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "Origin point") *Origin* (font-color red) (the-as vector2h #f))
+)
+
+  (none)
+)
+
+(defun adjust-chick-origin ((mmark vector))
+
+  (draw-origin)
+  (let ((xchange 0.0)
+        (ychange 0.0)
+        (zchange 0.0))
+        (if (not (= (vector-vector-distance *Origin* mmark) 0.0))
+            (begin
+              "Takes in the closest master mark from (draw-chicks-fund) then adjusts it and returns it to use as origin for chicken demons"
+              ;; If the origin is not at its starting point, figure out how much it moved and store that.
+
+
+              (set! xchange (- (-> *Origin* x) (-> mmark x)))
+              (set! ychange (- (-> *Origin* y) (-> *target* root trans y)))
+              (set! zchange (- (-> *Origin* z) (-> mmark z)))
+
+              ;;(format #t "Origin moved by ~m ~m ~%" xchange zchange)
+              (move-flock-by-xz xchange ychange zchange)
+
+              ;;Update the stored Origin since it moved
+              (vector-copy! *Origin* mmark)
+              (set! (-> *Origin* y) (-> *target* root trans y))
+            )
+        )
+  )
+            ;;Check if the position of all NUM_FLOCKPOINTS flock points is valid here, if its not regenerate them.
+            ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-yellow*)
+            ;;Set the spot of CHICK1 to origin
+
+
+      *Origin*
+)
+
+(defun portal-mort-trans ()
+  (-> (the warp-gate (-> (the basebutton (process-by-ename "project-warp-gate-switch") )child 0)) root trans)
+  )
+
+
+(defun portal-mort-gate ()
+  (the warp-gate (-> (the basebutton (process-by-ename "project-warp-gate-switch") )child 0))
+  )
+
+;;mort getters
+
+
+(defun restore-saved-chicks-from-mem()
+"This function runs on jak spawn, and checks if the stored memory card value is nonzero, and saved chicks is zero if so it updates it."
+(if (and (nonzero? (get-saved-chicks-from-mem)) (= (get-saved-chicks) 0))
+(update-saved-chicks (get-saved-chicks-from-mem))
+)
+)
+
+(defun  update-current-chicks ((amount int))
+(set! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) amount)
+(none)
+)
+
+  (defun run-this-when-cell-grab ((self fuel-cell))
+      ;;Saved a chick
+    ;;Tagmort
+
+    ;;check to see the saved chickens stored and maybe restore it
+    (if (and (= (get-current-chicks) 0)
+    (= (get-saved-chicks) 0) )
+    (begin
+    (format #t "picked up a chick and its first in the level~%")
+    (if (> (get-saved-chicks-from-mem) (get-saved-chicks))
+    (begin
+    (format #t "Found saved chick data that was non zero, updating saved chicks in level to ~D~%" (get-saved-chicks-from-mem))
+    (update-saved-chicks (get-saved-chicks-from-mem))
+    )
+    )
+    )
+    )
+    ;; Set the chick with the highest index as this cell
+    (set! (-> (get-chick-from-flock (the int (get-current-chicks))) parent-cell-name)
+        (the string (-> self name))
+    )
+    ;; Increment after setting name
+    (update-current-chicks (+ (get-current-chicks) 1))
+    (play-sound-file "ChickPickup1.mp3" (the int (-> *setting-control* default sfx-volume)))
+    (if (= (+  (get-current-chicks)  (get-saved-chicks))
+           (get-total-chicks)
+        )
+   (play-sound-file "coin1.wav" (the int (-> *setting-control* default sfx-volume)))
+    )
+  (none))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Begin process-function defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -386,9 +609,210 @@
   (none)
 )
 
+(defun chicken-every-frame ()
+
+
+(when (run-mort-code?)
+  (adjust-chick-origin (find-best-master-mark))
+    ;;If are flock points aren't setup, lets set them up.
+
+    ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
+
+    ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
+    ;;If a chicken should despawn, set its target pos to 0,0,0.
+    (assign-remove-demon-chicken-target)
+    ;;Constantly check all chicks to see if they are in the warpgate if they are, then run chick-saved and increment saved per level
+    ;;THIS FUNCTION HAS A SLEEP/SUSPEND WHEN IT RUNS (have a chick, be near portal)
+     (warp-demon-chick)
+     (save-chicks-func)
+)
+(none))
+
+(define *count-crates* 0)
+(defun get-loaded-cell-count ()
+(set! *count-crates* 0)
+(execute-process-tree *active-pool* (lambda ((proc process))
+(when (-> proc entity)
+(let (
+    (vec (-> proc entity trans))
+    (quat (-> proc entity quat))
+    (name (the string (-> proc name))))
+    (when (= (-> (the entity-actor (-> proc entity)) etype) fuel-cell)
+
+    ;;We know its a cell
+
+
+
+    ;;If its wood, increase our count
+
+    (set! *count-crates* (+ *count-crates* 1))
+
+    )
+
+    ))
+
+
+    )
+    *kernel-context*)
+    *count-crates*
+
+)
+
+
+
+(defun have-all-chicks-safe ()
+
+
+
+(let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
+         )
+
+(when (or (and  (= (get-loaded-cell-count) 0) (= (get-current-chicks) 0) (not (chicken-portal?)))
+(and (= (get-loaded-cell-count) 0) (> (get-saved-chicks) (get-total-chicks)) (not (chicken-portal?)))
+)
+
+(if
+(and (= (-> (level-get-target-inside *level*)name) (->  (get-continue-by-name *game-info* (-> *warp-info* (get-unlock-level))) level)) (!= (-> (level-get-target-inside *level*)name) 'block-world))
+(begin
+(play-sound-file "nosoftlock.mp3" 100)
+(set-unlock-level)
+;;TEST THIS
+)
+)
+)
+
+
+(or
+      (and (>= (get-saved-chicks) (get-total-chicks)) (not (chicken-portal?)))
+      (and *cheat-mode* (cpad-hold? 0 l3))
+      (and (= (get-loaded-cell-count) 0) (= (get-current-chicks) 0) (not (chicken-portal?)) )
+)
+))
+
+    (defun runs-every-frame-proc-func ()
+    "this is ran in its own process called run-every-frame-proc"
+    ;;This is a hack to run softlock prevention
+
+    ;; (when (and (not (cpad-hold? 0 l3))(cpad-hold? 0 down))
+    ;; (mort-chicks-text)
+    ;; )
+    ;; (if (not (= *master-mode* 'progress))
+    ;; (set! *loaded-cell-pause* (get-loaded-cell-count))
+
+    ;; )
+
+    ;;This is a hack to try to patch a bug, remove if it messes up save/restoring
+    (if (and *target* (= (-> *target* state name) 'target-warp-out))
+    (reset-saved-chick-from-mem)
+    )
+
+    (when #t
+    ;;(format #t "~A" (-> *target* state name))
+
+      (if (and *target*
+          (= (-> *target* state name) 'target-stance)
+          (not (movie?))
+          (!= (level-get-target-inside *level*) #f)
+          (!= (-> (level-get-target-inside *level*)name) 'misty)
+          (!= (-> (level-get-target-inside *level*)name) 'village1)
+          (!= (-> (level-get-target-inside *level*)name) 'beach)
+          (!= (-> (level-get-target-inside *level*)name) 'mort-title)
+          (!= (-> (level-get-target-inside *level*)name) 'citadel)
+          (!= (-> (level-get-target-inside *level*)name) 'finalboss)
+          )
+      (have-all-chicks-safe)
+      )
+      ;;
+      ;; )
+
+    ;;This is kind of a hack to start up during the opening cutscene
+    (when (and (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (>= *currentCutsceneFrame* 1649))
+    (set! *in-mort-menu* #t)
+                  (let ((current-timea (current-time)))
+                    (until (time-elapsed? current-timea (seconds 0.55))
+                    ;;(format #t "~S~%" "NOT ELAPSED")
+                      (suspend)
+                    )
+              )
+              (set-blackout-frames (seconds 25.3))
+    (str-play-stop *currentSpoolName*)
+    (set! (-> *art-control* active-stream) #f)
+
+    )
+
+    (when (and (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 2))
+    (move-samos-butts)
+    )
+
+    (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 2))
+    (play-sound-file "farts/fart1.mp3" (the int (-> *setting-control* default dialog-volume)))
+    )
+    (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 250))
+    (play-sound-file "farts/vinefart.mp3" (the int (-> *setting-control* default dialog-volume)))
+    )
+
+
+   ;; (sound-manager)
+    (when (run-mort-code?)
+      ;;   (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+      ;;   (init-chickens)
+      ;; )
+
+
+    (eco-manager) ;;checks constantly if we do or do not have eco, and what type, the gives effect or turns it off
+    (none)
+
+   )
+     ;; This should be done as the last thing
+      ;; (find-best-master-mark)
+      ;; (mort-main-menu)
+
+
+    )
+
+      (none)
+    )
+
+(defun debug-text-every-frame ()
+"This process ONLY spawns when debug mode is on and shows some extra info"
+"I have no idea why the close-to-portal check is needed but it works."
+   (when *debug-segment*
+
+    (update-mort-vars)
+    (when (and (run-mort-code?) #t)
+     (draw-beta-flock-points)
+     (mort-rewrite-text)
+    )
+   )
+
+(none))
+
+(defun variable-every-frame()
+ "Responsible for updating most globals - if this isnt running something is terribly wrong"
+(update-mort-vars)
+ (if (= (-> *target* state name) 'target-warp-out)
+  (set! (-> *speedrun-info* should-display?) #t)
+ )
+  (if (and (= (-> *target* state name) 'target-warp-in) (> (get-unlock-level) 0))
+  (set! (-> *speedrun-info* should-display?) #f)
+ )
+;;If we input a button combo and we are in debug, unlock the next level
+      (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1) *cheat-mode*)
+      (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
+      (set-unlock-level)
+      ;;This might be ok to revert later
+      ;;(reset-actors #t)
+      )
+
+
+(none))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Begin process defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define done-init?  #f)
+
 
 (defbehavior sound-manager-proc process ()
 "handles the sound, and if it needs to spawn the runs-every-frame process it does that too"
@@ -397,6 +821,10 @@
 ;; (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
 ;;   (init-chickens)
 ;; )
+(if (not done-init?)
+  (init-chickens)
+
+)
 (suspend)
 )
 (none)
@@ -411,37 +839,73 @@
 (none)
 )
 
+(defbehavior run-every-frame-proc process ()
+(while #t
+(runs-every-frame-proc-func)
+(suspend)
+)
+(none)
+)
+
+(defbehavior debug-text-every-frame-proc process ()
+"Process is responsible for drawing debug text this process should never be suspended"
+(while #t
+(debug-text-every-frame)
+(suspend)
+)
+(none)
+)
+
+(defbehavior chicken-every-frame-proc process ()
+"Process is responsible for most chicken related functions"
+(while #t
+(chicken-every-frame)
+(suspend)
+)
+(none)
+)
+
+(defbehavior variable-every-frame-proc process ()
+"Process is responsible for updating most variables/globals this process should never be suspended"
+(while #t
+(variable-every-frame)
+(suspend)
+)
+(none)
+)
+
 
 (defun init-chickens ()
 
 
 
-      ;;   (process-spawn-function process run-every-frame-proc) ;; THERE IS A RETAIL CRASH HERE
-      ;;  (process-spawn-function process chicken-every-frame-proc)
-      ;;  (process-spawn-function process variable-every-frame-proc)
+         (process-spawn-function process run-every-frame-proc) ;; THERE IS A RETAIL CRASH HERE
+        (process-spawn-function process chicken-every-frame-proc)
+
+       (process-spawn-function process variable-every-frame-proc)
       ;; ;; (process-spawn-function process text-every-frame-proc)
-      ;;  (process-spawn-function process debug-text-every-frame-proc)
+        (process-spawn-function process debug-text-every-frame-proc)
         (process-spawn-function process stupid-hacks-every-frame-proc)
 
 
-      ;; (when *debug-segment*
-      ;; (format #t "INITIALIZING CHICKENS~%")
-      ;; (format #t "ITS MORTIN TIME~%")
-      ;; )
+      (when *debug-segment*
+      (format #t "INITIALIZING CHICKENS~%")
+      (format #t "ITS MORTIN TIME~%")
+      )
 
-      ;; (set-flock-points-start)
-      ;; (set-flock-points)
-      ;; (set-flock-false);; Set all flock values to #f before chickens are in it
-      ;; (chicken-pls) ;; spawn the chickens offscreen
+      (set-flock-points-start)
+      (set-flock-points)
+      (set-flock-false);; Set all flock values to #f before chickens are in it
+      (chicken-pls) ;; spawn the chickens offscreen
       ;; (get-mort-orb-total)
-      ;; (set! done-init? #t)
+       (set! done-init? #t)
 
       (none))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Begin function defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
-(define done-init?  #f)
+
 (defun runs-every-frame ()
   ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
 
@@ -455,8 +919,6 @@
       (suspend)
       )
       (process-spawn-function process sound-manager-proc)
-      (init-chickens) ;;remove this later
-      (set! done-init? #t)
 )
   (if *show-input-display* (input-display-on) (input-display-off))
   ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
@@ -513,11 +975,20 @@
       ))
   (none))
 
-(defun runs-on-jak-spawn ()
-  ;; Code here runs every time jak spawns (loading a file new game or death)
-  ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc
-  ;;(process-spawn-function process music-manager-proc)
-  (none))
+    (defun runs-on-jak-spawn ()
+      ;; Code here runs every time jak spawns (loading a file new game or death)
+
+      ;;(init-title)
+      ;;(format #t  "RUNNING MUSIC PROC~%")
+      ;; (process-spawn-function process music-manager-proc)
+      ;; (restore-cells)
+      ;; (restore-saved-chicks-from-mem)
+
+
+      ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc
+      ;;(process-spawn-function process music-manager-proc)
+      (none)
+      )
 
 (defun runs-on-jak-death ((death-event symbol))
   (case death-event

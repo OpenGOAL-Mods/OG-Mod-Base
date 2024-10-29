@@ -225,7 +225,7 @@ void Generic2::setup_opengl_tex(u16 unit,
   }
 
   if (!tex) {
-    lg::warn("Failed to find texture at {}, using random (generic2)", tbp_to_lookup);
+    //lg::warn("Failed to find texture at {}, using random (generic2)", tbp_to_lookup);
     tex = render_state->texture_pool->get_placeholder_texture();
   }
 

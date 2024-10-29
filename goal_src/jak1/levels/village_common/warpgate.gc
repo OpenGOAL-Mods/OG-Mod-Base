@@ -1,16 +1,6 @@
 ;; DECOMP BEGINS
 
-(defun get-current-chicks ()
 
-0)
-(defun get-saved-chicks ()
-
-0)
-(defun chicken-portal? ()
-#f)
-(defun get-total-chicks ()
-
-0)
 
 (define-extern flutflut? symbol)
 (define flut-movement-freeze #f)
@@ -131,12 +121,7 @@
     )
   :post target-no-move-post
   )
-(defun-extern get-unlock-level int)
-(defun-extern get-loaded-cell-count int)
-(defun-extern set-unlock-level none)
-(defun-extern reset-saved-chick-from-mem none)
 
-(defun-extern chicken-portal? symbol)
 
 ;; this lets us use the portal, first thing we try to do is upgrade the unlock level if there are no cells and we cant get a chick as a softlock protection
 (defun have-all-chicks-safe ()

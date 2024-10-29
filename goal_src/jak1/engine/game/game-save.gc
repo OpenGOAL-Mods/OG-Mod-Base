@@ -6,7 +6,7 @@
 (require "engine/gfx/sprite/sparticle/sparticle-launcher.gc")
 (require "engine/ps2/memcard-h.gc")
 (require "engine/load/loader.gc")
-
+(defun-extern reset-custom-info none)
 ;; The game-save system implements the "background autosave" feature.
 
 ;; The process works like this:
@@ -610,6 +610,7 @@
   ;; if we're a new game, set our checkpoint.
   (when (nonzero? (-> save new-game))
     (set-continue! this "game-start")
+    (reset-custom-info)
     (set! save save)
     (goto cfg-134))
   ;; loop over all tags

@@ -1989,6 +1989,8 @@
 
 (define *camera-master-dead-pool* (new 'global 'dead-pool 1 (* 8 1024) '*camera-master-dead-pool*))
 
+(define *demon-chicken-dead-pool* (new 'global 'dead-pool 32 (* 16 1024) '*demon-chicken-dead-pool*))
+
 ;; used if other pools run out of space in debug mode
 (if *debug-segment* (define *debug-dead-pool* (new 'debug 'dead-pool-heap '*debug-dead-pool* 768 (* 1024 1024))))
 
@@ -2028,6 +2030,11 @@
 
 ;; pause in menus
 (set! (-> *target-pool* mask) (process-mask pause menu progress process-tree))
+
+(change-parent (define *demon-chicken-pool* (new 'global 'process-tree 'demon-chicken-pool)) *active-pool*)
+;; pause in menus
+(set! (-> *demon-chicken-pool* mask) (process-mask pause menu progress process-tree))
+
 
 ;; the *entity-pool* contains all processes spawned from entities.
 (change-parent (define *entity-pool* (new 'global 'process-tree 'entity-pool)) *active-pool*)

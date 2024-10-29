@@ -411,8 +411,8 @@ void DirectRenderer::update_gl_texture(SharedRenderState* render_state, int unit
   }
 
   if (!tex) {
-    lg::warn("Failed to find texture at {}, using random (direct: {})", state.texture_base_ptr,
-             name_and_id());
+    //lg::warn("Failed to find texture at {}, using random (direct: {})", state.texture_base_ptr,
+    //         name_and_id());
     tex = render_state->texture_pool->get_placeholder_texture();
   }
   ASSERT(tex);

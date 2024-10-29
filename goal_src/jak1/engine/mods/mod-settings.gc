@@ -59,5 +59,34 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *currentCutsceneFrame* 0)
 (define *currentSpoolName* "")
 (define mort-level? #f)
+(define *in-mort-menu* #f)
+(define *has-chicken-eco* #f)
+(define custom-music-eco-paused? #f)
+(define-extern *show-debug* symbol)
+
 
 (define *old-voice-volume* 0.0)
+(define *Origin*  (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0))
+(defun-extern init-chickens (none))
+(defconstant ORANGE_DEMON_DEBUG #f)
+(defconstant NOTICE_DIST (meters 10000))
+(defconstant STOP_CHASE_DIST (meters 100000))
+(define *close-to-portal?* #f)
+
+(define *sphere-color* (new 'static 'rgba :r #xff :g #xff :b #xff :a #x80))
+;;This function is a mess TODO: Pretend it doesn't exist.
+(define *closest-pos-index* 0)
+(define old-point-to-jak (meters 3729817398217391279))
+
+(deftype level-information (structure)
+((name string)
+ (total-chicks int32)
+ (current-chicks int32)
+ (saved-chicks int32)
+))
+  (deftype custom-level-info (structure)
+  ((data level-information 47 :inline  :offset-assert 0)
+   )
+  )
+
+  (define *custom-level-info*(new 'static 'custom-level-info))
