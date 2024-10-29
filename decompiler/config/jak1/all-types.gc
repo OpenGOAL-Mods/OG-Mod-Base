@@ -1048,7 +1048,7 @@
   (sidekick-hint-rounddoor #x23c)
   (sidekick-hint-lurkerm #x23d)
   (sidekick-hint-tower #x23e)
-  
+
   (sidekick-reminder-fish #x240)
 
   (firecanyon-need-cells #x24f)
@@ -24772,32 +24772,32 @@
     bladeassm-idle)
   )
 
-(deftype flutflutegg (process-drawable)
-  ((root collide-shape-moving :override)
-   (fall-dist           meters                  :offset-assert 176)
-   (start               vector          :inline :offset-assert 192)
-   (dir                 vector          :inline :offset-assert 208)
-   (pos                 float                   :offset-assert 224)
-   (vel                 float                   :offset-assert 228)
-   (wobbler             wobbler                   :offset-assert 232)
-   (last-impulse-time   int32                   :offset-assert 236)
-   (incomming-attack-id uint64                  :offset-assert 240)
-   (ambients-played     int32                   :offset-assert 248)
-   (ambient             ambient-control :inline :offset-assert 256)
-   )
-  :method-count-assert 21
-  :size-assert         #x110
-  :heap-base           #xa0
-  :flag-assert         #x1500a00110
-  (:methods
-    (flutflutegg-method-20 (_type_ float float float) none) ;; 20
-    )
-  (:states
-    (flutflutegg-break symbol)
-    flutflutegg-idle
-    flutflutegg-physics-fall
-    flutflutegg-physics)
-  )
+;; (deftype flutflutegg (process-drawable)
+;;   ((root collide-shape-moving :override)
+;;    (fall-dist           meters                  :offset-assert 176)
+;;    (start               vector          :inline :offset-assert 192)
+;;    (dir                 vector          :inline :offset-assert 208)
+;;    (pos                 float                   :offset-assert 224)
+;;    (vel                 float                   :offset-assert 228)
+;;    (wobbler             wobbler                   :offset-assert 232)
+;;    (last-impulse-time   int32                   :offset-assert 236)
+;;    (incomming-attack-id uint64                  :offset-assert 240)
+;;    (ambients-played     int32                   :offset-assert 248)
+;;    (ambient             ambient-control :inline :offset-assert 256)
+;;    )
+;;   :method-count-assert 21
+;;   :size-assert         #x110
+;;   :heap-base           #xa0
+;;   :flag-assert         #x1500a00110
+;;   (:methods
+;;     (flutflutegg-method-20 (_type_ float float float) none) ;; 20
+;;     )
+;;   (:states
+;;     (flutflutegg-break symbol)
+;;     flutflutegg-idle
+;;     flutflutegg-physics-fall
+;;     flutflutegg-physics)
+;;   )
 
 (deftype harvester (process-drawable)
   ((root collide-shape :override)
@@ -24821,7 +24821,7 @@
 
 ;; - Functions
 
-(define-extern flutflutegg-hit-sounds (function none :behavior flutflutegg))
+;; (define-extern flutflutegg-hit-sounds (function none :behavior flutflutegg))
 (define-extern bladeassm-prebind-function (function process-drawable int bladeassm event-message-block object)) ;; TODO - first arg is very likely wrong
 (define-extern flying-rock-init-by-other (function vector vector float entity-actor none :behavior flying-rock))
 (define-extern spawn-flying-rock (function vector vector float entity none))

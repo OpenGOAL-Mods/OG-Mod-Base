@@ -490,6 +490,7 @@
 
    "village_common/villagep-obs.gc"
    "village_common/oracle.gc"
+   "village_common/warpgate.gc"
 
    "common/blocking-plane.gc"
    "common/blocking-plane-b.gc" ;; mod-base-change
@@ -529,6 +530,7 @@
   "wobbler.gc"
   "twister.gc"
   "beach-obs.gc"
+  "flutflutegg.gc"
   "bird-lady.gc"
   "bird-lady-beach.gc"
   "mayor.gc"

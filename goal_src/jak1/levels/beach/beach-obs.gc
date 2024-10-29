@@ -725,24 +725,34 @@
   (go bladeassm-idle)
   (none))
 
-(deftype flutflutegg (process-drawable)
-  ((root                collide-shape-moving :override)
-   (fall-dist           meters)
-   (start               vector :inline)
-   (dir                 vector :inline)
-   (pos                 float)
-   (vel                 float)
-   (wobbler             wobbler)
-   (last-impulse-time   int32)
-   (incomming-attack-id uint64)
-   (ambients-played     int32)
-   (ambient             ambient-control :inline))
+  ;;added the custom fields to match flutflutegg.gc
+  (deftype flutflutegg (process-drawable)
+  ((root                 collide-shape-moving :override)
+   (fall-dist            meters)
+   (start                vector                :inline)
+   (dir                  vector                :inline)
+   (pos                  float)
+   (vel                  float)
+   (wobbler              wobbler)
+   (last-impulse-time    int32)
+   (incomming-attack-id  uint64)
+   (ambients-played      int32)
+   (ambient              ambient-control       :inline)
+   (num-hit   int32 )
+   (max-hp int32)
+   (eco-collectable int32)
+   (eco-quantity int32)
+   )
   (:methods
-   (flutflutegg-method-20 (_type_ float float float) none))
-  (:states (flutflutegg-break symbol)
-   flutflutegg-idle
-   flutflutegg-physics
-   flutflutegg-physics-fall))
+    (flutflutegg-method-20 (_type_ float float float) none)
+    )
+  (:states
+    (flutflutegg-break symbol)
+    flutflutegg-idle
+    flutflutegg-physics
+    flutflutegg-physics-fall
+    )
+  )
 
 
 (defskelgroup *flutflutegg-sg*
