@@ -452,6 +452,20 @@
        (if (time-elapsed? (-> this money-pickup-time) (seconds 0.05)) (sound-play "money-pickup"))
        (set-time! (-> this money-pickup-time)))
      (adjust (-> (the-as target (-> this process)) game) 'money amount source-handle))
+
+    (((pickup-type star))
+     ;; get money.
+     (when (< 0.0 amount)
+       ;; play sound.
+       ;;hack
+       (set! amount 5.0)
+       (if (>= (- (-> *display* base-frame-counter) (-> this money-pickup-time)) (seconds 0.05))
+           (sound-play "money-pickup")
+           )
+       (set! (-> this money-pickup-time) (-> *display* base-frame-counter))
+       )
+     (adjust (-> (the-as target (-> this process)) game) 'money amount source-handle))
+
     (((pickup-type fuel-cell))
      ;; the amount is actually the index of the task.
      (let ((s4-2 (the int amount)))
