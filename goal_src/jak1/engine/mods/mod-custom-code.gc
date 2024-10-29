@@ -91,6 +91,37 @@
 (none)
 )
 
+(defun run-mort-code? ()
+"When these are true, we dont want to run mort code."
+(and *target*
+      (!= (-> (level-get-target-inside *level*)name) title) ;; this doesnt work and should be 'title but I am afraid fixing it will cause bugs
+      (!= (-> (level-get-target-inside *level*)name) mort-title)
+      (!= (-> (level-get-target-inside *level*)name) 'mort-title)
+      (!= (-> *target* state name) 'target-continue)
+      ;;This warp stuff is a total hack to fix warp-demon-chick in retail mode. Id like to remove it one day
+      (!= (-> *target* state name) 'target-warp-out)
+      (!= (-> *target* state name) 'target-warp-in)
+      mort-level?)
+)
+
+        (defun robo-movie-check ()
+
+      (when (and (process-by-ename "robotboss-3") *target*)
+      (when  (and (= (-> (process-by-ename "robotboss-3") state name) 'robotboss-blue-wait) (!= (-> *target* state name) 'target-continue) )
+        (dotimes (i 10)
+        (suspend)
+        )
+        (begin
+              (suspend)
+              (set! (-> *autosplit-info-jak1* res-cold-pipe) 1)
+        (go-process  (process-by-ename "robotboss-3") robotboss-white-eco-movie)
+        (suspend)
+        )
+
+      )
+
+      )
+      (none))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Begin process-function defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -279,6 +310,82 @@
 
 (none))
 
+(defun stupid-hacks-every-frame ()
+(when run-mort-code?
+;;Hack the main menu music since we cant pause it yet
+(main-music-volume (the int (* (-> *setting-control* default music-volume) 0.75)))
+
+    ;; Its so funny that this works lol
+
+
+;;Hack to warp/skip to the light eco cutscene if we are in citadel because I dont know how to make mort bosses yet
+(when (and (process-by-ename "robotboss-3") *target*)
+    (robo-movie-check)
+    )
+
+
+;;Hack to rotat the warpgate this one is extra weird the math on this is wrong but the idea is close enough, might not work in coins??
+  (if (and  (entity-by-name "project-training-part-1") (!= (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))
+  ))))
+       (set! (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))))
+     )
+  )
+
+
+
+  )
+
+
+
+;;Hack to set the voice volume to 0 during these cutscenes, then restore it when the cutscene is overridden.
+
+(when (string= *currentSpoolName* "green-sagecage-outro-beat-boss-b")
+    (str-play-stop *currentSpoolName*)
+    (set! (-> *art-control* active-stream) #f)
+
+)
+
+          (if (or (and *custom-cutscene?* (or  (string= *currentSpoolName* "sage-intro-sequence-a")
+                   (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
+                   (string= *currentSpoolName* "sidekick-human-intro-sequence-c")))
+
+
+                   (and *custom-cutscene?*  (string= *currentSpoolName* "finalbosscam-white-eco")
+
+                    (or (< *currentCutsceneFrame* 267)
+                    (> *currentCutsceneFrame* 321)
+                    )
+                   )
+                   ;;annoying but the daxter cutscene takes a second to update the volume...
+                   (and *custom-cutscene?*  (string= *currentSpoolName* "green-sagecage-daxter-sacrifice") )
+                   )
+
+
+
+                        (begin
+                        ;;store the current volume setting
+                        (if (= *old-voice-volume* 0.0)
+                        (set! *old-voice-volume* (-> *setting-control* default dialog-volume))
+                        )
+                        ;;set volume to 0 during this cutscene
+                        (set! (-> *setting-control* default dialog-volume) 0.0)
+                        )
+                        (begin
+                        (if (and (!= *old-voice-volume* 0.0 )(= (-> *setting-control* default dialog-volume) 0.0))
+                          (begin
+                          (set! (-> *setting-control* default dialog-volume) *old-voice-volume*)
+                          (set! *old-voice-volume* 0.0)
+                          )
+                        )
+                  )
+
+          )
+
+
+
+  (none)
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Begin process defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -294,6 +401,42 @@
 )
 (none)
 )
+
+(defbehavior stupid-hacks-every-frame-proc process ()
+"Ideally this process does nothing, but unfortunately it does alot"
+(while #t
+(stupid-hacks-every-frame)
+(suspend)
+)
+(none)
+)
+
+
+(defun init-chickens ()
+
+
+
+      ;;   (process-spawn-function process run-every-frame-proc) ;; THERE IS A RETAIL CRASH HERE
+      ;;  (process-spawn-function process chicken-every-frame-proc)
+      ;;  (process-spawn-function process variable-every-frame-proc)
+      ;; ;; (process-spawn-function process text-every-frame-proc)
+      ;;  (process-spawn-function process debug-text-every-frame-proc)
+        (process-spawn-function process stupid-hacks-every-frame-proc)
+
+
+      ;; (when *debug-segment*
+      ;; (format #t "INITIALIZING CHICKENS~%")
+      ;; (format #t "ITS MORTIN TIME~%")
+      ;; )
+
+      ;; (set-flock-points-start)
+      ;; (set-flock-points)
+      ;; (set-flock-false);; Set all flock values to #f before chickens are in it
+      ;; (chicken-pls) ;; spawn the chickens offscreen
+      ;; (get-mort-orb-total)
+      ;; (set! done-init? #t)
+
+      (none))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Begin function defintions.
@@ -312,6 +455,7 @@
       (suspend)
       )
       (process-spawn-function process sound-manager-proc)
+      (init-chickens) ;;remove this later
       (set! done-init? #t)
 )
   (if *show-input-display* (input-display-on) (input-display-off))

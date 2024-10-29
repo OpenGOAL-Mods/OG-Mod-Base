@@ -59,3 +59,5 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *currentCutsceneFrame* 0)
 (define *currentSpoolName* "")
 (define mort-level? #f)
+
+(define *old-voice-volume* 0.0)
