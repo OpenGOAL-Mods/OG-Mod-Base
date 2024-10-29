@@ -347,7 +347,8 @@
      (level-task-data-index coldpipe)
      (level-task-data-index blockman)
      (level-task-data-index cubeface)
-     (level-task-data-index morttitle)))
+     (level-task-data-index morttitle)
+     (level-task-data-index max)))
 
 ;; maps goal language ID to its name string ID
 (define *language-name-remap*
@@ -2187,4 +2188,4 @@
 ;; goes down by 24 or 23 every time
 (define *task-egg-starting-x* (new 'static 'boxed-array :type int32 218 194 171 147 124 100 77 53 30))
 
-(define *game-counts* (the game-count-info (malloc 'global 10000)))
+(define *game-counts* (the-as game-count-info #f))

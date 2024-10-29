@@ -484,27 +484,27 @@
   (set! (-> *progress-process* 0 icons 4 icon-x) -320)
   0
   (none))
-
+(define *game-counts* (the game-count-info (malloc 'global 10000)))
 (defmethod relocate ((this game-count-info) (arg0 int))
   "Load in the game-count-info. This is a bit of a hack."
   (set! (-> *game-counts* type) game-count-info)
   (set! (-> *game-counts* length) (length *level-load-list*))
-  (set! (-> *game-counts* data 0 money-count) 50)
-  (set! (-> *game-counts* data 1 money-count) 50)
-  (set! (-> *game-counts* data 2 money-count) 150)
-  (set! (-> *game-counts* data 3 money-count) 150)
-  (set! (-> *game-counts* data 4 money-count) 150)
-  (set! (-> *game-counts* data 5 money-count) 50)
-  (set! (-> *game-counts* data 6 money-count) 50)
-  (set! (-> *game-counts* data 7 money-count) 200)
-  (set! (-> *game-counts* data 8 money-count) 200)
-  (set! (-> *game-counts* data 9 money-count) 200)
-  (set! (-> *game-counts* data 10 money-count) 50)
-  (set! (-> *game-counts* data 11 money-count) 50)
-  (set! (-> *game-counts* data 12 money-count) 200)
-  (set! (-> *game-counts* data 13 money-count) 200)
-  (set! (-> *game-counts* data 14 money-count) 50)
-  (set! (-> *game-counts* data 15 money-count) 200)
+  ;; (set! (-> *game-counts* data 0 money-count) 50)
+  ;; (set! (-> *game-counts* data 1 money-count) 50)
+  ;; (set! (-> *game-counts* data 2 money-count) 150)
+  ;; (set! (-> *game-counts* data 3 money-count) 150)
+  ;; (set! (-> *game-counts* data 4 money-count) 150)
+  ;; (set! (-> *game-counts* data 5 money-count) 50)
+  ;; (set! (-> *game-counts* data 6 money-count) 50)
+  ;; (set! (-> *game-counts* data 7 money-count) 200)
+  ;; (set! (-> *game-counts* data 8 money-count) 200)
+  ;; (set! (-> *game-counts* data 9 money-count) 200)
+  ;; (set! (-> *game-counts* data 10 money-count) 50)
+  ;; (set! (-> *game-counts* data 11 money-count) 50)
+  ;; (set! (-> *game-counts* data 12 money-count) 200)
+  ;; (set! (-> *game-counts* data 13 money-count) 200)
+  ;; (set! (-> *game-counts* data 14 money-count) 50)
+  ;; (set! (-> *game-counts* data 15 money-count) 200)
   (set! (-> *game-counts* data 16 money-count) 55);;block world
   (set! (-> *game-counts* data 17 money-count) 45);;factory cross
   (set! (-> *game-counts* data 18 money-count) 50);;hollywood
@@ -524,11 +524,11 @@
   (set! (-> *game-counts* data 32 money-count) 50);;cold-pipe
 
 
-(dotimes (i (level-task-data-index max))
-  (if (or (= (-> *game-counts* data i money-count) 0) (> (-> *game-counts* data i money-count) 300) (= (-> *game-counts* data i money-count) #f))
+(dotimes (i (- (level-task-data-index max) 4)) ;;this is a stupid hack
+  (if (and (> i 16 )(or (= (-> *game-counts* data i money-count) 0) (> (-> *game-counts* data i money-count) 300) (= (-> *game-counts* data i money-count) #f)))
     (set! (-> *game-counts* data i money-count) i)
   )
-  (if (or (= (-> *game-counts* data i buzzer-count) 0) (> (-> *game-counts* data i buzzer-count) 300) (= (-> *game-counts* data i buzzer-count) #f))
+  (if (and (> i 16 ) (or (= (-> *game-counts* data i buzzer-count) 0) (> (-> *game-counts* data i buzzer-count) 300) (= (-> *game-counts* data i buzzer-count) #f)))
     (set! (-> *game-counts* data i buzzer-count) i)
   )
   )

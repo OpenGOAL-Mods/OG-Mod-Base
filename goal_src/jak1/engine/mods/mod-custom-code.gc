@@ -18,11 +18,302 @@
 |#
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Begin function defintions.
+;; Begin custom function defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun is-in-chem-fac-silo ()
+"this checks if the user is in the chem factory silo"
+(when  (= (-> (level-get-target-inside *level*)name ) 'chem-fac)
+  (if (in-bubble? (meters 131.51) (meters 310.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 315.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 320.57) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 325.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 330.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 335.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 340.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+  (if (in-bubble? (meters 131.51) (meters 345.37) (meters 200.12) (meters 29.0))
+    (return #t)
+  )
+)
+  #f
+)
+
+(defun cam-eye-no-rot ()
+  ;;add levels to this or condition if you want the cam-eye to not be able to rotate (Useful for psuedo loading screens/images/menus)
+    (if (or #f (= (-> (level-get-target-inside *level*)name )'mort-title))
+      (set! (-> *CAM_EYE-bank* rot-speed) 0.0)
+      (set! (-> *CAM_EYE-bank* rot-speed) 364.0889)
+    )
+  (none)
+  )
+
+(defun check-portal-distance ()
+    (cond
+      ((< (vector-vector-distance (-> *target* root trans) (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans)) (meters 12))
+        (set! *close-to-portal?* #t)
+        )
+      (else
+      (set! *close-to-portal?* #f)
+        )
+    )
+  (none)
+)
+
+(defun update-mort-vars()
+"This function runs first thing and gets the updated state of variables/booleans"
+  ;;This locks the first person with no rotation if in certain levels (psuedo loading screens)
+  (cam-eye-no-rot)
+  (check-portal-distance)
+  (when (handle->process (-> *art-control* spool-lock))(with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the
+ int (ja-aframe-num 0))))
+  (set! *currentSpoolName* (-> *art-control* active-stream))
+ )
+  ;;Are we in a mort level?
+  (if (and (>= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 16)
+           (<= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 34))
+                (set! mort-level? #t)
+                (set! mort-level? #f)
+  )
+(none)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Begin process-function defintions.
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun sound-manager()
+"responsible for all the sounds played during cutscenes"
+
+  ;;Hack to disable cutscene skips for specific cutscenes     (if               ;;Cutscenes added here will be unskippable witht the triangle button
+          (if (and *custom-cutscene?* (or  (string= (-> *art-control* active-stream) "sage-intro-sequence-a")
+                        (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-b")
+                        (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-c")
+                        (string= (-> *art-control* active-stream) "finalbosscam-white-eco")
+                        (string= (-> *art-control* active-stream) "green-sagecage-daxter-sacrifice")
+                        (string= (-> *art-control* active-stream) "green-sagecage-outro-beat-boss-a")
+
+
+                        ))
+                        (set! (-> *pc-settings* skip-movies?) #f)
+                        (set! (-> *pc-settings* skip-movies?) #t)
+                  )
+
+
+(let ((current-timea (current-time))
+      (chem-bool #f))
+  (when (handle->process (-> *art-control* spool-lock))(with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the
+ int (ja-aframe-num 0))))
+  (set! *currentSpoolName* (-> *art-control* active-stream)))
+
+
+  (if (and (is-in-chem-fac-silo) (not chem-bool))
+  (begin
+   (play-sound-file "windy.wav" (the int (-> *setting-control* default sfx-volume)))
+   (set! chem-bool #t)
+   (until (or (not (is-in-chem-fac-silo)) (time-elapsed? current-timea (seconds 20)))
+   (suspend)
+   )
+   (until (time-elapsed? current-timea (seconds 0.5))
+   (suspend)
+   )
+   (stop-sound-file "windy.wav")
+   (set! chem-bool #f)
+  )
+  )
+
+
+(cond
+((and (string= *currentSpoolName* "ndi-intro") (= *currentCutsceneFrame* 420))
+   (play-sound-file "zed.mp3" (the int (-> *setting-control* default sfx-volume)))
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+
+)
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 0))
+   (play-sound-file "fart-intro.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 2447))
+   (play-sound-file "dax/oldgreenstufftoldusnotto.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-b") (= *currentCutsceneFrame* 555))
+   (play-sound-file "htootsgas.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 16))
+   (play-sound-file "dax/what_are_we_doing_here.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 220))
+   (play-sound-file "dax/euagh_ooop.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;375 huH
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 375))
+   (play-sound-file "dax/stupid_precursor_gas.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+
+;;410 STUPID PERCURSOR GAS
+
+;;584 eek daRT TOOT
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 584))
+   (play-sound-file "dax/what_is_that_dark_toot.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;725 BREATH
+
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 725))
+   (play-sound-file "dax/yaps_on_about.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;1019 POWERTOOTS
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1019))
+   (play-sound-file "dax/power_toots.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+
+;;1215 how did you do that
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1215))
+   (play-sound-file "dax/wow_how_did_you_do_that.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;1340 JAK WE IN TROUBLE
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1340))
+   (play-sound-file "dax/i_think_were_in_trouble.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+;;1627 ahhhHHH
+((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1627))
+   (play-sound-file "dax/daxter_ahh.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+)
+
+
+((and *custom-cutscene?* (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 52))
+   (play-sound-file "hnot_my_farts.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+
+((and *custom-cutscene?* (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 165))
+   (play-sound-file "htootsgas2.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+
+((and *custom-cutscene?* (string= *currentSpoolName* "green-sagecage-daxter-sacrifice") (= *currentCutsceneFrame* 12))
+   (play-sound-file "dax/daxter light eco.mp3" 100)
+   (until (time-elapsed? current-timea (seconds 1))
+   (suspend)
+   )
+
+)
+
+
+)
+)
+
+(none))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Begin process defintions.
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defbehavior sound-manager-proc process ()
+"handles the sound, and if it needs to spawn the runs-every-frame process it does that too"
+(while #t
+(sound-manager)
+;; (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+;;   (init-chickens)
+;; )
+(suspend)
+)
+(none)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Begin function defintions.
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define done-init?  #f)
 (defun runs-every-frame ()
   ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
+
+;;stupid hack ur an idiot if you leave this in
+;; ENTRY POINT TO SPAWN PROCESSES
+  (when (not done-init?)
+      (format #t "INITIALIZING TITLE PROC~%")
+      (dotimes (i (level-task-data-index max))(set! (-> *game-counts* data i money-count) 0)(set! (-> *game-counts* data i buzzer-count) 0))
+      (relocate *game-counts* 1)
+      (when (not *target*)
+      (suspend)
+      )
+      (process-spawn-function process sound-manager-proc)
+      (set! done-init? #t)
+)
   (if *show-input-display* (input-display-on) (input-display-off))
   ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
   (when *debug-segment*
@@ -71,7 +362,7 @@
        ;; Code here runs as soon as you pickup small green eco
        )
       (((pickup-type eco-green))
-       ;; Code here runs as soon as you pickup big green eco 
+       ;; Code here runs as soon as you pickup big green eco
        ))
     (when from-vent?
       ;; Code here runs only if the eco was picked up from a vent

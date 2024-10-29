@@ -1,0 +1,11 @@
+(deftype flock (structure)
+  ((chicks handle NUM_FLOCKPOINTS  :offset-assert 0)
+   )
+  )
+(define *flock* (new 'static 'flock))
+
+(deftype flock-pos (structure)
+  ((points vector NUM_FLOCKPOINTS   :inline :offset-assert 0)
+   )
+  )
+(define *flock-points* (new 'static 'flock-pos))

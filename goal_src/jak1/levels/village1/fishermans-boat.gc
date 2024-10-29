@@ -679,27 +679,29 @@
       (if (nonzero? (-> self anim)) (spool-push *art-control* (-> self anim name) 0 self -99.0)))
   :code
     (behavior ()
-      (set! (-> self anim)
-            (new 'static
-                 'spool-anim
-                 :name "fishermans-boat-ride-to-misty"
-                 :index 15
-                 :parts 3
-                 :command-list
-                 '((0 want-levels village1 misty)
-                  (0 shadow target #f)
-                  (0 shadow sidekick #f)
-                  (250 display-level misty display)
-                  (250 display-level village1 special)
-                  (250 want-vis mis)
-                  (250 want-force-vis misty #t)
-                  (459 want-force-vis misty #f)
-                  (459 save)
-                  (459 blackout 20)
-                  (459 shadow target #t))))
-      (fishermans-boat-set-dock-point 0)
-      (fishermans-boat-set-path-point 0)
-      (anim-loop))
+      ;; (set! (-> self anim)
+      ;;       (new 'static
+      ;;            'spool-anim
+      ;;            :name "fishermans-boat-ride-to-misty"
+      ;;            :index 15
+      ;;            :parts 3
+      ;;            :command-list
+      ;;            '((0 want-levels village1 misty)
+      ;;             (0 shadow target #f)
+      ;;             (0 shadow sidekick #f)
+      ;;             (250 display-level misty display)
+      ;;             (250 display-level village1 special)
+      ;;             (250 want-vis mis)
+      ;;             (250 want-force-vis misty #t)
+      ;;             (459 want-force-vis misty #f)
+      ;;             (459 save)
+      ;;             (459 blackout 20)
+      ;;             (459 shadow target #t))))
+      ;; (fishermans-boat-set-dock-point 0)
+      ;; (fishermans-boat-set-path-point 0)
+      ;; (anim-loop)
+      (none)
+      )
   :post fishermans-boat-post)
 
 (defstate fishermans-boat-leaving-village (fishermans-boat)
@@ -1052,12 +1054,12 @@
   (none))
 
 (defmethod init-from-entity! ((this fishermans-boat) (arg0 entity-actor))
-  (stack-size-set! (-> this main-thread) 512)
-  (logior! (-> this mask) (process-mask platform))
-  (rigid-body-platform-method-30 this)
-  (process-drawable-from-entity! this arg0)
-  (rigid-body-platform-method-31 this)
-  (if (= (-> *game-info* current-continue level) 'misty) (go fishermans-boat-docked-misty) (go fishermans-boat-docked-village))
+  ;; (stack-size-set! (-> this main-thread) 512)
+  ;; (logior! (-> this mask) (process-mask platform))
+  ;; (rigid-body-platform-method-30 this)
+  ;; (process-drawable-from-entity! this arg0)
+  ;; (rigid-body-platform-method-31 this)
+  ;; (if (= (-> *game-info* current-continue level) 'misty) (go fishermans-boat-docked-misty) (go fishermans-boat-docked-village))
   (none))
 
 (defbehavior fishermans-boat-reset-physics fishermans-boat ()
