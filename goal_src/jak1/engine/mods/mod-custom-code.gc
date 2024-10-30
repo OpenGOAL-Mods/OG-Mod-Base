@@ -22,885 +22,610 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun is-in-chem-fac-silo ()
-"this checks if the user is in the chem factory silo"
-(when  (= (-> (level-get-target-inside *level*)name ) 'chem-fac)
-  (if (in-bubble? (meters 131.51) (meters 310.37) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-  (if (in-bubble? (meters 131.51) (meters 315.37) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-  (if (in-bubble? (meters 131.51) (meters 320.57) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-  (if (in-bubble? (meters 131.51) (meters 325.37) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-  (if (in-bubble? (meters 131.51) (meters 330.37) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-  (if (in-bubble? (meters 131.51) (meters 335.37) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-  (if (in-bubble? (meters 131.51) (meters 340.37) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-  (if (in-bubble? (meters 131.51) (meters 345.37) (meters 200.12) (meters 29.0))
-    (return #t)
-  )
-)
-  #f
-)
+  "this checks if the user is in the chem factory silo"
+  (when (= (-> (level-get-target-inside *level*) name) 'chem-fac)
+    (if (in-bubble? (meters 131.51) (meters 310.37) (meters 200.12) (meters 29.0)) (return #t))
+    (if (in-bubble? (meters 131.51) (meters 315.37) (meters 200.12) (meters 29.0)) (return #t))
+    (if (in-bubble? (meters 131.51) (meters 320.57) (meters 200.12) (meters 29.0)) (return #t))
+    (if (in-bubble? (meters 131.51) (meters 325.37) (meters 200.12) (meters 29.0)) (return #t))
+    (if (in-bubble? (meters 131.51) (meters 330.37) (meters 200.12) (meters 29.0)) (return #t))
+    (if (in-bubble? (meters 131.51) (meters 335.37) (meters 200.12) (meters 29.0)) (return #t))
+    (if (in-bubble? (meters 131.51) (meters 340.37) (meters 200.12) (meters 29.0)) (return #t))
+    (if (in-bubble? (meters 131.51) (meters 345.37) (meters 200.12) (meters 29.0)) (return #t)))
+  #f)
 
 (defun cam-eye-no-rot ()
   ;;add levels to this or condition if you want the cam-eye to not be able to rotate (Useful for psuedo loading screens/images/menus)
-    (if (or #f (= (-> (level-get-target-inside *level*)name )'mort-title))
-      (set! (-> *CAM_EYE-bank* rot-speed) 0.0)
-      (set! (-> *CAM_EYE-bank* rot-speed) 364.0889)
-    )
-  (none)
-  )
+  (if (or #f (= (-> (level-get-target-inside *level*) name) 'mort-title))
+    (set! (-> *CAM_EYE-bank* rot-speed) 0.0)
+    (set! (-> *CAM_EYE-bank* rot-speed) 364.0889))
+  (none))
 
 (defun check-portal-distance ()
-    (cond
-      ((< (vector-vector-distance (-> *target* root trans) (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans)) (meters 12))
-        (set! *close-to-portal?* #t)
-        )
-      (else
-      (set! *close-to-portal?* #f)
-        )
-    )
-  (none)
-)
+  (cond
+    ((< (vector-vector-distance (-> *target* root trans)
+                                (-> (the-as training-part (process-by-ename "project-training-part-1")) root trans))
+        (meters 12))
+     (set! *close-to-portal?* #t))
+    (else (set! *close-to-portal?* #f)))
+  (none))
 
-(defun update-mort-vars()
-"This function runs first thing and gets the updated state of variables/booleans"
+(defun update-mort-vars ()
+  "This function runs first thing and gets the updated state of variables/booleans"
   ;;This locks the first person with no rotation if in certain levels (psuedo loading screens)
   (cam-eye-no-rot)
   (check-portal-distance)
-  (when (handle->process (-> *art-control* spool-lock))(with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the
- int (ja-aframe-num 0))))
-  (set! *currentSpoolName* (-> *art-control* active-stream))
- )
+  (when (handle->process (-> *art-control* spool-lock))
+    (with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the int (ja-aframe-num 0))))
+    (set! *currentSpoolName* (-> *art-control* active-stream)))
   ;;Are we in a mort level?
-  (if (and (>= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 16)
-           (<= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)) 34))
-                (set! mort-level? #t)
-                (set! mort-level? #f)
-  )
-(none)
-)
+  (if (and (>= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1)) 16)
+           (<= (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1)) 34))
+    (set! mort-level? #t)
+    (set! mort-level? #f))
+  (none))
 
 (defun run-mort-code? ()
-"When these are true, we dont want to run mort code."
-(and *target*
-      (!= (-> (level-get-target-inside *level*)name) title) ;; this doesnt work and should be 'title but I am afraid fixing it will cause bugs
-      (!= (-> (level-get-target-inside *level*)name) mort-title)
-      (!= (-> (level-get-target-inside *level*)name) 'mort-title)
-      (!= (-> *target* state name) 'target-continue)
-      ;;This warp stuff is a total hack to fix warp-demon-chick in retail mode. Id like to remove it one day
-      (!= (-> *target* state name) 'target-warp-out)
-      (!= (-> *target* state name) 'target-warp-in)
-      mort-level?)
-)
+  "When these are true, we dont want to run mort code."
+  (and *target*
+       (!= (-> (level-get-target-inside *level*) name) title) ;; this doesnt work and should be 'title but I am afraid fixing it will cause bugs
+       (!= (-> (level-get-target-inside *level*) name) mort-title)
+       (!= (-> (level-get-target-inside *level*) name) 'mort-title)
+       (!= (-> *target* state name) 'target-continue)
+       ;;This warp stuff is a total hack to fix warp-demon-chick in retail mode. Id like to remove it one day
+       (!= (-> *target* state name) 'target-warp-out)
+       (!= (-> *target* state name) 'target-warp-in)
+       mort-level?))
 
-        (defun robo-movie-check ()
-
-      (when (and (process-by-ename "robotboss-3") *target*)
-      (when  (and (= (-> (process-by-ename "robotboss-3") state name) 'robotboss-blue-wait) (!= (-> *target* state name) 'target-continue) )
-        (dotimes (i 10)
+(defun robo-movie-check ()
+  (when (and (process-by-ename "robotboss-3") *target*)
+    (when (and (= (-> (process-by-ename "robotboss-3") state name) 'robotboss-blue-wait)
+               (!= (-> *target* state name) 'target-continue))
+      (dotimes (i 10)
+        (suspend))
+      (begin
         (suspend)
-        )
-        (begin
-              (suspend)
-              (set! (-> *autosplit-info-jak1* res-cold-pipe) 1)
-        (go-process  (process-by-ename "robotboss-3") robotboss-white-eco-movie)
-        (suspend)
-        )
+        (set! (-> *autosplit-info-jak1* res-cold-pipe) 1)
+        (go-process (process-by-ename "robotboss-3") robotboss-white-eco-movie)
+        (suspend))))
+  (none))
 
-      )
-
-      )
-      (none))
-
-      (defun move-samos-butts ()
-(vector-copy! (-> (the sage (process-by-ename "crate-3256"))root trans) (new 'static 'vector :x (meters 3025.28) :y (meters 485.76) :z (meters -4821.85)))
-(vector-copy! (-> (the sage (process-by-ename "crate-3258"))root trans) (new 'static 'vector :x (meters 3065.19) :y (meters 485.76) :z (meters -4859.85)))
-(vector-copy! (-> (the sage (process-by-ename "crate-3259"))root trans) (new 'static 'vector :x (meters 2985.19) :y (meters 485.76) :z (meters -4859.85)))
-(vector-copy! (-> (the sage (process-by-ename "crate-3250"))root trans) (new 'static 'vector :x (meters 3017.5074) :y (meters 485.76) :z (meters -4896.85)))
-
-(none))
-
+(defun move-samos-butts ()
+  (vector-copy! (-> (the sage (process-by-ename "crate-3256")) root trans)
+                (new 'static 'vector :x (meters 3025.28) :y (meters 485.76) :z (meters -4821.85)))
+  (vector-copy! (-> (the sage (process-by-ename "crate-3258")) root trans)
+                (new 'static 'vector :x (meters 3065.19) :y (meters 485.76) :z (meters -4859.85)))
+  (vector-copy! (-> (the sage (process-by-ename "crate-3259")) root trans)
+                (new 'static 'vector :x (meters 2985.19) :y (meters 485.76) :z (meters -4859.85)))
+  (vector-copy! (-> (the sage (process-by-ename "crate-3250")) root trans)
+                (new 'static 'vector :x (meters 3017.5074) :y (meters 485.76) :z (meters -4896.85)))
+  (none))
 
 (defun find-best-master-mark ()
   (set! old-point-to-jak (meters 3729817398217391279))
   (dotimes (i 32)
-    (let* ((current-ball-pos (-> *camera*  target-spline point i position))
-            (dist-target-meters (/ (vector-vector-distance current-ball-pos (-> *target* root trans)) 40964))
-            (valid? (not (or (> dist-target-meters 1.0) (< dist-target-meters 0.27))))
-            (less-than-stored-pos (< dist-target-meters old-point-to-jak)))
+    (let* ((current-ball-pos (-> *camera* target-spline point i position))
+           (dist-target-meters (/ (vector-vector-distance current-ball-pos (-> *target* root trans)) 40964))
+           (valid? (not (or (> dist-target-meters 1.0) (< dist-target-meters 0.27))))
+           (less-than-stored-pos (< dist-target-meters old-point-to-jak)))
       ;; Too close to jak red/ignore them
       (if (not valid?)
-          (none)
-          ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *color-black*)
-         ;; show all possible indexes for debugging
-         ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) current-ball-pos (font-color red) (the-as vector2h #f))
-         )
+        (none)
+        ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *color-black*)
+        ;; show all possible indexes for debugging
+        ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) current-ball-pos (font-color red) (the-as vector2h #f))
+        )
       ;; Corrected part to update the closest position and distance
       (if (and valid? less-than-stored-pos)
+        (begin
+          (set! *sphere-color* *color-green*)
+          ;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *sphere-color*)
+          (if less-than-stored-pos
+            ;; If our current point is closer than our last point, store it and update closest known distance
             (begin
-              (set! *sphere-color* *color-green*)
-              ;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *sphere-color*)
-              (if less-than-stored-pos
-                  ;; If our current point is closer than our last point, store it and update closest known distance
-                  (begin
-                    (set! *closest-pos-index* i)
-                    (set! old-point-to-jak dist-target-meters)
-                  )
-              )
-            )
-      )
-    )
-  )
+              (set! *closest-pos-index* i)
+              (set! old-point-to-jak dist-target-meters)))))))
   ;; Draw the closest position
   ;;(format #t "WARNING: fuel-cell stall on not cloning. ~F~%" old-point-to-jak)
   ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*)
   ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" *closest-pos-index*) (-> *camera*  target-spline point *closest-pos-index* position)  (font-color green) (the-as vector2h #f))
-  (-> *camera*  target-spline point *closest-pos-index* position)
-  )
-
+  (-> *camera* target-spline point *closest-pos-index* position))
 
 (defun eco-manager ()
-
-;;Eco-chicken start
-(when (send-event *target* 'query 'powerup (pickup-type eco-chicken))
-(set! *has-chicken-eco* #t)
-
-)
-
-(when (not (send-event *target* 'query 'powerup (pickup-type eco-chicken)))
-(set! *has-chicken-eco* #f)
-
-)
-;;Ice eco start
-(when (send-event *target* 'query 'powerup (pickup-type eco-ice))
-
-;;Turn on the ice slide
-(set! (-> *stone-surface* slope-slip-angle) 16384.0)(set! (-> *stone-surface* slip-factor) 0.7)(set! (-> *stone-surface* transv-max) 1.5)(set! (-> *stone-surface* transv-max) 1.5)(set! (-> *stone-surface* turnv) 0.5)(set! (-> *stone-surface* nonlin-fric-dist) 4091904.0)(set! (-> *stone-surface* fric) 23756.8)
-
-;;snow
-(run-next-time-in-process (the process (activate (get-process *default-dead-pool* process #x4000) *default-pool* 'process (the pointer #x70004000))) (lambda () (dotimes (i 7) (if (send-event *target* 'query 'powerup (pickup-type eco-ice)) (if *target* (update-snow *target*)) (suspend)))))
-
-;;Stop custom music
-(when (not custom-music-eco-paused?)
-(set!  (-> (-> (level-get-target-inside *level*)info)music-bank) 'snow)
-(stop-main-music)
-(set! custom-music-eco-paused? #t)
-)
-)
-;; The condition for slip-angle is a disgusting hack so we arent consitantly setting a new jump-height
-(when  (and (not (send-event *target* 'query 'powerup (pickup-type eco-ice))) (= (-> *stone-surface* slope-slip-angle) 16384.0))
-(set! (-> *stone-surface* slope-slip-angle) 8192.0)(set! (-> *stone-surface* slip-factor) 1.0)(set! (-> *stone-surface* transv-max) 1.0)(set! (-> *stone-surface* turnv) 1.0)(set! (-> *stone-surface* nonlin-fric-dist) 5120.0)(set! (-> *stone-surface* fric) 153600.0)
-(music-manager)
-;;We should prob store the previous music-bank instead of assuming it was #f
-(set!  (-> (-> (level-get-target-inside *level*)info)music-bank) #f)
-(set! custom-music-eco-paused? #f)
-)
-;;Ice eco end
-
-;;Low gravity eco is in logic-target.gc 836, due to the values it sets being overridden.
-
-(none))
+  ;;Eco-chicken start
+  (when (send-event *target* 'query 'powerup (pickup-type eco-chicken))
+    (set! *has-chicken-eco* #t))
+  (when (not (send-event *target* 'query 'powerup (pickup-type eco-chicken)))
+    (set! *has-chicken-eco* #f))
+  ;;Ice eco start
+  (when (send-event *target* 'query 'powerup (pickup-type eco-ice))
+    ;;Turn on the ice slide
+    (set! (-> *stone-surface* slope-slip-angle) 16384.0)
+    (set! (-> *stone-surface* slip-factor) 0.7)
+    (set! (-> *stone-surface* transv-max) 1.5)
+    (set! (-> *stone-surface* transv-max) 1.5)
+    (set! (-> *stone-surface* turnv) 0.5)
+    (set! (-> *stone-surface* nonlin-fric-dist) 4091904.0)
+    (set! (-> *stone-surface* fric) 23756.8)
+    ;;snow
+    (run-next-time-in-process (the process
+                                   (activate (get-process *default-dead-pool* process #x4000) *default-pool* 'process (the pointer #x70004000)))
+                              (lambda ()
+                                (dotimes (i 7)
+                                  (if (send-event *target* 'query 'powerup (pickup-type eco-ice)) (if *target* (update-snow *target*)) (suspend)))))
+    ;;Stop custom music
+    (when (not custom-music-eco-paused?)
+      (set! (-> (-> (level-get-target-inside *level*) info) music-bank) 'snow)
+      (stop-main-music)
+      (set! custom-music-eco-paused? #t)))
+  ;; The condition for slip-angle is a disgusting hack so we arent consitantly setting a new jump-height
+  (when (and (not (send-event *target* 'query 'powerup (pickup-type eco-ice))) (= (-> *stone-surface* slope-slip-angle) 16384.0))
+    (set! (-> *stone-surface* slope-slip-angle) 8192.0)
+    (set! (-> *stone-surface* slip-factor) 1.0)
+    (set! (-> *stone-surface* transv-max) 1.0)
+    (set! (-> *stone-surface* turnv) 1.0)
+    (set! (-> *stone-surface* nonlin-fric-dist) 5120.0)
+    (set! (-> *stone-surface* fric) 153600.0)
+    (music-manager)
+    ;;We should prob store the previous music-bank instead of assuming it was #f
+    (set! (-> (-> (level-get-target-inside *level*) info) music-bank) #f)
+    (set! custom-music-eco-paused? #f))
+  ;;Ice eco end
+  ;;Low gravity eco is in logic-target.gc 836, due to the values it sets being overridden.
+  (none))
 
 (defun reset-chicken-targets ()
-;; wtf man just code normal please stupd hack stupid-hacks-every-frame
-(when (not (-> *speedrun-info* should-display?))
-(vector-identity! (-> *chicken-0* target-pos))
-(vector-identity! (-> *chicken-1* target-pos))
-(vector-identity! (-> *chicken-2* target-pos))
-(vector-identity! (-> *chicken-3* target-pos))
-(vector-identity! (-> *chicken-4* target-pos))
-(vector-identity! (-> *chicken-5* target-pos))
-(vector-identity! (-> *chicken-6* target-pos))
-(vector-identity! (-> *chicken-7* target-pos))
-(vector-identity! (-> *chicken-8* target-pos))
-(vector-identity! (-> *chicken-9* target-pos))
-(vector-identity! (-> *chicken-10* target-pos))
-(vector-identity! (-> *chicken-11* target-pos))
-
-)
-(format #t "RESETING CHICKEN TARGETS")
-(none)
-)
-
+  ;; wtf man just code normal please stupd hack stupid-hacks-every-frame
+  (when (not (-> *speedrun-info* should-display?))
+    (vector-identity! (-> *chicken-0* target-pos))
+    (vector-identity! (-> *chicken-1* target-pos))
+    (vector-identity! (-> *chicken-2* target-pos))
+    (vector-identity! (-> *chicken-3* target-pos))
+    (vector-identity! (-> *chicken-4* target-pos))
+    (vector-identity! (-> *chicken-5* target-pos))
+    (vector-identity! (-> *chicken-6* target-pos))
+    (vector-identity! (-> *chicken-7* target-pos))
+    (vector-identity! (-> *chicken-8* target-pos))
+    (vector-identity! (-> *chicken-9* target-pos))
+    (vector-identity! (-> *chicken-10* target-pos))
+    (vector-identity! (-> *chicken-11* target-pos)))
+  (format #t "RESETING CHICKEN TARGETS")
+  (none))
 
 (defun restore-cells ()
-
-;;Loop the flock and restore all the Cells
-(dotimes (i (get-current-chicks))
-(set-or-clear-status! (the entity-actor (entity-by-name (-> (get-chick-from-flock i) parent-cell-name))) (entity-perm-status dead) #f)
-)
-(reset-chicken-targets)
-
-
-;;Clear the flock to 0
-(set! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 0)
-
-)
-
+  ;;Loop the flock and restore all the Cells
+  (dotimes (i (get-current-chicks))
+    (set-or-clear-status! (the entity-actor (entity-by-name (-> (get-chick-from-flock i) parent-cell-name)))
+                          (entity-perm-status dead)
+                          #f))
+  (reset-chicken-targets)
+  ;;Clear the flock to 0
+  (set! (-> *custom-level-info*
+            data
+            (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))
+            current-chicks)
+        0))
 
 (defun draw-origin ()
-(when *show-debug*
-  (add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-orange*)
-  (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "Origin point") *Origin* (font-color red) (the-as vector2h #f))
-)
-
-  (none)
-)
+  (when *show-debug*
+    (add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-orange*)
+    (add-debug-text-3d #t
+                       (bucket-id debug-no-zbuf)
+                       (string-format "Origin point")
+                       *Origin*
+                       (font-color red)
+                       (the-as vector2h #f)))
+  (none))
 
 (defun adjust-chick-origin ((mmark vector))
-
   (draw-origin)
   (let ((xchange 0.0)
         (ychange 0.0)
         (zchange 0.0))
-        (if (not (= (vector-vector-distance *Origin* mmark) 0.0))
-            (begin
-              "Takes in the closest master mark from (draw-chicks-fund) then adjusts it and returns it to use as origin for chicken demons"
-              ;; If the origin is not at its starting point, figure out how much it moved and store that.
-
-
-              (set! xchange (- (-> *Origin* x) (-> mmark x)))
-              (set! ychange (- (-> *Origin* y) (-> *target* root trans y)))
-              (set! zchange (- (-> *Origin* z) (-> mmark z)))
-
-              ;;(format #t "Origin moved by ~m ~m ~%" xchange zchange)
-              (move-flock-by-xz xchange ychange zchange)
-
-              ;;Update the stored Origin since it moved
-              (vector-copy! *Origin* mmark)
-              (set! (-> *Origin* y) (-> *target* root trans y))
-            )
-        )
-  )
-            ;;Check if the position of all NUM_FLOCKPOINTS flock points is valid here, if its not regenerate them.
-            ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-yellow*)
-            ;;Set the spot of CHICK1 to origin
-
-
-      *Origin*
-)
+    (if (not (= (vector-vector-distance *Origin* mmark) 0.0))
+      (begin
+        "Takes in the closest master mark from (draw-chicks-fund) then adjusts it and returns it to use as origin for chicken demons"
+        ;; If the origin is not at its starting point, figure out how much it moved and store that.
+        (set! xchange (- (-> *Origin* x) (-> mmark x)))
+        (set! ychange (- (-> *Origin* y) (-> *target* root trans y)))
+        (set! zchange (- (-> *Origin* z) (-> mmark z)))
+        ;;(format #t "Origin moved by ~m ~m ~%" xchange zchange)
+        (move-flock-by-xz xchange ychange zchange)
+        ;;Update the stored Origin since it moved
+        (vector-copy! *Origin* mmark)
+        (set! (-> *Origin* y) (-> *target* root trans y)))))
+  ;;Check if the position of all NUM_FLOCKPOINTS flock points is valid here, if its not regenerate them.
+  ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-yellow*)
+  ;;Set the spot of CHICK1 to origin
+  *Origin*)
 
 (defun portal-mort-trans ()
-  (-> (the warp-gate (-> (the basebutton (process-by-ename "project-warp-gate-switch") )child 0)) root trans)
-  )
-
+  (-> (the warp-gate (-> (the basebutton (process-by-ename "project-warp-gate-switch")) child 0)) root trans))
 
 (defun portal-mort-gate ()
-  (the warp-gate (-> (the basebutton (process-by-ename "project-warp-gate-switch") )child 0))
-  )
+  (the warp-gate (-> (the basebutton (process-by-ename "project-warp-gate-switch")) child 0)))
 
 ;;mort getters
 
+(defun restore-saved-chicks-from-mem ()
+  "This function runs on jak spawn, and checks if the stored memory card value is nonzero, and saved chicks is zero if so it updates it."
+  (if (and (nonzero? (get-saved-chicks-from-mem)) (= (get-saved-chicks) 0)) (update-saved-chicks (get-saved-chicks-from-mem))))
 
-(defun restore-saved-chicks-from-mem()
-"This function runs on jak spawn, and checks if the stored memory card value is nonzero, and saved chicks is zero if so it updates it."
-(if (and (nonzero? (get-saved-chicks-from-mem)) (= (get-saved-chicks) 0))
-(update-saved-chicks (get-saved-chicks-from-mem))
-)
-)
-
-(defun  update-current-chicks ((amount int))
-(set! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) amount)
-(none)
-)
-
-  (defun run-this-when-cell-grab ((self fuel-cell))
-      ;;Saved a chick
-    ;;Tagmort
-
-    ;;check to see the saved chickens stored and maybe restore it
-    (if (and (= (get-current-chicks) 0)
-    (= (get-saved-chicks) 0) )
-    (begin
-    (format #t "picked up a chick and its first in the level~%")
-    (if (> (get-saved-chicks-from-mem) (get-saved-chicks))
-    (begin
-    (format #t "Found saved chick data that was non zero, updating saved chicks in level to ~D~%" (get-saved-chicks-from-mem))
-    (update-saved-chicks (get-saved-chicks-from-mem))
-    )
-    )
-    )
-    )
-    ;; Set the chick with the highest index as this cell
-    (set! (-> (get-chick-from-flock (the int (get-current-chicks))) parent-cell-name)
-        (the string (-> self name))
-    )
-    ;; Increment after setting name
-    (update-current-chicks (+ (get-current-chicks) 1))
-    (play-sound-file "ChickPickup1.mp3" (the int (-> *setting-control* default sfx-volume)))
-    (if (= (+  (get-current-chicks)  (get-saved-chicks))
-           (get-total-chicks)
-        )
-   (play-sound-file "coin1.wav" (the int (-> *setting-control* default sfx-volume)))
-    )
+(defun update-current-chicks ((amount int))
+  (set! (-> *custom-level-info*
+            data
+            (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))
+            current-chicks)
+        amount)
   (none))
+
+(defun run-this-when-cell-grab ((self fuel-cell))
+  ;;Saved a chick
+  ;;Tagmort
+  ;;check to see the saved chickens stored and maybe restore it
+  (if (and (= (get-current-chicks) 0) (= (get-saved-chicks) 0))
+    (begin
+      (format #t "picked up a chick and its first in the level~%")
+      (if (> (get-saved-chicks-from-mem) (get-saved-chicks))
+        (begin
+          (format #t
+                  "Found saved chick data that was non zero, updating saved chicks in level to ~D~%"
+                  (get-saved-chicks-from-mem))
+          (update-saved-chicks (get-saved-chicks-from-mem))))))
+  ;; Set the chick with the highest index as this cell
+  (set! (-> (get-chick-from-flock (the int (get-current-chicks))) parent-cell-name) (the string (-> self name)))
+  ;; Increment after setting name
+  (update-current-chicks (+ (get-current-chicks) 1))
+  (play-sound-file "ChickPickup1.mp3" (the int (-> *setting-control* default sfx-volume)))
+  (if (= (+ (get-current-chicks) (get-saved-chicks)) (get-total-chicks))
+    (play-sound-file "coin1.wav" (the int (-> *setting-control* default sfx-volume))))
+  (none))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Begin process-function defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun sound-manager()
-"responsible for all the sounds played during cutscenes"
-
+(defun sound-manager ()
+  "responsible for all the sounds played during cutscenes"
   ;;Hack to disable cutscene skips for specific cutscenes     (if               ;;Cutscenes added here will be unskippable witht the triangle button
-          (if (and *custom-cutscene?* (or  (string= (-> *art-control* active-stream) "sage-intro-sequence-a")
-                        (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-b")
-                        (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-c")
-                        (string= (-> *art-control* active-stream) "finalbosscam-white-eco")
-                        (string= (-> *art-control* active-stream) "green-sagecage-daxter-sacrifice")
-                        (string= (-> *art-control* active-stream) "green-sagecage-outro-beat-boss-a")
-
-
-                        ))
-                        (set! (-> *pc-settings* skip-movies?) #f)
-                        (set! (-> *pc-settings* skip-movies?) #t)
-                  )
-
-
-(let ((current-timea (current-time))
-      (chem-bool #f))
-  (when (handle->process (-> *art-control* spool-lock))(with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the
- int (ja-aframe-num 0))))
-  (set! *currentSpoolName* (-> *art-control* active-stream)))
-
-
-  (if (and (is-in-chem-fac-silo) (not chem-bool))
-  (begin
-   (play-sound-file "windy.wav" (the int (-> *setting-control* default sfx-volume)))
-   (set! chem-bool #t)
-   (until (or (not (is-in-chem-fac-silo)) (time-elapsed? current-timea (seconds 20)))
-   (suspend)
-   )
-   (until (time-elapsed? current-timea (seconds 0.5))
-   (suspend)
-   )
-   (stop-sound-file "windy.wav")
-   (set! chem-bool #f)
-  )
-  )
-
-
-(cond
-((and (string= *currentSpoolName* "ndi-intro") (= *currentCutsceneFrame* 420))
-   (play-sound-file "zed.mp3" (the int (-> *setting-control* default sfx-volume)))
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-
-
-)
-
-((and *custom-cutscene?* (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 0))
-   (play-sound-file "fart-intro.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-
-)
-
-((and *custom-cutscene?* (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 2447))
-   (play-sound-file "dax/oldgreenstufftoldusnotto.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-
-)
-
-((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-b") (= *currentCutsceneFrame* 555))
-   (play-sound-file "htootsgas.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-
-)
-
-((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 16))
-   (play-sound-file "dax/what_are_we_doing_here.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-)
-
-((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 220))
-   (play-sound-file "dax/euagh_ooop.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-)
-
-;;375 huH
-
-((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 375))
-   (play-sound-file "dax/stupid_precursor_gas.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-)
-
-
-;;410 STUPID PERCURSOR GAS
-
-;;584 eek daRT TOOT
-((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 584))
-   (play-sound-file "dax/what_is_that_dark_toot.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-)
-
-;;725 BREATH
-
-((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 725))
-   (play-sound-file "dax/yaps_on_about.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-)
-
-;;1019 POWERTOOTS
-((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1019))
-   (play-sound-file "dax/power_toots.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-)
-
-
-;;1215 how did you do that
-((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1215))
-   (play-sound-file "dax/wow_how_did_you_do_that.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-)
-
-;;1340 JAK WE IN TROUBLE
-((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1340))
-   (play-sound-file "dax/i_think_were_in_trouble.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-)
-
-;;1627 ahhhHHH
-((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1627))
-   (play-sound-file "dax/daxter_ahh.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-)
-
-
-((and *custom-cutscene?* (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 52))
-   (play-sound-file "hnot_my_farts.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-
-)
-
-
-((and *custom-cutscene?* (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 165))
-   (play-sound-file "htootsgas2.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-
-)
-
-
-((and *custom-cutscene?* (string= *currentSpoolName* "green-sagecage-daxter-sacrifice") (= *currentCutsceneFrame* 12))
-   (play-sound-file "dax/daxter light eco.mp3" 100)
-   (until (time-elapsed? current-timea (seconds 1))
-   (suspend)
-   )
-
-)
-
-
-)
-)
-
-(none))
+  (if (and *custom-cutscene?*
+           (or (string= (-> *art-control* active-stream) "sage-intro-sequence-a")
+               (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-b")
+               (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-c")
+               (string= (-> *art-control* active-stream) "finalbosscam-white-eco")
+               (string= (-> *art-control* active-stream) "green-sagecage-daxter-sacrifice")
+               (string= (-> *art-control* active-stream) "green-sagecage-outro-beat-boss-a")))
+    (set! (-> *pc-settings* skip-movies?) #f)
+    (set! (-> *pc-settings* skip-movies?) #t))
+  (let ((current-timea (current-time))
+        (chem-bool #f))
+    (when (handle->process (-> *art-control* spool-lock))
+      (with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the int (ja-aframe-num 0))))
+      (set! *currentSpoolName* (-> *art-control* active-stream)))
+    (if (and (is-in-chem-fac-silo) (not chem-bool))
+      (begin
+        (play-sound-file "windy.wav" (the int (-> *setting-control* default sfx-volume)))
+        (set! chem-bool #t)
+        (until (or (not (is-in-chem-fac-silo)) (time-elapsed? current-timea (seconds 20)))
+          (suspend))
+        (until (time-elapsed? current-timea (seconds 0.5))
+          (suspend))
+        (stop-sound-file "windy.wav")
+        (set! chem-bool #f)))
+    (cond
+      ((and (string= *currentSpoolName* "ndi-intro") (= *currentCutsceneFrame* 420))
+       (play-sound-file "zed.mp3" (the int (-> *setting-control* default sfx-volume)))
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ((and *custom-cutscene?* (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 0))
+       (play-sound-file "fart-intro.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ((and *custom-cutscene?* (string= *currentSpoolName* "sage-intro-sequence-a") (= *currentCutsceneFrame* 2447))
+       (play-sound-file "dax/oldgreenstufftoldusnotto.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-b") (= *currentCutsceneFrame* 555))
+       (play-sound-file "htootsgas.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 16))
+       (play-sound-file "dax/what_are_we_doing_here.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 220))
+       (play-sound-file "dax/euagh_ooop.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ;;375 huH
+      ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 375))
+       (play-sound-file "dax/stupid_precursor_gas.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ;;410 STUPID PERCURSOR GAS
+      ;;584 eek daRT TOOT
+      ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 584))
+       (play-sound-file "dax/what_is_that_dark_toot.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ;;725 BREATH
+      ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 725))
+       (play-sound-file "dax/yaps_on_about.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ;;1019 POWERTOOTS
+      ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1019))
+       (play-sound-file "dax/power_toots.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ;;1215 how did you do that
+      ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1215))
+       (play-sound-file "dax/wow_how_did_you_do_that.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ;;1340 JAK WE IN TROUBLE
+      ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1340))
+       (play-sound-file "dax/i_think_were_in_trouble.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ;;1627 ahhhHHH
+      ((and *custom-cutscene?* (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (= *currentCutsceneFrame* 1627))
+       (play-sound-file "dax/daxter_ahh.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ((and *custom-cutscene?* (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 52))
+       (play-sound-file "hnot_my_farts.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ((and *custom-cutscene?* (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 165))
+       (play-sound-file "htootsgas2.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))
+      ((and *custom-cutscene?* (string= *currentSpoolName* "green-sagecage-daxter-sacrifice") (= *currentCutsceneFrame* 12))
+       (play-sound-file "dax/daxter light eco.mp3" 100)
+       (until (time-elapsed? current-timea (seconds 1))
+         (suspend)))))
+  (none))
 
 (defun stupid-hacks-every-frame ()
-(when run-mort-code?
-;;Hack the main menu music since we cant pause it yet
-(main-music-volume (the int (* (-> *setting-control* default music-volume) 0.75)))
-
+  (when run-mort-code?
+    ;;Hack the main menu music since we cant pause it yet
+    (main-music-volume (the int (* (-> *setting-control* default music-volume) 0.75)))
     ;; Its so funny that this works lol
-
-
-;;Hack to warp/skip to the light eco cutscene if we are in citadel because I dont know how to make mort bosses yet
-(when (and (process-by-ename "robotboss-3") *target*)
-    (robo-movie-check)
-    )
-
-
-;;Hack to rotat the warpgate this one is extra weird the math on this is wrong but the idea is close enough, might not work in coins??
-  (if (and  (entity-by-name "project-training-part-1") (!= (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))
-  ))))
-       (set! (-> *part-id-table* 765  init-specs 2 initial-valuef) (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))))
-     )
-  )
-
-
-
-  )
-
-
-
-;;Hack to set the voice volume to 0 during these cutscenes, then restore it when the cutscene is overridden.
-
-(when (string= *currentSpoolName* "green-sagecage-outro-beat-boss-b")
+    ;;Hack to warp/skip to the light eco cutscene if we are in citadel because I dont know how to make mort bosses yet
+    (when (and (process-by-ename "robotboss-3") *target*)
+      (robo-movie-check))
+    ;;Hack to rotat the warpgate this one is extra weird the math on this is wrong but the idea is close enough, might not work in coins??
+    (if (and (entity-by-name "project-training-part-1")
+             (!= (-> *part-id-table* 765 init-specs 2 initial-valuef)
+                 (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))))))
+      (set! (-> *part-id-table* 765 init-specs 2 initial-valuef)
+            (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure)))))))
+  ;;Hack to set the voice volume to 0 during these cutscenes, then restore it when the cutscene is overridden.
+  (when (string= *currentSpoolName* "green-sagecage-outro-beat-boss-b")
     (str-play-stop *currentSpoolName*)
-    (set! (-> *art-control* active-stream) #f)
-
-)
-
-          (if (or (and *custom-cutscene?* (or  (string= *currentSpoolName* "sage-intro-sequence-a")
+    (set! (-> *art-control* active-stream) #f))
+  (if (or (and *custom-cutscene?*
+               (or (string= *currentSpoolName* "sage-intro-sequence-a")
                    (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
                    (string= *currentSpoolName* "sidekick-human-intro-sequence-c")))
-
-
-                   (and *custom-cutscene?*  (string= *currentSpoolName* "finalbosscam-white-eco")
-
-                    (or (< *currentCutsceneFrame* 267)
-                    (> *currentCutsceneFrame* 321)
-                    )
-                   )
-                   ;;annoying but the daxter cutscene takes a second to update the volume...
-                   (and *custom-cutscene?*  (string= *currentSpoolName* "green-sagecage-daxter-sacrifice") )
-                   )
-
-
-
-                        (begin
-                        ;;store the current volume setting
-                        (if (= *old-voice-volume* 0.0)
-                        (set! *old-voice-volume* (-> *setting-control* default dialog-volume))
-                        )
-                        ;;set volume to 0 during this cutscene
-                        (set! (-> *setting-control* default dialog-volume) 0.0)
-                        )
-                        (begin
-                        (if (and (!= *old-voice-volume* 0.0 )(= (-> *setting-control* default dialog-volume) 0.0))
-                          (begin
-                          (set! (-> *setting-control* default dialog-volume) *old-voice-volume*)
-                          (set! *old-voice-volume* 0.0)
-                          )
-                        )
-                  )
-
-          )
-
-
-
-  (none)
-)
+          (and *custom-cutscene?*
+               (string= *currentSpoolName* "finalbosscam-white-eco")
+               (or (< *currentCutsceneFrame* 267) (> *currentCutsceneFrame* 321)))
+          ;;annoying but the daxter cutscene takes a second to update the volume...
+          (and *custom-cutscene?* (string= *currentSpoolName* "green-sagecage-daxter-sacrifice")))
+    (begin
+      ;;store the current volume setting
+      (if (= *old-voice-volume* 0.0) (set! *old-voice-volume* (-> *setting-control* default dialog-volume)))
+      ;;set volume to 0 during this cutscene
+      (set! (-> *setting-control* default dialog-volume) 0.0))
+    (begin
+      (if (and (!= *old-voice-volume* 0.0) (= (-> *setting-control* default dialog-volume) 0.0))
+        (begin
+          (set! (-> *setting-control* default dialog-volume) *old-voice-volume*)
+          (set! *old-voice-volume* 0.0)))))
+  (none))
 
 (defun chicken-every-frame ()
-
-
-(when (run-mort-code?)
-  (adjust-chick-origin (find-best-master-mark))
+  (when (run-mort-code?)
+    (adjust-chick-origin (find-best-master-mark))
     ;;If are flock points aren't setup, lets set them up.
-
     ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
-
     ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
     ;;If a chicken should despawn, set its target pos to 0,0,0.
     (assign-remove-demon-chicken-target)
     ;;Constantly check all chicks to see if they are in the warpgate if they are, then run chick-saved and increment saved per level
     ;;THIS FUNCTION HAS A SLEEP/SUSPEND WHEN IT RUNS (have a chick, be near portal)
-     (warp-demon-chick)
-     (save-chicks-func)
-)
-(none))
+    (warp-demon-chick)
+    (save-chicks-func))
+  (none))
 
 (define *count-crates* 0)
+
 (defun get-loaded-cell-count ()
-(set! *count-crates* 0)
-(execute-process-tree *active-pool* (lambda ((proc process))
-(when (-> proc entity)
-(let (
-    (vec (-> proc entity trans))
-    (quat (-> proc entity quat))
-    (name (the string (-> proc name))))
-    (when (= (-> (the entity-actor (-> proc entity)) etype) fuel-cell)
-
-    ;;We know its a cell
-
-
-
-    ;;If its wood, increase our count
-
-    (set! *count-crates* (+ *count-crates* 1))
-
-    )
-
-    ))
-
-
-    )
-    *kernel-context*)
-    *count-crates*
-
-)
-
-
+  (set! *count-crates* 0)
+  (execute-process-tree *active-pool*
+                        (lambda ((proc process))
+                          (when (-> proc entity)
+                            (let ((vec (-> proc entity trans))
+                                  (quat (-> proc entity quat))
+                                  (name (the string (-> proc name))))
+                              (when (= (-> (the entity-actor (-> proc entity)) etype) fuel-cell)
+                                ;;We know its a cell
+                                ;;If its wood, increase our count
+                                (set! *count-crates* (+ *count-crates* 1))))))
+                        *kernel-context*)
+  *count-crates*)
 
 (defun have-all-chicks-safe ()
+  (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))))
+    (when (or (and (= (get-loaded-cell-count) 0) (= (get-current-chicks) 0) (not (chicken-portal?)))
+              (and (= (get-loaded-cell-count) 0) (> (get-saved-chicks) (get-total-chicks)) (not (chicken-portal?))))
+      (if (and (= (-> (level-get-target-inside *level*) name)
+                  (-> (get-continue-by-name *game-info* (-> *warp-info* (get-unlock-level))) level))
+               (!= (-> (level-get-target-inside *level*) name) 'block-world))
+        (begin
+          (play-sound-file "nosoftlock.mp3" 100)
+          (set-unlock-level)
+          ;;TEST THIS
+          )))
+    (or (and (>= (get-saved-chicks) (get-total-chicks)) (not (chicken-portal?)))
+        (and *cheat-mode* (cpad-hold? 0 l3))
+        (and (= (get-loaded-cell-count) 0) (= (get-current-chicks) 0) (not (chicken-portal?))))))
 
-
-
-(let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1)))
-         )
-
-(when (or (and  (= (get-loaded-cell-count) 0) (= (get-current-chicks) 0) (not (chicken-portal?)))
-(and (= (get-loaded-cell-count) 0) (> (get-saved-chicks) (get-total-chicks)) (not (chicken-portal?)))
-)
-
-(if
-(and (= (-> (level-get-target-inside *level*)name) (->  (get-continue-by-name *game-info* (-> *warp-info* (get-unlock-level))) level)) (!= (-> (level-get-target-inside *level*)name) 'block-world))
-(begin
-(play-sound-file "nosoftlock.mp3" 100)
-(set-unlock-level)
-;;TEST THIS
-)
-)
-)
-
-
-(or
-      (and (>= (get-saved-chicks) (get-total-chicks)) (not (chicken-portal?)))
-      (and *cheat-mode* (cpad-hold? 0 l3))
-      (and (= (get-loaded-cell-count) 0) (= (get-current-chicks) 0) (not (chicken-portal?)) )
-)
-))
-
-    (defun runs-every-frame-proc-func ()
-    "this is ran in its own process called run-every-frame-proc"
-    ;;This is a hack to run softlock prevention
-
-    ;; (when (and (not (cpad-hold? 0 l3))(cpad-hold? 0 down))
-    ;; (mort-chicks-text)
-    ;; )
-    ;; (if (not (= *master-mode* 'progress))
-    ;; (set! *loaded-cell-pause* (get-loaded-cell-count))
-
-    ;; )
-
-    ;;This is a hack to try to patch a bug, remove if it messes up save/restoring
-    (if (and *target* (= (-> *target* state name) 'target-warp-out))
-    (reset-saved-chick-from-mem)
-    )
-
-    (when #t
+(defun runs-every-frame-proc-func ()
+  "this is ran in its own process called run-every-frame-proc"
+  ;;This is a hack to run softlock prevention
+  ;; (when (and (not (cpad-hold? 0 l3))(cpad-hold? 0 down))
+  ;; (mort-chicks-text)
+  ;; )
+  ;; (if (not (= *master-mode* 'progress))
+  ;; (set! *loaded-cell-pause* (get-loaded-cell-count))
+  ;; )
+  ;;This is a hack to try to patch a bug, remove if it messes up save/restoring
+  (if (and *target* (= (-> *target* state name) 'target-warp-out)) (reset-saved-chick-from-mem))
+  (when #t
     ;;(format #t "~A" (-> *target* state name))
-
-      (if (and *target*
-          (= (-> *target* state name) 'target-stance)
-          (not (movie?))
-          (!= (level-get-target-inside *level*) #f)
-          (!= (-> (level-get-target-inside *level*)name) 'misty)
-          (!= (-> (level-get-target-inside *level*)name) 'village1)
-          (!= (-> (level-get-target-inside *level*)name) 'beach)
-          (!= (-> (level-get-target-inside *level*)name) 'mort-title)
-          (!= (-> (level-get-target-inside *level*)name) 'citadel)
-          (!= (-> (level-get-target-inside *level*)name) 'finalboss)
-          )
-      (have-all-chicks-safe)
-      )
-      ;;
-      ;; )
-
+    (if (and *target*
+             (= (-> *target* state name) 'target-stance)
+             (not (movie?))
+             (!= (level-get-target-inside *level*) #f)
+             (!= (-> (level-get-target-inside *level*) name) 'misty)
+             (!= (-> (level-get-target-inside *level*) name) 'village1)
+             (!= (-> (level-get-target-inside *level*) name) 'beach)
+             (!= (-> (level-get-target-inside *level*) name) 'mort-title)
+             (!= (-> (level-get-target-inside *level*) name) 'citadel)
+             (!= (-> (level-get-target-inside *level*) name) 'finalboss))
+      (have-all-chicks-safe))
+    ;;
+    ;; )
     ;;This is kind of a hack to start up during the opening cutscene
     (when (and (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (>= *currentCutsceneFrame* 1649))
-    (set! *in-mort-menu* #t)
-                  (let ((current-timea (current-time)))
-                    (until (time-elapsed? current-timea (seconds 0.55))
-                    ;;(format #t "~S~%" "NOT ELAPSED")
-                      (suspend)
-                    )
-              )
-              (set-blackout-frames (seconds 25.3))
-    (str-play-stop *currentSpoolName*)
-    (set! (-> *art-control* active-stream) #f)
-
-    )
-
+      (set! *in-mort-menu* #t)
+      (let ((current-timea (current-time)))
+        (until (time-elapsed? current-timea (seconds 0.55))
+          ;;(format #t "~S~%" "NOT ELAPSED")
+          (suspend)))
+      (set-blackout-frames (seconds 25.3))
+      (str-play-stop *currentSpoolName*)
+      (set! (-> *art-control* active-stream) #f))
     (when (and (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 2))
-    (move-samos-butts)
-    )
-
+      (move-samos-butts))
     (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 2))
-    (play-sound-file "farts/fart1.mp3" (the int (-> *setting-control* default dialog-volume)))
-    )
+      (play-sound-file "farts/fart1.mp3" (the int (-> *setting-control* default dialog-volume))))
     (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 250))
-    (play-sound-file "farts/vinefart.mp3" (the int (-> *setting-control* default dialog-volume)))
-    )
-
-
-   ;; (sound-manager)
+      (play-sound-file "farts/vinefart.mp3" (the int (-> *setting-control* default dialog-volume))))
+    ;; (sound-manager)
     (when (run-mort-code?)
       ;;   (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
       ;;   (init-chickens)
       ;; )
-
-
-    (eco-manager) ;;checks constantly if we do or do not have eco, and what type, the gives effect or turns it off
-    (none)
-
-   )
-     ;; This should be done as the last thing
-      ;; (find-best-master-mark)
-      ;; (mort-main-menu)
-
-
+      (eco-manager) ;;checks constantly if we do or do not have eco, and what type, the gives effect or turns it off
+      (none))
+    ;; This should be done as the last thing
+    ;; (find-best-master-mark)
+    ;; (mort-main-menu)
     )
-
-      (none)
-    )
+  (none))
 
 (defun debug-text-every-frame ()
-"This process ONLY spawns when debug mode is on and shows some extra info"
-"I have no idea why the close-to-portal check is needed but it works."
-   (when *debug-segment*
-
+  "This process ONLY spawns when debug mode is on and shows some extra info"
+  "I have no idea why the close-to-portal check is needed but it works."
+  (when *debug-segment*
     (update-mort-vars)
     (when (and (run-mort-code?) #t)
-     (draw-beta-flock-points)
-     (mort-rewrite-text)
-    )
-   )
+      (draw-beta-flock-points)
+      (mort-rewrite-text)))
+  (none))
 
-(none))
-
-(defun variable-every-frame()
- "Responsible for updating most globals - if this isnt running something is terribly wrong"
-(update-mort-vars)
- (if (= (-> *target* state name) 'target-warp-out)
-  (set! (-> *speedrun-info* should-display?) #t)
- )
+(defun variable-every-frame ()
+  "Responsible for updating most globals - if this isnt running something is terribly wrong"
+  (update-mort-vars)
+  (if (= (-> *target* state name) 'target-warp-out) (set! (-> *speedrun-info* should-display?) #t))
   (if (and (= (-> *target* state name) 'target-warp-in) (> (get-unlock-level) 0))
-  (set! (-> *speedrun-info* should-display?) #f)
- )
-;;If we input a button combo and we are in debug, unlock the next level
-      (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1) *cheat-mode*)
-      (if (portal-mort-switch)(go-virtual-process (portal-mort-switch) basebutton-going-down)(sound-play "caught-eel"))
-      (set-unlock-level)
-      ;;This might be ok to revert later
-      ;;(reset-actors #t)
-      )
-
-
-(none))
+    (set! (-> *speedrun-info* should-display?) #f))
+  ;;If we input a button combo and we are in debug, unlock the next level
+  (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1) *cheat-mode*)
+    (if (portal-mort-switch) (go-virtual-process (portal-mort-switch) basebutton-going-down) (sound-play "caught-eel"))
+    (set-unlock-level)
+    ;;This might be ok to revert later
+    ;;(reset-actors #t)
+    )
+  (none))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Begin process defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define done-init?  #f)
-
+(define done-init? #f)
 
 (defbehavior sound-manager-proc process ()
-"handles the sound, and if it needs to spawn the runs-every-frame process it does that too"
-(while #t
-(sound-manager)
-;; (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
-;;   (init-chickens)
-;; )
-(if (not done-init?)
-  (init-chickens)
-
-)
-(suspend)
-)
-(none)
-)
+  "handles the sound, and if it needs to spawn the runs-every-frame process it does that too"
+  (while #t
+    (sound-manager)
+    ;; (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
+    ;;   (init-chickens)
+    ;; )
+    (if (not done-init?) (init-chickens))
+    (suspend))
+  (none))
 
 (defbehavior stupid-hacks-every-frame-proc process ()
-"Ideally this process does nothing, but unfortunately it does alot"
-(while #t
-(stupid-hacks-every-frame)
-(suspend)
-)
-(none)
-)
+  "Ideally this process does nothing, but unfortunately it does alot"
+  (while #t
+    (stupid-hacks-every-frame)
+    (suspend))
+  (none))
 
 (defbehavior run-every-frame-proc process ()
-(while #t
-(runs-every-frame-proc-func)
-(suspend)
-)
-(none)
-)
+  (while #t
+    (runs-every-frame-proc-func)
+    (suspend))
+  (none))
 
 (defbehavior debug-text-every-frame-proc process ()
-"Process is responsible for drawing debug text this process should never be suspended"
-(while #t
-(debug-text-every-frame)
-(suspend)
-)
-(none)
-)
+  "Process is responsible for drawing debug text this process should never be suspended"
+  (while #t
+    (debug-text-every-frame)
+    (suspend))
+  (none))
 
 (defbehavior chicken-every-frame-proc process ()
-"Process is responsible for most chicken related functions"
-(while #t
-(chicken-every-frame)
-(suspend)
-)
-(none)
-)
+  "Process is responsible for most chicken related functions"
+  (while #t
+    (chicken-every-frame)
+    (suspend))
+  (none))
 
 (defbehavior variable-every-frame-proc process ()
-"Process is responsible for updating most variables/globals this process should never be suspended"
-(while #t
-(variable-every-frame)
-(suspend)
-)
-(none)
-)
-
+  "Process is responsible for updating most variables/globals this process should never be suspended"
+  (while #t
+    (variable-every-frame)
+    (suspend))
+  (none))
 
 (defun init-chickens ()
-
-
-
-         (process-spawn-function process run-every-frame-proc) ;; THERE IS A RETAIL CRASH HERE
-        (process-spawn-function process chicken-every-frame-proc)
-
-       (process-spawn-function process variable-every-frame-proc)
-      ;; ;; (process-spawn-function process text-every-frame-proc)
-        (process-spawn-function process debug-text-every-frame-proc)
-        (process-spawn-function process stupid-hacks-every-frame-proc)
-
-
-      (when *debug-segment*
-      (format #t "INITIALIZING CHICKENS~%")
-      (format #t "ITS MORTIN TIME~%")
-      )
-
-      (set-flock-points-start)
-      (set-flock-points)
-      (set-flock-false);; Set all flock values to #f before chickens are in it
-      (chicken-pls) ;; spawn the chickens offscreen
-      ;; (get-mort-orb-total)
-       (set! done-init? #t)
-
-      (none))
+  (process-spawn-function process
+    run-every-frame-proc) ;; THERE IS A RETAIL CRASH HERE
+  (process-spawn-function process
+    chicken-every-frame-proc)
+  (process-spawn-function process
+    variable-every-frame-proc)
+  ;; ;; (process-spawn-function process text-every-frame-proc)
+  (process-spawn-function process
+    debug-text-every-frame-proc)
+  (process-spawn-function process
+    stupid-hacks-every-frame-proc)
+  (when *debug-segment*
+    (format #t "INITIALIZING CHICKENS~%")
+    (format #t "ITS MORTIN TIME~%"))
+  (set-flock-points-start)
+  (set-flock-points)
+  (set-flock-false) ;; Set all flock values to #f before chickens are in it
+  (chicken-pls) ;; spawn the chickens offscreen
+  ;; (get-mort-orb-total)
+  (set! done-init? #t)
+  (none))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Begin function defintions.
@@ -908,18 +633,18 @@
 
 (defun runs-every-frame ()
   ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
-
-;;stupid hack ur an idiot if you leave this in
-;; ENTRY POINT TO SPAWN PROCESSES
+  ;;stupid hack ur an idiot if you leave this in
+  ;; ENTRY POINT TO SPAWN PROCESSES
   (when (not done-init?)
-      (format #t "INITIALIZING TITLE PROC~%")
-      (dotimes (i (level-task-data-index max))(set! (-> *game-counts* data i money-count) 0)(set! (-> *game-counts* data i buzzer-count) 0))
-      (relocate *game-counts* 1)
-      (when (not *target*)
-      (suspend)
-      )
-      (process-spawn-function process sound-manager-proc)
-)
+    (format #t "INITIALIZING TITLE PROC~%")
+    (dotimes (i (level-task-data-index max))
+      (set! (-> *game-counts* data i money-count) 0)
+      (set! (-> *game-counts* data i buzzer-count) 0))
+    (relocate *game-counts* 1)
+    (when (not *target*)
+      (suspend))
+    (process-spawn-function process
+      sound-manager-proc))
   (if *show-input-display* (input-display-on) (input-display-off))
   ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
   (when *debug-segment*
@@ -975,20 +700,16 @@
       ))
   (none))
 
-    (defun runs-on-jak-spawn ()
-      ;; Code here runs every time jak spawns (loading a file new game or death)
-
-      ;;(init-title)
-      ;;(format #t  "RUNNING MUSIC PROC~%")
-      ;; (process-spawn-function process music-manager-proc)
-      ;; (restore-cells)
-      ;; (restore-saved-chicks-from-mem)
-
-
-      ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc
-      ;;(process-spawn-function process music-manager-proc)
-      (none)
-      )
+(defun runs-on-jak-spawn ()
+  ;; Code here runs every time jak spawns (loading a file new game or death)
+  ;;(init-title)
+  ;;(format #t  "RUNNING MUSIC PROC~%")
+  ;; (process-spawn-function process music-manager-proc)
+  ;; (restore-cells)
+  ;; (restore-saved-chicks-from-mem)
+  ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc
+  ;;(process-spawn-function process music-manager-proc)
+  (none))
 
 (defun runs-on-jak-death ((death-event symbol))
   (case death-event

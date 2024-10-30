@@ -334,8 +334,14 @@
   ;; (adjust-chick-origin (find-best-master-mark))
   )
 
+
+
+
+
+
 (defun start2 ()
-  (process-spawn demon-chicken (target-pos-with-offset) :from *demon-chicken-dead-pool* :to *demon-chicken-pool*))
+(process-spawn demon-chicken (target-pos-with-offset) :from *demon-chicken-dead-pool* :to *demon-chicken-pool*)
+)
 
 (defun chicken-pls ()
   (define *chicken-0* (-> (start2) 0))
@@ -374,33 +380,6 @@
   (define *chicken-11* (-> (start2) 0))
   (set! (-> *chicken-11* name) "chicken-11")
   (set! (-> *flock* chicks 11) (process->handle *chicken-11*))
-  ;; (define *chicken-12* (-> (start2) 0))
-  ;; (set! (-> *chicken-12* name) "chicken-12")
-  ;; (set! (-> *flock* chicks 12)  (process->handle *chicken-12*))
-  ;; (define *chicken-13* (-> (start2) 0))
-  ;; (set! (-> *chicken-13* name) "chicken-13")
-  ;; (set! (-> *flock* chicks 13)  (process->handle *chicken-13*))
-  ;; (define *chicken-14* (-> (start2) 0))
-  ;; (set! (-> *chicken-14* name) "chicken-14")
-  ;; (set! (-> *flock* chicks 14)  (process->handle *chicken-14*))
-  ;; (define *chicken-15* (-> (start2) 0))
-  ;; (set! (-> *chicken-15* name) "chicken-15")
-  ;; (set! (-> *flock* chicks 15)  (process->handle *chicken-15*))
-  ;; (define *chicken-16* (-> (start2) 0))
-  ;; (set! (-> *chicken-16* name) "chicken-16")
-  ;; (set! (-> *flock* chicks 16)  (process->handle *chicken-16*))
-  ;; (define *chicken-17* (-> (start2) 0))
-  ;; (set! (-> *chicken-17* name) "chicken-17")
-  ;; (set! (-> *flock* chicks 17)  (process->handle *chicken-17*))
-  ;; (define *chicken-18* (-> (start2) 0))
-  ;; (set! (-> *chicken-18* name) "chicken-18")
-  ;; (set! (-> *flock* chicks 18)  (process->handle *chicken-18*))
-  ;; (define *chicken-19* (-> (start2) 0))
-  ;; (set! (-> *chicken-19* name) "chicken-19")
-  ;; (set! (-> *flock* chicks 19)  (process->handle *chicken-19*))
-  ;; (define *chicken-20* (-> (start2) 0))
-  ;; (set! (-> *chicken-20* name) "chicken-20")
-  ;; (set! (-> *flock* chicks 20)  (process->handle *chicken-20*))
   (none))
 
 (defun vegan ()
@@ -469,26 +448,13 @@
 (defun portal-mort-switch ()
   (the-as warp-gate-switch (process-by-ename "project-warp-gate-switch")))
 
-(defun mort-rewrite-text ()
-  ;;mort debugging
-  ;; this is a debug checking text to see certain values
-  (when (and (portal-mort-switch) (!= (-> (level-get-target-inside *level*) name) 'mort-title))
-    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
-                                 (bucket-id subtitle)
-                                 (or *debug-segment* (and (not *debug-segment*) (= (the int (-> *setting-control* default sfx-volume) 1)))))
-      (draw-string-xy (string-format "Will Remove soon!~%Mort Rewrite info ~%Chicks in memory card: ~D ~%Total Chicks is is ~D~%Current Chicks is is ~D~%saved Chicks is is ~D~%Chicken going to portal? ~A~%Unlock lvl is ~D~%"
-                                     (get-saved-chicks-from-mem)
-                                     (get-total-chicks)
-                                     (get-current-chicks)
-                                     (get-saved-chicks)
-                                     (chicken-portal?)
-                                     (get-unlock-level))
-                      buf
-                      (- 400 70)
-                      (- 150 (* 8 16))
-                      (font-color flat-yellow)
-                      (font-flags shadow kerning))))
-  (none))
+
+(defun get-saved-chicks-from-mem ()
+  ;;(format #t "getting unlock level it is ~D~%" (-> *game-info* money-per-level 3))
+  (the int (-> *game-info* money-per-level 5)))
+
+
+
 
 (defun get-chick-from-flock ((idx int))
   (when *flock*
@@ -539,9 +505,7 @@
         (return #t))
       #f)))
 
-(defun get-saved-chicks-from-mem ()
-  ;;(format #t "getting unlock level it is ~D~%" (-> *game-info* money-per-level 3))
-  (the int (-> *game-info* money-per-level 5)))
+
 
 (defun reset-saved-chick-from-mem ()
   (when (nonzero? (get-saved-chicks-from-mem))
@@ -683,6 +647,28 @@
   ;;end hack original currently bugged function below
   ;(set! (-> *game-info* money-per-level 3) (+ (-> *game-info* money-per-level 3) (the-as uint arg1)))
   ;;(format #t "unlock level is ~D~%" (-> *game-info* money-per-level 3))
+  (none))
+
+
+(defun mort-rewrite-text ()
+  ;;mort debugging
+  ;; this is a debug checking text to see certain values
+  (when (and (portal-mort-switch) (!= (-> (level-get-target-inside *level*) name) 'mort-title))
+    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
+                                 (bucket-id subtitle)
+                                 (or *debug-segment* (and (not *debug-segment*) (= (the int (-> *setting-control* default sfx-volume) 1)))))
+      (draw-string-xy (string-format "Will Remove soon!~%Mort Rewrite info ~%Chicks in memory card: ~D ~%Total Chicks is is ~D~%Current Chicks is is ~D~%saved Chicks is is ~D~%Chicken going to portal? ~A~%Unlock lvl is ~D~%"
+                                     (get-saved-chicks-from-mem)
+                                     (get-total-chicks)
+                                     (get-current-chicks)
+                                     (get-saved-chicks)
+                                     (chicken-portal?)
+                                     (get-unlock-level))
+                      buf
+                      (- 400 70)
+                      (- 150 (* 8 16))
+                      (font-color flat-yellow)
+                      (font-flags shadow kerning))))
   (none))
 
 (defun assign-remove-demon-chicken-target ()
