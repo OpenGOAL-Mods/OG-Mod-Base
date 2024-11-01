@@ -1783,12 +1783,11 @@
 (defstate vent-blocked (vent)
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
-      (case message
-        (('show) (go vent-wait-for-touch))))
+        (go vent-wait-for-touch))
   :code
     (behavior ()
       (loop
-        (if (not ((-> self block-func) self)) (go vent-wait-for-touch))
+     (go vent-wait-for-touch)
         (suspend))))
 
 (defstate vent-pickup (vent)
