@@ -3078,6 +3078,21 @@
                                              :disp0 'display
                                              :lev1 #f
                                              :disp1 #f
+                                             )
+                                             (new 'static 'continue-point
+                                             :name "chem-fac-start"
+                                             :level 'chem-fac
+                                             ;;:flags (continue-flags warp)
+                                             :trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
+                                             :quat (new 'static 'quaternion  :w 1.0)
+                                             :camera-trans (new 'static 'vector :x (meters 32.93) :y (meters 300.0) :z (meters 152.43) :w 1.0)
+                                             :camera-rot (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+                                             :load-commands '()
+                                             :vis-nick 'none
+                                             :lev0 'chem-fac
+                                             :disp0 'display
+                                             :lev1 #f
+                                             :disp1 #f
                                              ))
                            :tasks '()
                            :priority 100

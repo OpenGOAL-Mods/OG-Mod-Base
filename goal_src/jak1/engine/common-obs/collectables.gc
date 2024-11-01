@@ -963,7 +963,9 @@
               (fuel-cell-animate)
               (suspend)
               (ja :num! (loop! f30-1))))))))
-(define *MAXCURRENTCHICKS* 5)
+(define *MAXCURRENTCHICKS* 12)
+(defun-extern get-current-chicks int)
+(defun-extern chicken-going-to-portal? symbol)
 (defstate pickup (fuel-cell)
   :virtual #t
   :enter
