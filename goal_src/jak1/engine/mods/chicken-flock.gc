@@ -494,7 +494,7 @@
       (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))
       saved-chicks))
 
-(defun chicken-portal? ()
+(defun chicken-going-to-portal? ()
   ;;Is a chicken going to the portal?
   (when mort-level?
     (dotimes (i NUM_FLOCKPOINTS)
@@ -562,91 +562,72 @@
   (format #t "unlock level is set to ~D~%" (-> *game-info* money-per-level 3))
   (none))
 
-(defun set-unlock-level ()
-  "adds to the unlock level"
-  (if (chicken-portal?) (return #f))
   (defun unlock-level-func ((idx int))
     (set-unlock-level-val idx)
     (play-sound-file "end-level.wav" (the int (-> *setting-control* default sfx-volume)))
     (reset-saved-chick-from-mem)
     (auto-save-command 'auto-save 0 0 *default-pool*)
     (none))
+
+(defun set-unlock-level ()
+  "adds to the unlock level"
+  (if (chicken-going-to-portal?) (return #f))
+
   ;; (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))
   ;; (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks)
-  (if (portal-mort-switch) (go-virtual-process (portal-mort-switch) basebutton-going-down) (sound-play "caught-eel"))
+  (if (portal-mort-switch) (go-virtual-process (portal-mort-switch) basebutton-going-down))
   (case (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))
     ((16)
-     ;; Code here runs as soon as you pickup a powercell
      (when (< (get-unlock-level) 1)
        (unlock-level-func 1)))
     ((17)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 2)
        (unlock-level-func 2)))
     ((18)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 3)
        (unlock-level-func 3)))
     ((19)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 4)
        (unlock-level-func 4)))
     ((20)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 5)
        (unlock-level-func 5)))
     ((21)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 6)
        (unlock-level-func 6)))
     ((22)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 7)
        (unlock-level-func 7)))
     ((23)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 8)
        (unlock-level-func 8)))
     ((24)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 9)
        (unlock-level-func 9)))
     ((25)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 10)
        (unlock-level-func 10)))
     ((26)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 11)
        (unlock-level-func 11)))
     ((27)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 12)
        (unlock-level-func 12)))
     ((28)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 13)
        (unlock-level-func 13)))
     ((29)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 14)
        (unlock-level-func 14)))
     ((30)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 15)
        (unlock-level-func 15)))
     ((31)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 16)
        (unlock-level-func 16)))
     ((32)
-     ;; Code here runs at the end of any powercell cutscene
      (when (< (get-unlock-level) 17)
        (unlock-level-func 17))))
-  #| Temporary hardcoded hack so I can be sure how this works for release |#
-  ;;end hack original currently bugged function below
-  ;(set! (-> *game-info* money-per-level 3) (+ (-> *game-info* money-per-level 3) (the-as uint arg1)))
-  ;;(format #t "unlock level is ~D~%" (-> *game-info* money-per-level 3))
   (none))
 
 
@@ -662,7 +643,7 @@
                                      (get-total-chicks)
                                      (get-current-chicks)
                                      (get-saved-chicks)
-                                     (chicken-portal?)
+                                     (chicken-going-to-portal?)
                                      (get-unlock-level))
                       buf
                       (- 400 70)

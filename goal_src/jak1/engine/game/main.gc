@@ -10,8 +10,11 @@
 (require "engine/common-obs/generic-obs.gc")
 (require "pc/pckernel.gc")
 
-;; DECOMP BEGINS
+(defun-extern zero-volume? (symbol))
 
+;; DECOMP BEGINS
+(define-extern *in-mort-menu* symbol)
+(define-extern *warp-info* (array string))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Letterbox and blackout
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -163,6 +166,16 @@
                                  ((not (progress-allowed?)) (if (pause-allowed?) 'pause *master-mode*))
                                  ;; pushing start.
                                  ((cpad-hold? 0 start)
+                                  ;;Tagmort This is where the game checks for pause, we can hijack here and have different results based on level etc
+                                  (if (= (-> (level-get-target-inside *level*) name) 'mort-title)
+                                    (begin
+                                      (let ((in-blackout? (>= (-> *game-info* blackout-time) (current-time))))
+                                      (when (not in-blackout?)
+                                      (set! *in-mort-menu* #f)
+                                      ;; replace with mort menu eventually
+                                      (sound-play "select-menu")
+                                      (send-event *target* 'continue (get-continue-by-name *game-info* (-> *warp-info* 0)))
+                                      (return 0)))))
                                   ;; toggle between progress/game
                                   (if *progress-process* 'game 'progress))
                                  (else
@@ -357,6 +370,7 @@
     ;; collide dma
     (suspend)
     (while *run*
+      (if (zero-volume?)  (pause-main-music)  (resume-main-music))
       (runs-every-frame) ;; trigger hook for mod base mod-base-change entry point
       ;; start immediately after all process updates finish.
       (profiler-instant-event "display-loop-top")

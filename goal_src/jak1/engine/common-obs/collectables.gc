@@ -881,9 +881,25 @@
               (v1-20 (if (and (nonzero? gp-1) (type-type? (-> gp-1 type) collide-shape)) gp-1))
               (gp-2 (if v1-20 (-> v1-20 root-prim prim-core) (-> self root trans))))
          (spawn (-> self part) (the-as vector gp-2))
-         (when (nonzero? (-> self sound))
-           (update-trans! (-> self sound) (the-as vector gp-2))
-           (update! (-> self sound)))))))
+         (if (< (vector-vector-xz-distance (target-pos 0) (-> self root trans)) (meters 8.0))
+
+           ;;tag mort
+
+           (begin
+
+             (when (nonzero? (-> self sound))
+
+               (update-trans! (-> self sound) (the-as vector gp-2))
+
+               (update! (-> self sound))))
+
+           (begin
+
+             (when (nonzero? (-> self sound))
+
+               (update-trans! (-> self sound) (new 'static 'vector))
+
+               (update! (-> self sound)))))))))
   (set-vector! (-> self draw color-mult) 0.5 0.5 0.5 1.0)
   (set-vector! (-> self draw color-emissive) 0.5 0.5 0.5 1.0)
   0
@@ -947,14 +963,15 @@
               (fuel-cell-animate)
               (suspend)
               (ja :num! (loop! f30-1))))))))
-
+(define *MAXCURRENTCHICKS* 5)
 (defstate pickup (fuel-cell)
   :virtual #t
   :enter
     (behavior ((arg0 object) (arg1 handle))
       (set-time! (-> self state-time))
       (set! (-> self state-object) #t)
-      (let ((t9-1 (-> (the-as (state eco-collectable) (find-parent-state)) enter))) (if t9-1 (t9-1))))
+      (let ((t9-1 (-> (the-as (state eco-collectable) (find-parent-state)) enter))) (if t9-1 (t9-1)))
+      )
   :trans
     (behavior ()
       (let ((f30-0 (the-as float
@@ -981,6 +998,7 @@
   :code
     (behavior ((arg0 object) (arg1 handle))
       (local-vars (sv-96 res-tag))
+          (if (or (< *MAXCURRENTCHICKS* (get-current-chicks)) (chicken-going-to-portal?)) (return #f))
       (sound-play "pu-powercell")
       (clear-collide-with-as (-> self root))
       (logclear! (-> self mask) (process-mask actor-pause))
@@ -988,6 +1006,7 @@
       (process-entity-status! self (entity-perm-status dead) #t)
       (stop! (-> self sound))
       (run-this-when-cell-grab self)
+    (if #f (begin
      (while (handle->process (-> *game-info* other-camera-handle))
         (format #t
                 "WARNING: fuel-cell stall ~D ~A ~A~%"
@@ -1016,6 +1035,9 @@
            (set-yaw-angle-clear-roll-pitch! (-> self root) (y-angle (-> *target* control)))
            (move-to-ground (-> self root) (the-as float 40960.0) (the-as float 40960.0) #f (collide-kind background)))))
       (spool-push *art-control* (-> self victory-anim name) 0 self (the-as float -99.0))
+    ))
+    (if #f (begin
+
       (send-event *target* 'get-pickup (-> self fact pickup-type) (-> self fact pickup-amount))
       (set! (-> self draw bounds w) 32768.0)
       (logior! (-> self skel status) (janim-status inited))
@@ -1023,17 +1045,17 @@
       (add-setting! 'music-volume 'rel (-> *setting-control* current music-volume-movie) 0)
       (add-setting! 'sfx-volume 'rel (-> *setting-control* current sfx-volume-movie) 0)
       (add-setting! 'ambient-volume 'rel (-> *setting-control* current ambient-volume-movie) 0)
-      (process-spawn othercam self 10 #f #t :to self)
-      (auto-save-command 'auto-save 0 0 *default-pool*)
-      (ja-play-spooled-anim (-> self victory-anim)
-                            (the-as art-joint-anim fuel-cell-idle-ja)
-                            (the-as art-joint-anim #f)
-                            (the-as (function process-drawable symbol) false-func))
+      (process-spawn othercam self 10 #f #t :to self)))
+      ;;(auto-save-command 'auto-save 0 0 *default-pool*)
+      ;; (ja-play-spooled-anim (-> self victory-anim)
+      ;;                       (the-as art-joint-anim fuel-cell-idle-ja)
+      ;;                       (the-as art-joint-anim #f)
+      ;;                       (the-as (function process-drawable symbol) false-func))
       (remove-setting! 'music-volume)
       (remove-setting! 'sfx-volume)
       (remove-setting! 'ambient-volume)
       (send-event *target* 'blend-shape #f)
-      (send-event *target* 'end-mode)
+      ;;(send-event *target* 'end-mode)
       (send-event *camera* 'no-intro)
       (send-event *camera* 'clear-entity)
       (ja-channel-set! 0)

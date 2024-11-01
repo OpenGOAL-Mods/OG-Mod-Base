@@ -485,55 +485,69 @@
   0
   (none))
 (define *game-counts* (the game-count-info (malloc 'global 10000)))
-(defmethod relocate ((this game-count-info) (arg0 int))
+(defmethod relocate game-count-info ((this game-count-info) (arg0 int))
   "Load in the game-count-info. This is a bit of a hack."
-  (set! (-> *game-counts* type) game-count-info)
+(set! (-> *game-counts* type) game-count-info)
   (set! (-> *game-counts* length) (length *level-load-list*))
-  ;; (set! (-> *game-counts* data 0 money-count) 50)
-  ;; (set! (-> *game-counts* data 1 money-count) 50)
-  ;; (set! (-> *game-counts* data 2 money-count) 150)
-  ;; (set! (-> *game-counts* data 3 money-count) 150)
-  ;; (set! (-> *game-counts* data 4 money-count) 150)
-  ;; (set! (-> *game-counts* data 5 money-count) 50)
-  ;; (set! (-> *game-counts* data 6 money-count) 50)
-  ;; (set! (-> *game-counts* data 7 money-count) 200)
-  ;; (set! (-> *game-counts* data 8 money-count) 200)
-  ;; (set! (-> *game-counts* data 9 money-count) 200)
-  ;; (set! (-> *game-counts* data 10 money-count) 50)
-  ;; (set! (-> *game-counts* data 11 money-count) 50)
-  ;; (set! (-> *game-counts* data 12 money-count) 200)
-  ;; (set! (-> *game-counts* data 13 money-count) 200)
-  ;; (set! (-> *game-counts* data 14 money-count) 50)
-  ;; (set! (-> *game-counts* data 15 money-count) 200)
-  (set! (-> *game-counts* data 16 money-count) 55);;block world
-  (set! (-> *game-counts* data 17 money-count) 45);;factory cross
-  (set! (-> *game-counts* data 18 money-count) 50);;hollywood
-  (set! (-> *game-counts* data 19 money-count) 51);;monument
-  (set! (-> *game-counts* data 20 money-count) 47)
-  (set! (-> *game-counts* data 21 money-count) 47);;pyramid
-  (set! (-> *game-counts* data 22 money-count) 46);;ice canyon
-  (set! (-> *game-counts* data 23 money-count) 98);;coins
-  (set! (-> *game-counts* data 24 money-count) 43);;villa-cuba   NEED
-  (set! (-> *game-counts* data 25 money-count) 35);;ice-slide
-  (set! (-> *game-counts* data 26 money-count) 41);; islands
-  (set! (-> *game-counts* data 27 money-count) 43);;glass towers NEED
-  (set! (-> *game-counts* data 28 money-count) 54);;chemical factory
-  (set! (-> *game-counts* data 29 money-count) 55) ;;space  bridge
-  (set! (-> *game-counts* data 30 money-count) 1);;chicks
-  (set! (-> *game-counts* data 31 money-count) 33);;garden
-  (set! (-> *game-counts* data 32 money-count) 50);;cold-pipe
+
+  (set! (-> *game-counts* data 0 money-count) 50)
+(set! (-> *game-counts* data 1 money-count) 50)
+(set! (-> *game-counts* data 2 money-count) 150)
+(set! (-> *game-counts* data 3 money-count) 150)
+(set! (-> *game-counts* data 4 money-count) 150)
+(set! (-> *game-counts* data 5 money-count) 50)
+(set! (-> *game-counts* data 6 money-count) 50)
+(set! (-> *game-counts* data 7 money-count) 200)
+(set! (-> *game-counts* data 8 money-count) 200)
+(set! (-> *game-counts* data 9 money-count) 200)
+(set! (-> *game-counts* data 10 money-count) 50)
+(set! (-> *game-counts* data 11 money-count) 50)
+(set! (-> *game-counts* data 12 money-count) 200)
+(set! (-> *game-counts* data 13 money-count) 200)
+(set! (-> *game-counts* data 14 money-count) 50)
+(set! (-> *game-counts* data 15 money-count) 200)
+(set! (-> *game-counts* data 16 money-count) 55);;block world
+(set! (-> *game-counts* data 17 money-count) 45);;factory cross
+(set! (-> *game-counts* data 18 money-count) 50);;hollywood
+(set! (-> *game-counts* data 19 money-count) 51);;monument
+(set! (-> *game-counts* data 20 money-count) 47)
+(set! (-> *game-counts* data 21 money-count) 47);;pyramid
+(set! (-> *game-counts* data 22 money-count) 46);;ice canyon
+(set! (-> *game-counts* data 23 money-count) 98);;coins
+(set! (-> *game-counts* data 24 money-count) 43);;villa-cuba   NEED
+(set! (-> *game-counts* data 25 money-count) 35);;ice-slide
+(set! (-> *game-counts* data 26 money-count) 41);; islands
+(set! (-> *game-counts* data 27 money-count) 43);;glass towers NEED
+(set! (-> *game-counts* data 28 money-count) 54);;chemical factory
+(set! (-> *game-counts* data 29 money-count) 55) ;;space  bridge
+(set! (-> *game-counts* data 30 money-count) 1);;chicks
+(set! (-> *game-counts* data 31 money-count) 33);;garden
+(set! (-> *game-counts* data 32 money-count) 50);;cold-pipe
 
 
-(dotimes (i (- (level-task-data-index max) 4)) ;;this is a stupid hack
-  (if (and (> i 16 )(or (= (-> *game-counts* data i money-count) 0) (> (-> *game-counts* data i money-count) 300) (= (-> *game-counts* data i money-count) #f)))
-    (set! (-> *game-counts* data i money-count) i)
+
+
+
+;; (define block-world-load-level-id 22)
+;; (define block-world-per-level-id 16)
+;; (define block-world-num-chicks 3)
+;; (define block-world-num-fuel 6)
+;; (define block-world-spawn-point 0)
+
+
+
+  (dotimes (i (level-task-data-index max))
+  (if (or (= (-> *game-counts* data i money-count) 0) (> (-> *game-counts* data i money-count) 300) (= (-> *game-counts* data i money-count) #f))
+  (set! (-> *game-counts* data i money-count) i)
   )
-  (if (and (> i 16 ) (or (= (-> *game-counts* data i buzzer-count) 0) (> (-> *game-counts* data i buzzer-count) 300) (= (-> *game-counts* data i buzzer-count) #f)))
-    (set! (-> *game-counts* data i buzzer-count) i)
+  (if (or (= (-> *game-counts* data i buzzer-count) 0) (> (-> *game-counts* data i buzzer-count) 300) (= (-> *game-counts* data i buzzer-count) #f))
+  (set! (-> *game-counts* data i buzzer-count) i)
   )
   )
-  (set! *game-counts* this)
-  this)
+
+
+  this
+  )
 
 (defmethod relocate ((this progress) (arg0 int))
   (dotimes (v1-0 (-> this nb-of-particles))

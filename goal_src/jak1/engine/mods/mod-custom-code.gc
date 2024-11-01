@@ -21,6 +21,74 @@
 ;; Begin custom function defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defconstant MUSIC_LOWER_PERCENT 0.75)
+
+(defun-extern josh-suprise-sound-25-function-spawn none)
+
+(defun music-manager ()
+  (stop-main-music)
+  ;; Some of the alt sounds only play if you stay in a level for a very long time, so its nice to give them a rare chance to get a spotlight
+  (case (-> (level-get-target-inside *level*) name)
+    (('mort-title)
+     (play-main-music "jak-chicken-theme.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))))
+    (('block-world)
+     (if (rand-vu-percent? 0.125)
+       (play-main-music "music-block-world2.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT)))
+       (play-main-music "music-block-world.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT)))))
+    (('factory-cross 'chicks)
+     (play-main-music "music-factory-cross-chicks.mp3"
+                      (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))))
+    (('holly-wood)
+     (if (rand-vu-percent? 0.125)
+       (play-main-music "music-holly-wood2.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))) ;;get holly wood 1?
+       (play-main-music "music-holly-wood1.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))) ;;get holly wood 1?
+       ))
+    (('monument)
+     (if (rand-vu-percent? 0.125)
+       (play-main-music "music-monument2.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT)))
+       (play-main-music "music-monument1.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))))
+     ;;add alt theme? ITS SO GOOD YES
+     )
+    (('cathedral)
+     (if (rand-vu-percent? 0.125)
+       (play-main-music "music-cathedral2.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT)))
+       (play-main-music "music-cathedral1.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT)))))
+    (('pyramid)
+     (play-main-music "music-pyramid.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))))
+    (('ice-canyon 'cold-pipe)
+     (if (rand-vu-percent? 0.125)
+       (play-main-music "music-ice-canyon2.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))) ;;2?
+       (play-main-music "music-ice-canyon-cold-pipe.mp3"
+                        (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))) ;;2?
+       ))
+    (('coins)
+     (play-main-music "music-coins.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))))
+    (('villa-cube)
+     (play-main-music "music-monument1.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))) ;; monument and villa cuba share audio
+     )
+    (('ice-slide)
+     (play-main-music "music-ice-slide.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))))
+    (('islands)
+     (play-main-music "music-holly-wood1.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))) ;; shares track with islands
+     )
+    (('glass-toe 'chem-fac)
+     (play-main-music "music-glass-towers-chemical-factory.mp3"
+                      (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))))
+    (('space-bird)
+     (play-main-music "music-space-bridge.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))))
+    (('garden)
+     (play-main-music "music-block-man.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))) ;;FIX
+     )
+    (('block-man)
+     (play-main-music "music-block-man.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))))
+    (('cube-face)
+     (play-main-music "music-cube-face.mp3" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT))))
+    (else
+     (play-main-music "" (the int (* (-> *setting-control* default music-volume) MUSIC_LOWER_PERCENT)))
+     ;;(stop-main-music) This function is broken but playing a invalid sound does the same thing
+     ))
+  (none))
+
 (defun is-in-chem-fac-silo ()
   "this checks if the user is in the chem factory silo"
   (when (= (-> (level-get-target-inside *level*) name) 'chem-fac)
@@ -288,15 +356,15 @@
 (defun sound-manager ()
   "responsible for all the sounds played during cutscenes"
   ;;Hack to disable cutscene skips for specific cutscenes     (if               ;;Cutscenes added here will be unskippable witht the triangle button
-  (if (and *custom-cutscene?*
-           (or (string= (-> *art-control* active-stream) "sage-intro-sequence-a")
-               (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-b")
-               (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-c")
-               (string= (-> *art-control* active-stream) "finalbosscam-white-eco")
-               (string= (-> *art-control* active-stream) "green-sagecage-daxter-sacrifice")
-               (string= (-> *art-control* active-stream) "green-sagecage-outro-beat-boss-a")))
-    (set! (-> *pc-settings* skip-movies?) #f)
-    (set! (-> *pc-settings* skip-movies?) #t))
+  ;; (if (and *custom-cutscene?*
+  ;;          (or (string= (-> *art-control* active-stream) "sage-intro-sequence-a")
+  ;;              (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-b")
+  ;;              (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-c")
+  ;;              (string= (-> *art-control* active-stream) "finalbosscam-white-eco")
+  ;;              (string= (-> *art-control* active-stream) "green-sagecage-daxter-sacrifice")
+  ;;              (string= (-> *art-control* active-stream) "green-sagecage-outro-beat-boss-a")))
+  ;;   (set! (-> *pc-settings* skip-movies?) #f)
+  ;;   (set! (-> *pc-settings* skip-movies?) #t))
   (let ((current-timea (current-time))
         (chem-bool #f))
     (when (handle->process (-> *art-control* spool-lock))
@@ -389,6 +457,8 @@
 
 (defun stupid-hacks-every-frame ()
   (when run-mort-code?
+    ;;This is a hack to try to patch a bug, remove if it messes up save/restoring
+    (if (and *target* (= (-> *target* state name) 'target-warp-out)) (reset-saved-chick-from-mem))
     ;;Hack the main menu music since we cant pause it yet
     (main-music-volume (the int (* (-> *setting-control* default music-volume) 0.75)))
     ;; Its so funny that this works lol
@@ -458,38 +528,67 @@
   *count-crates*)
 
 (defun have-all-chicks-safe ()
-  (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))))
-    (when (or (and (= (get-loaded-cell-count) 0) (= (get-current-chicks) 0) (not (chicken-portal?)))
-              (and (= (get-loaded-cell-count) 0) (> (get-saved-chicks) (get-total-chicks)) (not (chicken-portal?))))
-      (if (and (= (-> (level-get-target-inside *level*) name)
-                  (-> (get-continue-by-name *game-info* (-> *warp-info* (get-unlock-level))) level))
-               (!= (-> (level-get-target-inside *level*) name) 'block-world))
-        (begin
-          (play-sound-file "nosoftlock.mp3" 100)
-          (set-unlock-level)
-          ;;TEST THIS
-          )))
-    (or (and (>= (get-saved-chicks) (get-total-chicks)) (not (chicken-portal?)))
+  #|
+This function checks a few conditions that *shouldn't* happen, but if they do then it unsoftlocks you.
+1. There are no cells left to grab and we dont have chickens following us and there isnt a chicken currently going to the portal
+2. There are no cells left to grab and we have somehow saved more chicks than the total amount of chicks in the level (chicken dupe) and there isnt a chicken currently going to the portal.
+Then at the end of this function it checks some conditions and returns #t or #f depending (I think this is to let me use the portal in development)
+1. Our saved chicks is greater than or euqal to the total chicks in the level and there isnt a chicken going to the portal.
+2. debug mode is on and I am holding l3
+3. There are no cells left to grab, our current chickens is 0 and there isnt a chicken going to the portal.
+  |#
+  (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1)))
+         (no-powercells-alive? (= (get-loaded-cell-count) 0))
+         (no-chickens-following (= (get-current-chicks) 0))
+         (inside-our-highest-level (and (= (-> (level-get-target-inside *level*) name)
+                                           (-> (get-continue-by-name *game-info* (-> *warp-info* (get-unlock-level))) level))
+                                        (!= (-> (level-get-target-inside *level*) name) 'block-world))))
+    (when (or (and no-powercells-alive? no-chickens-following (not (chicken-going-to-portal?)))
+              (and no-powercells-alive? (> (get-saved-chicks) (get-total-chicks)) (not (chicken-going-to-portal?))))
+      (if inside-our-highest-level (begin   (play-sound-file "nosoftlock.mp3" 100)   (set-unlock-level))))
+    (or (and (>= (get-saved-chicks) (get-total-chicks)) (not (chicken-going-to-portal?)))
         (and *cheat-mode* (cpad-hold? 0 l3))
-        (and (= (get-loaded-cell-count) 0) (= (get-current-chicks) 0) (not (chicken-portal?))))))
+        (and no-powercells-alive? no-chickens-following (not (chicken-going-to-portal?))))))
+
+(defun mort-main-menu ()
+  (when (and *in-mort-menu* *target*)
+    ;;If we arent in hub 3 warp there.
+    (when (!= (-> (level-get-target-inside *level*) name) 'mort-title)
+      (send-event *target* 'continue (get-continue-by-name *game-info* "mort-title-start"))
+      ;;We need to sleep for a tiny amount of time, so we dont spawn multiple process
+      ;;(let ((current-timea (current-time))) (until (time-elapsed? current-timea (seconds 0.2)) (suspend)))
+      (suspend-for (seconds 0.2))
+      ;;This function sleeps for 27 seconds so it has to be in another process to not block this one
+      (josh-suprise-sound-25-function-spawn))
+    (if (and (= (-> (level-get-target-inside *level*) name) 'mort-title))
+      (set! (-> *target* root trans y) (meters 301)))
+    (if (and (= (-> (level-get-target-inside *level*) name) 'mort-title) (!= (-> *target* root trans x) (meters 0.0)))
+      (set! (-> *target* root trans x) (meters 0.0)))
+    (if (and (= (-> (level-get-target-inside *level*) name) 'mort-title) (!= (-> *target* root trans z) (meters 0.0)))
+      (set! (-> *target* root trans z) (meters 0.0)))
+    ;;if we arent in cam-eye switch to cam-eye
+    (when (and (!= (-> (-> (the-as (pointer camera-slave) (-> *camera* child))) state name) 'cam-eye))
+        (send-event *camera* 'change-state cam-eye *dm-cam-mode-interpolation*))
+    ;;do the invisible hacksmort-
+    (when (!= (-> *target* draw status) (draw-status hidden))
+        (set! (-> *target* draw status) (draw-status hidden))
+        (send-event *target* 'sidekick #f))
+    (none)))
+
+(define done-init? #f)
 
 (defun runs-every-frame-proc-func ()
   "this is ran in its own process called run-every-frame-proc"
-  ;;This is a hack to run softlock prevention
-  ;; (when (and (not (cpad-hold? 0 l3))(cpad-hold? 0 down))
-  ;; (mort-chicks-text)
-  ;; )
-  ;; (if (not (= *master-mode* 'progress))
-  ;; (set! *loaded-cell-pause* (get-loaded-cell-count))
-  ;; )
-  ;;This is a hack to try to patch a bug, remove if it messes up save/restoring
-  (if (and *target* (= (-> *target* state name) 'target-warp-out)) (reset-saved-chick-from-mem))
   (when #t
-    ;;(format #t "~A" (-> *target* state name))
+    #|
+ This where we check for softlocks, and should be the only spot we check for softlocks
+      This checks things like currently saved/following chicks, so it might be unsafe in a retail level. Add exceptions here if crash observed.
+    |#
     (if (and *target*
              (= (-> *target* state name) 'target-stance)
              (not (movie?))
              (!= (level-get-target-inside *level*) #f)
+             (!= (-> (level-get-target-inside *level*) name) 'training)
              (!= (-> (level-get-target-inside *level*) name) 'misty)
              (!= (-> (level-get-target-inside *level*) name) 'village1)
              (!= (-> (level-get-target-inside *level*) name) 'beach)
@@ -497,18 +596,15 @@
              (!= (-> (level-get-target-inside *level*) name) 'citadel)
              (!= (-> (level-get-target-inside *level*) name) 'finalboss))
       (have-all-chicks-safe))
-    ;;
-    ;; )
     ;;This is kind of a hack to start up during the opening cutscene
-    (when (and (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (>= *currentCutsceneFrame* 1649))
-      (set! *in-mort-menu* #t)
-      (let ((current-timea (current-time)))
-        (until (time-elapsed? current-timea (seconds 0.55))
-          ;;(format #t "~S~%" "NOT ELAPSED")
-          (suspend)))
-      (set-blackout-frames (seconds 25.3))
-      (str-play-stop *currentSpoolName*)
-      (set! (-> *art-control* active-stream) #f))
+    ;; (when (and (string= *currentSpoolName* "sidekick-human-intro-sequence-c") (>= *currentCutsceneFrame* 1649))
+    ;;   (set! *in-mort-menu* #t)
+    ;;   (let ((current-timea (current-time)))
+    ;;     (until (time-elapsed? current-timea (seconds 0.55))
+    ;;       (suspend)))
+    ;;   (set-blackout-frames (seconds 25.3))
+    ;;   (str-play-stop *currentSpoolName*)
+    ;;   (set! (-> *art-control* active-stream) #f))
     (when (and (string= *currentSpoolName* "finalbosscam-white-eco") (= *currentCutsceneFrame* 2))
       (move-samos-butts))
     (when (and (string= *currentSpoolName* "green-sagecage-outro-beat-boss-a") (= *currentCutsceneFrame* 2))
@@ -517,14 +613,16 @@
       (play-sound-file "farts/vinefart.mp3" (the int (-> *setting-control* default dialog-volume))))
     ;; (sound-manager)
     (when (run-mort-code?)
-      ;;   (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
-      ;;   (init-chickens)
-      ;; )
+      (if (and (= (-> *flock-points* points 1 x) 0.0)
+               (!= (-> *target* state name) 'target-warp-out)
+               (!= (-> *target* state name) 'target-continue)
+               (!= (-> *target* state name) 'target-warp-in))
+        (if (not done-init?) (init-chickens)))
       (eco-manager) ;;checks constantly if we do or do not have eco, and what type, the gives effect or turns it off
       (none))
     ;; This should be done as the last thing
-    ;; (find-best-master-mark)
-    ;; (mort-main-menu)
+     (find-best-master-mark)
+     (mort-main-menu)
     )
   (none))
 
@@ -557,17 +655,34 @@
 ;; Begin process defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define done-init? #f)
+(defbehavior josh-suprise-sound-25 process ()
+  (let ((current-timea (current-time)))
+    (until (time-elapsed? current-timea (seconds 27))
+      (suspend))
+    (play-sound-file "joshsuprise.mp3" (the int 200)))
+  (none))
 
+(defun josh-suprise-sound-25-function-spawn ()
+(when (not (process-by-name "josh-suprise-sound-25" *active-pool*))
+        (process-spawn-function process
+          josh-suprise-sound-25
+          :name "josh-suprise-sound-25"))
+          (none)
+)
 (defbehavior sound-manager-proc process ()
   "handles the sound, and if it needs to spawn the runs-every-frame process it does that too"
   (while #t
     (sound-manager)
-    ;; (if (and (= (-> *flock-points* points 1 x) 0.0) (!= (-> *target* state name) 'target-warp-out) (!= (-> *target* state name) 'target-continue)(!= (-> *target* state name) 'target-warp-in))
-    ;;   (init-chickens)
-    ;; )
-    (if (not done-init?) (init-chickens))
+    (if (and (= (-> *flock-points* points 1 x) 0.0)
+             (!= (-> *target* state name) 'target-warp-out)
+             (!= (-> *target* state name) 'target-continue)
+             (!= (-> *target* state name) 'target-warp-in))
+      (if (not done-init?) (init-chickens)))
     (suspend))
+  (none))
+
+(defbehavior music-manager-proc process ()
+  (music-manager)
   (none))
 
 (defbehavior stupid-hacks-every-frame-proc process ()
@@ -606,7 +721,7 @@
 
 (defun init-chickens ()
   (process-spawn-function process
-    run-every-frame-proc) ;; THERE IS A RETAIL CRASH HERE
+    run-every-frame-proc)
   (process-spawn-function process
     chicken-every-frame-proc)
   (process-spawn-function process
@@ -630,21 +745,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Begin function defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define *runs-every-frame-init?* #f)
+
+  (defun zero-volume? ()
+  "Returns true if the volume of main music should be set to 0 This is a hack."
+  (or (not (= *master-mode* 'game) )
+  (= (-> (level-get-target-inside *level*)name) 'title)
+  )
+  )
 
 (defun runs-every-frame ()
   ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
   ;;stupid hack ur an idiot if you leave this in
   ;; ENTRY POINT TO SPAWN PROCESSES
-  (when (not done-init?)
+  (when (not *runs-every-frame-init?*)
     (format #t "INITIALIZING TITLE PROC~%")
-    (dotimes (i (level-task-data-index max))
-      (set! (-> *game-counts* data i money-count) 0)
-      (set! (-> *game-counts* data i buzzer-count) 0))
-    (relocate *game-counts* 1)
-    (when (not *target*)
-      (suspend))
+    ;; (relocate *game-counts* 1)
     (process-spawn-function process
-      sound-manager-proc))
+      sound-manager-proc)
+    (set! *runs-every-frame-init?* #t))
   (if *show-input-display* (input-display-on) (input-display-off))
   ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
   (when *debug-segment*
@@ -704,7 +823,7 @@
   ;; Code here runs every time jak spawns (loading a file new game or death)
   ;;(init-title)
   ;;(format #t  "RUNNING MUSIC PROC~%")
-  ;; (process-spawn-function process music-manager-proc)
+  (process-spawn-function process music-manager-proc)
   ;; (restore-cells)
   ;; (restore-saved-chicks-from-mem)
   ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc

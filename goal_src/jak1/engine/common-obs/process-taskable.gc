@@ -14,6 +14,9 @@
 
 ;; DECOMP BEGINS
 
+(define-extern *currentCutsceneFrame* int)
+(define-extern *currentSpoolName* string)
+
 (defmethod process-taskable-method-52 ((this process-taskable))
   (let ((v1-1 (-> this draw shadow-ctrl)))
     (when v1-1
@@ -85,15 +88,31 @@
          (set! (-> s5-0 flags) (font-flags shadow kerning large))
          (print-game-text (lookup-text! *common-text* (text-id confirm) #f) s5-0 #f 128 22))))
     (cond
-      ((!= (-> this decision) 'undecided))
+      ((and (= *currentCutsceneFrame* 1657) (string= *currentSpoolName* "sidekick-human-intro-sequence-c"))
+       (set-blackout-frames (seconds 25.3))
+       (set! *in-mort-menu* #t)
+       (set! (-> this decision) 'no)
+      )
+      ((!= (-> this decision) 'undecided)
+      )
       ((and (cpad-pressed? 0 x) (not (-> this only-allow-cancel)))
        (logclear! (-> *cpad-list* cpads 0 button0-abs 0) (pad-buttons x))
        (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons x))
        (set! (-> this decision) 'yes))
-      ((cpad-pressed? 0 triangle)
+      ((and (cpad-pressed? 0 triangle)
+            (not (or (string= (-> *art-control* active-stream) "sage-intro-sequence-a")
+                     (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-b")
+                     (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-c")
+                     (string= (-> *art-control* active-stream) "finalbosscam-white-eco")
+                     (string= (-> *art-control* active-stream) "green-sagecage-daxter-sacrifice")
+                     (string= (-> *art-control* active-stream) "green-sagecage-outro-beat-boss-a"))))
        (logclear! (-> *cpad-list* cpads 0 button0-abs 0) (pad-buttons triangle))
        (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons triangle))
-       (set! (-> this decision) 'no))))
+       (set! (-> this decision) 'no)))
+   )
+
+
+
   (-> this decision))
 
 (defmethod relocate ((this process-taskable) (arg0 int))
@@ -273,17 +292,15 @@
      ;; og:preserve-this allow cutscene skipping on pc port
      ;; save a sort of timestamp just so we know if it took at least 1 frame
      (#when PC_PORT
-       (define *play-anim-time* (current-time)))
-     (if (#if PC_PORT (= (-> *pc-settings* skip-movies?) #t) (and *debug-segment* *cheat-mode*))
-       (ja-play-spooled-anim (the-as spool-anim arg1)
-                             arg0
-                             (-> self blend-on-exit)
-                             (lambda ((arg0 process-taskable))
-                               (= (get-response (-> arg0 query)) 'no)))
-       (ja-play-spooled-anim (the-as spool-anim arg1)
-                             arg0
-                             (-> self blend-on-exit)
-                             (the-as (function process-drawable symbol) false-func)))
+        (define *play-anim-time* (current-time)))
+
+         (ja-play-spooled-anim
+           (the-as spool-anim arg1)
+           arg0
+           (-> self blend-on-exit)
+           (lambda ((arg0 process-taskable)) (= (get-response (-> arg0 query)) 'no))
+           )
+
      ;; og:preserve-this
      (#when PC_PORT
        (if (= (current-time) *play-anim-time*) (suspend)))

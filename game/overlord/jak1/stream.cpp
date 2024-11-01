@@ -124,7 +124,7 @@ void* RPC_STR(unsigned int fno, void* _cmd, int y) {
 
     if (!file_record) {
       // didn't find the file
-      printf("[OVERLORD STR] Failed to find animation %s\n", cmd->name);
+      //printf("[OVERLORD STR] Failed to find animation %s\n", cmd->name);
       cmd->result = STR_RPC_RESULT_ERROR;
     } else {
       // found it! See if we've cached this animation's header.
