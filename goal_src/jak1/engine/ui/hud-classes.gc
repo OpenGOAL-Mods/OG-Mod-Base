@@ -485,7 +485,9 @@
           (when (or (= *kernel-boot-message* 'play) (= (-> v1-83 level-name-id) (text-id misty-level-name)))
             (if (= s1-0 arg0) (set! s2-2 (the-as int (-> *game-info* money-per-level s1-0))))
             (+! s3-2 (-> *game-info* money-per-level s1-0))
-            (+! s4-4 (-> (get-game-count s1-0) money-count))))))
+            (+! s4-4 (-> (get-game-count s1-0) money-count)))))
+            (set! s2-2 (get-mort-orb-total))
+            )
     (cond
       ((= s3-2 s4-4) (set! (-> this total-orbs) s4-4) (set! (-> this total-orbs) s4-4) (set! (-> this level-index) -1))
       ((begin (set! (-> this total-orbs) s2-2) (< arg0 (length *level-task-data*))) (set! (-> this level-index) arg0))
@@ -852,6 +854,8 @@
    (scale-center        float)
    (icon-pos-y          int32)))
 
+(defun-extern get-saved-chicks int)
+(defun-extern get-total-chicks int)
 (defmethod draw-hud ((this hud-fuel-cell))
   (let ((t9-0 (method-of-type hud draw-hud))) (t9-0 this))
   (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id debug))
@@ -889,7 +893,8 @@
                                   0.8)))
         (((hud-collectable-view original))
          ;; show original (cells collected across entire game)
-         (draw-string-xy (string-format "~D" (-> this value))
+         ;;Currently the number drops when going to portal, maybe fix somehow
+         (draw-string-xy (string-format "~D/~D" (+ (get-saved-chicks) (get-current-chicks)) (get-total-chicks))
                          buf
                          string-x
                          string-y
