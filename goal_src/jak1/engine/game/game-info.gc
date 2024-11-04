@@ -488,7 +488,7 @@
          (set-time! (-> this buzzer-pickup-time)))
        (set! (-> this buzzer) buzz-count))
      (-> this buzzer))
-    (((pickup-type eco-red) (pickup-type eco-blue) (pickup-type eco-yellow))
+    (((pickup-type eco-red) (pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-gravity) (pickup-type eco-ice) (pickup-type eco-chicken))
      ;; the green vent jumps here.
      (label cfg-80)
      ;; if the amount is zero, we just want to know how much eco there is.
@@ -530,7 +530,22 @@
            (((pickup-type eco-blue)) (sound-play "get-blue-eco"))
            (((pickup-type eco-green)) (sound-play "get-green-eco"))
            (((pickup-type eco-yellow)) (sound-play "get-yellow-eco"))
-           (((pickup-type eco-red)) (sound-play "get-red-eco"))))
+           (((pickup-type eco-red)) (sound-play "get-red-eco"))
+                      (((pickup-type eco-gravity))
+            (sound-play "get-yellow-eco")
+            )
+
+           (((pickup-type eco-ice))
+            (sound-play "get-green-eco")
+            )
+           (((pickup-type eco-chicken))
+            (sound-play "get-green-eco") ;; add chicken noise
+            )
+           (else
+           (play-sound-file "farts/fart1.mp3" (the int (-> *setting-control* default dialog-volume)))
+           )
+
+           ))
        (set! (-> this eco-source) source-handle)
        (set-time! (-> this eco-source-time))
        ;; special case for blue eco magnet effect

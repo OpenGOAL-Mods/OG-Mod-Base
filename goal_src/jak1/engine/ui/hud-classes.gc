@@ -5,6 +5,7 @@
 
 ;; note: changed for high fps
 
+(defun-extern get-mort-orb-total int)
 ;; DECOMP BEGINS
 
 (defpartgroup group-part-hud-pickup
