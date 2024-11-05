@@ -29,7 +29,7 @@
 
 (defun-extern run-this-when-cell-grab process-drawable none)
 
-(define *MAXCURRENTCHICKS* 12)
+(define *MAXCURRENTCHICKS* 11)
 
 (defun-extern get-current-chicks int)
 
