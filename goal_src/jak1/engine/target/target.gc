@@ -29,8 +29,6 @@
 
 (define-extern target-bonk-event-handler (function process int symbol event-message-block object :behavior target))
 
-
-
 ;; DECOMP BEGINS
 
 (defbehavior target-falling-anim target ((arg0 time-frame) (arg1 time-frame))

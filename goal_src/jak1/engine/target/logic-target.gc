@@ -13,7 +13,6 @@
 
 ;; target-start is modified due to changing the size of the stack in gkernel.gc
 
-
 ;; DECOMP BEGINS
 
 (defbehavior build-conversions target ((arg0 vector))
@@ -651,7 +650,7 @@
              (time-elapsed? (-> self no-look-around-wait) (seconds 0.05))
              (not (and (= (-> self control ground-pat material) (pat-material ice)) (< 4096.0 (-> self control unknown-float01)))))
       (send-event self 'change-mode 'look-around)))
-   ;;Tagmort this function checks if we can debug fly (debug mode or chicken eco etc)
+  ;;Tagmort this function checks if we can debug fly (debug mode or chicken eco etc)
   (when (can-we-fly?)
     (if (!= (-> self next-state name) 'target-falling) (send-event self 'change-mode 'falling))
     (let ((gp-0 (new-stack-vector0)))

@@ -617,7 +617,7 @@ Then at the end of this function it checks some conditions and returns #t or #f 
       (play-sound-file "farts/vinefart.mp3" (the int (-> *setting-control* default dialog-volume))))
     ;; (sound-manager)
     (when (run-mort-code?)
-    (if (zero-volume?) (pause-main-music) (resume-main-music))
+      (if (zero-volume?) (pause-main-music) (resume-main-music))
       (if (and (= (-> *flock-points* points 1 x) 0.0)
                (!= (-> *target* state name) 'target-warp-out)
                (!= (-> *target* state name) 'target-continue)
@@ -868,11 +868,8 @@ Then at the end of this function it checks some conditions and returns #t or #f 
       (((pickup-type eco-green))
        ;; Code here runs as soon as you pickup big green eco
        )
-       (((pickup-type eco-chicken))
-
-    (play-sound-file "chicken-eco-intro.mp3" (the int (-> *setting-control* default dialog-volume)))
-       )
-       )
+      (((pickup-type eco-chicken))
+       (play-sound-file "chicken-eco-intro.mp3" (the int (-> *setting-control* default dialog-volume)))))
     (when from-vent?
       ;; Code here runs only if the eco was picked up from a vent
       ))

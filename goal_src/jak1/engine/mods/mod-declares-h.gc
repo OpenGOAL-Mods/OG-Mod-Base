@@ -26,5 +26,3 @@
 (defun-extern return-hover-animation art-element)
 
 (defun-extern is-in-chem-fac-silo symbol)
-
-

@@ -22,8 +22,6 @@
 
 (define-extern orb-placer-list-maintenace (function symbol none))
 
-
-
 (declare-type vent process-drawable)
 
 (declare-type eco eco-collectable)
@@ -91,7 +89,7 @@
   (set! (-> this old-base quad) (-> this root trans quad))
   (set! (-> this pickup-handle) (the-as handle #f))
   (case (-> this fact pickup-type)
-  	;;Tagmort add pickups here to make them collected by blue eco
+    ;;Tagmort add pickups here to make them collected by blue eco
     (((pickup-type eco-pill) (pickup-type eco-green) (pickup-type money) (pickup-type eco-blue) (pickup-type star))
      (logclear! (-> this flags) (collectable-flags ignore-blue))))
   (if (logtest? (-> this fact options) (fact-options large))
@@ -1029,7 +1027,6 @@
               (suspend)
               (ja :num! (loop! f30-1))))))))
 
-
 (defstate pickup (fuel-cell)
   :virtual #t
   :enter
@@ -1884,12 +1881,12 @@
 (defstate vent-blocked (vent)
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
-     ;;Tagmort hack vents to always be active
+      ;;Tagmort hack vents to always be active
       (go vent-wait-for-touch))
   :code
     (behavior ()
       (loop
-       ;;Tagmort hack vents to always be active
+        ;;Tagmort hack vents to always be active
         (go vent-wait-for-touch)
         (suspend))))
 
