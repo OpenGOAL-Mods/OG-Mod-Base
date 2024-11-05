@@ -6,7 +6,8 @@
 (require "engine/util/sync-info.gc")
 (require "engine/common-obs/plat.gc")
 
-#| custom platform for complex animations
+#|
+ custom platform for complex animations
   
   define path array of vector4m as usual, probably you want first and last positions to be the same
     "path": ["vector4m",
@@ -34,8 +35,8 @@
     "sync": ["float", 14, 0.0]
 |#
 (deftype linear-plat (plat)
-  ((timings     float 64))) ;; inline array of floats
-  
+  ((timings float 64))) ;; inline array of floats
+
 (defun get-current-phase-linear-plat ((this linear-plat))
   (let* ((cur-time (mod (the-as uint (current-time)) (-> this sync period)))
          (pos 0))
@@ -44,7 +45,6 @@
         (when (< cur-time timing)
           ;; we should be between pos and pos+1
           (return (+ (the float pos) (/ (the float cur-time) (the float timing)))))
-
         ;; we are at least at next position
         (+! pos 1)
         (-! cur-time timing))))
@@ -61,9 +61,7 @@
     ;; partial vector based on path-pos decimal
     (vector-float*! dir dir partial)
     ;; update basetrans
-    (vector+! basetrans (-> path curve cverts pos0) dir)
-    )
-  )
+    (vector+! basetrans (-> path curve cverts pos0) dir)))
 
 (defstate plat-path-active (linear-plat)
   :virtual #t
@@ -73,8 +71,7 @@
       (sound-stop (-> self sound-id)))
   :trans
     (behavior ()
-      (set! (-> self path-pos)
-            (get-current-phase-linear-plat self))
+      (set! (-> self path-pos) (get-current-phase-linear-plat self))
       (eval-linear-path! (-> self path) (-> self basetrans) (-> self path-pos))
       (if (< (vector-vector-distance (-> self root trans) (ear-trans)) 81920.0)
         (sound-play "eco-plat-hover" :id (-> self sound-id) :position (the-as symbol (-> self root trans))))
@@ -96,7 +93,6 @@
   (load-params! (-> this sync) this (the-as uint 0) 0.0 0.15 0.15)
   (set! (-> this fact) (new 'process 'fact-info this (pickup-type eco-pill-random) (-> *FACT-bank* default-pill-inc)))
   (set! (-> this path) (new 'process 'curve-control this 'path -1000000000.0))
-
   ;; read path timing data from res-lump
   ;; look up the curve data
   (let* ((tag (new 'static 'res-tag))
@@ -105,7 +101,6 @@
       ;; success, we got some data
       (dotimes (idx (-> this path curve num-cverts))
         (set! (-> this timings idx) (-> (the-as (pointer float) data) idx)))))
-
   (logior! (-> this path flags) (path-control-flag display draw-line draw-point draw-text))
   (set! (-> this sound-id) (new-sound-id))
   (cond

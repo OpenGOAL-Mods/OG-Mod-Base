@@ -21,7 +21,6 @@
   (:states
    windmill-one-idle))
 
-
 (defskelgroup *windmill-one-sg*
   windmill-one
   windmill-one-lod0-jg
@@ -167,7 +166,6 @@
    grottopole-idle
    grottopole-moving-down
    grottopole-moving-up))
-
 
 (defskelgroup *grottopole-sg*
   grottopole
@@ -320,7 +318,6 @@
   ((root collide-shape :override))
   (:states (ecoventrock-break symbol)
    ecoventrock-idle))
-
 
 (defskelgroup *ecoventrock-sg*
   ecoventrock
@@ -573,7 +570,6 @@
    flying-rock-idle
    flying-rock-rolling))
 
-
 (defskelgroup *kickrock-sg*
   kickrock
   kickrock-lod0-jg
@@ -679,7 +675,6 @@
   (:states
    bladeassm-idle))
 
-
 (defskelgroup *bladeassm-sg*
   bladeassm
   bladeassm-lod0-jg
@@ -725,36 +720,30 @@
   (go bladeassm-idle)
   (none))
 
-  ;;added the custom fields to match flutflutegg.gc
-  (deftype flutflutegg (process-drawable)
-  ((root                 collide-shape-moving :override)
-   (fall-dist            meters)
-   (start                vector                :inline)
-   (dir                  vector                :inline)
-   (pos                  float)
-   (vel                  float)
-   (wobbler              wobbler)
-   (last-impulse-time    int32)
-   (incomming-attack-id  uint64)
-   (ambients-played      int32)
-   (ambient              ambient-control       :inline)
-   (num-hit   int32 )
-   (max-hp int32)
-   (eco-collectable int32)
-   (eco-quantity int32)
-   (spawned-collect? symbol)
-   )
+;;added the custom fields to match flutflutegg.gc
+(deftype flutflutegg (process-drawable)
+  ((root                collide-shape-moving :override)
+   (fall-dist           meters)
+   (start               vector :inline)
+   (dir                 vector :inline)
+   (pos                 float)
+   (vel                 float)
+   (wobbler             wobbler)
+   (last-impulse-time   int32)
+   (incomming-attack-id uint64)
+   (ambients-played     int32)
+   (ambient             ambient-control :inline)
+   (num-hit             int32)
+   (max-hp              int32)
+   (eco-collectable     int32)
+   (eco-quantity        int32)
+   (spawned-collect?    symbol))
   (:methods
-    (flutflutegg-method-20 (_type_ float float float) none)
-    )
-  (:states
-    (flutflutegg-break symbol)
-    flutflutegg-idle
-    flutflutegg-physics
-    flutflutegg-physics-fall
-    )
-  )
-
+   (flutflutegg-method-20 (_type_ float float float) none))
+  (:states (flutflutegg-break symbol)
+   flutflutegg-idle
+   flutflutegg-physics
+   flutflutegg-physics-fall))
 
 (defskelgroup *flutflutegg-sg*
   flutflutegg
@@ -1011,7 +1000,6 @@
    harvester-idle
    (harvester-inflate symbol)))
 
-
 (defskelgroup *harvester-sg*
   harvester
   harvester-lod0-jg
@@ -1111,7 +1099,6 @@
   (none))
 
 (deftype beachcam (process-hidden) ())
-
 
 (defun beachcam-spawn ()
   (with-pp

@@ -40,7 +40,6 @@
    plant-boss-spawn
    plant-boss-vulnerable))
 
-
 (defmethod relocate ((this plant-boss) (offset int))
   (if (nonzero? (-> this neck)) (&+! (-> this neck) offset))
   (if (nonzero? (-> this body)) (&+! (-> this body) offset))
@@ -65,7 +64,6 @@
    (plant-boss-vine-hit basic)
    plant-boss-vine-idle))
 
-
 (deftype plant-boss-leaf (process-drawable)
   ((root             collide-shape-moving :override)
    (side             int32)
@@ -78,7 +76,6 @@
    (plant-boss-leaf-idle symbol)
    (plant-boss-leaf-open symbol)
    (plant-boss-leaf-open-idle symbol)))
-
 
 (defskelgroup *plant-boss-sg*
   plant-boss

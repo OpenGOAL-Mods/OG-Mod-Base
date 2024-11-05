@@ -18,7 +18,6 @@
    (stick-lock    basic)
    (flap-sound-id sound-id)))
 
-
 (deftype flut-bank (basic)
   ((jump-height-min        meters)
    (jump-height-max        meters)
@@ -26,7 +25,6 @@
    (double-jump-height-max meters)
    (air-attack-speed       meters)
    (ground-timeout         time-frame)))
-
 
 (define *FLUT-bank*
   (new 'static
@@ -1011,7 +1009,7 @@
       ;;                 (seek! (-> arg0 collide-info root-prim local-sphere w) (the-as float 28672.0) (* 286720.0 (seconds-per-frame)))
       ;;                 (update-transforms! (-> arg0 collide-info))
       ;;                 (none))))
-                      )
+      )
   :exit
     (-> target-flut-air-attack
         exit)

@@ -6,6 +6,7 @@
 ;; note: changed for high fps
 
 (defun-extern get-mort-orb-total int)
+
 ;; DECOMP BEGINS
 
 (defpartgroup group-part-hud-pickup
@@ -487,8 +488,7 @@
             (if (= s1-0 arg0) (set! s2-2 (the-as int (-> *game-info* money-per-level s1-0))))
             (+! s3-2 (-> *game-info* money-per-level s1-0))
             (+! s4-4 (-> (get-game-count s1-0) money-count)))))
-            (set! s2-2 (get-mort-orb-total))
-            )
+      (set! s2-2 (get-mort-orb-total)))
     (cond
       ((= s3-2 s4-4) (set! (-> this total-orbs) s4-4) (set! (-> this total-orbs) s4-4) (set! (-> this level-index) -1))
       ((begin (set! (-> this total-orbs) s2-2) (< arg0 (length *level-task-data*))) (set! (-> this level-index) arg0))
@@ -856,7 +856,9 @@
    (icon-pos-y          int32)))
 
 (defun-extern get-saved-chicks int)
+
 (defun-extern get-total-chicks int)
+
 (defmethod draw-hud ((this hud-fuel-cell))
   (let ((t9-0 (method-of-type hud draw-hud))) (t9-0 this))
   (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id debug))

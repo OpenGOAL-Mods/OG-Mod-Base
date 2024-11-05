@@ -2032,9 +2032,9 @@
 (set! (-> *target-pool* mask) (process-mask pause menu progress process-tree))
 
 (change-parent (define *demon-chicken-pool* (new 'global 'process-tree 'demon-chicken-pool)) *active-pool*)
+
 ;; pause in menus
 (set! (-> *demon-chicken-pool* mask) (process-mask pause menu progress process-tree))
-
 
 ;; the *entity-pool* contains all processes spawned from entities.
 (change-parent (define *entity-pool* (new 'global 'process-tree 'entity-pool)) *active-pool*)

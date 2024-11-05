@@ -30,6 +30,7 @@
 (define-extern target-bonk-event-handler (function process int symbol event-message-block object :behavior target))
 
 (defun-extern return-hover-animation art-element)
+
 ;; DECOMP BEGINS
 
 (defbehavior target-falling-anim target ((arg0 time-frame) (arg1 time-frame))
@@ -66,7 +67,8 @@
   #f)
 
 (defbehavior target-falling-anim-trans target ()
-  (let ((v1-2 (ja-group))) (b! (or (= v1-2 (return-hover-animation)) (= v1-2 eichar-jump-land-ja)) cfg-7 :delay (empty-form)))
+  (let ((v1-2 (ja-group)))
+    (b! (or (= v1-2 (return-hover-animation)) (= v1-2 eichar-jump-land-ja)) cfg-7 :delay (empty-form)))
   (ja-channel-push! 1 (seconds 0.33))
   (ja :group! (return-hover-animation))
   (b! #t cfg-23 :delay (nop!))

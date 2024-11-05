@@ -244,7 +244,7 @@
 
 (defun reset-chicken-targets ()
   ;; wtf man just code normal please stupd hack stupid-hacks-every-frame
-  (when  done-init?
+  (when done-init?
     (vector-identity! (-> *chicken-0* target-pos))
     (vector-identity! (-> *chicken-1* target-pos))
     (vector-identity! (-> *chicken-2* target-pos))
@@ -259,10 +259,6 @@
     (vector-identity! (-> *chicken-11* target-pos)))
   (format #t "RESETING CHICKEN TARGETS")
   (none))
-
-
-
-
 
 (defun restore-cells ()
   ;;Loop the flock and restore all the Cells
@@ -515,6 +511,7 @@
   (none))
 
 (define *count-crates* 0)
+
 (define flut-movement-freeze #f)
 
 (defun get-loaded-cell-count ()
@@ -565,19 +562,18 @@ Then at the end of this function it checks some conditions and returns #t or #f 
       (suspend-for (seconds 0.2))
       ;;This function sleeps for 27 seconds so it has to be in another process to not block this one
       (josh-suprise-sound-25-function-spawn))
-    (if (and (= (-> (level-get-target-inside *level*) name) 'mort-title))
-      (set! (-> *target* root trans y) (meters 301)))
+    (if (and (= (-> (level-get-target-inside *level*) name) 'mort-title)) (set! (-> *target* root trans y) (meters 301)))
     (if (and (= (-> (level-get-target-inside *level*) name) 'mort-title) (!= (-> *target* root trans x) (meters 0.0)))
       (set! (-> *target* root trans x) (meters 0.0)))
     (if (and (= (-> (level-get-target-inside *level*) name) 'mort-title) (!= (-> *target* root trans z) (meters 0.0)))
       (set! (-> *target* root trans z) (meters 0.0)))
     ;;if we arent in cam-eye switch to cam-eye
     (when (and (!= (-> (-> (the-as (pointer camera-slave) (-> *camera* child))) state name) 'cam-eye))
-        (send-event *camera* 'change-state cam-eye *dm-cam-mode-interpolation*))
+      (send-event *camera* 'change-state cam-eye *dm-cam-mode-interpolation*))
     ;;do the invisible hacksmort-
     (when (!= (-> *target* draw status) (draw-status hidden))
-        (set! (-> *target* draw status) (draw-status hidden))
-        (send-event *target* 'sidekick #f))
+      (set! (-> *target* draw status) (draw-status hidden))
+      (send-event *target* 'sidekick #f))
     (none)))
 
 (define done-init? #f)
@@ -626,9 +622,8 @@ Then at the end of this function it checks some conditions and returns #t or #f 
       (eco-manager) ;;checks constantly if we do or do not have eco, and what type, the gives effect or turns it off
       (none))
     ;; This should be done as the last thing
-     (find-best-master-mark)
-     (mort-main-menu)
-    )
+    (find-best-master-mark)
+    (mort-main-menu))
   (none))
 
 (defun debug-text-every-frame ()
@@ -668,12 +663,12 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   (none))
 
 (defun josh-suprise-sound-25-function-spawn ()
-(when (not (process-by-name "josh-suprise-sound-25" *active-pool*))
-        (process-spawn-function process
-          josh-suprise-sound-25
-          :name "josh-suprise-sound-25"))
-          (none)
-)
+  (when (not (process-by-name "josh-suprise-sound-25" *active-pool*))
+    (process-spawn-function process
+      josh-suprise-sound-25
+      :name "josh-suprise-sound-25"))
+  (none))
+
 (defbehavior sound-manager-proc process ()
   "handles the sound, and if it needs to spawn the runs-every-frame process it does that too"
   (while #t
@@ -752,67 +747,61 @@ Then at the end of this function it checks some conditions and returns #t or #f 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define *runs-every-frame-init?* #f)
 
-  (defun zero-volume? ()
+(defun zero-volume? ()
   "Returns true if the volume of main music should be set to 0 This is a hack."
-  (or (not (= *master-mode* 'game) )
-  (= (-> (level-get-target-inside *level*)name) 'title)
-  )
-  )
+  (or (not (= *master-mode* 'game)) (= (-> (level-get-target-inside *level*) name) 'title)))
 
 (define flutflut? #f)
+
 (define chicken-mode-on? #f)
-    (defun chicken-mode-logic ()
-    ;;This runs every frame and if chicken mode is on forces jak on flut and hides him etc
 
-(when (and chicken-mode-on? (not  (= (-> (level-get-target-inside *level*)name) 'finalboss)))
-(set! flutflut? (aif *target* (case (-> it next-state name) (
-                                      (
-                                       'target-flut-air-attack
-                                       'target-flut-air-attack-hit-ground
-                                       'target-flut-clone-anim
-                                       'target-flut-death
-                                       'target-flut-double-jump
-                                       'target-flut-falling
-                                       'target-flut-get-off
-                                       'target-flut-get-off-hit-ground
-                                       'target-flut-get-off-jump
-                                       'target-flut-get-on
-                                       'target-flut-grab
-                                       'target-flut-hit
-                                       'target-flut-hit-ground
-                                       'target-flut-jump
-                                       'target-flut-running-attack
-                                       'target-flut-stance
-                                       'target-flut-start
-                                       'target-flut-walk
-                                       ;; not flutflut, but we don't need to force flutflut in these cases
-                                       'target-periscope
-                                       'target-falling
-                                       'target-clone-anim
-                                       'target-play-anim
-                                       'target-billy-game
-                                       'target-look-around
-                                       'target-fishing
-                                       ;; launcher crap
-                                       'target-launch
-                                       'target-high-jump
-                                       'target-duck-high-jump
-                                       'target-duck-high-jump-jump
-                                       'target-hit-ground) #t))))
-
-(if (and (not flutflut?) (not (and (logtest? (-> *kernel-context* prevent-from-run) (process-mask movie)) (or (= (-> *target* current-level name) 'jungle)(= (-> *target* current-level name) 'village1) )))) (send-event *target* 'change-mode 'flut #f))
-
-    (logior! (-> *target* draw status) (draw-status hidden))
-
-)
-
-(if (or (not flut-movement-freeze) (= (-> (level-get-target-inside *level*)name) 'finalboss))
-(set! (-> *flut-walk-mods* target-speed) 81920.0)
-(set! (-> *flut-walk-mods* target-speed) 0.0)
-)
-
-    (none)
-    )
+(defun chicken-mode-logic ()
+  ;;This runs every frame and if chicken mode is on forces jak on flut and hides him etc
+  (when (and chicken-mode-on? (not (= (-> (level-get-target-inside *level*) name) 'finalboss)))
+    (set! flutflut?
+          (aif *target*
+               (case (-> it next-state name)
+                 (('target-flut-air-attack 'target-flut-air-attack-hit-ground
+                                          'target-flut-clone-anim
+                                          'target-flut-death
+                                          'target-flut-double-jump
+                                          'target-flut-falling
+                                          'target-flut-get-off
+                                          'target-flut-get-off-hit-ground
+                                          'target-flut-get-off-jump
+                                          'target-flut-get-on
+                                          'target-flut-grab
+                                          'target-flut-hit
+                                          'target-flut-hit-ground
+                                          'target-flut-jump
+                                          'target-flut-running-attack
+                                          'target-flut-stance
+                                          'target-flut-start
+                                          'target-flut-walk
+                                          ;; not flutflut, but we don't need to force flutflut in these cases
+                                          'target-periscope
+                                          'target-falling
+                                          'target-clone-anim
+                                          'target-play-anim
+                                          'target-billy-game
+                                          'target-look-around
+                                          'target-fishing
+                                          ;; launcher crap
+                                          'target-launch
+                                          'target-high-jump
+                                          'target-duck-high-jump
+                                          'target-duck-high-jump-jump
+                                          'target-hit-ground)
+                  #t))))
+    (if (and (not flutflut?)
+             (not (and (logtest? (-> *kernel-context* prevent-from-run) (process-mask movie))
+                       (or (= (-> *target* current-level name) 'jungle) (= (-> *target* current-level name) 'village1)))))
+      (send-event *target* 'change-mode 'flut #f))
+    (logior! (-> *target* draw status) (draw-status hidden)))
+  (if (or (not flut-movement-freeze) (= (-> (level-get-target-inside *level*) name) 'finalboss))
+    (set! (-> *flut-walk-mods* target-speed) 81920.0)
+    (set! (-> *flut-walk-mods* target-speed) 0.0))
+  (none))
 
 (defun runs-every-frame ()
   ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
@@ -824,15 +813,12 @@ Then at the end of this function it checks some conditions and returns #t or #f 
     (process-spawn-function process
       sound-manager-proc)
     (set! *runs-every-frame-init?* #t))
-
   (chicken-mode-logic)
-
   (if *show-input-display* (input-display-on) (input-display-off))
   ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
   (when *debug-segment*
     (orb-placer-maintenance))
   (none))
-
 
 (defun runs-on-orb-pickup ((parent process-tree))
   (let* ((from-cache? (and parent (type-type? (-> parent type) orb-cache-top))))
@@ -887,7 +873,8 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   ;; Code here runs every time jak spawns (loading a file new game or death)
   ;;(init-title)
   ;;(format #t  "RUNNING MUSIC PROC~%")
-  (process-spawn-function process music-manager-proc)
+  (process-spawn-function process
+    music-manager-proc)
   (restore-cells)
   (restore-saved-chicks-from-mem)
   ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc

@@ -205,74 +205,57 @@
     (((speedrun-category full-game))
      ;; spawn at the geyser warp gate checkpoint
      (initialize! *game-info* 'game (the-as game-save #f) "block-world-warp"))
- (((speedrun-category il-block-world)) ;;
-      ;; spawn at the geyser warp gate checkpoint
-      (initialize! *game-info* 'game (the-as game-save #f) "block-world-warp")
-      )
+    (((speedrun-category il-block-world)) ;;
+     ;; spawn at the geyser warp gate checkpoint
+     (initialize! *game-info* 'game (the-as game-save #f) "block-world-warp"))
     (((speedrun-category il-factory-cross))
-      ;; spawn at the green sage hut warp gate
-      (initialize! *game-info* 'game (the-as game-save #f) "fac-cross-warp")
-      )
+     ;; spawn at the green sage hut warp gate
+     (initialize! *game-info* 'game (the-as game-save #f) "fac-cross-warp"))
     (((speedrun-category il-holly-wood))
-      ;; spawn at beach
-      (initialize! *game-info* 'game (the-as game-save #f) "holly-wood-warp")
-      )
+     ;; spawn at beach
+     (initialize! *game-info* 'game (the-as game-save #f) "holly-wood-warp"))
     (((speedrun-category il-monument))
-      ;; spawn at start of FJ
-      (initialize! *game-info* 'game (the-as game-save #f) "monument-warp")
-      )
+     ;; spawn at start of FJ
+     (initialize! *game-info* 'game (the-as game-save #f) "monument-warp"))
     (((speedrun-category il-cathedral))
-      ;; spawn at start of misty
-      (initialize! *game-info* 'game (the-as game-save #f) "cathedral-warp")
-      )
+     ;; spawn at start of misty
+     (initialize! *game-info* 'game (the-as game-save #f) "cathedral-warp"))
     (((speedrun-category il-pyramid))
-      ;; spawn at start of fire canyon
-      (initialize! *game-info* 'game (the-as game-save #f) "pyramid-warp")
-      )
+     ;; spawn at start of fire canyon
+     (initialize! *game-info* 'game (the-as game-save #f) "pyramid-warp"))
     (((speedrun-category il-ice-canyon))
-      ;; spawn at rock village start
-      (initialize! *game-info* 'game (the-as game-save #f) "ice-canyon-warp")
-      )
+     ;; spawn at rock village start
+     (initialize! *game-info* 'game (the-as game-save #f) "ice-canyon-warp"))
     (((speedrun-category il-coins))
-      ;; spawn at start of LPC
-      (initialize! *game-info* 'game (the-as game-save #f) "coins-warp")
-      )
+     ;; spawn at start of LPC
+     (initialize! *game-info* 'game (the-as game-save #f) "coins-warp"))
     (((speedrun-category il-villa-cube))
-      ;; spawn at start of boggy
-      (initialize! *game-info* 'game (the-as game-save #f) "villa-cube-warp")
-      )
+     ;; spawn at start of boggy
+     (initialize! *game-info* 'game (the-as game-save #f) "villa-cube-warp"))
     (((speedrun-category il-ice-slide))
-      ;; spawn at start of basin
-      (initialize! *game-info* 'game (the-as game-save #f) "ice-slide-warp")
-      )
+     ;; spawn at start of basin
+     (initialize! *game-info* 'game (the-as game-save #f) "ice-slide-warp"))
     (((speedrun-category il-islands))
-      ;; spawn before klaww
-      (initialize! *game-info* 'game (the-as game-save #f) "islands-warp")
-      )
+     ;; spawn before klaww
+     (initialize! *game-info* 'game (the-as game-save #f) "islands-warp"))
     (((speedrun-category il-glass-towers))
-      ;; spawn at start of volcanic crater
-      (initialize! *game-info* 'game (the-as game-save #f) "glass-tower-warp")
-      )
+     ;; spawn at start of volcanic crater
+     (initialize! *game-info* 'game (the-as game-save #f) "glass-tower-warp"))
     (((speedrun-category il-chemical-factory))
-      ;; spawn at start of snowy
-      (initialize! *game-info* 'game (the-as game-save #f) "chem-fac-warp")
-      )
+     ;; spawn at start of snowy
+     (initialize! *game-info* 'game (the-as game-save #f) "chem-fac-warp"))
     (((speedrun-category il-space-bridge))
-      ;; spawn at start of spider cave
-      (initialize! *game-info* 'game (the-as game-save #f) "space-bird-warp")
-      )
+     ;; spawn at start of spider cave
+     (initialize! *game-info* 'game (the-as game-save #f) "space-bird-warp"))
     (((speedrun-category il-chicks))
-      ;; spawn at start of lava tube
-      (initialize! *game-info* 'game (the-as game-save #f) "chicks-warp")
-      )
+     ;; spawn at start of lava tube
+     (initialize! *game-info* 'game (the-as game-save #f) "chicks-warp"))
     (((speedrun-category il-garden))
-      ;; spawn outside first citadel door
-      (initialize! *game-info* 'game (the-as game-save #f) "garden-warp")
-      )
+     ;; spawn outside first citadel door
+     (initialize! *game-info* 'game (the-as game-save #f) "garden-warp"))
     (((speedrun-category il-cold-pipe))
-      ;; spawn outside first citadel door
-      (initialize! *game-info* 'game (the-as game-save #f) "cold-pipe-warp")
-      )
+     ;; spawn outside first citadel door
+     (initialize! *game-info* 'game (the-as game-save #f) "cold-pipe-warp"))
     (((speedrun-category new-game-plus))
      ;; spawn at the geyser warp gate checkpoint
      (initialize! *game-info* 'game (the-as game-save #f) "game-start"))
@@ -300,115 +283,89 @@
   (none))
 
 (defun setup-speedrun-post-blackout ()
-  (when (and (-> *speedrun-info* needs-post-blackout-setup?) (>= (-> *display* base-frame-counter) (-> *game-info* blackout-time)))
+  (when (and (-> *speedrun-info* needs-post-blackout-setup?)
+             (>= (-> *display* base-frame-counter) (-> *game-info* blackout-time)))
     (set! (-> *speedrun-info* needs-post-blackout-setup?) #f)
     (case (-> *speedrun-info* category)
       (((speedrun-category full-game))
-        ;; skip intro cutscene
-        (close-specific-task! (game-task intro) (task-status need-resolution))
-        )
-      (((speedrun-category il-block-world))
-        )
-      (((speedrun-category il-factory-cross))
-        )
-      (((speedrun-category il-holly-wood))
-        )
-      (((speedrun-category il-monument))
-        )
-      (((speedrun-category il-cathedral))
-        )
-      (((speedrun-category il-pyramid))
-        )
-      (((speedrun-category il-ice-canyon))
-        )
-      (((speedrun-category il-coins))
-        )
-      (((speedrun-category il-villa-cube))
-        )
-      (((speedrun-category il-ice-slide))
-        )
-      (((speedrun-category il-islands))
-        )
-      (((speedrun-category il-glass-towers))
-        )
-      (((speedrun-category il-chemical-factory))
-        )
-      (((speedrun-category il-space-bridge))
-        )
-      (((speedrun-category il-chicks))
-        )
-      (((speedrun-category il-garden))
-        )
-      (((speedrun-category il-cold-pipe))
-        )
+       ;; skip intro cutscene
+       (close-specific-task! (game-task intro) (task-status need-resolution)))
+      (((speedrun-category il-block-world)))
+      (((speedrun-category il-factory-cross)))
+      (((speedrun-category il-holly-wood)))
+      (((speedrun-category il-monument)))
+      (((speedrun-category il-cathedral)))
+      (((speedrun-category il-pyramid)))
+      (((speedrun-category il-ice-canyon)))
+      (((speedrun-category il-coins)))
+      (((speedrun-category il-villa-cube)))
+      (((speedrun-category il-ice-slide)))
+      (((speedrun-category il-islands)))
+      (((speedrun-category il-glass-towers)))
+      (((speedrun-category il-chemical-factory)))
+      (((speedrun-category il-space-bridge)))
+      (((speedrun-category il-chicks)))
+      (((speedrun-category il-garden)))
+      (((speedrun-category il-cold-pipe)))
       (((speedrun-category new-game-plus))
-        ;; skip intro cutscene
-        (close-specific-task! (game-task intro) (task-status need-resolution))
-        ;; unlock hub1 cells
-        (dotimes (idx (length *hub1-cell-list*))
-          (close-specific-task! (-> *hub1-cell-list* idx) (task-status need-resolution))
-          (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (-> *hub1-cell-list* idx)))
-          )
-        ;; unlock hub2 cells
-        (dotimes (idx (length *hub2-cell-list*))
-          (close-specific-task! (-> *hub2-cell-list* idx) (task-status need-resolution))
-          (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (-> *hub2-cell-list* idx)))
-          )
-        ;; unlock hub3 cells
-        (dotimes (idx (length *hub3-cell-list*))
-          (close-specific-task! (-> *hub3-cell-list* idx) (task-status need-resolution))
-          (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (-> *hub3-cell-list* idx)))
-          )
-        )
+       ;; skip intro cutscene
+       (close-specific-task! (game-task intro) (task-status need-resolution))
+       ;; unlock hub1 cells
+       (dotimes (idx (length *hub1-cell-list*))
+         (close-specific-task! (-> *hub1-cell-list* idx) (task-status need-resolution))
+         (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (-> *hub1-cell-list* idx))))
+       ;; unlock hub2 cells
+       (dotimes (idx (length *hub2-cell-list*))
+         (close-specific-task! (-> *hub2-cell-list* idx) (task-status need-resolution))
+         (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (-> *hub2-cell-list* idx))))
+       ;; unlock hub3 cells
+       (dotimes (idx (length *hub3-cell-list*))
+         (close-specific-task! (-> *hub3-cell-list* idx) (task-status need-resolution))
+         (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (-> *hub3-cell-list* idx)))))
       (((speedrun-category hub1-100))
-        ;; skip intro cutscene
-        (close-specific-task! (game-task intro) (task-status need-resolution))
-        )
+       ;; skip intro cutscene
+       (close-specific-task! (game-task intro) (task-status need-resolution)))
       (((speedrun-category hub2-100))
-        ;; skip intro cutscene
-        (close-specific-task! (game-task intro) (task-status need-resolution))
-        ;; unlock hub1 cells
-        (dotimes (idx (length *hub1-cell-list*))
-          (close-specific-task! (-> *hub1-cell-list* idx) (task-status need-resolution))
-          (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (-> *hub1-cell-list* idx)))
-          )
-        ;; give all orbs from hub1
-        (set! (-> *game-info* money-total) 600.0)  ;; 50+50+150+150+150+50
-        (set! (-> *game-info* money) 180.0)  ;; 50+50+150+150+150+50 - (90+90+120+120)
-        )
+       ;; skip intro cutscene
+       (close-specific-task! (game-task intro) (task-status need-resolution))
+       ;; unlock hub1 cells
+       (dotimes (idx (length *hub1-cell-list*))
+         (close-specific-task! (-> *hub1-cell-list* idx) (task-status need-resolution))
+         (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (-> *hub1-cell-list* idx))))
+       ;; give all orbs from hub1
+       (set! (-> *game-info* money-total) 600.0) ;; 50+50+150+150+150+50
+       (set! (-> *game-info* money) 180.0) ;; 50+50+150+150+150+50 - (90+90+120+120)
+       )
       (((speedrun-category hub3-100))
-        ;; skip intro cutscene
-        (close-specific-task! (game-task intro) (task-status need-resolution))
-        ;; unlock hub1 cells
-        (dotimes (idx (length *hub1-cell-list*))
-          (close-specific-task! (-> *hub1-cell-list* idx) (task-status need-resolution))
-          (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (-> *hub1-cell-list* idx)))
-          )
-        ;; unlock hub2 cells
-        (dotimes (idx (length *hub2-cell-list*))
-          (close-specific-task! (-> *hub2-cell-list* idx) (task-status need-resolution))
-          (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (-> *hub2-cell-list* idx)))
-          )
-        ;; give all orbs from hub1+2
-        (set! (-> *game-info* money-total) 1300.0)  ;; 50+50+150+150+150+50 + 50+200+200+200+50
-        (set! (-> *game-info* money) 370.0)  ;; 50+50+150+150+150+50 - (90+90+120+120) + 50+200+200+200+50 - (90+90+90+120+120)
-        )
+       ;; skip intro cutscene
+       (close-specific-task! (game-task intro) (task-status need-resolution))
+       ;; unlock hub1 cells
+       (dotimes (idx (length *hub1-cell-list*))
+         (close-specific-task! (-> *hub1-cell-list* idx) (task-status need-resolution))
+         (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (-> *hub1-cell-list* idx))))
+       ;; unlock hub2 cells
+       (dotimes (idx (length *hub2-cell-list*))
+         (close-specific-task! (-> *hub2-cell-list* idx) (task-status need-resolution))
+         (send-event *target* 'get-pickup (pickup-type fuel-cell) (the float (-> *hub2-cell-list* idx))))
+       ;; give all orbs from hub1+2
+       (set! (-> *game-info* money-total) 1300.0) ;; 50+50+150+150+150+50 + 50+200+200+200+50
+       (set! (-> *game-info* money) 370.0) ;; 50+50+150+150+150+50 - (90+90+120+120) + 50+200+200+200+50 - (90+90+90+120+120)
+       )
       (((speedrun-category all-cutscenes))
-        ;; no post-blackout actions needed
-        )
+       ;; no post-blackout actions needed
+       )
       (else
-        (format 0 "setup-speedrun-post-blackout: unrecognized category ~S~%" (enum->string speedrun-category (-> *speedrun-info* category)))
-        )
-      )
-      ;; reset speedrun display (gets hidden on first collectable pickup)
-      (set! (-> *speedrun-info* should-display?) #t)
-      ;; reset actors to ensure any above changes take effect
-      (reset-actors 'life)
-      ;; autosave any changes back to file
-      (auto-save-command 'auto-save 0 0 *default-pool*)
-    )
-  (none)
-  )
+       (format 0
+               "setup-speedrun-post-blackout: unrecognized category ~S~%"
+               (enum->string speedrun-category (-> *speedrun-info* category)))))
+    ;; reset speedrun display (gets hidden on first collectable pickup)
+    (set! (-> *speedrun-info* should-display?) #t)
+    ;; reset actors to ensure any above changes take effect
+    (reset-actors 'life)
+    ;; autosave any changes back to file
+    (auto-save-command 'auto-save 0 0 *default-pool*))
+  (none))
+
 (defun hide-speedrun-display ()
   (set! (-> *speedrun-info* should-display?) #f)
   (none))
@@ -440,7 +397,8 @@
       (true! *has-landed?*))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id subtitle))
       (draw-string-xy (string-format "Speedrunner Mode ~%ModBase ~S / ~S ~%Category: ~S ~%Cutscene Skips ~A~%Has Landed? ~A"
-                                     *pc-settings-built-sha* *mod-version-text*
+                                     *pc-settings-built-sha*
+                                     *mod-version-text*
                                      (enum->string speedrun-category (-> *speedrun-info* category))
                                      (-> *pc-settings* skip-movies?)
                                      *has-landed?*)

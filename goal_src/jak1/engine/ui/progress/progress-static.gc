@@ -301,54 +301,57 @@
 
 ;; maps level-info indices to the appropriate offset in *level-task-data*
 (define *level-task-data-remap*
-   (new 'static 'boxed-array :type int32
-     (level-task-data-index training)
-     (level-task-data-index village1)
-     (level-task-data-index beach)
-     (level-task-data-index jungle) ;; jungle?
-     (level-task-data-index jungle) ;; jungleb?
-     (level-task-data-index misty)
-     (level-task-data-index firecanyon)
-     (level-task-data-index village2)
-     (level-task-data-index sunken) ;; sunken?
-     (level-task-data-index sunken) ;; sunkenb?
-     (level-task-data-index swamp)
-     (level-task-data-index rolling)
-     (level-task-data-index ogre)
-     (level-task-data-index village3)
-     (level-task-data-index snow)
-     (level-task-data-index cave) ;; maincave?
-     (level-task-data-index cave) ;; robocave?
-     (level-task-data-index cave) ;; darkcave?
-     (level-task-data-index lavatube)
-     (level-task-data-index citadel) ;; citadel?
-     (level-task-data-index citadel) ;; finalboss?
-     (level-task-data-index misty) ;; demo?
-     (level-task-data-index misty) ;; intro?
-     (level-task-data-index training);;title
-     (level-task-data-index training);;halfpipe
-     (level-task-data-index training);;halfpipe
-     (level-task-data-index blockworld)
-     (level-task-data-index factorycross)
-     (level-task-data-index hollyworld)
-     (level-task-data-index monument)
-     (level-task-data-index cathedral)
-     (level-task-data-index pyramid)
-     (level-task-data-index icecanyon)
-     (level-task-data-index coins)
-     (level-task-data-index villacube)
-     (level-task-data-index iceslide)
-     (level-task-data-index islands)
-     (level-task-data-index glasstowers)
-     (level-task-data-index chemicalfactory)
-     (level-task-data-index spacebridge)
-     (level-task-data-index chicks)
-     (level-task-data-index garden)
-     (level-task-data-index coldpipe)
-     (level-task-data-index blockman)
-     (level-task-data-index cubeface)
-     (level-task-data-index morttitle)
-     (level-task-data-index max)))
+  (new 'static
+       'boxed-array
+       :type
+       int32
+       (level-task-data-index training)
+       (level-task-data-index village1)
+       (level-task-data-index beach)
+       (level-task-data-index jungle) ;; jungle?
+       (level-task-data-index jungle) ;; jungleb?
+       (level-task-data-index misty)
+       (level-task-data-index firecanyon)
+       (level-task-data-index village2)
+       (level-task-data-index sunken) ;; sunken?
+       (level-task-data-index sunken) ;; sunkenb?
+       (level-task-data-index swamp)
+       (level-task-data-index rolling)
+       (level-task-data-index ogre)
+       (level-task-data-index village3)
+       (level-task-data-index snow)
+       (level-task-data-index cave) ;; maincave?
+       (level-task-data-index cave) ;; robocave?
+       (level-task-data-index cave) ;; darkcave?
+       (level-task-data-index lavatube)
+       (level-task-data-index citadel) ;; citadel?
+       (level-task-data-index citadel) ;; finalboss?
+       (level-task-data-index misty) ;; demo?
+       (level-task-data-index misty) ;; intro?
+       (level-task-data-index training) ;;title
+       (level-task-data-index training) ;;halfpipe
+       (level-task-data-index training) ;;halfpipe
+       (level-task-data-index blockworld)
+       (level-task-data-index factorycross)
+       (level-task-data-index hollyworld)
+       (level-task-data-index monument)
+       (level-task-data-index cathedral)
+       (level-task-data-index pyramid)
+       (level-task-data-index icecanyon)
+       (level-task-data-index coins)
+       (level-task-data-index villacube)
+       (level-task-data-index iceslide)
+       (level-task-data-index islands)
+       (level-task-data-index glasstowers)
+       (level-task-data-index chemicalfactory)
+       (level-task-data-index spacebridge)
+       (level-task-data-index chicks)
+       (level-task-data-index garden)
+       (level-task-data-index coldpipe)
+       (level-task-data-index blockman)
+       (level-task-data-index cubeface)
+       (level-task-data-index morttitle)
+       (level-task-data-index max)))
 
 ;; maps goal language ID to its name string ID
 (define *language-name-remap*
@@ -1437,753 +1440,899 @@
                       :task-id (game-task citadel-buzzer)
                       :task-name
                       (new 'static 'array text-id 4 (text-id citadel-buzzer) (text-id citadel-buzzer) (text-id citadel-buzzer) (text-id zero)))))
-
-
-
-                     (new 'static 'level-tasks-info
-              :level-name-id (text-id blockworld-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id factory-cross-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id holly-world-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id monument-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id cathedral-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id pyramid-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id ice-canyon-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id coins-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id villa-cube-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id ice-slide-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id islands-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id glass-toe-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id chem-fac-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id space-bird-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id chicks-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id garden-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id cold-pipe-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id block-man-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-                        (new 'static 'level-tasks-info
-              :level-name-id (text-id cube-face-level-name)
-              :text-group-index 1
-              :nb-of-tasks 3
-              :buzzer-task-index 2
-              :task-info
-              (new 'static 'array task-info-data 8
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-gimmie)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id blockworld-gimmie-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-secondtask)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id blockworld-secondtask-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   (new 'static 'task-info-data
-                        :task-id (game-task blockworld-buzzer)
-                        :task-name
-                        (new 'static 'array text-id 4
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id blockworld-buzzer-task-name)
-                             (text-id zero)
-                             )
-                        )
-                   )
-              )
-
-         )
-  )
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id blockworld-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id factory-cross-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id holly-world-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id monument-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id cathedral-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id pyramid-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id ice-canyon-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id coins-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id villa-cube-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id ice-slide-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id islands-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id glass-toe-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id chem-fac-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id space-bird-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id chicks-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id garden-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id cold-pipe-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id block-man-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))
+       (new 'static
+            'level-tasks-info
+            :level-name-id (text-id cube-face-level-name)
+            :text-group-index 1
+            :nb-of-tasks 3
+            :buzzer-task-index 2
+            :task-info
+            (new 'static
+                 'array
+                 task-info-data
+                 8
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-gimmie)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id blockworld-gimmie-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-secondtask)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id blockworld-secondtask-task-name)
+                           (text-id zero)))
+                 (new 'static
+                      'task-info-data
+                      :task-id (game-task blockworld-buzzer)
+                      :task-name
+                      (new 'static
+                           'array
+                           text-id
+                           4
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id blockworld-buzzer-task-name)
+                           (text-id zero)))))))
 
 ;; goes down by 24 or 23 every time
 (define *task-egg-starting-x* (new 'static 'boxed-array :type int32 218 194 171 147 124 100 77 53 30))

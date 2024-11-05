@@ -22,7 +22,7 @@
 
 (define-extern orb-placer-list-maintenace (function symbol none))
 
-(defun-extern run-this-when-cell-grab  process-drawable none)
+(defun-extern run-this-when-cell-grab process-drawable none)
 
 (declare-type vent process-drawable)
 
@@ -82,7 +82,9 @@
   (when (and (> arg0 0) #t)
     (logior! (-> this flags) (collectable-flags fade))
     (set! (-> this fadeout-timeout) arg0))
-  (if (-> *pc-settings* speedrunner-mode?) (set! (-> this collect-timeout) (seconds -0.33)) (set! (-> this collect-timeout) (seconds 0.33)))
+  (if (-> *pc-settings* speedrunner-mode?)
+    (set! (-> this collect-timeout) (seconds -0.33))
+    (set! (-> this collect-timeout) (seconds 0.33)))
   (set-time! (-> this birth-time))
   (set! (-> this base quad) (-> this root trans quad))
   (set! (-> this old-base quad) (-> this root trans quad))
@@ -142,7 +144,11 @@
 (defmethod initialize-effect ((this eco-collectable) (arg0 pickup-type))
   (set! (-> this fact pickup-type) arg0)
   (case (-> this fact pickup-type)
-    (((pickup-type eco-blue) (pickup-type eco-red) (pickup-type eco-green) (pickup-type eco-yellow)      (pickup-type eco-gravity)
+    (((pickup-type eco-blue)
+      (pickup-type eco-red)
+      (pickup-type eco-green)
+      (pickup-type eco-yellow)
+      (pickup-type eco-gravity)
       (pickup-type eco-ice)
       (pickup-type eco-chicken))
      (logclear! (-> this mask) (process-mask actor-pause))))
@@ -176,9 +182,8 @@
      (set! (-> this eco-effect) (-> *part-group-id-table* 59))
      (set! (-> this collect-effect2) (-> *part-group-id-table* 60))
      (set! (-> this collect-effect-time) (seconds 0.5)))
-
-     ;; CUSTOM ENTRIES
-      ;;tageco This determines the look, and sound of the new eco
+    ;; CUSTOM ENTRIES
+    ;;tageco This determines the look, and sound of the new eco
     (((pickup-type eco-gravity))
      (set! (-> this eco-effect) (-> *part-group-id-table* 709))
      (set! (-> this collect-effect) (-> *part-group-id-table* 66))
@@ -196,9 +201,7 @@
      (set! (-> this collect-effect) (-> *part-group-id-table* 66))
      (set! (-> this collect-effect2) (-> *part-group-id-table* 43))
      (set! (-> this collect-effect-time) (seconds 0.5))
-     (set! (-> this sound-name) (static-sound-spec "blue-eco-idle" :fo-max 15)))
-
-     )
+     (set! (-> this sound-name) (static-sound-spec "blue-eco-idle" :fo-max 15))))
   (set! (-> this part) (create-launch-control (-> this eco-effect) this))
   (if (-> this sound-name) (set! (-> this sound) (new 'process 'ambient-sound (-> this sound-name) (-> this root trans))))
   (none))
@@ -217,7 +220,10 @@
   (initialize-effect self (-> self fact pickup-type))
   (set! (-> self notify-parent) #f)
   (case (-> self fact pickup-type)
-    (((pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-red)      (pickup-type eco-gravity)
+    (((pickup-type eco-blue)
+      (pickup-type eco-yellow)
+      (pickup-type eco-red)
+      (pickup-type eco-gravity)
       (pickup-type eco-ice)
       (pickup-type eco-chicken))
      (initialize-params self
@@ -529,14 +535,12 @@
             (level-hint-spawn (text-id training-eco-reminder) "sagevb23" (the-as entity #f) *entity-pool* (game-task none)))))
         (((pickup-type eco-green)) (sound-play "g-eco-pickup"))
         (((pickup-type eco-green) (pickup-type eco-pill)) (sound-play "pill-pickup"))
-                ;;tageco This controls the sound the eco plays when its picked up
+        ;;tageco This controls the sound the eco plays when its picked up
         (((pickup-type eco-gravity)) (sound-play "y-eco-pickup"))
         (((pickup-type eco-ice)) (sound-play "g-eco-pickup"))
         (((pickup-type eco-chicken))
          (sound-play "g-eco-pickup") ;;TODO ;;Tagmort make this a chicken sound instead
-         )
-
-        )
+         ))
       (runs-on-eco-pickup (-> self fact pickup-type) (ppointer->process (-> self parent))) ;; trigger hook for mod base
       (if (nonzero? (-> self part)) (kill-and-free-particles (-> self part)))
       (let ((gp-6 (handle->process (-> self pickup-handle))))
@@ -674,7 +678,6 @@
   ((this eco-chicken) (arg0 entity-actor))
   (initialize-eco this arg0 (pickup-type eco-chicken) (-> *FACT-bank* eco-single-inc))
   (none))
-
 
 (deftype health (eco-collectable) ())
 
@@ -951,23 +954,14 @@
               (gp-2 (if v1-20 (-> v1-20 root-prim prim-core) (-> self root trans))))
          (spawn (-> self part) (the-as vector gp-2))
          (if (< (vector-vector-xz-distance (target-pos 0) (-> self root trans)) (meters 8.0))
-
            ;;tag mort
-
            (begin
-
              (when (nonzero? (-> self sound))
-
                (update-trans! (-> self sound) (the-as vector gp-2))
-
                (update! (-> self sound))))
-
            (begin
-
              (when (nonzero? (-> self sound))
-
                (update-trans! (-> self sound) (new 'static 'vector))
-
                (update! (-> self sound)))))))))
   (set-vector! (-> self draw color-mult) 0.5 0.5 0.5 1.0)
   (set-vector! (-> self draw color-emissive) 0.5 0.5 0.5 1.0)
@@ -1032,17 +1026,20 @@
               (fuel-cell-animate)
               (suspend)
               (ja :num! (loop! f30-1))))))))
+
 (define *MAXCURRENTCHICKS* 12)
+
 (defun-extern get-current-chicks int)
+
 (defun-extern chicken-going-to-portal? symbol)
+
 (defstate pickup (fuel-cell)
   :virtual #t
   :enter
     (behavior ((arg0 object) (arg1 handle))
       (set-time! (-> self state-time))
       (set! (-> self state-object) #t)
-      (let ((t9-1 (-> (the-as (state eco-collectable) (find-parent-state)) enter))) (if t9-1 (t9-1)))
-      )
+      (let ((t9-1 (-> (the-as (state eco-collectable) (find-parent-state)) enter))) (if t9-1 (t9-1))))
   :trans
     (behavior ()
       (let ((f30-0 (the-as float
@@ -1069,7 +1066,7 @@
   :code
     (behavior ((arg0 object) (arg1 handle))
       (local-vars (sv-96 res-tag))
-          (if (or (< *MAXCURRENTCHICKS* (get-current-chicks)) (chicken-going-to-portal?)) (return #f))
+      (if (or (< *MAXCURRENTCHICKS* (get-current-chicks)) (chicken-going-to-portal?)) (return #f))
       (sound-play "pu-powercell")
       (clear-collide-with-as (-> self root))
       (logclear! (-> self mask) (process-mask actor-pause))
@@ -1077,46 +1074,46 @@
       (process-entity-status! self (entity-perm-status dead) #t)
       (stop! (-> self sound))
       (run-this-when-cell-grab self)
-    (if #f (begin
-     (while (handle->process (-> *game-info* other-camera-handle))
-        (format #t
-                "WARNING: fuel-cell stall ~D ~A ~A~%"
-                (current-time)
-                (handle->process (-> *game-info* other-camera-handle))
-                (-> *level* loading-level))
-        (spool-push *art-control* (-> self victory-anim name) 0 self (the-as float -99.0))
-        (suspend))
-      (while (not (send-event *target* 'clone-anim self))
-        (spool-push *art-control* (-> self victory-anim name) 0 self (the-as float -99.0))
-        (format #t "WARNING: fuel-cell stall on not cloning.~%")
-        (suspend))
-      (set! sv-96 (new 'static 'res-tag))
-      (let* ((v1-34 (res-lump-data (-> self entity) 'movie-pos (inline-array vector) :tag-ptr (& sv-96) :time (the-as float -1000000000.0)))
-             (gp-1 (if (and v1-34 (< (-> self movie-pos-index) (the-as int (-> sv-96 elt-count))))
-                     (-> v1-34 (-> self movie-pos-index))
-                     (the-as vector #f))))
-        (cond
-          ((and *debug-segment* (< (-> *fuel-cell-tune-pos* w) 1000000000.0))
-           (move-to-point! (-> self root) *fuel-cell-tune-pos*)
-           (set-yaw-angle-clear-roll-pitch! (-> self root) (-> *fuel-cell-tune-pos* w)))
-          ((= (-> self movie-pos-index) -1))
-          (gp-1 (move-to-point! (-> self root) gp-1) (set-yaw-angle-clear-roll-pitch! (-> self root) (-> gp-1 w)))
-          (else
-           (move-to-point! (-> self root) (-> *target* control trans))
-           (set-yaw-angle-clear-roll-pitch! (-> self root) (y-angle (-> *target* control)))
-           (move-to-ground (-> self root) (the-as float 40960.0) (the-as float 40960.0) #f (collide-kind background)))))
-      (spool-push *art-control* (-> self victory-anim name) 0 self (the-as float -99.0))
-    ))
-    (if #f (begin
-
-      (send-event *target* 'get-pickup (-> self fact pickup-type) (-> self fact pickup-amount))
-      (set! (-> self draw bounds w) 32768.0)
-      (logior! (-> self skel status) (janim-status inited))
-      (send-event *target* 'blend-shape #t)
-      (add-setting! 'music-volume 'rel (-> *setting-control* current music-volume-movie) 0)
-      (add-setting! 'sfx-volume 'rel (-> *setting-control* current sfx-volume-movie) 0)
-      (add-setting! 'ambient-volume 'rel (-> *setting-control* current ambient-volume-movie) 0)
-      (process-spawn othercam self 10 #f #t :to self)))
+      (if #f
+        (begin
+          (while (handle->process (-> *game-info* other-camera-handle))
+            (format #t
+                    "WARNING: fuel-cell stall ~D ~A ~A~%"
+                    (current-time)
+                    (handle->process (-> *game-info* other-camera-handle))
+                    (-> *level* loading-level))
+            (spool-push *art-control* (-> self victory-anim name) 0 self (the-as float -99.0))
+            (suspend))
+          (while (not (send-event *target* 'clone-anim self))
+            (spool-push *art-control* (-> self victory-anim name) 0 self (the-as float -99.0))
+            (format #t "WARNING: fuel-cell stall on not cloning.~%")
+            (suspend))
+          (set! sv-96 (new 'static 'res-tag))
+          (let* ((v1-34 (res-lump-data (-> self entity) 'movie-pos (inline-array vector) :tag-ptr (& sv-96) :time (the-as float -1000000000.0)))
+                 (gp-1 (if (and v1-34 (< (-> self movie-pos-index) (the-as int (-> sv-96 elt-count))))
+                         (-> v1-34 (-> self movie-pos-index))
+                         (the-as vector #f))))
+            (cond
+              ((and *debug-segment* (< (-> *fuel-cell-tune-pos* w) 1000000000.0))
+               (move-to-point! (-> self root) *fuel-cell-tune-pos*)
+               (set-yaw-angle-clear-roll-pitch! (-> self root) (-> *fuel-cell-tune-pos* w)))
+              ((= (-> self movie-pos-index) -1))
+              (gp-1 (move-to-point! (-> self root) gp-1) (set-yaw-angle-clear-roll-pitch! (-> self root) (-> gp-1 w)))
+              (else
+               (move-to-point! (-> self root) (-> *target* control trans))
+               (set-yaw-angle-clear-roll-pitch! (-> self root) (y-angle (-> *target* control)))
+               (move-to-ground (-> self root) (the-as float 40960.0) (the-as float 40960.0) #f (collide-kind background)))))
+          (spool-push *art-control* (-> self victory-anim name) 0 self (the-as float -99.0))))
+      (if #f
+        (begin
+          (send-event *target* 'get-pickup (-> self fact pickup-type) (-> self fact pickup-amount))
+          (set! (-> self draw bounds w) 32768.0)
+          (logior! (-> self skel status) (janim-status inited))
+          (send-event *target* 'blend-shape #t)
+          (add-setting! 'music-volume 'rel (-> *setting-control* current music-volume-movie) 0)
+          (add-setting! 'sfx-volume 'rel (-> *setting-control* current sfx-volume-movie) 0)
+          (add-setting! 'ambient-volume 'rel (-> *setting-control* current ambient-volume-movie) 0)
+          (process-spawn othercam self 10 #f #t :to self)))
       ;;(auto-save-command 'auto-save 0 0 *default-pool*)
       ;; (ja-play-spooled-anim (-> self victory-anim)
       ;;                       (the-as art-joint-anim fuel-cell-idle-ja)
@@ -1522,7 +1519,7 @@
     (sv-160 process)
     (sv-176 process)
     (sv-192 (pointer process)))
-      (if (= arg1 (pickup-type eco-chicken))
+  (if (= arg1 (pickup-type eco-chicken))
     (play-sound-file "chicken-eco-intro.mp3" (the int (-> *setting-control* default dialog-volume))))
   (set! sv-32 arg5)
   (let ((s1-0 (new-stack-vector0))
@@ -1597,7 +1594,7 @@
                        (set! sv-192 (-> sv-112 ppointer))
                        v1-46))
                sv-192)
-               ;tageco this is needed to be able to spawn the eco with the birth-pickup command
+              ;tageco this is needed to be able to spawn the eco with the birth-pickup command
               ((= v1-25 (pickup-type eco-gravity))
                (set! sv-96 (get-process *pickup-dead-pool* eco-gravity #x4000))
                (set! v1-40
@@ -1892,11 +1889,11 @@
 (defstate vent-blocked (vent)
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
-        (go vent-wait-for-touch))
+      (go vent-wait-for-touch))
   :code
     (behavior ()
       (loop
-     (go vent-wait-for-touch)
+        (go vent-wait-for-touch)
         (suspend))))
 
 (defstate vent-pickup (vent)
@@ -1960,159 +1957,105 @@
   (none))
 
 ;;CUSTOM MONEY
-(deftype star (eco-collectable)
-  ()
+(deftype star (eco-collectable) ()
   :heap-base #x130
   :method-count-assert 31
-  :size-assert         #x194
-  :flag-assert         #x1f01300194
-  )
-
+  :size-assert #x194
+  :flag-assert #x1f01300194)
 
 (defmethod run-logic? ((this star))
   (or (zero? (logand (-> this mask) (process-mask actor-pause)))
       (or (and (nonzero? (-> this draw))
                (logtest? (-> this draw status) (draw-status was-drawn))
                (>= (+ (-> *ACTOR-bank* pause-dist) (-> this root pause-adjust-distance))
-                   (vector-vector-distance (-> this root trans) (math-camera-pos))
-                   )
-               )
+                   (vector-vector-distance (-> this root trans) (math-camera-pos))))
           (and (nonzero? (-> this skel)) (!= (-> this skel root-channel 0) (-> this skel channel)))
-          (and (nonzero? (-> this draw)) (logtest? (-> this draw status) (draw-status no-skeleton-update)))
-          )
-      )
-  )
+          (and (nonzero? (-> this draw)) (logtest? (-> this draw status) (draw-status no-skeleton-update))))))
 
 (defmethod deactivate ((this star))
   (when (= (-> this next-state name) 'pickup)
     (if (not (and (-> this entity) (logtest? (-> this entity extra perm status) (entity-perm-status dead))))
-        (format #t "star ~A was killed in pickup~%")
-        )
-    (process-entity-status! this (entity-perm-status dead) #t)
-    )
+      (format #t "star ~A was killed in pickup~%"))
+    (process-entity-status! this (entity-perm-status dead) #t))
   ((method-of-type eco-collectable deactivate) this)
-  (none)
-  )
+  (none))
 
 (defstate wait (star)
   :virtual #t
-  :code (behavior ()
-    (loop
-      (quaternion-rotate-y!
-        (-> self root quat)
-        (-> self root quat)
-        (* 40049.777 (seconds-per-frame))
-        )
-      (let ((f30-0 (-> self bob-amount)))
-        (when (< 0.0 f30-0)
-          (set! (-> self root trans y)
-                (+ (-> self base y)
-                   (-> self suck-y-offset)
-                   (* f30-0
-                      (sin (* 109.22667 (the float (mod (+ (- (current-time) (-> self birth-time)) (-> self bob-offset)) 600))))
-                      )
-                   )
-                )
-          (update-transforms! (-> self root))
-          )
-        )
-      (ja-post)
-      ;; og:preserve-this added particle!
-      (with-pc
-        (if (-> *pc-settings* money-starburst?)
-      (spawn (-> self part) (-> self root root-prim world-sphere))))
-      (suspend)
-      )
-    )
-  )
-
-(defstate notice-blue (star)
-  :virtual #t
-  :code (behavior ((arg0 handle))
-    (loop
-      (quaternion-rotate-y!
-        (-> self root quat)
-        (-> self root quat)
-        (* 91022.22 (seconds-per-frame))
-        )
-      (set! (-> self root trans quad) (-> self base quad))
-      (add-blue-motion #t #t #t #f)
-      (let ((f30-0 (-> self bob-amount)))
-        (if (< 0.0 f30-0)
+  :code
+    (behavior ()
+      (loop
+        (quaternion-rotate-y! (-> self root quat) (-> self root quat) (* 40049.777 (seconds-per-frame)))
+        (let ((f30-0 (-> self bob-amount)))
+          (when (< 0.0 f30-0)
             (set! (-> self root trans y)
                   (+ (-> self base y)
                      (-> self suck-y-offset)
-                     (* f30-0
-                        (sin (* 109.22667 (the float (mod (+ (- (current-time) (-> self birth-time)) (-> self bob-offset)) 600))))
-                        )
-                     )
-                  )
-            )
-        )
-      (transform-post)
-      ;; og:preserve-this added particle!
-      (with-pc
-        (if (-> *pc-settings* money-starburst?)
-      (spawn (-> self part) (-> self root root-prim world-sphere))))
-      (suspend)
-      )
-    )
-  )
+                     (* f30-0 (sin (* 109.22667 (the float (mod (+ (- (current-time) (-> self birth-time)) (-> self bob-offset)) 600)))))))
+            (update-transforms! (-> self root))))
+        (ja-post)
+        ;; og:preserve-this added particle!
+        (with-pc
+          (if (-> *pc-settings* money-starburst?) (spawn (-> self part) (-> self root root-prim world-sphere))))
+        (suspend))))
+
+(defstate notice-blue (star)
+  :virtual #t
+  :code
+    (behavior ((arg0 handle))
+      (loop
+        (quaternion-rotate-y! (-> self root quat) (-> self root quat) (* 91022.22 (seconds-per-frame)))
+        (set! (-> self root trans quad) (-> self base quad))
+        (add-blue-motion #t #t #t #f)
+        (let ((f30-0 (-> self bob-amount)))
+          (if (< 0.0 f30-0)
+            (set! (-> self root trans y)
+                  (+ (-> self base y)
+                     (-> self suck-y-offset)
+                     (* f30-0 (sin (* 109.22667 (the float (mod (+ (- (current-time) (-> self birth-time)) (-> self bob-offset)) 600)))))))))
+        (transform-post)
+        ;; og:preserve-this added particle!
+        (with-pc
+          (if (-> *pc-settings* money-starburst?) (spawn (-> self part) (-> self root root-prim world-sphere))))
+        (suspend))))
 
 (defstate pickup (star)
   :virtual #t
-  :code (behavior ((arg0 object) (arg1 handle))
-    ;; og:preserve-this added
-    (if (nonzero? (-> self part))
-        (kill-and-free-particles (-> self part))
-        )
-    (logclear! (-> self mask) (process-mask actor-pause))
-    (clear-collide-with-as (-> self root))
-    (process-entity-status! self (entity-perm-status dead) #t)
-    ;;(set! (-> *game-info* money) (+ (-> *game-info* money) 5.0))
-
-    (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* money))))
-    (none)
-    )
-  )
+  :code
+    (behavior ((arg0 object) (arg1 handle))
+      ;; og:preserve-this added
+      (if (nonzero? (-> self part)) (kill-and-free-particles (-> self part)))
+      (logclear! (-> self mask) (process-mask actor-pause))
+      (clear-collide-with-as (-> self root))
+      (process-entity-status! self (entity-perm-status dead) #t)
+      ;;(set! (-> *game-info* money) (+ (-> *game-info* money) 5.0))
+      (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* money))))
+      (none)))
 
 (defmethod initialize ((this star))
   (stack-size-set! (-> this main-thread) 192) ;; hack increased from 128
   (let ((s5-0 (new 'process 'collide-shape-moving this (collide-list-enum hit-by-player))))
     (set! (-> s5-0 dynam) (copy *standard-dynamics* 'process))
     (set! (-> s5-0 reaction) default-collision-reaction)
-    (set! (-> s5-0 no-reaction)
-          (the-as (function collide-shape-moving collide-shape-intersect vector vector none) nothing)
-          )
+    (set! (-> s5-0 no-reaction) (the-as (function collide-shape-moving collide-shape-intersect vector vector none) nothing))
     (let ((s4-0 (new 'process 'collide-shape-prim-sphere s5-0 (the-as uint 0))))
       (set! (-> s4-0 prim-core collide-as) (collide-kind powerup blue-eco-suck))
       (set! (-> s4-0 collide-with) (collide-kind target))
       (set-vector! (-> s4-0 local-sphere) 0.0 2048.0 0.0 4915.2)
-      (set-root-prim! s5-0 s4-0)
-      )
+      (set-root-prim! s5-0 s4-0))
     (set! (-> s5-0 nav-radius) (* 0.75 (-> s5-0 root-prim local-sphere w)))
     (backup-collide-with-as s5-0)
-    (set! (-> this root) s5-0)
-    )
+    (set! (-> this root) s5-0))
   (logior! (-> this mask) (process-mask actor-pause))
   (set! (-> this actor-pause) #t)
   (set! (-> this notify-parent) #f)
   (set! (-> this fact) (new 'process 'fact-info this (pickup-type star) (the-as float 1.0)))
   (let ((a0-10 (-> this entity)))
     (if (when a0-10
-          (let ((a0-11 (-> a0-10 extra perm task)))
-            (if a0-11
-                (= a0-11 (game-task none))
-                )
-            )
-          )
-        (set! (-> this entity extra perm task) (game-task complete))
-        )
-    )
+          (let ((a0-11 (-> a0-10 extra perm task))) (if a0-11 (= a0-11 (game-task none)))))
+      (set! (-> this entity extra perm task) (game-task complete))))
   (initialize-skeleton this *money-sg* '())
-  (if (-> this entity)
-      (nav-mesh-connect this (-> this root) (the-as nav-control #f))
-      )
+  (if (-> this entity) (nav-mesh-connect this (-> this root) (the-as nav-control #f)))
   (set-vector! (-> this draw color-mult) 0.8 0.8 0.8 1.0)
   (set-vector! (-> this draw color-emissive) 0.2 0.2 0.2 1.0)
   ;; added! money starburst
@@ -2121,8 +2064,7 @@
   (set! (-> this draw color-mult y) 10.0)
   (set! (-> this draw color-mult z) 0.0)
   (set! (-> this pickup-amount) 5.0)
-  this
-  )
+  this)
 
 (defmethod init-from-entity! ((this star) (arg0 entity-actor))
   (initialize this)
@@ -2130,20 +2072,17 @@
   (initialize-params this 0 (the-as float 1024.0))
   (update-transforms! (-> this root))
   (go (method-of-object this wait))
-  (none)
-  )
+  (none))
 
 (defbehavior star-init-by-other star ((arg0 vector) (arg1 vector) (arg2 fact-info) (arg3 entity-actor))
   (let ((s3-0 (-> arg2 pickup-type))
-        (f30-0 (-> arg2 pickup-spawn-amount))
-        )
+        (f30-0 (-> arg2 pickup-spawn-amount)))
     (set! (-> self entity) arg3)
     (set! (-> self pickup-type) s3-0)
     (set! (-> self pickup-amount) f30-0)
     (initialize self)
     (set! (-> self fact pickup-type) s3-0)
-    (set! (-> self fact pickup-amount) f30-0)
-    )
+    (set! (-> self fact pickup-amount) f30-0))
   (set! (-> self fact options) (-> arg2 options))
   (set! (-> self notify-parent) #t)
   (set! (-> self root trans quad) (-> arg0 quad))
@@ -2154,8 +2093,7 @@
   (update-transforms! (-> self root))
   (set! (-> self event-hook) (-> (method-of-object self wait) event))
   (go-virtual wait)
-  (none)
-  )
+  (none))
 
 (defbehavior star-init-by-other-no-bob star ((arg0 vector) (arg1 vector) (arg2 fact-info) (arg3 float) (arg4 entity-actor))
   (set! (-> self entity) arg4)
@@ -2174,6 +2112,6 @@
   (update-transforms! (-> self root))
   (set! (-> self event-hook) (-> (method-of-object self wait) event))
   (go-virtual wait)
-  (none)
-  )
-  ;;END CUSTOM MONEY
+  (none))
+
+;;END CUSTOM MONEY

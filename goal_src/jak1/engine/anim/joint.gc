@@ -696,10 +696,8 @@
                (when (or (not s5-1) (= (-> s5-1 name) 'default))
                  (login this) ;; not part of level load, just normal login.
                  (when (needs-link? this)
-                    (format 0 "bonus link~%")
-                    (link-art! this)
-                    )
-                 )
+                   (format 0 "bonus link~%")
+                   (link-art! this)))
                (if s5-1
                  (set-loaded-art (-> s5-1 art-group) this) ;; part of level load, add to level's ag, but don't log in yet.
                  ))

@@ -334,14 +334,8 @@
   ;; (adjust-chick-origin (find-best-master-mark))
   )
 
-
-
-
-
-
 (defun start2 ()
-(process-spawn demon-chicken (target-pos-with-offset) :from *demon-chicken-dead-pool* :to *demon-chicken-pool*)
-)
+  (process-spawn demon-chicken (target-pos-with-offset) :from *demon-chicken-dead-pool* :to *demon-chicken-pool*))
 
 (defun chicken-pls ()
   (define *chicken-0* (-> (start2) 0))
@@ -448,13 +442,9 @@
 (defun portal-mort-switch ()
   (the-as warp-gate-switch (process-by-ename "project-warp-gate-switch")))
 
-
 (defun get-saved-chicks-from-mem ()
   ;;(format #t "getting unlock level it is ~D~%" (-> *game-info* money-per-level 3))
   (the int (-> *game-info* money-per-level 5)))
-
-
-
 
 (defun get-chick-from-flock ((idx int))
   (when *flock*
@@ -504,8 +494,6 @@
                   0.0))
         (return #t))
       #f)))
-
-
 
 (defun reset-saved-chick-from-mem ()
   (when (nonzero? (get-saved-chicks-from-mem))
@@ -562,74 +550,38 @@
   (format #t "unlock level is set to ~D~%" (-> *game-info* money-per-level 3))
   (none))
 
-  (defun unlock-level-func ((idx int))
-    (set-unlock-level-val idx)
-    (play-sound-file "end-level.wav" (the int (-> *setting-control* default sfx-volume)))
-    (reset-saved-chick-from-mem)
-    (auto-save-command 'auto-save 0 0 *default-pool*)
-    (none))
+(defun unlock-level-func ((idx int))
+  (set-unlock-level-val idx)
+  (play-sound-file "end-level.wav" (the int (-> *setting-control* default sfx-volume)))
+  (reset-saved-chick-from-mem)
+  (auto-save-command 'auto-save 0 0 *default-pool*)
+  (none))
 
 (defun set-unlock-level ()
   "adds to the unlock level"
   (if (chicken-going-to-portal?) (return #f))
-
   ;; (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))
   ;; (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))total-chicks)
   (if (portal-mort-switch) (go-virtual-process (portal-mort-switch) basebutton-going-down))
   (case (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))
-    ((16)
-     (when (< (get-unlock-level) 1)
-       (unlock-level-func 1)))
-    ((17)
-     (when (< (get-unlock-level) 2)
-       (unlock-level-func 2)))
-    ((18)
-     (when (< (get-unlock-level) 3)
-       (unlock-level-func 3)))
-    ((19)
-     (when (< (get-unlock-level) 4)
-       (unlock-level-func 4)))
-    ((20)
-     (when (< (get-unlock-level) 5)
-       (unlock-level-func 5)))
-    ((21)
-     (when (< (get-unlock-level) 6)
-       (unlock-level-func 6)))
-    ((22)
-     (when (< (get-unlock-level) 7)
-       (unlock-level-func 7)))
-    ((23)
-     (when (< (get-unlock-level) 8)
-       (unlock-level-func 8)))
-    ((24)
-     (when (< (get-unlock-level) 9)
-       (unlock-level-func 9)))
-    ((25)
-     (when (< (get-unlock-level) 10)
-       (unlock-level-func 10)))
-    ((26)
-     (when (< (get-unlock-level) 11)
-       (unlock-level-func 11)))
-    ((27)
-     (when (< (get-unlock-level) 12)
-       (unlock-level-func 12)))
-    ((28)
-     (when (< (get-unlock-level) 13)
-       (unlock-level-func 13)))
-    ((29)
-     (when (< (get-unlock-level) 14)
-       (unlock-level-func 14)))
-    ((30)
-     (when (< (get-unlock-level) 15)
-       (unlock-level-func 15)))
-    ((31)
-     (when (< (get-unlock-level) 16)
-       (unlock-level-func 16)))
-    ((32)
-     (when (< (get-unlock-level) 17)
-       (unlock-level-func 17))))
+    ((16) (when (< (get-unlock-level) 1) (unlock-level-func 1)))
+    ((17) (when (< (get-unlock-level) 2) (unlock-level-func 2)))
+    ((18) (when (< (get-unlock-level) 3) (unlock-level-func 3)))
+    ((19) (when (< (get-unlock-level) 4) (unlock-level-func 4)))
+    ((20) (when (< (get-unlock-level) 5) (unlock-level-func 5)))
+    ((21) (when (< (get-unlock-level) 6) (unlock-level-func 6)))
+    ((22) (when (< (get-unlock-level) 7) (unlock-level-func 7)))
+    ((23) (when (< (get-unlock-level) 8) (unlock-level-func 8)))
+    ((24) (when (< (get-unlock-level) 9) (unlock-level-func 9)))
+    ((25) (when (< (get-unlock-level) 10) (unlock-level-func 10)))
+    ((26) (when (< (get-unlock-level) 11) (unlock-level-func 11)))
+    ((27) (when (< (get-unlock-level) 12) (unlock-level-func 12)))
+    ((28) (when (< (get-unlock-level) 13) (unlock-level-func 13)))
+    ((29) (when (< (get-unlock-level) 14) (unlock-level-func 14)))
+    ((30) (when (< (get-unlock-level) 15) (unlock-level-func 15)))
+    ((31) (when (< (get-unlock-level) 16) (unlock-level-func 16)))
+    ((32) (when (< (get-unlock-level) 17) (unlock-level-func 17))))
   (none))
-
 
 (defun mort-rewrite-text ()
   ;;mort debugging

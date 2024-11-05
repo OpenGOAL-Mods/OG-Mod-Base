@@ -225,6 +225,7 @@
 ;; launch
 ;;;;;;;;;;;;;;;;;;;
 (define *last-particle-error-log-time* (the time-frame #f))
+
 (defun sp-queue-launch ((arg0 sparticle-system) (arg1 sparticle-launcher) (arg2 vector))
   "Queue a launch from the given launcher, at the given position."
   (let ((v1-0 *sp-launch-queue*))
@@ -232,8 +233,7 @@
     ;; make sure we have room in the queue
     (when (= (-> v1-0 in-use) SPARTICLE_QUEUE_SIZE)
       ;; og:mod-base suppress particle log spam a bit
-      (when (or (not *last-particle-error-log-time*)
-                (time-elapsed? *last-particle-error-log-time* (seconds 10)))
+      (when (or (not *last-particle-error-log-time*) (time-elapsed? *last-particle-error-log-time* (seconds 10)))
         (format 0 "ERROR: sp-launch-particles called during processing, and queue is full~%")
         (set-time! *last-particle-error-log-time*))
       (return 0))

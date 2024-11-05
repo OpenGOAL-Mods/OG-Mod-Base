@@ -45,7 +45,6 @@
        :suck-bounce-dist (meters 18)
        :suck-suck-dist (meters 7.5)))
 
-
 ;;tagmort tageco ADD NEW ECO HERE, ORDER IS IMPORTANT ONLY ADD TO END
 (defenum pickup-type
   :type int32

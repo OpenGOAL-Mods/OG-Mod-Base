@@ -24,7 +24,6 @@
    hidden
    ndi))
 
-
 (defmethod relocate ((this logo) (offset int))
   (if (nonzero? (-> this main-joint)) (&+! (-> this main-joint) offset))
   (the-as logo ((method-of-type process-drawable relocate) this offset)))
@@ -34,7 +33,6 @@
    (main-joint     joint-mod))
   (:state-methods
    idle))
-
 
 (defmethod relocate ((this logo-slave) (offset int))
   (if (nonzero? (-> this main-joint)) (&+! (-> this main-joint) offset))

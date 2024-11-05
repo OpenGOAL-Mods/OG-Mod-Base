@@ -7,6 +7,7 @@
 (require "engine/ps2/memcard-h.gc")
 (require "engine/load/loader.gc")
 (defun-extern reset-custom-info none)
+
 ;; The game-save system implements the "background autosave" feature.
 
 ;; The process works like this:

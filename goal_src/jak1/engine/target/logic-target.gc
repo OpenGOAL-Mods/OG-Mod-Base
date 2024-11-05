@@ -13,8 +13,11 @@
 
 ;; target-start is modified due to changing the size of the stack in gkernel.gc
 (defun-extern is-in-chem-fac-silo symbol)
+
 (defun-extern play-chem-hint none)
+
 (define-extern *has-chicken-eco* symbol)
+
 ;; DECOMP BEGINS
 
 (defbehavior build-conversions target ((arg0 vector))
@@ -511,19 +514,17 @@
 (defbehavior add-gravity target ()
   (let ((s5-0 (new-stack-vector0))
         (gp-0 (new-stack-vector0)))
-
-                        (when (send-event *target* 'query 'powerup (pickup-type eco-gravity))
-            (set!  (-> self control dynam gravity-length) (meters 20)) ;; 50
-            (set! (-> *TARGET-bank* jump-height-max) (meters 7.01));;3.5
-            (set! (-> *TARGET-bank* double-jump-height-max)  (meters 5.0)  ) ;;2.5
-        )
-        ;; The condition for 7.01 is a disgusting hack so we arent consitantly setting a new jump-height
-        (when (not (and (send-event *target* 'query 'powerup (pickup-type eco-gravity)) (= (-> *TARGET-bank* jump-height-max) (meters 7.01))))
-          ;;  (set!  (-> self control dynam gravity-length) (meters 50)) ;; 50 ;; Jaks gravity auto resets but we need to restore the jump heights
-              (set! (-> *TARGET-bank* jump-height-max) (meters 3.5));;3.5
-              (set! (-> *TARGET-bank* double-jump-height-max)   (meters 2.5))   ;;2.5
-        )
-
+    (when (send-event *target* 'query 'powerup (pickup-type eco-gravity))
+      (set! (-> self control dynam gravity-length) (meters 20)) ;; 50
+      (set! (-> *TARGET-bank* jump-height-max) (meters 7.01)) ;;3.5
+      (set! (-> *TARGET-bank* double-jump-height-max) (meters 5.0)) ;;2.5
+      )
+    ;; The condition for 7.01 is a disgusting hack so we arent consitantly setting a new jump-height
+    (when (not (and (send-event *target* 'query 'powerup (pickup-type eco-gravity)) (= (-> *TARGET-bank* jump-height-max) (meters 7.01))))
+      ;;  (set!  (-> self control dynam gravity-length) (meters 50)) ;; 50 ;; Jaks gravity auto resets but we need to restore the jump heights
+      (set! (-> *TARGET-bank* jump-height-max) (meters 3.5)) ;;3.5
+      (set! (-> *TARGET-bank* double-jump-height-max) (meters 2.5)) ;;2.5
+      )
     (compute-acc-due-to-gravity (-> self control) s5-0 (-> self control unknown-surface01 slip-factor))
     (vector-matrix*! gp-0 s5-0 (-> self control unknown-matrix00))
     (vector-v++! (-> self control unknown-vector00) gp-0))
@@ -654,17 +655,14 @@
              (time-elapsed? (-> self no-look-around-wait) (seconds 0.05))
              (not (and (= (-> self control ground-pat material) (pat-material ice)) (< 4096.0 (-> self control unknown-float01)))))
       (send-event self 'change-mode 'look-around)))
-         (if (is-in-chem-fac-silo)(play-chem-hint))
-  (when  (or
-                (and *has-chicken-eco* (cpad-hold? 0 r2))
-                (and *has-chicken-eco* (and (cpad-hold? 0 square) (cpad-hold? 0 circle)))
-                (and (is-in-chem-fac-silo) (cpad-hold? 0 r2))
-                (and (= *cheat-mode* 'debug)
-                (cpad-hold? (-> self control unknown-cpad-info00 number) r2)
-                (not *pause-lock*)
-              (not (logtest? (-> self state-flags) (state-flags grabbed first-person-mode)))))
-
-
+  (if (is-in-chem-fac-silo) (play-chem-hint))
+  (when (or (and *has-chicken-eco* (cpad-hold? 0 r2))
+            (and *has-chicken-eco* (and (cpad-hold? 0 square) (cpad-hold? 0 circle)))
+            (and (is-in-chem-fac-silo) (cpad-hold? 0 r2))
+            (and (= *cheat-mode* 'debug)
+                 (cpad-hold? (-> self control unknown-cpad-info00 number) r2)
+                 (not *pause-lock*)
+                 (not (logtest? (-> self state-flags) (state-flags grabbed first-person-mode)))))
     (if (!= (-> self next-state name) 'target-falling) (send-event self 'change-mode 'falling))
     (let ((gp-0 (new-stack-vector0)))
       (let ((f0-8 (vector-dot (-> self control dynam gravity-normal) (-> self control transv))))

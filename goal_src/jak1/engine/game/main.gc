@@ -9,12 +9,13 @@
 (require "engine/camera/cam-update.gc")
 (require "engine/common-obs/generic-obs.gc")
 (require "pc/pckernel.gc")
-
 (defun-extern zero-volume? (symbol))
 
 ;; DECOMP BEGINS
 (define-extern *in-mort-menu* symbol)
+
 (define-extern *warp-info* (array string))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Letterbox and blackout
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -170,12 +171,12 @@
                                   (if (= (-> (level-get-target-inside *level*) name) 'mort-title)
                                     (begin
                                       (let ((in-blackout? (>= (-> *game-info* blackout-time) (current-time))))
-                                      (when (not in-blackout?)
-                                      (set! *in-mort-menu* #f)
-                                      ;; replace with mort menu eventually
-                                      (sound-play "select-menu")
-                                      (send-event *target* 'continue (get-continue-by-name *game-info* (-> *warp-info* 0)))
-                                      (return 0)))))
+                                        (when (not in-blackout?)
+                                          (set! *in-mort-menu* #f)
+                                          ;; replace with mort menu eventually
+                                          (sound-play "select-menu")
+                                          (send-event *target* 'continue (get-continue-by-name *game-info* (-> *warp-info* 0)))
+                                          (return 0)))))
                                   ;; toggle between progress/game
                                   (if *progress-process* 'game 'progress))
                                  (else
@@ -239,26 +240,23 @@
 (define *progress-cheat* #f)
 
 (define *first-boot* #t) ;; PAL
+
 (define-extern chicken-mode-on? symbol)
+
 (defun main-cheats ()
   "Handle cheat codes and timeout"
   ;; look for codes when L3 is pushed
   (when (and (cpad-hold? 0 l3)
              (or *cheat-mode* (= *kernel-boot-message* 'play)) ;; not in demo
              )
-
-             ;; chicken mode
-                     (check-cheat-code (-> *cheat-temp* 5) 0
-        (up up down down left right left right x x square circle square triangle)
-          (cpad-clear! 0 r1)
-          ;;Mort softlock backup hack
-      (if chicken-mode-on?
-      (set! chicken-mode-on? #f)
-      (set! chicken-mode-on? #t)
-      )
-     (play-sound-file "chickendance.mp3" (the int (-> *setting-control* default sfx-volume)))
-        )
-
+    ;; chicken mode
+    (check-cheat-code (-> *cheat-temp* 5)
+                      0
+                      (up up down down left right left right x x square circle square triangle)
+                      (cpad-clear! 0 r1)
+                      ;;Mort softlock backup hack
+                      (if chicken-mode-on? (set! chicken-mode-on? #f) (set! chicken-mode-on? #t))
+                      (play-sound-file "chickendance.mp3" (the int (-> *setting-control* default sfx-volume))))
     ;;   (check-cheat-code (-> *cheat-temp* 0) 0
     ;;     (up up down down left right left right x x square circle square circle)
     ;;       (cpad-clear! 0 r1)
@@ -266,8 +264,6 @@
     ;;   (+! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 1)
     ;;  (play-sound-file "chickendance.mp3" (the int (-> *setting-control* default sfx-volume)))
     ;;     )
-
-
     ;; ;; cheat mode
     ;; (check-cheat-code (-> *cheat-temp* 0)
     ;;                   0
@@ -392,7 +388,7 @@
     ;; collide dma
     (suspend)
     (while *run*
-      (if (zero-volume?)  (pause-main-music)  (resume-main-music))
+      (if (zero-volume?) (pause-main-music) (resume-main-music))
       (runs-every-frame) ;; trigger hook for mod base mod-base-change entry point
       ;; start immediately after all process updates finish.
       (profiler-instant-event "display-loop-top")

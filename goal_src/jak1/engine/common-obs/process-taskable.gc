@@ -15,6 +15,7 @@
 ;; DECOMP BEGINS
 
 (define-extern *currentCutsceneFrame* int)
+
 (define-extern *currentSpoolName* string)
 
 (defmethod process-taskable-method-52 ((this process-taskable))
@@ -91,10 +92,8 @@
       ((and (= *currentCutsceneFrame* 1657) (string= *currentSpoolName* "sidekick-human-intro-sequence-c"))
        (set-blackout-frames (seconds 25.3))
        (set! *in-mort-menu* #t)
-       (set! (-> this decision) 'no)
-      )
-      ((!= (-> this decision) 'undecided)
-      )
+       (set! (-> this decision) 'no))
+      ((!= (-> this decision) 'undecided))
       ((and (cpad-pressed? 0 x) (not (-> this only-allow-cancel)))
        (logclear! (-> *cpad-list* cpads 0 button0-abs 0) (pad-buttons x))
        (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons x))
@@ -108,11 +107,7 @@
                      (string= (-> *art-control* active-stream) "green-sagecage-outro-beat-boss-a"))))
        (logclear! (-> *cpad-list* cpads 0 button0-abs 0) (pad-buttons triangle))
        (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons triangle))
-       (set! (-> this decision) 'no)))
-   )
-
-
-
+       (set! (-> this decision) 'no))))
   (-> this decision))
 
 (defmethod relocate ((this process-taskable) (arg0 int))
@@ -292,15 +287,12 @@
      ;; og:preserve-this allow cutscene skipping on pc port
      ;; save a sort of timestamp just so we know if it took at least 1 frame
      (#when PC_PORT
-        (define *play-anim-time* (current-time)))
-
-         (ja-play-spooled-anim
-           (the-as spool-anim arg1)
-           arg0
-           (-> self blend-on-exit)
-           (lambda ((arg0 process-taskable)) (= (get-response (-> arg0 query)) 'no))
-           )
-
+       (define *play-anim-time* (current-time)))
+     (ja-play-spooled-anim (the-as spool-anim arg1)
+                           arg0
+                           (-> self blend-on-exit)
+                           (lambda ((arg0 process-taskable))
+                             (= (get-response (-> arg0 query)) 'no)))
      ;; og:preserve-this
      (#when PC_PORT
        (if (= (current-time) *play-anim-time*) (suspend)))

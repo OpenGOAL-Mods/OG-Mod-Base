@@ -43,8 +43,8 @@
       (ja-channel-set! 1)
       (send-event self 'do-effect 'death-warp-in -1.0)
       (sound-play "warpgate-tele")
-              (runs-on-jak-spawn) ;; trigger hook for mod base
-        (reset-actors #t)
+      (runs-on-jak-spawn) ;; trigger hook for mod base
+      (reset-actors #t)
       (ja-no-eval :group! eichar-duck-high-jump-ja :num! (seek! (ja-aframe 50.0 0)) :frame-num (ja-aframe 40.0 0))
       (until (ja-done? 0)
         (suspend)
@@ -69,7 +69,6 @@
       (set-time! (-> self state-time))
       (loop
         ;;This condition is what lets the press circle to use appear for the warp-gate.
-
         (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> self root trans) (meters 1.0) *color-black*)
         (when (and (and *target* (>= 20480.0 (vector-vector-distance (-> self root trans) (-> *target* control trans))))
                    (and ;;(>= (-> self level-slot) 0)
@@ -80,9 +79,7 @@
                      (let* ((v1-16 (-> self root))
                             (a1-2 (-> *target* control trans))
                             (f0-1 (vector-y-angle (vector-! (new 'stack-no-clear 'vector) a1-2 (-> v1-16 trans)))))
-                       (or (!= (-> self level-slot) 3) (and (< f0-1 -9102.223) (< -32768.0 f0-1))))
-
-                       ))
+                       (or (!= (-> self level-slot) 3) (and (< f0-1 -9102.223) (< -32768.0 f0-1))))))
           (hide-hud)
           (level-hint-surpress!)
           (kill-current-level-hint '() '(sidekick voicebox) 'exit)
@@ -238,17 +235,12 @@
                     (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons circle))
                     ;; (set! flut-movement-freeze #f)
                     (go-virtual use gp-0 (the-as level s1-2)))))
-                                                      (when (= (get-unlock-level) (-> *warp-info* length))
-                                      (process-release? *target*)
-          (start 'play (get-continue-by-name *game-info* "finalboss-fight"))
-          (while (not (process-by-ename "robotboss-3"))
-          (suspend)
-          )
-
-
-  (return #f)
-          )
-                    )
+              (when (= (get-unlock-level) (-> *warp-info* length))
+                (process-release? *target*)
+                (start 'play (get-continue-by-name *game-info* "finalboss-fight"))
+                (while (not (process-by-ename "robotboss-3"))
+                  (suspend))
+                (return #f)))
             (let ((s1-3 (new 'stack 'font-context *font-default-matrix* 6 110 0.0 (font-color default) (font-flags shadow kerning))))
               (let ((v1-38 s1-3)) (set! (-> v1-38 scale) 0.7))
               (let ((v1-39 s1-3)) (set! (-> v1-39 width) (the float 500)))

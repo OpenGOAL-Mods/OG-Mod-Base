@@ -176,8 +176,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                         (static-rgba 0 #xff 0 #x40))))
   (none))
 
-
-
 ;;This function moves a given actor to jaks current position, then prints a (move-actors) call in gk.exe
 (defun move-to-jak ((arg0 string))
   (format #t
@@ -347,25 +345,19 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none))
 
 (define *heard-chem-hint* #f)
+
 (defun play-chem-hint ()
   (when (is-in-chem-fac-silo)
     (when (not *heard-chem-hint*)
-    (set! *heard-chem-hint* #t)
-    (play-sound-file "dax/daxter_for_zed.mp3" (the int (-> *setting-control* default dialog-volume)))
-    )
-  )
-(none)
-)
+      (set! *heard-chem-hint* #t)
+      (play-sound-file "dax/daxter_for_zed.mp3" (the int (-> *setting-control* default dialog-volume)))))
+  (none))
 
 (defun return-hover-animation ()
-
-(if (or *has-chicken-eco* (is-in-chem-fac-silo))
-(-> *target* draw art-group data 39);;jump flap
-(-> *target* draw art-group data 38);;debug hover loop
-
-)
-)
-
+  (if (or *has-chicken-eco* (is-in-chem-fac-silo))
+    (-> *target* draw art-group data 39) ;;jump flap
+    (-> *target* draw art-group data 38) ;;debug hover loop
+    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jak Color functions

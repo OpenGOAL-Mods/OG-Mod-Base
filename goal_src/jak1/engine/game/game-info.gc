@@ -452,20 +452,15 @@
        (if (time-elapsed? (-> this money-pickup-time) (seconds 0.05)) (sound-play "money-pickup"))
        (set-time! (-> this money-pickup-time)))
      (adjust (-> (the-as target (-> this process)) game) 'money amount source-handle))
-
     (((pickup-type star))
      ;; get money.
      (when (< 0.0 amount)
        ;; play sound.
        ;;hack
        (set! amount 5.0)
-       (if (>= (- (-> *display* base-frame-counter) (-> this money-pickup-time)) (seconds 0.05))
-           (sound-play "money-pickup")
-           )
-       (set! (-> this money-pickup-time) (-> *display* base-frame-counter))
-       )
+       (if (>= (- (-> *display* base-frame-counter) (-> this money-pickup-time)) (seconds 0.05)) (sound-play "money-pickup"))
+       (set! (-> this money-pickup-time) (-> *display* base-frame-counter)))
      (adjust (-> (the-as target (-> this process)) game) 'money amount source-handle))
-
     (((pickup-type fuel-cell))
      ;; the amount is actually the index of the task.
      (let ((s4-2 (the int amount)))
@@ -488,7 +483,12 @@
          (set-time! (-> this buzzer-pickup-time)))
        (set! (-> this buzzer) buzz-count))
      (-> this buzzer))
-    (((pickup-type eco-red) (pickup-type eco-blue) (pickup-type eco-yellow) (pickup-type eco-gravity) (pickup-type eco-ice) (pickup-type eco-chicken))
+    (((pickup-type eco-red)
+      (pickup-type eco-blue)
+      (pickup-type eco-yellow)
+      (pickup-type eco-gravity)
+      (pickup-type eco-ice)
+      (pickup-type eco-chicken))
      ;; the green vent jumps here.
      (label cfg-80)
      ;; if the amount is zero, we just want to know how much eco there is.
@@ -531,21 +531,12 @@
            (((pickup-type eco-green)) (sound-play "get-green-eco"))
            (((pickup-type eco-yellow)) (sound-play "get-yellow-eco"))
            (((pickup-type eco-red)) (sound-play "get-red-eco"))
-                      (((pickup-type eco-gravity))
-            (sound-play "get-yellow-eco")
-            )
-
-           (((pickup-type eco-ice))
-            (sound-play "get-green-eco")
-            )
+           (((pickup-type eco-gravity)) (sound-play "get-yellow-eco"))
+           (((pickup-type eco-ice)) (sound-play "get-green-eco"))
            (((pickup-type eco-chicken))
             (sound-play "get-green-eco") ;; add chicken noise
             )
-           (else
-           (play-sound-file "farts/fart1.mp3" (the int (-> *setting-control* default dialog-volume)))
-           )
-
-           ))
+           (else (play-sound-file "farts/fart1.mp3" (the int (-> *setting-control* default dialog-volume))))))
        (set! (-> this eco-source) source-handle)
        (set-time! (-> this eco-source-time))
        ;; special case for blue eco magnet effect
