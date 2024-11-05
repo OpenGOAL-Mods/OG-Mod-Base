@@ -26,3 +26,12 @@
 (defun-extern return-hover-animation art-element)
 
 (defun-extern is-in-chem-fac-silo symbol)
+
+(defun-extern run-this-when-cell-grab process-drawable none)
+
+(define *MAXCURRENTCHICKS* 12)
+
+(defun-extern get-current-chicks int)
+
+(defun-extern chicken-going-to-portal? symbol)
+

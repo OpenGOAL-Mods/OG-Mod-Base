@@ -320,8 +320,6 @@
   (set! (-> *autosplit-info-jak1* res-garden) 0)
   (set! (-> *autosplit-info-jak1* res-cold-pipe) 0))
 
-
-
 (defun update-autosplit-jak1-new-game ()
   (false! *has-landed?*)
   (reset-chicken-targets)

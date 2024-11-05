@@ -193,7 +193,6 @@
   "entity-table.o"
   "loader.o"
   "task-control-h.o"
-  "mod-declares-h.o"
   "speedruns-h.o" ;; added
   "game-info.o"
   "game-save.o"
@@ -274,6 +273,7 @@
   "aligner.o"
   "effect-control.o"
   "water.o"
+  "mod-declares-h.o"
   "collectables-part.o"
   "collectables.o"
   "task-control.o"
