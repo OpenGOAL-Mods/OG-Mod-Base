@@ -597,7 +597,7 @@
   (let ((gp-0 (-> obj skel)))
     (label cfg-1)
     (let ((s4-0 (-> gp-0 active-channels)))
-      (b! (logtest? (-> obj draw status) (draw-status hidden)) cfg-27)
+      ;;(b! (logtest? (-> obj draw status) (draw-status hidden)) cfg-27)
       (let ((s3-0 0))
         (b! #t cfg-13 :delay (nop!))
         (label cfg-3)

@@ -12,7 +12,9 @@
 ;; note: changed for high fps
 
 ;; target-start is modified due to changing the size of the stack in gkernel.gc
-
+(defun-extern is-in-chem-fac-silo symbol)
+(defun-extern play-chem-hint none)
+(define-extern *has-chicken-eco* symbol)
 ;; DECOMP BEGINS
 
 (defbehavior build-conversions target ((arg0 vector))
@@ -656,11 +658,11 @@
   (when  (or
                 (and *has-chicken-eco* (cpad-hold? 0 r2))
                 (and *has-chicken-eco* (and (cpad-hold? 0 square) (cpad-hold? 0 circle)))
-                (and (is-in-chem-fac-silo) (cpad-hold? 0 r2)))
+                (and (is-in-chem-fac-silo) (cpad-hold? 0 r2))
                 (and (= *cheat-mode* 'debug)
                 (cpad-hold? (-> self control unknown-cpad-info00 number) r2)
                 (not *pause-lock*)
-              (not (logtest? (-> self state-flags) (state-flags grabbed first-person-mode))))
+              (not (logtest? (-> self state-flags) (state-flags grabbed first-person-mode)))))
 
 
     (if (!= (-> self next-state name) 'target-falling) (send-event self 'change-mode 'falling))

@@ -88,6 +88,7 @@
    (max-hp int32)
    (eco-collectable int32)
    (eco-quantity int32)
+   (spawned-collect? symbol)
    )
   (:methods
     (flutflutegg-method-20 (_type_ float float float) none)
@@ -142,7 +143,24 @@
 
        )
 
-       (when (= (-> self max-hp) (-> self num-hit))
+       (when (and (not (-> self spawned-collect?)) (not (= (-> self max-hp) (-> self num-hit))) (or (= (-> *target* next-state name) 'target-flut-air-attack)
+                (= (-> *target* next-state name) 'target-flut-air-attack-hit-ground) ))
+        (birth-pickup-at-point
+              (-> self root trans)
+              (the pickup-type (-> self eco-collectable))
+              (the float(-> self eco-quantity))
+              #f
+              *target*
+              (the-as fact-info #f))
+
+              (set! (-> self num-hit) (-> self max-hp))
+              (set! (-> self spawned-collect?) #t)
+           (go flutflutegg-break #t)
+
+
+       )
+
+       (when (and (not (-> self spawned-collect?)) (= (-> self max-hp) (-> self num-hit)))
 
 
         (birth-pickup-at-point
@@ -152,6 +170,7 @@
               #f
               *target*
               (the-as fact-info #f))
+              (set! (-> self spawned-collect?) #t)
            (go flutflutegg-break #t)
        )
 
@@ -173,8 +192,27 @@
 )
 
 
+
+  (defun draw-debug-sphere-on-actor ((actorName process-drawable) (radius float))
+  (when *debug-segment*
+    (when  actorName
+      (add-debug-sphere #t
+                        (bucket-id debug)
+                        (-> actorName root trans)
+                        (meters radius)
+                        (static-rgba 0 #xff 0 #x40))))
+  (none))
+
+
 (defstate flutflutegg-idle (flutflutegg)
   :event (behavior ((proc process) (arg1 int) (event-type symbol) (event event-message-block))
+    (if (= (-> self max-hp) (-> self num-hit))   (go flutflutegg-break #t) )
+
+
+
+
+
+
     (when (and (= event-type 'attack)
                (or (= (-> event param 1) 'punch) (= (-> event param 1) 'spin) (= (-> event param 1) 'spin-air) (= (-> event param 1) 'flut-attack))
                (!= (-> self incomming-attack-id) (-> event param 2))
@@ -262,6 +300,28 @@
   :code (behavior ()
     (ja-post)
     (loop
+
+
+(draw-debug-sphere-on-actor-name "chem-fac-crate-3-chickeco" (meters 7.0))
+;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> self root trans) (meters 7.0) *color-orange*)
+
+               (when (and (< (vector-vector-distance (-> self root trans) (-> *target* root trans)) (meters 4.0)) (not (-> self spawned-collect?)) (not (= (-> self max-hp) (-> self num-hit))) (or (= (-> *target* next-state name) 'target-flut-air-attack)
+                (= (-> *target* next-state name) 'target-flut-air-attack-hit-ground) ))
+              (birth-pickup-at-point
+              (-> self root trans)
+              (the pickup-type (-> self eco-collectable))
+              (the float(-> self eco-quantity))
+              #f
+              *target*
+              (the-as fact-info #f))
+
+              (set! (-> self num-hit) (-> self max-hp))
+              (set! (-> self spawned-collect?) #t)
+           (go flutflutegg-break #t)
+
+
+       )
+
       (suspend)
       )
     (none)
@@ -300,6 +360,7 @@
   :code (behavior ()
     (set! (-> self state-time) (-> *display* base-frame-counter))
     (loop
+    (if (= (-> self max-hp) (-> self num-hit))   (go flutflutegg-break #t) )
       (+! (-> self pos) (* (-> self vel) (-> *display* seconds-per-frame)))
       ;; PAL patch here
       (set! (-> self vel) (* (-> self vel) (- 1.0 (* 0.05 (-> *display* time-adjust-ratio)))))
@@ -403,6 +464,7 @@
       (arg0
         (set-vector! (-> self root trans) -231190.94 64559.105 -1164727.5 1.0)
         (quaternion-axis-angle! (-> self root quat) 0.0 1.0 0.0 -18204.445)
+        (update-transforms! (-> self root))
         )
       )
     (suspend)
@@ -513,6 +575,9 @@
   (set! (-> obj max-hp) 3)
   (set! (-> obj eco-collectable)  (get-intstr-from-lump obj 'eco-collectable))
   (set! (-> obj eco-quantity)  (get-intstr-from-lump obj 'eco-quantity))
+  (set! (-> obj spawned-collect?) #f)
+
+  (if (and (not (-> *pc-settings* speedrunner-mode?)) (name= (-> obj name) 'monument-crate-3-beco)) (set! (-> obj eco-collectable) (the int(pickup-type eco-chicken))))
 
   (if (and (task-closed? (game-task beach-flutflut) (task-status need-reminder)) (not (name= (-> obj name) "jakup-beach-flutflutegg-01")))
       (go flutflutegg-break #t)

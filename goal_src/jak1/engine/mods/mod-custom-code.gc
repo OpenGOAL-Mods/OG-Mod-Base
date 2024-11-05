@@ -244,7 +244,7 @@
 
 (defun reset-chicken-targets ()
   ;; wtf man just code normal please stupd hack stupid-hacks-every-frame
-  (when (not (-> *speedrun-info* should-display?))
+  (when  done-init?
     (vector-identity! (-> *chicken-0* target-pos))
     (vector-identity! (-> *chicken-1* target-pos))
     (vector-identity! (-> *chicken-2* target-pos))
@@ -259,6 +259,10 @@
     (vector-identity! (-> *chicken-11* target-pos)))
   (format #t "RESETING CHICKEN TARGETS")
   (none))
+
+
+
+
 
 (defun restore-cells ()
   ;;Loop the flock and restore all the Cells
@@ -511,6 +515,7 @@
   (none))
 
 (define *count-crates* 0)
+(define flut-movement-freeze #f)
 
 (defun get-loaded-cell-count ()
   (set! *count-crates* 0)
@@ -754,6 +759,61 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   )
   )
 
+(define flutflut? #f)
+(define chicken-mode-on? #f)
+    (defun chicken-mode-logic ()
+    ;;This runs every frame and if chicken mode is on forces jak on flut and hides him etc
+
+(when (and chicken-mode-on? (not  (= (-> (level-get-target-inside *level*)name) 'finalboss)))
+(set! flutflut? (aif *target* (case (-> it next-state name) (
+                                      (
+                                       'target-flut-air-attack
+                                       'target-flut-air-attack-hit-ground
+                                       'target-flut-clone-anim
+                                       'target-flut-death
+                                       'target-flut-double-jump
+                                       'target-flut-falling
+                                       'target-flut-get-off
+                                       'target-flut-get-off-hit-ground
+                                       'target-flut-get-off-jump
+                                       'target-flut-get-on
+                                       'target-flut-grab
+                                       'target-flut-hit
+                                       'target-flut-hit-ground
+                                       'target-flut-jump
+                                       'target-flut-running-attack
+                                       'target-flut-stance
+                                       'target-flut-start
+                                       'target-flut-walk
+                                       ;; not flutflut, but we don't need to force flutflut in these cases
+                                       'target-periscope
+                                       'target-falling
+                                       'target-clone-anim
+                                       'target-play-anim
+                                       'target-billy-game
+                                       'target-look-around
+                                       'target-fishing
+                                       ;; launcher crap
+                                       'target-launch
+                                       'target-high-jump
+                                       'target-duck-high-jump
+                                       'target-duck-high-jump-jump
+                                       'target-hit-ground) #t))))
+
+(if (and (not flutflut?) (not (and (logtest? (-> *kernel-context* prevent-from-run) (process-mask movie)) (or (= (-> *target* current-level name) 'jungle)(= (-> *target* current-level name) 'village1) )))) (send-event *target* 'change-mode 'flut #f))
+
+    (logior! (-> *target* draw status) (draw-status hidden))
+
+)
+
+(if (or (not flut-movement-freeze) (= (-> (level-get-target-inside *level*)name) 'finalboss))
+(set! (-> *flut-walk-mods* target-speed) 81920.0)
+(set! (-> *flut-walk-mods* target-speed) 0.0)
+)
+
+    (none)
+    )
+
 (defun runs-every-frame ()
   ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
   ;;stupid hack ur an idiot if you leave this in
@@ -764,11 +824,15 @@ Then at the end of this function it checks some conditions and returns #t or #f 
     (process-spawn-function process
       sound-manager-proc)
     (set! *runs-every-frame-init?* #t))
+
+  (chicken-mode-logic)
+
   (if *show-input-display* (input-display-on) (input-display-off))
   ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
   (when *debug-segment*
     (orb-placer-maintenance))
   (none))
+
 
 (defun runs-on-orb-pickup ((parent process-tree))
   (let* ((from-cache? (and parent (type-type? (-> parent type) orb-cache-top))))
@@ -824,8 +888,8 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   ;;(init-title)
   ;;(format #t  "RUNNING MUSIC PROC~%")
   (process-spawn-function process music-manager-proc)
-  ;; (restore-cells)
-  ;; (restore-saved-chicks-from-mem)
+  (restore-cells)
+  (restore-saved-chicks-from-mem)
   ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc
   ;;(process-spawn-function process music-manager-proc)
   (none))

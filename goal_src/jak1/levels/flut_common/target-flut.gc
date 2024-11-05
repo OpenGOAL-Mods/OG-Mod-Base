@@ -1002,15 +1002,16 @@
       (set! (-> self control unknown-dword33) 0)
       (set! (-> self control unknown-surface00) *flut-air-attack-mods*)
       (sound-play "flop-land" :pitch -0.4)
-      (effect-control-method-10 (-> self skel effect) 'group-flut-attack-strike-ground (ja-frame-num 0) 0)
-      (let ((gp-2 (process-spawn touch-tracker :init touch-tracker-init (-> self control trans) 4096.0 30 :to self)))
-        (send-event (ppointer->process gp-2) 'event 'attack 'flut-attack)
-        (send-event (ppointer->process gp-2)
-                    'function
-                    (lambda :behavior target ((arg0 nav-enemy))
-                      (seek! (-> arg0 collide-info root-prim local-sphere w) (the-as float 28672.0) (* 286720.0 (seconds-per-frame)))
-                      (update-transforms! (-> arg0 collide-info))
-                      (none)))))
+      ;; (effect-control-method-10 (-> self skel effect) 'group-flut-attack-strike-ground (ja-frame-num 0) 0)
+      ;; (let ((gp-2 (process-spawn touch-tracker :init touch-tracker-init (-> self control trans) 4096.0 30 :to self)))
+      ;;   (send-event (ppointer->process gp-2) 'event 'attack 'flut-attack)
+      ;;   (send-event (ppointer->process gp-2)
+      ;;               'function
+      ;;               (lambda :behavior target ((arg0 nav-enemy))
+      ;;                 (seek! (-> arg0 collide-info root-prim local-sphere w) (the-as float 28672.0) (* 286720.0 (seconds-per-frame)))
+      ;;                 (update-transforms! (-> arg0 collide-info))
+      ;;                 (none))))
+                      )
   :exit
     (-> target-flut-air-attack
         exit)

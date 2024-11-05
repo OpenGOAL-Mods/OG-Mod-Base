@@ -742,6 +742,7 @@
    (max-hp int32)
    (eco-collectable int32)
    (eco-quantity int32)
+   (spawned-collect? symbol)
    )
   (:methods
     (flutflutegg-method-20 (_type_ float float float) none)

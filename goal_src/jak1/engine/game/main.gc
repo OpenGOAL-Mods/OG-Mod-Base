@@ -239,21 +239,43 @@
 (define *progress-cheat* #f)
 
 (define *first-boot* #t) ;; PAL
-
+(define-extern chicken-mode-on? symbol)
 (defun main-cheats ()
   "Handle cheat codes and timeout"
   ;; look for codes when L3 is pushed
   (when (and (cpad-hold? 0 l3)
              (or *cheat-mode* (= *kernel-boot-message* 'play)) ;; not in demo
              )
-    ;; cheat mode
-    (check-cheat-code (-> *cheat-temp* 0)
-                      0
-                      (up up down down left right left right x x square circle square circle)
-                      (cpad-clear! 0 r1)
-                      ;; toggle!
-                      (not! *cheat-mode*)
-                      (cheats-sound-play *cheat-mode*))
+
+             ;; chicken mode
+                     (check-cheat-code (-> *cheat-temp* 5) 0
+        (up up down down left right left right x x square circle square triangle)
+          (cpad-clear! 0 r1)
+          ;;Mort softlock backup hack
+      (if chicken-mode-on?
+      (set! chicken-mode-on? #f)
+      (set! chicken-mode-on? #t)
+      )
+     (play-sound-file "chickendance.mp3" (the int (-> *setting-control* default sfx-volume)))
+        )
+
+    ;;   (check-cheat-code (-> *cheat-temp* 0) 0
+    ;;     (up up down down left right left right x x square circle square circle)
+    ;;       (cpad-clear! 0 r1)
+    ;;       ;;Mort softlock backup hack
+    ;;   (+! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 1)
+    ;;  (play-sound-file "chickendance.mp3" (the int (-> *setting-control* default sfx-volume)))
+    ;;     )
+
+
+    ;; ;; cheat mode
+    ;; (check-cheat-code (-> *cheat-temp* 0)
+    ;;                   0
+    ;;                   (up up down down left right left right x x square circle square circle)
+    ;;                   (cpad-clear! 0 r1)
+    ;;                   ;; toggle!
+    ;;                   (not! *cheat-mode*)
+    ;;                   (cheats-sound-play *cheat-mode*))
     ;; debug mode
     (when *cheat-mode*
       (check-cheat-code (-> *cheat-temp* 1)
