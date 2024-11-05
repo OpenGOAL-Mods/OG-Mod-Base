@@ -89,6 +89,7 @@
          (set! (-> s5-0 flags) (font-flags shadow kerning large))
          (print-game-text (lookup-text! *common-text* (text-id confirm) #f) s5-0 #f 128 22))))
     (cond
+      ;;Tagmort This is where we hijack to skip cutscenes and warp out of the intro
       ((and (= *currentCutsceneFrame* 1657) (string= *currentSpoolName* "sidekick-human-intro-sequence-c"))
        (set-blackout-frames (seconds 25.3))
        (set! *in-mort-menu* #t)
@@ -99,6 +100,7 @@
        (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons x))
        (set! (-> this decision) 'yes))
       ((and (cpad-pressed? 0 triangle)
+            ;;Tagmort Add cutscenes here to disable cutscene skip on them.
             (not (or (string= (-> *art-control* active-stream) "sage-intro-sequence-a")
                      (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-b")
                      (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-c")
@@ -288,6 +290,7 @@
      ;; save a sort of timestamp just so we know if it took at least 1 frame
      (#when PC_PORT
        (define *play-anim-time* (current-time)))
+     ;;Tagmort We removed the check for skip-movies? and treat every cutscene as "skipable" to enable the half intro in retail mode. See tag above.
      (ja-play-spooled-anim (the-as spool-anim arg1)
                            arg0
                            (-> self blend-on-exit)

@@ -266,6 +266,7 @@
            (new 'static 'task-hint-control-group)))
 
 (defun find-hint-control-index ((arg0 text-id))
+  ;;Tagmort We do this to avoid some crash I dont understand.
   ;;   (let ((gp-0 -1))
   ;;     (let ((v1-2 (length (-> *game-info* hint-control))))
   ;;       (dotimes (a0-2 v1-2)
@@ -295,6 +296,7 @@
 
 ;; WARN: disable def twice: 139. This may happen when a cond (no else) is nested inside of another conditional, but it should be rare.
 (defun can-hint-be-played? ((arg0 text-id) (arg1 entity) (arg2 string))
+  ;;Tagmort This is a hack to always return #f to avoid a crash I dont understand.
   ;;   (let ((v1-0 (not (str-is-playing?))))
   ;;     (if (and v1-0 (nonzero? arg0)) (set! v1-0 (not (seen-text? *game-info* arg0))))
   ;;     (when v1-0
@@ -343,6 +345,7 @@
   #f)
 
 (defun reset-all-hint-controls ()
+  ;;Tagmort this is a hack to avoid a crash that I dont understand.
   ;;   (let ((v1-2 (length (-> *game-info* hint-control))))
   ;;     (dotimes (a0-1 v1-2)
   ;;       (let ((a1-2 (-> *game-info* hint-control a0-1)))

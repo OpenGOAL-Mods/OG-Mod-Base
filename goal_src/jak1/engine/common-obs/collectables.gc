@@ -22,7 +22,7 @@
 
 (define-extern orb-placer-list-maintenace (function symbol none))
 
-(defun-extern run-this-when-cell-grab process-drawable none)
+
 
 (declare-type vent process-drawable)
 
@@ -82,6 +82,7 @@
   (when (and (> arg0 0) #t)
     (logior! (-> this flags) (collectable-flags fade))
     (set! (-> this fadeout-timeout) arg0))
+  ;;tagMort fast collect
   (if (-> *pc-settings* speedrunner-mode?)
     (set! (-> this collect-timeout) (seconds -0.33))
     (set! (-> this collect-timeout) (seconds 0.33)))
@@ -90,6 +91,7 @@
   (set! (-> this old-base quad) (-> this root trans quad))
   (set! (-> this pickup-handle) (the-as handle #f))
   (case (-> this fact pickup-type)
+  	;;Tagmort add pickups here to make them collected by blue eco
     (((pickup-type eco-pill) (pickup-type eco-green) (pickup-type money) (pickup-type eco-blue) (pickup-type star))
      (logclear! (-> this flags) (collectable-flags ignore-blue))))
   (if (logtest? (-> this fact options) (fact-options large))
@@ -954,7 +956,7 @@
               (gp-2 (if v1-20 (-> v1-20 root-prim prim-core) (-> self root trans))))
          (spawn (-> self part) (the-as vector gp-2))
          (if (< (vector-vector-xz-distance (target-pos 0) (-> self root trans)) (meters 8.0))
-           ;;tag mort
+           ;;Tagmort make the powercell only play idle sound when super close bc chicken level small
            (begin
              (when (nonzero? (-> self sound))
                (update-trans! (-> self sound) (the-as vector gp-2))
@@ -1027,11 +1029,6 @@
               (suspend)
               (ja :num! (loop! f30-1))))))))
 
-(define *MAXCURRENTCHICKS* 12)
-
-(defun-extern get-current-chicks int)
-
-(defun-extern chicken-going-to-portal? symbol)
 
 (defstate pickup (fuel-cell)
   :virtual #t
@@ -1519,8 +1516,6 @@
     (sv-160 process)
     (sv-176 process)
     (sv-192 (pointer process)))
-  (if (= arg1 (pickup-type eco-chicken))
-    (play-sound-file "chicken-eco-intro.mp3" (the int (-> *setting-control* default dialog-volume))))
   (set! sv-32 arg5)
   (let ((s1-0 (new-stack-vector0))
         (t9-0 (method-of-type res-lump get-property-value-float)))
@@ -1889,10 +1884,12 @@
 (defstate vent-blocked (vent)
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
+     ;;Tagmort hack vents to always be active
       (go vent-wait-for-touch))
   :code
     (behavior ()
       (loop
+       ;;Tagmort hack vents to always be active
         (go vent-wait-for-touch)
         (suspend))))
 

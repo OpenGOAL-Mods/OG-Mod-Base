@@ -235,7 +235,7 @@
     (behavior ()
       (ja-post)
       (loop
-        (draw-debug-sphere-on-actor-name "chem-fac-crate-3-chickeco" (meters 7.0))
+        ;;(draw-debug-sphere-on-actor-name "chem-fac-crate-3-chickeco" (meters 7.0))
         ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> self root trans) (meters 7.0) *color-orange*)
         (when (and (< (vector-vector-distance (-> self root trans) (-> *target* root trans)) (meters 4.0))
                    (not (-> self spawned-collect?))

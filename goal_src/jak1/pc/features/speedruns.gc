@@ -203,77 +203,54 @@
   (if category (set! (-> *speedrun-info* category) category))
   (case (-> *speedrun-info* category)
     (((speedrun-category full-game))
-     ;; spawn at the geyser warp gate checkpoint
      (initialize! *game-info* 'game (the-as game-save #f) "block-world-warp"))
     (((speedrun-category il-block-world)) ;;
-     ;; spawn at the geyser warp gate checkpoint
      (initialize! *game-info* 'game (the-as game-save #f) "block-world-warp"))
     (((speedrun-category il-factory-cross))
-     ;; spawn at the green sage hut warp gate
      (initialize! *game-info* 'game (the-as game-save #f) "fac-cross-warp"))
     (((speedrun-category il-holly-wood))
-     ;; spawn at beach
      (initialize! *game-info* 'game (the-as game-save #f) "holly-wood-warp"))
     (((speedrun-category il-monument))
-     ;; spawn at start of FJ
      (initialize! *game-info* 'game (the-as game-save #f) "monument-warp"))
     (((speedrun-category il-cathedral))
-     ;; spawn at start of misty
      (initialize! *game-info* 'game (the-as game-save #f) "cathedral-warp"))
     (((speedrun-category il-pyramid))
-     ;; spawn at start of fire canyon
      (initialize! *game-info* 'game (the-as game-save #f) "pyramid-warp"))
     (((speedrun-category il-ice-canyon))
-     ;; spawn at rock village start
      (initialize! *game-info* 'game (the-as game-save #f) "ice-canyon-warp"))
     (((speedrun-category il-coins))
-     ;; spawn at start of LPC
      (initialize! *game-info* 'game (the-as game-save #f) "coins-warp"))
     (((speedrun-category il-villa-cube))
-     ;; spawn at start of boggy
      (initialize! *game-info* 'game (the-as game-save #f) "villa-cube-warp"))
     (((speedrun-category il-ice-slide))
-     ;; spawn at start of basin
      (initialize! *game-info* 'game (the-as game-save #f) "ice-slide-warp"))
     (((speedrun-category il-islands))
-     ;; spawn before klaww
      (initialize! *game-info* 'game (the-as game-save #f) "islands-warp"))
     (((speedrun-category il-glass-towers))
-     ;; spawn at start of volcanic crater
      (initialize! *game-info* 'game (the-as game-save #f) "glass-tower-warp"))
     (((speedrun-category il-chemical-factory))
-     ;; spawn at start of snowy
      (initialize! *game-info* 'game (the-as game-save #f) "chem-fac-warp"))
     (((speedrun-category il-space-bridge))
-     ;; spawn at start of spider cave
      (initialize! *game-info* 'game (the-as game-save #f) "space-bird-warp"))
     (((speedrun-category il-chicks))
-     ;; spawn at start of lava tube
      (initialize! *game-info* 'game (the-as game-save #f) "chicks-warp"))
     (((speedrun-category il-garden))
-     ;; spawn outside first citadel door
      (initialize! *game-info* 'game (the-as game-save #f) "garden-warp"))
     (((speedrun-category il-cold-pipe))
-     ;; spawn outside first citadel door
      (initialize! *game-info* 'game (the-as game-save #f) "cold-pipe-warp"))
     (((speedrun-category new-game-plus))
-     ;; spawn at the geyser warp gate checkpoint
      (initialize! *game-info* 'game (the-as game-save #f) "game-start"))
     (((speedrun-category hub1-100))
-     ;; spawn at the geyser warp gate checkpoint
      (initialize! *game-info* 'game (the-as game-save #f) "game-start"))
     (((speedrun-category hub2-100))
-     ;; spawn at end of fire canyon
      (initialize! *game-info* 'game (the-as game-save #f) "firecanyon-end"))
     (((speedrun-category hub3-100))
-     ;; spawn at end of mountain pass
      (initialize! *game-info* 'game (the-as game-save #f) "ogre-end"))
     (((speedrun-category all-cutscenes))
      ;; turn play hints back on
      (set! (-> *setting-control* default play-hints) #t)
      ;; don't allow cutscene skips
      (set! (-> *pc-settings* skip-movies?) #f)
-     ;; spawn at the geyser warp gate checkpoint
      (initialize! *game-info* 'game (the-as game-save #f) "intro-start"))
     (else
      (format 0 "start-speedrun: unrecognized category ~S~%" (enum->string speedrun-category (-> *speedrun-info* category)))))

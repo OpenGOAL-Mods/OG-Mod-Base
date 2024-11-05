@@ -103,3 +103,47 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   ((data level-information 47 :inline :offset-assert 0)))
 
 (define *custom-level-info* (new 'static 'custom-level-info))
+
+(set! (-> *custom-level-info* data 16 total-chicks) 6)
+
+(set! (-> *custom-level-info* data 17 total-chicks) 6)
+
+(set! (-> *custom-level-info* data 18 total-chicks) 6)
+
+(set! (-> *custom-level-info* data 19 total-chicks) 9)
+
+(set! (-> *custom-level-info* data 20 total-chicks) 10)
+
+(set! (-> *custom-level-info* data 21 total-chicks) 10)
+
+(set! (-> *custom-level-info* data 22 total-chicks) 9)
+
+(set! (-> *custom-level-info* data 23 total-chicks) 1)
+
+(set! (-> *custom-level-info* data 24 total-chicks) 10)
+
+(set! (-> *custom-level-info* data 25 total-chicks) 6)
+
+(set! (-> *custom-level-info* data 26 total-chicks) 6)
+
+(set! (-> *custom-level-info* data 26 total-chicks) 5)
+
+(set! (-> *custom-level-info* data 27 total-chicks) 10)
+
+(set! (-> *custom-level-info* data 28 total-chicks) 6)
+
+(set! (-> *custom-level-info* data 29 total-chicks) 6)
+
+(set! (-> *custom-level-info* data 30 total-chicks) 36)
+
+(set! (-> *custom-level-info* data 30 total-chicks) 32)
+
+(set! (-> *custom-level-info* data 31 total-chicks) 10)
+
+(set! (-> *custom-level-info* data 32 total-chicks) 6)
+
+(set! (-> *custom-level-info* data 33 total-chicks) 12)
+
+(set! (-> *custom-level-info* data 34 total-chicks) 12)
+
+(activate-big-collide-cache!)

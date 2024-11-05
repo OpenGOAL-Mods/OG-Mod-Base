@@ -359,6 +359,59 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (-> *target* draw art-group data 38) ;;debug hover loop
     ))
 
+(defun escape-mort-title? ()
+  "This is ran when start is pressed checks if we are in mort title menu, and valid to leave"
+  (if (= (-> (level-get-target-inside *level*) name) 'mort-title)
+    (begin
+      (let ((in-blackout? (>= (-> *game-info* blackout-time) (current-time))))
+        (when (not in-blackout?)
+          (set! *in-mort-menu* #f)
+          ;; replace with mort menu eventually
+          (sound-play "select-menu")
+          (send-event *target* 'continue (get-continue-by-name *game-info* (-> *warp-info* 0)))
+          (return #t)))))
+  #f)
+
+(defun mort-cheats ()
+  "Handle cheat codes and timeout"
+  ;; look for codes when L3 is pushed
+  (when (and (cpad-hold? 0 l3)
+             (or *cheat-mode* (= *kernel-boot-message* 'play)) ;; not in demo
+             )
+    ;; chicken mode
+    (check-cheat-code (-> *cheat-temp* 5)
+                      0
+                      (up up down down left right left right x x square circle square triangle)
+                      (cpad-clear! 0 r1)
+                      ;;Mort softlock backup hack
+                      (if chicken-mode-on? (set! chicken-mode-on? #f) (set! chicken-mode-on? #t))
+                      (play-sound-file "chickendance.mp3" (the int (-> *setting-control* default sfx-volume))))
+    ;;   (check-cheat-code (-> *cheat-temp* 0) 0
+    ;;     (up up down down left right left right x x square circle square circle)
+    ;;       (cpad-clear! 0 r1)
+    ;;       ;;Mort softlock backup hack
+    ;;   (+! (-> *custom-level-info* data (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*)info index) -1))current-chicks) 1)
+    ;;  (play-sound-file "chickendance.mp3" (the int (-> *setting-control* default sfx-volume)))
+    ;;     )
+    ;; ;; cheat mode
+    ;; (check-cheat-code (-> *cheat-temp* 0)
+    ;;                   0
+    ;;                   (up up down down left right left right x x square circle square circle)
+    ;;                   (cpad-clear! 0 r1)
+    ;;                   ;; toggle!
+    ;;                   (not! *cheat-mode*)
+    ;;                   (cheats-sound-play *cheat-mode*))
+    0))
+
+(defun can-we-fly? ()
+  (or (and *has-chicken-eco* (cpad-hold? 0 r2))
+      (and *has-chicken-eco* (and (cpad-hold? 0 square) (cpad-hold? 0 circle)))
+      (and (is-in-chem-fac-silo) (cpad-hold? 0 r2))
+      (and (= *cheat-mode* 'debug)
+           (cpad-hold? (-> *target* control unknown-cpad-info00 number) r2)
+           (not *pause-lock*)
+           (not (logtest? (-> *target* state-flags) (state-flags grabbed first-person-mode))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Jak Color functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;

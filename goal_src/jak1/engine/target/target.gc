@@ -29,7 +29,7 @@
 
 (define-extern target-bonk-event-handler (function process int symbol event-message-block object :behavior target))
 
-(defun-extern return-hover-animation art-element)
+
 
 ;; DECOMP BEGINS
 

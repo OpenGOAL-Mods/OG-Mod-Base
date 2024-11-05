@@ -12,11 +12,7 @@
 ;; note: changed for high fps
 
 ;; target-start is modified due to changing the size of the stack in gkernel.gc
-(defun-extern is-in-chem-fac-silo symbol)
 
-(defun-extern play-chem-hint none)
-
-(define-extern *has-chicken-eco* symbol)
 
 ;; DECOMP BEGINS
 
@@ -655,14 +651,8 @@
              (time-elapsed? (-> self no-look-around-wait) (seconds 0.05))
              (not (and (= (-> self control ground-pat material) (pat-material ice)) (< 4096.0 (-> self control unknown-float01)))))
       (send-event self 'change-mode 'look-around)))
-  (if (is-in-chem-fac-silo) (play-chem-hint))
-  (when (or (and *has-chicken-eco* (cpad-hold? 0 r2))
-            (and *has-chicken-eco* (and (cpad-hold? 0 square) (cpad-hold? 0 circle)))
-            (and (is-in-chem-fac-silo) (cpad-hold? 0 r2))
-            (and (= *cheat-mode* 'debug)
-                 (cpad-hold? (-> self control unknown-cpad-info00 number) r2)
-                 (not *pause-lock*)
-                 (not (logtest? (-> self state-flags) (state-flags grabbed first-person-mode)))))
+   ;;Tagmort this function checks if we can debug fly (debug mode or chicken eco etc)
+  (when (can-we-fly?)
     (if (!= (-> self next-state name) 'target-falling) (send-event self 'change-mode 'falling))
     (let ((gp-0 (new-stack-vector0)))
       (let ((f0-8 (vector-dot (-> self control dynam gravity-normal) (-> self control transv))))

@@ -6,7 +6,6 @@
 (require "engine/gfx/sprite/sparticle/sparticle-launcher.gc")
 (require "engine/ps2/memcard-h.gc")
 (require "engine/load/loader.gc")
-(defun-extern reset-custom-info none)
 
 ;; The game-save system implements the "background autosave" feature.
 
@@ -611,6 +610,7 @@
   ;; if we're a new game, set our checkpoint.
   (when (nonzero? (-> save new-game))
     (set-continue! this "game-start")
+    ;;Tagmort we need to reset saved chicks per level and stuff.
     (reset-custom-info)
     (set! save save)
     (goto cfg-134))

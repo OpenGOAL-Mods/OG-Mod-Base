@@ -292,34 +292,8 @@
   (go-virtual basebutton-startup)
   (none))
 
-;; (define *warp-info*
-;;   (new 'static 'boxed-array :type string "training-warp" "village1-warp" "village2-warp" "village3-warp" "citadel-warp"))
-
 (define *warp-info*
-  (new 'static
-       'boxed-array
-       :type
-       string
-       "block-world-warp" ;;-done
-       "fac-cross-warp"
-       "holly-wood-warp"
-       "monument-warp"
-       "cathedral-warp"
-       "pyramid-warp"
-       "ice-canyon-warp"
-       "coins-warp"
-       "villa-cube-warp"
-       "ice-slide-warp"
-       "islands-warp"
-       "glass-tower-warp"
-       "chem-fac-warp"
-       "space-bird-warp"
-       "chicks-warp"
-       "garden-warp"
-       "cold-pipe-warp"
-       ;;"block-man-warp"
-       ;;"cube-face-warp"
-       ))
+  (new 'static 'boxed-array :type string "training-warp" "village1-warp" "village2-warp" "village3-warp" "citadel-warp"))
 
 (deftype warp-gate (process-drawable)
   ((level      symbol)

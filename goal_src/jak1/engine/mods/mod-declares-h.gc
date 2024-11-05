@@ -1,0 +1,30 @@
+;;this resets saved chicks in level, ran on run start or new game save
+(defun-extern reset-custom-info none)
+
+(defun-extern reset-chicken-targets none)
+
+;;this is a bool that checks if we should have zero volume (are we paused etc)
+(defun-extern zero-volume? (symbol))
+
+;;If this is true then we force player to fake mort title
+(define-extern *in-mort-menu* symbol)
+
+;; just need this early lol
+(define-extern *warp-info* (array string))
+
+;; this function runs in main.gc on start push and lets you escape the psuedo mort title
+(defun-extern escape-mort-title? symbol)
+
+;; if this symbol is true it forces jak into flutflut mode
+(define-extern chicken-mode-on? symbol)
+
+;; this is a function that checks for jak the chicken specific cheats
+(defun-extern mort-cheats int)
+
+(defun-extern can-we-fly? symbol)
+
+(defun-extern return-hover-animation art-element)
+
+(defun-extern is-in-chem-fac-silo symbol)
+
+

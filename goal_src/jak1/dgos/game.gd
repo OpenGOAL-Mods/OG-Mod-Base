@@ -193,6 +193,7 @@
   "entity-table.o"
   "loader.o"
   "task-control-h.o"
+  "mod-declares-h.o"
   "speedruns-h.o" ;; added
   "game-info.o"
   "game-save.o"

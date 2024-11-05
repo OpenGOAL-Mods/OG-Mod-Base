@@ -144,6 +144,4 @@
   (defmacro activate-big-collide-cache! ()
     `(set! *collide-cache-max-tris* BIG_COLLIDE_CACHE_SIZE)))
 
-(activate-big-collide-cache!)
-
 (define-perm *collide-list* collide-list (new 'global 'collide-list))

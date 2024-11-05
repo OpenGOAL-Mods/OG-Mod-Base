@@ -453,10 +453,7 @@
        (set-time! (-> this money-pickup-time)))
      (adjust (-> (the-as target (-> this process)) game) 'money amount source-handle))
     (((pickup-type star))
-     ;; get money.
      (when (< 0.0 amount)
-       ;; play sound.
-       ;;hack
        (set! amount 5.0)
        (if (>= (- (-> *display* base-frame-counter) (-> this money-pickup-time)) (seconds 0.05)) (sound-play "money-pickup"))
        (set! (-> this money-pickup-time) (-> *display* base-frame-counter)))
@@ -483,6 +480,7 @@
          (set-time! (-> this buzzer-pickup-time)))
        (set! (-> this buzzer) buzz-count))
      (-> this buzzer))
+    ;;Tagmort You have to add ecos here to get a eco meter
     (((pickup-type eco-red)
       (pickup-type eco-blue)
       (pickup-type eco-yellow)

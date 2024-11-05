@@ -9,10 +9,6 @@
 (require "engine/collide/collide-shape-h.gc")
 (require "engine/gfx/sprite/sparticle/sparticle-launcher-h.gc")
 
-;; name: collectables-part.gc
-;; name in dgo: collectables-part
-;; dgos: GAME, ENGINE
-
 ;; why is this file built first....
 ;; TODO - also for entity and beach-rocks
 (declare-type collectable process-drawable)
@@ -1070,30 +1066,6 @@
    (sp-item 195 :fade-after (meters 90) :falloff-to (meters 110) :flags (start-dead))
    (sp-item 195 :fade-after (meters 90) :falloff-to (meters 110) :flags (start-dead))))
 
-(defpartgroup group-eco-chicken
-  :id 756
-  :bounds (static-bspherem 0 0 0 1)
-  :parts
-  ((sp-item 191 :flags (launch-asap) :binding 192)
-   (sp-item 192 :flags (start-dead launch-asap) :binding 193)
-   (sp-item 192 :flags (start-dead launch-asap) :binding 193)
-   (sp-item 192 :flags (start-dead launch-asap) :binding 193)
-   (sp-item 192 :flags (start-dead launch-asap) :binding 193)
-   (sp-item 192 :flags (start-dead launch-asap) :binding 193)
-   (sp-item 192 :flags (start-dead launch-asap) :binding 193)
-   (sp-item 193 :flags (start-dead launch-asap) :binding 194)
-   (sp-item 193 :flags (start-dead launch-asap) :binding 194)
-   (sp-item 193 :flags (start-dead launch-asap) :binding 194)
-   (sp-item 193 :flags (start-dead launch-asap) :binding 194)
-   (sp-item 194 :fade-after (meters 100) :flags (start-dead launch-asap) :binding 195)
-   (sp-item 194 :fade-after (meters 100) :flags (start-dead launch-asap) :binding 195)
-   (sp-item 194 :fade-after (meters 100) :flags (start-dead launch-asap) :binding 195)
-   (sp-item 194 :fade-after (meters 100) :flags (start-dead launch-asap) :binding 195)
-   (sp-item 195 :fade-after (meters 90) :falloff-to (meters 110) :flags (start-dead))
-   (sp-item 195 :fade-after (meters 90) :falloff-to (meters 110) :flags (start-dead))
-   (sp-item 195 :fade-after (meters 90) :falloff-to (meters 110) :flags (start-dead))
-   (sp-item 195 :fade-after (meters 90) :falloff-to (meters 110) :flags (start-dead))))
-
 (defpart 191
   :init-specs
   ((:texture (new 'static 'texture-id :index #xf :page #x2))
@@ -1273,68 +1245,6 @@
    (:flags (bit2 bit3 bit14))
    (:next-time (seconds 0.8))
    (:next-launcher 198)))
-
-(defpartgroup group-eco-gravity
-  :id 709
-  :bounds (static-bspherem 0 0 0 1)
-  :parts
-  ((sp-item 2002 :flags (launch-asap) :binding 2003)
-   (sp-item 2003 :fade-after (meters 40) :flags (start-dead launch-asap) :binding 5)
-   (sp-item 2003 :fade-after (meters 60) :flags (start-dead launch-asap) :binding 5)
-   (sp-item 2003 :fade-after (meters 80) :flags (start-dead launch-asap) :binding 5)
-   (sp-item 2003 :fade-after (meters 100) :flags (start-dead launch-asap) :binding 5)
-   (sp-item 2003 :fade-after (meters 130) :flags (start-dead launch-asap) :binding 5)
-   (sp-item 2003 :flags (start-dead launch-asap) :binding 5)
-   ;; (sp-item 5 :flags (start-dead launch-asap) :binding 7)
-   ;; (sp-item 5 :flags (start-dead launch-asap) :binding 8)
-   ;; (sp-item 5 :flags (start-dead launch-asap) :binding 9)
-   ;; (sp-item 5 :flags (start-dead launch-asap) :binding 7)
-   ;; (sp-item 5 :flags (start-dead launch-asap) :binding 8)
-   ;; (sp-item 5 :flags (start-dead launch-asap) :binding 9)
-   ;; (sp-item 7 :fade-after (meters 60) :flags (start-dead) :binding 10)
-   ;; (sp-item 8 :fade-after (meters 70) :flags (start-dead) :binding 10)
-   ;; (sp-item 9 :fade-after (meters 80) :flags (start-dead) :binding 10)
-   ;; (sp-item 7 :fade-after (meters 90) :flags (start-dead) :binding 10)
-   ;; (sp-item 8 :fade-after (meters 100) :flags (start-dead) :binding 10)
-   ;; (sp-item 9 :fade-after (meters 100) :flags (start-dead) :binding 10)
-   ;; (sp-item 10 :flags (start-dead))
-   ))
-
-(defpart 2002
-  :init-specs
-  ((:texture (new 'static 'texture-id :index #xf :page #x2))
-   (:num 1.0)
-   (:x (meters 4))
-   (:scale-x (meters 0.01))
-   (:scale-y :copy scale-x)
-   (:timer (seconds -0.005))
-   (:flags (bit3 bit14))
-   (:func 'sparticle-track-root-prim)))
-
-;;rgb(93, 63, 211)
-(defpart 2003
-  :init-specs
-  ((:texture (new 'static 'texture-id :page #x2))
-   (:num 6.0)
-   (:y (meters 0) (meters 16))
-   (:z (meters 0.3) (meters 0.15))
-   (:scale-x (meters 2) (meters 1))
-   (:rot-z (degrees 0) (degrees 360))
-   (:scale-y :copy scale-x)
-   (:r 93.0 93.0)
-   (:g 63.0 63.0)
-   (:b 211.0 211.0)
-   (:a 100.0)
-   (:omega 0.0 .0)
-   (:vel-x (meters 0.0148148155) (meters 0.0044444446))
-   (:vel-y (meters 0))
-   (:vel-z (meters 0))
-   (:rotvel-z (degrees -0.1) 1 (degrees 0.2))
-   (:timer (seconds -0.005))
-   (:flags (bit3 bit7 bit14))
-   (:func 'eco-fadeout)
-   (:next-time (seconds 0.035))
-   (:next-launcher 4)))
 
 (defpartgroup group-eco-green
   :id 58
@@ -2365,3 +2275,89 @@
    (:func 'sparticle-track-root)
    (:next-time (seconds 0.2))
    (:next-launcher 245)))
+
+(defpartgroup group-eco-chicken
+  :id 756
+  :bounds (static-bspherem 0 0 0 1)
+  :parts
+  ((sp-item 191 :flags (launch-asap) :binding 192)
+   (sp-item 192 :flags (start-dead launch-asap) :binding 193)
+   (sp-item 192 :flags (start-dead launch-asap) :binding 193)
+   (sp-item 192 :flags (start-dead launch-asap) :binding 193)
+   (sp-item 192 :flags (start-dead launch-asap) :binding 193)
+   (sp-item 192 :flags (start-dead launch-asap) :binding 193)
+   (sp-item 192 :flags (start-dead launch-asap) :binding 193)
+   (sp-item 193 :flags (start-dead launch-asap) :binding 194)
+   (sp-item 193 :flags (start-dead launch-asap) :binding 194)
+   (sp-item 193 :flags (start-dead launch-asap) :binding 194)
+   (sp-item 193 :flags (start-dead launch-asap) :binding 194)
+   (sp-item 194 :fade-after (meters 100) :flags (start-dead launch-asap) :binding 195)
+   (sp-item 194 :fade-after (meters 100) :flags (start-dead launch-asap) :binding 195)
+   (sp-item 194 :fade-after (meters 100) :flags (start-dead launch-asap) :binding 195)
+   (sp-item 194 :fade-after (meters 100) :flags (start-dead launch-asap) :binding 195)
+   (sp-item 195 :fade-after (meters 90) :falloff-to (meters 110) :flags (start-dead))
+   (sp-item 195 :fade-after (meters 90) :falloff-to (meters 110) :flags (start-dead))
+   (sp-item 195 :fade-after (meters 90) :falloff-to (meters 110) :flags (start-dead))
+   (sp-item 195 :fade-after (meters 90) :falloff-to (meters 110) :flags (start-dead))))
+
+(defpartgroup group-eco-gravity
+  :id 709
+  :bounds (static-bspherem 0 0 0 1)
+  :parts
+  ((sp-item 2002 :flags (launch-asap) :binding 2003)
+   (sp-item 2003 :fade-after (meters 40) :flags (start-dead launch-asap) :binding 5)
+   (sp-item 2003 :fade-after (meters 60) :flags (start-dead launch-asap) :binding 5)
+   (sp-item 2003 :fade-after (meters 80) :flags (start-dead launch-asap) :binding 5)
+   (sp-item 2003 :fade-after (meters 100) :flags (start-dead launch-asap) :binding 5)
+   (sp-item 2003 :fade-after (meters 130) :flags (start-dead launch-asap) :binding 5)
+   (sp-item 2003 :flags (start-dead launch-asap) :binding 5)
+   ;; (sp-item 5 :flags (start-dead launch-asap) :binding 7)
+   ;; (sp-item 5 :flags (start-dead launch-asap) :binding 8)
+   ;; (sp-item 5 :flags (start-dead launch-asap) :binding 9)
+   ;; (sp-item 5 :flags (start-dead launch-asap) :binding 7)
+   ;; (sp-item 5 :flags (start-dead launch-asap) :binding 8)
+   ;; (sp-item 5 :flags (start-dead launch-asap) :binding 9)
+   ;; (sp-item 7 :fade-after (meters 60) :flags (start-dead) :binding 10)
+   ;; (sp-item 8 :fade-after (meters 70) :flags (start-dead) :binding 10)
+   ;; (sp-item 9 :fade-after (meters 80) :flags (start-dead) :binding 10)
+   ;; (sp-item 7 :fade-after (meters 90) :flags (start-dead) :binding 10)
+   ;; (sp-item 8 :fade-after (meters 100) :flags (start-dead) :binding 10)
+   ;; (sp-item 9 :fade-after (meters 100) :flags (start-dead) :binding 10)
+   ;; (sp-item 10 :flags (start-dead))
+   ))
+
+(defpart 2002
+  :init-specs
+  ((:texture (new 'static 'texture-id :index #xf :page #x2))
+   (:num 1.0)
+   (:x (meters 4))
+   (:scale-x (meters 0.01))
+   (:scale-y :copy scale-x)
+   (:timer (seconds -0.005))
+   (:flags (bit3 bit14))
+   (:func 'sparticle-track-root-prim)))
+
+;;rgb(93, 63, 211)
+(defpart 2003
+  :init-specs
+  ((:texture (new 'static 'texture-id :page #x2))
+   (:num 6.0)
+   (:y (meters 0) (meters 16))
+   (:z (meters 0.3) (meters 0.15))
+   (:scale-x (meters 2) (meters 1))
+   (:rot-z (degrees 0) (degrees 360))
+   (:scale-y :copy scale-x)
+   (:r 93.0 93.0)
+   (:g 63.0 63.0)
+   (:b 211.0 211.0)
+   (:a 100.0)
+   (:omega 0.0 .0)
+   (:vel-x (meters 0.0148148155) (meters 0.0044444446))
+   (:vel-y (meters 0))
+   (:vel-z (meters 0))
+   (:rotvel-z (degrees -0.1) 1 (degrees 0.2))
+   (:timer (seconds -0.005))
+   (:flags (bit3 bit7 bit14))
+   (:func 'eco-fadeout)
+   (:next-time (seconds 0.035))
+   (:next-launcher 4)))
