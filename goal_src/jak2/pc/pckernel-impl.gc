@@ -168,7 +168,7 @@
   (set! (-> obj memcard-volume-dialog) 0.75)
   (set! (-> obj memcard-vibration?) #t)
   (set! (-> obj memcard-subtitles?) #f)
-  (set! (-> obj hint-subtitles?) #t)
+  (set! (-> obj hinttitles?) #t)
   0)
 
 (defmethod reset-extra ((obj pc-settings-jak2) (call-handlers symbol))
