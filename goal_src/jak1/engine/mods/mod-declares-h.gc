@@ -39,3 +39,7 @@
 
 (define-extern *mort-orb-total* int)
 
+(defun-extern portal-mort-gate process-drawable)
+
+(defun-extern portal-mort-trans vector)
+
