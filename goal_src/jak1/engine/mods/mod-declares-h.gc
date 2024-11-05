@@ -35,3 +35,7 @@
 
 (defun-extern chicken-going-to-portal? symbol)
 
+(defun-extern get-mort-orb-total int)
+
+(define-extern *mort-orb-total* int)
+

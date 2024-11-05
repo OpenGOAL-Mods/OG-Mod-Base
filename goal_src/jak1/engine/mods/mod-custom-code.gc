@@ -617,7 +617,7 @@ Then at the end of this function it checks some conditions and returns #t or #f 
       (play-sound-file "farts/vinefart.mp3" (the int (-> *setting-control* default dialog-volume))))
     ;; (sound-manager)
     (when (run-mort-code?)
-      (if (zero-volume?) (pause-main-music) (resume-main-music))
+     
       (if (and (= (-> *flock-points* points 1 x) 0.0)
                (!= (-> *target* state name) 'target-warp-out)
                (!= (-> *target* state name) 'target-continue)
