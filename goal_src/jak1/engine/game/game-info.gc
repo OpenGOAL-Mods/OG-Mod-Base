@@ -459,6 +459,9 @@
      (adjust (-> (the-as target (-> this process)) game) 'money amount source-handle))
     (((pickup-type star))
      (when (< 0.0 amount)
+       (#when PC_PORT
+         ;; make sure any speedrun display is hidden
+         (hide-speedrun-display))
        (set! amount 5.0)
        (if (>= (- (-> *display* base-frame-counter) (-> this money-pickup-time)) (seconds 0.05)) (sound-play "money-pickup"))
        (set! (-> this money-pickup-time) (-> *display* base-frame-counter)))

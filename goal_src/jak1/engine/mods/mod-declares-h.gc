@@ -43,3 +43,4 @@
 
 (defun-extern portal-mort-trans vector)
 
+(define-extern *has-landed?* symbol)

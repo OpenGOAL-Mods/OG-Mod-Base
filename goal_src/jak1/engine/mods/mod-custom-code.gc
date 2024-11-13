@@ -331,6 +331,8 @@
 
 (defun run-this-when-cell-grab ((self fuel-cell))
   ;;Saved a chick
+  ;; make sure any speedrun display is hidden
+  (hide-speedrun-display)
   ;;Tagmort
   ;;check to see the saved chickens stored and maybe restore it
   (if (and (= (get-current-chicks) 0) (= (get-saved-chicks) 0))
@@ -643,9 +645,9 @@ Then at the end of this function it checks some conditions and returns #t or #f 
 (defun variable-every-frame ()
   "Responsible for updating most globals - if this isnt running something is terribly wrong"
   (update-mort-vars)
-  (if (= (-> *target* state name) 'target-warp-out) (set! (-> *speedrun-info* should-display?) #t))
-  (if (and (= (-> *target* state name) 'target-warp-in) (> (get-unlock-level) 0))
-    (set! (-> *speedrun-info* should-display?) #f))
+  ;; show speedrun text if we're warping into the level and havent landed (which is reset on warp-out)
+  (when (and (= (-> *target* state name) 'target-warp-in) (not *has-landed?*))
+    (set! (-> *speedrun-info* should-display?) #t))
   ;;If we input a button combo and we are in debug, unlock the next level
   (when (and (cpad-pressed? 0 l1) (cpad-pressed? 0 r1) *cheat-mode*)
     (if (portal-mort-switch) (go-virtual-process (portal-mort-switch) basebutton-going-down) (sound-play "caught-eel"))
