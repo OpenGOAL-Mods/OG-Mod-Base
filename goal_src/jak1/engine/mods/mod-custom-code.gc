@@ -287,6 +287,12 @@
                        (the-as vector2h #f)))
   (none))
 
+(defun draw-origin-sphere-text ((pos vector) (name string))
+  (when *show-debug*
+    (add-debug-sphere #t (bucket-id debug-no-zbuf) pos (meters 0.1) *color-orange*)
+    (add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~S" name) pos (font-color red) (the-as vector2h #f)))
+  (none))
+
 (defun adjust-chick-origin ((mmark vector))
   (draw-origin)
   (let ((xchange 0.0)
@@ -822,6 +828,7 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   (chicken-mode-logic)
   (if *show-input-display* (input-display-on) (input-display-off))
   ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
+
   (when *debug-segment*
     (orb-placer-maintenance))
   (none))

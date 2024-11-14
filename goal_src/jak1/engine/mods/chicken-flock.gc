@@ -3,10 +3,10 @@
 
 (define *flock* (new 'static 'flock))
 
-(deftype flock-pos (structure)
+(deftype flock-points (structure)
   ((points vector NUM_FLOCKPOINTS :inline :offset-assert 0)))
 
-(define *flock-points* (new 'static 'flock-pos))
+(define *flock-points* (new 'static 'flock-points))
 
 (deftype demon-chicken (process-drawable)
   ((cshape           collide-shape-moving :offset 112)
@@ -20,7 +20,8 @@
    (traj-time        float)
    (grace-period     time-frame)
    (to-point-speed   float)
-   (parent-cell-name string))
+   (parent-cell-name string)
+   (substate         symbol))
   (:methods
    (init-collision! (_type_) none)
    (init-skel! (_type_) none)
@@ -92,8 +93,20 @@
   (set! (-> this traj-time) 1.0)
   (set! (-> this grace-period) (seconds 0))
   (set! (-> this to-point-speed) 6.0)
+  (set! (-> this substate) 'uncollected)
+  (set! (-> this parent-cell-name) "NOT SET")
   ;;(set! (-> this part) (create-launch-control (-> *part-group-id-table* 800) this))
   (none))
+
+(defun update-chicken-substate ((chicken demon-chicken) (state symbol))
+  (when (run-mort-code?)
+    (case state
+      (('following) (vector-copy! (-> chicken target-pos) (-> *target* root trans)) (set! (-> chicken substate) 'following))
+      (('waiting-to-return) (set! (-> chicken substate) 'waiting-to-return))
+      (('moving-to-portal) (set! (-> chicken substate) 'moving-to-portal))
+      (('uncollected) (set! (-> chicken substate) 'uncollected))
+      (else (play-sound-file "codemistake.mp3" 3000))))
+  #t)
 
 (defbehavior demon-chicken-init-by-other demon-chicken ((vec vector))
   (common-init! self)
@@ -109,11 +122,13 @@
   (none))
 
 (defbehavior demon-chicken-follow-trajectory demon-chicken ((time float))
+;; make chickens run back and forth when idle
+  (when (> (vector-vector-distance (-> self root trans) (-> self target-pos)) (meters 0.5))
   (let ((traj (-> self trajectory)))
     (eval-position! traj time (-> self cshape trans))
     (eval-velocity! traj time (-> self cshape transv)))
   (vector-normalize-copy! (-> self dir) (-> self cshape transv) 1.0)
-  (forward-up->quaternion (-> self cshape quat) (-> self dir) *up-vector*)
+  (forward-up->quaternion (-> self cshape quat) (-> self dir) *up-vector*))
   (none))
 
 (defbehavior send-attack! demon-chicken ((proc process) (tshapes touching-shapes-entry))
@@ -447,6 +462,13 @@
   (the int (-> *game-info* money-per-level 5)))
 
 (defun get-chick-from-flock ((idx int))
+;; Chicken indexes are 0-11 (- NUM_FLOCKPOINTS 1)
+  (when (or (< idx 0) (>= idx NUM_FLOCKPOINTS))
+  (format #t (string-format "AHHH idx in get-chick-from-flock is outside of bounds value of idx was ~D~%" idx))
+  (suspend)
+  (set! *target* (the-as target 46327846237649324325.0))
+  ;;break
+  )
   (when *flock*
     (if (the demon-chicken (handle->process (-> *flock* chicks idx)))
       (return (the demon-chicken (handle->process (-> *flock* chicks idx))))
@@ -494,6 +516,40 @@
                   0.0))
         (return #t))
       #f)))
+
+  (defun get-chicken-initial-return-point ()
+  (let* ((warpgate-pos (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans)) ;; point A
+         (target-pos (-> *target* root trans)) ;; point B
+         (circle-radius (meters 5.0)) ;; desired distance from warpgate-pos
+         (vector-AB (new 'static 'vector)) ;; vector from A to B (ignoring y)
+         (normalized-AB (new 'static 'vector)) ;; normalized direction vector
+         (final-point (new 'static 'vector)) ;; final point on the circle
+         (magnitude 0.0))
+    ;; Calculate vector AB by subtracting warpgate-pos from target-pos (ignoring y)
+    (set! (-> vector-AB x) (- (-> target-pos x) (-> warpgate-pos x)))
+    (set! (-> vector-AB z) (- (-> target-pos z) (-> warpgate-pos z)))
+    (set! (-> vector-AB y) 0.0) ;; Ignore y component for direction
+    ;; Draw initial points for reference
+    (draw-origin-sphere-text warpgate-pos "warpgate/vector A")
+    (draw-origin-sphere-text target-pos "target/vector B")
+    (draw-origin-sphere-text vector-AB "Vector AB (ignoring y)")
+    ;; Normalize vector AB to get a unit direction vector
+    (set! magnitude (sqrtf (+ (* (-> vector-AB x) (-> vector-AB x)) (* (-> vector-AB z) (-> vector-AB z)))))
+    (when (> magnitude 0.0)
+      (set! (-> normalized-AB x) (/ (-> vector-AB x) magnitude))
+      (set! (-> normalized-AB z) (/ (-> vector-AB z) magnitude)))
+    ;; Scale the normalized direction vector by the circle radius
+    (set! (-> normalized-AB x) (* (-> normalized-AB x) circle-radius))
+    (set! (-> normalized-AB z) (* (-> normalized-AB z) circle-radius))
+    ;; Calculate the final point by adding the scaled vector to warpgate-pos
+    (set! (-> final-point x) (+ (-> warpgate-pos x) (-> normalized-AB x)))
+    (set! (-> final-point z) (+ (-> warpgate-pos z) (-> normalized-AB z)))
+    ;; Set y-coordinate to match the warpgate y-coordinate
+    (set! (-> final-point y) (-> warpgate-pos y))
+    ;; Draw the final point at the specified distance from warpgate-pos
+    (draw-origin-sphere-text final-point "Point on Circle Radius (ignoring y)")
+    (return final-point))
+  (the-as vector #f))
 
 (defun reset-saved-chick-from-mem ()
   (when (nonzero? (get-saved-chicks-from-mem))
