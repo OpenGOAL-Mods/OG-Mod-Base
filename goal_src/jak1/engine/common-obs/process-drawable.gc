@@ -619,7 +619,7 @@
             (let ((v1-16 art-joint-anim)) (b! (= (-> s1-0 type) v1-16) cfg-11))
             (go process-drawable-art-error "joint-anim")
             (format 0 "dummy-19 bad~%")
-            (break!)
+            ;; (break!)
             (nop!)
             0
             (label cfg-11)

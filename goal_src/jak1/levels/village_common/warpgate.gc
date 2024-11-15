@@ -47,6 +47,8 @@
       (if (logtest? (-> self control status) (cshape-moving-flags onsurf)) (go target-hit-ground #f)))
   :code
     (behavior ((arg0 vector) (arg1 vector))
+      (restore-cells)
+      (restore-saved-chicks-from-mem)
       (clear-collide-with-as (-> self control))
       (ja-channel-set! 0)
       (vector-reset! (-> self control transv))

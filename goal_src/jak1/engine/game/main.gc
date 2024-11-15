@@ -360,7 +360,7 @@
     ;; collide dma
     (suspend)
     (while *run*
-     (if (zero-volume?) (pause-main-music) (resume-main-music))
+      (if (zero-volume?) (pause-main-music) (resume-main-music))
       (runs-every-frame) ;; trigger hook for mod base mod-base-change entry point
       ;; start immediately after all process updates finish.
       (profiler-instant-event "display-loop-top")

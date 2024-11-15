@@ -353,7 +353,8 @@
       (true! *has-landed?*))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id subtitle))
       (draw-string-xy (string-format "Speedrunner Mode ~%~S / ~S ~%Category: ~S ~%Jak or Flut?: ~S ~%Has Landed? ~A"
-                                     *pc-settings-built-sha* *mod-version-text*
+                                     *pc-settings-built-sha*
+                                     *mod-version-text*
                                      (enum->string speedrun-category (-> *speedrun-info* category))
                                      (if chicken-mode-on? "FLUT" "JAK")
                                      *has-landed?*)

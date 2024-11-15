@@ -854,7 +854,7 @@
    (scale-center        float)
    (icon-pos-y          int32)))
 
-(defun-extern get-saved-chicks int)
+(defun-extern get-saved-chicks integer)
 
 (defun-extern get-total-chicks int)
 

@@ -191,7 +191,7 @@
           (set! *sphere-color* *color-green*)
           ;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *sphere-color*)
           (if less-than-stored-pos
-            ;; If our current point is closer than our last point, store it and update closest known distance
+            ;; If our point is closer than our last point, store it and update closest known distance
             (begin
               (set! *closest-pos-index* i)
               (set! old-point-to-jak dist-target-meters)))))))
@@ -247,18 +247,9 @@
 (defun reset-chicken-targets ()
   ;; wtf man just code normal please stupd hack stupid-hacks-every-frame
   (when done-init?
-    (vector-identity! (-> *chicken-0* target-pos))
-    (vector-identity! (-> *chicken-1* target-pos))
-    (vector-identity! (-> *chicken-2* target-pos))
-    (vector-identity! (-> *chicken-3* target-pos))
-    (vector-identity! (-> *chicken-4* target-pos))
-    (vector-identity! (-> *chicken-5* target-pos))
-    (vector-identity! (-> *chicken-6* target-pos))
-    (vector-identity! (-> *chicken-7* target-pos))
-    (vector-identity! (-> *chicken-8* target-pos))
-    (vector-identity! (-> *chicken-9* target-pos))
-    (vector-identity! (-> *chicken-10* target-pos))
-    (vector-identity! (-> *chicken-11* target-pos)))
+    (dotimes (i NUM_FLOCKPOINTS)
+      (if (= (-> (get-chick-from-flock i) substate) 'following) (vector-identity! (-> (get-chick-from-flock i) target-pos)))
+      (update-chicken-substate (get-chick-with-state 'following) 'uncollected)))
   (format #t "RESETING CHICKEN TARGETS")
   (none))
 
@@ -269,12 +260,7 @@
                           (entity-perm-status dead)
                           #f))
   (reset-chicken-targets)
-  ;;Clear the flock to 0
-  (set! (-> *custom-level-info*
-            data
-            (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))
-            current-chicks)
-        0))
+  0)
 
 (defun draw-origin ()
   (when *show-debug*
@@ -294,7 +280,7 @@
   (none))
 
 (defun adjust-chick-origin ((mmark vector))
-  (draw-origin)
+  ;;(draw-origin)
   (let ((xchange 0.0)
         (ychange 0.0)
         (zchange 0.0))
@@ -327,37 +313,31 @@
   "This function runs on jak spawn, and checks if the stored memory card value is nonzero, and saved chicks is zero if so it updates it."
   (if (and (nonzero? (get-saved-chicks-from-mem)) (= (get-saved-chicks) 0)) (update-saved-chicks (get-saved-chicks-from-mem))))
 
-(defun update-current-chicks ((amount int))
-  (set! (-> *custom-level-info*
-            data
-            (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))
-            current-chicks)
-        amount)
-  (none))
-
 (defun run-this-when-cell-grab ((self fuel-cell))
   ;;Saved a chick
   ;; make sure any speedrun display is hidden
   (hide-speedrun-display)
   ;;Tagmort
   ;;check to see the saved chickens stored and maybe restore it
-  (if (and (= (get-current-chicks) 0) (= (get-saved-chicks) 0))
-    (begin
-      (format #t "picked up a chick and its first in the level~%")
-      (if (> (get-saved-chicks-from-mem) (get-saved-chicks))
-        (begin
-          (format #t
-                  "Found saved chick data that was non zero, updating saved chicks in level to ~D~%"
-                  (get-saved-chicks-from-mem))
-          (update-saved-chicks (get-saved-chicks-from-mem))))))
+  (when (and (= (get-current-chicks) 0) (= (get-saved-chicks) 0))
+    (format #t "picked up a chick and its first in the level~%")
+    (when (> (get-saved-chicks-from-mem) (get-saved-chicks))
+      (format #t
+              "Found saved chick data that was non zero, updating saved chicks in level to ~D~%"
+              (get-saved-chicks-from-mem))
+      (update-saved-chicks (get-saved-chicks-from-mem))))
   ;; Set the chick with the highest index as this cell
-  (set! (-> (get-chick-from-flock (the int (get-current-chicks))) parent-cell-name) (the string (-> self name)))
+  (set! (-> (get-chick-with-state 'uncollected) parent-cell-name) (the string (-> self name)))
   ;; Increment after setting name
-  (update-current-chicks (+ (get-current-chicks) 1))
+  (update-chicken-substate (get-chick-with-state 'uncollected) 'following)
   (play-sound-file "ChickPickup1.mp3" (the int (-> *setting-control* default sfx-volume)))
   (if (= (+ (get-current-chicks) (get-saved-chicks)) (get-total-chicks))
     (play-sound-file "coin1.wav" (the int (-> *setting-control* default sfx-volume))))
   (none))
+
+(defun give-12-chickens ()
+  (dotimes (i NUM_FLOCKPOINTS)
+    (update-chicken-substate (get-chick-with-state 'uncollected) 'following)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Begin process-function defintions.
@@ -496,7 +476,7 @@
           ;;annoying but the daxter cutscene takes a second to update the volume...
           (and *custom-cutscene?* (string= *currentSpoolName* "green-sagecage-daxter-sacrifice")))
     (begin
-      ;;store the current volume setting
+      ;;store the volume setting
       (if (= *old-voice-volume* 0.0) (set! *old-voice-volume* (-> *setting-control* default dialog-volume)))
       ;;set volume to 0 during this cutscene
       (set! (-> *setting-control* default dialog-volume) 0.0))
@@ -512,7 +492,7 @@
     (adjust-chick-origin (find-best-master-mark))
     ;;If are flock points aren't setup, lets set them up.
     ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
-    ;;Here we should call a funciton, that checks the current number of chicks we have following us, and set up the target pos-valid
+    ;;Here we should call a funciton, that checks the number of chicks we have following us, and set up the target pos-valid
     ;;If a chicken should despawn, set its target pos to 0,0,0.
     (assign-remove-demon-chicken-target)
     ;;Constantly check all chicks to see if they are in the warpgate if they are, then run chick-saved and increment saved per level
@@ -548,7 +528,7 @@ This function checks a few conditions that *shouldn't* happen, but if they do th
 Then at the end of this function it checks some conditions and returns #t or #f depending (I think this is to let me use the portal in development)
 1. Our saved chicks is greater than or euqal to the total chicks in the level and there isnt a chicken going to the portal.
 2. debug mode is on and I am holding l3
-3. There are no cells left to grab, our current chickens is 0 and there isnt a chicken going to the portal.
+3. There are no cells left to grab, our chickens is 0 and there isnt a chicken going to the portal.
   |#
   (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1)))
          (no-powercells-alive? (= (get-loaded-cell-count) 0))
@@ -591,7 +571,12 @@ Then at the end of this function it checks some conditions and returns #t or #f 
 
 (defun runs-every-frame-proc-func ()
   "this is ran in its own process called run-every-frame-proc"
+  ;; (if (get-chick-with-state 'moving-to-portal)  (vector-copy! (-> (get-chick-with-state 'moving-to-portal) target-pos) (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans))
+  ;; )
+  (when (and (cpad-hold? 0 l2) (cpad-pressed? 0 l3))
+    (give-12-chickens))
   (when #t
+    ;;(inspect (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans))
     #|
  This where we check for softlocks, and should be the only spot we check for softlocks
       This checks things like currently saved/following chicks, so it might be unsafe in a retail level. Add exceptions here if crash observed.
@@ -625,7 +610,6 @@ Then at the end of this function it checks some conditions and returns #t or #f 
       (play-sound-file "farts/vinefart.mp3" (the int (-> *setting-control* default dialog-volume))))
     ;; (sound-manager)
     (when (run-mort-code?)
-
       (if (and (= (-> *flock-points* points 1 x) 0.0)
                (!= (-> *target* state name) 'target-warp-out)
                (!= (-> *target* state name) 'target-continue)
@@ -828,7 +812,36 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   (chicken-mode-logic)
   (if *show-input-display* (input-display-on) (input-display-off))
   ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
-
+  (when run-mort-code?
+    (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 20 0.0 (font-color default) (font-flags shadow kerning))))
+      (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
+      (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
+      (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.6))
+      (set! (-> gp-0 flags) (font-flags shadow kerning large))
+      (print-game-text-scaled (string-format "CHICKEN POOL STATS!!~%FOLLOW ~D~%UNCOLLECT ~D~%WAITING ~D~%TO PORTAL ~D~%SAVED ~D~%USED CHICKEN POOL SLOTS ~%~D/12"
+                                             (get-current-chicks)
+                                             (get-uncollected-chicks)
+                                             (get-waiting-chicks)
+                                             (get-to-portal-chicks)
+                                             (get-saved-chicks)
+                                             (+ (+ (get-current-chicks) (get-waiting-chicks)) (get-to-portal-chicks)))
+                              1.0
+                              gp-0
+                              128))
+    (when done-init?
+      (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 150 0.0 (font-color default) (font-flags shadow kerning))))
+        (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
+        (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
+        (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.6))
+        (set! (-> gp-0 flags) (font-flags shadow kerning large))
+        (print-game-text-scaled (string-format "X:~D~%Y:~D~%Z:~D~%"
+                                               (-> *chicken-0* target-pos x)
+                                               (-> *chicken-0* target-pos y)
+                                               (-> *chicken-0* target-pos z))
+                                1.0
+                                gp-0
+                                128))))
+  ;;(defun print-game-text-scaled ((str string) (scale float) (font-ctxt font-context) (alpha int))
   (when *debug-segment*
     (orb-placer-maintenance))
   (none))
