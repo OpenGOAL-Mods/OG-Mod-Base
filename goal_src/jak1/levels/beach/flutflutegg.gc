@@ -170,23 +170,20 @@
                      (= (-> event param 1) 'spin)
                      (= (-> event param 1) 'spin-air)
                      (= (-> event param 1) 'flut-attack)
-                      (= (-> event param 1) 'flut-attack-ground))
+                     (= (-> event param 1) 'flut-attack-ground))
                  (!= (-> self incomming-attack-id) (-> event param 2)))
         (set! (-> self incomming-attack-id) (-> event param 2))
         (flutflutegg-hit-sounds)
-
-          (when (= (-> event param 1) 'flut-attack-ground)
-    (birth-pickup-at-point (-> self root trans)
-                           (the pickup-type (-> self eco-collectable))
-                           (the float (-> self eco-quantity))
-                           #f
-                           *target*
-                           (the-as fact-info #f))
-    (set! (-> self num-hit) (-> self max-hp))
-    (set! (-> self spawned-collect?) #t)
-    (go flutflutegg-break #t))
-
-
+        (when (= (-> event param 1) 'flut-attack-ground)
+          (birth-pickup-at-point (-> self root trans)
+                                 (the pickup-type (-> self eco-collectable))
+                                 (the float (-> self eco-quantity))
+                                 #f
+                                 *target*
+                                 (the-as fact-info #f))
+          (set! (-> self num-hit) (-> self max-hp))
+          (set! (-> self spawned-collect?) #t)
+          (go flutflutegg-break #t))
         (let ((s5-1 (vector-! (new-stack-vector0) (-> (the-as process-drawable proc) root trans) (-> self root trans))))
           (set! (-> s5-1 y) 0.0)
           (vector-normalize! s5-1 1.0)

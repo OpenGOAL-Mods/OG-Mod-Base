@@ -52,3 +52,5 @@
 (defun-extern draw-origin-sphere-text vector string none)
 
 (defun-extern get-chick-from-state process)
+
+(define-extern *seen-all-orbs-display* symbol)

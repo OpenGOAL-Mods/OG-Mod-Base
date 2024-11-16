@@ -1060,7 +1060,7 @@
   :code
     (behavior ((arg0 object) (arg1 handle))
       (local-vars (sv-96 res-tag))
-      (if (or (< *MAXCURRENTCHICKS* (get-current-chicks)) ) (return #f))
+      (if (or (< *MAXCURRENTCHICKS* (get-current-chicks))) (return #f))
       (sound-play "pu-powercell")
       (clear-collide-with-as (-> self root))
       (logclear! (-> self mask) (process-mask actor-pause))

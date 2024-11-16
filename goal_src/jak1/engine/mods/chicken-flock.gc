@@ -760,12 +760,12 @@
       (when (< (vector-vector-distance (-> (get-chick-with-state 'waiting-to-return) target-pos)
                                        (-> (get-chick-with-state 'waiting-to-return) root trans))
                (meters 1.2))
-        (vector-copy! (-> (get-chick-with-state 'waiting-to-return) target-pos) (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans))
+        (vector-copy! (-> (get-chick-with-state 'waiting-to-return) target-pos)
+                      (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans))
         (update-chicken-substate (get-chick-with-state 'waiting-to-return) 'moving-to-portal)))
     ;;chicken in waiting-state update to walk to portal then walk to portal
     )
   (none))
-
 
 (defun warp-demon-chick ()
   (dotimes (i NUM_FLOCKPOINTS)
@@ -786,8 +786,8 @@
         (sound-play "warpgate-tele")
         (update-saved-chicks (+ (get-saved-chicks) 1))
         (update-saved-chicks-in-mem 1)
-         (vector-identity! (-> (get-chick-from-flock i)target-pos))
-         (vector-identity! (-> (get-chick-from-flock i) root trans))
+        (vector-identity! (-> (get-chick-from-flock i) target-pos))
+        (vector-identity! (-> (get-chick-from-flock i) root trans))
         ;;maybe unsafe
         (if (>= (get-saved-chicks) (get-total-chicks))
           (begin

@@ -287,11 +287,11 @@
                (+! (-> this money-total) amount)
                ;; if we have all the money in our level, display the all orbs graphic
                (get-mort-orb-total)
-               (if (>= (-> *game-info* money-total) *mort-orb-total*)
-                 (activate-orb-all -1)
+
+
                  (if (= (-> this money-per-level level-idx) (-> (get-game-count level-idx) money-count))
                    ;;CHANGE THIS MORT TAGMORT MORT STUPID THIS
-                   (activate-orb-all level-idx))))))))
+                   (activate-orb-all level-idx)))))))
      ;; increment our current money count
      (+! (-> this money) amount))
     (('fuel-cell)

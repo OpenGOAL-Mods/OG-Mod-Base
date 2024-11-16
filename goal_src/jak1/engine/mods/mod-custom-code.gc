@@ -156,8 +156,7 @@
       (begin
         (suspend)
         (set! (-> *autosplit-info-jak1* res-cold-pipe) 1)
-        (go-process (process-by-ename "robotboss-3") robotboss-white-eco-movie)
-        (suspend))))
+        (go-process (process-by-ename "robotboss-3") robotboss-white-eco-movie))))
   (none))
 
 (defun move-samos-butts ()
@@ -317,7 +316,7 @@
   ;;Saved a chick
   ;; make sure any speedrun display is hidden
   (hide-speedrun-display)
-    (if (portal-mort-switch) (go-virtual-process (portal-mort-switch) basebutton-going-down))
+  (if (portal-mort-switch) (go-virtual-process (portal-mort-switch) basebutton-going-down))
   ;;Tagmort
   ;;check to see the saved chickens stored and maybe restore it
   (when (and (= (get-current-chicks) 0) (= (get-saved-chicks) 0))
@@ -814,52 +813,41 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   (if *show-input-display* (input-display-on) (input-display-off))
   ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
   (when run-mort-code?
-
-
-(let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 20 0.0 (font-color default) (font-flags shadow kerning))))
+    (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 20 0.0 (font-color default) (font-flags shadow kerning))))
       (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
       (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
       (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.6))
       (set! (-> gp-0 flags) (font-flags shadow kerning large))
-      (print-game-text-scaled (string-format "TEST VERSION NOT VALID FOR RUNS"
-                                            )
-                              1.0
-                              gp-0
-                              128))
-
-
-
-    (when *debug-segment* (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 20 0.0 (font-color default) (font-flags shadow kerning))))
-      (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
-      (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
-      (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.6))
-      (set! (-> gp-0 flags) (font-flags shadow kerning large))
-      (print-game-text-scaled (string-format "CHICKEN POOL STATS!!~%FOLLOW ~D~%UNCOLLECT ~D~%WAITING ~D~%TO PORTAL ~D~%SAVED ~D~%USED CHICKEN POOL SLOTS ~%~D/12"
-                                             (get-current-chicks)
-                                             (get-uncollected-chicks)
-                                             (get-waiting-chicks)
-                                             (get-to-portal-chicks)
-                                             (get-saved-chicks)
-                                             (+ (+ (get-current-chicks) (get-waiting-chicks)) (get-to-portal-chicks)))
-                              1.0
-                              gp-0
-                              128))
-
-    (when done-init?
-      (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 150 0.0 (font-color default) (font-flags shadow kerning))))
+      (print-game-text-scaled (string-format "TEST VERSION NOT VALID FOR RUNS") 1.0 gp-0 128))
+    (when *debug-segment*
+      (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 20 0.0 (font-color default) (font-flags shadow kerning))))
         (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
         (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
         (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.6))
         (set! (-> gp-0 flags) (font-flags shadow kerning large))
-        (print-game-text-scaled (string-format "X:~D~%Y:~D~%Z:~D~%"
-                                               (-> *chicken-0* target-pos x)
-                                               (-> *chicken-0* target-pos y)
-                                               (-> *chicken-0* target-pos z))
+        (print-game-text-scaled (string-format "CHICKEN POOL STATS!!~%FOLLOW ~D~%UNCOLLECT ~D~%WAITING ~D~%TO PORTAL ~D~%SAVED ~D~%USED CHICKEN POOL SLOTS ~%~D/12"
+                                               (get-current-chicks)
+                                               (get-uncollected-chicks)
+                                               (get-waiting-chicks)
+                                               (get-to-portal-chicks)
+                                               (get-saved-chicks)
+                                               (+ (+ (get-current-chicks) (get-waiting-chicks)) (get-to-portal-chicks)))
                                 1.0
                                 gp-0
-                                128))))
-
-)
+                                128))
+      (when done-init?
+        (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 150 0.0 (font-color default) (font-flags shadow kerning))))
+          (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
+          (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
+          (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.6))
+          (set! (-> gp-0 flags) (font-flags shadow kerning large))
+          (print-game-text-scaled (string-format "X:~D~%Y:~D~%Z:~D~%"
+                                                 (-> *chicken-0* target-pos x)
+                                                 (-> *chicken-0* target-pos y)
+                                                 (-> *chicken-0* target-pos z))
+                                  1.0
+                                  gp-0
+                                  128)))))
   ;;(defun print-game-text-scaled ((str string) (scale float) (font-ctxt font-context) (alpha int))
   (when *debug-segment*
     (orb-placer-maintenance))
@@ -873,7 +861,7 @@ Then at the end of this function it checks some conditions and returns #t or #f 
       )
     (when (not from-cache?)
       ;; Code here runs only if the orb was NOT from an orb cache
-      ))
+      (set! *seen-all-orbs-display* #f)))
   (none))
 
 (defun runs-on-fly-pickup ()
@@ -926,7 +914,6 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   (restore-saved-chicks-from-mem)
   ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc
   ;;(process-spawn-function process music-manager-proc)
-
   (none))
 
 (defun runs-on-jak-death ((death-event symbol))

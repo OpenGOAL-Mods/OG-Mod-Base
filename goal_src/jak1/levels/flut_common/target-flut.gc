@@ -1009,8 +1009,7 @@
                     (lambda :behavior target ((arg0 nav-enemy))
                       (seek! (-> arg0 collide-info root-prim local-sphere w) (the-as float 28672.0) (* 286720.0 (seconds-per-frame)))
                       (update-transforms! (-> arg0 collide-info))
-                      (none))))
-      )
+                      (none)))))
   :exit
     (-> target-flut-air-attack
         exit)
