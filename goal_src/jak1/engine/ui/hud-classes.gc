@@ -401,7 +401,7 @@
            (s3-0 (-> *display* frames (-> *display* on-screen) frame global-buf))
            (s4-1 (-> s3-0 base)))
       (let ((s2-0 draw-string-xy))
-        (format (clear *temp-string*) "~D/~D" (-> this total-orbs) (-> this total-orbs))
+        (format (clear *temp-string*) "~D/~D" (get-mort-orb-total)(get-mort-orb-total))
         (s2-0 *temp-string*
               s3-0
               (+ (-> this text-x) (* (-> this x-sgn) (-> this offset)) s1-0)
