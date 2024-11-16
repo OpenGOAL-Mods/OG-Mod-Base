@@ -317,6 +317,7 @@
   ;;Saved a chick
   ;; make sure any speedrun display is hidden
   (hide-speedrun-display)
+    (if (portal-mort-switch) (go-virtual-process (portal-mort-switch) basebutton-going-down))
   ;;Tagmort
   ;;check to see the saved chickens stored and maybe restore it
   (when (and (= (get-current-chicks) 0) (= (get-saved-chicks) 0))
@@ -813,7 +814,22 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   (if *show-input-display* (input-display-on) (input-display-off))
   ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
   (when run-mort-code?
-    (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 20 0.0 (font-color default) (font-flags shadow kerning))))
+
+
+(let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 20 0.0 (font-color default) (font-flags shadow kerning))))
+      (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
+      (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
+      (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.6))
+      (set! (-> gp-0 flags) (font-flags shadow kerning large))
+      (print-game-text-scaled (string-format "TEST VERSION NOT VALID FOR RUNS"
+                                            )
+                              1.0
+                              gp-0
+                              128))
+
+
+
+    (when *debug-segment* (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 20 0.0 (font-color default) (font-flags shadow kerning))))
       (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
       (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
       (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.6))
@@ -828,6 +844,7 @@ Then at the end of this function it checks some conditions and returns #t or #f 
                               1.0
                               gp-0
                               128))
+
     (when done-init?
       (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 150 0.0 (font-color default) (font-flags shadow kerning))))
         (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
@@ -841,6 +858,8 @@ Then at the end of this function it checks some conditions and returns #t or #f 
                                 1.0
                                 gp-0
                                 128))))
+
+)
   ;;(defun print-game-text-scaled ((str string) (scale float) (font-ctxt font-context) (alpha int))
   (when *debug-segment*
     (orb-placer-maintenance))
@@ -907,6 +926,7 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   (restore-saved-chicks-from-mem)
   ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc
   ;;(process-spawn-function process music-manager-proc)
+
   (none))
 
 (defun runs-on-jak-death ((death-event symbol))

@@ -149,6 +149,7 @@
      (frame-rate)
      (lod-bg)
      (lod-fg)
+     (jak-or-flut)
      (resolution)
      (aspect-new)
      (language-subtitles)

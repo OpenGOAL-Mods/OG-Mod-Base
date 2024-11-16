@@ -95,6 +95,8 @@
 
 (def-progress-carousell *carousell-lod-fg* (lod-high lod-low lod-ps2))
 
+(def-progress-carousell *carousell-jak-or-flut* (jak flut))
+
 (def-progress-carousell *carousell-speaker* (speaker-always speaker-never speaker-auto))
 
 (def-progress-carousell *carousell-frame-rate-150fps* (60fps 100fps 150fps))
@@ -757,6 +759,7 @@
        :type
        game-option
        (new 'static 'game-option :option-type (game-option-type button) :name (text-id speedrun-reset-current-run) :scale #t)
+              (new 'static 'game-option :option-type (game-option-type jak-or-flut) :name (text-id jak-or-flut) :scale #t)
        (new 'static 'game-option :option-type (game-option-type button) :name (text-id speedrun-new-full-game) :scale #t)
        (new 'static
             'game-option
@@ -1367,7 +1370,9 @@
   (let ((s5-0 (if arg3 arg2 (- arg2))))
     (+! (-> arg1 origin x) (the float s5-0))
     (let ((f30-0 (- 1.0 (* 0.0033333334 (the float arg2)))))
-      (print-game-text-scaled (lookup-text! *common-text* arg0 #f) f30-0 arg1 (the int (* 128.0 f30-0))))
+      (print-game-text-scaled (lookup-text! *common-text* arg0 #f) f30-0 arg1 (the int (* 128.0 f30-0)))
+      ;; add flut icon here later
+      )
     (set! (-> arg1 origin x) (- (-> arg1 origin x) (the float s5-0))))
   (set! (-> arg1 color) (font-color default))
   arg1)
@@ -2128,6 +2133,7 @@
   (set! (-> *sound-options-pc* 0 value-to-modify) (&-> *pc-settings* memcard-volume-sfx))
   (set! (-> *sound-options-pc* 1 value-to-modify) (&-> *pc-settings* memcard-volume-music))
   (set! (-> *sound-options-pc* 2 value-to-modify) (&-> *pc-settings* memcard-volume-dialog))
+  (set! (-> *speedrun-options* 1 value-to-modify) (&-> *progress-carousell* int-backup))
   (dotimes (i (1- (-> *cheats* length)))
     (set! (-> *cheats* i value-to-modify) (&-> *progress-carousell* symbol-backup)))
   ;(set! (-> *sound-options-pc* 3 value-to-modify) (&-> *pc-settings* music-fadein?))
@@ -2235,6 +2241,7 @@
                     (game-option-type msaa)
                     (game-option-type lod-bg)
                     (game-option-type lod-fg)
+                    (game-option-type jak-or-flut)
                     (game-option-type speaker)
                     (game-option-type frame-rate)
                     (game-option-type language-subtitles)
@@ -2318,6 +2325,7 @@
                     (game-option-type msaa)
                     (game-option-type lod-bg)
                     (game-option-type lod-fg)
+                    (game-option-type jak-or-flut)
                     (game-option-type speaker)
                     (game-option-type frame-rate)
                     (game-option-type language-subtitles)
@@ -2640,6 +2648,10 @@
                   (cond
                     ((-> *pc-settings* ps2-lod-dist?) (set! (-> *progress-carousell* int-backup) 1))
                     (else (set! (-> *progress-carousell* int-backup) 0))))
+                                     (((game-option-type jak-or-flut))
+                  (cond
+                    (chicken-mode-on? (set! (-> *progress-carousell* int-backup) 1))
+                    (else (set! (-> *progress-carousell* int-backup) 0))))
                  (((game-option-type speaker))
                   (case (-> *pc-settings* subtitle-speaker?)
                     ((#t) (set! (-> *progress-carousell* int-backup) 0))
@@ -2678,6 +2690,7 @@
                     (((game-option-type msaa)) (set! (-> *progress-carousell* current-carousell) *carousell-msaa*))
                     (((game-option-type lod-bg)) (set! (-> *progress-carousell* current-carousell) *carousell-lod-bg*))
                     (((game-option-type lod-fg)) (set! (-> *progress-carousell* current-carousell) *carousell-lod-bg*))
+                                      (((game-option-type jak-or-flut)) (set! (-> *progress-carousell* current-carousell) *carousell-jak-or-flut*))
                     (((game-option-type speaker)) (set! (-> *progress-carousell* current-carousell) *carousell-speaker*))
                     (((game-option-type frame-rate)) (set! (-> *progress-carousell* current-carousell) *carousell-frame-rate*))
                     (((game-option-type language-subtitles)) (set! (-> *progress-carousell* current-carousell) *subtitle-languages*))
@@ -2729,6 +2742,10 @@
                (case (-> *progress-carousell* int-backup)
                  ((0) (set! (-> *pc-settings* lod-force-actor) 0) (set! (-> *pc-settings* ps2-lod-dist?) #f))
                  ((1) (set! (-> *pc-settings* lod-force-actor) 0) (set! (-> *pc-settings* ps2-lod-dist?) #t))))
+                               (((game-option-type jak-or-flut))
+               (case (-> *progress-carousell* int-backup)
+                 ((0) (set! (-> *pc-settings* lod-force-actor) 0) (set! chicken-mode-on? #f) (send-event *target* 'end-mode))
+                 ((1) (set! (-> *pc-settings* lod-force-actor) 0) (set! chicken-mode-on? #t))))
               (((game-option-type language-subtitles))
                (let ((lang (assoc (the binteger (-> *subtitle-languages* (-> *progress-carousell* int-backup))) *language-remap-info-pc*)))
                  (set! (-> *pc-settings* subtitle-language) (the pc-language (/ (the int (cadr lang)) 8)))))
@@ -3110,6 +3127,7 @@
                       (game-option-type msaa)
                       (game-option-type lod-bg)
                       (game-option-type lod-fg)
+                          (game-option-type jak-or-flut)
                       (game-option-type speaker)
                       (game-option-type frame-rate)
                       (game-option-type language-subtitles)
@@ -3176,6 +3194,7 @@
                       (game-option-type msaa)
                       (game-option-type lod-bg)
                       (game-option-type lod-fg)
+                                         (game-option-type jak-or-flut)
                       (game-option-type speaker)
                       (game-option-type frame-rate)
                       (game-option-type normal-inverted)

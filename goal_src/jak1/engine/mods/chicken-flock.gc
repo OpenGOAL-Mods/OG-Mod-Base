@@ -782,11 +782,12 @@
           (effect-control-method-10 (-> (get-chick-from-flock i) skel effect) 'death-warp-in -1.0 -1))
         ;;set their target to 1,1,1
         (update-chicken-substate (get-chick-from-flock i) 'uncollected)
-        (play-sound-file "ChickPickup1.mp3" (the int (-> *setting-control* default sfx-volume)))
+        ;;(play-sound-file "ChickPickup1.mp3" (the int (-> *setting-control* default sfx-volume)))
+        (sound-play "warpgate-tele")
         (update-saved-chicks (+ (get-saved-chicks) 1))
         (update-saved-chicks-in-mem 1)
-        ;; (vector-identity! (-> (get-chick-from-flock i)target-pos))
-        ;; (vector-identity! (-> (get-chick-from-flock i) root trans))
+         (vector-identity! (-> (get-chick-from-flock i)target-pos))
+         (vector-identity! (-> (get-chick-from-flock i) root trans))
         ;;maybe unsafe
         (if (>= (get-saved-chicks) (get-total-chicks))
           (begin
