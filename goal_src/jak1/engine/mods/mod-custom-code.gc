@@ -245,10 +245,12 @@
 
 (defun reset-chicken-targets ()
   ;; wtf man just code normal please stupd hack stupid-hacks-every-frame
-  (when done-init?
+  (when (run-mort-code?)
     (dotimes (i NUM_FLOCKPOINTS)
-      (if (= (-> (get-chick-from-flock i) substate) 'following) (vector-identity! (-> (get-chick-from-flock i) target-pos)))
-      (update-chicken-substate (get-chick-with-state 'following) 'uncollected)))
+      (when (!= (-> (get-chick-from-flock i) substate) 'uncollected)
+        (vector-identity! (-> (get-chick-from-flock i) target-pos))
+        (vector-identity! (-> (get-chick-from-flock i) root trans))
+        (set! (-> (get-chick-from-flock i) substate) 'uncollected))))
   (format #t "RESETING CHICKEN TARGETS")
   (none))
 

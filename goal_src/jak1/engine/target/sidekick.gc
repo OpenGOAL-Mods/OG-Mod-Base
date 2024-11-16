@@ -105,7 +105,9 @@
                                 *sidekick-remap*
                                 (the-as int (-> self anim-seed))
                                 "")
-          (let ((v1-22 (-> self parent-override 0 draw color-mult quad))) (set! (-> self draw color-mult quad) v1-22))
+          ;; This causes a crash when reseting and chickens are going to the portal for some reason...
+          ;; (when (-> self parent-override 0 draw color-mult quad)
+          ;; (let ((v1-22 (-> self parent-override 0 draw color-mult quad))) (set! (-> self draw color-mult quad) v1-22)))
           (with-pc ;; duh!
             (when (pc-cheats? (-> *pc-settings* cheats) sidekick-blue)
               (set! (-> self draw color-mult x) (set! (-> self draw color-mult y) 0.1))))

@@ -195,7 +195,6 @@
   "Basic post: Update grace period, shadow, joint control and disable sidekick."
   (update-direction-from-time-of-day (-> self draw shadow-ctrl))
   (false! (-> *setting-control* default play-hints))
-  (send-event *target* 'sidekick #t)
   ;; joint control debug prints
   (if ORANGE_DEMON_DEBUG (aif (-> self skel) (debug-print-channels it (the symbol *stdcon*))))
   (if (= (-> *target* next-state name) 'target-continue) (set! (-> self grace-period) (current-time)))
@@ -267,23 +266,23 @@
   :event demon-chicken-event-handler
   :enter
     (behavior ()
-      (if (and (!= (-> self draw status) (the draw-status 17))
-               (< (vector-vector-distance (target-pos 0) (-> self root trans)) (meters 100.0)))
-        ;;Show demon chick
-        (set! (-> self draw status) (the draw-status 17))
-        ;;Hide demon chick
-        (logior! (-> self draw status) (draw-status hidden)))
+      ;; (if (and (!= (-> self draw status) (the draw-status 17))
+      ;;          (< (vector-vector-distance (target-pos 0) (-> self root trans)) (meters 100.0)))
+      ;;   ;;Show demon chick
+      ;;   (set! (-> self draw status) (the draw-status 17))
+      ;;   ;;Hide demon chick
+      ;;   (logior! (-> self draw status) (draw-status hidden)))
       (set! (-> self state-time) (current-time))
       (none))
   :code
     (behavior ()
       (loop
-        (if (and (!= (-> self draw status) (the draw-status 17))
-                 (< (vector-vector-distance (target-pos 0) (-> self root trans)) (meters 100.0)))
-          ;;Show demon chick
-          (set! (-> self draw status) (the draw-status 17))
-          ;;Hide demon chick
-          (logior! (-> self draw status) (draw-status hidden)))
+        ;; (if (and (!= (-> self draw status) (the draw-status 17))
+        ;;          (< (vector-vector-distance (target-pos 0) (-> self root trans)) (meters 100.0)))
+        ;;   ;;Show demon chick
+        ;;   (set! (-> self draw status) (the draw-status 17))
+        ;;   ;;Hide demon chick
+        ;;   (logior! (-> self draw status) (draw-status hidden)))
         (ja-channel-set! 1)
         (ja-no-eval :group! flut-saddle-flut-run-ja :num! min)
         (until (ja-done? 0)
@@ -313,12 +312,12 @@
         ;;(spawn (-> self part) (the vector (-> self cshape root-prim prim-core))) ;; fire rings
         ;; set up trajectory to follow target
         ;;hack doesnt work(set! (-> self traj-time) 1.0)
-        (if (and (!= (-> self draw status) (the draw-status 17))
-                 (< (vector-vector-distance (target-pos 0) (-> self root trans)) (meters 100.0)))
-          ;;Show demon chick
-          (set! (-> self draw status) (the draw-status 17))
-          ;;Hide demon chick
-          (logior! (-> self draw status) (draw-status hidden)))
+        ;; (if (and (!= (-> self draw status) (the draw-status 17))
+        ;;          (< (vector-vector-distance (target-pos 0) (-> self root trans)) (meters 100.0)))
+        ;;   ;;Show demon chick
+        ;;   (set! (-> self draw status) (the draw-status 17))
+        ;;   ;;Hide demon chick
+        ;;   (logior! (-> self draw status) (draw-status hidden)))
         (setup-from-to-duration-scaled! (-> self trajectory)
                                         (-> self cshape trans)
                                         (-> self target-pos)
@@ -409,7 +408,6 @@
   (vector-vector-distance (-> this cshape trans) (-> this target-pos)))
 
 (defmethod deactivate ((this demon-chicken))
-  (send-event *target* 'sidekick #t)
   ((method-of-type process-drawable deactivate) this)
   (none))
 
