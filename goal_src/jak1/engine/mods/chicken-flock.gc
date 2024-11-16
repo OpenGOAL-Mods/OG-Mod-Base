@@ -760,11 +760,12 @@
       (when (< (vector-vector-distance (-> (get-chick-with-state 'waiting-to-return) target-pos)
                                        (-> (get-chick-with-state 'waiting-to-return) root trans))
                (meters 1.2))
-        (vector-copy! (-> (get-chick-with-state 'waiting-to-return) target-pos) warpgate-pos)
+        (vector-copy! (-> (get-chick-with-state 'waiting-to-return) target-pos) (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans))
         (update-chicken-substate (get-chick-with-state 'waiting-to-return) 'moving-to-portal)))
     ;;chicken in waiting-state update to walk to portal then walk to portal
     )
   (none))
+
 
 (defun warp-demon-chick ()
   (dotimes (i NUM_FLOCKPOINTS)
