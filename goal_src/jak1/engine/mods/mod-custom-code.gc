@@ -575,7 +575,7 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   "this is ran in its own process called run-every-frame-proc"
   ;; (if (get-chick-with-state 'moving-to-portal)  (vector-copy! (-> (get-chick-with-state 'moving-to-portal) target-pos) (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans))
   ;; )
-  (when (and (cpad-hold? 0 l2) (cpad-pressed? 0 l3))
+  (when (and *debug-segment* (cpad-hold? 0 l2) (cpad-pressed? 0 l3))
     (give-12-chickens))
   (when #t
     ;;(inspect (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans))
