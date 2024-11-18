@@ -189,7 +189,7 @@
           (vector-normalize! s5-1 1.0)
           (let ((f0-2 (vector-dot s5-1 (-> self dir)))
                 (f1-2 (- (* (-> s5-1 x) (-> self dir z)) (* (-> s5-1 z) (-> self dir x)))))
-            (if (< f0-2 -0.7)
+            (if (and (< f0-2 -0.7) (not (-> *pc-settings* speedrunner-mode?)))
               (flutflutegg-method-20 self 24576.0 (* -8192.0 f1-2) (* -8192.0 f0-2))
               (flutflutegg-method-20 self 0.0 (* -8192.0 f1-2) (* -8192.0 f0-2)))))
         (go flutflutegg-physics)))
@@ -283,7 +283,7 @@
                   (vector-normalize! s5-1 1.0)
                   (let ((f0-2 (vector-dot s5-1 (-> self dir)))
                         (f1-2 (- (* (-> s5-1 x) (-> self dir z)) (* (-> s5-1 z) (-> self dir x)))))
-                    (if (< f0-2 -0.7)
+                    (if (and (< f0-2 -0.7) (not (-> *pc-settings* speedrunner-mode?)))
                       (the-as symbol (flutflutegg-method-20 self 24576.0 (* -8192.0 f1-2) (* -8192.0 f0-2)))
                       (the-as symbol (flutflutegg-method-20 self 0.0 (* -8192.0 f1-2) (* -8192.0 f0-2)))))))))
   :code
