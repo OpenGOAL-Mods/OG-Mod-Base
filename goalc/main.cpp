@@ -119,6 +119,7 @@ int main(int argc, char** argv) {
     for (const auto& cmd : startup_file.run_before_listen) {
       status = compiler->handle_repl_string(cmd);
     }
+     compiler->run_front_end_on_string("(lt)(mi)");
   };
 
   // Initialize nREPL server socket
