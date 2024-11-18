@@ -92,39 +92,22 @@
   (none))
 
 (defun is-in-chem-fac-silo ()
-  "this checks if the user is in the chem factory silo"
+  "This checks if the user is in the chem factory silo."
   (when (= (-> (level-get-target-inside *level*) name) 'chem-fac)
-    (if (in-bubble? (meters 131.51) (meters 310.37) (meters 200.12) (meters 29.0)) (return #t))
-    (if (in-bubble? (meters 131.51) (meters 315.37) (meters 200.12) (meters 29.0)) (return #t))
-    (if (in-bubble? (meters 131.51) (meters 320.57) (meters 200.12) (meters 29.0)) (return #t))
-    (if (in-bubble? (meters 131.51) (meters 325.37) (meters 200.12) (meters 29.0)) (return #t))
-    (if (in-bubble? (meters 131.51) (meters 330.37) (meters 200.12) (meters 29.0)) (return #t))
-    (if (in-bubble? (meters 131.51) (meters 335.37) (meters 200.12) (meters 29.0)) (return #t))
-    (if (in-bubble? (meters 131.51) (meters 340.37) (meters 200.12) (meters 29.0)) (return #t))
-    (if (in-bubble? (meters 131.51) (meters 345.37) (meters 200.12) (meters 29.0)) (return #t)))
-  #f)
-
-(defun cam-eye-no-rot ()
-  ;;add levels to this or condition if you want the cam-eye to not be able to rotate (Useful for psuedo loading screens/images/menus)
-  (if (or #f (= (-> (level-get-target-inside *level*) name) 'mort-title))
-    (set! (-> *CAM_EYE-bank* rot-speed) 0.0)
-    (set! (-> *CAM_EYE-bank* rot-speed) 364.0889))
-  (none))
-
-(defun check-portal-distance ()
-  (cond
-    ((< (vector-vector-distance (-> *target* root trans)
-                                (-> (the-as training-part (process-by-ename "project-training-part-1")) root trans))
-        (meters 12))
-     (set! *close-to-portal?* #t))
-    (else (set! *close-to-portal?* #f)))
-  (none))
+    (dotimes (i 8) ;; Loop 8 times for the range of checks
+      (when (in-bubble? (meters 131.51)
+                        (meters (+ 310.37 (* i 5))) ;; Increment the Y value by 5 each iteration
+                        (meters 200.12)
+                        (meters 29.0))
+        (return #t)))
+    #f))
 
 (defun update-mort-vars ()
   "This function runs first thing and gets the updated state of variables/booleans"
   ;;This locks the first person with no rotation if in certain levels (psuedo loading screens)
-  (cam-eye-no-rot)
-  (check-portal-distance)
+  (if (= (-> (level-get-target-inside *level*) name) 'mort-title)
+    (set! (-> *CAM_EYE-bank* rot-speed) 0.0)
+    (set! (-> *CAM_EYE-bank* rot-speed) 364.0889))
   (when (handle->process (-> *art-control* spool-lock))
     (with-proc ((handle->process (-> *art-control* spool-lock))) (set! *currentCutsceneFrame* (the int (ja-aframe-num 0))))
     (set! *currentSpoolName* (-> *art-control* active-stream)))
@@ -151,12 +134,8 @@
   (when (and (process-by-ename "robotboss-3") *target*)
     (when (and (= (-> (process-by-ename "robotboss-3") state name) 'robotboss-blue-wait)
                (!= (-> *target* state name) 'target-continue))
-      (dotimes (i 10)
-        (suspend))
-      (begin
-        (suspend)
-        (set! (-> *autosplit-info-jak1* res-cold-pipe) 1)
-        (go-process (process-by-ename "robotboss-3") robotboss-white-eco-movie))))
+      (set! (-> *autosplit-info-jak1* res-cold-pipe) 1)
+      (go-process (process-by-ename "robotboss-3") robotboss-white-eco-movie)))
   (none))
 
 (defun move-samos-butts ()
@@ -171,87 +150,107 @@
   (none))
 
 (defun find-best-master-mark ()
-  (set! old-point-to-jak (meters 3729817398217391279))
-  (dotimes (i 32)
-    (let* ((current-ball-pos (-> *camera* target-spline point i position))
-           (dist-target-meters (/ (vector-vector-distance current-ball-pos (-> *target* root trans)) 40964))
-           (valid? (not (or (> dist-target-meters 1.0) (< dist-target-meters 0.27))))
-           (less-than-stored-pos (< dist-target-meters old-point-to-jak)))
-      ;; Too close to jak red/ignore them
-      (if (not valid?)
-        (none)
-        ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *color-black*)
-        ;; show all possible indexes for debugging
-        ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" i) current-ball-pos (font-color red) (the-as vector2h #f))
-        )
-      ;; Corrected part to update the closest position and distance
-      (if (and valid? less-than-stored-pos)
-        (begin
-          (set! *sphere-color* *color-green*)
-          ;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point i position) (meters 0.05) *sphere-color*)
-          (if less-than-stored-pos
-            ;; If our point is closer than our last point, store it and update closest known distance
-            (begin
-              (set! *closest-pos-index* i)
-              (set! old-point-to-jak dist-target-meters)))))))
-  ;; Draw the closest position
-  ;;(format #t "WARNING: fuel-cell stall on not cloning. ~F~%" old-point-to-jak)
-  ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *camera*  target-spline point *closest-pos-index* position) (meters 0.05) *sphere-color*)
-  ;;(add-debug-text-3d #t (bucket-id debug-no-zbuf) (string-format "~D" *closest-pos-index*) (-> *camera*  target-spline point *closest-pos-index* position)  (font-color green) (the-as vector2h #f))
-  (-> *camera* target-spline point *closest-pos-index* position))
+  ;; Define local variables for the closest position index and the closest known distance.
+  (let ((old-point-to-jak (meters 3729817398217391279))
+        (closest-pos-index 1)) ;; Initialize to -1 as a placeholder
+    (dotimes (i 32)
+      ;; Retrieve the position of the current spline point for the camera in the loop.
+      (let* ((current-ball-pos (-> *camera* target-spline point i position))
+             ;; Calculate the distance (in meters) between the current spline point
+             ;; and the target's position, converting the value from game units.
+             (dist-target-meters (/ (vector-vector-distance current-ball-pos (-> *target* root trans)) 40964))
+             ;; Check if the distance is within the valid range (0.27 to 1.0 meters).
+             (valid? (not (or (> dist-target-meters 1.0) (< dist-target-meters 0.27))))
+             ;; Check if this distance is smaller than the previously stored closest distance.
+             (less-than-stored-pos (< dist-target-meters old-point-to-jak)))
+        ;; If the current point is valid and closer than any previously found point...
+        (when (and valid? less-than-stored-pos)
+          ;; Update the index of the closest position.
+          (set! closest-pos-index i)
+          ;; Update the closest known distance to the current distance.
+          (set! old-point-to-jak dist-target-meters))))
+    ;; Return the position of the closest spline point found, or nil if no valid point was found.
+    (return (-> *camera* target-spline point closest-pos-index position)))
+  ;;this is never hit, just makes the compiler happy
+  (-> *camera* target-spline point 1 position))
+
+(defconstant ice-slope-slip-angle 16384.0)
+
+(defconstant default-slope-slip-angle 8192.0)
+
+(defconstant snow-fric 23756.8)
+
+(defconstant normal-fric 153600.0)
+
+(defun update-chicken-eco ()
+  "Handle eco-chicken powerup logic."
+  (set! *has-chicken-eco* (the-as symbol (send-event *target* 'query 'powerup (pickup-type eco-chicken)))))
+
+(defun activate-ice-eco ()
+  "Apply properties and effects for ice eco."
+  ;; Update stone surface properties for ice
+  (set! (-> *stone-surface* slope-slip-angle) ice-slope-slip-angle)
+  (set! (-> *stone-surface* slip-factor) 0.7)
+  (set! (-> *stone-surface* transv-max) 1.5)
+  (set! (-> *stone-surface* turnv) 0.5)
+  (set! (-> *stone-surface* nonlin-fric-dist) 4091904.0)
+  (set! (-> *stone-surface* fric) snow-fric)
+  ;; Handle snow effect
+  (run-next-time-in-process (the process
+                                 (activate (get-process *default-dead-pool* process #x4000) *default-pool* 'process (the pointer #x70004000)))
+                            (lambda ()
+                              (dotimes (i 7)
+                                (when (send-event *target* 'query 'powerup (pickup-type eco-ice))
+                                  (when *target*
+                                    (update-snow *target*))
+                                  (suspend)))))
+  ;; Manage custom music
+  (when (not *custom-music-eco-paused?*)
+    (set! (-> (-> (level-get-target-inside *level*) info) music-bank) 'snow)
+    (stop-main-music)
+    (set! *custom-music-eco-paused?* #t)))
+
+(defun deactivate-ice-eco ()
+  "Reset properties and effects when ice eco ends."
+  (set! (-> *stone-surface* slope-slip-angle) default-slope-slip-angle)
+  (set! (-> *stone-surface* slip-factor) 1.0)
+  (set! (-> *stone-surface* transv-max) 1.0)
+  (set! (-> *stone-surface* turnv) 1.0)
+  (set! (-> *stone-surface* nonlin-fric-dist) 5120.0)
+  (set! (-> *stone-surface* fric) normal-fric)
+  (music-manager)
+  (set! (-> (-> (level-get-target-inside *level*) info) music-bank) #f)
+  (set! *custom-music-eco-paused?* #f))
 
 (defun eco-manager ()
-  ;;Eco-chicken start
-  (when (send-event *target* 'query 'powerup (pickup-type eco-chicken))
-    (set! *has-chicken-eco* #t))
-  (when (not (send-event *target* 'query 'powerup (pickup-type eco-chicken)))
-    (set! *has-chicken-eco* #f))
-  ;;Ice eco start
-  (when (send-event *target* 'query 'powerup (pickup-type eco-ice))
-    ;;Turn on the ice slide
-    (set! (-> *stone-surface* slope-slip-angle) 16384.0)
-    (set! (-> *stone-surface* slip-factor) 0.7)
-    (set! (-> *stone-surface* transv-max) 1.5)
-    (set! (-> *stone-surface* transv-max) 1.5)
-    (set! (-> *stone-surface* turnv) 0.5)
-    (set! (-> *stone-surface* nonlin-fric-dist) 4091904.0)
-    (set! (-> *stone-surface* fric) 23756.8)
-    ;;snow
-    (run-next-time-in-process (the process
-                                   (activate (get-process *default-dead-pool* process #x4000) *default-pool* 'process (the pointer #x70004000)))
-                              (lambda ()
-                                (dotimes (i 7)
-                                  (if (send-event *target* 'query 'powerup (pickup-type eco-ice)) (if *target* (update-snow *target*)) (suspend)))))
-    ;;Stop custom music
-    (when (not custom-music-eco-paused?)
-      (set! (-> (-> (level-get-target-inside *level*) info) music-bank) 'snow)
-      (stop-main-music)
-      (set! custom-music-eco-paused? #t)))
-  ;; The condition for slip-angle is a disgusting hack so we arent consitantly setting a new jump-height
-  (when (and (not (send-event *target* 'query 'powerup (pickup-type eco-ice))) (= (-> *stone-surface* slope-slip-angle) 16384.0))
-    (set! (-> *stone-surface* slope-slip-angle) 8192.0)
-    (set! (-> *stone-surface* slip-factor) 1.0)
-    (set! (-> *stone-surface* transv-max) 1.0)
-    (set! (-> *stone-surface* turnv) 1.0)
-    (set! (-> *stone-surface* nonlin-fric-dist) 5120.0)
-    (set! (-> *stone-surface* fric) 153600.0)
-    (music-manager)
-    ;;We should prob store the previous music-bank instead of assuming it was #f
-    (set! (-> (-> (level-get-target-inside *level*) info) music-bank) #f)
-    (set! custom-music-eco-paused? #f))
-  ;;Ice eco end
-  ;;Low gravity eco is in logic-target.gc 836, due to the values it sets being overridden.
+  "Main function to manage eco effects."
+  ;; Handle eco-chicken
+  (update-chicken-eco)
+  ;; Handle ice eco
+  (if (send-event *target* 'query 'powerup (pickup-type eco-ice))
+    (activate-ice-eco)
+    (when (= (-> *stone-surface* slope-slip-angle) ice-slope-slip-angle)
+      (deactivate-ice-eco))))
+
+;; these functions can be combined later they serve the same purpose just need a condition passed for all or following
+(defun reset-chicken-targets ()
+  (when done-init?
+    (dotimes (i NUM_FLOCKPOINTS)
+      (when (= (-> (get-chick-from-flock i) substate) 'following)
+        (vector-identity! (-> (get-chick-from-flock i) target-pos))
+        (vector-identity! (-> (get-chick-from-flock i) root trans))
+        (set! (-> (get-chick-from-flock i) substate) 'uncollected))))
+  (format #t "RESETING CHICKEN TARGETS")
   (none))
 
-(defun reset-chicken-targets ()
-  ;; wtf man just code normal please stupd hack stupid-hacks-every-frame
-  (when (run-mort-code?)
+(defun reset-chicken-targets-all ()
+  (when done-init?
     (dotimes (i NUM_FLOCKPOINTS)
       (when (!= (-> (get-chick-from-flock i) substate) 'uncollected)
         (vector-identity! (-> (get-chick-from-flock i) target-pos))
         (vector-identity! (-> (get-chick-from-flock i) root trans))
         (set! (-> (get-chick-from-flock i) substate) 'uncollected))))
-  (format #t "RESETING CHICKEN TARGETS")
+  (format #t "RESETING CHICKEN TARGETS ALL")
   (none))
 
 (defun restore-cells ()
@@ -263,17 +262,6 @@
   (reset-chicken-targets)
   0)
 
-(defun draw-origin ()
-  (when *show-debug*
-    (add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-orange*)
-    (add-debug-text-3d #t
-                       (bucket-id debug-no-zbuf)
-                       (string-format "Origin point")
-                       *Origin*
-                       (font-color red)
-                       (the-as vector2h #f)))
-  (none))
-
 (defun draw-origin-sphere-text ((pos vector) (name string))
   (when *show-debug*
     (add-debug-sphere #t (bucket-id debug-no-zbuf) pos (meters 0.1) *color-orange*)
@@ -281,32 +269,18 @@
   (none))
 
 (defun adjust-chick-origin ((mmark vector))
-  ;;(draw-origin)
   (let ((xchange 0.0)
         (ychange 0.0)
         (zchange 0.0))
-    (if (not (= (vector-vector-distance *Origin* mmark) 0.0))
-      (begin
-        "Takes in the closest master mark from (draw-chicks-fund) then adjusts it and returns it to use as origin for chicken demons"
-        ;; If the origin is not at its starting point, figure out how much it moved and store that.
-        (set! xchange (- (-> *Origin* x) (-> mmark x)))
-        (set! ychange (- (-> *Origin* y) (-> *target* root trans y)))
-        (set! zchange (- (-> *Origin* z) (-> mmark z)))
-        ;;(format #t "Origin moved by ~m ~m ~%" xchange zchange)
-        (move-flock-by-xz xchange ychange zchange)
-        ;;Update the stored Origin since it moved
-        (vector-copy! *Origin* mmark)
-        (set! (-> *Origin* y) (-> *target* root trans y)))))
-  ;;Check if the position of all NUM_FLOCKPOINTS flock points is valid here, if its not regenerate them.
-  ;;(add-debug-sphere #t (bucket-id debug-no-zbuf) *Origin* (meters 0.1) *color-yellow*)
-  ;;Set the spot of CHICK1 to origin
+    (when (not (= (vector-vector-distance *Origin* mmark) 0.0))
+      ;; If the origin is not at its starting point, figure out how much it moved and store that.
+      (set! xchange (- (-> *Origin* x) (-> mmark x)))
+      (set! ychange (- (-> *Origin* y) (-> *target* root trans y)))
+      (set! zchange (- (-> *Origin* z) (-> mmark z)))
+      (move-flock-by-xz xchange ychange zchange)
+      (vector-copy! *Origin* mmark)
+      (set! (-> *Origin* y) (-> *target* root trans y))))
   *Origin*)
-
-(defun portal-mort-trans ()
-  (-> (the warp-gate (-> (the basebutton (process-by-ename "project-warp-gate-switch")) child 0)) root trans))
-
-(defun portal-mort-gate ()
-  (the process-drawable (-> (the basebutton (process-by-ename "project-warp-gate-switch")) child 0)))
 
 ;;mort getters
 
@@ -319,16 +293,7 @@
   ;; make sure any speedrun display is hidden
   (hide-speedrun-display)
   (if (portal-mort-switch) (go-virtual-process (portal-mort-switch) basebutton-going-down))
-  ;;Tagmort
-  ;;check to see the saved chickens stored and maybe restore it
-  (when (and (= (get-current-chicks) 0) (= (get-saved-chicks) 0))
-    (format #t "picked up a chick and its first in the level~%")
-    (when (> (get-saved-chicks-from-mem) (get-saved-chicks))
-      (format #t
-              "Found saved chick data that was non zero, updating saved chicks in level to ~D~%"
-              (get-saved-chicks-from-mem))
-      (update-saved-chicks (get-saved-chicks-from-mem))))
-  ;; Set the chick with the highest index as this cell
+  ;; Set the uncollected chick with the highest index as this cell
   (set! (-> (get-chick-with-state 'uncollected) parent-cell-name) (the string (-> self name)))
   ;; Increment after setting name
   (update-chicken-substate (get-chick-with-state 'uncollected) 'following)
@@ -348,16 +313,6 @@
 (defun sound-manager ()
   "responsible for all the sounds played during cutscenes"
   (if (is-in-chem-fac-silo) (play-chem-hint))
-  ;;Hack to disable cutscene skips for specific cutscenes     (if               ;;Cutscenes added here will be unskippable witht the triangle button
-  ;; (if (and *custom-cutscene?*
-  ;;          (or (string= (-> *art-control* active-stream) "sage-intro-sequence-a")
-  ;;              (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-b")
-  ;;              (string= (-> *art-control* active-stream) "sidekick-human-intro-sequence-c")
-  ;;              (string= (-> *art-control* active-stream) "finalbosscam-white-eco")
-  ;;              (string= (-> *art-control* active-stream) "green-sagecage-daxter-sacrifice")
-  ;;              (string= (-> *art-control* active-stream) "green-sagecage-outro-beat-boss-a")))
-  ;;   (set! (-> *pc-settings* skip-movies?) #f)
-  ;;   (set! (-> *pc-settings* skip-movies?) #t))
   (let ((current-timea (current-time))
         (chem-bool #f))
     (when (handle->process (-> *art-control* spool-lock))
@@ -448,10 +403,18 @@
          (suspend)))))
   (none))
 
+(defun runs-every-frame-warpgate-hacks ()
+  ;; this is in stupid hacks every frame
+  (if (and (entity-by-name "project-training-part-1")
+           (!= (-> *part-id-table* 765 init-specs 2 initial-valuef)
+               (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))))))
+    (set! (-> *part-id-table* 765 init-specs 2 initial-valuef)
+          (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))))))
+  ;;We can add level specific hacks under here to make the warpgates actually look good later
+  )
+
 (defun stupid-hacks-every-frame ()
   (when run-mort-code?
-    ;;This is a hack to try to patch a bug, remove if it messes up save/restoring
-    (if (and *target* (= (-> *target* state name) 'target-warp-out)) (reset-saved-chick-from-mem))
     ;;Hack the main menu music since we cant pause it yet
     (main-music-volume (the int (* (-> *setting-control* default music-volume) 0.75)))
     ;; Its so funny that this works lol
@@ -459,15 +422,8 @@
     (when (and (process-by-ename "robotboss-3") *target*)
       (robo-movie-check))
     ;;Hack to rotat the warpgate this one is extra weird the math on this is wrong but the idea is close enough, might not work in coins??
-    (if (and (entity-by-name "project-training-part-1")
-             (!= (-> *part-id-table* 765 init-specs 2 initial-valuef)
-                 (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure))))))
-      (set! (-> *part-id-table* 765 init-specs 2 initial-valuef)
-            (meters (string->float (the string (res-lump-struct (entity-by-name "project-training-part-1") 'game_task structure)))))))
+    (runs-every-frame-warpgate-hacks))
   ;;Hack to set the voice volume to 0 during these cutscenes, then restore it when the cutscene is overridden.
-  (when (string= *currentSpoolName* "green-sagecage-outro-beat-boss-b")
-    (str-play-stop *currentSpoolName*)
-    (set! (-> *art-control* active-stream) #f))
   (if (or (and *custom-cutscene?*
                (or (string= *currentSpoolName* "sage-intro-sequence-a")
                    (string= *currentSpoolName* "sidekick-human-intro-sequence-b")
@@ -492,10 +448,6 @@
 (defun chicken-every-frame ()
   (when (run-mort-code?)
     (adjust-chick-origin (find-best-master-mark))
-    ;;If are flock points aren't setup, lets set them up.
-    ;;We should sanity check the flock points here, then assume they are valid for the rest of the frame.
-    ;;Here we should call a funciton, that checks the number of chicks we have following us, and set up the target pos-valid
-    ;;If a chicken should despawn, set its target pos to 0,0,0.
     (assign-remove-demon-chicken-target)
     ;;Constantly check all chicks to see if they are in the warpgate if they are, then run chick-saved and increment saved per level
     ;;THIS FUNCTION HAS A SLEEP/SUSPEND WHEN IT RUNS (have a chick, be near portal)
@@ -503,12 +455,12 @@
     (save-chicks-func))
   (none))
 
-(define *count-crates* 0)
-
 (define flut-movement-freeze #f)
 
+(define *count-cells* 0)
+
 (defun get-loaded-cell-count ()
-  (set! *count-crates* 0)
+  (set! *count-cells* 0)
   (execute-process-tree *active-pool*
                         (lambda ((proc process))
                           (when (-> proc entity)
@@ -517,10 +469,9 @@
                                   (name (the string (-> proc name))))
                               (when (= (-> (the entity-actor (-> proc entity)) etype) fuel-cell)
                                 ;;We know its a cell
-                                ;;If its wood, increase our count
-                                (set! *count-crates* (+ *count-crates* 1))))))
+                                (set! *count-cells* (+ *count-cells* 1))))))
                         *kernel-context*)
-  *count-crates*)
+  *count-cells*)
 
 (defun have-all-chicks-safe ()
   #|
@@ -631,7 +582,8 @@ Then at the end of this function it checks some conditions and returns #t or #f 
     (update-mort-vars)
     (when (and (run-mort-code?) #t)
       (draw-beta-flock-points)
-      (mort-rewrite-text)))
+      ;;(mort-rewrite-text)
+      ))
   (none))
 
 (defun variable-every-frame ()
@@ -704,7 +656,7 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   (none))
 
 (defbehavior chicken-every-frame-proc process ()
-  "Process is responsible for most chicken related functions"
+  "Process is responsible for dsa most chicken related functions"
   (while #t
     (chicken-every-frame)
     (suspend))
@@ -820,13 +772,14 @@ Then at the end of this function it checks some conditions and returns #t or #f 
       (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
       (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.6))
       (set! (-> gp-0 flags) (font-flags shadow kerning large))
-      (print-game-text-scaled (string-format "TEST VERSION NOT VALID FOR RUNS") 1.0 gp-0 128))
+      (when (and (-> *pc-settings* speedrunner-mode?) (not *valid-for-runs*))
+        (print-game-text-scaled (string-format "TEST VERSION NOT VALID FOR RUNS") 1.0 gp-0 128)))
     (when *debug-segment*
-      (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 20 0.0 (font-color default) (font-flags shadow kerning))))
+      (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 10 50 0.0 (font-color default) (font-flags shadow kerning))))
         (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
         (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
-        (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.6))
-        (set! (-> gp-0 flags) (font-flags shadow kerning large))
+        (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.2))
+        (set! (-> gp-0 flags) (font-flags kerning large))
         (print-game-text-scaled (string-format "CHICKEN POOL STATS!!~%FOLLOW ~D~%UNCOLLECT ~D~%WAITING ~D~%TO PORTAL ~D~%SAVED ~D~%USED CHICKEN POOL SLOTS ~%~D/12"
                                                (get-current-chicks)
                                                (get-uncollected-chicks)
@@ -837,16 +790,17 @@ Then at the end of this function it checks some conditions and returns #t or #f 
                                 1.0
                                 gp-0
                                 128))
-      (when done-init?
-        (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 32 150 0.0 (font-color default) (font-flags shadow kerning))))
+      (when (and done-init? (not (= (-> *chicken-0* target-pos x) 0.0)))
+        (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 10 150 0.0 (font-color default) (font-flags shadow kerning))))
           (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
           (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
-          (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.6))
-          (set! (-> gp-0 flags) (font-flags shadow kerning large))
-          (print-game-text-scaled (string-format "X:~D~%Y:~D~%Z:~D~%"
-                                                 (-> *chicken-0* target-pos x)
-                                                 (-> *chicken-0* target-pos y)
-                                                 (-> *chicken-0* target-pos z))
+          (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.2))
+          (set! (-> gp-0 flags) (font-flags kerning large))
+          (print-game-text-scaled (string-format "~S TARGET~%X:~F~%Y:~F~%Z:~F~%"
+                                                 (string-upcase (the-as string (-> *chicken-0* name)) *pc-temp-string*)
+                                                 (/ (-> *chicken-0* target-pos x) (meters 1))
+                                                 (/ (-> *chicken-0* target-pos y) (meters 1))
+                                                 (/ (-> *chicken-0* target-pos z) (meters 1)))
                                   1.0
                                   gp-0
                                   128)))))

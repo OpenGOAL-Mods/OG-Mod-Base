@@ -22,7 +22,8 @@
    (to-point-speed   float)
    (parent-cell-name string)
    (substate         symbol)
-   (last-retrieved?  time-frame))
+   (last-retrieved?  time-frame)
+   (locked?          symbol))
   (:methods
    (init-collision! (_type_) none)
    (init-skel! (_type_) none)
@@ -97,6 +98,7 @@
   (set! (-> this substate) 'uncollected)
   (set! (-> this parent-cell-name) "NOT SET")
   (set! (-> this last-retrieved?) (seconds 0.0))
+  (set! (-> this locked?) #f)
   ;;(set! (-> this part) (create-launch-control (-> *part-group-id-table* 800) this))
   (none))
 
@@ -125,7 +127,14 @@
 
 (defbehavior demon-chicken-follow-trajectory demon-chicken ((time float))
   ;; make chickens run back and forth when idle
-  (when (> (vector-vector-distance (-> self root trans) (-> self target-pos)) (meters 0.5))
+  (when (and (-> *pc-settings* speedrunner-mode?) (= (-> self substate) 'waiting-to-return))
+    (let ((traj (-> self trajectory)))
+      (eval-position! traj time (-> self cshape trans))
+      (eval-velocity! traj time (-> self cshape transv)))
+    (vector-normalize-copy! (-> self dir) (-> self cshape transv) 1.0)
+    (forward-up->quaternion (-> self cshape quat) (-> self dir) *up-vector*))
+  (when (and (or (not (= (-> self substate) 'waiting-to-return)) (not (-> *pc-settings* speedrunner-mode?)))
+             (> (vector-vector-distance (-> self root trans) (-> self target-pos)) (meters 0.5)))
     (let ((traj (-> self trajectory)))
       (eval-position! traj time (-> self cshape trans))
       (eval-velocity! traj time (-> self cshape transv)))
@@ -211,7 +220,7 @@
 (defbehavior demon-chicken-chase-post demon-chicken ()
   "Chase post: Poll [[target]]'s position and update our own position, direction and trajectory time."
   ;;(set! (-> self target-pos quad) (-> (target-pos 0) quad))
-  (when *show-debug*
+  (when (and *show-debug* *draw-chicken-information*)
     (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> self target-pos) (meters 0.05) *color-red*)
     (when (= (-> self substate) 'moving-to-portal)
       (add-debug-text-3d #t
@@ -482,7 +491,7 @@
 
 (defun draw-beta-flock-points ()
   ;;beta function to draw spheres assiend my set-flock-points
-  (when *show-debug*
+  (when (and *show-debug* *draw-chicken-information*)
     (dotimes (i NUM_FLOCKPOINTS)
       ;;draw a black circle where a chick is trying to get to.
       (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> (get-chick-from-flock i) target-pos) (meters 0.10) *color-black*)
@@ -538,7 +547,11 @@
       (when (and (get-chick-from-flock i) (= (-> (get-chick-from-flock i) substate) state))
         (set! (-> (get-chick-from-flock i) last-retrieved?) (current-time))
         (return (get-chick-from-flock i)))))
-  (the-as demon-chicken #f))
+  ;;Some function requested a chicken in some state we dont have, something is wrong, this is essentially my version of an assert
+  (format #t
+          (string-format "SOMEONE ASKED FOR A CHICKEN IN STATE ~A BUT WE DONT HAVE IT ~D~%" state (get-current-chicks)))
+  (set! (-> (get-chick-from-flock 0) root scale y) 3.0)
+  (get-chick-from-flock 0))
 
 ;; (defun vector-copy! ((dst vector) (src vector))
 ;;   "Copy vector src to dst. Copies the entire quadword (xyzw).
@@ -700,7 +713,7 @@
       (set! (-> (get-chick-from-flock i) target-pos quad) (-> *flock-points* points i quad))
       ;; Once we warp the chick out restore its "fast" speed
       (set! (-> (get-chick-from-flock i) to-point-speed) 6.0)
-      (when *show-debug*
+      (when (and *show-debug* *draw-chicken-information*)
         (add-debug-text-3d #t
                            (bucket-id debug-no-zbuf)
                            (string-format "~D" i)
@@ -738,18 +751,20 @@
 
 (defun save-chicks-func ()
   (let* ((current-level-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1)))
-         (current-custom-info (-> *custom-level-info* data current-level-idx))
-         (warpgate-pos (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans)))
-    (when (and *close-to-portal?* (> (get-current-chicks) 0))
+         (current-custom-info (-> *custom-level-info* data current-level-idx)))
+    (label func-start)
+    (when (and (< (vector-vector-distance (-> *target* root trans)
+                                          (-> (the-as training-part (process-by-ename "project-training-part-1")) root trans))
+                  (meters 12))
+               (> (get-current-chicks) 0))
       ;;We add 1 here, because we removed it above. Will need to adjust when it goes down on warp
-      (begin
-        (dotimes (i NUM_FLOCKPOINTS)
-          (when (get-chick-with-state 'following)
-            (vector-copy! (-> (get-chick-with-state 'following) target-pos) (get-chicken-initial-return-point))
-            (if (-> *pc-settings* speedrunner-mode?)
-              (vector-copy! (-> (get-chick-with-state 'following) root trans) (get-chicken-initial-return-point)))
-            (update-chicken-substate (get-chick-with-state 'following) 'waiting-to-return))))
-      (set! (-> (get-chick-from-flock (the int (-> current-custom-info current-chicks))) to-point-speed) 3.0))
+      (dotimes (i NUM_FLOCKPOINTS)
+        (when (get-chick-with-state 'following)
+          (vector-copy! (-> (get-chick-with-state 'following) target-pos) (get-chicken-initial-return-point))
+          (if (-> *pc-settings* speedrunner-mode?)
+            (vector-copy! (-> (get-chick-with-state 'following) root trans) (get-chicken-initial-return-point)))
+          (update-chicken-substate (get-chick-with-state 'following) 'waiting-to-return))
+        (goto func-start)))
     (when (> (get-waiting-chicks) 0)
       (let ((current-timea (current-time)))
         (until (time-elapsed? current-timea (seconds 0.35))
@@ -767,32 +782,31 @@
 
 (defun warp-demon-chick ()
   (dotimes (i NUM_FLOCKPOINTS)
-    (let* ((warpgate-pos (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans)))
-      ;;If they are close to the portal
-      (when (and (= (-> (get-chick-from-flock i) substate) 'moving-to-portal)
-                 (!= (get-chick-from-flock i) #f)
-                 (the-as process-drawable (process-by-ename "project-training-part-1"))
-                 (< (vector-vector-distance (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans)
-                                            (-> (get-chick-from-flock i) root trans))
-                    (meters 0.6)))
-        ;;Play portal effect on them
-        (if (!= (-> (get-chick-from-flock i) skel effect) #f)
-          (effect-control-method-10 (-> (get-chick-from-flock i) skel effect) 'death-warp-in -1.0 -1))
-        ;;set their target to 1,1,1
-        (update-chicken-substate (get-chick-from-flock i) 'uncollected)
-        ;;(play-sound-file "ChickPickup1.mp3" (the int (-> *setting-control* default sfx-volume)))
+    (let* ((chick (get-chick-from-flock i))
+           (warpgate-pos (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans)))
+      ;; If the chicken exists, is moving to the portal, and is close to the portal
+      (when (and chick
+                 (= (-> chick substate) 'moving-to-portal)
+                 (not (-> chick locked?)) ;; Ensure the chicken is not locked
+                 (< (vector-vector-distance warpgate-pos (-> chick root trans)) (meters 0.6)))
+        ;; Lock the chicken to prevent further saves
+        (set! (-> chick locked?) #t)
+        (suspend)
+        ;; Play portal effect on the chicken
+        (when (-> chick skel effect)
+          (effect-control-method-10 (-> chick skel effect) 'death-warp-in -1.0 -1))
+        ;; Set their state and position
+        (update-chicken-substate chick 'uncollected)
         (sound-play "warpgate-tele")
-        (update-saved-chicks (+ (get-saved-chicks) 1))
-        (update-saved-chicks-in-mem 1)
-        (vector-identity! (-> (get-chick-from-flock i) target-pos))
-        (vector-identity! (-> (get-chick-from-flock i) root trans))
-        ;;maybe unsafe
-        (if (>= (get-saved-chicks) (get-total-chicks))
-          (begin
-            (set-unlock-level)
-            ;; (reset-actors #t) ;;HACK for some reason, the warp gate doesnt let us use it after coming out of it but reseting actor fixes this.
-            ))
-        (auto-save-command 'auto-save 0 0 *default-pool*)))
-    ;; (-> (the-as training-part (process-by-ename "project-training-part-1") )root trans)  )
-    )
+        ;; Perform save logic
+        (begin
+          (update-saved-chicks (+ (get-saved-chicks) 1))
+          (update-saved-chicks-in-mem 1)
+          (vector-identity! (-> chick target-pos))
+          (vector-identity! (-> chick root trans))
+          ;; Check if all chicks are saved and unlock the level
+          (if (>= (get-saved-chicks) (get-total-chicks)) (set-unlock-level))
+          ;; Auto-save the game state
+          (auto-save-command 'auto-save 0 0 *default-pool*)))
+      (set! (-> chick locked?) #f)))
   (none))

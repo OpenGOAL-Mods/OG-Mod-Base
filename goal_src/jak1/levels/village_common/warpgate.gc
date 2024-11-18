@@ -97,7 +97,7 @@
       (set-time! (-> self state-time))
       (loop
         ;;This condition is what lets the press circle to use appear for the warp-gate.
-        (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> self root trans) (meters 1.0) *color-black*)
+        (if *draw-warp-gate-pos* (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> self root trans) (meters 1.0) *color-black*))
         (when (and (>= (* 20480.0 (if (-> *pc-settings* speedrunner-mode?) 15.0 10.0))
                        (vector-vector-distance (-> self root trans) (-> *target* control trans)))
                    (= (get-mort-orb-total) (-> *game-info* money-total))

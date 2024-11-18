@@ -3,6 +3,8 @@
 
 (defun-extern reset-chicken-targets none)
 
+(defun-extern reset-chicken-targets-all none)
+
 ;;this is a bool that checks if we should have zero volume (are we paused etc)
 (defun-extern zero-volume? (symbol))
 
@@ -39,9 +41,9 @@
 
 (define-extern *mort-orb-total* int)
 
-(defun-extern portal-mort-gate process-drawable)
+(declare-type basebutton process-drawable)
 
-(defun-extern portal-mort-trans vector)
+(defun-extern portal-mort-switch basebutton)
 
 (define-extern *has-landed?* symbol)
 
@@ -54,3 +56,5 @@
 (defun-extern get-chick-from-state process)
 
 (define-extern *seen-all-orbs-display* symbol)
+
+(define-extern *heard-chem-hint* symbol)

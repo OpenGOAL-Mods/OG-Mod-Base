@@ -35,7 +35,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 ;; Define Settings to use in mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define *valid-for-runs* #f)
+
 (define *debug-continue-point* "chicks-warp")
+
+(define *draw-warp-gate-pos* #f)
+
+(define *draw-chicken-information* #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Custom Settings Variables to use in mods
@@ -68,7 +74,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (define *has-chicken-eco* #f)
 
-(define custom-music-eco-paused? #f)
+(define *custom-music-eco-paused?* #f)
 
 (define-extern *show-debug* symbol)
 
@@ -84,14 +90,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defconstant STOP_CHASE_DIST (meters 100000))
 
-(define *close-to-portal?* #f)
-
 (define *sphere-color* (new 'static 'rgba :r #xff :g #xff :b #xff :a #x80))
-
-;;This function is a mess TODO: Pretend it doesn't exist.
-(define *closest-pos-index* 0)
-
-(define old-point-to-jak (meters 3729817398217391279))
 
 (deftype level-information (structure)
   ((name           string)
