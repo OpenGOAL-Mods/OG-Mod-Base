@@ -897,13 +897,21 @@
                                   0.8)))
         (((hud-collectable-view original))
          ;; show original (cells collected across entire game)
-         ;;Currently the number drops when going to portal, maybe fix somehow
-         (draw-string-xy (string-format "~D/~D" (+ (get-saved-chicks) (get-current-chicks)) (get-total-chicks))
+         (if (!= (-> (level-get-target-inside *level*) name) 'finalboss) (draw-string-xy (string-format "~D/~D" (+ (get-saved-chicks) (get-current-chicks)) (get-total-chicks))
                          buf
                          string-x
                          string-y
                          (font-color yellow)
-                         (font-flags shadow kerning large))))))
+                         (font-flags shadow kerning large))
+
+                                  (draw-string-xy (string-format "~D/~D" 171 171)
+                         buf
+                         string-x
+                         string-y
+                         (font-color yellow)
+                         (font-flags shadow kerning large))
+
+                         )))))
   0
   (none))
 

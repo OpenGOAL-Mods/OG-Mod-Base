@@ -8,6 +8,8 @@
 
 (define *flock-points* (new 'static 'flock-points))
 
+(define *return-points* (new 'static 'flock-points))
+
 (deftype demon-chicken (process-drawable)
   ((cshape           collide-shape-moving :offset 112)
    (trajectory       trajectory :inline)
@@ -431,6 +433,17 @@
     (if (> (vector-vector-xz-distance vec (-> *flock-points* points i)) (meters 0.1)) (return #t)))
   #f)
 
+  (defun return-point-at-origin? ()
+  (dotimes (i NUM_FLOCKPOINTS)
+    (if (= (vector-vector-distance (-> *return-points* points i) *Origin-R*) 0.0) (return #t)))
+  (return #f)
+  #f)
+
+(defun return-point-close-to-another? ((vec vector))
+  (dotimes (i NUM_FLOCKPOINTS)
+    (if (> (vector-vector-xz-distance vec (-> *return-points* points i)) (meters 0.1)) (return #t)))
+  #f)
+
 (defun set-flock-false ()
   "initalizes the flock to #f to avoid crashes when referencing."
   (dotimes (i NUM_FLOCKPOINTS)
@@ -458,6 +471,37 @@
         (set! (-> old-origin z) (+ (-> old-origin z) (rand-vu-float-range 0.0 (meters 2)))))
       ;;store it in the list of points
       (vector-copy! (-> *flock-points* points i) old-origin))))
+
+  (defun set-return-points ()
+  (if (= (-> *Origin-R* x) (meters 3.0))
+(vector-copy! *Origin-R* (get-chicken-initial-return-point))
+  )
+  (let ((old-origin (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0)))
+    (dotimes (i NUM_FLOCKPOINTS)
+      ;; If we dont have a point at the origin addone there
+      (when (not (return-point-at-origin?))
+        ;;(format #t "There was no chicken at origin, assiging chicken ~D now ~%" i)
+        (vector-copy! (-> *return-points* points i) *Origin-R*))
+      ;;Do this so we can save the old origin
+      (vector-copy! old-origin *Origin-R*)
+      ;; If we are too close to another point, then keep making random spots until we arent
+      ;;This should be a (while valid?... instead of (when close...
+      (when (return-point-close-to-another? old-origin)
+        ;;(format #t "MAKING NEW POS~%")
+        (set! (-> old-origin x) (+ (-> old-origin x) (rand-vu-float-range 0.0 (meters 2))))
+        ;;(set! (-> old-origin y) (+ (-> old-origin y) (rand-vu-float-range 0.0 (meters 1))))
+        (set! (-> old-origin z) (+ (-> old-origin z) (rand-vu-float-range 0.0 (meters 2)))))
+      ;;store it in the list of points
+      (vector-copy! (-> *return-points* points i) old-origin))))
+
+(defun move-return-flock-by-xz ((xchange float) (ychange float) (zchange float))
+  (dotimes (i NUM_FLOCKPOINTS)
+    (set! (-> *return-points* points i x) (- (-> *return-points* points i x) xchange))
+    (set! (-> *return-points* points i y) (- (-> *return-points* points i y) ychange))
+    (set! (-> *return-points* points i z) (- (-> *return-points* points i z) zchange))
+    ;;(format #t "Moved flock by X ~D Y ~D Z ~D~%" xchange ychange zchange)
+    )
+  (none))
 
 (defun move-flock-by-xz ((xchange float) (ychange float) (zchange float))
   (dotimes (i NUM_FLOCKPOINTS)
@@ -503,7 +547,9 @@
                          (font-color red)
                          (the-as vector2h #f))
       ;;draw all possible flockpoints
-      (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *flock-points* points i) (meters 0.05) *color-cyan*))
+      (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *flock-points* points i) (meters 0.05) *color-cyan*)
+      (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *return-points* points i) (meters 0.05) *color-magenta*)
+      )
     ;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *flock-points* points i) (meters 0.1) *color-green*)
     )
   (none))
@@ -578,17 +624,16 @@
   ;;Is a chicken going to the portal?
   (when mort-level?
     (dotimes (i NUM_FLOCKPOINTS)
-      (if (and (get-chick-from-flock i)
-               (= (vector-vector-distance (-> (get-chick-from-flock i) target-pos)
-                                          (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans))
-                  0.0))
+      (if (or (= (-> (get-chick-from-flock i) substate) 'moving-to-portal)
+      (= (-> (get-chick-from-flock i) substate) 'waiting-to-return)
+               )
         (return #t))
       #f)))
 
 (defun get-chicken-initial-return-point ()
   (let* ((warpgate-pos (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans)) ;; point A
          (target-pos (-> *target* root trans)) ;; point B
-         (circle-radius (meters 5.0)) ;; desired distance from warpgate-pos
+         (circle-radius (meters 7.5)) ;; desired distance from warpgate-pos
          (vector-AB (new 'static 'vector)) ;; vector from A to B (ignoring y)
          (normalized-AB (new 'static 'vector)) ;; normalized direction vector
          (final-point (new 'static 'vector)) ;; final point on the circle
@@ -758,9 +803,7 @@
       ;;We add 1 here, because we removed it above. Will need to adjust when it goes down on warp
       (dotimes (i NUM_FLOCKPOINTS)
         (when (get-chick-with-state 'following)
-          (vector-copy! (-> (get-chick-with-state 'following) target-pos) (get-chicken-initial-return-point))
-          (if (-> *pc-settings* speedrunner-mode?)
-            (vector-copy! (-> (get-chick-with-state 'following) root trans) (get-chicken-initial-return-point)))
+          (vector-copy! (-> (get-chick-with-state 'following) target-pos) (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS)))
           (update-chicken-substate (get-chick-with-state 'following) 'waiting-to-return))
         (goto func-start)))
     (when (> (get-waiting-chicks) 0)
@@ -773,6 +816,8 @@
                (meters 1.2))
         (vector-copy! (-> (get-chick-with-state 'waiting-to-return) target-pos)
                       (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans))
+        (if (-> *pc-settings* speedrunner-mode?)
+            (vector-copy! (-> (get-chick-with-state 'waiting-to-return) root trans) (get-chicken-initial-return-point)))
         (update-chicken-substate (get-chick-with-state 'waiting-to-return) 'moving-to-portal)))
     ;;chicken in waiting-state update to walk to portal then walk to portal
     )

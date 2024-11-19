@@ -498,12 +498,13 @@
     (begin
       (dotimes (i 33)
         (when (>= i 16)
-          (format #t
-                  "The value of i is ~D amd we are adding ~D to mort total Mort total before addition is ~D and after it is ~D ~%"
-                  i
-                  (-> *game-counts* data i money-count)
-                  *mort-orb-total*
-                  (+ *mort-orb-total* (-> *game-counts* data i money-count)))
+          (when *debug-segment*
+            (format #t
+                    "The value of i is ~D amd we are adding ~D to mort total Mort total before addition is ~D and after it is ~D ~%"
+                    i
+                    (-> *game-counts* data i money-count)
+                    *mort-orb-total*
+                    (+ *mort-orb-total* (-> *game-counts* data i money-count))))
           (set! *mort-orb-total* (+ *mort-orb-total* (-> *game-counts* data i money-count)))))))
   ;; (dotimes (i 32)
   ;;   (if (>= i 16)

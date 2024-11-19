@@ -161,6 +161,7 @@ int main(int argc, char** argv) {
             game_version, std::make_optional(repl_config), username,
             std::make_unique<REPL::Wrapper>(username, repl_config, startup_file, nrepl_server_ok));
         status = ReplStatus::OK;
+            compiler->run_front_end_on_string("(lt)(mi)");
       }
       // process user input
       std::string input_from_stdin = compiler->get_repl_input();

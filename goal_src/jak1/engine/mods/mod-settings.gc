@@ -41,7 +41,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (define *draw-warp-gate-pos* #f)
 
-(define *draw-chicken-information* #f)
+(define *draw-chicken-information* #t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Custom Settings Variables to use in mods
@@ -80,7 +80,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (define *old-voice-volume* 0.0)
 
-(define *Origin* (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0))
 
 (defun-extern init-chickens (none))
 

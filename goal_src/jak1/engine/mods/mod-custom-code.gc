@@ -94,11 +94,8 @@
 (defun is-in-chem-fac-silo ()
   "This checks if the user is in the chem factory silo."
   (when (= (-> (level-get-target-inside *level*) name) 'chem-fac)
-    (dotimes (i 8) ;; Loop 8 times for the range of checks
-      (when (in-bubble? (meters 131.51)
-                        (meters (+ 310.37 (* i 5))) ;; Increment the Y value by 5 each iteration
-                        (meters 200.12)
-                        (meters 29.0))
+    (dotimes (i 8)
+      (when (in-bubble? (meters 131.51) (meters (+ 310.37 (* i 5))) (meters 200.12) (meters 29.0))
         (return #t)))
     #f))
 
@@ -282,6 +279,21 @@
       (set! (-> *Origin* y) (-> *target* root trans y))))
   *Origin*)
 
+
+  (defun adjust-return-origin ()
+  (let ((xchange 0.0)
+        (ychange 0.0)
+        (zchange 0.0))
+    (when (not (= (vector-vector-distance *Origin-R* (get-chicken-initial-return-point)) 0.0))
+      ;; If the origin is not at its starting point, figure out how much it moved and store that.
+      (set! xchange (- (-> *Origin-R* x) (-> (get-chicken-initial-return-point)x)))
+      (set! ychange (- (-> *Origin-R* y) (meters 300.0)))
+      (set! zchange (- (-> *Origin-R* z) (->(get-chicken-initial-return-point)z)))
+      (move-return-flock-by-xz xchange ychange zchange)
+      (vector-copy! *Origin-R* (get-chicken-initial-return-point))
+      (set! (-> *Origin-R* y) (meters 300.0))))
+  *Origin-R*)
+
 ;;mort getters
 
 (defun restore-saved-chicks-from-mem ()
@@ -448,6 +460,7 @@
 (defun chicken-every-frame ()
   (when (run-mort-code?)
     (adjust-chick-origin (find-best-master-mark))
+    (adjust-return-origin)
     (assign-remove-demon-chicken-target)
     ;;Constantly check all chicks to see if they are in the warpgate if they are, then run chick-saved and increment saved per level
     ;;THIS FUNCTION HAS A SLEEP/SUSPEND WHEN IT RUNS (have a chick, be near portal)
@@ -687,6 +700,7 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   (set-flock-points-start)
   (set-flock-points)
   (set-flock-false) ;; Set all flock values to #f before chickens are in it
+        (set-return-points)
   (chicken-pls) ;; spawn the chickens offscreen
   ;; (get-mort-orb-total)
   (set! done-init? #t)
@@ -867,6 +881,7 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   (process-spawn-function process
     music-manager-proc)
   (restore-cells)
+  (reset-chicken-targets-all)
   (restore-saved-chicks-from-mem)
   ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc
   ;;(process-spawn-function process music-manager-proc)
