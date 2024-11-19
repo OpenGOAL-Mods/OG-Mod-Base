@@ -2535,7 +2535,7 @@
        :nickname 'bwd
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -2612,7 +2612,7 @@
        :nickname 'cro
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -2687,7 +2687,7 @@
        :nickname 'hol
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -2742,7 +2742,7 @@
        :nickname 'mon
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -2797,7 +2797,7 @@
        :nickname 'cat
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -2852,7 +2852,7 @@
        :nickname 'pyr
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -2962,7 +2962,7 @@
        :nickname 'coi
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -3017,7 +3017,7 @@
        :nickname 'vil
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -3127,7 +3127,7 @@
        :nickname 'isl
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -3182,7 +3182,7 @@
        :nickname 'gla
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -3237,7 +3237,7 @@
        :nickname 'che
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -3312,7 +3312,7 @@
        :nickname 'spa
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -3367,7 +3367,7 @@
        :nickname 'chi
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -3422,7 +3422,7 @@
        :nickname 'gar
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -3477,7 +3477,7 @@
        :nickname 'COL
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -3532,7 +3532,7 @@
        :nickname 'man
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
@@ -3587,7 +3587,7 @@
        :nickname 'FAC
        ;; nickname
        :packages '(training)
-       :sound-banks '(training)
+       :sound-banks '(snow)
        :music-bank #f
        :ambient-sounds
        '()
