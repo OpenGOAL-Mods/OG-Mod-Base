@@ -37,7 +37,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (define *valid-for-runs* #f)
 
-(define *debug-continue-point* "chicks-warp")
+(define *debug-continue-point* "coins-warp")
 
 (define *draw-warp-gate-pos* #f)
 
@@ -79,7 +79,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define-extern *show-debug* symbol)
 
 (define *old-voice-volume* 0.0)
-
 
 (defun-extern init-chickens (none))
 

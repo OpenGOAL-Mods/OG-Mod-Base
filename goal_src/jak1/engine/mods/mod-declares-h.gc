@@ -23,9 +23,10 @@
 ;; this is a function that checks for jak the chicken specific cheats
 (defun-extern mort-cheats int)
 
-
 (define *Origin* (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0))
+
 (define *Origin-R* (new 'static 'vector :x (meters 3.0) :y (meters 3.0) :z (meters 3.0) :w 1.0))
+
 (defun-extern can-we-fly? symbol)
 
 (defun-extern return-hover-animation art-element)
@@ -63,3 +64,5 @@
 (define-extern *heard-chem-hint* symbol)
 
 (defun-extern get-chicken-initial-return-point vector)
+
+(defun-extern waiting-chicks-proc-func none)

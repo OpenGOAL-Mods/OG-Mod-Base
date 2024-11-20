@@ -279,16 +279,15 @@
       (set! (-> *Origin* y) (-> *target* root trans y))))
   *Origin*)
 
-
-  (defun adjust-return-origin ()
+(defun adjust-return-origin ()
   (let ((xchange 0.0)
         (ychange 0.0)
         (zchange 0.0))
     (when (not (= (vector-vector-distance *Origin-R* (get-chicken-initial-return-point)) 0.0))
       ;; If the origin is not at its starting point, figure out how much it moved and store that.
-      (set! xchange (- (-> *Origin-R* x) (-> (get-chicken-initial-return-point)x)))
+      (set! xchange (- (-> *Origin-R* x) (-> (get-chicken-initial-return-point) x)))
       (set! ychange (- (-> *Origin-R* y) (meters 300.0)))
-      (set! zchange (- (-> *Origin-R* z) (->(get-chicken-initial-return-point)z)))
+      (set! zchange (- (-> *Origin-R* z) (-> (get-chicken-initial-return-point) z)))
       (move-return-flock-by-xz xchange ychange zchange)
       (vector-copy! *Origin-R* (get-chicken-initial-return-point))
       (set! (-> *Origin-R* y) (meters 300.0))))
@@ -675,6 +674,12 @@ Then at the end of this function it checks some conditions and returns #t or #f 
     (suspend))
   (none))
 
+(defbehavior waiting-chicks-proc process ()
+  (while #t
+    (waiting-chicks-proc-func)
+    (suspend))
+  (none))
+
 (defbehavior variable-every-frame-proc process ()
   "Process is responsible for updating most variables/globals this process should never be suspended"
   (while #t
@@ -694,13 +699,15 @@ Then at the end of this function it checks some conditions and returns #t or #f 
     debug-text-every-frame-proc)
   (process-spawn-function process
     stupid-hacks-every-frame-proc)
+  (process-spawn-function process
+    waiting-chicks-proc)
   (when *debug-segment*
     (format #t "INITIALIZING CHICKENS~%")
     (format #t "ITS MORTIN TIME~%"))
   (set-flock-points-start)
   (set-flock-points)
   (set-flock-false) ;; Set all flock values to #f before chickens are in it
-        (set-return-points)
+  (set-return-points)
   (chicken-pls) ;; spawn the chickens offscreen
   ;; (get-mort-orb-total)
   (set! done-init? #t)
@@ -881,7 +888,7 @@ Then at the end of this function it checks some conditions and returns #t or #f 
   (process-spawn-function process
     music-manager-proc)
   (restore-cells)
-  (reset-chicken-targets-all)
+  (reset-chicken-targets)
   (restore-saved-chicks-from-mem)
   ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc
   ;;(process-spawn-function process music-manager-proc)

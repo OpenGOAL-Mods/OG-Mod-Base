@@ -433,7 +433,7 @@
     (if (> (vector-vector-xz-distance vec (-> *flock-points* points i)) (meters 0.1)) (return #t)))
   #f)
 
-  (defun return-point-at-origin? ()
+(defun return-point-at-origin? ()
   (dotimes (i NUM_FLOCKPOINTS)
     (if (= (vector-vector-distance (-> *return-points* points i) *Origin-R*) 0.0) (return #t)))
   (return #f)
@@ -472,10 +472,8 @@
       ;;store it in the list of points
       (vector-copy! (-> *flock-points* points i) old-origin))))
 
-  (defun set-return-points ()
-  (if (= (-> *Origin-R* x) (meters 3.0))
-(vector-copy! *Origin-R* (get-chicken-initial-return-point))
-  )
+(defun set-return-points ()
+  (if (= (-> *Origin-R* x) (meters 3.0)) (vector-copy! *Origin-R* (get-chicken-initial-return-point)))
   (let ((old-origin (new 'static 'vector :x (meters 32.0085) :y (meters 300.1105) :z (meters 153.0149) :w 1.0)))
     (dotimes (i NUM_FLOCKPOINTS)
       ;; If we dont have a point at the origin addone there
@@ -548,8 +546,7 @@
                          (the-as vector2h #f))
       ;;draw all possible flockpoints
       (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *flock-points* points i) (meters 0.05) *color-cyan*)
-      (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *return-points* points i) (meters 0.05) *color-magenta*)
-      )
+      (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *return-points* points i) (meters 0.05) *color-magenta*))
     ;; (add-debug-sphere #t (bucket-id debug-no-zbuf) (-> *flock-points* points i) (meters 0.1) *color-green*)
     )
   (none))
@@ -625,8 +622,7 @@
   (when mort-level?
     (dotimes (i NUM_FLOCKPOINTS)
       (if (or (= (-> (get-chick-from-flock i) substate) 'moving-to-portal)
-      (= (-> (get-chick-from-flock i) substate) 'waiting-to-return)
-               )
+              (= (-> (get-chick-from-flock i) substate) 'waiting-to-return))
         (return #t))
       #f)))
 
@@ -803,24 +799,25 @@
       ;;We add 1 here, because we removed it above. Will need to adjust when it goes down on warp
       (dotimes (i NUM_FLOCKPOINTS)
         (when (get-chick-with-state 'following)
-          (vector-copy! (-> (get-chick-with-state 'following) target-pos) (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS)))
+          (vector-copy! (-> (get-chick-with-state 'following) target-pos)
+                        (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS)))
           (update-chicken-substate (get-chick-with-state 'following) 'waiting-to-return))
         (goto func-start)))
-    (when (> (get-waiting-chicks) 0)
-      (let ((current-timea (current-time)))
-        (until (time-elapsed? current-timea (seconds 0.35))
-          ;;(format #t "~S~%" "NOT ELAPSED")
-          (suspend)))
-      (when (< (vector-vector-distance (-> (get-chick-with-state 'waiting-to-return) target-pos)
-                                       (-> (get-chick-with-state 'waiting-to-return) root trans))
-               (meters 1.2))
-        (vector-copy! (-> (get-chick-with-state 'waiting-to-return) target-pos)
-                      (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans))
-        (if (-> *pc-settings* speedrunner-mode?)
-            (vector-copy! (-> (get-chick-with-state 'waiting-to-return) root trans) (get-chicken-initial-return-point)))
-        (update-chicken-substate (get-chick-with-state 'waiting-to-return) 'moving-to-portal)))
     ;;chicken in waiting-state update to walk to portal then walk to portal
     )
+  (none))
+
+(defun waiting-chicks-proc-func ()
+  (when (> (get-waiting-chicks) 0)
+    (suspend-for (seconds 0.35))
+    (when (< (vector-vector-distance (-> (get-chick-with-state 'waiting-to-return) target-pos)
+                                     (-> (get-chick-with-state 'waiting-to-return) root trans))
+             (meters 1.2))
+      (vector-copy! (-> (get-chick-with-state 'waiting-to-return) target-pos)
+                    (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans))
+      (if (-> *pc-settings* speedrunner-mode?)
+        (vector-copy! (-> (get-chick-with-state 'waiting-to-return) root trans) (get-chicken-initial-return-point)))
+      (update-chicken-substate (get-chick-with-state 'waiting-to-return) 'moving-to-portal)))
   (none))
 
 (defun warp-demon-chick ()
