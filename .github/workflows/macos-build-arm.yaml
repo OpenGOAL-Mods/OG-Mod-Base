@@ -13,7 +13,7 @@ on:
 jobs:
   build:
     name: ARM
-    runs-on: macos-12
+    runs-on: macos-15
     timeout-minutes: 120
 
     steps:
@@ -23,11 +23,8 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Set up ARM64 environment
-        run: sudo softwareupdate --install-rosetta --agree-to-license
-
       - name: Install Package Dependencies
-        run: arch -arm64 brew install cmake ninja
+        run: brew install cmake ninja nasm
 
       - name: Setup sccache
         uses: hendrikmuhs/ccache-action@v1.2.14
@@ -55,7 +52,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: opengoal-macos-${{ inputs.cachePrefix }}
+          name: opengoal-macos-arm-${{ inputs.cachePrefix }}
           if-no-files-found: error
           path: |
             ./build/goalc/goalc
