@@ -799,6 +799,9 @@
       ;;We add 1 here, because we removed it above. Will need to adjust when it goes down on warp
       (dotimes (i NUM_FLOCKPOINTS)
         (when (get-chick-with-state 'following)
+        (when (-> *pc-settings* speedrunner-mode?)
+        (vector-copy! (-> (get-chick-with-state 'following) root trans)
+                        (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS))))
           (vector-copy! (-> (get-chick-with-state 'following) target-pos)
                         (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS)))
           (update-chicken-substate (get-chick-with-state 'following) 'waiting-to-return))
