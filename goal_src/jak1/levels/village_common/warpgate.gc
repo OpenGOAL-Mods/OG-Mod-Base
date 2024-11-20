@@ -183,7 +183,7 @@
     ((string= (symbol->string (-> (get-continue-by-name *game-info* arg0) level)) "factory-cross") (return "FACTORY CROSS"))
     ((string= (symbol->string (-> (get-continue-by-name *game-info* arg0) level)) "holly-wood") (return "HOLLY WOOD"))
     ((string= (symbol->string (-> (get-continue-by-name *game-info* arg0) level)) "ice-canyon") (return "ICE CANYON"))
-    ((string= (symbol->string (-> (get-continue-by-name *game-info* arg0) level)) "villa-cube") (return "VILLA CUBE"))
+    ((string= (symbol->string (-> (get-continue-by-name *game-info* arg0) level)) "villa-cube") (return "VILLA CUBA"))
     ((string= (symbol->string (-> (get-continue-by-name *game-info* arg0) level)) "ice-slide") (return "ICE SLIDE"))
     ((string= (symbol->string (-> (get-continue-by-name *game-info* arg0) level)) "glass-toe") (return "GLASS TOWER"))
     ((string= (symbol->string (-> (get-continue-by-name *game-info* arg0) level)) "chem-fac") (return "CHEMICAL FACTORY"))

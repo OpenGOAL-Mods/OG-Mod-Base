@@ -759,7 +759,6 @@
        :type
        game-option
        (new 'static 'game-option :option-type (game-option-type button) :name (text-id speedrun-reset-current-run) :scale #t)
-       (new 'static 'game-option :option-type (game-option-type jak-or-flut) :name (text-id jak-or-flut) :scale #t)
        (new 'static 'game-option :option-type (game-option-type button) :name (text-id speedrun-new-full-game) :scale #t)
        (new 'static
             'game-option
@@ -767,12 +766,13 @@
             :name (text-id speedrun-new-individual-level)
             :scale #t
             :param3 (game-option-menu speedrun-il-options))
-       (new 'static
-            'game-option
-            :option-type (game-option-type menu)
-            :name (text-id speedrun-new-cat-ext)
-            :scale #t
-            :param3 (game-option-menu speedrun-cat-ext-options))
+       (new 'static 'game-option :option-type (game-option-type jak-or-flut) :name (text-id jak-or-flut) :scale #t)
+      ;;  (new 'static
+      ;;       'game-option
+      ;;       :option-type (game-option-type menu)
+      ;;       :name (text-id speedrun-new-cat-ext)
+      ;;       :scale #t
+      ;;       :param3 (game-option-menu speedrun-cat-ext-options))
        (new 'static 'game-option :option-type (game-option-type button) :name (text-id back) :scale #t)))
 
 (define *speedrun-il-options*
@@ -2133,7 +2133,7 @@
   (set! (-> *sound-options-pc* 0 value-to-modify) (&-> *pc-settings* memcard-volume-sfx))
   (set! (-> *sound-options-pc* 1 value-to-modify) (&-> *pc-settings* memcard-volume-music))
   (set! (-> *sound-options-pc* 2 value-to-modify) (&-> *pc-settings* memcard-volume-dialog))
-  (set! (-> *speedrun-options* 1 value-to-modify) (&-> *progress-carousell* int-backup))
+  (set! (-> *speedrun-options* 3 value-to-modify) (&-> *progress-carousell* int-backup)) ;; jak-or-flut
   (dotimes (i (1- (-> *cheats* length)))
     (set! (-> *cheats* i value-to-modify) (&-> *progress-carousell* symbol-backup)))
   ;(set! (-> *sound-options-pc* 3 value-to-modify) (&-> *pc-settings* music-fadein?))
