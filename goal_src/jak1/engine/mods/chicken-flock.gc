@@ -583,6 +583,13 @@
       (return current-chick-num)))
   0)
 
+(defun do-we-have-chick-with-state ((state symbol))
+  (when done-init?
+    (dotimes (i NUM_FLOCKPOINTS)
+      (when (and (get-chick-from-flock i) (= (-> (get-chick-from-flock i) substate) state))
+        (return #t))))
+  #f)
+
 (defun get-chick-with-state ((state symbol))
   "takes in a substate and returns the first chicken in the pool with said sate"
   (when done-init?
@@ -799,9 +806,9 @@
       ;;We add 1 here, because we removed it above. Will need to adjust when it goes down on warp
       (dotimes (i NUM_FLOCKPOINTS)
         (when (get-chick-with-state 'following)
-        (when (-> *pc-settings* speedrunner-mode?)
-        (vector-copy! (-> (get-chick-with-state 'following) root trans)
-                        (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS))))
+          (when (-> *pc-settings* speedrunner-mode?)
+            (vector-copy! (-> (get-chick-with-state 'following) root trans)
+                          (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS))))
           (vector-copy! (-> (get-chick-with-state 'following) target-pos)
                         (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS)))
           (update-chicken-substate (get-chick-with-state 'following) 'waiting-to-return))
@@ -811,8 +818,12 @@
   (none))
 
 (defun waiting-chicks-proc-func ()
+  (label func-start)
   (when (> (get-waiting-chicks) 0)
     (suspend-for (seconds 0.35))
+    (format #t (string-format "1~%"))
+    (when (not (do-we-have-chick-with-state 'waiting-to-return))
+      (goto func-start))
     (when (< (vector-vector-distance (-> (get-chick-with-state 'waiting-to-return) target-pos)
                                      (-> (get-chick-with-state 'waiting-to-return) root trans))
              (meters 1.2))

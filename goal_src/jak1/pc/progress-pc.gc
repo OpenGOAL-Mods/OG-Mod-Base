@@ -767,12 +767,12 @@
             :scale #t
             :param3 (game-option-menu speedrun-il-options))
        (new 'static 'game-option :option-type (game-option-type jak-or-flut) :name (text-id jak-or-flut) :scale #t)
-      ;;  (new 'static
-      ;;       'game-option
-      ;;       :option-type (game-option-type menu)
-      ;;       :name (text-id speedrun-new-cat-ext)
-      ;;       :scale #t
-      ;;       :param3 (game-option-menu speedrun-cat-ext-options))
+       ;;  (new 'static
+       ;;       'game-option
+       ;;       :option-type (game-option-type menu)
+       ;;       :name (text-id speedrun-new-cat-ext)
+       ;;       :scale #t
+       ;;       :param3 (game-option-menu speedrun-cat-ext-options))
        (new 'static 'game-option :option-type (game-option-type button) :name (text-id back) :scale #t)))
 
 (define *speedrun-il-options*
