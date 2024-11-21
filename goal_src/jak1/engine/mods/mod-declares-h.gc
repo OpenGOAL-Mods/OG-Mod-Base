@@ -39,6 +39,12 @@
 
 (defun-extern get-current-chicks int)
 
+(defun-extern get-saved-chicks int)
+
+(defun-extern get-waiting-chicks int)
+
+(defun-extern get-to-portal-chicks int)
+
 (defun-extern chicken-going-to-portal? symbol)
 
 (defun-extern get-mort-orb-total int)
