@@ -583,13 +583,6 @@
       (return current-chick-num)))
   0)
 
-(defun do-we-have-chick-with-state ((state symbol))
-  (when done-init?
-    (dotimes (i NUM_FLOCKPOINTS)
-      (when (and (get-chick-from-flock i) (= (-> (get-chick-from-flock i) substate) state))
-        (return #t))))
-  #f)
-
 (defun get-chick-with-state ((state symbol))
   "takes in a substate and returns the first chicken in the pool with said sate"
   (when done-init?
@@ -617,12 +610,10 @@
 ;;   dst)
 
 (defun get-saved-chicks ()
-  (if (not (>= (-> *game-info* blackout-time) (current-time)))
-    (-> *custom-level-info*
-        data
-        (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))
-        saved-chicks)
-    0))
+  (let ((lvl-idx (-> *level-task-data-remap* (+ (-> (level-get-target-inside *level*) info index) -1))))
+    (if (and (>= lvl-idx 16) (< lvl-idx 35)) ;; (not (>= (-> *game-info* blackout-time) (current-time)))
+      (-> *custom-level-info* data lvl-idx saved-chicks)
+      0)))
 
 (defun chicken-going-to-portal? ()
   ;;Is a chicken going to the portal?
@@ -651,6 +642,10 @@
     (draw-origin-sphere-text vector-AB "Vector AB (ignoring y)")
     ;; Normalize vector AB to get a unit direction vector
     (set! magnitude (sqrtf (+ (* (-> vector-AB x) (-> vector-AB x)) (* (-> vector-AB z) (-> vector-AB z)))))
+    (if (= magnitude 0.0)
+      (return (vector+! (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans)
+                        (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans)
+                        (vector-identity! (new-stack-vector0)))))
     (when (> magnitude 0.0)
       (set! (-> normalized-AB x) (/ (-> vector-AB x) magnitude))
       (set! (-> normalized-AB z) (/ (-> vector-AB z) magnitude)))
@@ -806,9 +801,9 @@
       ;;We add 1 here, because we removed it above. Will need to adjust when it goes down on warp
       (dotimes (i NUM_FLOCKPOINTS)
         (when (get-chick-with-state 'following)
-          (when (-> *pc-settings* speedrunner-mode?)
-            (vector-copy! (-> (get-chick-with-state 'following) root trans)
-                          (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS))))
+        (when (-> *pc-settings* speedrunner-mode?)
+        (vector-copy! (-> (get-chick-with-state 'following) root trans)
+                        (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS))))
           (vector-copy! (-> (get-chick-with-state 'following) target-pos)
                         (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS)))
           (update-chicken-substate (get-chick-with-state 'following) 'waiting-to-return))
@@ -818,15 +813,12 @@
   (none))
 
 (defun waiting-chicks-proc-func ()
-  (label func-start)
   (when (> (get-waiting-chicks) 0)
     (suspend-for (seconds 0.35))
-    (format #t (string-format "1~%"))
-    (when (not (do-we-have-chick-with-state 'waiting-to-return))
-      (goto func-start))
-    (when (< (vector-vector-distance (-> (get-chick-with-state 'waiting-to-return) target-pos)
-                                     (-> (get-chick-with-state 'waiting-to-return) root trans))
-             (meters 1.2))
+    (when (and (> (get-waiting-chicks) 0)
+               (< (vector-vector-distance (-> (get-chick-with-state 'waiting-to-return) target-pos)
+                                          (-> (get-chick-with-state 'waiting-to-return) root trans))
+                  (meters 1.2)))
       (vector-copy! (-> (get-chick-with-state 'waiting-to-return) target-pos)
                     (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans))
       (if (-> *pc-settings* speedrunner-mode?)
@@ -842,10 +834,11 @@
       (when (and chick
                  (= (-> chick substate) 'moving-to-portal)
                  (not (-> chick locked?)) ;; Ensure the chicken is not locked
-                 (< (vector-vector-distance warpgate-pos (-> chick root trans)) (meters 0.6)))
+                 (or (< (vector-vector-distance warpgate-pos (-> chick root trans)) (meters 0.6))
+                     (zero? (vector-length (-> chick target-pos)))) ;; hack to fix chicken stuck at 0,0,0
+                 ) 
         ;; Lock the chicken to prevent further saves
         (set! (-> chick locked?) #t)
-        (suspend)
         ;; Play portal effect on the chicken
         (when (-> chick skel effect)
           (effect-control-method-10 (-> chick skel effect) 'death-warp-in -1.0 -1))
