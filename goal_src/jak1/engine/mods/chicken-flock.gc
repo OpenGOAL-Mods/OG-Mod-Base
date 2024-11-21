@@ -109,8 +109,8 @@
     (case state
       (('following) (vector-copy! (-> chicken target-pos) (-> *target* root trans)) (set! (-> chicken substate) 'following))
       (('waiting-to-return) (set! (-> chicken substate) 'waiting-to-return))
-      (('moving-to-portal) (set! (-> chicken substate) 'moving-to-portal))
-      (('uncollected) (set! (-> chicken substate) 'uncollected))
+      (('moving-to-portal) (set! (-> chicken to-point-speed) 10.0) (set! (-> chicken substate) 'moving-to-portal))
+      (('uncollected) (set! (-> chicken to-point-speed) 6.0) (set! (-> chicken substate) 'uncollected))
       (else (play-sound-file "codemistake.mp3" 3000))))
   #t)
 
@@ -801,9 +801,9 @@
       ;;We add 1 here, because we removed it above. Will need to adjust when it goes down on warp
       (dotimes (i NUM_FLOCKPOINTS)
         (when (get-chick-with-state 'following)
-        (when (-> *pc-settings* speedrunner-mode?)
-        (vector-copy! (-> (get-chick-with-state 'following) root trans)
-                        (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS))))
+          (when (-> *pc-settings* speedrunner-mode?)
+            (vector-copy! (-> (get-chick-with-state 'following) root trans)
+                          (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS))))
           (vector-copy! (-> (get-chick-with-state 'following) target-pos)
                         (-> *return-points* points (rand-vu-int-range 0 NUM_FLOCKPOINTS)))
           (update-chicken-substate (get-chick-with-state 'following) 'waiting-to-return))
@@ -813,8 +813,15 @@
   (none))
 
 (defun waiting-chicks-proc-func ()
-  (when (> (get-waiting-chicks) 0)
-    (suspend-for (seconds 0.35))
+  ;; If we are dying politly wait to not be dying
+  (until (not (or (not *target*)
+                  (= (-> *target* state name) 'target-warp-out)
+                  (= (-> *target* state name) 'target-continue)
+                  (= (-> *target* state name) 'target-warp-in)
+                  (= (-> *target* state name) 'target-death)))
+    (suspend))
+  (when (and (> (get-waiting-chicks) 0) (= (get-to-portal-chicks) 0))
+    (suspend-for (seconds 0.117))
     (when (and (> (get-waiting-chicks) 0)
                (< (vector-vector-distance (-> (get-chick-with-state 'waiting-to-return) target-pos)
                                           (-> (get-chick-with-state 'waiting-to-return) root trans))
@@ -834,9 +841,7 @@
       (when (and chick
                  (= (-> chick substate) 'moving-to-portal)
                  (not (-> chick locked?)) ;; Ensure the chicken is not locked
-                 (or (< (vector-vector-distance warpgate-pos (-> chick root trans)) (meters 0.6))
-                     (zero? (vector-length (-> chick target-pos)))) ;; hack to fix chicken stuck at 0,0,0
-                 ) 
+                 (< (vector-vector-distance warpgate-pos (-> chick root trans)) (meters 0.6)))
         ;; Lock the chicken to prevent further saves
         (set! (-> chick locked?) #t)
         ;; Play portal effect on the chicken

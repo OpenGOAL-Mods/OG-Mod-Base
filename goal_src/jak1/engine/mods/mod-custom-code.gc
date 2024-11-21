@@ -286,11 +286,14 @@
     (when (not (= (vector-vector-distance *Origin-R* (get-chicken-initial-return-point)) 0.0))
       ;; If the origin is not at its starting point, figure out how much it moved and store that.
       (set! xchange (- (-> *Origin-R* x) (-> (get-chicken-initial-return-point) x)))
-      (set! ychange (- (-> *Origin-R* y) (- (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans y)  (meters 3.0907)) ))
+      (set! ychange
+            (- (-> *Origin-R* y)
+               (- (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans y) (meters 3.0907))))
       (set! zchange (- (-> *Origin-R* z) (-> (get-chicken-initial-return-point) z)))
       (move-return-flock-by-xz xchange ychange zchange)
       (vector-copy! *Origin-R* (get-chicken-initial-return-point))
-      (set! (-> *Origin-R* y) (- (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans y)  (meters 3.0907)))))
+      (set! (-> *Origin-R* y)
+            (- (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans y) (meters 3.0907)))))
   *Origin-R*)
 
 ;;mort getters
@@ -308,7 +311,7 @@
   (set! (-> (get-chick-with-state 'uncollected) parent-cell-name) (the string (-> self name)))
   ;; Increment after setting name
   (update-chicken-substate (get-chick-with-state 'uncollected) 'following)
-  (play-sound-file "ChickPickup1.mp3" (the int (/ (-> *setting-control* default sfx-volume) 4)))
+  (play-sound-file "ChickPickup1.mp3" (the int (* (-> *setting-control* default sfx-volume) 0.60)))
   (if (= (+ (get-current-chicks) (get-saved-chicks)) (get-total-chicks))
     (play-sound-file "coin1.wav" (the int (-> *setting-control* default sfx-volume))))
   (none))

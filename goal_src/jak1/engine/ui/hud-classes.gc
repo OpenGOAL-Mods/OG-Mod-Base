@@ -898,7 +898,9 @@
         (((hud-collectable-view original))
          ;; show original (cells collected across entire game)
          (if (!= (-> (level-get-target-inside *level*) name) 'finalboss)
-           (draw-string-xy (string-format "~D/~D" (+ (get-saved-chicks) (get-current-chicks)) (get-total-chicks))
+           (draw-string-xy (string-format "~D/~D"
+                                          (+ (+ (get-current-chicks) (get-waiting-chicks)) (get-to-portal-chicks) (get-saved-chicks))
+                                          (get-total-chicks))
                            buf
                            string-x
                            string-y
