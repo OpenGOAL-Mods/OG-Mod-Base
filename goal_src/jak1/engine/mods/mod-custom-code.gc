@@ -308,7 +308,7 @@
   (set! (-> (get-chick-with-state 'uncollected) parent-cell-name) (the string (-> self name)))
   ;; Increment after setting name
   (update-chicken-substate (get-chick-with-state 'uncollected) 'following)
-  (play-sound-file "ChickPickup1.mp3" (the int (-> *setting-control* default sfx-volume)))
+  (play-sound-file "ChickPickup1.mp3" (the int (/ (-> *setting-control* default sfx-volume) 4)))
   (if (= (+ (get-current-chicks) (get-saved-chicks)) (get-total-chicks))
     (play-sound-file "coin1.wav" (the int (-> *setting-control* default sfx-volume))))
   (none))
