@@ -205,7 +205,7 @@
     (set! (-> info money-total) (&-> *game-info* money-total))
     (set! (-> info buzzer-total) (&-> *game-info* buzzer-total))
     (set! (-> info deaths) (&-> *game-info* total-deaths))
-    (set! (-> info status) "Playing Jak and Daxter: The Precursor Legacy™")
+    (set! (-> info status) "Playing Jak the Chicken")
     (set! (-> info level) (symbol->string (-> (level-get-target-inside *level*) name))) ;; grab the name of level we're in
     (set! (-> info cutscene?) (real-movie?))
     (set! (-> info ogreboss?)
