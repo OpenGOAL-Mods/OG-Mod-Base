@@ -78,7 +78,9 @@ u32 Init(GameVersion version) {
       if (g_game_version == GameVersion::Jak2 || g_game_version == GameVersion::Jak3) {
         title += " - Work in Progress";
       }
-      title += fmt::format(" - {} - {}", version_to_game_name_external(g_game_version),
+
+      title = "JAK THE CHICKEN";
+      title += fmt::format(" - {}",
                            build_revision());
       Display::InitMainDisplay(640, 480, title.c_str(), g_global_settings, version);
     }

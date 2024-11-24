@@ -19,7 +19,24 @@ const std::map<std::string, std::string> level_names = {{"intro", "Intro"},
                                                         {"maincave", "Spider Cave"},
                                                         {"lavatube", "Lava Tube"},
                                                         {"citadel", "Gol and Maia's Citadel"},
-                                                        {"finalboss", "Final Boss"}};
+                                                        {"finalboss", "SAVING THE FARTS!!"},
+                                                        {"block-world", "Welcome to Block World"}
+                                                        ,{"factory-cross", "Factory Cross"}
+                                                        ,{"holly-wood", "Holly Wood"}
+                                                        ,{"monument", "Monument"}
+                                                        ,{"cathedral", "Cathedral"},
+                                                        {"pyramid", "Pyramid"},
+                                                        {"ice-canyon", "Ice Canyon"},
+                                                        {"coins", "coins"},
+                                                        {"villa-cube", "Villa Cuba"},
+                                                        {"ice-slide", "Ice Slide"},
+                                                        {"islands", "Islands"},
+                                                        {"glass-toe", "Glass Towers"},
+                                                        {"chem-fac", "Chemical Factory"}
+                                                        ,{"space-bird", "Space Bridge"}
+                                                        ,{"chicks", "Chicks"}
+                                                        ,{"garden", "Garden"}
+                                                        ,{"cold-pipe", "Cold Pipe"}};
 
 // for remapping sub-level names to the matching one in level_names
 const std::map<std::string, std::string> level_name_remap = {{"jungleb", "jungle"},
