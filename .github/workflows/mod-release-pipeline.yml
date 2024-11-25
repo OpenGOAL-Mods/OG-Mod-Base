@@ -50,7 +50,7 @@ on:
       skipMacOS:
         description: "Whether to skip macOS builds, defaults to `false`"
         required: false
-        default: false
+        default: true
         type: "boolean"
     secrets:
       token:
