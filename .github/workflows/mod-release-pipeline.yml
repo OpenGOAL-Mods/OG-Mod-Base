@@ -88,7 +88,7 @@ jobs:
 
   create_release:
     name: "Create Release"
-    needs: 
+    needs:
       - validate_metadata
     runs-on: ubuntu-latest
     outputs:
@@ -124,7 +124,7 @@ jobs:
 
   bundle_windows_build:
     name: "Bundle Windows Build"
-    needs: 
+    needs:
       - create_release
       - build_windows_clang
     if: ${{ !inputs.skipWindows && inputs.buildBinaries }}
@@ -175,7 +175,7 @@ jobs:
       cachePrefix: "static"
       uploadArtifacts: true
     secrets: inherit
-  
+
   bundle_linux_build:
     name: "Bundle Linux Build"
     needs:
@@ -183,13 +183,26 @@ jobs:
       - build_linux_clang
     if: ${{ !inputs.skipLinux && inputs.buildBinaries }}
     runs-on: ubuntu-latest
-    steps:      
+    steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.create_release.outputs.bundleTagName }}
 
       - name: "Checkout Repository"
         uses: actions/checkout@v4
+
+    # Not where I wanna be
+    # Debug: Display the structure of the repository before deletion
+      - name: Debug - List files before deletion
+        run: ls -Rl
+        shell: bash
+
+      # Remove .blend and .blend1 files on Linux/macOS
+      - name: Remove .blend and .blend1 files (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          find . -type f \( -iname "*.blend" -o -iname "*.blend1" \) -print -exec rm -f {} +
+
 
       - name: Prepare Artifact Folder
         run: mkdir -p ./ci-artifacts
@@ -234,7 +247,7 @@ jobs:
 
   bundle_macos_build:
     name: "Bundle MacOS Build"
-    needs: 
+    needs:
       - create_release
       - build_macos_intel
     if: ${{ !inputs.skipMacOS && inputs.buildBinaries }}
@@ -246,7 +259,7 @@ jobs:
 
       - name: "Checkout Repository"
         uses: actions/checkout@v4
-        
+
       - name: Prepare Artifact Folder
         run: mkdir -p ./ci-artifacts
 
@@ -352,7 +365,7 @@ jobs:
 
   finalize_release:
     name: "Finalize Release"
-    needs: 
+    needs:
       - create_release
       - bundle_windows_build
       - bundle_linux_build
@@ -396,7 +409,7 @@ jobs:
       - name: Move MacOS Assets
         if: ${{ !inputs.skipMacOS }}
         run: mv ${{ inputs.outputDir }}/artifacts/macos-intel/* ${{ inputs.outputDir }}/dist
-      
+
       - name: Prepare Release Metadata
         env:
           SCHEMA_VERSION: "0.1.0"
