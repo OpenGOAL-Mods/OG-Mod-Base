@@ -45,6 +45,17 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
+    # Debug: Display the structure of the repository before deletion
+      - name: Debug - List files before deletion
+        run: ls -Rl
+        shell: bash
+
+      # Remove .blend and .blend1 files on Linux/macOS
+      - name: Remove .blend and .blend1 files (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          find . -type f \( -iname "*.blend" -o -iname "*.blend1" \) -exec rm -f {} +
+
       - name: Install Package Dependencies
         run: |
           sudo apt update
