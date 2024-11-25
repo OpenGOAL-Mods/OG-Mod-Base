@@ -137,6 +137,17 @@ jobs:
       - name: "Checkout Repository"
         uses: actions/checkout@v4
 
+  # Debug: Display the structure of the repository before deletion
+      - name: Debug - List files before deletion
+        run: ls -Rl
+        shell: bash
+
+      # Remove .blend and .blend1 files on Linux/macOS
+      - name: Remove .blend and .blend1 files (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          find . -type f \( -iname "*.blend" -o -iname "*.blend1" \) -print -exec rm -f {} +
+
       - name: Prepare Artifact Folder
         run: mkdir -p ./ci-artifacts
 
