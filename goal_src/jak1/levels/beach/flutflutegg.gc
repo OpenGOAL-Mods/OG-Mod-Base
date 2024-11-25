@@ -117,8 +117,6 @@
   (when (= (- (-> self max-hp) 1) (-> self num-hit))
     ;;Want to crack the egg here when it has 1 hp left
     )
-
-
   (when (and (not (-> self spawned-collect?)) (= (-> self max-hp) (-> self num-hit)))
     (birth-pickup-at-point (-> self root trans)
                            (the pickup-type (-> self eco-collectable))
@@ -184,23 +182,20 @@
         (go flutflutegg-physics)))
   :trans
     (behavior ()
-
       (when (and (not (-> self spawned-collect?))
-             (not (= (-> self max-hp) (-> self num-hit)))
-             (or (= (-> *target* next-state name) 'target-flut-air-attack)
-                 (= (-> *target* next-state name) 'target-flut-air-attack-hit-ground))
-                 (< (vector-vector-distance (-> self root trans) (-> *target* root trans)) (meters 0.6))
-                 )
-    (birth-pickup-at-point (-> self root trans)
-                           (the pickup-type (-> self eco-collectable))
-                           (the float (-> self eco-quantity))
-                           #f
-                           *target*
-                           (the-as fact-info #f))
-    (set! (-> self num-hit) (-> self max-hp))
-    (set! (-> self spawned-collect?) #t)
-    (go flutflutegg-break #t))
-
+                 (not (= (-> self max-hp) (-> self num-hit)))
+                 (or (= (-> *target* next-state name) 'target-flut-air-attack)
+                     (= (-> *target* next-state name) 'target-flut-air-attack-hit-ground))
+                 (< (vector-vector-distance (-> self root trans) (-> *target* root trans)) (meters 0.6)))
+        (birth-pickup-at-point (-> self root trans)
+                               (the pickup-type (-> self eco-collectable))
+                               (the float (-> self eco-quantity))
+                               #f
+                               *target*
+                               (the-as fact-info #f))
+        (set! (-> self num-hit) (-> self max-hp))
+        (set! (-> self spawned-collect?) #t)
+        (go flutflutegg-break #t))
       (let* ((gp-0 (ambient-control-method-10 (-> self ambient) (new 'stack-no-clear 'vector) (seconds 3) 368640.0 self))
              (v1-2 (/ (the-as int (rand-uint31-gen *random-generator*)) 256))
              (v1-3 (the-as number (logior #x3f800000 v1-2)))

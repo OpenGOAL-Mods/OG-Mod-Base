@@ -435,6 +435,11 @@
     ;;Hack to warp/skip to the light eco cutscene if we are in citadel because I dont know how to make mort bosses yet
     (when (and (process-by-ename "robotboss-3") *target*)
       (robo-movie-check))
+    (when (and (-> *speedrun-info* should-display?)
+               (> (vector-vector-distance (-> *target* root trans)
+                                          (-> (the-as process-drawable (process-by-ename "project-training-part-1")) root trans))
+                  (meters 14.0)))
+      (hide-speedrun-display))
     ;;Hack to rotat the warpgate this one is extra weird the math on this is wrong but the idea is close enough, might not work in coins??
     (runs-every-frame-warpgate-hacks))
   ;;Hack to set the voice volume to 0 during these cutscenes, then restore it when the cutscene is overridden.

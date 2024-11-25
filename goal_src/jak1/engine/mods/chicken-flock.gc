@@ -821,9 +821,7 @@
                   (= (-> *target* state name) 'target-death)
                   (= (-> *target* state name) 'target-flut-death)
                   (= (-> *target* state name) 'target-tube-death)
-                  (= (-> *target* state name) 'target-racer-death)
-                  ))
-
+                  (= (-> *target* state name) 'target-racer-death)))
     (suspend))
   (when (and (> (get-waiting-chicks) 0) (= (get-to-portal-chicks) 0))
     (suspend-for (seconds 0.117))
