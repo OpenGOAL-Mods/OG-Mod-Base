@@ -50,13 +50,16 @@
     ((= idx 10) (set! *target-chicken* *chicken-10*))
     ((= idx 11) (set! *target-chicken* *chicken-11*))
     (else (print "Invalid idx! Must be between 0 and 11."))))
+
 (define *speedrunner-mode?* (-> *pc-settings* speedrunner-mode?))
+
 (defun-debug debug-menu-make-mort-chicken-menu ((ctx debug-menu-context))
   (let ((mort-chicken-tools-menu (new 'debug 'debug-menu ctx "Chicken")))
     ;; orb-placer menu
     (let ((draw-info-menu (new 'debug 'debug-menu ctx "Draw menu"))
           (update-current-chicken-menu (new 'debug 'debug-menu ctx "Update Current Chicken Menu")))
-(debug-menu-append-item draw-info-menu (new-dm-bool "Speedrunner Mode" (-> *pc-settings* speedrunner-mode?) dm-boolean-toggle-pick-func))
+      (debug-menu-append-item draw-info-menu
+                              (new-dm-bool "Speedrunner Mode" (-> *pc-settings* speedrunner-mode?) dm-boolean-toggle-pick-func))
       (debug-menu-append-item draw-info-menu
                               (new-dm-bool "Draw chicken info" *draw-chicken-information* dm-boolean-toggle-pick-func))
       (debug-menu-append-item draw-info-menu
