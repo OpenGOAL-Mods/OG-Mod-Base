@@ -8,6 +8,17 @@
 ;; Additional debug menu(s)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun debug-menu-append-item-top ((menu debug-menu) (item debug-menu-node))
+  "Add an entry to the debug menu."
+  (let* ((context (-> menu context))
+         (was-active (-> context is-active)))
+    (if was-active (debug-menu-context-send-msg context (debug-menu-msg deactivate) (debug-menu-dest activation)))
+    (set! (-> item parent) menu)
+    (set! (-> menu items) (the-as pair (dcons item (-> menu items)))) ;; Prepend to the top
+    (debug-menu-rebuild menu)
+    (if was-active (debug-menu-context-send-msg context (debug-menu-msg activate) (debug-menu-dest activation))))
+  item)
+
 (defun-debug debug-menu-make-modding-tools-menu ((ctx debug-menu-context))
   (let ((modding-tools-menu (new 'debug 'debug-menu ctx "Modding Tools")))
     ;; orb-placer menu
@@ -23,5 +34,62 @@
       (debug-menu-append-item modding-tools-menu (new-dm-submenu "Orb Placer" orb-placer-menu)))
     (new-dm-submenu "Modding Tools" modding-tools-menu)))
 
+(defun update-target-chicken ((idx int))
+  "Set *target-chicken* to *chicken-0* through *chicken-11* based on idx."
+  (cond
+    ((= idx 0) (set! *target-chicken* *chicken-0*))
+    ((= idx 1) (set! *target-chicken* *chicken-1*))
+    ((= idx 2) (set! *target-chicken* *chicken-2*))
+    ((= idx 3) (set! *target-chicken* *chicken-3*))
+    ((= idx 4) (set! *target-chicken* *chicken-4*))
+    ((= idx 5) (set! *target-chicken* *chicken-5*))
+    ((= idx 6) (set! *target-chicken* *chicken-6*))
+    ((= idx 7) (set! *target-chicken* *chicken-7*))
+    ((= idx 8) (set! *target-chicken* *chicken-8*))
+    ((= idx 9) (set! *target-chicken* *chicken-9*))
+    ((= idx 10) (set! *target-chicken* *chicken-10*))
+    ((= idx 11) (set! *target-chicken* *chicken-11*))
+    (else (print "Invalid idx! Must be between 0 and 11."))))
+(define *speedrunner-mode?* (-> *pc-settings* speedrunner-mode?))
+(defun-debug debug-menu-make-mort-chicken-menu ((ctx debug-menu-context))
+  (let ((mort-chicken-tools-menu (new 'debug 'debug-menu ctx "Chicken")))
+    ;; orb-placer menu
+    (let ((draw-info-menu (new 'debug 'debug-menu ctx "Draw menu"))
+          (update-current-chicken-menu (new 'debug 'debug-menu ctx "Update Current Chicken Menu")))
+(debug-menu-append-item draw-info-menu (new-dm-bool "Speedrunner Mode" (-> *pc-settings* speedrunner-mode?) dm-boolean-toggle-pick-func))
+      (debug-menu-append-item draw-info-menu
+                              (new-dm-bool "Draw chicken info" *draw-chicken-information* dm-boolean-toggle-pick-func))
+      (debug-menu-append-item draw-info-menu
+                              (new-dm-bool "Draw chicken Pool info" *draw-chicken-pool* dm-boolean-toggle-pick-func))
+      (debug-menu-append-item draw-info-menu
+                              (new-dm-bool "Draw current chicken target info" *show-target-chicken-info* dm-boolean-toggle-pick-func))
+      (debug-menu-append-item update-current-chicken-menu (new-dm-func "Chicken-0" 0 update-target-chicken))
+      (debug-menu-append-item update-current-chicken-menu (new-dm-func "Chicken-1" 1 update-target-chicken))
+      (debug-menu-append-item update-current-chicken-menu (new-dm-func "Chicken-2" 2 update-target-chicken))
+      (debug-menu-append-item update-current-chicken-menu (new-dm-func "Chicken-3" 3 update-target-chicken))
+      (debug-menu-append-item update-current-chicken-menu (new-dm-func "Chicken-4" 4 update-target-chicken))
+      (debug-menu-append-item update-current-chicken-menu (new-dm-func "Chicken-5" 5 update-target-chicken))
+      (debug-menu-append-item update-current-chicken-menu (new-dm-func "Chicken-6" 6 update-target-chicken))
+      (debug-menu-append-item update-current-chicken-menu (new-dm-func "Chicken-7" 7 update-target-chicken))
+      (debug-menu-append-item update-current-chicken-menu (new-dm-func "Chicken-8" 8 update-target-chicken))
+      (debug-menu-append-item update-current-chicken-menu (new-dm-func "Chicken-9" 9 update-target-chicken))
+      (debug-menu-append-item update-current-chicken-menu (new-dm-func "Chicken-10" 10 update-target-chicken))
+      (debug-menu-append-item update-current-chicken-menu (new-dm-func "Chicken-11" 11 update-target-chicken))
+      (debug-menu-append-item mort-chicken-tools-menu (new-dm-submenu "Draw Bools" draw-info-menu))
+      (debug-menu-append-item mort-chicken-tools-menu (new-dm-submenu "Change Target Chicken" update-current-chicken-menu)))
+    ;; (let ((orb-placer-menu (new 'debug 'debug-menu ctx "Orb Placer")))
+    ;;   (debug-menu-append-item orb-placer-menu (new-dm-bool "Edit Mode?" *orb-placer-enabled?* dm-boolean-toggle-pick-func))
+    ;;   (debug-menu-append-item orb-placer-menu (new-dm-func "Add Orb" #f orb-placer-add))
+    ;;   (let ((select-orb-menu (new 'debug 'debug-menu ctx "Select Orb")))
+    ;;     (set! *orb-placer-select-menu* select-orb-menu)
+    ;;     ;; populated on orb add
+    ;;     (debug-menu-append-item orb-placer-menu (new-dm-submenu "Select Orb" select-orb-menu)))
+    ;;   (debug-menu-append-item orb-placer-menu (new-dm-func "Print Selected Orb Position" #f orb-placer-print-selected))
+    ;;   (debug-menu-append-item orb-placer-menu (new-dm-func "Print All Orb Positions" #f orb-placer-print-all))
+    ;;   (debug-menu-append-item mort-chicken-tools-menu (new-dm-submenu "Orb Placer" orb-placer-menu)))
+    (new-dm-submenu "Chicken" mort-chicken-tools-menu)))
+
 (when (-> *debug-menu-context* root-menu)
-  (debug-menu-append-item (-> *debug-menu-context* root-menu) (debug-menu-make-modding-tools-menu *debug-menu-context*)))
+  (debug-menu-append-item (-> *debug-menu-context* root-menu) (debug-menu-make-modding-tools-menu *debug-menu-context*))
+  (debug-menu-append-item-top (-> *debug-menu-context* root-menu)
+                              (debug-menu-make-mort-chicken-menu *debug-menu-context*)))

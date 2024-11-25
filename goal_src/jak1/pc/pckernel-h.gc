@@ -250,6 +250,8 @@
 
 (define *pc-temp-string-1* (new 'global 'string 2048 (the string #f)))
 
+(define *pc-chicken-string* (new 'global 'string 2048 (the string #f)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; debug settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

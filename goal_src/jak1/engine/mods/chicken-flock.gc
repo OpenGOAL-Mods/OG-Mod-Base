@@ -373,6 +373,7 @@
   (define *chicken-0* (-> (start2) 0))
   (set! (-> *chicken-0* name) "chicken-0")
   (set! (-> *flock* chicks 0) (process->handle *chicken-0*))
+  (set! *target-chicken* *chicken-0*)
   (define *chicken-1* (-> (start2) 0))
   (set! (-> *chicken-1* name) "chicken-1")
   (set! (-> *flock* chicks 1) (process->handle *chicken-1*))
@@ -637,9 +638,10 @@
     (set! (-> vector-AB z) (- (-> target-pos z) (-> warpgate-pos z)))
     (set! (-> vector-AB y) 0.0) ;; Ignore y component for direction
     ;; Draw initial points for reference
-    (draw-origin-sphere-text warpgate-pos "warpgate/vector A")
-    (draw-origin-sphere-text target-pos "target/vector B")
-    (draw-origin-sphere-text vector-AB "Vector AB (ignoring y)")
+    (when *draw-chicken-information*
+      (draw-origin-sphere-text warpgate-pos "warpgate/vector A")
+      (draw-origin-sphere-text target-pos "target/vector B")
+      (draw-origin-sphere-text vector-AB "Vector AB (ignoring y)"))
     ;; Normalize vector AB to get a unit direction vector
     (set! magnitude (sqrtf (+ (* (-> vector-AB x) (-> vector-AB x)) (* (-> vector-AB z) (-> vector-AB z)))))
     (if (= magnitude 0.0)
@@ -658,13 +660,14 @@
     ;; Set y-coordinate to match the warpgate y-coordinate
     (set! (-> final-point y) (-> warpgate-pos y))
     ;; Draw the final point at the specified distance from warpgate-pos
-    (draw-origin-sphere-text final-point "Point on Circle Radius (ignoring y)")
+    (when *draw-chicken-information*
+      (draw-origin-sphere-text final-point "Point on Circle Radius (ignoring y)"))
     (return final-point))
   (the-as vector #f))
 
 (defun reset-saved-chick-in-mem ()
   (when (nonzero? (get-saved-chicks-from-mem))
-    (format #t "All chicks in this level are safe, setting saved chicks mem to 0")
+    (format #t "All chicks in this level are safe, setting saved chicks mem to 0~%")
     (set! (-> *game-info* money-per-level 5) 0))
   (none))
 
@@ -692,7 +695,7 @@
 
 (defun set-unlock-level-val ((arg1 int))
   (set! (-> *game-info* money-per-level 3) (the-as uint arg1))
-  (format #t "unlock level is set to ~D~%" (-> *game-info* money-per-level 3))
+  (format #t "Unlocked the next level!  ~D~%" (-> *game-info* money-per-level 3))
   (none))
 
 (defun unlock-level-func ((idx int))

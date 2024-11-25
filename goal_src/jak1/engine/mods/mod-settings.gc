@@ -41,7 +41,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (define *draw-warp-gate-pos* #f)
 
-(define *draw-chicken-information* #t)
+(define *draw-chicken-information* #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Custom Settings Variables to use in mods

@@ -72,3 +72,11 @@
 (defun-extern get-chicken-initial-return-point vector)
 
 (defun-extern waiting-chicks-proc-func none)
+
+(declare-type demon-chicken process-drawable)
+
+(define *target-chicken* (the-as demon-chicken #f))
+
+(define *draw-chicken-pool* #f)
+
+(define *show-target-chicken-info* #f)

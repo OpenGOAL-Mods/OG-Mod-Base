@@ -143,7 +143,10 @@ FileEnv* Compiler::compile_object_file(const std::string& name,
       compile_top_level_function("top-level", std::move(code), compilation_env));
 
   if (!allow_emit && !file_env->is_empty()) {
-    throw std::runtime_error("Compilation generated code, but wasn't supposed to");
+    m_listener.connect_to_target();
+    compile_object_file(name,code,true);
+
+   //throw std::runtime_error("Compilation generated code, but wasn't supposed to");
   }
 
   return file_env;
@@ -505,6 +508,8 @@ void Compiler::asm_file(const CompilationOptions& options) {
       if (m_listener.is_connected()) {
         m_listener.send_code(data, obj_file_name);
       } else {
+        m_listener.connect_to_target();
+        m_listener.send_code(data, obj_file_name);
         lg::print("WARNING - couldn't load because listener isn't connected\n");  // todo log warn
       }
     }

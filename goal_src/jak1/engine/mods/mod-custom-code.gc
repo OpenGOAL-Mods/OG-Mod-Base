@@ -237,7 +237,8 @@
         (vector-identity! (-> (get-chick-from-flock i) target-pos))
         (vector-identity! (-> (get-chick-from-flock i) root trans))
         (set! (-> (get-chick-from-flock i) substate) 'uncollected))))
-  (format #t "RESETING CHICKEN TARGETS")
+  (when *debug-segment*
+    (format #t "RESETING CHICKEN TARGETS~%"))
   (none))
 
 (defun reset-chicken-targets-all ()
@@ -247,7 +248,8 @@
         (vector-identity! (-> (get-chick-from-flock i) target-pos))
         (vector-identity! (-> (get-chick-from-flock i) root trans))
         (set! (-> (get-chick-from-flock i) substate) 'uncollected))))
-  (format #t "RESETING CHICKEN TARGETS ALL")
+  (when *debug-segment*
+    (format #t "RESETING CHICKEN TARGETS ALL~%"))
   (none))
 
 (defun restore-cells ()
@@ -782,6 +784,8 @@ Then at the end of this function it checks some conditions and returns #t or #f 
     (set! (-> *flut-walk-mods* target-speed) 0.0))
   (none))
 
+(set! *target-chicken* *chicken-0*)
+
 (defun runs-every-frame ()
   ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
   ;;stupid hack ur an idiot if you leave this in
@@ -803,7 +807,7 @@ Then at the end of this function it checks some conditions and returns #t or #f 
       (set! (-> gp-0 flags) (font-flags shadow kerning large))
       (when (and (-> *pc-settings* speedrunner-mode?) (not *valid-for-runs*))
         (print-game-text-scaled (string-format "TEST VERSION NOT VALID FOR RUNS") 1.0 gp-0 128)))
-    (when *debug-segment*
+    (when (and *debug-segment* *draw-chicken-pool*)
       (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 10 50 0.0 (font-color default) (font-flags shadow kerning))))
         (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
         (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
@@ -818,21 +822,21 @@ Then at the end of this function it checks some conditions and returns #t or #f 
                                                (+ (+ (get-current-chicks) (get-waiting-chicks)) (get-to-portal-chicks)))
                                 1.0
                                 gp-0
-                                128))
-      (when (and done-init? (not (= (-> *chicken-0* target-pos x) 0.0)))
-        (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 10 150 0.0 (font-color default) (font-flags shadow kerning))))
-          (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
-          (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
-          (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.2))
-          (set! (-> gp-0 flags) (font-flags kerning large))
-          (print-game-text-scaled (string-format "~S TARGET~%X:~F~%Y:~F~%Z:~F~%"
-                                                 (string-upcase (the-as string (-> *chicken-0* name)) *pc-temp-string*)
-                                                 (/ (-> *chicken-0* target-pos x) (meters 1))
-                                                 (/ (-> *chicken-0* target-pos y) (meters 1))
-                                                 (/ (-> *chicken-0* target-pos z) (meters 1)))
-                                  1.0
-                                  gp-0
-                                  128)))))
+                                128)))
+    (when (and *debug-segment* done-init? *show-target-chicken-info* *target-chicken*)
+      (let ((gp-0 (new 'stack 'font-context *font-default-matrix* 10 150 0.0 (font-color default) (font-flags shadow kerning))))
+        (let ((v1-53 gp-0)) (set! (-> v1-53 width) (the float 1440)))
+        (let ((v1-54 gp-0)) (set! (-> v1-54 height) (the float 1380)))
+        (let ((v1-55 gp-0)) (set! (-> v1-55 scale) 0.2))
+        (set! (-> gp-0 flags) (font-flags kerning large))
+        (print-game-text-scaled (string-format "~S TARGET~%X:~F~%Y:~F~%Z:~F~%"
+                                               (string-upcase (the-as string (-> *target-chicken* name)) *pc-temp-string*)
+                                               (/ (-> *target-chicken* target-pos x) (meters 1))
+                                               (/ (-> *target-chicken* target-pos y) (meters 1))
+                                               (/ (-> *target-chicken* target-pos z) (meters 1)))
+                                1.0
+                                gp-0
+                                128))))
   ;;(defun print-game-text-scaled ((str string) (scale float) (font-ctxt font-context) (alpha int))
   (when *debug-segment*
     (orb-placer-maintenance))
