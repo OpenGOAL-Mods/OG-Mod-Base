@@ -700,7 +700,7 @@
 
 (defun unlock-level-func ((idx int))
   (set-unlock-level-val idx)
-  (play-sound-file "end-level.wav" (the int (-> *setting-control* default sfx-volume)))
+  (play-sound-file "sfx/end-level.wav" (the int (-> *setting-control* default sfx-volume)))
   (reset-saved-chick-in-mem)
   (auto-save-command 'auto-save 0 0 *default-pool*)
   (none))

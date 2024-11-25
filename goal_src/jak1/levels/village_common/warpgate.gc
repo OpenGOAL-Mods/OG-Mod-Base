@@ -260,7 +260,7 @@
               (if (and (= (-> (level-get-target-inside *level*) name) (-> (get-continue-by-name *game-info* (-> *warp-info* gp-0)) level))
                        (cpad-pressed? 0 circle)
                        (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.05)))
-                (play-sound-file "nope.mp3" (the int (-> *setting-control* default dialog-volume)))
+                (play-sound-file "sfx/nope.mp3" (the int (-> *setting-control* default dialog-volume)))
                 (begin
                   (when (and (>= (- (-> *display* base-frame-counter) (-> self state-time)) (seconds 0.005))
                              (cpad-pressed? 0 circle)

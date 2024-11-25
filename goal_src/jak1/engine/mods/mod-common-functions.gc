@@ -350,7 +350,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (when (is-in-chem-fac-silo)
     (when (not *heard-chem-hint*)
       (set! *heard-chem-hint* #t)
-      (play-sound-file "dax/daxter_for_zed.mp3" (the int (-> *setting-control* default dialog-volume)))))
+      (play-sound-file "cutscenes/dax/daxter_for_zed.mp3" (the int (-> *setting-control* default dialog-volume)))))
   (none))
 
 (defun return-hover-animation ()
@@ -385,7 +385,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                       (cpad-clear! 0 r1)
                       ;;Mort softlock backup hack
                       (if chicken-mode-on? (set! chicken-mode-on? #f) (set! chicken-mode-on? #t))
-                      (play-sound-file "chickendance.mp3" (the int (-> *setting-control* default sfx-volume))))
+                      (play-sound-file "sfx/chickendance.mp3" (the int (-> *setting-control* default sfx-volume))))
     ;;   (check-cheat-code (-> *cheat-temp* 0) 0
     ;;     (up up down down left right left right x x square circle square circle)
     ;;       (cpad-clear! 0 r1)
