@@ -152,8 +152,8 @@ jobs:
         run: |
           mkdir -p ./ci-artifacts/windows
           mkdir -p ${{ inputs.outputDir }}/dist
-          chmod +x ./.github/scripts/releases/extract_build_windows.sh
-          ./.github/scripts/releases/extract_build_windows.sh ./ci-artifacts/windows ./ci-artifacts/opengoal-windows-static ./
+          chmod +x ./.github/scripts/releases/extract_mod_build_windows.sh
+          ./.github/scripts/releases/extract_mod_build_windows.sh ./ci-artifacts/windows ./ci-artifacts/opengoal-windows-static ./
           TAG_VAL=${{ needs.create_release.outputs.bundleTagName }}
           7z a -tzip ${{ inputs.outputDir }}/dist/windows-${TAG_VAL}.zip ./ci-artifacts/windows/*
 
@@ -206,8 +206,8 @@ jobs:
         run: |
           mkdir -p ./ci-artifacts/linux
           mkdir -p ${{ inputs.outputDir }}/dist
-          chmod +x ./.github/scripts/releases/extract_build_unix.sh
-          ./.github/scripts/releases/extract_build_unix.sh ./ci-artifacts/linux ./ci-artifacts/opengoal-linux-static ./
+          chmod +x ./.github/scripts/releases/extract_mod_build_unix.sh
+          ./.github/scripts/releases/extract_mod_build_unix.sh ./ci-artifacts/linux ./ci-artifacts/opengoal-linux-static ./
           pushd ci-artifacts/linux
           TAG_VAL=${{ needs.create_release.outputs.bundleTagName }}
           tar czf ../../${{ inputs.outputDir }}/dist/linux-${TAG_VAL}.tar.gz .
@@ -227,7 +227,7 @@ jobs:
     # assumes that this file is defined in your mod repo
     uses: ./.github/workflows/macos-build.yaml
     with:
-      cmakePreset: "Release-macos-clang-static"
+      cmakePreset: "Release-macos-x86_64-clang-static"
       cachePrefix: "static"
       uploadArtifacts: true
     secrets: inherit
@@ -262,8 +262,8 @@ jobs:
         run: |
           mkdir -p ./ci-artifacts/macos-intel
           mkdir -p ${{ inputs.outputDir }}/dist
-          chmod +x ./.github/scripts/releases/extract_build_unix.sh
-          ./.github/scripts/releases/extract_build_unix.sh ./ci-artifacts/macos-intel ./ci-artifacts/opengoal-macos-static ./
+          chmod +x ./.github/scripts/releases/extract_mod_build_unix.sh
+          ./.github/scripts/releases/extract_mod_build_unix.sh ./ci-artifacts/macos-intel ./ci-artifacts/opengoal-macos-static ./
           pushd ci-artifacts/macos-intel
           TAG_VAL=${{ needs.create_release.outputs.bundleTagName }}
           tar czf ../../${{ inputs.outputDir }}/dist/macos-intel-${TAG_VAL}.tar.gz .
