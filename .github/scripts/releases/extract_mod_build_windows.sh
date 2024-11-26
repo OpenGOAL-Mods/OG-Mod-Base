@@ -26,4 +26,4 @@ cp -r $SOURCE/game/assets $DEST/data/game/
 cp -r $SOURCE/game/graphics/opengl_renderer/shaders $DEST/data/game/graphics/opengl_renderer
 cp -r $SOURCE/custom_assets $DEST/data
 
-python ./replace-mod-version-timestamp.py $DEST/data/goal_src
+python ./.github/scripts/releases/replace-mod-version-timestamp.py $DEST/data/goal_src
