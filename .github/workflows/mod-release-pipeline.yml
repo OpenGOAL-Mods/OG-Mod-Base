@@ -227,7 +227,7 @@ jobs:
     # assumes that this file is defined in your mod repo
     uses: ./.github/workflows/macos-build.yaml
     with:
-      cmakePreset: "Release-macos-clang-static"
+      cmakePreset: "Release-macos-x86_64-clang-static"
       cachePrefix: "static"
       uploadArtifacts: true
     secrets: inherit
