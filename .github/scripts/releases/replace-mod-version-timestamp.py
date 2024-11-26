@@ -37,5 +37,5 @@ def patch_mod_timestamp(goal_src_path):
 
 if len(sys.argvl) > 1:
     patch_mod_timestamp(sys.argv[1])
-else
+else:
     print(f"No goal_src path provided to replace-mod-version-timestamp")
