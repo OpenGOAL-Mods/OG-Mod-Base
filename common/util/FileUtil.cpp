@@ -168,7 +168,25 @@ std::string get_current_executable_path() {
 #endif
 }
 
+// mod-base-change
+std::optional<std::string> try_get_project_path_from_path_modbase(const std::string& path) {
+  fs::path current_path = fs::path(path);
+  while (true) {
+    lg::info("Current path in loop - {}", current_path.string());
+    if (fs::exists(current_path / ".github")) {
+      lg::info("Project path found - {}", current_path.string());
+      return current_path.string();
+    }
+    if (!current_path.has_parent_path()){
+      lg::info("No parent folder found");
+      return {};
+    }
+    current_path = current_path.parent_path();
+  }
+}
+
 std::optional<std::string> try_get_project_path_from_path(const std::string& path) {
+  return try_get_project_path_from_path_modbase(path);
   std::string::size_type pos =
       std::string(path).rfind("jak-project");  // Strip file path down to /jak-project/ directory
   if (pos == std::string::npos) {

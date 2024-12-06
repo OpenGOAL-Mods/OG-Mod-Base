@@ -1,5 +1,5 @@
 # Top Level CMakeLists.txt
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -31,6 +31,7 @@ if (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json" )
         "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json"
         "${PROJECT_SOURCE_DIR}/build/compile_commands.json")
 endif()
+
 
 # Setup compiler flags
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

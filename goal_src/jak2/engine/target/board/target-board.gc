@@ -31,6 +31,9 @@
 (define-extern target-board-halfpipe-check (function collide-action :behavior target))
 (define-extern target-board-jump-trans (function none :behavior target))
 
+(define-extern *target-board-hold-tricks* int)
+
+
 (#when PC_PORT
 
 (define *board-trick-tracker* (new 'static 'board-trick-tracker))
@@ -2935,6 +2938,7 @@
         (end-combo! *board-trick-tracker*))
       )
     )
+  (set! *target-board-hold-tricks* 0)
   (set! (-> this trick-count) 0)
   0
   0

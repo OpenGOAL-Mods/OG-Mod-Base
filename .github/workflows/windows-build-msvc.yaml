@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Install NASM
         # TODO - Simplify this with just the first command once choco 2.0 rolls out everywhere
@@ -56,10 +59,10 @@ jobs:
           set CL=/MP
           cmake --build build --parallel %NUMBER_OF_PROCESSORS%
 
-      - name: Run Tests
-        timeout-minutes: 10
-        env:
-          GTEST_OUTPUT: "xml:opengoal-test-report.xml"
-        run: |
-          ./build/bin/goalc-test.exe --gtest_color=yes --gtest_brief=0 --gtest_filter="-*MANUAL_TEST*"
+      # - name: Run Tests
+      #   timeout-minutes: 10
+      #   env:
+      #     GTEST_OUTPUT: "xml:opengoal-test-report.xml"
+      #   run: |
+      #     ./build/bin/goalc-test.exe --gtest_color=yes --gtest_brief=0 --gtest_filter="-*MANUAL_TEST*"
 

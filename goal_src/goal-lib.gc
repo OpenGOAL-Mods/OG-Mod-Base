@@ -658,6 +658,12 @@
 (defmacro false! (var)
   `(set! ,var #f))
 
+(defmacro true? (thing)
+  `(eq? ,thing #t))
+
+(defmacro false? (thing)
+  `(eq? ,thing #f))
+
 (defmacro max! (val maxval)
   `(set! ,val (max ,val ,maxval)))
 (defmacro min! (val minval)
@@ -1275,3 +1281,4 @@
    (asm-file "goal_src/jak3/compiler-setup.gc")
    )
   )
+

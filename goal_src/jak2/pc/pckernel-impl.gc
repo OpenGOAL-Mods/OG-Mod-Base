@@ -44,7 +44,6 @@
   (weather-good)
   (hijack-lines)
   )
-
 ;; pc enum for languages. this is the game's languages + custom ones.
 (defenum pc-language
   :type uint16
@@ -102,6 +101,7 @@
    (controller-led-status?    symbol)
    (speedrunner-mode-custom-bind uint32)
    (memcard-subtitles? symbol)
+   (hint-subtitles? symbol)
 
    (text-language pc-language) ;; language for game text
 	 )

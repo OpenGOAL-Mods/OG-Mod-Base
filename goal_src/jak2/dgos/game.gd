@@ -343,6 +343,7 @@
   "pckernel.o" ;; added
   "subtitle2-h.o" ;; added
   "subtitle2.o" ;; added
+  "input-display.o" ;;added ;;mod-base-change
   "main.o"
   "collide-cache.o"
   "collide-debug.o"
@@ -465,4 +466,9 @@
   "elec-gate.o"
   "cty-guard-turret-button.o"
   "entity-debug.o" ;; added
+  "mod-settings.o" ;; added ;;mod-base-change
+  "mod-common-functions.o" ;; added
+  "orb-placer.o"  ;; added
+  "mod-custom-code.o" ;; added
+  "mod-debug.o" ;; added
  ))

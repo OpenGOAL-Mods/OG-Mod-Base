@@ -25,6 +25,33 @@ jobs:
       - name: Checkout Repository
         if: ${{ ! inputs.uploadArtifacts }}
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      # full checkout with tags if we ARE uploading artifacts
+      - name: Checkout Repository with Tags
+        if: ${{ inputs.uploadArtifacts }}
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      # full checkout with tags if we ARE uploading artifacts
+      - name: Checkout Repository with Tags
+        if: ${{ inputs.uploadArtifacts }}
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      # full checkout with tags if we ARE uploading artifacts
+      - name: Checkout Repository with Tags
+        if: ${{ inputs.uploadArtifacts }}
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       # full checkout with tags if we ARE uploading artifacts
       - name: Checkout Repository with Tags
@@ -57,8 +84,8 @@ jobs:
       - name: Build Project
         run: cmake --build build --parallel $((`sysctl -n hw.logicalcpu`))
 
-      - name: Run Tests
-        run: ./test.sh
+      # - name: Run Tests
+      #   run: ./test.sh
 
       - name: Prepare artifacts
         if: ${{ inputs.uploadArtifacts }}

@@ -7,6 +7,7 @@
 (require "engine/target/target-part.gc")
 
 ;; DECOMP BEGINS
+(define-extern runs-on-jak-spawn (function none))
 
 (defskelgroup *deathcam-sg*
   deathcam
@@ -284,6 +285,7 @@
               (car (-> s5-8 continues))))))
       (ja-channel-set! 1)
       (ja :group! eichar-stance-loop-ja)
+      (runs-on-jak-spawn) ;; trigger hook for mod base mod-base-change
       (suspend)
       (logior! (-> self control status) (cshape-moving-flags onsurf onground tsurf))
       (go target-stance))
@@ -684,6 +686,7 @@
         trans)
   :code
     (behavior ((arg0 symbol))
+      (runs-on-jak-death 'dying) ;;mod-base-change
       (set! (-> self control unknown-uint20) (the-as uint #f))
       (set! (-> self control unknown-int21)
             (the-as int (send-event (handle->process (-> self attack-info attacker)) 'target 'die arg0)))

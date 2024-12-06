@@ -3,6 +3,8 @@
 
 ;; TODO later - customize menu open keybind
 
+(define-extern *mod-version-text* string)
+
 (define-extern task-close! (function string symbol))
 
 (define *speedrun-info* (new 'static 'speedrun-info))
@@ -428,21 +430,21 @@
       ((= (-> this category) (speedrun-category custom))
        (pc-sr-mode-get-custom-category-name (-> this active-custom-category index) *pc-cpp-temp-string*)
        (format *temp-string*
-               "<COLOR_WHITE>Category: <COLOR_GREEN>~S~%<COLOR_WHITE>Secrets: <COLOR_GREEN>~D~%<COLOR_WHITE>Features: <COLOR_GREEN>~D~%<COLOR_WHITE>Forbidden Features: <COLOR_GREEN>~D~%<COLOR_WHITE>Cheats: <COLOR_GREEN>~D~%<COLOR_WHITE>Version: <COLOR_GREEN>~S~%"
+               "<COLOR_WHITE>Category: <COLOR_GREEN>~S~%<COLOR_WHITE>Secrets: <COLOR_GREEN>~D~%<COLOR_WHITE>Features: <COLOR_GREEN>~D~%<COLOR_WHITE>Forbidden Features: <COLOR_GREEN>~D~%<COLOR_WHITE>Cheats: <COLOR_GREEN>~D~%<COLOR_WHITE>Mod Version: <COLOR_GREEN>~S~%"
                *pc-cpp-temp-string*
                (-> this active-custom-category secrets)
                (-> this active-custom-category features)
                (-> this active-custom-category forbidden-features)
                (-> this active-custom-category pc-cheats)
-               *pc-settings-built-sha*))
+               *mod-version-text*))
       (else
         (format *temp-string*
-              "<COLOR_WHITE>Category: <COLOR_GREEN>~S~%<COLOR_WHITE>PC Cheats: <COLOR_GREEN>~D~%<COLOR_WHITE>Frame Rate: <COLOR_GREEN>~D~%<COLOR_WHITE>PS2 Actor Vis?: <COLOR_GREEN>~S~%<COLOR_WHITE>Version: <COLOR_GREEN>~S~%"
+              "<COLOR_WHITE>Category: <COLOR_GREEN>~S~%<COLOR_WHITE>PC Cheats: <COLOR_GREEN>~D~%<COLOR_WHITE>Frame Rate: <COLOR_GREEN>~D~%<COLOR_WHITE>PS2 Actor Vis?: <COLOR_GREEN>~S~%<COLOR_WHITE>Mod Version: <COLOR_GREEN>~S~%"
               (enum->string speedrun-category (-> this category))
               (the-as int (-> *pc-settings* cheats))
               (-> *pc-settings* target-fps)
               (if (-> *pc-settings* ps2-actor-vis?) "true" "false")
-              *pc-settings-built-sha*)))
+              *mod-version-text*)))
     (pc-encode-utf8-string *temp-string* *pc-encoded-temp-string*)
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id debug-no-zbuf2))
       ;; reset bucket settings prior to drawing - font won't do this for us, and

@@ -828,8 +828,14 @@
   (progress-graphics-ps2-lod-dist #x1337)
   (progress-graphics-msaa-off #x1338)
   (progress-graphics-display #x1339)
-  (language-name-finnish #x133a)
+  (language-name-finnish #x133a)  
   (progress-hint-subtitles #x133b)
+
+  ;; mod text
+  (pad-triangle #x2000)
+  (pad-circle #x2001)
+  (pad-x #x2002)
+  (pad-square #x2003)
 )
 ;; ---text-id
 
