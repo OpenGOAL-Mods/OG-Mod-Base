@@ -25,6 +25,8 @@
 (define-extern target-hit-orient (function attack-info vector symbol :behavior target))
 (define-extern target-hit-move (function attack-info symbol (function none :behavior target) float none :behavior target))
 
+(define-extern *target-board-hold-tricks* int)
+
 (declare-type grenade projectile)
 
 ;; DECOMP BEGINS
@@ -119,6 +121,7 @@
     )
   (none)
   )
+
 
 ;; WARN: Return type mismatch object vs none.
 (defbehavior target-board-spin-check target ()
@@ -245,6 +248,7 @@
                         )
                    )
           (set! (-> self board unknown-float01) f28-1)
+          (+! *target-board-hold-tricks* 1)
           (go
             target-board-hold
             (-> *TARGET_BOARD-bank* tricky-jump-height-min)
@@ -1665,6 +1669,9 @@
     (set! (-> self control dynam gravity-length) 147456.0)
     )
   :exit (behavior ()
+    (when (and (-> self next-state) (!= 'target-board-hold (-> self next-state name)))
+      (set! *target-board-hold-tricks* 0)
+      )
     (set! (-> self board unknown-float01) 0.0)
     (set-time! (-> self board unknown-time-frame05))
     (let ((v1-3 (the-as sound-rpc-set-param (get-sound-buffer-entry))))

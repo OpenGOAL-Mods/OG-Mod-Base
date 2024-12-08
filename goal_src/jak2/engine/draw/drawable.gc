@@ -109,7 +109,6 @@
         )
   )
 
-
 (defun guard-band-cull ((arg0 vector))
   "Is the given sphere within the guard band, and possibly needs clipping?"
   (local-vars (v1-0 uint128) (v1-1 uint128) (v1-2 uint128))

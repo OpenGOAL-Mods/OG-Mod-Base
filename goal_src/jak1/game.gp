@@ -492,6 +492,7 @@
    "village_common/oracle.gc"
 
    "common/blocking-plane.gc"
+   "common/blocking-plane-b.gc" ;; mod-base-change
    "common/launcherdoor.gc"
    "common/battlecontroller.gc"
 
@@ -1748,7 +1749,7 @@
  :deps
  ("$OUT/obj/display.o"
   "$OUT/obj/decomp-h.o")
- 
+
  "engine/connect.gc"
  "ui/text-h.gc"
  "game/settings-h.gc"
@@ -2046,6 +2047,7 @@
  "common-obs/plat.gc"
  "common-obs/plat-button.gc"
  "common-obs/plat-eco.gc"
+ "common-obs/linear-plat.gc"
  "common-obs/ropebridge.gc"
  "common-obs/ticky.gc"
  )
@@ -2101,7 +2103,23 @@
 (goal-src "pc/debug/default-menu-pc.gc" "anim-tester-x" "part-tester" "entity-debug")
 (goal-src "pc/debug/pc-debug-common.gc" "pckernel-impl" "entity-h" "game-info-h" "level-h" "settings-h" "gsound-h" "target-util")
 (goal-src "pc/debug/pc-debug-methods.gc" "pc-debug-common")
+
+(goal-src "engine/mods/input-display.gc")
+(goal-src "engine/mods/orb-placer.gc")
+
+
+(goal-src-sequence
+ ;; prefix
+ "engine/"
+ :deps ("$OUT/obj/battlecontroller.o" "$OUT/obj/snow-bunny.o" "$OUT/obj/baby-spider.o" "$OUT/obj/sage-village3.o" "$OUT/obj/sage-finalboss.o" "$OUT/obj/assistant-citadel.o" "$OUT/obj/assistant-lavatube.o" "$OUT/obj/robocave-part.o" "$OUT/obj/driller-lurker.o" "$OUT/obj/training-part.o" "$OUT/obj/rolling-race-ring.o" "$OUT/obj/beach-part.o" "$OUT/obj/sculptor.o" "$OUT/obj/sunken-fish.o" "$OUT/obj/billy.o" "$OUT/obj/sidekick-human.o" "$OUT/obj/flying-lurker.o" "$OUT/obj/target-racer-h.o" "$OUT/obj/firecanyon-obs.o" "$OUT/obj/target-flut.o" "$OUT/obj/hud-classes-pc.o" "$OUT/obj/collide-reaction-racer.o" "$OUT/obj/plant-boss.o" "$OUT/obj/beach-obs.o" "$OUT/obj/sunken-elevator.o" "$OUT/obj/jungle-part.o" "$OUT/obj/sequence-a-village1.o" "$OUT/obj/ticky.o")
+ "mods/mod-settings.gc"
+ "mods/mod-common-functions.gc"
+ "mods/mod-custom-code.gc"
+ "mods/mod-debug.gc"
+)
+
 (goal-src "levels/test-zone/test-zone-obs.gc" "process-drawable")
+
 
 (group-list "all-code"
   `(,@(reverse *all-gc*))

@@ -127,7 +127,9 @@
       (set! (-> self racer boost-sound-id) (new 'static 'sound-id))
       (set! (-> self racer scrape-sound-id) (new-sound-id))
       (set! (-> self racer entity) #f)
-      (let ((v1-28 (handle->process arg0))) (if v1-28 (set! (-> self racer entity) (-> v1-28 entity))))
+      (let ((v1-28 (handle->process arg0))) 
+        (if (and (not *allow-zoomer-anywhere*) v1-28) ;; OG-modbase dont track entity, prevents crash on level deload
+          (set! (-> self racer entity) (-> v1-28 entity))))
       (set! (-> self control surf) *race-track-surface*)
       (set! (-> self control reaction) racer-collision-reaction)
       (vector-reset! (-> self racer rot))

@@ -12,6 +12,7 @@
 #include "common/util/FileUtil.h"
 #include "common/util/Timer.h"
 #include "common/util/string_util.h"
+#include <common/formatter/formatter.h>
 
 #include "decompiler/IR2/Form.h"
 #include "decompiler/analysis/analyze_inspect_method.h"

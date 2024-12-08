@@ -7,6 +7,21 @@
 (require "pc/pckernel.gc")
 (require "engine/common-obs/collectables-part.gc")
 (require "engine/entity/entity.gc")
+
+;; name: collectables.gc
+;; name in dgo: collectables
+;; dgos: GAME, ENGINE
+
+(define-extern runs-on-orb-pickup (function process-tree none))
+
+(define-extern runs-on-fly-pickup (function none))
+
+(define-extern runs-on-cell-pickup (function symbol none))
+
+(define-extern runs-on-eco-pickup (function pickup-type process-tree none))
+
+(define-extern orb-placer-list-maintenace (function symbol none))
+
 (declare-type vent process-drawable)
 
 (declare-type eco eco-collectable)
@@ -485,6 +500,7 @@
             (level-hint-spawn (text-id training-eco-reminder) "sagevb23" (the-as entity #f) *entity-pool* (game-task none)))))
         (((pickup-type eco-green)) (sound-play "g-eco-pickup"))
         (((pickup-type eco-green) (pickup-type eco-pill)) (sound-play "pill-pickup")))
+      (runs-on-eco-pickup (-> self fact pickup-type) (ppointer->process (-> self parent))) ;; trigger hook for mod base
       (if (nonzero? (-> self part)) (kill-and-free-particles (-> self part)))
       (let ((gp-6 (handle->process (-> self pickup-handle))))
         (if (nonzero? (-> self collect-effect))
@@ -726,7 +742,13 @@
       (logclear! (-> self mask) (process-mask actor-pause))
       (clear-collide-with-as (-> self root))
       (process-entity-status! self (entity-perm-status dead) #t)
-      (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* money))))))
+      (runs-on-orb-pickup (ppointer->process (-> self parent))) ;; trigger hook for mod base
+      (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* money)))))
+  :exit
+    (behavior ()
+      ;; refresh orb-placer list in debug mode
+      (when *debug-segment*
+        (orb-placer-list-maintenace #t))))
 
 (defmethod initialize ((this money))
   (stack-size-set! (-> this main-thread) 192) ;; og:preserve-this hack increased from 128
@@ -1085,6 +1107,7 @@
         (((game-task citadel-sage-green)) (send-event (process-by-name "green-sagecage-1" *active-pool*) 'play-anim))
         (((game-task jungle-eggtop) (game-task snow-eggtop) (game-task snow-ball) (game-task sunken-slide)))
         (else (send-event (ppointer->process (-> *hud-parts* fuel-cell)) 'show)))
+      (runs-on-cell-pickup 'cutscene-end)
       (convert-to-hud-object self (the-as hud (ppointer->process (-> *hud-parts* fuel-cell)))))
   :post
     (behavior ()
@@ -1261,6 +1284,7 @@
       (logclear! (-> self mask) (process-mask actor-pause))
       (process-entity-status! self (entity-perm-status complete) #t)
       (sound-play "buzzer-pickup")
+      (runs-on-fly-pickup)
       (case (-> (level-get-target-inside *level*) name)
         (('training)
          (level-hint-spawn (text-id training-buzzer-hint) "asstvb44" (the-as entity #f) *entity-pool* (game-task none)))
@@ -1714,6 +1738,7 @@
                  (set! (-> a1-1 message) 'get-pickup)
                  (set! (-> a1-1 param 0) (the-as uint (-> self fact pickup-type)))
                  (set! (-> a1-1 param 1) (the-as uint (-> self fact pickup-amount)))
+                 (runs-on-eco-pickup (-> self fact pickup-type) self)
                  (and (= (send-event-function proc a1-1) #t)
                       (or (logtest? (-> self fact options) (fact-options powerup)) (send-event proc 'powerup)))))
         (go vent-pickup (process->handle proc)))

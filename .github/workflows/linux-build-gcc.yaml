@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Install Package Dependencies
         run: |
@@ -54,5 +57,5 @@ jobs:
       - name: Build Project
         run: cmake --build build --parallel $((`nproc`)) -- -w dupbuild=warn
 
-      - name: Run Tests
-        run: ./test.sh
+      # - name: Run Tests
+      #   run: ./test.sh

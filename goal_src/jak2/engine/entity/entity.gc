@@ -1984,16 +1984,30 @@
   (let* ((v1-0 arg0)
          (s5-0 (cond
                  ((or (= v1-0 'life) (= v1-0 'debug))
-                  4719
+                  (entity-perm-status bit-0 error dead no-kill bit-5 subtask-complete bit-9 bit-12 bit-15) ;;mod-base-change
                   )
                  ((= v1-0 'try)
-                  4719
+                  (entity-perm-status bit-0 error dead no-kill bit-5 subtask-complete bit-9 bit-12 bit-15) ;;mod-base-change
                   )
                  ((= v1-0 'game)
-                  8063
+                  (entity-perm-status bit-0
+                                      error
+                                      dead
+                                      no-kill
+                                      bit-4
+                                      bit-5
+                                      subtask-complete
+                                      complete
+                                      bit-9
+                                      bit-10
+                                      save
+                                      bit-12
+                                      bit-13
+                                      bit-15 ;;mod-base-change
+                                      )
                   )
                  (else
-                   5759
+                   (entity-perm-status bit-0 error dead no-kill bit-4 bit-5 subtask-complete bit-9 bit-10 bit-12 bit-15) ;;mod-base-change
                    )
                  )
                )

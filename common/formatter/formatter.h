@@ -6,7 +6,6 @@
 #include "tree_sitter/api.h"
 
 namespace formatter {
-
 struct TreeSitterParserDeleter {
   void operator()(TSParser* ptr) const { ts_parser_delete(ptr); }
 };

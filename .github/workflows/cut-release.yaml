@@ -1,0 +1,80 @@
+name: Cut Mod Release ⭐
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Semver Bump Type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      binary_source:
+        description: 'Binary Source'
+        required: true
+        default: 'modbase'
+        type: choice
+        options:
+          - vanilla
+          - modbase
+          - build_binaries
+      jak1:
+        description: 'Supports Jak 1?'
+        required: true
+        default: 'true'
+        type: boolean
+      jak2:
+        description: 'Supports Jak 2?'
+        required: true
+        default: 'false'
+        type: boolean
+      jak3:
+        description: 'Supports Jak 3?'
+        required: true
+        default: 'false'
+        type: boolean
+      jakx:
+        description: 'Supports Jak X?'
+        required: true
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  prep_vars:
+    name: "Prep Variables"
+    runs-on: ubuntu-latest
+    outputs:
+      supported_games: ${{ steps.prep-vars.outputs.GAMES }}
+      tooling_repo: ${{ steps.prep-vars.outputs.REPO }}
+    steps:
+      - name: Prep Variables
+        id: prep-vars
+        run: |
+          GAMES=
+          if [[ ${{ inputs.jak1 }} == "true" ]]; then GAMES+=jak1,; fi
+          if [[ ${{ inputs.jak2 }} == "true" ]]; then GAMES+=jak2,; fi
+          if [[ ${{ inputs.jak3 }} == "true" ]]; then GAMES+=jak3,; fi
+          if [[ ${{ inputs.jakx }} == "true" ]]; then GAMES+=jakx,; fi
+          GAMES=${GAMES%?}
+          echo "GAMES=$GAMES" >> $GITHUB_OUTPUT
+          REPO=OpenGOAL-Mods/OG-Mod-Base
+          if [[ ${{ inputs.binary_source == 'vanilla' }} ]]; then REPO=open-goal/jak-project; fi
+          echo "REPO=$REPO" >> $GITHUB_OUTPUT
+
+  cut_mod_release:
+    name: "Cut Mod Release"
+    needs: prep_vars
+    uses: ./.github/workflows/mod-release-pipeline.yml
+    with:
+      semverBump: ${{ inputs.bump }}
+      metadataSupportedGames: ${{ needs.prep_vars.outputs.supported_games }}
+      buildBinaries: ${{ inputs.binary_source == 'build_binaries'}}
+      toolingRepo: ${{ needs.prep_vars.outputs.tooling_repo }}
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
