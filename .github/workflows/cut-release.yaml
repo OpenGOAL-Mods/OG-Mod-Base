@@ -15,7 +15,7 @@ on:
       binary_source:
         description: 'Binary Source'
         required: true
-        default: 'modbase'
+        default: 'build_binaries'
         type: choice
         options:
           - vanilla
