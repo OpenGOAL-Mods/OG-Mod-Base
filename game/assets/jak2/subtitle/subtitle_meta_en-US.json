@@ -3785,6 +3785,52 @@
         }
       ]
     },
+    "city-protect-blimp-res": {
+      "lines": [
+        {
+          "frame_end": 68,
+          "frame_start": 12,
+          "merge": false,
+          "offscreen": false,
+          "speaker": "torn"
+        },
+        {
+          "frame_end": 108,
+          "frame_start": 70,
+          "merge": false,
+          "offscreen": false,
+          "speaker": "torn"
+        },
+        {
+          "frame_end": 158,
+          "frame_start": 110,
+          "merge": false,
+          "offscreen": false,
+          "speaker": "torn"
+        },
+        {
+          "frame_end": 262,
+          "frame_start": 162,
+          "merge": false,
+          "offscreen": false,
+          "speaker": "torn"
+        },
+        {
+          "frame_end": 370,
+          "frame_start": 270,
+          "merge": false,
+          "offscreen": false,
+          "speaker": "torn"
+        },
+        {
+          "frame_end": 490,
+          "frame_start": 380,
+          "merge": false,
+          "offscreen": false,
+          "speaker": "torn"
+        }
+      ]
+    },
     "city-protect-slums-intro": {
       "lines": [
         {
