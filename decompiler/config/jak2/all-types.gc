@@ -39689,9 +39689,10 @@ Consists of a header and a list of [[merc-effect]]s."
     active
     shutdown
     dormant
-    die
+    ;;die
     )
   (:methods
+    (base-turret-method-32 (_type_) none) ;; 32 - added to fix decompiler crash
     (turret-init! (_type_ entity-actor matrix) none) ;; 33
     (base-turret-method-34 (_type_ process) none) ;; 34
     (base-turret-method-35 (_type_) none) ;; 35
