@@ -829,6 +829,7 @@
     )
   )
 
+;; Remains from the unused port mission found! Torn cutscene when the task ends
 (scene-method-16 (new 'static 'scene
                    :name "city-protect-blimp-res"
                    :extra #f
@@ -879,7 +880,7 @@
                        )
                      )
                    :load-point-obj "ctyport-turret"
-                   :end-point-obj #f
+                   :end-point-obj "ctyport-turret"
                    :borrow '()
                    :sfx-volume -1.0
                    :ambient-volume -1.0
