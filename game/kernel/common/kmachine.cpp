@@ -149,6 +149,11 @@ std::mutex activeMusicsMutex;
 // Declare a mutex for synchronizing access to mainMusicInstance
 std::mutex mainMusicMutex;
 
+// Mutex to synchronize access to sounds
+std::mutex soundMutex;
+std::condition_variable soundCondition;
+bool isPaused = false;  // flag to check whether the custom sounds are paused or not
+
 // Function to stop all instances of specific sound by filepath
 void stopMP3(u32 filePathu32) {
   std::string filePath = Ptr<String>(filePathu32).c()->data();
@@ -173,6 +178,39 @@ void stopMP3(u32 filePathu32) {
 
 // Function to stop all currently playing sounds.
 void stopAllSounds() {
+  std::lock_guard<std::mutex> lock(activeMusicsMutex);
+
+  std::cout << "Stopping all sounds..." << std::endl;
+
+  // Stop all sounds before removing them
+  for (auto& pair : maSoundMap) {
+    for (auto& sound : pair.second) {
+      if (MiniAudioLib::ma_sound_is_playing(&sound)) {
+        MiniAudioLib::ma_sound_stop(&sound);
+      }
+    }
+  }
+
+  // Wait a short period of time to make sure the sounds have stopped
+  std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+  // Release memory and remove the sounds from the map
+  for (auto it = maSoundMap.begin(); it != maSoundMap.end();) {
+    auto& soundList = it->second;
+
+    for (auto& sound : soundList) {
+      MiniAudioLib::ma_sound_uninit(&sound);
+    }
+
+    soundList.clear();
+    it = maSoundMap.erase(it);
+  }
+
+  std::cout << "All sounds stopped successfully!" << std::endl;
+}
+
+// Function to force sounds to stop after playing. 
+void forceStopSounds() {
   for (auto& pair : maSoundMap) {
     // stop all instances of this sound
     for (auto sound : pair.second) {
@@ -235,9 +273,31 @@ u64 playMP3_internal(u32 filePathu32, u32 volume, bool isMainMusic) {
       maSoundMap[filePath].push_back(sound);
     }
 
-    // sleep/loop until we're no longer main music, or non-looping sound is stopped/ends
-    while (mainMusicSound == &sound || MiniAudioLib::ma_sound_is_playing(&sound)) {
+    // Loop to check the state of the sound without freezing the main thread
+    bool isPlaying = true;
+    while (isPlaying) {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+       // Check if the game is paused
+      if (isPaused) {
+        // pause sound
+        //std::cout << "Sounds paused, stopping playback..." << std::endl;
+        MiniAudioLib::ma_sound_stop(&sound);  // stop the sound when paused
+
+        // Wait until the game is resumed
+        while (isPaused) {
+          std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+
+        // Resume the sound after the pause
+        //std::cout << "Resuming sound: " << filePath << std::endl;
+        MiniAudioLib::ma_sound_start(&sound);
+      }
+
+      // Check if the sound is still playing
+      if (!MiniAudioLib::ma_sound_is_playing(&sound)) {
+        isPlaying = false;
+      }
     }
 
     MiniAudioLib::ma_sound_stop(&sound);
@@ -249,6 +309,7 @@ u64 playMP3_internal(u32 filePathu32, u32 volume, bool isMainMusic) {
       if (maSoundMap.find(filePath) != maSoundMap.end()) {
         maSoundMap[filePath].remove_if(
             [&](MiniAudioLib::ma_sound l_sound) { return &sound == &l_sound; });
+        forceStopSounds();   // Force sounds to stop. For some reason, without this `isAnySoundPlaying` will always return true even if the sound finished playing.
       }
     }
   });
@@ -305,6 +366,81 @@ void changeMainMusicVolume(u32 volume) {
     MiniAudioLib::ma_sound_set_volume(mainMusicSound, ((float)volume) / 100.0);
   }
   mainMusicMutex.unlock();
+}
+
+// Function to check if any custom audio is being played or not. This will return true or false.
+u64 isAnySoundPlaying() {
+  bool anyPlaying = false;  // Flag to track whether any sound is currently playing
+
+  std::lock_guard<std::mutex> activeLock(activeMusicsMutex);
+
+  // Iterate over all entries in maSoundMap
+  for (auto it = maSoundMap.begin(); it != maSoundMap.end();) {
+    auto& soundList = it->second;  // Get the list of sounds for the current file
+
+    // Remove sounds that have finished playing
+    soundList.remove_if([](MiniAudioLib::ma_sound& sound) {
+      if (!MiniAudioLib::ma_sound_is_playing(&sound)) {  // Check if the sound has stopped
+        MiniAudioLib::ma_sound_stop(&sound);             // Stop the sound to free resources
+        MiniAudioLib::ma_sound_uninit(&sound);           // Uninitialize to clean up memory
+        return true;                                     // Remove this sound from the list
+      }
+      return false;  // Keep this sound in the list if it's still playing
+    });
+
+    // If the list still contains sounds, set anyPlaying to true
+    if (!soundList.empty()) {
+      anyPlaying = true;
+    }
+
+    // If the list is empty after removing finished sounds, erase it from the map
+    if (soundList.empty()) {
+      it = maSoundMap.erase(it);  // Remove the entry and move iterator to the next valid element
+    } else {
+      ++it;  // Move to the next element in the map
+    }
+  }
+
+  /*if (anyPlaying) {
+    std::cout << "Some sound is being played!" << std::endl;
+  } else {
+    std::cout << "No sound is being played!" << std::endl;
+  }*/
+
+  return bool_to_symbol(anyPlaying);
+}
+
+// Function to check if the custom audio passed as an argument is being played or not. This will return true or false. 
+u64 isSoundPlaying(u32 filePathu32) {
+
+  std::string filePath = Ptr<String>(filePathu32).c()->data();
+
+  //Get the list of files that are currently being played
+  std::vector<std::string> playingFiles = getPlayingFileNames();
+
+  // Checks if the file is in the list of files being played
+  if (std::find(playingFiles.begin(), playingFiles.end(), filePath) != playingFiles.end()) {
+    //std::cout << "The sound: (" << filePath << ") is being played!" << std::endl;
+    return bool_to_symbol(true);
+  }
+
+  return bool_to_symbol(false);
+}
+
+// Function to pause custom sounds
+void pauseAllSounds() {
+  std::lock_guard<std::mutex> lock(soundMutex);
+  //std::cout << "Pausing all sounds..." << std::endl;
+  isPaused = true;  // pause sounds
+}
+
+// Function to resume custom sounds
+void resumeAllSounds() {
+  std::lock_guard<std::mutex> lock(soundMutex);
+  //std::cout << "Resuming all sounds..." << std::endl;
+  isPaused = false;             // resume sounds
+  soundCondition.notify_all();  // notifies the thread to resume
+  //std::cout << "All sounds have resumed!" << std::endl;
 }
 
 /*!
@@ -1224,6 +1360,14 @@ void init_common_pc_port_functions(
   make_func_symbol_func("resume-main-music", (void*)resumeMainMusic);
 
   make_func_symbol_func("main-music-volume", (void*)changeMainMusicVolume);
+
+  // Check if any custom audio is being played or not
+  make_func_symbol_func("is-any-sound-playing?", (void*)isAnySoundPlaying);
+  make_func_symbol_func("is-sound-playing?", (void*)isSoundPlaying);
+
+  // Pause/Resume all sounds
+  make_func_symbol_func("pause-all-sounds", (void*)pauseAllSounds);
+  make_func_symbol_func("resume-all-sounds", (void*)resumeAllSounds);
 
   // discord rich presence
   make_func_symbol_func("pc-discord-rpc-set", (void*)set_discord_rpc);
