@@ -1273,6 +1273,12 @@
                        (go target-darkjak-get-off)
                        )
                    )
+                  ;; added
+                  ((= v1-45 'port-turret)
+                   (if (logtest? (-> self control status) (collide-status on-surface))
+                       (go target-port-turret-get-on (process->handle (the-as process (-> arg3 param 1))))
+                       )
+                   )
                   )
                 )
           )
