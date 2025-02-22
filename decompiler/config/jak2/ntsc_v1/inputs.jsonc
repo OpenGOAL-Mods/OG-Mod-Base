@@ -427,7 +427,8 @@
     "STR/YOLYSAMS.STR",
     "STR/YOLYSKDC.STR",
     "STR/YOONINTE.STR",
-    "STR/YOTOMBD.STR"
+    "STR/YOTOMBD.STR",
+    "STR/CIPBRES.STR" // added in PC Port - Cutscene data "CIPBRES.STR" restored from Jak 2 July Prototype
   ],
 
   // some objects are directly stored as files on the DVD. This is just text files.
