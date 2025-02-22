@@ -4775,4 +4775,8 @@
 (def-art-elt zipline-ag zipline-lod0-mg 1)
 (def-art-elt zipline-ag zipline-idle-ja 2)
 
+(def-art-elt port-metal-head-boat-ag port-metal-head-boat-lod0-jg 0)
+(def-art-elt port-metal-head-boat-ag port-metal-head-boat-lod0-mg 1)
+(def-art-elt port-metal-head-boat-ag port-metal-head-boat-idle-ja 2)
+
 

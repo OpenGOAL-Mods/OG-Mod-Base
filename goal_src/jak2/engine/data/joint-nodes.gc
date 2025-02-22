@@ -14448,4 +14448,8 @@
 (def-joint-node samos-lod0-jg "BIRDR1" 58)
 (def-joint-node samos-lod0-jg "BIRDL1" 59)
 
+(def-joint-node port-metal-head-boat-lod0-jg "align" 1)
+(def-joint-node port-metal-head-boat-lod0-jg "prejoint" 2)
+(def-joint-node port-metal-head-boat-lod0-jg "main" 3)
+
 
