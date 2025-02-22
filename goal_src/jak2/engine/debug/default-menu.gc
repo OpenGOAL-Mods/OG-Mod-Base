@@ -5714,9 +5714,9 @@
                ("ctyslumc-seal-movie" "city-protect-slums-intro")
                dm-scene-load-pick-func
                )
-
-              ;; added in PC Port - Torn cutscene from the unused port mission restored from Jak 2 July Prototype
-              (function "city-protect-blimp-res" ("ctyport-turret" "city-protect-blimp-res") dm-scene-load-pick-func)
+              
+             ;; added in PC Port - Torn cutscene from the unused port mission restored from Jak 2 July Prototype
+             (function "city-protect-blimp-res" ("ctyport-turret" "city-protect-blimp-res") dm-scene-load-pick-func)
              )
            (menu
              "atoll"
@@ -6156,6 +6156,10 @@
         (debug-menu-context-send-msg *popup-menu-context* (debug-menu-msg activate) (debug-menu-dest activation))
         (debug-menu-context-send-msg *debug-menu-context* (debug-menu-msg deactivate) (debug-menu-dest activation))
         (debug-menu-context-send-msg *editable-menu-context* (debug-menu-msg deactivate) (debug-menu-dest activation))
+        ;; If there are custom audios playing, then, pause them
+        (if (is-any-sound-playing?)
+          (pause-all-sounds)
+          )
         )
        ((and (cpad-hold? 1 start) *editable*)
         (debug-menu-context-send-msg *editable-menu-context* (debug-menu-msg activate) (debug-menu-dest activation))
@@ -6166,6 +6170,10 @@
         (debug-menu-context-send-msg *debug-menu-context* (debug-menu-msg activate) (debug-menu-dest activation))
         (debug-menu-context-send-msg *popup-menu-context* (debug-menu-msg deactivate) (debug-menu-dest activation))
         (debug-menu-context-send-msg *editable-menu-context* (debug-menu-msg deactivate) (debug-menu-dest activation))
+        ;; If there are custom audios playing, then, pause them
+        (if (is-any-sound-playing?)
+          (pause-all-sounds)
+          )
         )
        )
      )

@@ -140,6 +140,10 @@
        (set! *pause-lock* #f)
        (sound-group-pause (sound-group sfx music dialog sog3 ambient dialog2 sog6 sog7))
        (set! (-> *game-info* pause-start-time) (-> *display* real-clock frame-counter))
+       ;; If there are custom audios playing, then, pause them
+       (if (is-any-sound-playing?)
+        (pause-all-sounds)
+        )
        )
       (('freeze)
        (logior! (-> *setting-control* user-default process-mask) (process-mask freeze))
@@ -164,10 +168,15 @@
              )
          )
        (set! (-> *game-info* pause-start-time) (-> *display* real-clock frame-counter))
+       ;; If there are custom audios playing, then, pause them
+       (if (is-any-sound-playing?)
+        (pause-all-sounds)
+        )
        )
       (('game)
        (logclear! (-> *setting-control* user-default process-mask) (process-mask freeze pause menu))
        (sound-group-continue (sound-group sfx music dialog sog3 ambient dialog2 sog6 sog7))
+       (resume-all-sounds) ;; Resume all custom audios
        )
       )
 
