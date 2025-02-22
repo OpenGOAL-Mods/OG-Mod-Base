@@ -14763,7 +14763,7 @@
     :kill-func #f
     :borrow-size (new 'static 'array uint16 2 #x352 #x0)
     :borrow-level (new 'static 'array symbol 2 #f #f)
-    :borrow-display? (new 'static 'array symbol 2 #f #f) 
+    :borrow-display? (new 'static 'array symbol 2 #f #f)  
     :base-task-mask (task-mask task0)
     :texture-anim-tfrag #f
     :texture-anim-pris #f

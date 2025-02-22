@@ -858,11 +858,12 @@
                        )
                      (new 'static 'scene-actor
                        :name "torn-highres"
-                       :level 'portblmp
+                       :level 'ltrnysam ;; chaged - use torn-highres from this package to avoid missing eyes texture bug
                        :art-group "skel-torn-highres"
                        :prefix ""
                        :draw-frames '((min max))
                        :scissor-frames '()
+                       :light-index #x1e
                        :flags #x1
                        :shadow-flags -1
                        :shadow-volume-joint #f
@@ -880,7 +881,7 @@
                        )
                      )
                    :load-point-obj "ctyport-turret"
-                   :end-point-obj "ctyport-turret"
+                   :end-point-obj "ctyport-turret-res"
                    :borrow '()
                    :sfx-volume -1.0
                    :ambient-volume -1.0
