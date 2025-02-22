@@ -5714,6 +5714,9 @@
                ("ctyslumc-seal-movie" "city-protect-slums-intro")
                dm-scene-load-pick-func
                )
+
+              ;; added in PC Port - Torn cutscene from the unused port mission restored from Jak 2 July Prototype
+              (function "city-protect-blimp-res" ("ctyport-turret" "city-protect-blimp-res") dm-scene-load-pick-func)
              )
            (menu
              "atoll"
