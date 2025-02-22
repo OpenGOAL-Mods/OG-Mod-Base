@@ -683,6 +683,7 @@
    (arrow-red              float)
    (red-filter-timer       time-frame)
    (ride-height            float)
+   (path-end?              symbol) ;; added
    )
   (:state-methods
     idle
