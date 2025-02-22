@@ -270,6 +270,8 @@
 (cgo-file "lguard.gd" common-dep)
 (cgo-file "lerbrngd.gd" common-dep)
 (cgo-file "lyskdcd.gd" common-dep)
+;; portblmp
+(cgo-file "portblmp.gd" common-dep)
 
 ;; test levels from the ps3 version
 (when USE_PS3_LEVELS
@@ -348,7 +350,7 @@
   "TOSC0" "TOSC1" "TOSC2" "TOSSCARE" "TOTURRET" "TOUPOLES" "TOUSTART"
   "TOUWATER" "UNBD1" "UNBD2" "UNBD3" "UNBD4" "UNCONE" "UNCTHREE" "UNCTWO"
   "UNFSRES" "UNGSORES" "VIRESCUE" "VIRINTRO" "WOMAP" "YOFOREST" "YOLTRNYS"
-  "YOLYSAMS" "YOLYSKDC" "YOONINTE" "YOTOMBD")
+  "YOLYSAMS" "YOLYSKDC" "YOONINTE" "YOTOMBD" "CIPBRES")
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; MUSIC
