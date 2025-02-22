@@ -160,7 +160,8 @@
     "DGO/LRACEBB.DGO",
     "DGO/CASCITY.DGO",
     "DGO/LYSAMSAM.DGO",
-    "DGO/VI1.DGO"
+    "DGO/VI1.DGO",
+    "DGO/PORTBLMP.DGO" // Require the DGO file from Jak 2 July Prototype
 
     // ps3 test levels
     // "DGO/4AARON.DGO",
@@ -740,7 +741,8 @@
     "UND.DGO",
     "VI1.DGO",
     "VIN.DGO",
-    "HALFPIPE.DGO"
+    "HALFPIPE.DGO",
+    "PORTBLMP.DGO" // Require the DGO file from Jak 2 July Prototype
 
     // ps3 test levels
     // "4AARON.DGO",
