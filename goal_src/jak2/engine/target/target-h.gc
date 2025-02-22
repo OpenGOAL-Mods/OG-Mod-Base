@@ -18,6 +18,7 @@
 (declare-type indax-info basic)
 (declare-type turret-info basic)
 (declare-type sparticle-launcher basic)
+(declare-type port-turret-info basic) ;; added
 
 ;; NOTE - for level-info, defined in `logic-target`
 (define-extern start (function symbol continue-point target))
@@ -188,6 +189,7 @@
    (turret                   turret-info)
    (darkjak                  darkjak-info)
    (indax                    indax-info)
+   (port-turret              port-turret-info) ;;added
    )
   (:methods
     (do-edge-grabs (_type_ collide-cache collide-edge-spec) none)
@@ -348,6 +350,9 @@
     (target-warp-in vector vector target)
     (target-warp-out vector vector target)
     target-yellow-jump-blast
+    target-port-turret-get-off ;;added
+    (target-port-turret-get-on handle) ;;added
+    (target-port-turret-stance handle) ;;added
     )
   )
 
