@@ -411,6 +411,15 @@ void ObjectFileDB::add_obj_from_dgo(const std::string& obj_name,
       return;
     }
   }
+
+  // prevents the extraction of specific files from PORTBLMP.DGO
+  const std::unordered_set<std::string> excluded_files = {"target-turret", "target-turret-shot"};
+
+  if (dgo_name == "PORTBLMP.DGO" && excluded_files.find(obj_name) != excluded_files.end()) {
+    lg::warn("Skipping extraction of {} from {} to avoid conflict", obj_name, dgo_name);
+    return;
+  }
+
   stats.total_obj_files++;
   ASSERT(obj_size > 128);
   uint16_t version = *(const uint16_t*)(obj_data + 8);
@@ -581,6 +590,40 @@ void ObjectFileDB::process_link_data(const Config& config) {
   // printf("\n");
 }
 
+// Function to rename portblmp files to avoid an compilation error when (mi)
+void rename_portblmp_files() {
+  fs::path root_dir = file_util::get_jak_project_dir() / "decompiler_out" / "jak2" / "raw_obj";
+
+  // list of files to rename with their new names
+  std::vector<std::pair<std::string, std::string>> files_to_rename = {
+      {"torn-highres-ag-LTHRNOUT-LTRNKRKD-LTRNTESS-LTRNYSAM-SAG", "torn-highres-ag.go"},
+      {"drill-turret-ext-ag-DRI-DRILLMTN", "drill-turret-ext-ag.go"},
+      {"jak-turret+0-ag-DMI", "jak-turret+0-ag.go"}};
+
+  // iterate over the list of files
+  for (const auto& [old_name, new_name] : files_to_rename) {
+    // full path of the old file
+    fs::path old_file_path = root_dir / (old_name + ".go");
+
+    // full path of the new file
+    fs::path new_file_path = root_dir / (new_name);
+
+    // check if the old file exists
+    if (fs::exists(old_file_path)) {
+      // rename the file
+      try {
+        fs::rename(old_file_path, new_file_path);
+        lg::info("Renamed '{}' to '{}'", old_file_path.string(), new_file_path.string());
+      } catch (const std::exception& e) {
+        lg::error("Error renaming file '{}' to '{}': {}", old_file_path.string(),
+                  new_file_path.string(), e.what());
+      }
+    } else {
+      lg::warn("File '{}' does not exist, skipping renaming.", old_file_path.string());
+    }
+  }
+}
+
 /*!
  * Process all of the labels generated from linking and give them reasonable names.
  */
@@ -593,6 +636,9 @@ void ObjectFileDB::process_labels() {
   lg::info("Processed Labels:");
   lg::info(" Total {} labels", total);
   lg::info(" Total {:.2f} ms", process_label_timer.getMs());
+
+  // rename portblmp files to avoid an compilation error when (mi)
+  rename_portblmp_files();
 }
 
 /*!
