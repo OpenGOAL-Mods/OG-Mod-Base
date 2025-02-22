@@ -1,3 +1,19 @@
+# "Defend-The-Portwall-Restoration" Branch
+
+This branch contains modifications with the goal of restoring that cut Port mission called "Defend the Port Wall" from Jak II (July 2003 preview) to the final version of the game on OpenGoal, with some improvements. For more information on this mission, see: https://www.youtube.com/watch?v=2ZGTRvTlA3M&t=131s
+
+### Usage
+
+You need to grab `PORTBLMP.DGO` from the DGO folder of the `Jak II (July 2003 Preview) Prototype Build` and place it in the DGO folder of `iso_data`. Also, you need to grab `CIPBRES.STR` from the STR folder of the Prototype Build and place it in the STR folder of `iso_data`. Then complete the rest of the Opengoal installation process. If you did everything correctly, you will be able to do this mission after completing the "Defend Stadium" mission near the end of the game.
+
+### Final words
+
+Well, doing something like this took me a LOT of effort, it was really complicated, and really frustrates me during the restoration and decompiling process. I wanted to do this because I thought this mission really interesting and fun, and because I thought it was a shame that Naughty Dog cut it from the final game. But here it is, and works very similarly to what it was in that build, but with some improvements and fixes!
+
+So, that's it. Hope you enjoy it!
+
+_~~Nick07_
+
 # OpenGoal-Mod-Base
 Serves as a base template for openGOAL mods that will be supported via [OG-ModLauncher](https://github.com/OpenGOAL-Mods/OG-ModLauncher).
 
