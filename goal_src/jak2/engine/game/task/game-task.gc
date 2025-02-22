@@ -1034,6 +1034,17 @@
             :play-continue "stadiumd-race-fail"
             :kiosk-play-continue #f
             )
+          ;; Added - task "city-defend-portwall" for the unused port mission
+          (new 'static 'game-task-info
+            :name "city-defend-portwall"
+            :text-name (text-id progress-missions-defend-port-wall)
+            :pre-play-node (game-task-node city-protect-blimp-introduction)
+            :kiosk-play-node (game-task-node city-protect-blimp-introduction)
+            :pre-play-continue "ctyport-turret"
+            :play-node (game-task-node city-protect-blimp-resolution)
+            :play-continue "ctyport-turret"
+            :kiosk-play-continue #f
+            )  
           )
         )
   (set! (-> gp-0 sub-task-list)
@@ -1068,6 +1079,7 @@
               (stadiumd 0 #f #f) ;; added
               (introcst 0 lintcstb #f)
               (onintent 0 ltentout display)
+              (portblmp 0 ltrnysam special) ;; added
               )
             :open? #f
             :on-close #f
@@ -9166,7 +9178,7 @@
             :when-open #f
             :flags (game-task-node-flag save-on-life intro-wait task-manager)
             :parent-node (new 'static 'array game-task-node 4
-              (game-task-node city-defend-stadium-resolution)
+              (game-task-node city-protect-blimp-resolution) ;; changed - Construction site task will be after "Defend the Portwall" task
               (game-task-node none)
               (game-task-node none)
               (game-task-node none)
@@ -12305,6 +12317,100 @@
                                                    )
                     )
             :on-close #f
+            )
+          ;; Added - task-node "city-protect-blimp-introduction" restored from Jak 2 July Prototype
+          (new 'static 'game-task-node-info
+            :level 'city
+            :task (game-task city-defend-portwall)
+            :name "city-protect-blimp-introduction"
+            :when-open (new 'static 'boxed-array :type game-task-event
+              (new 'static 'game-task-event
+                :actor (game-task-actor minimap)
+                :action (game-task-action show)
+                :tex (game-task-icon gaticon-30)
+                :scene #f
+                )
+            )
+            :flags (game-task-node-flag save-on-life intro-wait task-manager)
+            :parent-node (new 'static 'array game-task-node 4
+              (game-task-node city-defend-stadium-resolution)
+              (game-task-node none)
+              (game-task-node none)
+              (game-task-node none)
+              )
+            :on-open #f
+            :info (new 'static 'task-manager-info
+              :mask (task-manager-mask intro-scene)
+              :level 'ctywide
+              :intro-scene "tor005" ;; Torn's intro speaker voice line from "Defend the Portwall" mission  
+              :resolution-scene #f
+              :resolution-scene-continue #f
+              :retry-continue #f
+              :fail-continue #f
+              :init-hook #f
+              :cleanup-hook #f
+              :update-hook #f
+              :code-hook #f
+              :complete-hook #f
+              :fail-hook #f
+              :event-hook #f
+              :final-node (game-task-node city-protect-blimp-introduction)
+              :intro-delay #x258
+              :on-complete #f
+              :on-fail #f
+              )
+            :task-mask (task-mask task0)
+            :borrow '((ctywide 1 lwideb special))
+            :open? #f
+            :on-close #f
+            :description (text-id progress-missions-defend-port-wall)
+            )
+          ;; Added - task-node "city-protect-blimp-resolution" restored from Jak 2 July Prototype
+          (new 'static 'game-task-node-info
+            :level 'city
+            :task (game-task city-defend-portwall)
+            :name "city-protect-blimp-resolution"
+            :when-open (new 'static 'boxed-array :type game-task-event
+              (new 'static 'game-task-event
+                :actor (game-task-actor minimap)
+                :action (game-task-action show)
+                :tex (game-task-icon gaticon-30)
+                :scene #f
+                )
+              )
+            :flags (game-task-node-flag close-task abs-task-mask task-manager)
+            :parent-node (new 'static 'array game-task-node 4
+              (game-task-node city-protect-blimp-introduction)
+              (game-task-node none)
+              (game-task-node none)
+              (game-task-node none)
+              )
+            :task-mask (task-mask done)
+            :on-open #f
+            :info (new 'static 'task-manager-info
+              :mask (task-manager-mask resolution-scene)
+              :level 'portblmp
+              :intro-scene #f
+              :resolution-scene "city-protect-blimp-res"
+              :resolution-scene-continue "ctyport-turret-res"
+              :retry-continue "ctyport-turret"
+              :fail-continue "ctyport-turret"
+              :init-hook #f
+              :cleanup-hook #f
+              :update-hook #f
+              :code-hook #f
+              :complete-hook #f
+              :fail-hook #f
+              :event-hook #f
+              :final-node (game-task-node city-protect-blimp-resolution)
+              :on-complete #f
+              :on-fail #f
+              )
+            :task-mask (task-mask task0)
+            :borrow '((ctywide 1 lwideb special))
+            :open? #f
+            :on-close #f
+            :description (text-id progress-missions-defend-port-wall)
             )
           )
         )
