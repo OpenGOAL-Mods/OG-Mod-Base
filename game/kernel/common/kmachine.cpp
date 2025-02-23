@@ -153,7 +153,6 @@ std::mutex mainMusicMutex;
 
 // Mutex to synchronize access to sounds
 std::mutex soundMutex;
-std::condition_variable soundCondition;
 bool isPaused = false;  // flag to check whether the custom sounds are paused or not
 
 // Function to stop all instances of specific sound by filepath
@@ -287,7 +286,12 @@ u64 playMP3_internal(u32 filePathu32, u32 volume, bool isMainMusic) {
         MiniAudioLib::ma_sound_stop(&sound);  // stop the sound when paused
 
         // Wait until the game is resumed
-        while (isPaused) {
+        while (true) {
+          {
+            std::lock_guard<std::mutex> lock(soundMutex);
+            if (!isPaused)
+              break;
+          }
           std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
 
@@ -440,8 +444,7 @@ void pauseAllSounds() {
 void resumeAllSounds() {
   std::lock_guard<std::mutex> lock(soundMutex);
   //std::cout << "Resuming all sounds..." << std::endl;
-  isPaused = false;             // resume sounds
-  soundCondition.notify_all();  // notifies the thread to resume
+  isPaused = false; // resume sounds
   //std::cout << "All sounds have resumed!" << std::endl;
 }
 
