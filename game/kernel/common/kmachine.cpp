@@ -6,8 +6,6 @@
 #include <random>
 #include <thread>
 #include <list>
-#include <mutex>
-#include <condition_variable>
 
 #define MINIAUDIO_IMPLEMENTATION
 // NOTE - this is needed, because on macOS, there is a file called `MacTypes.h`
