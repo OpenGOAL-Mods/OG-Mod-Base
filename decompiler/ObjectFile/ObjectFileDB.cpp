@@ -413,12 +413,12 @@ void ObjectFileDB::add_obj_from_dgo(const std::string& obj_name,
   }
 
   // prevents the extraction of specific files from PORTBLMP.DGO
-  const std::unordered_set<std::string> excluded_files = {"target-turret", "target-turret-shot"};
+  /*const std::unordered_set<std::string> excluded_files = {"target-turret", "target-turret-shot"};
 
   if (dgo_name == "PORTBLMP.DGO" && excluded_files.find(obj_name) != excluded_files.end()) {
     lg::warn("Skipping extraction of {} from {} to avoid conflict", obj_name, dgo_name);
     return;
-  }
+  }*/
 
   stats.total_obj_files++;
   ASSERT(obj_size > 128);
