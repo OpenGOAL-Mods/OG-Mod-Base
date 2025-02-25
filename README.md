@@ -6,7 +6,15 @@ This branch contains modifications with the goal of restoring that cut Port miss
 
 ### Usage
 
-You need to grab `PORTBLMP.DGO` from the DGO folder of the `Jak II (July 2003 Preview) Prototype Build` and place it in the DGO folder of `iso_data`. Also, you need to grab `CIPBRES.STR` from the STR folder of the Prototype Build and place it in the STR folder of `iso_data`. Then complete the rest of the Opengoal installation process. If you did everything correctly, you will be able to do this mission after completing the "Defend Stadium" mission near the end of the game.
+Before installing this mod you need to first extract the ISO contents from `Jak II (July 2003 Preview) Build` and grab `PORTBLMP.DGO` from the `DGO` folder from that build and place it in the following directory:
+
+`<your_launcher_installation_directory>\active\jak2\data\iso_data\jak2\DGO`. 
+
+Also, you need to grab `CIPBRES.STR` from the `STR` folder from that build and place it in the following directory:
+
+`<your_launcher_installation_directory>\active\jak2\data\iso_data\jak2\STR`.
+
+Then, complete the rest of the installation process. If you did everything correctly, you will be able to do this mission after completing the "Defend Stadium" mission near the end of the game.
 
 ### Final words
 
