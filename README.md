@@ -2,7 +2,9 @@
 
 ![Art_Final_1](https://github.com/user-attachments/assets/6ae1efb1-680d-4b0e-bdf1-1f18bcb4c4d1)
 
-This branch contains modifications with the goal of restoring that cut Port mission called "Defend the Port Wall" from Jak II (July 2003 preview) to the final version of the game on OpenGoal, with some improvements. For more information on this mission, see: https://www.youtube.com/watch?v=2ZGTRvTlA3M&t=131s
+Jak II - Defend The Port Wall is a mod with the goal of restoring that removed mission called "Defend the Port Wall" from `Jak II (July 2003 preview) Build` to the final version of the game on OpenGoal, with some improvements and fixes. 
+
+For more information about this mission, see: https://www.youtube.com/watch?v=2ZGTRvTlA3M&t=131s
 
 ### Usage
 
@@ -14,7 +16,7 @@ Also, you need to grab `CIPBRES.STR` from the `STR` folder from that build and p
 
 `<your_launcher_installation_directory>\active\jak2\data\iso_data\jak2\STR`.
 
-Then, complete the rest of the installation process. If you did everything correctly, you will be able to do this mission after completing the "Defend Stadium" mission near the end of the game.
+Then, complete the rest of the installation process. If you did everything correctly, you will be able to play this mission after completing the "Defend Stadium" mission near the end of the game.
 
 ### Final words
 
