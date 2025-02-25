@@ -8,7 +8,7 @@ For more information about this mission, see: https://www.youtube.com/watch?v=2Z
 
 ### Usage
 
-Before installing this mod you need to first extract the ISO contents from `Jak II (July 2003 Preview) Build` and grab `PORTBLMP.DGO` from the `DGO` folder from that build and place it in the following directory:
+Before installing this mod you need to first extract the ISO contents from `Jak II (July 2003 Preview) Build`, that you can find it here: https://hiddenpalace.org/Jak_II_(Jul_13,_2003_PAL_prototype), and grab `PORTBLMP.DGO` from the `DGO` folder from that build and place it in the following directory:
 
 `<your_launcher_installation_directory>\active\jak2\data\iso_data\jak2\DGO`. 
 
