@@ -511,7 +511,7 @@ void IsoQueueVagStream(ISO_VAGCommand* user_cmd) {
       if (!internal_stereo_cmd) {
         // allocating stereo failed, give up.
         internal_cmd->flags.scanned = 0;
-        ASSERT_NOT_REACHED();
+        // ASSERT_NOT_REACHED();
         ReleaseMessage(internal_cmd);
         RemoveVagCmd(internal_cmd);
         FreeVagCmd(internal_cmd);
@@ -821,7 +821,7 @@ u32 ISOThread() {
   // ISOFileDef* file_def = nullptr;
 
   while (true) {
-    dma_intr_hack();
+    // dma_intr_hack();
     // Part 1: Handle incoming messages from the user:
 
     int poll_result = PollMbx((MsgPacket**)&mbx_cmd, g_nISOMbx);
