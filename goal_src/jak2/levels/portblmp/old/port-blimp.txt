@@ -33,8 +33,8 @@
   )
 
 (deftype port-turret (base-turret)
-  ((first-ship-launched    time-frame)
-   (last-ship-launched     time-frame)
+  ((first-ship-launched    time-frame  :offset 552)
+   (last-ship-launched     time-frame  :offset 560)
    (ships-launched         int32)
    (total-ships-launched   uint32)
    (sink-interp            float)
@@ -52,7 +52,34 @@
    )
   )
 
-;; Torn new wave voicelines
+(defmethod inspect ((this port-turret))
+  (when (not this)
+    (set! this this)
+    (goto cfg-4)
+    )
+  (let ((t9-0 (method-of-type base-turret inspect)))
+    (t9-0 this)
+    )
+  (format #t "~2Tfirst-ship-launched: ~D~%" (-> this first-ship-launched))
+  (format #t "~2Tlast-ship-launched: ~D~%" (-> this last-ship-launched))
+  (format #t "~2Tships-launched: ~D~%" (-> this ships-launched))
+  (format #t "~2Ttotal-ships-launched: ~D~%" (-> this total-ships-launched))
+  (format #t "~2Tsink-interp: ~f~%" (-> this sink-interp))
+  (format #t "~2Tnum-shots-available: ~f~%" (-> this num-shots-available))
+  (format #t "~2Tlast-shot-gained: ~D~%" (-> this last-shot-gained))
+  (format #t "~2Ttorn: #x~X~%" (-> this torn))
+  (format #t "~2Ttarget-y: ~f~%" (-> this target-y))
+  (format #t "~2Tchannel: ~D~%" (-> this channel))
+  (format #t "~2Tid: ~D~%" (-> this id))
+  (format #t "~2Tlast-speech: ~D~%" (-> this last-speech))
+  (format #t "~2Tturret-state: ~D~%" (-> this turret-state))
+  (format #t "~2Tnext-turret-state: ~D~%" (-> this next-turret-state))
+  (format #t "~2Tprevious-turret-state: ~D~%" (-> this previous-turret-state))
+  (format #t "~2Twho-am-i: ~D~%" (-> this who-am-i))
+  (label cfg-4)
+  this
+  )
+
 (defun new-wave-speech ((arg0 port-turret))
   (when (= (get-status *gui-control* (the-as sound-id (-> arg0 id))) (gui-status unknown))
     (let ((v1-3 (rand-vu-int-count 9)))
@@ -135,7 +162,6 @@
   0
   )
 
-;; Torn voicelines when Jak destroy an metal head boat
 (defun jak-hit-speech ((arg0 port-turret))
   (when (= (get-status *gui-control* (the-as sound-id (-> arg0 id))) (gui-status unknown))
     (let ((v1-3 (rand-vu-int-count 9)))
@@ -218,7 +244,6 @@
   0
   )
 
-;; UNUSED voicelines
 (defun jak-miss-speech ((arg0 port-turret))
   (let ((a2-0 (get-status *gui-control* (the-as sound-id (-> arg0 id)))))
     (when (= a2-0 (gui-status unknown))
@@ -248,7 +273,6 @@
   0
   )
 
-;; Torn voicelines when the metal head boats are close to the portwall
 (defun ship-close-speech ((arg0 port-turret))
   (when (= (get-status *gui-control* (the-as sound-id (-> arg0 id))) (gui-status unknown))
     (let ((v1-3 (rand-vu-int-count 3)))
@@ -283,7 +307,6 @@
   0
   )
 
-;; UNUSED voicelines
 (defun help-speech ((arg0 port-turret))
   (when (= (get-status *gui-control* (the-as sound-id (-> arg0 id))) (gui-status unknown))
     (let ((v1-3 (rand-vu-int-count 2)))
@@ -394,8 +417,9 @@
   :init-specs ((:fade-r 0.0) (:fade-g 0.0) (:fade-b 0.0) (:fade-a -0.03 -0.24))
   )
 
-(defskelgroup skel-port-metal-head-boat port-metal-head-boat port-metal-head-boat-lod0-jg port-metal-head-boat-idle-ja
-              ((port-metal-head-boat-lod0-mg (meters 999999)))
+;; failed to figure out what this is:
+(defskelgroup skel-port-metal-head-boat port-metal-head-boat 0 2
+              ((1 (meters 999999)))
               :bounds (static-spherem 0 0 0 110)
               )
 
@@ -415,6 +439,28 @@
   (:state-methods
     idle
     )
+  )
+
+(defmethod inspect ((this port-metal-head-boat))
+  (when (not this)
+    (set! this this)
+    (goto cfg-4)
+    )
+  (let ((t9-0 (method-of-type process-drawable inspect)))
+    (t9-0 this)
+    )
+  (format #t "~2Tinit-angle: ~f~%" (-> this init-angle))
+  (format #t "~2Tposition: #<vector @ #x~X>~%" (-> this position))
+  (format #t "~2Tforward-dir: #<vector @ #x~X>~%" (-> this forward-dir))
+  (format #t "~2Tside-dir: #<vector @ #x~X>~%" (-> this side-dir))
+  (format #t "~2Thit-count: ~D~%" (-> this hit-count))
+  (format #t "~2Thit-ids[4] @ #x~X~%" (-> this hit-ids))
+  (format #t "~2Thit-max: ~D~%" (-> this hit-max))
+  (format #t "~2Tspeed: ~f~%" (-> this speed))
+  (format #t "~2Tside-speed: ~f~%" (-> this side-speed))
+  (format #t "~2Tsmall: ~A~%" (-> this small))
+  (label cfg-4)
+  this
   )
 
 ;; INFO: Used lq/sq
@@ -513,15 +559,6 @@
 
 (defstate idle (port-metal-head-boat)
   :virtual #t
-  :enter (behavior ()
-    (let ((v0-0 (the-as object (-> self draw color-mult)))) ;; Added to make metal head boat black like in the prototype
-                 (set! (-> (the-as rgbaf v0-0) x) 0.0)
-                 (set! (-> (the-as rgbaf v0-0) y) 0.0)
-                 (set! (-> (the-as rgbaf v0-0) z) 0.0)
-                 (set! (-> (the-as rgbaf v0-0) w) 1.0)
-                 v0-0
-                 )
-    )
   :event (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
     (case message
       (('attack)
@@ -695,6 +732,20 @@
    )
   )
 
+(defmethod inspect ((this port-turret-shot))
+  (when (not this)
+    (set! this this)
+    (goto cfg-4)
+    )
+  (let ((t9-0 (method-of-type turret-shot inspect)))
+    (t9-0 this)
+    )
+  (format #t "~2Tbackup-pos: #<vector @ #x~X>~%" (-> this backup-pos))
+  (format #t "~2Tinitial-y: ~f~%" (-> this initial-y))
+  (label cfg-4)
+  this
+  )
+
 (defstate impact (port-turret-shot)
   :virtual #t
   :code (behavior ()
@@ -703,13 +754,13 @@
         (let ((v1-2 (-> self root root-prim)))
           (set! (-> v1-2 prim-core world-sphere w) f30-0)
           (set! (-> (the-as collide-shape-prim-group v1-2) child 1 prim-core world-sphere w) f30-0)
-          ;(add-debug-sphere  ;; Remove debug-sphere display
-            ;#t
-            ;(bucket-id debug-no-zbuf1)
-            ;(the-as vector (-> v1-2 prim-core))
-            ;(-> v1-2 prim-core world-sphere w)
-            ;*color-green*
-            ;)
+          (add-debug-sphere
+            #t
+            (bucket-id debug-no-zbuf1)
+            (the-as vector (-> v1-2 prim-core))
+            (-> v1-2 prim-core world-sphere w)
+            *color-green*
+            )
           )
         (let ((a1-1 (new 'stack-no-clear 'overlaps-others-params)))
           (set! (-> a1-1 options) (overlaps-others-options))
@@ -859,6 +910,8 @@
   (none)
   )
 
+;; INFO: Used lq/sq
+;; WARN: Return type mismatch smush-control vs none.
 (defmethod base-turret-method-45 ((this port-turret) (arg0 object) (arg1 symbol))
   (local-vars (sv-112 vector) (sv-128 vector) (sv-144 vector))
   (rlet ((acc :class vf)
@@ -918,7 +971,7 @@
        )
      )
     (('start-shooting)
-     (set! (-> this enable-controls) (the-as symbol #t))
+     (set! (-> this enable-controls) (the-as basic #t))
      (set! (-> this roty-min) -32768.0)
      (set! (-> this roty-max) 12743.111)
      )
@@ -926,7 +979,6 @@
      (seek! (-> this health) 0.0 (the-as float (-> arg3 param 0)))
      (activate! (-> this smush-control) 0.2 30 240 0.8 0.8 (-> *display* entity-clock))
      (cpad-set-buzz! (-> *cpad-list* cpads 0) 1 255 (seconds 0.5))
-     (sound-play "turret-take-hit") ;; Added turret's hit sound
      )
     (('exit)
      (if (= (-> this path-u) 0.0)
@@ -940,7 +992,6 @@
     )
   )
 
-;; WARN: Return type mismatch smush-control vs none.
 (defun manage-torn-turret ((arg0 port-turret) (arg1 object) (arg2 float))
   (with-pp
     (when (and (< 0.0 (-> arg0 num-shots-available)) (< (-> arg0 roty) 2730.6667))
@@ -975,7 +1026,7 @@
        (set! (-> self root trans y) (- (-> self root trans y) (* 122880.0 (-> self sink-interp))))
        (seek! (-> self sink-interp) 0.0 (* 0.005 (-> self clock time-adjust-ratio)))
        (if (= (-> self sink-interp) 0.0)
-           (set! (-> self available-for-pickup) (the-as symbol #t))
+           (set! (-> self available-for-pickup) (the-as basic #t))
            )
        )
       ((zero? (-> self who-am-i))
@@ -1194,19 +1245,16 @@
             )
            ((= v1-34 5)
             (when (< (the-as uint (get-status *gui-control* (the-as sound-id (-> self id)))) (the-as uint 3))
+              (set! (-> self path-direction) (the-as basic #t))
               (set! (-> self path-mode) (the-as uint 2))
               (set! (-> self roty-min) 0.0)
               (set! (-> self roty-max) 0.0)
               (set! (-> self available-for-pickup) #f)
-              (remove-setting! 'music) ;; Stop the music after beating the mission (Not in original)
+              (send-event *target* 'end-mode)
               (process-spawn scene-player :init scene-player-init "city-protect-blimp-res" #t #f)
-              (set! (-> self last-speech) (the-as uint 6)) ;; Added a new case which fixes an black screen softlock after the cutscene ends
+              (set! (-> self last-speech) (the-as uint 0))
+              (go-virtual idle)
               )
-            )
-          ((= v1-34 6) ;; Added a new case which fixes an black screen softlock after the cutscene ends
-            (go-virtual shutdown)
-            (send-event *target* 'end-mode)
-            (set! (-> self path-u) 0.0) ;; Set turret's path position to the start
             )
            )
          )
@@ -1223,8 +1271,6 @@
                       (add-process *gui-control* self (the-as gui-channel (-> self channel)) (gui-action play) "torn014" -99.0 0)
                       )
                     )
-
-                (set-setting! 'music 'danger4 0.0 0) ;; Added an music during the mission
               )
           (+! (-> self total-ships-launched) 1)
           (if (< 7 (-> self ships-launched))
@@ -1235,7 +1281,3 @@
       )
     )
   )
-
-
-
-
