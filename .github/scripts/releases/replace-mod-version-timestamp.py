@@ -18,7 +18,7 @@ def patch_mod_timestamp(goal_src_path):
             # Check if the placeholder string is present in the file
             if "%MODVERSIONPLACEHOLDER%" in file_data:
                 # Replace the placeholder string with the version and date string
-                version_str = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+                version_str = os.getenv("versionName") + " " + datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
                 file_data = file_data.replace("%MODVERSIONPLACEHOLDER%", version_str)
                 # Write the updated content back to the mod-settings
                 file = open(settings_file_path, "w")
