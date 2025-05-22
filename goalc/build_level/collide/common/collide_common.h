@@ -9,7 +9,7 @@ struct CollideVertex {
 
 namespace jak1 {
 struct PatSurface {
-  enum class Mode { GROUND = 0, WALL = 1, OBSTACLE = 2, MAX_MODE = 3 };
+  enum class Mode { GROUND = 0, WALL = 1, OBSTACLE = 2, AUTO = 3, MAX_MODE = 4 };
   enum class Material {
     STONE = 0,
     ICE = 1,
