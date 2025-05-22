@@ -469,13 +469,24 @@ PatResult custom_props_to_pat(const tinygltf::Value& val, const std::string& /*d
 
   if (val.Has("collide_mode")) {
     int mode = val.Get("collide_mode").Get<int>();
-    if (mode == 0) {
-      mode = 3;
-    } else if (mode == 3) {
-      mode = 0;
-    }
     ASSERT(mode < (int)jak1::PatSurface::Mode::MAX_MODE);
-    result.pat.set_mode(jak1::PatSurface::Mode(mode));
+    // For backwards compatibility, we treat mode=0 from blender as AUTO, and mode=3 as GROUND
+    switch (mode) {
+      case 0:
+        result.pat.set_mode(jak1::PatSurface::Mode::AUTO);
+        break;
+      case 3:
+        result.pat.set_mode(jak1::PatSurface::Mode::GROUND);
+        break;
+      default:
+        // wall/obstacle/halfpipe/etc
+        result.pat.set_mode(jak1::PatSurface::Mode(mode));
+        break;
+    }
+  }
+  else {
+    // No explicit collide mode
+    result.pat.set_mode(jak1::PatSurface::Mode::AUTO);
   }
 
   if (val.Get("nocamera").Get<int>()) {
