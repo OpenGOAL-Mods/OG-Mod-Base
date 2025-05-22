@@ -1,0 +1,113 @@
+;;-*-Lisp-*-
+(in-package goal)
+(bundles "FIC.DGO" "LAV.DGO" "MIS.DGO" "OGR.DGO" "ROL.DGO" "SNO.DGO" "SWA.DGO")
+(require "engine/geometry/path.gc")
+(require "engine/common-obs/process-drawable.gc")
+
+;; DECOMP BEGINS
+
+(deftype blocking-plane-b (process-drawable) ()
+  (:states
+   blocking-plane-b-idle))
+
+(defskelgroup *ef-plane-sg*
+  ef-plane
+  ef-plane-lod0-jg
+  ef-plane-idle-ja
+  ((ef-plane-lod0-mg (meters 999999)))
+  :bounds (static-spherem 0 0 0 30))
+
+(defstate blocking-plane-b-idle (blocking-plane-b)
+  :trans
+    (behavior ()
+      (if (and *debug-segment* *display-path-marks*)
+        (logclear! (-> self draw status) (draw-status skip-bones)) ;; in debug, show blocking planes when path marks on
+        (logior! (-> self draw status) (draw-status skip-bones))))
+  :code
+    (behavior ()
+      (transform-post)
+      (loop
+        (when (not *debug-segment*)
+          (logior! (-> self mask) (process-mask sleep)))
+        (suspend))))
+
+(defbehavior blocking-plane-b-init-by-other blocking-plane-b ((vec-pair (inline-array vector)) (height float))
+  "Rewritten based on Jak II implementation - sets up plane given 2 vectors and a height"
+  (if (not vec-pair) (deactivate self))
+  (let ((s5-0 (-> vec-pair 0))
+        (gp-0 (-> vec-pair 1)))
+    0.0
+    (let ((f30-1 (* 0.5 (vector-vector-distance s5-0 gp-0)))
+          (s4-1 (new 'process 'collide-shape self (collide-list-enum usually-hit-by-player))))
+      (let ((s3-1 (new 'process 'collide-shape-prim-mesh s4-1 (the-as uint 0) (the-as uint 0))))
+        (set! (-> s3-1 prim-core collide-as) (collide-kind wall-object))
+        (set! (-> s3-1 collide-with) (collide-kind target))
+        (set! (-> s3-1 prim-core action) (collide-action solid))
+        (set! (-> s3-1 prim-core offense) (collide-offense indestructible))
+        (set! (-> s3-1 transform-index) 3)
+        (set-vector! (-> s3-1 local-sphere) 0.0 (* 0.00024414062 (* 0.5 height)) 0.0 (fmax height f30-1))
+        (set-root-prim! s4-1 s3-1))
+      (set! (-> s4-1 nav-radius) (* 0.75 (-> s4-1 root-prim local-sphere w)))
+      (backup-collide-with-as s4-1)
+      (set! (-> self root) s4-1))
+    (let ((s4-2 (new-stack-matrix0)))
+      (vector+! (-> self root trans) s5-0 gp-0)
+      (vector-float*! (-> self root trans) (-> self root trans) 0.5)
+      (+! (-> self root trans y) (* 0.5 height))
+      (vector-! (the-as vector (-> s4-2 vector)) gp-0 s5-0)
+      (set! (-> self root scale x) (* 0.00024414062 (vector-normalize-ret-len! (the-as vector (-> s4-2 vector)) 1.0)))
+      (set! (-> self root scale y) (* 0.00024414062 height))
+      (set! (-> self root scale z) 0.0)
+      (set! (-> s4-2 vector 1 quad) (-> (new 'static 'vector :y 1.0 :w 1.0) quad))
+      (vector-cross! (-> s4-2 vector 2) (the-as vector (-> s4-2 vector)) (-> s4-2 vector 1))
+      (vector-normalize! (-> s4-2 vector 2) 1.0)
+      (matrix->quaternion (-> self root quat) s4-2)))
+  (initialize-skeleton self *ef-plane-sg* '())
+  (logior! (-> self draw status) (draw-status skip-bones))
+  (go blocking-plane-b-idle)
+  (none))
+
+;; Use the below function to spawn a blocking-plane-b between 2 vectors with a given height.
+;;
+;; Example (spawn):
+;;
+;; (when (not (process-by-name "test-blocking-plane-b-1" *active-pool*))
+;;   (let ((verts (new 'stack-no-clear 'inline-array 'vector 2)))
+;;     (set-vector-meters! (-> verts 0) 194.39  10.62 -1587.11) ;; near geologist
+;;     (set-vector-meters! (-> verts 1) 214.60  10.31 -1590.41)
+;;     (blocking-plane-b-spawn-simple verts (meters 30.0) "test-blocking-plane-b-1")
+;;     )
+;;   )
+;;
+;; Example (despawn):
+;;
+;; (let ((plane (process-by-name "test-blocking-plane-b-1" *active-pool*)))
+;;   (when plane (deactivate plane))
+;;   )
+(defun blocking-plane-b-spawn-simple ((verts (inline-array vector)) (height float) (name string))
+  (process-spawn blocking-plane-b verts height :to *active-pool* :name name))
+
+(defbehavior blocking-plane-b-spawn process ((arg0 curve-control))
+  (cond
+    ((or (not arg0) (logtest? (-> arg0 flags) (path-control-flag not-found))))
+    (else
+     (let ((s5-0 (the int (the float (+ (-> arg0 curve num-cverts) -1))))
+           (s2-0 (new 'stack-no-clear 'inline-array 'vector 2))
+           (s4-0 0))
+       (while (< s4-0 s5-0)
+         (eval-path-curve-div! arg0 (-> s2-0 0) (the float s4-0) 'exact)
+         (eval-path-curve-div! arg0 (-> s2-0 1) (+ 1.0 (the float s4-0)) 'exact)
+         (process-spawn blocking-plane-b s2-0 122880.0 :to self)
+         (+! s4-0 2)))))
+  0
+  (none))
+
+(defun blocking-plane-b-destroy ()
+  (with-pp
+    (let ((gp-0 (-> pp child)))
+      (while gp-0
+        (let ((s5-0 (ppointer->process gp-0)))
+          (set! gp-0 (-> gp-0 0 brother))
+          (if (type-type? (-> s5-0 type) blocking-plane-b) (deactivate s5-0)))))
+    0
+    (none)))
