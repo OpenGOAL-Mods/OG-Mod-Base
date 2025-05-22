@@ -597,7 +597,7 @@ void extract(const Input& in,
   int wall_count = 0;
   float wall_cos = std::cos(in.auto_wall_angle * 2.f * 3.14159 / 360.f);
   for (auto& face : out.faces) {
-    if (static_cast<int>(face.pat.get_mode()) == 3) {
+    if (face.pat.get_mode() == jak1::PatSurface::Mode::AUTO) {
       math::Vector3f face_normal = (face.v[1] - face.v[0]).cross(face.v[2] - face.v[0]).normalized();
       if (face_normal[1] < wall_cos) {
         face.pat.set_mode(jak1::PatSurface::Mode::WALL);
