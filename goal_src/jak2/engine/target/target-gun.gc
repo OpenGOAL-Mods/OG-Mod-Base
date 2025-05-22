@@ -209,7 +209,7 @@
     (target-gun-type-set! arg0)
     (set-time! (-> gp-0 gun-get-on-time))
     )
-  (set! (-> self board latch?) #f)
+  ;; (set! (-> self board latch?) #f)
   (set! (-> self gun put-away?) #f)
   (set! (-> self gun active?) #f)
   (set! (-> self gun surpress-time) 0)
