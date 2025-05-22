@@ -469,6 +469,11 @@ PatResult custom_props_to_pat(const tinygltf::Value& val, const std::string& /*d
 
   if (val.Has("collide_mode")) {
     int mode = val.Get("collide_mode").Get<int>();
+    if (mode == 0) {
+      mode = 3;
+    } else if (mode == 3) {
+      mode = 0;
+    }
     ASSERT(mode < (int)jak1::PatSurface::Mode::MAX_MODE);
     result.pat.set_mode(jak1::PatSurface::Mode(mode));
   }
@@ -588,20 +593,21 @@ void extract(const Input& in,
 
   out.faces = std::move(fixed_faces);
 
-  if (in.auto_wall_enable) {
-    lg::info("automatically detecting walls with angle {}", in.auto_wall_angle);
-    int wall_count = 0;
-    float wall_cos = std::cos(in.auto_wall_angle * 2.f * 3.14159 / 360.f);
-    for (auto& face : out.faces) {
-      math::Vector3f face_normal =
-          (face.v[1] - face.v[0]).cross(face.v[2] - face.v[0]).normalized();
+  lg::info("automatically detecting auto faces with angle {}", in.auto_wall_angle);
+  int wall_count = 0;
+  float wall_cos = std::cos(in.auto_wall_angle * 2.f * 3.14159 / 360.f);
+  for (auto& face : out.faces) {
+    if (static_cast<int>(face.pat.get_mode()) == 3) {
+      math::Vector3f face_normal = (face.v[1] - face.v[0]).cross(face.v[2] - face.v[0]).normalized();
       if (face_normal[1] < wall_cos) {
         face.pat.set_mode(jak1::PatSurface::Mode::WALL);
         wall_count++;
+      } else {
+        face.pat.set_mode(jak1::PatSurface::Mode::GROUND);
       }
     }
-    lg::info("automatic wall: {}/{} converted to walls", wall_count, out.faces.size());
   }
+  lg::info("automatic wall: {}/{} converted to walls", wall_count, out.faces.size());
 
   lg::info("{} out of {} faces appeared to have wrong orientation and were flipped",
            suspicious_faces, out.faces.size());
