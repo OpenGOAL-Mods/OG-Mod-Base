@@ -800,6 +800,8 @@
   (pad-circle #x2001)
   (pad-x #x2002)
   (pad-square #x2003)
+
+  (save-and-load-game #x3000)
   ;; GAME-TEXT-ID ENUM ENDS
   )
 

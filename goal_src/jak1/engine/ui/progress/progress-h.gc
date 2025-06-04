@@ -129,6 +129,10 @@
      (speedrun-options)
      (speedrun-il-options)
      (speedrun-cat-ext-options)
+     ;; modbase additions
+     (save-and-load-game)
+     (memcard-saving-and-loading)
+     (memcard-data-exists-save-and-load)
      ;; the last one!
      (max))
    (defenum game-option-type
