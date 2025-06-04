@@ -889,7 +889,7 @@
 (defbehavior auto-save-init-by-other auto-save ((desired-mode symbol) (notify-proc process-tree) (card-idx int) (file-idx int))
   ;; trying to create multiple auto save procs, bad idea.
   (when (handle->process (-> *game-info* auto-save-proc))
-    (send-event notify-proc 'notify 'error 16)
+    (send-event notify-proc 'notify 'error (mc-status-code no-process))
     (return #f))
   ;; set us as the auto save proc
   (set! (-> *game-info* auto-save-proc) (process->handle self))
