@@ -2823,7 +2823,6 @@
         (cpad-clear! 0 circle)
         (case (-> obj display-state)
           (((progress-screen save-and-load-game))
-           (format 0 "respond-memcard save-and-load-game~%")
            (cond
              ((< (-> obj option-index) 4)
               (set! (-> *progress-state* which) (-> obj option-index))
@@ -2875,7 +2874,6 @@
                 (set! (-> obj next-display-state) (progress-screen save-game-title))
                 (set! (-> obj next-display-state) (progress-screen save-game))))))
           (((progress-screen memcard-data-exists-save-and-load))
-           (format 0 "respond-memcard data-exists-SL~%")
            (cond
              ((-> *progress-state* yes-no-choice)
               (sound-play "start-options")
