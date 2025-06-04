@@ -115,6 +115,13 @@
        'boxed-array
        :type
        game-option
+      ;;  ;; un-comment this section to add save+load option
+      ;;  (new 'static
+      ;;       'game-option
+      ;;       :option-type (game-option-type menu)
+      ;;       :name (text-id save-and-load-game)
+      ;;       :scale #t
+      ;;       :param3 (game-option-menu save-and-load-game))
        (new 'static
             'game-option
             :option-type (game-option-type menu)
@@ -164,6 +171,13 @@
        'boxed-array
        :type
        game-option
+      ;;  ;; un-comment this section to add save+load option
+      ;;  (new 'static
+      ;;       'game-option
+      ;;       :option-type (game-option-type menu)
+      ;;       :name (text-id save-and-load-game)
+      ;;       :scale #t
+      ;;       :param3 (game-option-menu save-and-load-game))
        (new 'static
             'game-option
             :option-type (game-option-type menu)
@@ -2061,9 +2075,11 @@
   (set! (-> *options-remap* (progress-screen memcard-not-formatted)) *ok-options*)
   (set! (-> *options-remap* (progress-screen memcard-format)) *yes-no-options*)
   (set! (-> *options-remap* (progress-screen memcard-data-exists)) *yes-no-options*)
+  (set! (-> *options-remap* (progress-screen memcard-data-exists-save-and-load)) *yes-no-options*)
   (set! (-> *options-remap* (progress-screen memcard-insert)) *ok-options*)
   (set! (-> *options-remap* (progress-screen load-game)) *load-options*)
   (set! (-> *options-remap* (progress-screen save-game)) *save-options*)
+  (set! (-> *options-remap* (progress-screen save-and-load-game)) *save-and-load-options*)
   (set! (-> *options-remap* (progress-screen save-game-title)) *save-options-title*)
   (set! (-> *options-remap* (progress-screen memcard-error-loading)) *ok-options*)
   (set! (-> *options-remap* (progress-screen memcard-error-saving)) *ok-options*)
@@ -2424,6 +2440,7 @@
            ((or (can-go-back? obj)
                 (= (-> obj display-state) (progress-screen load-game))
                 (= (-> obj display-state) (progress-screen save-game))
+                (= (-> obj display-state) (progress-screen save-and-load-game))
                 (= (-> obj display-state) (progress-screen save-game-title)))
             ;; no option selected, go back
             (cpad-clear! 0 square)
@@ -2459,7 +2476,7 @@
                   (sound-play "select-option")
                   (set! (-> obj next-display-state) (the-as progress-screen (-> options (-> obj option-index) param3)))
                   (case (-> obj next-display-state)
-                    (((progress-screen load-game) (progress-screen save-game) (progress-screen save-game-title))
+                    (((progress-screen load-game) (progress-screen save-game) (progress-screen save-and-load-game) (progress-screen save-game-title))
                      (set! (-> obj next-display-state) (set-memcard-screen obj (-> obj next-display-state))))))))
               ((= (-> options (-> obj option-index) option-type) (game-option-type button))
                ;; a button. what?
@@ -2805,6 +2822,16 @@
         (cpad-clear! 0 x)
         (cpad-clear! 0 circle)
         (case (-> obj display-state)
+          (((progress-screen save-and-load-game))
+           (format 0 "respond-memcard save-and-load-game~%")
+           (cond
+             ((< (-> obj option-index) 4)
+              (set! (-> *progress-state* which) (-> obj option-index))
+              ;; save slot selected
+              (if (zero? (-> s5-0 file (-> obj option-index) present))
+                (set! (-> obj next-display-state) (progress-screen memcard-saving-and-loading))
+                (set! (-> obj next-display-state) (progress-screen memcard-data-exists-save-and-load))))
+             (else (sound-play "cursor-options") (set! (-> obj next-display-state) (progress-screen invalid)))))
           (((progress-screen load-game))
            (cond
              ((< (-> obj option-index) 4)
@@ -2847,6 +2874,15 @@
               (if (= (-> obj display-state-stack 0) (progress-screen title))
                 (set! (-> obj next-display-state) (progress-screen save-game-title))
                 (set! (-> obj next-display-state) (progress-screen save-game))))))
+          (((progress-screen memcard-data-exists-save-and-load))
+           (format 0 "respond-memcard data-exists-SL~%")
+           (cond
+             ((-> *progress-state* yes-no-choice)
+              (sound-play "start-options")
+              (set! (-> obj next-display-state) (progress-screen memcard-saving-and-loading)))
+             (else
+              (sound-play "cursor-options")
+              (set! (-> obj next-display-state) (progress-screen save-and-load-game)))))
           (((progress-screen memcard-no-data))
            (cond
              ((-> *progress-state* yes-no-choice)
@@ -3403,15 +3439,16 @@
         (((progress-screen memcard-format)) (draw-memcard-format obj a1-1))
         (((progress-screen memcard-no-space) (progress-screen memcard-not-inserted) (progress-screen memcard-not-formatted))
          (draw-memcard-storage-error obj a1-1))
-        (((progress-screen memcard-data-exists)) (draw-memcard-data-exists obj a1-1))
+        (((progress-screen memcard-data-exists) (progress-screen memcard-data-exists-save-and-load)) (draw-memcard-data-exists obj a1-1))
         (((progress-screen memcard-no-data)) (draw-memcard-no-data obj a1-1))
         (((progress-screen memcard-loading)
           (progress-screen memcard-saving)
+          (progress-screen memcard-saving-and-loading)
           (progress-screen memcard-formatting)
           (progress-screen memcard-creating))
          (draw-memcard-accessing obj a1-1))
         (((progress-screen memcard-insert)) (draw-memcard-insert obj a1-1))
-        (((progress-screen load-game) (progress-screen save-game) (progress-screen save-game-title))
+        (((progress-screen load-game) (progress-screen save-game) (progress-screen save-and-load-game) (progress-screen save-game-title))
          (draw-memcard-file-select obj a1-1))
         (((progress-screen memcard-auto-save-error)) (draw-memcard-auto-save-error obj a1-1))
         (((progress-screen memcard-removed)) (draw-memcard-removed obj a1-1))
@@ -3504,7 +3541,9 @@
               (progress-screen memcard-auto-save-error)
               (progress-screen auto-save)
               (progress-screen load-game)
-              (progress-screen save-game))
+              (progress-screen save-game)
+              (progress-screen save-and-load-game)
+              )
              (draw-notice-screen self)
              (draw-options self 190 0 0.82))
             (((progress-screen no-disc) (progress-screen bad-disc))
@@ -3514,9 +3553,10 @@
              (draw-notice-screen self)
              (draw-options self 110 0 0.82))
             (((progress-screen memcard-insert)) (draw-notice-screen self) (draw-options self 165 0 0.82))
-            (((progress-screen memcard-data-exists)) (draw-notice-screen self) (draw-options self 168 0 0.82))
+            (((progress-screen memcard-data-exists) (progress-screen memcard-data-exists-save-and-load)) (draw-notice-screen self) (draw-options self 168 0 0.82))
             (((progress-screen memcard-loading)
               (progress-screen memcard-saving)
+              (progress-screen memcard-saving-and-loading)
               (progress-screen memcard-formatting)
               (progress-screen memcard-creating))
              (draw-notice-screen self))
@@ -3560,7 +3600,7 @@
         (set! (-> self particles 32 init-pos x) -320.0)
         (set! (-> self particles 33 init-pos x) -320.0)
         (case (-> self display-state)
-          (((progress-screen load-game) (progress-screen save-game) (progress-screen save-game-title))
+          (((progress-screen load-game) (progress-screen save-game) (progress-screen save-and-load-game) (progress-screen save-game-title))
            (set! (-> self transition-speed) 30.0)))
         (none)))
 
@@ -3634,9 +3674,11 @@
               ((or (= v1-74 (progress-screen memcard-no-space))
                    (= v1-74 (progress-screen memcard-format))
                    (= v1-74 (progress-screen memcard-data-exists))
+                   (= v1-74 (progress-screen memcard-data-exists-save-and-load))
                    (= v1-74 (progress-screen memcard-insert))
                    (= v1-74 (progress-screen load-game))
                    (= v1-74 (progress-screen save-game))
+                   (= v1-74 (progress-screen save-and-load-game))
                    (= v1-74 (progress-screen save-game-title))
                    (= v1-74 (progress-screen memcard-error-loading))
                    (= v1-74 (progress-screen memcard-error-saving))
