@@ -1721,8 +1721,26 @@
               )
             (send-event (ppointer->process (-> this parent)) 'child-hit)
             (let ((f0-1 0.0))
-              (if (not *debug-unkillable*)
-                  (set! f0-1 (damage-enemy-from-attack! this proc block))
+              (when (not *debug-unkillable*)
+                ;; og:preserve-this for damage numbers cheat
+                (#cond
+                  (PC_PORT
+                    (let ((old-hp (-> this hit-points))
+                          ;; (dmg-taken (damage-enemy-from-attack! this proc block))
+                          )
+                      (set! f0-1 (damage-enemy-from-attack! this proc block))
+                      (when (> f0-1 0)
+                        (process-spawn damage-number (the int (get-damage-from-attack this proc block)) (-> this root trans) (-> this mask))
+                        (send-damage-to-bar *health-bar-manager* this (the int f0-1) (the int old-hp)))
+                      (when (nonzero? (-> this fated-time))
+                        (aif (get-bar-for-process *health-bar-manager* this)
+                            (send-event (ppointer->process it) 'set-hit-points 0)
+                            (send-damage-to-bar *health-bar-manager* this 1 1))
+                        )
+                      )
+                    )
+                  (#t
+                    (set! f0-1 (damage-enemy-from-attack! this proc block))))
                   )
               (let ((s2-2 (msg-for-incoming-attack this proc block f0-1)))
                 (when s2-2

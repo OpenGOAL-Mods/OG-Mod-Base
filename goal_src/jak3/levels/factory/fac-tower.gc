@@ -692,6 +692,7 @@
   )
 
 (defbehavior fac-gun-tower-standard-event-handler fac-gun-tower ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
+  ;; (format 0 "fac-gun-tower-std-event-handler ~D ~A ~A ~A~%" arg1 arg2 (-> arg3 param 1) (-> arg3 param 0))
   (case arg2
     (('attack)
      (let ((gp-0 (the-as object (-> arg3 param 1)))
@@ -712,6 +713,9 @@
                  (when a0-4
                    (case (-> a0-4 prim-id)
                      ((1)
+                      (when (> f30-0 0)
+                        (process-spawn damage-number (the int f30-0) (-> self root trans) (-> self mask))
+                        (send-damage-to-bar *health-bar-manager* self (the int f30-0) (the int (-> self hit-points))))
                       (set! (-> self hit-points) (fmax 0.0 (- (-> self hit-points) f30-0)))
                       (set-time! (-> self last-hit-time))
                       )
@@ -733,6 +737,9 @@
              (when (or (< 0.0 (vector-dot s4-0 (-> s3-0 fvec)))
                        (< (vector-vector-distance s5-0 (the-as vector (+ (the-as uint gp-0) 0))) 36864.0)
                        )
+               (when (> f30-0 0)
+                  (process-spawn damage-number (the int f30-0) (-> self root trans) (-> self mask))
+                  (send-damage-to-bar *health-bar-manager* self (the int f30-0) (the int (-> self hit-points))))
                (set! (-> self hit-points) (fmax 0.0 (- (-> self hit-points) f30-0)))
                (set-time! (-> self last-hit-time))
                )
