@@ -539,6 +539,8 @@ void InitMachine_PCPort() {
   make_function_symbol_from_c("__pc-get-tex-remap", (void*)lookup_jak2_texture_dest_offset);
   make_function_symbol_from_c("pc-init-autosplitter-struct",
                               (void*)kmachine_extras::init_autosplit_struct);
+  make_function_symbol_from_c("pc-get-archipelago-struct",
+                              (void*)kmachine_extras::init_archipelago_struct);
 
   // discord rich presence
   make_function_symbol_from_c("pc-discord-rpc-update", (void*)kmachine_extras::update_discord_rpc);

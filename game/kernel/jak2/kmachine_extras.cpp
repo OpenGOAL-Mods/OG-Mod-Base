@@ -201,6 +201,12 @@ void init_autosplit_struct() {
       (u64)g_ee_main_mem + (u64)intern_from_c("*autosplit-info-jak2*")->value();
 }
 
+void init_archipelago_struct() {
+  g_archipelago_block_jak2.pointer_to_symbol =
+      (u64)g_ee_main_mem + (u64)intern_from_c("*archipelago-info-jak2*")->value();
+}
+}  // namespace kmachine_extras
+
 // TODO - currently using a single mutex for all background task synchronization
 std::mutex background_task_lock;
 
