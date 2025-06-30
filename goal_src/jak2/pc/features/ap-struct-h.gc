@@ -1,0 +1,25 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(deftype ap-info-jak2 (structure)
+    (;; Memory Struct Version
+    (version              uint32)
+
+    ;; Mission/Side Mission Information
+    (next-mission-index              uint)
+    (next-side-mission-index         uint)
+    (missions-checked                uint32 70)
+    (side-missions-checked           uint32 24)
+
+    ;; End Marker
+    (end-marker           uint8 4)
+    )
+
+    
+)
+
+(define-extern *ap-info-jak2* ap-info-jak2)
+
+(define-extern ap-mission-checked! (function uint uint))
+
+(define-extern ap-side-mission-checked! (function uint uint))

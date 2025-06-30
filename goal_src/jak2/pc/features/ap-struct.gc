@@ -1,0 +1,21 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *ap-info-jak2* (new 'static 'ap-info-jak2))
+
+
+;; Setup markers
+(charp<-string (-> *ap-info-jak2* end-marker) "end")
+
+;; ****************************************************************************
+;; **** This number must match expected_memory_version in MemoryReader.py! ****
+;; ****************************************************************************
+(set! (-> *ap-info-jak2* version) 1)
+
+(defun ap-mission-checked! ((mission-id uint))
+  (set! (-> *ap-info-jak2* missions-checked (-> *ap-info-jak2* next-mission-index)) mission-id)
+  (+! (-> *ap-info-jak2* next-mission-index) 1.0))
+
+(defun ap-side-mission-checked! ((side-mission-id uint))
+  (set! (-> *ap-info-jak2* side-missions-checked (-> *ap-info-jak2* next-side-mission-index)) side-mission-id)
+  (+! (-> *ap-info-jak2* next-side-mission-index) 1.0))
