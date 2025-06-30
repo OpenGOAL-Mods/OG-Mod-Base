@@ -596,6 +596,7 @@
       (when (nonzero? i)
         (let ((node (-> game-nodes i)))
           (when (and (= (-> node task) arg0) (logtest? (-> node flags) (game-task-node-flag close-task)))
+            (ap-mission-checked! (the-as uint arg0))
             (close! node 'event)
             (return #t)
             )
