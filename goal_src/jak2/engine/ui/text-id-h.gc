@@ -853,6 +853,17 @@
   (pad-circle #x2001)
   (pad-x #x2002)
   (pad-square #x2003)
+
+  ;; destination names text
+  (caspad-name #x10000)
+  (nest-name #x10001)
+  (ctyport-name #x10002)
+
+  ;; menu stuff text
+  (select-destination #x100000)
+  (no-menu-data #x100001)
+  (next-page #x100002)
+  (previous-page #x100003)
 )
 ;; ---text-id
 
