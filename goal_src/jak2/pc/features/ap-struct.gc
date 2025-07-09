@@ -19,3 +19,38 @@
 (defun ap-side-mission-checked! ((side-mission-id uint))
   (set! (-> *ap-info-jak2* side-missions-checked (-> *ap-info-jak2* next-side-mission-index)) side-mission-id)
   (+! (-> *ap-info-jak2* next-side-mission-index) 1.0))
+
+(defun ap-special-checked? ((special-id uint))
+  (let ((checked #f))
+    (dotimes (i (-> *ap-info-jak2* next-special-index))
+      (when (= special-id (-> *ap-info-jak2* specials-checked i))
+        (set! checked #t)))
+    checked))
+
+(defun ap-special-task-to-index ((special-id uint))
+ (cond
+ ((= special-id 12) (the-as uint 0)) ;; Dark Jak
+ ((= special-id 24) (the-as uint 1)) ;; Scatter Gun
+ ((= special-id 25) (the-as uint 2)) ;; Blaster
+ ((= special-id 26) (the-as uint 3)) ;; Vulcan Fury
+ ((= special-id 27) (the-as uint 4)) ;; Peacemaker
+ ((= special-id 28) (the-as uint 5)) ;; JetBoard
+ ((= special-id 40) (the-as uint 6)) ;; Rate of Fire increase
+ ((= special-id 38) (the-as uint 7)) ;; Ammo Capacity increase
+ ((= special-id 39) (the-as uint 8)) ;; Damage increase
+ ((= special-id 29) (the-as uint 9)) ;; Red Security Pass
+ ((= special-id 30) (the-as uint 10)) ;; Yellow Security Pass
+ ((= special-id 31) (the-as uint 11)) ;; Green Security Pass
+ ((= special-id 41) (the-as uint 12)) ;; Purple Security Pass
+ ((= special-id 42) (the-as uint 13)) ;; Black Security Pass
+ ((= special-id 34) (the-as uint 14)) ;; Dark Bomb
+ ((= special-id 35) (the-as uint 15)) ;; Dark Blast
+ ((= special-id 36) (the-as uint 16)) ;; Dark Giant
+ ((= special-id 37) (the-as uint 17)) ;; Dark Invincibility
+ ))
+
+(defun ap-special-received! ((special-id uint))
+  (set! (-> *ap-info-jak2* specials-received (ap-special-task-to-index special-id)) (the uint 1)))
+
+(defun ap-special-received? ((special-id uint))
+  (> (-> *ap-info-jak2* specials-received (ap-special-task-to-index special-id)) 0))

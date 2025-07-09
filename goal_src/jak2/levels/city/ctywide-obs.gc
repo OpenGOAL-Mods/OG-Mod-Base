@@ -386,10 +386,10 @@
   ;; og:preserve-this
   :code (behavior ()
     (until #f
-      (when (or (and (logtest? (game-feature pass-red) (-> *game-info* features)) (= 29 (-> self pass)))
-                (and (logtest? (game-feature pass-green) (-> *game-info* features)) (= 30 (-> self pass)))
-                (and (logtest? (game-feature pass-yellow) (-> *game-info* features)) (= 31 (-> self pass)))
-                (and (logtest? (game-feature pass-blue) (-> *game-info* features)) (= 32 (-> self pass)))
+      (when (or (and (ap-special-received? (the-as uint 29)) (= 29 (-> self pass))) ;; red pass
+                (and (ap-special-received? (the-as uint 30)) (= 30 (-> self pass))) ;; green pass
+                (and (ap-special-received? (the-as uint 31)) (= 31 (-> self pass))) ;; yellow pass
+                (and (logtest? (game-feature pass-blue) (-> *game-info* features)) (= 32 (-> self pass))) ;; ignore, blue pass is not used
                 )
         (go-virtual idle-open)
         (return #t)
