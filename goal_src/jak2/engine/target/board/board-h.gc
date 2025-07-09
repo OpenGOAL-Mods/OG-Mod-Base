@@ -249,7 +249,7 @@
         )
 
 (defbehavior want-to-board? target ()
-  (and (logtest? (-> self game features) (game-feature board))
+  (and (ap-special-received? (the-as uint 28))
        (or (and (cpad-pressed? (-> self control cpad number) r2)
                 (or (!= *cheat-mode* 'debug)
                     (not (logtest? (-> *cpad-list* cpads (-> self control cpad number) button0-abs 0) (pad-buttons l2)))

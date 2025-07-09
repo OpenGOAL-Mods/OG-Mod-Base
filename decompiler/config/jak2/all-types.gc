@@ -14834,6 +14834,15 @@ Consists of a header and a list of [[merc-effect]]s."
   (pass-yellow    31)
   (pass-blue      32)
   (ammo-random    33)
+  (darkjak-bomb0  34) ;; dark bomb
+  (darkjak-bomb1  35) ;; dark blast
+  (darkjak-giant  36) ;; dark giant
+  (darkjak-invinc 37) ;; dark invincibility
+  (gun-upgrade-ammo 38) ;; ammo upgrade
+  (gun-upgrade-damage 39) ;; damage upgrade
+  (gun-upgrade-speed 40) ;; speed upgrade
+  (pass-purple    41) ;; purple pass
+  (pass-black     42) ;; black pass
   )
 
 (deftype game-bank (basic)

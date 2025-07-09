@@ -5,11 +5,14 @@
     (;; Memory Struct Version
     (version              uint32)
 
-    ;; Mission/Side Mission Information
+    ;; Mission/Side Mission and Special Information
     (next-mission-index              uint)
     (next-side-mission-index         uint)
+    (next-special-index              uint)
     (missions-checked                uint32 70)
     (side-missions-checked           uint32 24)
+    (specials-checked                uint32 32) ;; we're not using all 32, but it can be referenced in the future
+    (specials-received               uint32 32) ;; we're not using all 32, but it can be referenced in the future
 
     ;; End Marker
     (end-marker           uint8 4)
@@ -23,3 +26,13 @@
 (define-extern ap-mission-checked! (function uint uint))
 
 (define-extern ap-side-mission-checked! (function uint uint))
+
+(define-extern ap-special-task-to-index (function uint uint))
+
+(define-extern ap-dialog-special-task-to-index (function uint uint))
+
+(define-extern ap-special-checked? (function uint symbol))
+
+(define-extern ap-special-received! (function uint uint))
+
+(define-extern ap-special-received? (function uint symbol))

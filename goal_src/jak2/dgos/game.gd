@@ -292,6 +292,8 @@
   "lightning.o"
   "carry-h.o"
   "pilot-h.o"
+  "ap-struct-h.o" ;; added
+  "ap-struct.o" ;; added
   "gun-h.o"
   "board-h.o"
   "darkjak-h.o"
@@ -357,8 +359,6 @@
   "aligner.o"
   "water.o"
   "collectables.o"
-  "ap-struct-h.o"
-  "ap-struct.o"
   "task-control.o"
   "scene.o"
   "pov-camera.o"
