@@ -734,7 +734,7 @@
           (logclear! (-> this features) (game-feature board))
           )
          )
-       (if (logtest? (-> this features) (game-feature board))
+       (if (ap-special-received? (the-as uint 28))
            1.0
            0.0
            )
