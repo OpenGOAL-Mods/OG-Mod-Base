@@ -39,8 +39,8 @@
  ((= special-id 38) (the-as uint 7)) ;; Ammo Capacity increase
  ((= special-id 39) (the-as uint 8)) ;; Damage increase
  ((= special-id 29) (the-as uint 9)) ;; Red Security Pass
- ((= special-id 30) (the-as uint 10)) ;; Yellow Security Pass
- ((= special-id 31) (the-as uint 11)) ;; Green Security Pass
+ ((= special-id 30) (the-as uint 10)) ;; Green Security Pass
+ ((= special-id 31) (the-as uint 11)) ;; Yellow Security Pass
  ((= special-id 41) (the-as uint 12)) ;; Purple Security Pass
  ((= special-id 42) (the-as uint 13)) ;; Black Security Pass
  ((= special-id 34) (the-as uint 14)) ;; Dark Bomb

@@ -1109,7 +1109,7 @@
                     (not *pause-lock*)
                     )
                (logtest? (state-flags prevent-board) (-> self state-flags))
-               (not (logtest? (-> *game-info* features) (game-feature board)))
+               (not (ap-special-received? (the-as uint 28)))
                )
            (and (time-elapsed? (-> self board board-get-on-time) (seconds 1))
                 (< (-> self board board-get-on-time)

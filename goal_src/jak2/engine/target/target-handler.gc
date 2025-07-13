@@ -1168,7 +1168,7 @@
                    (go target-flut-start (process->handle (the-as process (-> arg3 param 1))))
                    )
                   ((= v1-45 'board)
-                   (if (logtest? (-> self game features) (game-feature board))
+                   (if (ap-special-received? (the-as uint 28))
                        (go target-board-start (process->handle (the-as process (-> arg3 param 1))))
                        )
                    )
