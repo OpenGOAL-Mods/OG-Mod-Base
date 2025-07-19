@@ -17,7 +17,7 @@
          (when v0-0
            (cond
              ((= gp-0 2)
-              (if (logtest? (-> self game features) (game-feature gun-upgrade-speed))
+              (if (ap-special-received? (the-as uint 40))
                   (set! (-> self control unknown-word04) (the-as uint jakb-gun-red-fire-fast-ja))
                   (set! (-> self control unknown-word04) (the-as uint jakb-gun-red-fire-ja))
                   )
