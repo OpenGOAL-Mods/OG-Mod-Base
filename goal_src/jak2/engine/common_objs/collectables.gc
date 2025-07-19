@@ -2486,62 +2486,62 @@
     (when (= s2-0 (pickup-type ammo-random))
       (let ((s2-1 (-> *game-info* features)))
         0.0
-        (let* ((f0-2 (if (logtest? s2-1 (game-feature gun-yellow))
+        (let* ((f0-2 (if (ap-special-received? (the-as uint 25)) ;; blaster
                          (-> *FACT-bank* ammo-yellow-max)
                          0.0
                          )
                      )
-               (f1-1 (if (logtest? s2-1 (game-feature gun-red))
+               (f1-1 (if (ap-special-received? (the-as uint 24)) ;; scatter gun
                          (-> *FACT-bank* ammo-red-max)
                          0.0
                          )
                      )
-               (f2-1 (if (logtest? s2-1 (game-feature gun-blue))
+               (f2-1 (if (ap-special-received? (the-as uint 26)) ;; vulcan fury
                          (-> *FACT-bank* ammo-blue-max)
                          0.0
                          )
                      )
-               (f3-1 (if (logtest? s2-1 (game-feature gun-dark))
+               (f3-1 (if (ap-special-received? (the-as uint 27)) ;; peacemaker
                          (-> *FACT-bank* ammo-dark-max)
                          0.0
                          )
                      )
-               (f4-1 (if (logtest? s2-1 (game-feature gun-yellow))
+               (f4-1 (if (ap-special-received? (the-as uint 25)) ;; blaster
                          (-> *FACT-bank* ammo-yellow-max)
                          0.0
                          )
                      )
-               (f5-1 (if (logtest? s2-1 (game-feature gun-red))
+               (f5-1 (if (ap-special-received? (the-as uint 24)) ;; scatter gun
                          (-> *FACT-bank* ammo-red-max)
                          0.0
                          )
                      )
-               (f6-1 (if (logtest? s2-1 (game-feature gun-blue))
+               (f6-1 (if (ap-special-received? (the-as uint 26)) ;; vulcan fury
                          (-> *FACT-bank* ammo-blue-max)
                          0.0
                          )
                      )
-               (f7-1 (if (logtest? s2-1 (game-feature gun-dark))
+               (f7-1 (if (ap-special-received? (the-as uint 27)) ;; peacemaker
                          (-> *FACT-bank* ammo-dark-max)
                          0.0
                          )
                      )
-               (f8-1 (if (logtest? s2-1 (game-feature gun-yellow))
+               (f8-1 (if (ap-special-received? (the-as uint 25)) ;; blaster
                          (-> *game-info* gun-ammo 0)
                          0.0
                          )
                      )
-               (f9-1 (if (logtest? s2-1 (game-feature gun-red))
+               (f9-1 (if (ap-special-received? (the-as uint 24)) ;; scatter gun
                          (-> *game-info* gun-ammo 1)
                          0.0
                          )
                      )
-               (f10-1 (if (logtest? s2-1 (game-feature gun-blue))
+               (f10-1 (if (ap-special-received? (the-as uint 26)) ;; vulcan fury
                           (-> *game-info* gun-ammo 2)
                           0.0
                           )
                       )
-               (f11-1 (if (logtest? s2-1 (game-feature gun-dark))
+               (f11-1 (if (ap-special-received? (the-as uint 27)) ;; peacemaker
                           (-> *game-info* gun-ammo 3)
                           0.0
                           )
@@ -2564,17 +2564,17 @@
                     (f0-5 (rand-vu))
                     )
                (cond
-                 ((and (>= f26-0 f0-5) (logtest? s2-1 (game-feature gun-yellow)))
+                 ((and (>= f26-0 f0-5) (ap-special-received? (the-as uint 25)))
                   (set! s2-0 (pickup-type ammo-yellow))
                   )
-                 ((and (>= f22-0 f0-5) (logtest? s2-1 (game-feature gun-red)))
+                 ((and (>= f22-0 f0-5) (ap-special-received? (the-as uint 24)))
                   (set! s2-0 (pickup-type ammo-red))
                   (set! f30-0 (/ f30-0 2))
                   )
-                 ((and (>= f24-0 f0-5) (logtest? s2-1 (game-feature gun-blue)))
+                 ((and (>= f24-0 f0-5) (ap-special-received? (the-as uint 26)))
                   (set! s2-0 (pickup-type ammo-blue))
                   )
-                 ((and (>= f28-0 f0-5) (logtest? s2-1 (game-feature gun-dark)))
+                 ((and (>= f28-0 f0-5) (ap-special-received? (the-as uint 27)))
                   (set! s2-0 (pickup-type ammo-dark))
                   (set! f30-0 (/ f30-0 10))
                   )

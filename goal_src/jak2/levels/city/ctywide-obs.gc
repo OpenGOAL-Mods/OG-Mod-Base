@@ -573,10 +573,10 @@
   (set-vector! (-> this draw color-mult) 0.0 0.0 0.0 0.0)
   (set-vector! (-> this draw color-emissive) 1.0 1.0 1.0 1.0)
   (transform-post)
-  (if (or (and (ap-special-received? (the-as uint 29)) (= 29 (-> this pass)))
-          (and (ap-special-received? (the-as uint 30)) (= 30 (-> this pass)))
-          (and (ap-special-received? (the-as uint 31)) (= 31 (-> this pass)))
-          (and (logtest? (game-feature pass-blue) (-> *game-info* features)) (= 32 (-> this pass)))
+  (if (or (and (ap-special-received? (the-as uint 29)) (= 29 (-> this pass))) ;; red pass
+          (and (ap-special-received? (the-as uint 30)) (= 30 (-> this pass))) ;; green pass
+          (and (ap-special-received? (the-as uint 31)) (= 31 (-> this pass))) ;; yellow pass
+          (and (logtest? (game-feature pass-blue) (-> *game-info* features)) (= 32 (-> this pass))) ;; ignore, blue pass is not used
           )
       (go (method-of-object this idle-open))
       (go (method-of-object this idle-close))

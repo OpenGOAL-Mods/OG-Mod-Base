@@ -154,14 +154,12 @@
 
 (defbehavior want-to-gun? process ((arg0 target) (arg1 symbol))
   (local-vars (v1-36 symbol))
-  (and (logtest? (-> arg0 game features) (game-feature gun))
+  (and (ap-any-gun-received? (the-as uint 0))
        (time-elapsed? (-> arg0 gun gun-time) (seconds 0.1))
        (not (focus-test? arg0 dead hit board mech dark teleporting))
        (not (logtest? (surface-flag gun-inactive gun-hide gun-off) (-> arg0 control current-surface flags)))
        (not (logtest? (state-flags prevent-gun) (-> arg0 state-flags)))
-       (logtest? (logand (-> *setting-control* user-current features) (game-feature gun-yellow gun-red gun-blue gun-dark))
-                 (-> arg0 game features)
-                 )
+       (ap-any-gun-received? (the-as uint 0))
        (or (not (logtest? (-> arg0 control current-surface flags) (surface-flag duck))) (can-exit-duck? arg0))
        (or (not (focus-test? arg0 pilot)) (-> arg0 pilot gun?))
        (or arg1

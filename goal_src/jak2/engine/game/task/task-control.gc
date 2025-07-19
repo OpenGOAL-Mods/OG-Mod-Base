@@ -70,7 +70,7 @@
   (cond
     ((or (= arg0 'debug) (= arg0 'level))
      )
-    ((logtest? (-> *game-info* secrets) (game-secrets hero-mode))
+    ((logtest? (-> *game-info* secrets) (game-secrets hero-mode)) ;; hero mode stuff, leave that for future you
      (set! (-> *game-info* features) (game-feature gun gun-yellow gun-red gun-blue gun-dark))
      )
     (else
@@ -741,15 +741,24 @@
               (if (= (-> it next-state name) 'course)
                 (let ((feat (-> *setting-control* user-current features)))
                   (cond
-                    ((not (logtest? feat (game-feature gun-yellow gun-blue gun-dark)))
+                    ((not (or (ap-special-received? (the-as uint 25)) ;; yellow
+                              (ap-special-received? (the-as uint 26)) ;; blue
+                              (ap-special-received? (the-as uint 27)) ;; dark
+                    ))
                      (set! (-> info task) "city-red-gun-training")
                      (return (lookup-text! *common-text* (text-id discord-rpc-red-gun-training) #f))
                      )
-                    ((not (logtest? feat (game-feature gun-red gun-blue gun-dark)))
+                    ((not (or (ap-special-received? (the-as uint 24))
+                              (ap-special-received? (the-as uint 26)) ;; blue
+                              (ap-special-received? (the-as uint 27)) ;; dark
+                    ))
                      (set! (-> info task) "city-yellow-gun-training")
                      (return (lookup-text! *common-text* (text-id discord-rpc-yellow-gun-training) #f))
                      )
-                    ((not (logtest? feat (game-feature gun-red gun-yellow gun-dark)))
+                    ((not (or (ap-special-received? (the-as uint 24)) ;; red
+                              (ap-special-received? (the-as uint 25)) ;; yellow
+                              (ap-special-received? (the-as uint 27)) ;; dark
+                    ))
                      (set! (-> info task) "city-blue-gun-training")
                      (return (lookup-text! *common-text* (text-id discord-rpc-blue-gun-training) #f))
                      )
