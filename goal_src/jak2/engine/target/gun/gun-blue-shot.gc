@@ -307,7 +307,7 @@
     (set! (-> this timeout) 1)
     (set! (-> this move) gun-blue-shot-move)
     (vector-reset! (-> this collide-normal))
-    (set! (-> this damage) (if (logtest? (game-feature gun-upgrade-damage) (-> *game-info* features))
+    (set! (-> this damage) (if (ap-special-received? (the-as uint 39))
                                4.0
                                2.0
                                )

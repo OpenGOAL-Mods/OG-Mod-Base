@@ -362,7 +362,7 @@
   (set! (-> this move) gun-yellow-shot-move)
   (set! (-> this timeout) (seconds 0.5))
   (set! (-> this sound-id) (new-sound-id))
-  (set! (-> this damage) (if (logtest? (game-feature gun-upgrade-damage) (-> *game-info* features))
+  (set! (-> this damage) (if (ap-special-received? (the-as uint 39))
                              4.0
                              2.0
                              )

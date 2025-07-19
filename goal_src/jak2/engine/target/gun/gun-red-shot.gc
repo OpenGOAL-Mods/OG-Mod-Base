@@ -142,7 +142,7 @@
                            3.0
                            2.0
                            )
-                       (if (logtest? (game-feature gun-upgrade-damage) (-> *game-info* features))
+                       (if (ap-special-received? (the-as uint 39))
                            2.0
                            1.0
                            )
