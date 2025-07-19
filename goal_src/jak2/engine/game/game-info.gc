@@ -668,7 +668,7 @@
                            )
                          )
               )
-         (if (logtest? (-> this features) (game-feature gun-upgrade-ammo))
+         (if (ap-special-received? (the-as uint 38))
              (set! ammo-max (* 2.0 ammo-max))
              )
          (if (>= arg1 0.0)
@@ -697,7 +697,7 @@
              )
            )
          )
-       (if (logtest? (logand (-> *setting-control* user-current features) (game-feature gun-yellow)) (-> this features))
+       (if (ap-special-received? (the-as uint 25))
            1.0
            0.0
            )
@@ -720,7 +720,7 @@
              )
            )
          )
-       (if (logtest? (logand (-> *setting-control* user-current features) (game-feature gun-dark)) (-> this features))
+       (if (ap-special-received? (the-as uint 27))
            1.0
            0.0
            )
@@ -734,7 +734,7 @@
           (logclear! (-> this features) (game-feature board))
           )
          )
-       (if (ap-special-received? (the-as uint 28))
+       (if (ap-special-received? (the-as uint 28)) 
            1.0
            0.0
            )

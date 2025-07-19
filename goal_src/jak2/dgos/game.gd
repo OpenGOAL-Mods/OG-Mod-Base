@@ -234,6 +234,8 @@
   "sparticle.o"
   "entity-table.o"
   "loader.o"
+  "ap-struct-h.o" ;; added
+  "ap-struct.o" ;; added
   "game-info.o"
   "game-task.o"
   "game-save.o"
@@ -292,8 +294,6 @@
   "lightning.o"
   "carry-h.o"
   "pilot-h.o"
-  "ap-struct-h.o" ;; added
-  "ap-struct.o" ;; added
   "gun-h.o"
   "board-h.o"
   "darkjak-h.o"

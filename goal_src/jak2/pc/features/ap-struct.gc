@@ -30,11 +30,11 @@
 (defun ap-special-task-to-index ((special-id uint))
  (cond
  ((= special-id 12) (the-as uint 0)) ;; Dark Jak
- ((= special-id 24) (the-as uint 1)) ;; Scatter Gun
- ((= special-id 25) (the-as uint 2)) ;; Blaster
- ((= special-id 26) (the-as uint 3)) ;; Vulcan Fury
- ((= special-id 27) (the-as uint 4)) ;; Peacemaker
- ((= special-id 28) (the-as uint 5)) ;; JetBoard
+ ((= special-id 28) (the-as uint 1)) ;; JetBoard
+ ((= special-id 24) (the-as uint 2)) ;; Scatter Gun
+ ((= special-id 25) (the-as uint 3)) ;; Blaster
+ ((= special-id 26) (the-as uint 4)) ;; Vulcan Fury
+ ((= special-id 27) (the-as uint 5)) ;; Peacemaker
  ((= special-id 40) (the-as uint 6)) ;; Rate of Fire increase
  ((= special-id 38) (the-as uint 7)) ;; Ammo Capacity increase
  ((= special-id 39) (the-as uint 8)) ;; Damage increase
@@ -54,3 +54,11 @@
 
 (defun ap-special-received? ((special-id uint))
   (> (-> *ap-info-jak2* specials-received (ap-special-task-to-index special-id)) 0))
+
+(defun ap-any-gun-received? ((special-id uint))
+    (or (ap-special-received? (the-as uint 24))
+        (ap-special-received? (the-as uint 25))
+        (ap-special-received? (the-as uint 26))
+        (ap-special-received? (the-as uint 27))
+    )
+)
