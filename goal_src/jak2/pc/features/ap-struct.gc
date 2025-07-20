@@ -55,6 +55,17 @@
 (defun ap-special-received? ((special-id uint))
   (> (-> *ap-info-jak2* specials-received (ap-special-task-to-index special-id)) 0))
 
+(defun ap-gun-received? ((gun-type pickup-type))
+  (ap-special-received? 
+    (case gun-type  
+      (((pickup-type eco-red)) (the-as uint 24))
+      (((pickup-type eco-yellow)) (the-as uint 25))
+      (((pickup-type eco-blue)) (the-as uint 26))
+      (((pickup-type eco-dark)) (the-as uint 27))
+      )
+    )
+  )
+
 (defun ap-any-gun-received? ()
     (or (ap-special-received? (the-as uint 24))
         (ap-special-received? (the-as uint 25))
