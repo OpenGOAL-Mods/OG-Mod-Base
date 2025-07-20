@@ -154,6 +154,7 @@
 
 (defbehavior want-to-gun? process ((arg0 target) (arg1 symbol))
   (local-vars (v1-36 symbol))
+  ;; (format 0 "want-to-gun ~A ~A ~A ~%" arg1 (nonzero? (-> arg0 gun using-gun-type)) (not (-> arg0 skel top-anim frame-group)))
   (and (ap-any-gun-received?)
        (time-elapsed? (-> arg0 gun gun-time) (seconds 0.1))
        (not (focus-test? arg0 dead hit board mech dark teleporting))
