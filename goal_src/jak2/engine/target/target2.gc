@@ -326,7 +326,7 @@
                  (send-event self 'gun-type (-> block param 2))
                  )
                 ((want-to-gun? self #t)
-                 (if (logtest? (-> self game features) (game-feature gun))
+                 (if (ap-any-gun-received?)
                      (target-gun-init (the-as pickup-type (-> block param 2)))
                      )
                  )

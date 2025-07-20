@@ -1017,11 +1017,9 @@
                   )
               )
         (set! (-> this sprites 5 scale-x)
-              (if (and (logtest? (-> *target* game features) (game-feature gun))
+              (if (and (ap-any-gun-received?)
                        (and (-> *setting-control* user-current gun)
-                            (logtest? (logand (-> *setting-control* user-current features) (game-feature gun-yellow))
-                                      (-> *target* game features)
-                                      )
+                            (ap-special-received? (the-as uint 25))
                             )
                        )
                   f30-0
