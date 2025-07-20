@@ -37,4 +37,4 @@
 
 (define-extern ap-special-received? (function uint symbol))
 
-(define-extern ap-any-gun-received? (function uint symbol))
+(define-extern ap-any-gun-received? (function symbol))

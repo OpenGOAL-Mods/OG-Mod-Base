@@ -748,7 +748,7 @@
                      (set! (-> info task) "city-red-gun-training")
                      (return (lookup-text! *common-text* (text-id discord-rpc-red-gun-training) #f))
                      )
-                    ((not (or (ap-special-received? (the-as uint 24))
+                    ((not (or (ap-special-received? (the-as uint 24)) ;; red
                               (ap-special-received? (the-as uint 26)) ;; blue
                               (ap-special-received? (the-as uint 27)) ;; dark
                     ))

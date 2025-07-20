@@ -3245,7 +3245,7 @@
                          (-> *FACT-bank* default-eco-pill-green-inc)
                          )
         )
-  (target-gun-setup (ap-any-gun-received? (the-as uint 0)))
+  (target-gun-setup (ap-any-gun-received?))
   (target-board-setup (ap-special-received? (the-as uint 28)))
   (target-sidekick-setup (logtest? (-> this game features) (game-feature sidekick)))
   (target-darkjak-setup (logtest? (-> this game features) (game-feature darkjak)))
