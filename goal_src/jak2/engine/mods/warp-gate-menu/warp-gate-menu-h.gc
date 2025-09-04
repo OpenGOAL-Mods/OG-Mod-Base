@@ -297,7 +297,7 @@
                 :level-name 'vinroom
                 :continue-name "vinroom-warp"
                 :text-id (text-id vinroom-name) ;"Power Station"
-                :allow-when "fortress-save-friends-resolution"
+                :allow-when "fortress-save-friends-resolution" ;; third completed fortress mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -305,7 +305,7 @@
                 :level-name 'strip
                 :continue-name "strip-warp"
                 :text-id (text-id strip-name) ;"Strip Mine"
-                :allow-when "fortress-save-friends-resolution"
+                :allow-when "fortress-save-friends-resolution" ;; third completed fortress mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -313,7 +313,7 @@
                 :level-name 'drillmid
                 :continue-name "drill3-warp"
                 :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
-                :allow-when "fortress-save-friends-resolution"
+                :allow-when "fortress-save-friends-resolution" ;; third completed fortress mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -321,7 +321,7 @@
                 :level-name 'drillmid
                 :continue-name "drill-warp-gunship"
                 :text-id (text-id drill-name-2) ;"Drill Platform (Warp 2)"
-                :allow-when "fortress-save-friends-resolution"
+                :allow-when "fortress-save-friends-resolution" ;; third completed fortress mission required
                 :forbid-when #f
                 :on-activate #f
                 )

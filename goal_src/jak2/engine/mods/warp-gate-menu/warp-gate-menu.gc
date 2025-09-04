@@ -1,8 +1,8 @@
 ;;-*-Lisp-*-
 (in-package goal)
 
-(define *selected* -1)
-(define *items-per-page* 6)
+(define *wm-selected* -1)
+(define *wm-wg-items-per-page* 6)
 
 (defmethod warp-select-menu ((this warp-gate))
   (let* ((menu (-> this wmenu-list))
@@ -24,11 +24,11 @@
       )
 
     (let* ((page (-> this page)) ;; current page
-            (start-idx (* page *items-per-page*)) ;; start index of the current page
-            (end-idx (+ start-idx *items-per-page*)) ;; exclusive end index for the current page, used to check if there's a next page
+            (start-idx (* page *wm-wg-items-per-page*)) ;; start index of the current page
+            (end-idx (+ start-idx *wm-wg-items-per-page*)) ;; exclusive end index for the current page, used to check if there's a next page
             (have-next-page? (< end-idx available-count)) ;; is there a next page?
             (have-prev-page? (> page 0)) ;; is there a previous page?
-            (items-this-page (min *items-per-page* (- available-count start-idx))) ;; amount of items in this page (only destination options is counted)
+            (items-this-page (min *wm-wg-items-per-page* (- available-count start-idx))) ;; amount of items in this page (only destination options is counted)
             (extra-options (cond ((and have-prev-page? have-next-page?) 2) ;; add 2 if have next and previous pages
                                   (have-prev-page? 1) ;; add 1 if only have previous page 
                                   (have-next-page? 1) ;; add 1 if only have next page
@@ -58,7 +58,7 @@
                 (set! (-> this selected) 0)
                 )
               (else ;; warp to the selected destination
-                (set! *selected* (-> available-idxs (+ start-idx (-> this selected))))
+                (set! *wm-selected* (-> available-idxs (+ start-idx (-> this selected))))
                 (go execute-warp)
                 )
               )
@@ -316,7 +316,7 @@
     (remove-setting! 'mode-name)
     )
   :trans (behavior ()
-    ;(format *stdcon* "selected: ~D~%" *selected*)
+    ;(format *stdcon* "selected: ~D~%" *wm-selected*)
     ;(format *stdcon* "page: ~D~%" (-> self page))
     (when (time-elapsed? (-> self state-time) (seconds 1.5))
       (warp-select-menu self)
@@ -357,7 +357,7 @@
       )
     )
   :enter (behavior ()
-    (set-warp! self *selected*)
+    (set-warp! self *wm-selected*)
     )
   :exit (behavior ()
     (remove-setting! 'mode-name)
