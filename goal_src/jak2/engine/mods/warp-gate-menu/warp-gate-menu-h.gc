@@ -231,7 +231,7 @@
 ;; mountain warp-gate bottom to top
 (define *warp-gate-10-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
               (static-warp-gate-menu-entry 
-                :level-name 'vinroom
+                :level-name 'mountain
                 :continue-name "mountain-warp-top"
                 :text-id (text-id mountain-top-name) ;"Mountain Temple (Top)"
                 :allow-when #f
@@ -244,7 +244,7 @@
 ;; mountain warp-gate top to bottom
 (define *warp-gate-11-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
               (static-warp-gate-menu-entry 
-                :level-name 'vinroom
+                :level-name 'mountain
                 :continue-name "mountain-warp-bottom"
                 :text-id (text-id mountain-bottom-name) ;"Mountain Temple (Bottom)"
                 :allow-when "mountain-lens-started"
