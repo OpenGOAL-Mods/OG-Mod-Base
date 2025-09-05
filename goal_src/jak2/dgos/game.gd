@@ -456,7 +456,12 @@
   "process-taskable.o"
   "scene-actor.o"
   "scene-looper.o"
-  "warp-gate.o"
+  "warp-gate.o" ;; original warp-gate logic - be sure to comment this out if using the menu system logic below
+  ;"warp-gate-menu-h.o" ;; added - warp-gate menu definitions file (commented out by default)
+  ;"air-train-menu-h.o" ;; added - air-train menu definitions file (commented out by default)
+  ;"warp-gate-menu-data.o" ;; added - type definitions for warp-gate and air-train with menu logic (commented out by default)
+  ;"warp-gate-menu.o" ;; added - warp-gate menu logic (commented out by default)
+  ;"air-train-menu.o" ;; added - air-train menu logic (commented out by default)
   "guard-projectile.o"
   "metalhead-projectile.o"
   "los-control.o"

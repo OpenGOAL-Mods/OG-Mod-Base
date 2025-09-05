@@ -1,0 +1,442 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *wm-selected* -1)
+(define *wm-wg-items-per-page* 6)
+
+(defmethod warp-select-menu ((this warp-gate))
+  (let* ((menu (-> this wmenu-list))
+          (list-length (-> menu length))
+          (available-idxs (new 'static 'boxed-array :type int32)) ;; array to store the indexes of the options that are available for selection
+          (available-count 0) ;; stores the amount of options that are available for selection 
+          )
+    (dotimes (i list-length)
+      (let* ((allow-task (-> menu i allow-when))
+              (forbid-task (-> menu i forbid-when))
+              )
+        ;; include the option if the `allow-when` task is closed,
+        ;; and the `forbid-when` task is either not set or not closed yet.
+        (when (and (or (not allow-task) (task-closed? allow-task)) (or (not forbid-task) (not (task-closed? forbid-task))))
+          (set! (-> available-idxs available-count) i) ;; store the available option indexes in `available-idxs` array  
+          (+! available-count 1)
+          )
+        )
+      )
+
+    (let* ((page (-> this page)) ;; current page
+            (start-idx (* page *wm-wg-items-per-page*)) ;; start index of the current page
+            (end-idx (+ start-idx *wm-wg-items-per-page*)) ;; exclusive end index for the current page, used to check if there's a next page
+            (have-next-page? (< end-idx available-count)) ;; is there a next page?
+            (have-prev-page? (> page 0)) ;; is there a previous page?
+            (items-this-page (min *wm-wg-items-per-page* (- available-count start-idx))) ;; amount of items in this page (only destination options is counted)
+            (extra-options (cond ((and have-prev-page? have-next-page?) 2) ;; add 2 if have next and previous pages
+                                  (have-prev-page? 1) ;; add 1 if only have previous page 
+                                  (have-next-page? 1) ;; add 1 if only have next page
+                                  (else 0))) ;; no extra option
+            (total-items (+ items-this-page extra-options)) ;; total entries displayed on screen
+            )
+      (when (not (paused?))
+        (cond
+          ((and (cpad-pressed? 0 up l-analog-up) (> (-> this selected) 0))
+            (seekl! (-> this selected) 0 1)
+            (sound-play "dmenu-move")
+            )
+          ((and (cpad-pressed? 0 down l-analog-down) (< (-> this selected) (+ total-items -1)))
+            (seekl! (-> this selected) (+ total-items -1) 1)
+            (sound-play "dmenu-move")
+            )
+          ((and (cpad-pressed? 0 confirm) (nonzero? available-count))
+            (sound-play "menu-pick")
+            (cond
+              ((and have-prev-page? (= (-> this selected) items-this-page)) ;; go to the previous page
+                (+! (-> this page) -1)
+                (set! (-> this selected) 0)
+                )
+              ((and have-next-page? (or (and have-prev-page? (= (-> this selected) (+ items-this-page 1))) ;; go to the next page
+                                       (and (not have-prev-page?) (= (-> this selected) items-this-page))))
+                (+! (-> this page) 1)
+                (set! (-> this selected) 0)
+                )
+              (else ;; warp to the selected destination
+                (set! *wm-selected* (-> available-idxs (+ start-idx (-> this selected))))
+                (go execute-warp)
+                )
+              )
+            )
+          )
+        (let* ((font-height 40)
+                (font-x 36)
+                (font-y (- 228 (* total-items (/ font-height 2))))
+                (font-ctxt (new
+                          'stack
+                          'font-context
+                          *font-default-matrix*
+                          font-x
+                          font-y
+                          0.0
+                          (font-color default)
+                          (font-flags shadow kerning)
+                          )
+                        )
+                )
+            (set! (-> font-ctxt flags) (font-flags shadow kerning middle middle-vert large))
+            (set! (-> font-ctxt width) (the float 440))
+            (set! (-> font-ctxt height) (the float 50))
+            (set! (-> font-ctxt scale) 1.0)
+            (let ((a0-59 40))
+              (set! (-> font-ctxt origin x) (the float font-x))
+              (set! (-> font-ctxt origin y) (the float a0-59))
+              )
+            ;; print menu header
+            (set! (-> font-ctxt color) (font-color progress-old-yellow))
+            (let ((select-text (lookup-text! *common-text* (text-id select-destination) #f)))
+              (format (clear *temp-string*) select-text)
+              )
+            (print-game-text *temp-string* font-ctxt #f 44 (bucket-id progress))
+            (set! (-> font-ctxt height) (the float font-height))
+            ;; print menu options
+            (cond
+              ((nonzero? available-count) ;; menu have data, print the options on the screen. 
+                (dotimes (i items-this-page)
+                  (let ((valid-idx (-> available-idxs (+ start-idx i))))
+                    (set! (-> font-ctxt origin x) (the float font-x))
+                    (set! (-> font-ctxt origin y) (the float font-y))
+                    (set! (-> font-ctxt scale) (if (= (-> this selected) i)
+                                                  0.8
+                                                  0.6
+                                                  )
+                          )
+                    (set! (-> font-ctxt color) (if (= (-> this selected) i)
+                                                  (font-color progress-old-selected)
+                                                  (font-color default)
+                                                  )
+                          )
+                    (print-game-text (lookup-text! *common-text* (-> menu valid-idx text-id) #f) font-ctxt #f 44 (the-as bucket-id 320))
+                    (+! font-y font-height)
+                    )
+                  )
+                (when have-prev-page? ;; print `Previous Page` if there is a previous page indeed
+                  (set! (-> font-ctxt origin x) (the float font-x))
+                  (set! (-> font-ctxt origin y) (the float font-y))
+                  (set! (-> font-ctxt scale) (if (= (-> this selected) items-this-page)
+                                                  0.8
+                                                  0.6
+                                                  )
+                          )
+                  (set! (-> font-ctxt color) (if (= (-> this selected) items-this-page)
+                                                  (font-color progress-old-selected)
+                                                  (font-color default)
+                                                  )
+                          )
+                  (print-game-text (lookup-text! *common-text* (text-id previous-page) #f) font-ctxt #f 44 (the-as bucket-id 320))
+                  (+! font-y font-height)
+                  )
+                (when have-next-page? ;; print `Next Page` if there is a next page indeed
+                  (set! (-> font-ctxt origin x) (the float font-x))
+                  (set! (-> font-ctxt origin y) (the float font-y))
+                  (set! (-> font-ctxt scale) (if (= (-> this selected) (- total-items 1))
+                                                  0.8
+                                                  0.6
+                                                  )
+                          )
+                  (set! (-> font-ctxt color) (if (= (-> this selected) (- total-items 1))
+                                                  (font-color progress-old-selected)
+                                                  (font-color default)
+                                                  )
+                          )
+                  (print-game-text (lookup-text! *common-text* (text-id next-page) #f) font-ctxt #f 44 (the-as bucket-id 320))
+                  (+! font-y font-height)
+                  )
+                )
+              (else ;; no menu data, print an error message on the screen.
+                (set! (-> font-ctxt origin x) (the float font-x))
+                (set! (-> font-ctxt origin y) (the float font-y))
+                (set! (-> font-ctxt scale) 0.8)
+                (set! (-> font-ctxt color) (font-color default))
+                (print-game-text (lookup-text! *common-text* (text-id no-menu-data) #f) font-ctxt #f 44 (bucket-id progress))
+                )
+              )
+            )
+          )
+      )
+    )
+  (none)
+  )
+
+(defmethod set-warp! ((this warp-gate) (idx int))
+  (let ((menu (-> (-> this wmenu-list) idx)))
+    (set! (-> this level-name) (the-as uint (-> menu level-name)))
+    (set! (-> this continue) (get-continue-by-name *game-info* (-> menu continue-name)))
+    (set! (-> this on-activate) (the-as pair (-> menu on-activate)))
+    (set! (-> this wait-for) (-> menu wait-for))
+    (set! (-> this on-close) (-> menu on-close))
+    )
+  (none)
+  )
+
+(defmethod available-to-use? ((this warp-gate))
+  (let* ((menu (-> this wmenu-list))
+          (list-length (-> menu length))
+          )
+    (dotimes (i list-length)
+      (let* ((allow-task (-> menu i allow-when))
+              (forbid-task (-> menu i forbid-when))
+              )
+        (when (and (or (not allow-task) (task-closed? allow-task)) (or (not forbid-task) (not (task-closed? forbid-task))))
+          (return #t)
+          )
+        )
+      )
+    (when (zero? list-length)
+      (return #t) ;; treat empty lists as available so that it can be displayed the "No Menu Data" error message instead of disabling interaction
+      )
+    )
+  #f
+  )
+
+(defstate idle (warp-gate)
+  :virtual #t
+  :event (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
+    (case message
+      (('hide)
+       (go-virtual hidden)
+       )
+      (('effect)
+       (process-spawn
+         part-tracker
+         :init part-tracker-init
+         (-> *part-group-id-table* 130)
+         0
+         #f
+         #f
+         #f
+         (-> self node-list data 4 bone transform)
+         :to *entity-pool*
+         )
+       )
+      )
+    )
+  :trans (behavior ()
+    (when (and (and *target*
+                      (and (>= (-> self distance) (vector-vector-distance (-> self root trans) (-> *target* control trans)))
+                           (not (logtest? (focus-status teleporting) (-> *target* focus-status)))
+                           )
+                      )
+                 (and (available-to-use? self)
+                      (not (focus-test? *target* in-head edge-grab pole flut tube board pilot mech indax))
+                      (-> *setting-control* user-current airlock)
+                      ;; og:preserve-this
+                      ;; For speedrunner mode, always allow warp-gates to be used
+                      ;; even when dialogues are playing
+                      (or (-> *pc-settings* speedrunner-mode?)
+                          (not (-> *setting-control* user-current hint)))
+                      )
+                 )
+        (talker-surpress!)
+        ;; og:preserve-this
+        ;; For speedrunner mode, always allow warp-gates to be used
+        ;; even when dialogues are playing
+        (when (and (or (-> *pc-settings* speedrunner-mode?)
+                       (can-display-query? self (the-as string #f) -99.0))
+                   (cond
+                     ((and (-> *target* next-state) (let ((v1-30 (-> *target* next-state name)))
+                                                      (or (= v1-30 'target-warp-in) (= v1-30 'target-warp-out))
+                                                      )
+                           )
+                      (set-time! (-> self state-time))
+                      #f
+                      )
+                     (else
+                       #t
+                       )
+                     )
+                   (time-elapsed? (-> self state-time) (seconds 0.1))
+                   )
+           (when (cpad-pressed? 0 triangle)
+            (logclear! (-> *cpad-list* cpads 0 button0-abs 0) (pad-buttons triangle))
+            (logclear! (-> *cpad-list* cpads 0 button0-rel 0) (pad-buttons triangle))
+            (go warp-gate-menu)
+            )
+          (script-eval (-> self on-close))
+          (let ((s5-1
+                  (new 'stack 'font-context *font-default-matrix* 32 280 0.0 (font-color default) (font-flags shadow kerning))
+                  )
+                )
+            (set! (-> s5-1 flags) (font-flags shadow kerning large))
+            (let ((v1-37 s5-1))
+              (set! (-> v1-37 width) (the float 340))
+              )
+            (let ((v1-38 s5-1))
+              (set! (-> v1-38 height) (the float 80))
+              )
+            (let ((v1-39 s5-1))
+              (set! (-> v1-39 scale) 0.9)
+              )
+            (let ((s4-1 print-game-text))
+              (format (clear *temp-string*) (lookup-text! *common-text* (text-id press-triangle-to-use) #f))
+              (s4-1 *temp-string* s5-1 #f 44 (bucket-id progress))
+              )
+            )
+          )
+        )
+    )
+  :code (behavior ()
+    (remove-setting! 'allow-progress)
+    (set-time! (-> self state-time))
+    (update-transforms (-> self root))
+    (until #f
+      (cond
+        ((available-to-use? self)
+         (seek! (-> self anim-speed) 1.0 (* 2.0 (seconds-per-frame)))
+         (setup-masks (-> self draw) 2 0)
+         )
+        (else
+          (setup-masks (-> self draw) 0 2)
+          (seek! (-> self anim-speed) 0.0 (* 2.0 (seconds-per-frame)))
+          )
+        )
+      (update! (-> self sound))
+      (ja-post)
+      (suspend)
+      (ja :num! (loop! (-> self anim-speed)))
+      )
+    #f
+    )
+  )
+
+(defstate warp-gate-menu (warp-gate)
+  :enter (behavior ()
+    (set-setting! 'minimap 'clear 0.0 (minimap-flag minimap))
+    (set-time! (-> self state-time))
+    )
+  :exit (behavior ()
+    (remove-setting! 'minimap)
+    (send-event *camera* 'change-target *target*)
+    (remove-setting! 'interp-time)
+    (remove-setting! 'mode-name)
+    )
+  :trans (behavior ()
+    ;(format *stdcon* "selected: ~D~%" *wm-selected*)
+    ;(format *stdcon* "page: ~D~%" (-> self page))
+    (when (time-elapsed? (-> self state-time) (seconds 1.5))
+      (warp-select-menu self)
+      (when (cpad-pressed? 0 triangle)
+        (when (and (not (process-grab? *target* #f)) (not (real-movie?)))
+          (process-release? *target*)
+          )
+        (go-virtual idle)
+        )
+      )
+    )
+  :code (behavior ()
+    (set-setting! 'mode-name 'cam-really-fixed 0.0 0)
+    (suspend)
+    (until (process-grab? *target* #f)
+      (suspend)
+      )
+    (sleep-code)
+    )
+  )
+
+(defstate execute-warp (warp-gate)
+  :event (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
+    (case message
+      (('effect)
+       (process-spawn
+         part-tracker
+         :init part-tracker-init
+         (-> *part-group-id-table* 130)
+         0
+         #f
+         #f
+         #f
+         (-> self node-list data 4 bone transform)
+         :to *entity-pool*
+         )
+       )
+      )
+    )
+  :enter (behavior ()
+    (set-warp! self *wm-selected*)
+    )
+  :exit (behavior ()
+    (remove-setting! 'mode-name)
+    (remove-setting! 'interp-time)
+    )
+  :trans (behavior ()
+    (send-event *camera* 'joystick 0.0 0.0)
+    )
+  :code (behavior ()
+    (local-vars (v1-38 symbol))
+    (kill-current-talker (the-as symbol '()) '() 'exit)
+    (set-setting! 'mode-name 'cam-fixed 0.0 0)
+    (set-setting! 'interp-time 'abs 0.0 0)
+    (set-time! (-> self state-time))
+    (logclear! (-> self mask) (process-mask actor-pause))
+    (when (not (-> self continue))
+      (process-release? *target*)
+      (go-virtual idle)
+      )
+    (set-setting! 'allow-progress #f 0.0 0)
+    (set! (-> *setting-control* user-default border-mode) #t)
+    (set! (-> *level* play?) #t)
+    (apply-settings *setting-control*)
+    (let ((s5-0 (new 'stack-no-clear 'event-message-block)))
+      (set! (-> s5-0 from) (process->ppointer self))
+      (set! (-> s5-0 num-params) 4)
+      (set! (-> s5-0 message) 'change-state)
+      (set! (-> s5-0 param 0) (the-as uint target-warp-out))
+      (let ((v1-22 (new 'static 'vector)))
+        (set! (-> v1-22 quad) (-> self center quad))
+        (set! (-> s5-0 param 1) (the-as uint v1-22))
+        )
+      (set! (-> s5-0 param 2) (the-as uint (target-pos 0)))
+      (set! (-> s5-0 param 3) (the-as uint (process->handle self)))
+      (send-event-function *target* s5-0)
+      )
+    (when (-> self on-activate)
+      (script-eval (-> self on-activate))
+      )
+    (while (begin
+                (set! v1-38 (when (-> self wait-for)
+                              (let* ((s5-1 (-> self wait-for))
+                                    (a1-8 (car s5-1))
+                                    )
+                              (while (not (null? s5-1))
+                                (when (not (member (level-status *level* (the-as symbol a1-8)) '(loaded active)))
+                                  (set! v1-38 #t)
+                                  (goto cfg-21)
+                                  )
+                                (set! s5-1 (cdr s5-1))
+                                (set! a1-8 (car s5-1))
+                                )
+                              )
+                            #f
+                            )
+                    )
+              (label cfg-21)
+              (or v1-38 (not (time-elapsed? (-> self state-time) (seconds 2))))
+              )
+      (update! (-> self sound))
+      (suspend)
+      (ja :num! (loop!))
+      (ja-post)
+      )
+    (if (not (logtest? (-> (-> self continue) flags) (continue-flags no-blackout)))
+        (set-blackout-frames (seconds 0.05))
+        )
+    (start 'play (-> self continue))
+    (suspend-for (seconds 1))
+    (while (and *target* (and (>= 81920.0 (vector-vector-distance (-> self root trans) (-> *target* control trans)))
+                              (not (logtest? (focus-status teleporting) (-> *target* focus-status)))
+                              )
+                )
+      (suspend)
+      (ja :num! (loop!))
+      (ja-post)
+      )
+    (logior! (-> self mask) (process-mask actor-pause))
+    (go-virtual idle)
+    )
+  )
+  
