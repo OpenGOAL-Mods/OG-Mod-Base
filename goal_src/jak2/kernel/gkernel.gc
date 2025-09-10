@@ -1413,6 +1413,21 @@
   *global-search-count*
   )
 
+(define *global-type-name* #f)
+(defun process-by-type-exact ((arg0 symbol) (arg1 process-tree))
+  "Find first process with the exact given type."
+  (local-vars (a0-1 process-tree))
+  (set! *global-type-name* arg0)
+  (search-process-tree arg1 (lambda ((arg2 process)) (= (-> arg2 type symbol) *global-type-name*)))
+  )
+
+(defun process-by-type ((arg0 type) (arg1 process-tree))
+  "Find first process with the given type (could be a parent type)."
+  (local-vars (a0-1 process-tree))
+  (set! *global-search-name* arg0)
+  (search-process-tree arg1 (lambda ((arg2 process)) (type-type? (-> arg2 type) (the type *global-search-name*))))
+  )
+
 (defun kill-by-name ((arg0 string) (arg1 process-tree))
   "Kill all processes with the given name."
   (local-vars (a0-1 process))

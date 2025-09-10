@@ -54,7 +54,8 @@
    (game-hash                    uint32)
    (in-cutscene?                 symbol)
    (is-loading?                  symbol)
-   (padding-controls             uint8 200) ;; padding for future growth
+   (current-level-id             uint8)
+   (padding-controls             uint8 199) ;; padding for future growth (200-1 for current-level-id)
    ;; need-resolution tasks
    (res-training-gimmie          uint8)
    (res-training-door            uint8)
@@ -169,6 +170,10 @@
    (com-misty-muse               uint8)
    (com-rolling-moles            uint8)
    (com-rolling-race             uint8)
+   ;; warp gate buttons
+   (hin-village2-levitator       uint8)
+   (hin-village3-button          uint8)
+   (hin-village4-button          uint8)
    ;; end marker just to make things look nice in a memory view
    (end-marker                   uint8 4)))
 

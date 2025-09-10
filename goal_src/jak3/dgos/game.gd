@@ -176,6 +176,7 @@
   "spatial-hash-h.o"
   "actor-hash-h.o"
   "rigid-body-h.o"
+  "damage-number.o"
   "load-dgo.o"
   "ramdisk.o"
   "gsound.o"
