@@ -1578,6 +1578,12 @@
                                     :text (text-id scene-city-defend-stadium-res)
                                     )
                                   (new 'static 'hud-scene-info
+                                    :name "city-protect-blimp-res"
+                                    :continue "ctyport-turret-res"
+                                    :info "city-protect-blimp-res"
+                                    :text (text-id scene-protect-blimp-res)
+                                    )
+                                  (new 'static 'hud-scene-info
                                     :name "under-find-sig-res"
                                     :continue "under-start"
                                     :info "under-find-sig-res"
