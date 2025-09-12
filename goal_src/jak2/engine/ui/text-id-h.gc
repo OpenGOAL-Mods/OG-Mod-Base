@@ -853,6 +853,23 @@
   (pad-circle #x2001)
   (pad-x #x2002)
   (pad-square #x2003)
+
+  ;; destination names text
+  (caspad-name #x10000)
+  (nest-name #x10001)
+  (ctyport-name #x10002)
+  (strip-name #x10003)
+  (drill-name-1 #x10004)
+  (drill-name-2 #x10005)
+  (vinroom-name #x10006)
+  (mountain-top-name #x10007)
+  (mountain-bottom-name #x10008)
+
+  ;; menu stuff text
+  (select-destination #x100000)
+  (no-menu-data #x100001)
+  (next-page #x100002)
+  (previous-page #x100003)
 )
 ;; ---text-id
 

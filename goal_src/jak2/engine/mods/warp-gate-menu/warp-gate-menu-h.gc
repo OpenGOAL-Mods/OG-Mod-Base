@@ -1,0 +1,329 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+#| This file defines the warp-gate destination menu structure and its related lists.
+   Each menu list corresponds to a specific warp-gate entity and contains
+   destinations Jak can warp to, based on mission/task progress.
+
+   Also, check the method `setup-fields` of the `warp-gate` type in `warp-gate-menu-data.gc`, 
+   which is responsible for assigning a menu entry list to a specific entity. Do this if you
+   want to add custom warp-gate menus in your own custom levels.  
+ |#
+
+(deftype warp-gate-menu-entry (structure)
+  ((level-name    symbol) ;; level name
+   (continue-name string) ;; name of the checkpoint Jak will be teleported to
+   (text-id       text-id) ;; text ID that defines the name displayed for this destination in the menu 
+   (allow-when    string) ;; optional: the task node that must be completed for this entry to become available
+   (forbid-when   string) ;; optional: if the specified task node is completed, this entry will be hidden regardless of `allow-when`
+   (on-activate   pair) ;; optional: actions executed when the destination is selected (e.g., play scenes, load levels, close tasks)
+   (wait-for      pair)
+   (on-close      pair)
+   )  
+  )
+
+(defmacro static-warp-gate-menu-entry (&key level-name
+                                 &key continue-name
+                                 &key text-id
+                                 &key (allow-when #f)
+                                 &key (forbid-when #f)
+                                 &key (on-activate #f)
+                                 &key (wait-for #f)
+                                 &key (on-close #f))
+  `(new 'static 'warp-gate-menu-entry
+     :level-name ,level-name
+     :continue-name ,continue-name
+     :text-id ,text-id
+     :allow-when ,allow-when
+     :forbid-when ,forbid-when
+     :on-activate ,on-activate
+     :wait-for ,wait-for
+     :on-close ,on-close
+     )
+  )
+
+;; just an empty array. leave it at is.
+;; used as a fallback when an entity doesn't have a defined menu.
+(define *empty-warp-gate-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry))
+
+;; vinroom warp-gate
+(define *warp-gate-21-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry 
+                :level-name 'strip
+                :continue-name "strip-warp"
+                :text-id (text-id strip-name) ;"Strip Mine"
+                :allow-when #f
+                :forbid-when "city-power-introduction" ;; unavailable from the city guard turret mission
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'drillmid
+                :continue-name "drill1-warp"
+                :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
+                :allow-when "drill-eggs-introduction"  ;; first drill platform mission required
+                :forbid-when "city-power-introduction" ;; unavailable from the city guard turret mission
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry 
+                :level-name 'strip
+                :continue-name "strip-warp"
+                :text-id (text-id strip-name) ;"Strip Mine"
+                :allow-when "strip-grenade-introduction" ;; second strip mine mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'drillmid
+                :continue-name "drill3-warp"
+                :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
+                :allow-when "drill-mech-introduction"  ;; third drill platform mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'drillmid
+                :continue-name "drill-warp-gunship"
+                :text-id (text-id drill-name-2) ;"Drill Platform (Warp 2)"
+                :allow-when "drill-ship-introduction"  ;; second drill platform mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
+
+;; strip warp-gate 1
+(define *warp-gate-1-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry 
+                :level-name 'vinroom
+                :continue-name "vinroom-warp"
+                :text-id (text-id vinroom-name) ;"Power Station"
+                :allow-when #f
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'drillmid
+                :continue-name "drill1-warp"
+                :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
+                :allow-when "drill-eggs-introduction" ;; first drill platform mission required
+                :forbid-when "city-power-introduction" ;; unavailable from the city guard turret mission
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'drillmid
+                :continue-name "drill3-warp"
+                :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
+                :allow-when "drill-mech-introduction"  ;; third drill platform mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'drillmid
+                :continue-name "drill-warp-gunship"
+                :text-id (text-id drill-name-2) ;"Drill Platform (Warp 2)"
+                :allow-when "drill-ship-introduction" ;; second drill platform mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
+
+;; strip warp-gate 2
+(define *warp-gate-2-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry 
+                :level-name 'vinroom
+                :continue-name "vinroom-warp"
+                :text-id (text-id vinroom-name) ;"Power Station"
+                :allow-when #f
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'drillmid
+                :continue-name "drill1-warp"
+                :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
+                :allow-when "drill-eggs-introduction" ;; first drill platform mission required
+                :forbid-when "city-power-introduction" ;; unavailable from the city guard turret mission
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'drillmid
+                :continue-name "drill3-warp"
+                :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
+                :allow-when "drill-mech-introduction"  ;; third drill platform mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'drillmid
+                :continue-name "drill-warp-gunship"
+                :text-id (text-id drill-name-2) ;"Drill Platform (Warp 2)"
+                :allow-when "drill-ship-introduction" ;; second drill platform mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
+
+;; drill warp-gate 1
+(define *warp-gate-22-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry 
+                :level-name 'vinroom
+                :continue-name "vinroom-warp"
+                :text-id (text-id vinroom-name) ;"Power Station"
+                :allow-when #f
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry 
+                :level-name 'strip
+                :continue-name "strip-warp"
+                :text-id (text-id strip-name) ;"Strip Mine"
+                :allow-when #f
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
+
+;; drill warp-gate 2
+(define *warp-gate-23-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry 
+                :level-name 'vinroom
+                :continue-name "vinroom-warp"
+                :text-id (text-id vinroom-name) ;"Power Station"
+                :allow-when "drill-eggs-resolution"
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry 
+                :level-name 'strip
+                :continue-name "strip-warp"
+                :text-id (text-id strip-name) ;"Strip Mine"
+                :allow-when "drill-eggs-resolution"
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
+
+;; drill warp-gate 3
+(define *warp-gate-25-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry 
+                :level-name 'vinroom
+                :continue-name "vinroom-warp"
+                :text-id (text-id vinroom-name) ;"Power Station"
+                :allow-when #f
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry 
+                :level-name 'strip
+                :continue-name "strip-warp"
+                :text-id (text-id strip-name) ;"Strip Mine"
+                :allow-when #f
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
+
+;; mountain warp-gate bottom to top
+(define *warp-gate-10-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry 
+                :level-name 'mountain
+                :continue-name "mountain-warp-top"
+                :text-id (text-id mountain-top-name) ;"Mountain Temple (Top)"
+                :allow-when #f
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
+
+;; mountain warp-gate top to bottom
+(define *warp-gate-11-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry 
+                :level-name 'mountain
+                :continue-name "mountain-warp-bottom"
+                :text-id (text-id mountain-bottom-name) ;"Mountain Temple (Bottom)"
+                :allow-when "mountain-lens-started"
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
+
+;; dig warp-gate
+(define *warp-gate-28-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry 
+                :level-name 'vinroom
+                :continue-name "vinroom-warp"
+                :text-id (text-id vinroom-name) ;"Power Station"
+                :allow-when #f
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry 
+                :level-name 'strip
+                :continue-name "strip-warp"
+                :text-id (text-id strip-name) ;"Strip Mine"
+                :allow-when #f
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'drillmid
+                :continue-name "drill3-warp"
+                :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
+                :allow-when "drill-mech-introduction"  ;; third drill platform mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'drillmid
+                :continue-name "drill-warp-gunship"
+                :text-id (text-id drill-name-2) ;"Drill Platform (Warp 2)"
+                :allow-when #f
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
+
+;; prison warp-gate
+(define *warp-gate-b-1-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry 
+                :level-name 'vinroom
+                :continue-name "vinroom-warp"
+                :text-id (text-id vinroom-name) ;"Power Station"
+                :allow-when "fortress-save-friends-resolution" ;; third completed fortress mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry 
+                :level-name 'strip
+                :continue-name "strip-warp"
+                :text-id (text-id strip-name) ;"Strip Mine"
+                :allow-when "fortress-save-friends-resolution" ;; third completed fortress mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'drillmid
+                :continue-name "drill3-warp"
+                :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
+                :allow-when "fortress-save-friends-resolution" ;; third completed fortress mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'drillmid
+                :continue-name "drill-warp-gunship"
+                :text-id (text-id drill-name-2) ;"Drill Platform (Warp 2)"
+                :allow-when "fortress-save-friends-resolution" ;; third completed fortress mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
