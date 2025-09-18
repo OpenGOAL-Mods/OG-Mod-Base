@@ -1,0 +1,104 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+#| This file defines the air-train destination menu structure and its related lists.
+   Each menu list corresponds to a specific air-train entity and contains
+   destinations Jak can warp to, based on mission/task progress.
+
+   Also, check the method `setup-fields` of the `air-train` type in `warp-gate-menu-data.gc`, 
+   which is responsible for assigning a menu entry list to a specific entity. Do this if you
+   want to add custom air-train menus in your own custom levels.  
+ |#
+
+(deftype air-train-menu-entry (structure)
+  ((level-name    symbol) ;; level name
+   (continue-name string) ;; name of the checkpoint Jak will be teleported to
+   (text-id       text-id) ;; text ID that defines the name displayed for this destination in the menu 
+   (allow-when    string) ;; optional: the task node that must be completed for this entry to become available
+   (forbid-when   string) ;; optional: if the specified task node is completed, this entry will be hidden regardless of `allow-when`
+   (on-activate   pair) ;; optional: actions executed when the destination is selected (e.g., play scenes, load levels, close tasks)
+   )  
+  )
+
+(defmacro static-air-train-menu-entry (&key level-name
+                                 &key continue-name
+                                 &key text-id
+                                 &key (allow-when #f)
+                                 &key (forbid-when #f)
+                                 &key (on-activate #f))
+  `(new 'static 'air-train-menu-entry
+     :level-name ,level-name
+     :continue-name ,continue-name
+     :text-id ,text-id
+     :allow-when ,allow-when
+     :forbid-when ,forbid-when
+     :on-activate ,on-activate
+     )
+  )
+
+;; just an empty array. leave it at is.
+;; used as a fallback when an entity doesn't have a defined menu.
+(define *empty-air-train-menu-list* (new 'static 'boxed-array :type air-train-menu-entry))
+
+;; ctyport air-train
+(define *air-train-1-menu-list* (new 'static 'boxed-array :type air-train-menu-entry
+              (static-air-train-menu-entry 
+                :level-name 'caspad
+                :continue-name "caspad-warp"
+                :text-id (text-id caspad-name) ;"Landing Pad"
+                :allow-when "dig-knock-down-introduction"  ;; first dig mission required
+                :forbid-when #f
+                :on-activate '(scene-play '("city-air-train-in-caspad" "caspad-air-train-out"))
+                )
+              (static-air-train-menu-entry
+                :level-name 'nest
+                :continue-name "nest-warp"
+                :text-id (text-id nest-name) ;"Metal Head Nest"
+                :allow-when "nest-get-to-gun-introduction"  ;; first nest mission required
+                :forbid-when #f
+                :on-activate '(scene-play '("city-air-train-in-nest" "nest-air-train-out"))
+                )
+              )
+  )
+
+;; caspad air-train
+(define *air-train-3-menu-list* (new 'static 'boxed-array :type air-train-menu-entry
+              (static-air-train-menu-entry
+                :level-name 'ctyport
+                :continue-name "ctyport-warp"
+                :text-id (text-id ctyport-name) ;"Haven City Port"
+                :allow-when "dig-knock-down-introduction"  ;; first dig mission required
+                :forbid-when #f
+                :on-activate '(scene-play '("caspad-air-train-in" "city-air-train-out"))
+                )
+              (static-air-train-menu-entry
+                :level-name 'nest
+                :continue-name "nest-warp"
+                :text-id (text-id nest-name) ;"Metal Head Nest"
+                :allow-when "nest-get-to-gun-introduction"  ;; first nest mission required
+                :forbid-when #f
+                :on-activate '(scene-play '("caspad-air-train-in" "nest-air-train-out"))
+                )
+              )
+  )
+
+;; nest air-train
+(define *air-train-4-menu-list* (new 'static 'boxed-array :type air-train-menu-entry
+              (static-air-train-menu-entry
+                :level-name 'ctyport
+                :continue-name "ctyport-warp"
+                :text-id (text-id ctyport-name) ;"Haven City Port"
+                :allow-when "nest-get-to-gun-introduction"  ;; first nest mission required
+                :forbid-when #f
+                :on-activate '(scene-play '("nest-air-train-in" "city-air-train-out"))
+                )
+              (static-air-train-menu-entry
+                :level-name 'caspad
+                :continue-name "caspad-warp"
+                :text-id (text-id caspad-name) ;"Landing Pad"
+                :allow-when "nest-get-to-gun-introduction"  ;; first nest mission required
+                :forbid-when #f
+                :on-activate '(scene-play '("nest-air-train-in" "caspad-air-train-out"))
+                )
+              )
+  )
