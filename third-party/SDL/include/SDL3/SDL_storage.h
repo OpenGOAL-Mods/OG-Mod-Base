@@ -450,8 +450,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_CloseStorage(SDL_Storage *storage);
  *
  * This function should be called in regular intervals until it returns true -
  * however, it is not recommended to spinwait on this call, as the backend may
- * depend on a synchronous message loop. You might instead poll this in your
- * game's main loop while processing events and drawing a loading screen.
+ * depend on a synchronous message loop.
  *
  * \param storage a storage container to query.
  * \returns true if the container is ready, false otherwise.

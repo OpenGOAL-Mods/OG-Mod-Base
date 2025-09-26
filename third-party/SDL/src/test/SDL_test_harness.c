@@ -515,7 +515,6 @@ int SDLTest_ExecuteTestSuiteRunner(SDLTest_TestSuiteRunner *runner)
 
     arraySuites = SDL_malloc(nbSuites * sizeof(int));
     if (!arraySuites) {
-        SDL_free((void *)failedTests);
         return SDL_OutOfMemory();
     }
     for (i = 0; i < nbSuites; i++) {
@@ -587,8 +586,6 @@ int SDLTest_ExecuteTestSuiteRunner(SDLTest_TestSuiteRunner *runner)
 
             arrayTestCases = SDL_malloc(nbTestCases * sizeof(int));
             if (!arrayTestCases) {
-                SDL_free(arraySuites);
-                SDL_free((void *)failedTests);
                 return SDL_OutOfMemory();
             }
             for (j = 0; j < nbTestCases; j++) {

@@ -157,8 +157,7 @@ static SDL_VideoDevice *Android_CreateDevice(void)
 VideoBootStrap Android_bootstrap = {
     ANDROID_VID_DRIVER_NAME, "SDL Android video driver",
     Android_CreateDevice,
-    Android_ShowMessageBox,
-    false
+    Android_ShowMessageBox
 };
 
 bool Android_VideoInit(SDL_VideoDevice *_this)

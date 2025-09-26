@@ -33,8 +33,7 @@ class SoundHandler {
   // should be removed.
   virtual SoundHandler* CheckInstanceLimit(
       const std::map<u32, std::unique_ptr<SoundHandler>>& handlers,
-      s32 vol,
-      bool parent) {
+      s32 vol) {
     return nullptr;
   }
 };

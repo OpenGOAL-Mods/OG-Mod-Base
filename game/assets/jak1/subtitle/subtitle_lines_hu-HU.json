@@ -1,8 +1,8 @@
 {
   "cutscenes": {
     "assistant-firecanyon-resolution": [
-      "KIRÁLY! MEGVAN A 20 CELLA, AMI A HŐPAJZSOMHOZ KELL!",
-      "NA MOST VIGYÁZZ, ",
+      "NAGY! MEGVAN AZ A 20 CELLÉ, HOGY A HŐPAJZSOM MŰKÖDTETÉSÉHEZ SZÜKSÉGES!",
+      "MOST LEGYEN VIGYÁZAT, A PAJZS CSAK A ZOOMERÉT VÉDI",
       "AMÍG EL NEM ÉRI AZ 500 FOKOT, ÍGY PRÓBÁLJON HÍVET TARTNI.",
       "A NYITOTT LÁVA FELÉ REPÜLÉS BIZTOSAN GYORSAN FEL FELEL.",
       "ELÜLT 500 FOKOT, ÉS VÉGE.",
@@ -18,7 +18,7 @@
     ],
     "assistant-introduction-blue-eco-switch": [
       "HÉ BÉBI. MIT MONDSZ ÖN ÉS ÉN AZ A-GRAV ZOOMEREN KURIZÁLJUK?",
-      "ELSŐ SZABÁLY: NEM RANDIZOK ÁLLATOKKAL.",
+      "ELSŐ SZABÁLY: NEM RAJZOK ÁLLATOKKAL.",
       "Ó, TE NEM TUDOD, MI HIÁNYZOTT, HE HH.",
       "FIGYELJ, HA VALAMI KELL, HOGY ELFOGLALJA, APÁM MINDIG BESZÉLTE",
       "A FÖLD MÉLYEN REJTETT ŐSI ELŐZŐCSŐVEZETŐRŐL.",
@@ -200,8 +200,8 @@
     "bird-lady-beach-resolution": [
       "Ó, REMÉLEM, SZEGÉNY DRÁGA JÓBAN.",
       "ÍME EGY TELJESÍTMÉNY CELL AZ ÖN BIZTONSÁGÁBÓL.",
-      "ANYA!",
-      "ANYA!",
+      "MAMA!",
+      "MAMA!",
       "ÓH NE! NEM NEM NEM NEM!",
       "NÉZD... NEM ARNYI? AZT HISZI, TE VAGY AZ ANYA.",
       "EH? NEM VAGYOK AZ ÉDESANYÁD! LÁSZ ITT TOLLAT?",
@@ -2658,13 +2658,13 @@
       "KERESS UTAT AZOKAN A SÖTÉT ÖKOHODÓKON!"
     ],
     "sksp0368": [
-      "ÜSD CSAK TOVÁBB AZOKAT A LUFIKAT!"
+      "TOVÁBBRA ÜSÍTSD AZOKAT A HŰTŐLÉFÖKET!"
     ],
     "sksp0369": [
-      "TÚL FOGUNK MELEGEDNI!"
+      "TÚL MELEGÜNK!"
     ],
     "sksp0370": [
-      "JAJ, EZ MINDJÁRT ROBBAN!"
+      "FÚJNI FOG!"
     ],
     "sksp0371": [
       "A KÉK ÖKO, JAK!"
@@ -2808,44 +2808,44 @@
       "DÖGÍTSÜK FEL AZOKAT A CSONTOKAT!"
     ],
     "sksp0443": [
-      "ÜSD FEL ALULRÓL AZOKAT A RUDAKAT!"
+      "AZOKAT AZOKAT AZOKAT A RÓDOKAT ALULJÓL TÖRÍTSD FEL!"
     ],
     "sksp0444": [
-      "VÁRUNK. HELLÓ?"
+      "VÁRTAK. HELLÓ?"
     ],
     "sksp0449": [
-      "NYOMD A START-OT A KEZDÉSHEZ."
+      "A LEJÁTSZÁSHOZ NYOMJON MEG."
     ],
     "sksp0450": [
-      "ABBA AKAROD HAGYNI A JÁTÉKOT?"
+      "SZERETNÉD HAGYNI A JÁTÉKOT?"
     ],
     "sksp0451": [
-      "SZERINTEM NEM."
+      "NEM SZERINTEM."
     ],
     "sksp0452": [
-      "OKÉ, NA CSUMI."
+      "OKÉ, VISZTÁL KÉSŐBB."
     ],
     "sksp0455": [
-      "HALLOD, KIK EZEK AZ EMBEREK?"
+      "EMBER, KIK EZEK AZ EMBEREK?"
     ],
     "sksp0466": [
-      "JÓ VOLTAM. UGYE, LÁNYOK?"
+      "JÓ VOLTAM. NEM VOLTAM, LÁNYOK?"
     ],
     "sksp0b42": [
-      "A SÁRGA HALAK ÖT KILÓSAK, NE ENGEDD EL ŐKET!",
-      "AZ JÓ SOK HAL, JAK."
+      "NE HIÁNYOZZÁK A SÁRGA HALAKAT, MINDENKINEK ÖT KILT!",
+      "ÉS EZ SOK HAL, JAK."
     ]
   },
   "speakers": {
     "???": "???",
     "BILLY": "BILLY",
-    "BIRDWATCHER": "MADÁRLESŐ",
+    "BIRDWATCHER": "MADÁRVIZSGÁLÓ",
     "BLUE SAGE": "KÉK ZSÁLYA",
     "DAXTER": "DAXTER",
     "FARMER": "GAZDA",
     "FISHERMAN": "HALÁSZ",
     "FLUT-FLUT": "FLUT-FLUT",
-    "GAMBLER": "SZERENCSEJÁTÉKOS",
+    "GAMBLER": "SZERENCÉS",
     "GEOLOGIST": "GEOLÓGUS",
     "GOL": "GOL",
     "GORDY": "GORDY",

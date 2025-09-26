@@ -202,7 +202,7 @@ struct TextureInput {
 
   GLuint gpu_texture = -1;
   bool common = false;
-  const u8* src_data = nullptr;
+  const u8* src_data;
   u16 w, h;
 };
 

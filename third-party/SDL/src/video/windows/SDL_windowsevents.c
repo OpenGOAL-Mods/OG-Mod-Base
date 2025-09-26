@@ -317,42 +317,7 @@ static void WIN_CheckAsyncMouseRelease(Uint64 timestamp, SDL_WindowData *data)
     data->mouse_button_flags = (WPARAM)-1;
 }
 
-static void WIN_UpdateMouseCapture(void)
-{
-    SDL_Window *focusWindow = SDL_GetKeyboardFocus();
-
-    if (focusWindow && (focusWindow->flags & SDL_WINDOW_MOUSE_CAPTURE)) {
-        SDL_WindowData *data = focusWindow->internal;
-
-        if (!data->mouse_tracked) {
-            POINT cursorPos;
-
-            if (GetCursorPos(&cursorPos) && ScreenToClient(data->hwnd, &cursorPos)) {
-                bool swapButtons = GetSystemMetrics(SM_SWAPBUTTON) != 0;
-                SDL_MouseID mouseID = SDL_GLOBAL_MOUSE_ID;
-
-                SDL_SendMouseMotion(WIN_GetEventTimestamp(), data->window, mouseID, false, (float)cursorPos.x, (float)cursorPos.y);
-                SDL_SendMouseButton(WIN_GetEventTimestamp(), data->window, mouseID,
-                                    !swapButtons ? SDL_BUTTON_LEFT : SDL_BUTTON_RIGHT,
-                                    (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0);
-                SDL_SendMouseButton(WIN_GetEventTimestamp(), data->window, mouseID,
-                                    !swapButtons ? SDL_BUTTON_RIGHT : SDL_BUTTON_LEFT,
-                                    (GetAsyncKeyState(VK_RBUTTON) & 0x8000) != 0);
-                SDL_SendMouseButton(WIN_GetEventTimestamp(), data->window, mouseID,
-                                    SDL_BUTTON_MIDDLE,
-                                    (GetAsyncKeyState(VK_MBUTTON) & 0x8000) != 0);
-                SDL_SendMouseButton(WIN_GetEventTimestamp(), data->window, mouseID,
-                                    SDL_BUTTON_X1,
-                                    (GetAsyncKeyState(VK_XBUTTON1) & 0x8000) != 0);
-                SDL_SendMouseButton(WIN_GetEventTimestamp(), data->window, mouseID,
-                                    SDL_BUTTON_X2,
-                                    (GetAsyncKeyState(VK_XBUTTON2) & 0x8000) != 0);
-            }
-        }
-    }
-}
-
-static void WIN_UpdateFocus(SDL_Window *window, bool expect_focus, DWORD pos)
+static void WIN_UpdateFocus(SDL_Window *window, bool expect_focus)
 {
     SDL_WindowData *data = window->internal;
     HWND hwnd = data->hwnd;
@@ -389,8 +354,7 @@ static void WIN_UpdateFocus(SDL_Window *window, bool expect_focus, DWORD pos)
 
         // In relative mode we are guaranteed to have mouse focus if we have keyboard focus
         if (!SDL_GetMouse()->relative_mode) {
-            cursorPos.x = (LONG)GET_X_LPARAM(pos);
-            cursorPos.y = (LONG)GET_Y_LPARAM(pos);
+            GetCursorPos(&cursorPos);
             ScreenToClient(hwnd, &cursorPos);
             SDL_SendMouseMotion(WIN_GetEventTimestamp(), window, SDL_GLOBAL_MOUSE_ID, false, (float)cursorPos.x, (float)cursorPos.y);
         }
@@ -472,6 +436,11 @@ static SDL_MOUSE_EVENT_SOURCE GetMouseMessageSource(ULONG extrainfo)
         } else {
             return SDL_MOUSE_EVENT_SOURCE_PEN;
         }
+    }
+    /* Sometimes WM_INPUT events won't have the correct touch signature,
+      so we have to rely purely on the touch bit being set. */
+    if (SDL_TouchDevicesAvailable() && extrainfo & 0x80) {
+        return SDL_MOUSE_EVENT_SOURCE_TOUCH;
     }
     return SDL_MOUSE_EVENT_SOURCE_MOUSE;
 }
@@ -610,14 +579,13 @@ static void WIN_HandleRawMouseInput(Uint64 timestamp, SDL_VideoData *data, HANDL
         return;
     }
 
-    if (GetMouseMessageSource(rawmouse->ulExtraInformation) != SDL_MOUSE_EVENT_SOURCE_MOUSE ||
-        (SDL_TouchDevicesAvailable() && (rawmouse->ulExtraInformation & 0x80) == 0x80)) {
+    if (GetMouseMessageSource(rawmouse->ulExtraInformation) != SDL_MOUSE_EVENT_SOURCE_MOUSE) {
         return;
     }
 
     SDL_WindowData *windowdata = window->internal;
 
-    if (haveMotion && !windowdata->in_modal_loop) {
+    if (haveMotion) {
         if (!isAbsolute) {
             SDL_SendMouseMotion(timestamp, window, mouseID, true, (float)dx, (float)dy);
         } else {
@@ -893,96 +861,31 @@ static bool HasDeviceID(Uint32 deviceID, const Uint32 *list, int count)
 }
 
 #if !defined(SDL_PLATFORM_XBOXONE) && !defined(SDL_PLATFORM_XBOXSERIES)
-static char *GetDeviceName(HANDLE hDevice, HDEVINFO devinfo, const char *instance, const char *default_name, bool hid_loaded)
+static void GetDeviceName(HDEVINFO devinfo, const char *instance, char *name, size_t len)
 {
-    char *vendor_name = NULL;
-    char *product_name = NULL;
-    char *name = NULL;
+    name[0] = '\0';
 
-    // These are 126 for USB, but can be longer for Bluetooth devices
-    WCHAR vend[256], prod[256];
-    vend[0] = 0;
-    prod[0] = 0;
-
-
-    HIDD_ATTRIBUTES attr;
-    attr.VendorID = 0;
-    attr.ProductID = 0;
-    attr.Size = sizeof(attr);
-
-    if (hid_loaded) {
-        char devName[MAX_PATH + 1];
-        UINT cap = sizeof(devName) - 1;
-        UINT len = GetRawInputDeviceInfoA(hDevice, RIDI_DEVICENAME, devName, &cap);
-        if (len != (UINT)-1) {
-            devName[len] = '\0';
-
-            // important: for devices with exclusive access mode as per
-            // https://learn.microsoft.com/en-us/windows-hardware/drivers/hid/top-level-collections-opened-by-windows-for-system-use
-            // they can only be opened with a desired access of none instead of generic read.
-            HANDLE hFile = CreateFileA(devName, 0, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
-            if (hFile != INVALID_HANDLE_VALUE) {
-                SDL_HidD_GetAttributes(hFile, &attr);
-                SDL_HidD_GetManufacturerString(hFile, vend, sizeof(vend));
-                SDL_HidD_GetProductString(hFile, prod, sizeof(prod));
-                CloseHandle(hFile);
-            }
-        }
-    }
-
-    if (vend[0]) {
-        vendor_name = WIN_StringToUTF8W(vend);
-    }
-
-    if (prod[0]) {
-        product_name = WIN_StringToUTF8W(prod);
-    } else {
-        SP_DEVINFO_DATA data;
-        SDL_zero(data);
-        data.cbSize = sizeof(data);
-        for (DWORD i = 0;; ++i) {
-            if (!SetupDiEnumDeviceInfo(devinfo, i, &data)) {
-                if (GetLastError() == ERROR_NO_MORE_ITEMS) {
-                    break;
-                } else {
-                    continue;
-                }
-            }
-
-            char DeviceInstanceId[64];
-            if (!SetupDiGetDeviceInstanceIdA(devinfo, &data, DeviceInstanceId, sizeof(DeviceInstanceId), NULL))
-                continue;
-
-            if (SDL_strcasecmp(instance, DeviceInstanceId) == 0) {
-                DWORD size = 0;
-                if (SetupDiGetDeviceRegistryPropertyW(devinfo, &data, SPDRP_DEVICEDESC, NULL, (PBYTE)prod, sizeof(prod), &size)) {
-                    // Make sure the device description is null terminated
-                    size /= sizeof(*prod);
-                    if (size >= SDL_arraysize(prod)) {
-                        // Truncated description...
-                        size = (SDL_arraysize(prod) - 1);
-                    }
-                    prod[size] = 0;
-
-                    if (attr.VendorID || attr.ProductID) {
-                        SDL_asprintf(&product_name, "%S (0x%.4x/0x%.4x)", prod, attr.VendorID, attr.ProductID);
-                    } else {
-                        product_name = WIN_StringToUTF8W(prod);
-                    }
-                }
+    SP_DEVINFO_DATA data;
+    SDL_zero(data);
+    data.cbSize = sizeof(data);
+    for (DWORD i = 0;; ++i) {
+        if (!SetupDiEnumDeviceInfo(devinfo, i, &data)) {
+            if (GetLastError() == ERROR_NO_MORE_ITEMS) {
                 break;
+            } else {
+                continue;
             }
         }
-    }
 
-    if (!product_name && (attr.VendorID || attr.ProductID)) {
-        SDL_asprintf(&product_name, "%s (0x%.4x/0x%.4x)", default_name, attr.VendorID, attr.ProductID);
-    }
-    name = SDL_CreateDeviceName(attr.VendorID, attr.ProductID, vendor_name, product_name, default_name);
-    SDL_free(vendor_name);
-    SDL_free(product_name);
+        char DeviceInstanceId[64];
+        if (!SetupDiGetDeviceInstanceIdA(devinfo, &data, DeviceInstanceId, sizeof(DeviceInstanceId), NULL))
+            continue;
 
-    return name;
+        if (SDL_strcasecmp(instance, DeviceInstanceId) == 0) {
+            SetupDiGetDeviceRegistryPropertyA(devinfo, &data, SPDRP_DEVICEDESC, NULL, (PBYTE)name, (DWORD)len, NULL);
+            return;
+        }
+    }
 }
 
 void WIN_CheckKeyboardAndMouseHotplug(SDL_VideoDevice *_this, bool initial_check)
@@ -1028,7 +931,6 @@ void WIN_CheckKeyboardAndMouseHotplug(SDL_VideoDevice *_this, bool initial_check
     old_keyboards = SDL_GetKeyboards(&old_keyboard_count);
     old_mice = SDL_GetMice(&old_mouse_count);
 
-    bool hid_loaded = WIN_LoadHIDDLL();
     for (UINT i = 0; i < raw_device_count; i++) {
         RID_DEVICE_INFO rdi;
         char devName[MAX_PATH] = { 0 };
@@ -1036,7 +938,7 @@ void WIN_CheckKeyboardAndMouseHotplug(SDL_VideoDevice *_this, bool initial_check
         UINT nameSize = SDL_arraysize(devName);
         int vendor = 0, product = 0;
         DWORD dwType = raw_devices[i].dwType;
-        char *instance, *ptr, *name;
+        char *instance, *ptr, name[64];
 
         if (dwType != RIM_TYPEKEYBOARD && dwType != RIM_TYPEMOUSE) {
             continue;
@@ -1074,9 +976,8 @@ void WIN_CheckKeyboardAndMouseHotplug(SDL_VideoDevice *_this, bool initial_check
                 SDL_KeyboardID keyboardID = (Uint32)(uintptr_t)raw_devices[i].hDevice;
                 AddDeviceID(keyboardID, &new_keyboards, &new_keyboard_count);
                 if (!HasDeviceID(keyboardID, old_keyboards, old_keyboard_count)) {
-                    name = GetDeviceName(raw_devices[i].hDevice, devinfo, instance, "Keyboard", hid_loaded);
+                    GetDeviceName(devinfo, instance, name, sizeof(name));
                     SDL_AddKeyboard(keyboardID, name, send_event);
-                    SDL_free(name);
                 }
             }
             break;
@@ -1085,18 +986,14 @@ void WIN_CheckKeyboardAndMouseHotplug(SDL_VideoDevice *_this, bool initial_check
                 SDL_MouseID mouseID = (Uint32)(uintptr_t)raw_devices[i].hDevice;
                 AddDeviceID(mouseID, &new_mice, &new_mouse_count);
                 if (!HasDeviceID(mouseID, old_mice, old_mouse_count)) {
-                    name = GetDeviceName(raw_devices[i].hDevice, devinfo, instance, "Mouse", hid_loaded);
+                    GetDeviceName(devinfo, instance, name, sizeof(name));
                     SDL_AddMouse(mouseID, name, send_event);
-                    SDL_free(name);
                 }
             }
             break;
         default:
             break;
         }
-    }
-    if (hid_loaded) {
-        WIN_UnloadHIDDLL();
     }
 
     for (int i = old_keyboard_count; i--;) {
@@ -1232,19 +1129,22 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     case WM_NCACTIVATE:
     {
         // Don't immediately clip the cursor in case we're clicking minimize/maximize buttons
-        data->postpone_clipcursor = true;
-        data->clipcursor_queued = true;
+        // This is the only place that this flag is set. This causes all subsequent calls to
+        // WIN_UpdateClipCursor for this window to be no-ops in this frame's message-pumping.
+        // This flag is unset at the end of message pumping each frame for every window, and
+        // should never be carried over between frames.
+        data->skip_update_clipcursor = true;
 
         /* Update the focus here, since it's possible to get WM_ACTIVATE and WM_SETFOCUS without
            actually being the foreground window, but this appears to get called in all cases where
            the global foreground window changes to and from this window. */
-        WIN_UpdateFocus(data->window, !!wParam, GetMessagePos());
+        WIN_UpdateFocus(data->window, !!wParam);
     } break;
 
     case WM_ACTIVATE:
     {
         // Update the focus in case we changed focus to a child window and then away from the application
-        WIN_UpdateFocus(data->window, !!LOWORD(wParam), GetMessagePos());
+        WIN_UpdateFocus(data->window, !!LOWORD(wParam));
     } break;
 
     case WM_MOUSEACTIVATE:
@@ -1267,14 +1167,14 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     case WM_SETFOCUS:
     {
         // Update the focus in case it's changing between top-level windows in the same application
-        WIN_UpdateFocus(data->window, true, GetMessagePos());
+        WIN_UpdateFocus(data->window, true);
     } break;
 
     case WM_KILLFOCUS:
     case WM_ENTERIDLE:
     {
         // Update the focus in case it's changing between top-level windows in the same application
-        WIN_UpdateFocus(data->window, false, GetMessagePos());
+        WIN_UpdateFocus(data->window, false);
     } break;
 
     case WM_POINTERENTER:
@@ -1355,10 +1255,8 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         const Uint64 timestamp = WIN_GetEventTimestamp();
         SDL_Window *window = data->window;
 
-        const bool istouching = IS_POINTER_INCONTACT_WPARAM(wParam) && IS_POINTER_FIRSTBUTTON_WPARAM(wParam);
-
         // if lifting off, do it first, so any motion changes don't cause app issues.
-        if (!istouching) {
+        if (msg == WM_POINTERUP) {
             SDL_SendPenTouch(timestamp, pen, window, (pen_info.penFlags & PEN_FLAG_INVERTED) != 0, false);
         }
 
@@ -1388,7 +1286,7 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         }
 
         // if setting down, do it last, so the pen is positioned correctly from the first contact.
-        if (istouching) {
+        if (msg == WM_POINTERDOWN) {
             SDL_SendPenTouch(timestamp, pen, window, (pen_info.penFlags & PEN_FLAG_INVERTED) != 0, true);
         }
 
@@ -1404,8 +1302,9 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                 window->flags & (SDL_WINDOW_MOUSE_RELATIVE_MODE | SDL_WINDOW_MOUSE_GRABBED) ||
                 (window->mouse_rect.w > 0 && window->mouse_rect.h > 0)
             );
-            if (wish_clip_cursor) { // queue clipcursor refresh on pump finish
-                data->clipcursor_queued = true;
+            if (wish_clip_cursor) {
+                data->skip_update_clipcursor = false;
+                WIN_UpdateClipCursor(window);
             }
         }
 
@@ -1419,8 +1318,6 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             if (TrackMouseEvent(&trackMouseEvent)) {
                 data->mouse_tracked = true;
             }
-
-            WIN_CheckAsyncMouseRelease(WIN_GetEventTimestamp(), data);
         }
 
         if (!data->videodata->raw_mouse_enabled) {
@@ -1430,7 +1327,6 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                 SDL_SendMouseMotion(WIN_GetEventTimestamp(), window, SDL_GLOBAL_MOUSE_ID, false, (float)GET_X_LPARAM(lParam), (float)GET_Y_LPARAM(lParam));
             }
         }
-        
     } break;
 
     case WM_LBUTTONUP:
@@ -1494,10 +1390,8 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         if (!(data->window->flags & SDL_WINDOW_MOUSE_CAPTURE)) {
             if (SDL_GetMouseFocus() == data->window && !SDL_GetMouse()->relative_mode && !IsIconic(hwnd)) {
                 SDL_Mouse *mouse;
-                DWORD pos = GetMessagePos();
                 POINT cursorPos;
-                cursorPos.x = GET_X_LPARAM(pos);
-                cursorPos.y = GET_Y_LPARAM(pos);
+                GetCursorPos(&cursorPos);
                 ScreenToClient(hwnd, &cursorPos);
                 mouse = SDL_GetMouse();
                 if (!mouse->was_touch_mouse_events) { // we're not a touch handler causing a mouse leave?
@@ -1631,15 +1525,6 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     case WM_NCLBUTTONDOWN:
     {
         data->in_title_click = true;
-
-        // Fix for 500ms hang after user clicks on the title bar, but before moving mouse
-        // Reference: https://gamedev.net/forums/topic/672094-keeping-things-moving-during-win32-moveresize-events/5254386/
-        if (SendMessage(hwnd, WM_NCHITTEST, wParam, lParam) == HTCAPTION) {
-            POINT cursorPos;
-            GetCursorPos(&cursorPos); // want the most current pos so as to not cause position change
-            ScreenToClient(hwnd, &cursorPos);
-            PostMessage(hwnd, WM_MOUSEMOVE, 0, cursorPos.x | (((Uint32)((Sint16)cursorPos.y)) << 16));
-        }
     } break;
 
     case WM_CAPTURECHANGED:
@@ -1790,7 +1675,7 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         }
 
         if (!data->disable_move_size_events) {
-            if (GetClientRect(hwnd, &rect) && WIN_WindowRectValid(&rect)) {
+            if (GetClientRect(hwnd, &rect) && !WIN_IsRectEmpty(&rect)) {
                 ClientToScreen(hwnd, (LPPOINT) &rect);
                 ClientToScreen(hwnd, (LPPOINT) &rect + 1);
 
@@ -1802,7 +1687,7 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             }
 
             // Moving the window from one display to another can change the size of the window (in the handling of SDL_EVENT_WINDOW_MOVED), so we need to re-query the bounds
-            if (GetClientRect(hwnd, &rect) && WIN_WindowRectValid(&rect)) {
+            if (GetClientRect(hwnd, &rect) && !WIN_IsRectEmpty(&rect)) {
                 w = rect.right;
                 h = rect.bottom;
 
@@ -1836,12 +1721,6 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     case WM_ENTERSIZEMOVE:
     case WM_ENTERMENULOOP:
     {
-        if (g_WindowsMessageHook) {
-            if (!DispatchModalLoopMessageHook(&hwnd, &msg, &wParam, &lParam)) {
-                return 0;
-            }
-        }
-
         ++data->in_modal_loop;
         if (data->in_modal_loop == 1) {
             data->initial_size_rect.left = data->window->x;
@@ -1850,9 +1729,6 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             data->initial_size_rect.bottom = data->window->y + data->window->h;
 
             SetTimer(hwnd, (UINT_PTR)SDL_IterateMainCallbacks, USER_TIMER_MINIMUM, NULL);
-
-            // Reset the keyboard, as we won't get any key up events during the modal loop
-            SDL_ResetKeyboard();
         }
     } break;
 
@@ -1860,15 +1736,6 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     {
         if (wParam == (UINT_PTR)SDL_IterateMainCallbacks) {
             SDL_OnWindowLiveResizeUpdate(data->window);
-
-#if !defined(SDL_PLATFORM_XBOXONE) && !defined(SDL_PLATFORM_XBOXSERIES)
-#if 0 // This locks up the Windows compositor when called by Steam; disabling until we understand why
-            // Make sure graphics operations are complete for smooth refresh
-            if (data->videodata->DwmFlush) {
-                data->videodata->DwmFlush();
-            }
-#endif
-#endif
             return 0;
         }
     } break;
@@ -2094,7 +1961,7 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                 RECT rect;
                 float x, y;
 
-                if (!GetClientRect(hwnd, &rect) || !WIN_WindowRectValid(&rect)) {
+                if (!GetClientRect(hwnd, &rect) || WIN_IsRectEmpty(&rect)) {
                     if (inputs) {
                         SDL_small_free(inputs, isstack);
                     }
@@ -2444,6 +2311,43 @@ LRESULT CALLBACK WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     }
 }
 
+#if !defined(SDL_PLATFORM_XBOXONE) && !defined(SDL_PLATFORM_XBOXSERIES)
+static void WIN_UpdateMouseCapture(void)
+{
+    SDL_Window *focusWindow = SDL_GetKeyboardFocus();
+
+    if (focusWindow && (focusWindow->flags & SDL_WINDOW_MOUSE_CAPTURE)) {
+        SDL_WindowData *data = focusWindow->internal;
+
+        if (!data->mouse_tracked) {
+            POINT cursorPos;
+
+            if (GetCursorPos(&cursorPos) && ScreenToClient(data->hwnd, &cursorPos)) {
+                bool swapButtons = GetSystemMetrics(SM_SWAPBUTTON) != 0;
+                SDL_MouseID mouseID = SDL_GLOBAL_MOUSE_ID;
+
+                SDL_SendMouseMotion(WIN_GetEventTimestamp(), data->window, mouseID, false, (float)cursorPos.x, (float)cursorPos.y);
+                SDL_SendMouseButton(WIN_GetEventTimestamp(), data->window, mouseID,
+                                    !swapButtons ? SDL_BUTTON_LEFT : SDL_BUTTON_RIGHT,
+                                    (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0);
+                SDL_SendMouseButton(WIN_GetEventTimestamp(), data->window, mouseID,
+                                    !swapButtons ? SDL_BUTTON_RIGHT : SDL_BUTTON_LEFT,
+                                    (GetAsyncKeyState(VK_RBUTTON) & 0x8000) != 0);
+                SDL_SendMouseButton(WIN_GetEventTimestamp(), data->window, mouseID,
+                                    SDL_BUTTON_MIDDLE,
+                                    (GetAsyncKeyState(VK_MBUTTON) & 0x8000) != 0);
+                SDL_SendMouseButton(WIN_GetEventTimestamp(), data->window, mouseID,
+                                    SDL_BUTTON_X1,
+                                    (GetAsyncKeyState(VK_XBUTTON1) & 0x8000) != 0);
+                SDL_SendMouseButton(WIN_GetEventTimestamp(), data->window, mouseID,
+                                    SDL_BUTTON_X2,
+                                    (GetAsyncKeyState(VK_XBUTTON2) & 0x8000) != 0);
+            }
+        }
+    }
+}
+#endif // !defined(SDL_PLATFORM_XBOXONE) && !defined(SDL_PLATFORM_XBOXSERIES)
+
 int WIN_WaitEventTimeout(SDL_VideoDevice *_this, Sint64 timeoutNS)
 {
     if (g_WindowsEnableMessageLoop) {
@@ -2591,27 +2495,13 @@ void WIN_PumpEvents(SDL_VideoDevice *_this)
         }
     }
 
-    // fire queued clipcursor refreshes
+    // Update the clipping rect in case someone else has stolen it
     if (_this) {
         SDL_Window *window = _this->windows;
         while (window) {
-            bool refresh_clipcursor = false;
             SDL_WindowData *data = window->internal;
-            if (data) {
-                refresh_clipcursor = data->clipcursor_queued;
-                data->clipcursor_queued = false;    // Must be cleared unconditionally.
-                data->postpone_clipcursor = false;  // Must be cleared unconditionally.
-                                                    // Must happen before UpdateClipCursor.
-                                                    // Although its occurrence currently
-                                                    // always coincides with the queuing of
-                                                    // clipcursor, it is logically distinct
-                                                    // and this coincidence might no longer
-                                                    // be true in the future.
-                                                    // Ergo this placement concordantly
-                                                    // conveys its unconditionality 
-                                                    // vis-a-vis the queuing of clipcursor.
-            }
-            if (refresh_clipcursor) {
+            if (data && data->skip_update_clipcursor) {
+                data->skip_update_clipcursor = false;
                 WIN_UpdateClipCursor(window);
             }
             window = window->next;

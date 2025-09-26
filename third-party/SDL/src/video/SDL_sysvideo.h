@@ -124,9 +124,6 @@ struct SDL_Window
 
     SDL_PropertiesID props;
 
-    int num_renderers;
-    SDL_Renderer **renderers;
-
     SDL_WindowData *internal;
 
     SDL_Window *prev;
@@ -163,8 +160,6 @@ struct SDL_VideoDisplay
     float content_scale;
     SDL_HDROutputProperties HDR;
 
-    // This is true if we are fullscreen or fullscreen is pending
-    bool fullscreen_active;
     SDL_Window *fullscreen_window;
 
     SDL_VideoDevice *device;
@@ -396,7 +391,8 @@ struct SDL_VideoDevice
     bool checked_texture_framebuffer;
     bool is_dummy;
     bool suspend_screensaver;
-    void *wakeup_window;
+    SDL_Window *wakeup_window;
+    SDL_Mutex *wakeup_lock; // Initialized only if WaitEventTimeout/SendWakeupEvent are supported
     int num_displays;
     SDL_VideoDisplay **displays;
     SDL_Rect desktop_bounds;
@@ -505,7 +501,6 @@ typedef struct VideoBootStrap
     const char *desc;
     SDL_VideoDevice *(*create)(void);
     bool (*ShowMessageBox)(const SDL_MessageBoxData *messageboxdata, int *buttonID);  // can be done without initializing backend!
-    bool is_preferred;
 } VideoBootStrap;
 
 // Not all of these are available in a given build. Use #ifdefs, etc.

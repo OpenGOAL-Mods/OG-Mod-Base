@@ -323,7 +323,6 @@ static int SDLCALL intrinsics_selftest(void *arg)
         size_t size;
         Uint32 *dest, *a, *b;
         if (allocate_random_uint_arrays(&dest, &a, &b, &size) < 0) {
-            free_arrays(dest, a, b);
             return TEST_ABORTED;
         }
         kernel_uints_mul_cpu(dest, a, b, size);
@@ -334,7 +333,6 @@ static int SDLCALL intrinsics_selftest(void *arg)
         size_t size;
         Uint32 *dest, *a, *b;
         if (allocate_random_uint_arrays(&dest, &a, &b, &size) < 0) {
-            free_arrays(dest, a, b);
             return TEST_ABORTED;
         }
         kernel_uints_add_cpu(dest, a, b, size);
@@ -345,7 +343,6 @@ static int SDLCALL intrinsics_selftest(void *arg)
         size_t size;
         float *dest, *a, *b;
         if (allocate_random_float_arrays(&dest, &a, &b, &size) < 0) {
-            free_arrays(dest, a, b);
             return TEST_ABORTED;
         }
         kernel_floats_add_cpu(dest, a, b, size);
@@ -356,7 +353,6 @@ static int SDLCALL intrinsics_selftest(void *arg)
         size_t size;
         double *dest, *a, *b;
         if (allocate_random_double_arrays(&dest, &a, &b, &size) < 0) {
-            free_arrays(dest, a, b);
             return TEST_ABORTED;
         }
         kernel_doubles_add_cpu(dest, a, b, size);
@@ -377,7 +373,6 @@ static int SDLCALL intrinsics_testMMX(void *arg)
 
             SDLTest_AssertCheck(true, "Test executable uses MMX intrinsics.");
             if (allocate_random_uint_arrays(&dest, &a, &b, &size) < 0) {
-                free_arrays(dest, a, b);
                 return TEST_ABORTED;
             }
             kernel_uints_add_mmx(dest, a, b, size);
@@ -406,7 +401,6 @@ static int SDLCALL intrinsics_testSSE(void *arg)
 
             SDLTest_AssertCheck(true, "Test executable uses SSE intrinsics.");
             if (allocate_random_float_arrays(&dest, &a, &b, &size) < 0) {
-                free_arrays(dest, a, b);
                 return TEST_ABORTED;
             }
             kernel_floats_add_sse(dest, a, b, size);
@@ -435,7 +429,6 @@ static int SDLCALL intrinsics_testSSE2(void *arg)
 
             SDLTest_AssertCheck(true, "Test executable uses SSE2 intrinsics.");
             if (allocate_random_double_arrays(&dest, &a, &b, &size) < 0) {
-                free_arrays(dest, a, b);
                 return TEST_ABORTED;
             }
             kernel_doubles_add_sse2(dest, a, b, size);
@@ -464,7 +457,6 @@ static int SDLCALL intrinsics_testSSE3(void *arg)
 
             SDLTest_AssertCheck(true, "Test executable uses SSE3 intrinsics.");
             if (allocate_random_uint_arrays(&dest, &a, &b, &size) < 0) {
-                free_arrays(dest, a, b);
                 return TEST_ABORTED;
             }
             kernel_uints_add_sse3(dest, a, b, size);
@@ -493,7 +485,6 @@ static int SDLCALL intrinsics_testSSE4_1(void *arg)
 
             SDLTest_AssertCheck(true, "Test executable uses SSE4.1 intrinsics.");
             if (allocate_random_uint_arrays(&dest, &a, &b, &size) < 0) {
-                free_arrays(dest, a, b);
                 return TEST_ABORTED;
             }
             kernel_uints_mul_sse4_1(dest, a, b, size);
@@ -557,7 +548,6 @@ static int SDLCALL intrinsics_testAVX(void *arg)
 
             SDLTest_AssertCheck(true, "Test executable uses AVX intrinsics.");
             if (allocate_random_float_arrays(&dest, &a, &b, &size) < 0) {
-                free_arrays(dest, a, b);
                 return TEST_ABORTED;
             }
             kernel_floats_add_avx(dest, a, b, size);
@@ -586,7 +576,6 @@ static int SDLCALL intrinsics_testAVX2(void *arg)
 
             SDLTest_AssertCheck(true, "Test executable uses AVX2 intrinsics.");
             if (allocate_random_uint_arrays(&dest, &a, &b, &size) < 0) {
-                free_arrays(dest, a, b);
                 return TEST_ABORTED;
             }
             kernel_uints_add_avx2(dest, a, b, size);
@@ -615,7 +604,6 @@ static int SDLCALL intrinsics_testAVX512F(void *arg)
 
             SDLTest_AssertCheck(true, "Test executable uses AVX512F intrinsics.");
             if (allocate_random_float_arrays(&dest, &a, &b, &size) < 0) {
-                free_arrays(dest, a, b);
                 return TEST_ABORTED;
             }
             kernel_floats_add_avx512f(dest, a, b, size);

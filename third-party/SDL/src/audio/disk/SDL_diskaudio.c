@@ -165,7 +165,7 @@ static bool DISKAUDIO_Init(SDL_AudioDriverImpl *impl)
 }
 
 AudioBootStrap DISKAUDIO_bootstrap = {
-    "disk", "direct-to-disk audio", DISKAUDIO_Init, true, false
+    "disk", "direct-to-disk audio", DISKAUDIO_Init, true
 };
 
 #endif // SDL_AUDIO_DRIVER_DISK

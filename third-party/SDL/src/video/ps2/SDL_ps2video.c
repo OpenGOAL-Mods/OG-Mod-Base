@@ -114,8 +114,7 @@ VideoBootStrap PS2_bootstrap = {
     "ps2",
     "PS2 Video Driver",
     PS2_CreateDevice,
-    NULL, // no ShowMessageBox implementation
-    false
+    NULL // no ShowMessageBox implementation
 };
 
 #endif // SDL_VIDEO_DRIVER_PS2

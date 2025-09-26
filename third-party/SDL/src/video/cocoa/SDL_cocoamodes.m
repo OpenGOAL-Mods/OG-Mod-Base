@@ -556,24 +556,22 @@ bool Cocoa_GetDisplayBounds(SDL_VideoDevice *_this, SDL_VideoDisplay *display, S
 
 bool Cocoa_GetDisplayUsableBounds(SDL_VideoDevice *_this, SDL_VideoDisplay *display, SDL_Rect *rect)
 {
-    @autoreleasepool {
-        SDL_DisplayData *displaydata = (SDL_DisplayData *)display->internal;
-        NSScreen *screen = GetNSScreenForDisplayID(displaydata->display);
+    SDL_DisplayData *displaydata = (SDL_DisplayData *)display->internal;
+    NSScreen *screen = GetNSScreenForDisplayID(displaydata->display);
 
-        if (screen == nil) {
-            return SDL_SetError("Couldn't get NSScreen for display");
-        }
-
-        {
-            const NSRect frame = [screen visibleFrame];
-            rect->x = (int)frame.origin.x;
-            rect->y = (int)(CGDisplayPixelsHigh(kCGDirectMainDisplay) - frame.origin.y - frame.size.height);
-            rect->w = (int)frame.size.width;
-            rect->h = (int)frame.size.height;
-        }
-
-        return true;
+    if (screen == nil) {
+        return SDL_SetError("Couldn't get NSScreen for display");
     }
+
+    {
+        const NSRect frame = [screen visibleFrame];
+        rect->x = (int)frame.origin.x;
+        rect->y = (int)(CGDisplayPixelsHigh(kCGDirectMainDisplay) - frame.origin.y - frame.size.height);
+        rect->w = (int)frame.size.width;
+        rect->h = (int)frame.size.height;
+    }
+
+    return true;
 }
 
 bool Cocoa_GetDisplayModes(SDL_VideoDevice *_this, SDL_VideoDisplay *display)
@@ -646,9 +644,7 @@ static CGError SetDisplayModeForDisplay(CGDirectDisplayID display, SDL_DisplayMo
         result = CGDisplaySetDisplayMode(display, moderef, NULL);
         if (result == kCGErrorSuccess) {
             // If this mode works, try it first next time.
-            if (i > 0) {
-                CFArrayExchangeValuesAtIndices(data->modes, i, 0);
-            }
+            CFArrayExchangeValuesAtIndices(data->modes, i, 0);
             break;
         }
     }

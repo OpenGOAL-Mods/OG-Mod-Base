@@ -1227,9 +1227,7 @@
           (send-event gp-0 'ai-set-target-speed f30-0)
           )
         )
-      ;; og:preserve-this
-      ;; original game bug.
-      (send-event gp-0 'ai-ignore-nav-mesh #t)
+      (send-event gp-0 'ai-ignore-nav-mesh)
       )
     )
   0

@@ -130,8 +130,7 @@ static bool VITAAUD_OpenDevice(SDL_AudioDevice *device)
 
 static bool VITAAUD_PlayDevice(SDL_AudioDevice *device, const Uint8 *buffer, int buffer_size)
 {
-    // sceAudioOutOutput returns amount of samples queued or < 0 on error
-    return (sceAudioOutOutput(device->hidden->port, buffer) >= 0);
+    return (sceAudioOutOutput(device->hidden->port, buffer) == 0);
 }
 
 // This function waits until it is possible to write a full sound buffer
@@ -233,7 +232,7 @@ static bool VITAAUD_Init(SDL_AudioDriverImpl *impl)
 }
 
 AudioBootStrap VITAAUD_bootstrap = {
-    "vita", "VITA audio driver", VITAAUD_Init, false, false
+    "vita", "VITA audio driver", VITAAUD_Init, false
 };
 
 #endif // SDL_AUDIO_DRIVER_VITA

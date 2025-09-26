@@ -57,14 +57,12 @@ SDL_AsyncIO *SDL_AsyncIOFromFile(const char *file, const char *mode)
     }
 
     SDL_AsyncIO *asyncio = (SDL_AsyncIO *)SDL_calloc(1, sizeof(*asyncio));
-    if (!asyncio) {
-        return NULL;
-    }
-
-    asyncio->lock = SDL_CreateMutex();
-    if (!asyncio->lock) {
-        SDL_free(asyncio);
-        return NULL;
+    if (asyncio) {
+        asyncio->lock = SDL_CreateMutex();
+        if (!asyncio->lock) {
+            SDL_free(asyncio);
+            return NULL;
+        }
     }
 
     if (!SDL_SYS_AsyncIOFromFile(file, binary_mode, asyncio)) {
@@ -309,13 +307,12 @@ bool SDL_LoadFileAsync(const char *file, SDL_AsyncIOQueue *queue, void *userdata
     if (asyncio) {
         asyncio->oneshot = true;
 
-        Uint8 *ptr = NULL;
+        void *ptr = NULL;
         const Sint64 flen = SDL_GetAsyncIOSize(asyncio);
         if (flen >= 0) {
             // !!! FIXME: check if flen > address space, since it'll truncate and we'll just end up with an incomplete buffer or a crash.
-            ptr = (Uint8 *) SDL_malloc((size_t) (flen + 1));  // over-allocate by one so we can add a null-terminator.
+            ptr = SDL_malloc((size_t) (flen + 1));  // over-allocate by one so we can add a null-terminator.
             if (ptr) {
-                ptr[flen] = '\0';
                 retval = SDL_ReadAsyncIO(asyncio, ptr, 0, (Uint64) flen, queue, userdata);
                 if (!retval) {
                     SDL_free(ptr);

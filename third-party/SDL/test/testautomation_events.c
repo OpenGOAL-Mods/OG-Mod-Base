@@ -211,93 +211,48 @@ static int SDLCALL events_addDelEventWatchWithUserdata(void *arg)
  *
  */
 
-typedef struct IncrementCounterData_t
-{
-    Uint32 delay;
-    int counter;
-} IncrementCounterData_t;
-
 static void SDLCALL IncrementCounter(void *userdata)
 {
-    IncrementCounterData_t *data = (IncrementCounterData_t *)userdata;
-    ++data->counter;
+    int *value = (int *)userdata;
+    *value = *value + 1;
 }
 
 #ifndef SDL_PLATFORM_EMSCRIPTEN /* Emscripten doesn't have threads */
 static int SDLCALL IncrementCounterThread(void *userdata)
 {
-    IncrementCounterData_t *data = (IncrementCounterData_t *)userdata;
-    SDL_Event event;
-
     SDL_assert(!SDL_IsMainThread());
-
-    if (data->delay > 0) {
-        SDL_Delay(data->delay);
-    }
-
-    if (!SDL_RunOnMainThread(IncrementCounter, userdata, false)) {
-        SDLTest_LogError("Couldn't run IncrementCounter asynchronously on main thread: %s", SDL_GetError());
-    }
-    if (!SDL_RunOnMainThread(IncrementCounter, userdata, true)) {
-        SDLTest_LogError("Couldn't run IncrementCounter synchronously on main thread: %s", SDL_GetError());
-    }
-
-    /* Send an event to unblock the main thread, which is waiting in SDL_WaitEvent() */
-    event.type = SDL_EVENT_USER;
-    SDL_PushEvent(&event);
-
+    SDL_RunOnMainThread(IncrementCounter, userdata, false);
+    SDL_RunOnMainThread(IncrementCounter, userdata, true);
     return 0;
 }
 #endif /* !SDL_PLATFORM_EMSCRIPTEN */
 
 static int SDLCALL events_mainThreadCallbacks(void *arg)
 {
-    IncrementCounterData_t data = { 0, 0 };
+    int counter = 0;
 
     /* Make sure we're on the main thread */
     SDLTest_AssertCheck(SDL_IsMainThread(), "Verify we're on the main thread");
 
-    SDL_RunOnMainThread(IncrementCounter, &data, true);
-    SDLTest_AssertCheck(data.counter == 1, "Incremented counter on main thread, expected 1, got %d", data.counter);
+    SDL_RunOnMainThread(IncrementCounter, &counter, true);
+    SDLTest_AssertCheck(counter == 1, "Incremented counter on main thread, expected 1, got %d", counter);
 
 #ifndef SDL_PLATFORM_EMSCRIPTEN /* Emscripten doesn't have threads */
     {
-        SDL_Window *window;
         SDL_Thread *thread;
-        SDL_Event event;
 
-        window = SDL_CreateWindow("test", 0, 0, SDL_WINDOW_HIDDEN);
-        SDLTest_AssertCheck(window != NULL, "Create window, expected non-NULL, got %p", window);
-
-        /* Flush any pending events */
-        SDL_PumpEvents();
-        SDL_FlushEvents(SDL_EVENT_FIRST, SDL_EVENT_LAST);
-
-        /* Increment the counter on a thread, waiting for both calls to be queued */
-        thread = SDL_CreateThread(IncrementCounterThread, NULL, &data);
+        thread = SDL_CreateThread(IncrementCounterThread, NULL, &counter);
         SDLTest_AssertCheck(thread != NULL, "Create counter thread");
 
         /* Wait for both increment calls to be queued up */
         SDL_Delay(100);
 
         /* Run the main callbacks */
-        SDL_WaitEvent(&event);
-        SDLTest_AssertCheck(event.type == SDL_EVENT_USER, "Expected user event (0x%.4x), got 0x%.4x", SDL_EVENT_USER, (int)event.type);
+        while (counter < 3) {
+            SDL_PumpEvents();
+        }
         SDL_WaitThread(thread, NULL);
-        SDLTest_AssertCheck(data.counter == 3, "Incremented counter on main thread, expected 3, got %d", data.counter);
-
-        /* Try again, but this time delay the calls until we've started waiting for events */
-        data.delay = 100;
-        thread = SDL_CreateThread(IncrementCounterThread, NULL, &data);
-        SDLTest_AssertCheck(thread != NULL, "Create counter thread");
-
-        /* Run the main callbacks */
-        SDL_WaitEvent(&event);
-        SDLTest_AssertCheck(event.type == SDL_EVENT_USER, "Expected user event (0x%.4x), got 0x%.4x", SDL_EVENT_USER, (int)event.type);
-        SDL_WaitThread(thread, NULL);
-        SDLTest_AssertCheck(data.counter == 5, "Incremented counter on main thread, expected 5, got %d", data.counter);
-
-        SDL_DestroyWindow(window);
+        SDLTest_AssertCheck(counter == 3, "Incremented counter on main thread, expected 3, got %d", counter);
     }
 #endif /* !SDL_PLATFORM_EMSCRIPTEN */
 

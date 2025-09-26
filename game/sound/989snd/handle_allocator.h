@@ -2,19 +2,31 @@
 // SPDX-License-Identifier: ISC
 #pragma once
 
+#include <queue>
+#include <unordered_map>
+
 #include "common/common_types.h"
 
 namespace snd {
 
 class IdAllocator {
  public:
-  // Use a unique ID each time - the Overlord will sometimes do the wrong thing if handles are
-  // reused. The real 989snd also includes type + handle index in this.
-  u32 GetId() { return mNextId++; }
-  void FreeId(u32) {}
+  u32 GetId() {
+    u32 id = 0;
+    if (mFreeIds.empty()) {
+      id = mNextId++;
+    } else {
+      id = mFreeIds.front();
+      mFreeIds.pop();
+    }
+    return id;
+  }
+
+  void FreeId(u32 id) { mFreeIds.push(id); }
 
  private:
   u32 mNextId{1};
+  std::queue<u32> mFreeIds;
 };
 
 }  // namespace snd

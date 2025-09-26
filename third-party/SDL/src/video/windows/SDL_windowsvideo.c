@@ -76,15 +76,10 @@ static void SDLCALL UpdateWindowFrameUsableWhileCursorHidden(void *userdata, con
 #if !defined(SDL_PLATFORM_XBOXONE) && !defined(SDL_PLATFORM_XBOXSERIES)
 static bool WIN_SuspendScreenSaver(SDL_VideoDevice *_this)
 {
-    DWORD result;
     if (_this->suspend_screensaver) {
-        result = SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
+        SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
     } else {
-        result = SetThreadExecutionState(ES_CONTINUOUS);
-    }
-    if (result == 0) {
-        SDL_SetError("SetThreadExecutionState() failed");
-        return false;
+        SetThreadExecutionState(ES_CONTINUOUS);
     }
     return true;
 }
@@ -108,9 +103,6 @@ static void WIN_DeleteDevice(SDL_VideoDevice *device)
     if (data->shcoreDLL) {
         SDL_UnloadObject(data->shcoreDLL);
     }
-    if (data->dwmapiDLL) {
-        SDL_UnloadObject(data->dwmapiDLL);
-    }
 #endif
 #ifdef HAVE_DXGI_H
     if (data->pDXGIFactory) {
@@ -120,6 +112,9 @@ static void WIN_DeleteDevice(SDL_VideoDevice *device)
         SDL_UnloadObject(data->dxgiDLL);
     }
 #endif
+    if (device->wakeup_lock) {
+        SDL_DestroyMutex(device->wakeup_lock);
+    }
     SDL_free(device->internal->rawinput);
     SDL_free(device->internal);
     SDL_free(device);
@@ -145,6 +140,7 @@ static SDL_VideoDevice *WIN_CreateDevice(void)
         return NULL;
     }
     device->internal = data;
+    device->wakeup_lock = SDL_CreateMutex();
     device->system_theme = WIN_GetSystemTheme();
 
 #if !defined(SDL_PLATFORM_XBOXONE) && !defined(SDL_PLATFORM_XBOXSERIES)
@@ -179,17 +175,6 @@ static SDL_VideoDevice *WIN_CreateDevice(void)
         /* *INDENT-OFF* */ // clang-format off
         data->GetDpiForMonitor = (HRESULT (WINAPI *)(HMONITOR, MONITOR_DPI_TYPE, UINT *, UINT *))SDL_LoadFunction(data->shcoreDLL, "GetDpiForMonitor");
         data->SetProcessDpiAwareness = (HRESULT (WINAPI *)(PROCESS_DPI_AWARENESS))SDL_LoadFunction(data->shcoreDLL, "SetProcessDpiAwareness");
-        /* *INDENT-ON* */ // clang-format on
-    } else {
-        SDL_ClearError();
-    }
-
-    data->dwmapiDLL = SDL_LoadObject("DWMAPI.DLL");
-    if (data->dwmapiDLL) {
-        /* *INDENT-OFF* */ // clang-format off
-        data->DwmFlush = (HRESULT (WINAPI *)(void))SDL_LoadFunction(data->dwmapiDLL, "DwmFlush");
-        data->DwmEnableBlurBehindWindow = (HRESULT (WINAPI *)(HWND hwnd, const DWM_BLURBEHIND *pBlurBehind))SDL_LoadFunction(data->dwmapiDLL, "DwmEnableBlurBehindWindow");
-        data->DwmSetWindowAttribute = (HRESULT (WINAPI *)(HWND hwnd, DWORD dwAttribute, LPCVOID pvAttribute, DWORD cbAttribute))SDL_LoadFunction(data->dwmapiDLL, "DwmSetWindowAttribute");
         /* *INDENT-ON* */ // clang-format on
     } else {
         SDL_ClearError();
@@ -345,11 +330,10 @@ static SDL_VideoDevice *WIN_CreateDevice(void)
 VideoBootStrap WINDOWS_bootstrap = {
     "windows", "SDL Windows video driver", WIN_CreateDevice,
     #if !defined(SDL_PLATFORM_XBOXONE) && !defined(SDL_PLATFORM_XBOXSERIES)
-    WIN_ShowMessageBox,
+    WIN_ShowMessageBox
     #else
-    NULL,
+    NULL
     #endif
-    false
 };
 
 static BOOL WIN_DeclareDPIAwareUnaware(SDL_VideoDevice *_this)

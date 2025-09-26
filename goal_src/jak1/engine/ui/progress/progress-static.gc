@@ -241,17 +241,6 @@
        (new 'static 'game-option :option-type (game-option-type button) :scale #f)
        (new 'static 'game-option :option-type (game-option-type button) :name (text-id back) :scale #f)))
 
-(define *save-and-load-options*
-  (new 'static
-       'boxed-array
-       :type
-       game-option
-       (new 'static 'game-option :option-type (game-option-type button) :scale #f)
-       (new 'static 'game-option :option-type (game-option-type button) :scale #f)
-       (new 'static 'game-option :option-type (game-option-type button) :scale #f)
-       (new 'static 'game-option :option-type (game-option-type button) :scale #f)
-       (new 'static 'game-option :option-type (game-option-type button) :name (text-id back) :scale #f)))
-
 (define *save-options-title*
   (new 'static
        'boxed-array
@@ -267,7 +256,7 @@
 ;; maps options to a progress screen
 ;; the length matches with `(progress-screen max)`
 (define *options-remap*
-  (new 'static 'boxed-array :type (array game-option) :length 0 :allocated-length (#if (not PC_PORT) 35 71)))
+  (new 'static 'boxed-array :type (array game-option) :length 0 :allocated-length (#if (not PC_PORT) 35 68)))
 
 ;; added in PC port
 (defenum level-task-data-index

@@ -69,8 +69,10 @@ int LoadISOFileToIOP(const ISOFileDef* file_def, void* addr, int length) {
   cmd.file_def = file_def;
   cmd.addr = (u8*)addr;
   cmd.maxlen = length;
+  lg::warn("--------------- LoadISOFileToIOP START");
   SendMbx(g_nISOMbx, &cmd);
   SleepThread();
+  lg::warn("--------------- LoadISOFileToIOP END");
   if (cmd.status == EIsoStatus::NONE_0) {
     return cmd.length_to_copy;
   } else {
@@ -86,8 +88,10 @@ int LoadISOFileToEE(const ISOFileDef* file_def, u32 addr, int length) {
   cmd.file_def = file_def;
   cmd.addr = (u8*)(u64)addr;
   cmd.maxlen = length;
+  lg::warn("--------------- LoadISOFileToEE START");
   SendMbx(g_nISOMbx, &cmd);
   SleepThread();
+  lg::warn("--------------- LoadISOFileToEE  END");
   if (cmd.status == EIsoStatus::NONE_0) {
     return cmd.length_to_copy;
   }
@@ -103,8 +107,10 @@ int LoadISOFileChunkToEE(const ISOFileDef* file_def, u32 addr, int max_len, int 
   cmd.addr = (u8*)(u64)addr;
   cmd.maxlen = max_len;
   cmd.sector_offset = sector_offset;
+  lg::warn("--------------- LoadISOFileChunkToEE START");
   SendMbx(g_nISOMbx, &cmd);
   SleepThread();
+  lg::warn("--------------- LoadISOFileChunkToEE END");
   if (cmd.status == EIsoStatus::NONE_0) {
     return cmd.length_to_copy;
   }
@@ -119,8 +125,10 @@ u32 LoadSoundBankToIOP(const char* name, SoundBankInfo* bank, u32 mode) {
   cmd.bank_info = bank;
   cmd.name = name;
   cmd.priority = mode;
+  lg::warn("--------------- LoadSoundBankToIOP START");
   SendMbx(g_nISOMbx, &cmd);
   SleepThread();
+  lg::warn("--------------- LoadSoundBankToIOP END");
 
   return (u32)cmd.status;
 }

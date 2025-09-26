@@ -330,10 +330,10 @@ void WIN_RectToRECT(const SDL_Rect *sdlrect, RECT *winrect)
     winrect->bottom = sdlrect->y + sdlrect->h - 1;
 }
 
-bool WIN_WindowRectValid(const RECT *rect)
+BOOL WIN_IsRectEmpty(const RECT *rect)
 {
-    // A window can be resized to zero height, but not zero width
-    return (rect->right > 0);
+    // Calculating this manually because Xbox does not support Win32 IsRectEmpty.
+    return (rect->right <= rect->left) || (rect->bottom <= rect->top);
 }
 
 // Some GUIDs we need to know without linking to libraries that aren't available before Vista.

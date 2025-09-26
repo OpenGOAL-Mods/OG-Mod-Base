@@ -300,7 +300,6 @@ static void DestroyThing(Thing *thing)
     }
 
     if (thing->prev) {
-        SDL_assert(thing != things);
         thing->prev->next = thing->next;
     } else {
         SDL_assert(thing == things);

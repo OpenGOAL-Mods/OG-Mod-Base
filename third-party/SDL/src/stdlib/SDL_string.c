@@ -368,12 +368,14 @@ static size_t SDL_ScanUnsignedLongLongInternal(const char *text, int count, int 
             negative = *text == '-';
             ++text;
         }
-        if ((radix == 0 || radix == 16) && *text == '0' && (text[1] == 'x' || text[1] == 'X')) {
-            text += 2;
-            radix = 16;
-        } else if (radix == 0 && *text == '0' && (text[1] >= '0' && text[1] <= '9')) {
+        if ((radix == 0 || radix == 16) && *text == '0' && text[1] != '\0') {
             ++text;
-            radix = 8;
+            if (*text == 'x' || *text == 'X') {
+                radix = 16;
+                ++text;
+            } else if (radix == 0) {
+                radix = 8;
+            }
         } else if (radix == 0) {
             radix = 10;
         }
@@ -460,12 +462,14 @@ static size_t SDL_ScanUnsignedLongLongInternalW(const wchar_t *text, int count, 
             negative = *text == '-';
             ++text;
         }
-        if ((radix == 0 || radix == 16) && *text == '0' && (text[1] == 'x' || text[1] == 'X')) {
-            text += 2;
-            radix = 16;
-        } else if (radix == 0 && *text == '0' && (text[1] >= '0' && text[1] <= '9')) {
+        if ((radix == 0 || radix == 16) && *text == '0') {
             ++text;
-            radix = 8;
+            if (*text == 'x' || *text == 'X') {
+                radix = 16;
+                ++text;
+            } else if (radix == 0) {
+                radix = 8;
+            }
         } else if (radix == 0) {
             radix = 10;
         }
@@ -1444,7 +1448,6 @@ static bool CharacterMatchesSet(char c, const char *set, size_t set_len)
 // NOLINTNEXTLINE(readability-non-const-parameter)
 int SDL_vsscanf(const char *text, SDL_SCANF_FORMAT_STRING const char *fmt, va_list ap)
 {
-    const char *start = text;
     int result = 0;
 
     if (!text || !*text) {
@@ -1712,36 +1715,6 @@ int SDL_vsscanf(const char *text, SDL_SCANF_FORMAT_STRING const char *fmt, va_li
                         }
                         *valuep = '\0';
                         ++result;
-                    }
-                    done = true;
-                    break;
-                case 'n':
-                    switch (inttype) {
-                    case DO_SHORT:
-                    {
-                        short *valuep = va_arg(ap, short *);
-                        *valuep = (short)(text - start);
-                    } break;
-                    case DO_INT:
-                    {
-                        int *valuep = va_arg(ap, int *);
-                        *valuep = (int)(text - start);
-                    } break;
-                    case DO_LONG:
-                    {
-                        long *valuep = va_arg(ap, long *);
-                        *valuep = (long)(text - start);
-                    } break;
-                    case DO_LONGLONG:
-                    {
-                        long long *valuep = va_arg(ap, long long *);
-                        *valuep = (long long)(text - start);
-                    } break;
-                    case DO_SIZE_T:
-                    {
-                        size_t *valuep = va_arg(ap, size_t *);
-                        *valuep = (size_t)(text - start);
-                    } break;
                     }
                     done = true;
                     break;

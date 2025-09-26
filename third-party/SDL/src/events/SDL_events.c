@@ -23,8 +23,6 @@
 // General event handling code for SDL
 
 #include "SDL_events_c.h"
-#include "SDL_eventwatch_c.h"
-#include "SDL_windowevents_c.h"
 #include "../SDL_hints_c.h"
 #include "../audio/SDL_audio_c.h"
 #include "../camera/SDL_camera_c.h"
@@ -54,53 +52,19 @@
 // Make sure the type in the SDL_Event aligns properly across the union
 SDL_COMPILE_TIME_ASSERT(SDL_Event_type, sizeof(Uint32) == sizeof(SDL_EventType));
 
-#define SDL2_SYSWMEVENT 0x201
-
-#ifdef SDL_VIDEO_DRIVER_WINDOWS
-#include "../core/windows/SDL_windows.h"
-#endif
-
-#ifdef SDL_VIDEO_DRIVER_X11
-#include <X11/Xlib.h>
-#endif
-
-typedef struct SDL2_version
+typedef struct SDL_EventWatcher
 {
-    Uint8 major;
-    Uint8 minor;
-    Uint8 patch;
-} SDL2_version;
+    SDL_EventFilter callback;
+    void *userdata;
+    bool removed;
+} SDL_EventWatcher;
 
-typedef enum
-{
-  SDL2_SYSWM_UNKNOWN
-} SDL2_SYSWM_TYPE;
-
-typedef struct SDL2_SysWMmsg
-{
-    SDL2_version version;
-    SDL2_SYSWM_TYPE subsystem;
-    union
-    {
-#ifdef SDL_VIDEO_DRIVER_WINDOWS
-        struct {
-            HWND hwnd;                  /**< The window for the message */
-            UINT msg;                   /**< The type of message */
-            WPARAM wParam;              /**< WORD message parameter */
-            LPARAM lParam;              /**< LONG message parameter */
-        } win;
-#endif
-#ifdef SDL_VIDEO_DRIVER_X11
-        struct {
-            XEvent event;
-        } x11;
-#endif
-        /* Can't have an empty union */
-        int dummy;
-    } msg;
-} SDL2_SysWMmsg;
-
-static SDL_EventWatchList SDL_event_watchers;
+static SDL_Mutex *SDL_event_watchers_lock;
+static SDL_EventWatcher SDL_EventOK;
+static SDL_EventWatcher *SDL_event_watchers = NULL;
+static int SDL_event_watchers_count = 0;
+static bool SDL_event_watchers_dispatching = false;
+static bool SDL_event_watchers_removed = false;
 static SDL_AtomicInt SDL_sentinel_pending;
 static Uint32 SDL_last_event_id = 0;
 
@@ -110,7 +74,7 @@ typedef struct
 } SDL_DisabledEventBlock;
 
 static SDL_DisabledEventBlock *SDL_disabled_events[256];
-static SDL_AtomicInt SDL_userevents;
+static Uint32 SDL_userevents = SDL_EVENT_USER;
 
 typedef struct SDL_TemporaryMemory
 {
@@ -250,17 +214,6 @@ static void SDL_LinkTemporaryMemoryToEvent(SDL_EventEntry *event, const void *me
     }
 }
 
-static void SDL_TransferSysWMMemoryToEvent(SDL_EventEntry *event)
-{
-    SDL2_SysWMmsg **wmmsg = (SDL2_SysWMmsg **)((&event->event.common)+1);
-    SDL2_SysWMmsg *mem = SDL_AllocateTemporaryMemory(sizeof(*mem));
-    if (mem) {
-        SDL_copyp(mem, *wmmsg);
-        *wmmsg = mem;
-        SDL_LinkTemporaryMemoryToEvent(event, mem);
-    }
-}
-
 // Transfer the event memory from the thread-local event memory list to the event
 static void SDL_TransferTemporaryMemoryToEvent(SDL_EventEntry *event)
 {
@@ -284,10 +237,6 @@ static void SDL_TransferTemporaryMemoryToEvent(SDL_EventEntry *event)
         break;
     case SDL_EVENT_CLIPBOARD_UPDATE:
         SDL_LinkTemporaryMemoryToEvent(event, event->event.clipboard.mime_types);
-        break;
-    case SDL2_SYSWMEVENT:
-        // We need to copy the stack pointer into temporary memory
-        SDL_TransferSysWMMemoryToEvent(event);
         break;
     default:
         break;
@@ -633,10 +582,9 @@ static void SDL_LogEvent(const SDL_Event *event)
 #undef PRINT_MBUTTON_EVENT
 
         SDL_EVENT_CASE(SDL_EVENT_MOUSE_WHEEL)
-        (void)SDL_snprintf(details, sizeof(details), " (timestamp=%u windowid=%u which=%u x=%g y=%g integer_x=%d integer_y=%d direction=%s)",
+        (void)SDL_snprintf(details, sizeof(details), " (timestamp=%u windowid=%u which=%u x=%g y=%g direction=%s)",
                            (uint)event->wheel.timestamp, (uint)event->wheel.windowID,
                            (uint)event->wheel.which, event->wheel.x, event->wheel.y,
-                           (int)event->wheel.integer_x, (int)event->wheel.integer_y,
                            event->wheel.direction == SDL_MOUSEWHEEL_NORMAL ? "normal" : "flipped");
         break;
 
@@ -929,8 +877,16 @@ void SDL_StopEventLoop(void)
         SDL_disabled_events[i] = NULL;
     }
 
-    SDL_QuitEventWatchList(&SDL_event_watchers);
-    SDL_QuitWindowEventWatch();
+    if (SDL_event_watchers_lock) {
+        SDL_DestroyMutex(SDL_event_watchers_lock);
+        SDL_event_watchers_lock = NULL;
+    }
+    if (SDL_event_watchers) {
+        SDL_free(SDL_event_watchers);
+        SDL_event_watchers = NULL;
+        SDL_event_watchers_count = 0;
+    }
+    SDL_zero(SDL_EventOK);
 
     SDL_Mutex *lock = NULL;
     if (SDL_EventQ.lock) {
@@ -964,19 +920,17 @@ bool SDL_StartEventLoop(void)
     }
     SDL_LockMutex(SDL_EventQ.lock);
 
-    if (!SDL_InitEventWatchList(&SDL_event_watchers)) {
-        SDL_UnlockMutex(SDL_EventQ.lock);
-        return false;
+    if (SDL_event_watchers_lock == NULL) {
+        SDL_event_watchers_lock = SDL_CreateMutex();
+        if (SDL_event_watchers_lock == NULL) {
+            SDL_UnlockMutex(SDL_EventQ.lock);
+            return false;
+        }
     }
 #endif // !SDL_THREADS_DISABLED
 
-    SDL_InitWindowEventWatch();
-
     SDL_EventQ.active = true;
-
-#ifndef SDL_THREADS_DISABLED
     SDL_UnlockMutex(SDL_EventQ.lock);
-#endif
     return true;
 }
 
@@ -1077,11 +1031,16 @@ static void SDL_SendWakeupEvent(void)
         return;
     }
 
-    // We only want to do this once while waiting for an event, so set it to NULL atomically here
-    SDL_Window *wakeup_window = (SDL_Window *)SDL_SetAtomicPointer(&_this->wakeup_window, NULL);
-    if (wakeup_window) {
-        _this->SendWakeupEvent(_this, wakeup_window);
+    SDL_LockMutex(_this->wakeup_lock);
+    {
+        if (_this->wakeup_window) {
+            _this->SendWakeupEvent(_this, _this->wakeup_window);
+
+            // No more wakeup events needed until we enter a new wait
+            _this->wakeup_window = NULL;
+        }
     }
+    SDL_UnlockMutex(_this->wakeup_lock);
 #endif
 }
 
@@ -1367,15 +1326,14 @@ bool SDL_RunOnMainThread(SDL_MainThreadCallback callback, void *userdata, bool w
     }
     SDL_UnlockMutex(SDL_main_callbacks_lock);
 
-    // If the main thread is waiting for events, wake it up
-    SDL_SendWakeupEvent();
-
     if (!wait_complete) {
         // Queued for execution, wait not requested
         return true;
     }
 
-    SDL_WaitSemaphore(entry->semaphore);
+    // Maximum wait of 30 seconds to prevent deadlocking forever
+    const Sint32 MAX_CALLBACK_WAIT = 30 * 1000;
+    SDL_WaitSemaphoreTimeout(entry->semaphore, MAX_CALLBACK_WAIT);
 
     switch (SDL_GetAtomicInt(&entry->state)) {
     case SDL_MAIN_CALLBACK_COMPLETE:
@@ -1519,7 +1477,18 @@ static int SDL_WaitEventTimeout_Device(SDL_VideoDevice *_this, SDL_Window *wakeu
         */
         SDL_PumpEventsInternal(true);
 
-        status = SDL_PeepEvents(event, 1, SDL_GETEVENT, SDL_EVENT_FIRST, SDL_EVENT_LAST);
+        SDL_LockMutex(_this->wakeup_lock);
+        {
+            status = SDL_PeepEvents(event, 1, SDL_GETEVENT, SDL_EVENT_FIRST, SDL_EVENT_LAST);
+            // If status == 0 we are going to block so wakeup will be needed.
+            if (status == 0) {
+                _this->wakeup_window = wakeup_window;
+            } else {
+                _this->wakeup_window = NULL;
+            }
+        }
+        SDL_UnlockMutex(_this->wakeup_lock);
+
         if (status < 0) {
             // Got an error: return
             break;
@@ -1532,6 +1501,8 @@ static int SDL_WaitEventTimeout_Device(SDL_VideoDevice *_this, SDL_Window *wakeu
         if (timeoutNS > 0) {
             Sint64 elapsed = SDL_GetTicksNS() - start;
             if (elapsed >= timeoutNS) {
+                // Set wakeup_window to NULL without holding the lock.
+                _this->wakeup_window = NULL;
                 return 0;
             }
             loop_timeoutNS = (timeoutNS - elapsed);
@@ -1544,9 +1515,9 @@ static int SDL_WaitEventTimeout_Device(SDL_VideoDevice *_this, SDL_Window *wakeu
                 loop_timeoutNS = poll_intervalNS;
             }
         }
-        SDL_SetAtomicPointer(&_this->wakeup_window, wakeup_window);
         status = _this->WaitEventTimeout(_this, loop_timeoutNS);
-        SDL_SetAtomicPointer(&_this->wakeup_window, NULL);
+        // Set wakeup_window to NULL without holding the lock.
+        _this->wakeup_window = NULL;
         if (status == 0 && poll_intervalNS != SDL_MAX_SINT64 && loop_timeoutNS == poll_intervalNS) {
             // We may have woken up to poll. Try again
             continue;
@@ -1703,11 +1674,44 @@ bool SDL_WaitEventTimeoutNS(SDL_Event *event, Sint64 timeoutNS)
 
 static bool SDL_CallEventWatchers(SDL_Event *event)
 {
-    if (event->common.type == SDL_EVENT_POLL_SENTINEL) {
-        return true;
+    if ((SDL_EventOK.callback || SDL_event_watchers_count > 0) &&
+        (event->common.type != SDL_EVENT_POLL_SENTINEL)) {
+        SDL_LockMutex(SDL_event_watchers_lock);
+        {
+            if (SDL_EventOK.callback && !SDL_EventOK.callback(SDL_EventOK.userdata, event)) {
+                SDL_UnlockMutex(SDL_event_watchers_lock);
+                return false;
+            }
+
+            if (SDL_event_watchers_count > 0) {
+                // Make sure we only dispatch the current watcher list
+                int i, event_watchers_count = SDL_event_watchers_count;
+
+                SDL_event_watchers_dispatching = true;
+                for (i = 0; i < event_watchers_count; ++i) {
+                    if (!SDL_event_watchers[i].removed) {
+                        SDL_event_watchers[i].callback(SDL_event_watchers[i].userdata, event);
+                    }
+                }
+                SDL_event_watchers_dispatching = false;
+
+                if (SDL_event_watchers_removed) {
+                    for (i = SDL_event_watchers_count; i--;) {
+                        if (SDL_event_watchers[i].removed) {
+                            --SDL_event_watchers_count;
+                            if (i < SDL_event_watchers_count) {
+                                SDL_memmove(&SDL_event_watchers[i], &SDL_event_watchers[i + 1], (SDL_event_watchers_count - i) * sizeof(SDL_event_watchers[i]));
+                            }
+                        }
+                    }
+                    SDL_event_watchers_removed = false;
+                }
+            }
+        }
+        SDL_UnlockMutex(SDL_event_watchers_lock);
     }
 
-    return SDL_DispatchEventWatchList(&SDL_event_watchers, event);
+    return true;
 }
 
 bool SDL_PushEvent(SDL_Event *event)
@@ -1731,11 +1735,11 @@ bool SDL_PushEvent(SDL_Event *event)
 void SDL_SetEventFilter(SDL_EventFilter filter, void *userdata)
 {
     SDL_EventEntry *event, *next;
-    SDL_LockMutex(SDL_event_watchers.lock);
+    SDL_LockMutex(SDL_event_watchers_lock);
     {
         // Set filter and discard pending events
-        SDL_event_watchers.filter.callback = filter;
-        SDL_event_watchers.filter.userdata = userdata;
+        SDL_EventOK.callback = filter;
+        SDL_EventOK.userdata = userdata;
         if (filter) {
             // Cut all events not accepted by the filter
             SDL_LockMutex(SDL_EventQ.lock);
@@ -1750,18 +1754,18 @@ void SDL_SetEventFilter(SDL_EventFilter filter, void *userdata)
             SDL_UnlockMutex(SDL_EventQ.lock);
         }
     }
-    SDL_UnlockMutex(SDL_event_watchers.lock);
+    SDL_UnlockMutex(SDL_event_watchers_lock);
 }
 
 bool SDL_GetEventFilter(SDL_EventFilter *filter, void **userdata)
 {
     SDL_EventWatcher event_ok;
 
-    SDL_LockMutex(SDL_event_watchers.lock);
+    SDL_LockMutex(SDL_event_watchers_lock);
     {
-        event_ok = SDL_event_watchers.filter;
+        event_ok = SDL_EventOK;
     }
-    SDL_UnlockMutex(SDL_event_watchers.lock);
+    SDL_UnlockMutex(SDL_event_watchers_lock);
 
     if (filter) {
         *filter = event_ok.callback;
@@ -1774,12 +1778,53 @@ bool SDL_GetEventFilter(SDL_EventFilter *filter, void **userdata)
 
 bool SDL_AddEventWatch(SDL_EventFilter filter, void *userdata)
 {
-    return SDL_AddEventWatchList(&SDL_event_watchers, filter, userdata);
+    bool result = true;
+
+    SDL_LockMutex(SDL_event_watchers_lock);
+    {
+        SDL_EventWatcher *event_watchers;
+
+        event_watchers = (SDL_EventWatcher *)SDL_realloc(SDL_event_watchers, (SDL_event_watchers_count + 1) * sizeof(*event_watchers));
+        if (event_watchers) {
+            SDL_EventWatcher *watcher;
+
+            SDL_event_watchers = event_watchers;
+            watcher = &SDL_event_watchers[SDL_event_watchers_count];
+            watcher->callback = filter;
+            watcher->userdata = userdata;
+            watcher->removed = false;
+            ++SDL_event_watchers_count;
+        } else {
+            result = false;
+        }
+    }
+    SDL_UnlockMutex(SDL_event_watchers_lock);
+
+    return result;
 }
 
 void SDL_RemoveEventWatch(SDL_EventFilter filter, void *userdata)
 {
-    SDL_RemoveEventWatchList(&SDL_event_watchers, filter, userdata);
+    SDL_LockMutex(SDL_event_watchers_lock);
+    {
+        int i;
+
+        for (i = 0; i < SDL_event_watchers_count; ++i) {
+            if (SDL_event_watchers[i].callback == filter && SDL_event_watchers[i].userdata == userdata) {
+                if (SDL_event_watchers_dispatching) {
+                    SDL_event_watchers[i].removed = true;
+                    SDL_event_watchers_removed = true;
+                } else {
+                    --SDL_event_watchers_count;
+                    if (i < SDL_event_watchers_count) {
+                        SDL_memmove(&SDL_event_watchers[i], &SDL_event_watchers[i + 1], (SDL_event_watchers_count - i) * sizeof(SDL_event_watchers[i]));
+                    }
+                }
+                break;
+            }
+        }
+    }
+    SDL_UnlockMutex(SDL_event_watchers_lock);
 }
 
 void SDL_FilterEvents(SDL_EventFilter filter, void *userdata)
@@ -1804,7 +1849,7 @@ void SDL_SetEventEnabled(Uint32 type, bool enabled)
     Uint8 lo = (type & 0xff);
 
     if (SDL_disabled_events[hi] &&
-        (SDL_disabled_events[hi]->bits[lo / 32] & (1U << (lo & 31)))) {
+        (SDL_disabled_events[hi]->bits[lo / 32] & (1 << (lo & 31)))) {
         current_state = false;
     } else {
         current_state = true;
@@ -1813,7 +1858,7 @@ void SDL_SetEventEnabled(Uint32 type, bool enabled)
     if ((enabled != false) != current_state) {
         if (enabled) {
             SDL_assert(SDL_disabled_events[hi] != NULL);
-            SDL_disabled_events[hi]->bits[lo / 32] &= ~(1U << (lo & 31));
+            SDL_disabled_events[hi]->bits[lo / 32] &= ~(1 << (lo & 31));
 
             // Gamepad events depend on joystick events
             switch (type) {
@@ -1844,7 +1889,7 @@ void SDL_SetEventEnabled(Uint32 type, bool enabled)
             }
             // Out of memory, nothing we can do...
             if (SDL_disabled_events[hi]) {
-                SDL_disabled_events[hi]->bits[lo / 32] |= (1U << (lo & 31));
+                SDL_disabled_events[hi]->bits[lo / 32] |= (1 << (lo & 31));
                 SDL_FlushEvent(type);
             }
         }
@@ -1863,7 +1908,7 @@ bool SDL_EventEnabled(Uint32 type)
     Uint8 lo = (type & 0xff);
 
     if (SDL_disabled_events[hi] &&
-        (SDL_disabled_events[hi]->bits[lo / 32] & (1U << (lo & 31)))) {
+        (SDL_disabled_events[hi]->bits[lo / 32] & (1 << (lo & 31)))) {
         return false;
     } else {
         return true;
@@ -1874,11 +1919,9 @@ Uint32 SDL_RegisterEvents(int numevents)
 {
     Uint32 event_base = 0;
 
-    if (numevents > 0) {
-        int value = SDL_AddAtomicInt(&SDL_userevents, numevents);
-        if (value >= 0 && value <= (SDL_EVENT_LAST - SDL_EVENT_USER)) {
-            event_base = (Uint32)(SDL_EVENT_USER + value);
-        }
+    if ((numevents > 0) && (SDL_userevents + numevents <= SDL_EVENT_LAST)) {
+        event_base = SDL_userevents;
+        SDL_userevents += numevents;
     }
     return event_base;
 }

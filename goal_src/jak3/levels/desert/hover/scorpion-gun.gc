@@ -1677,8 +1677,7 @@
       (let ((a0-4 (vehicle-spawn (vehicle-type v-scorpion) gp-0)))
         (when a0-4
           (set! (-> self scorp) (process->handle a0-4))
-          ;; og:preserve-this original game bug.
-          (send-event (handle->process (-> self scorp)) 'ai-ignore-nav-mesh #t)
+          (send-event (handle->process (-> self scorp)) 'ai-ignore-nav-mesh)
           )
         )
       )

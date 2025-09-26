@@ -809,7 +809,6 @@ static int SDLCALL audio_convertAudio(void *arg)
                         src_buf = (Uint8 *)SDL_malloc(src_len);
                         SDLTest_AssertCheck(src_buf != NULL, "Check src data buffer to convert is not NULL");
                         if (src_buf == NULL) {
-                            SDL_DestroyAudioStream(stream);
                             return TEST_ABORTED;
                         }
 
@@ -820,8 +819,6 @@ static int SDLCALL audio_convertAudio(void *arg)
                         dst_buf = (Uint8 *)SDL_malloc(dst_len);
                         SDLTest_AssertCheck(dst_buf != NULL, "Check dst data buffer to convert is not NULL");
                         if (dst_buf == NULL) {
-                            SDL_DestroyAudioStream(stream);
-                            SDL_free(src_buf);
                             return TEST_ABORTED;
                         }
 
@@ -831,9 +828,6 @@ static int SDLCALL audio_convertAudio(void *arg)
                         /* Run the audio converter */
                         if (!SDL_PutAudioStreamData(stream, src_buf, src_len) ||
                             !SDL_FlushAudioStream(stream)) {
-                            SDL_DestroyAudioStream(stream);
-                            SDL_free(src_buf);
-                            SDL_free(dst_buf);
                             return TEST_ABORTED;
                         }
 
@@ -843,9 +837,6 @@ static int SDLCALL audio_convertAudio(void *arg)
                         real_dst_len = SDL_GetAudioStreamData(stream, dst_buf, dst_len);
                         SDLTest_AssertCheck(dst_len == real_dst_len, "Verify result value; expected: %i; got: %i", dst_len, real_dst_len);
                         if (dst_len != real_dst_len) {
-                            SDL_DestroyAudioStream(stream);
-                            SDL_free(src_buf);
-                            SDL_free(dst_buf);
                             return TEST_ABORTED;
                         }
 
@@ -857,9 +848,6 @@ static int SDLCALL audio_convertAudio(void *arg)
                         for (m = 0; m < dst_len; ++m) {
                             if (dst_buf[m] != dst_silence) {
                                 SDLTest_LogError("Output buffer is not silent");
-                                SDL_DestroyAudioStream(stream);
-                                SDL_free(src_buf);
-                                SDL_free(dst_buf);
                                 return TEST_ABORTED;
                             }
                         }
@@ -1116,7 +1104,6 @@ static int SDLCALL audio_resampleLoss(void *arg)
     SDLTest_AssertCheck(buf_out != NULL, "Expected output buffer to be created.");
     if (buf_out == NULL) {
       SDL_DestroyAudioStream(stream);
-      SDL_free(buf_in);
       return TEST_ABORTED;
     }
 
@@ -1127,7 +1114,6 @@ static int SDLCALL audio_resampleLoss(void *arg)
     SDL_free(buf_in);
     if (len_out != len_target) {
       SDL_DestroyAudioStream(stream);
-      SDL_free(buf_out);
       return TEST_ABORTED;
     }
 
@@ -1144,7 +1130,6 @@ static int SDLCALL audio_resampleLoss(void *arg)
             sum_squared_value += target * target;
         }
     }
-    SDL_DestroyAudioStream(stream);
     SDL_free(buf_out);
     signal_to_noise = 10 * SDL_log10(sum_squared_value / sum_squared_error); /* decibel */
     SDLTest_AssertCheck(ISFINITE(sum_squared_value), "Sum of squared target should be finite.");

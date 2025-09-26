@@ -660,8 +660,7 @@ void X11_CreateInputContext(SDL_WindowData *data)
                                          NULL);
                 X11_XFree(attr);
             }
-        }
-        if (!data->ic) {
+        } else {
             data->ic = X11_XCreateIC(videodata->im,
                                      XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
                                      XNClientWindow, data->xwindow,
@@ -762,9 +761,7 @@ void X11_ShowScreenKeyboard(SDL_VideoDevice *_this, SDL_Window *window, SDL_Prop
             break;
         }
         (void)SDL_snprintf(deeplink, sizeof(deeplink),
-                           "steam://open/keyboard?XPosition=%i&YPosition=%i&Width=%i&Height=%i&Mode=%d",
-                           window->text_input_rect.x, window->text_input_rect.y,
-                           window->text_input_rect.w, window->text_input_rect.h,
+                           "steam://open/keyboard?XPosition=0&YPosition=0&Width=0&Height=0&Mode=%d",
                            mode);
         SDL_OpenURL(deeplink);
         videodata->steam_keyboard_open = true;

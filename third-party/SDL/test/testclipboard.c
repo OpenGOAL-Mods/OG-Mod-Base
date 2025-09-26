@@ -63,8 +63,6 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         if (event->key.key == SDLK_C && event->key.mod & SDL_KMOD_CTRL) {
             SDL_SetClipboardData(ClipboardDataCallback, NULL, NULL, mime_types, SDL_arraysize(mime_types));
             break;
-        } else if (event->key.key == SDLK_P && event->key.mod & SDL_KMOD_CTRL) {
-            SDL_SetPrimarySelectionText("SDL Primary Selection Text!");
         }
         break;
 
@@ -96,15 +94,6 @@ static float PrintClipboardText(float x, float y, const char *mime_type)
     if (data) {
         SDL_RenderDebugText(renderer, x, y, (const char *)data);
         SDL_free(data);
-        return SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE + 2.0f;
-    }
-    return 0.0f;
-}
-
-static float PrintPrimarySelectionText(float x, float y)
-{
-    if (SDL_HasPrimarySelectionText()) {
-        SDL_RenderDebugText(renderer, x, y, SDL_GetPrimarySelectionText());
         return SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE + 2.0f;
     }
     return 0.0f;
@@ -145,7 +134,7 @@ static float PrintClipboardImage(float x, float y, const char *mime_type)
     return 0.0f;
 }
 
-static float PrintClipboardContents(float x, float y)
+static void PrintClipboardContents(float x, float y)
 {
     char **clipboard_mime_types = SDL_GetClipboardMimeTypes(NULL);
     if (clipboard_mime_types) {
@@ -163,8 +152,6 @@ static float PrintClipboardContents(float x, float y)
         }
         SDL_free(clipboard_mime_types);
     }
-
-    return y;
 }
 
 SDL_AppResult SDL_AppIterate(void *appstate)
@@ -177,18 +164,10 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     float y = 4.0f;
     SDL_RenderDebugText(renderer, x, y, "Press Ctrl+C to copy content to the clipboard");
     y += SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * 2;
-    SDL_RenderDebugText(renderer, x, y, "Press Ctrl+P to set the primary selection text");
-    y += SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * 2;
     SDL_RenderDebugText(renderer, x, y, "Clipboard contents:");
     x += SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * 2;
     y += SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE + 2;
-    y = PrintClipboardContents(x, y);
-    if (SDL_HasPrimarySelectionText()) {
-        x = 4.0f;
-        SDL_RenderDebugText(renderer, x, y, "Primary selection text contents:");
-        y += SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE + 2;
-        PrintPrimarySelectionText(x + SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * 2, y);
-    }
+    PrintClipboardContents(x, y);
 
     SDL_RenderPresent(renderer);
 

@@ -192,13 +192,7 @@ bool HIDAPI_SupportsPlaystationDetection(Uint16 vendor, Uint16 product)
     case USB_VENDOR_SHANWAN_ALT:
         return true;
     case USB_VENDOR_THRUSTMASTER:
-        /* Most of these are wheels, don't have the full set of effects, and
-         * at least in the case of the T248 and T300 RS, the hid-tmff2 driver
-         * puts them in a non-standard report mode and they can't be read.
-         *
-         * If these should use the HIDAPI driver, add them to controller_list.h
-         */
-        return false;
+        return true;
     case USB_VENDOR_ZEROPLUS:
         return true;
     case 0x7545 /* SZ-MYPOWER */:
@@ -363,7 +357,7 @@ static SDL_HIDAPI_Device *HIDAPI_GetDeviceByIndex(int device_index, SDL_Joystick
     SDL_AssertJoysticksLocked();
 
     for (device = SDL_HIDAPI_devices; device; device = device->next) {
-        if (device->parent || device->broken) {
+        if (device->parent) {
             continue;
         }
         if (device->driver) {
@@ -533,6 +527,24 @@ static bool HIDAPI_JoystickInit(void)
         return true;
     }
 
+#ifdef SDL_USE_LIBUDEV
+    if (linux_enumeration_method == ENUMERATION_UNSET) {
+        if (!SDL_GetHintBoolean(SDL_HINT_HIDAPI_UDEV, true)) {
+            SDL_LogDebug(SDL_LOG_CATEGORY_INPUT,
+                         "udev disabled by SDL_HINT_HIDAPI_UDEV");
+            linux_enumeration_method = ENUMERATION_FALLBACK;
+        } else if (SDL_GetSandbox() != SDL_SANDBOX_NONE) {
+            SDL_LogDebug(SDL_LOG_CATEGORY_INPUT,
+                         "Container detected, disabling HIDAPI udev integration");
+            linux_enumeration_method = ENUMERATION_FALLBACK;
+        } else {
+            SDL_LogDebug(SDL_LOG_CATEGORY_INPUT,
+                         "Using udev for HIDAPI joystick device discovery");
+            linux_enumeration_method = ENUMERATION_LIBUDEV;
+        }
+    }
+#endif
+
     if (SDL_hid_init() < 0) {
         return SDL_SetError("Couldn't initialize hidapi");
     }
@@ -685,7 +697,7 @@ bool HIDAPI_HasConnectedUSBDevice(const char *serial)
     }
 
     for (device = SDL_HIDAPI_devices; device; device = device->next) {
-        if (!device->driver || device->broken) {
+        if (!device->driver) {
             continue;
         }
 
@@ -711,7 +723,7 @@ void HIDAPI_DisconnectBluetoothDevice(const char *serial)
     }
 
     for (device = SDL_HIDAPI_devices; device; device = device->next) {
-        if (!device->driver || device->broken) {
+        if (!device->driver) {
             continue;
         }
 
@@ -751,12 +763,11 @@ bool HIDAPI_JoystickConnected(SDL_HIDAPI_Device *device, SDL_JoystickID *pJoysti
 
     ++SDL_HIDAPI_numjoysticks;
 
+    SDL_PrivateJoystickAdded(joystickID);
+
     if (pJoystickID) {
         *pJoystickID = joystickID;
     }
-
-    SDL_PrivateJoystickAdded(joystickID);
-
     return true;
 }
 
@@ -869,8 +880,10 @@ static SDL_HIDAPI_Device *HIDAPI_AddDevice(const struct SDL_hid_device_info *inf
         return NULL;
     }
     SDL_SetObjectValid(device, SDL_OBJECT_TYPE_HIDAPI_JOYSTICK, true);
-    if (info->path) {
-        device->path = SDL_strdup(info->path);
+    device->path = SDL_strdup(info->path);
+    if (!device->path) {
+        SDL_free(device);
+        return NULL;
     }
     device->seen = true;
     device->vendor_id = info->vendor_id;
@@ -1015,10 +1028,6 @@ static bool HIDAPI_CreateCombinedJoyCons(void)
             // This device is already part of a combined device
             continue;
         }
-        if (device->broken) {
-            // This device can't be used
-            continue;
-        }
 
         SDL_GetJoystickGUIDInfo(device->guid, &vendor, &product, NULL, NULL);
 
@@ -1052,11 +1061,6 @@ static bool HIDAPI_CreateCombinedJoyCons(void)
             info.usage = USB_USAGE_GENERIC_GAMEPAD;
             info.manufacturer_string = L"Nintendo";
             info.product_string = L"Switch Joy-Con (L/R)";
-            if (children[0]->is_bluetooth || children[1]->is_bluetooth) {
-                info.bus_type = SDL_HID_API_BUS_BLUETOOTH;
-            } else {
-                info.bus_type = SDL_HID_API_BUS_USB;
-            }
 
             combined = HIDAPI_AddDevice(&info, 2, children);
             if (combined && combined->driver) {
@@ -1139,17 +1143,10 @@ check_removed:
                 goto check_removed;
             } else {
                 HIDAPI_DelDevice(device);
-                device = NULL;
 
                 // Update the device list again in case this device comes back
                 SDL_HIDAPI_change_count = 0;
             }
-        }
-        if (device && device->broken && device->parent) {
-            HIDAPI_DelDevice(device->parent);
-
-            // We deleted a different device here, restart the loop
-            goto check_removed;
         }
         device = next;
     }
@@ -1493,7 +1490,7 @@ static bool HIDAPI_JoystickOpen(SDL_Joystick *joystick, int device_index)
 
     SDL_AssertJoysticksLocked();
 
-    if (!device || !device->driver || device->broken) {
+    if (!device || !device->driver) {
         // This should never happen - validated before being called
         return SDL_SetError("Couldn't find HIDAPI device at index %d", device_index);
     }
