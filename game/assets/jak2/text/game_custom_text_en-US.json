@@ -258,5 +258,20 @@
   "2001": "<PAD_CIRCLE>",
   "2002": "<PAD_X>",
   "2003": "<PAD_SQUARE>",
-  "2004": "Torn's Symbols"
+  "2004": "Torn's Symbols",
+
+  "10000": "Landing Pad",
+  "10001": "Metal Head Nest",
+  "10002": "Haven City Port",
+  "10003": "Strip Mine",
+  "10004": "Drill Platform (Warp 1)",
+  "10005": "Drill Platform (Warp 2)",
+  "10006": "Power Station",
+  "10007": "Mountain Temple (Top)",
+  "10008": "Mountain Temple (Bottom)",
+
+  "100000": "Select Destination",
+  "100001": "No Menu Data",
+  "100002": "Next Page",
+  "100003": "Previous Page"
 }
