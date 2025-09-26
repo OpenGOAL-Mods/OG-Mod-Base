@@ -27,31 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          fetch-tags: true
-
-      # full checkout with tags if we ARE uploading artifacts
-      - name: Checkout Repository with Tags
-        if: ${{ inputs.uploadArtifacts }}
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-
-      # full checkout with tags if we ARE uploading artifacts
-      - name: Checkout Repository with Tags
-        if: ${{ inputs.uploadArtifacts }}
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-
-      # full checkout with tags if we ARE uploading artifacts
-      - name: Checkout Repository with Tags
-        if: ${{ inputs.uploadArtifacts }}
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
+          fetch-tags: false
 
       # full checkout with tags if we ARE uploading artifacts
       - name: Checkout Repository with Tags
@@ -62,10 +38,17 @@ jobs:
           fetch-tags: true
 
       - name: Install Package Dependencies
-        run: brew install cmake nasm ninja
+        env:
+          HOMEBREW_NO_INSTALL_CLEANUP: 1
+          HOMEBREW_NO_ANALYTICS: 1
+        run: |
+          if ! brew install ninja nasm; then
+            brew update
+            brew install ninja nasm
+          fi
 
       - name: Setup sccache
-        uses: hendrikmuhs/ccache-action@v1.2.17
+        uses: hendrikmuhs/ccache-action@v1.2.18
         with:
           variant: sccache
           key: macos-13-${{ inputs.cachePrefix }}-${{ inputs.cmakePreset }}-${{ github.sha }}
@@ -83,6 +66,9 @@ jobs:
 
       - name: Build Project
         run: cmake --build build --parallel $((`sysctl -n hw.logicalcpu`))
+
+      - name: List libraries of gk
+        run: otool -L ./build/game/gk
 
       # - name: Run Tests
       #   run: ./test.sh
