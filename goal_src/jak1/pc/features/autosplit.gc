@@ -156,6 +156,7 @@
                               task-id)))))
   ;; loading/cutscene related flags
   (set! (-> *autosplit-info-jak1* in-cutscene?) (real-movie?))
+  (set! (-> *autosplit-info-jak1* current-level-id) (-> (level-get-target-inside *level*) info index))
   ;; need resolution flags
   (autosplit-flag-task-complete! res-training-gimmie training-gimmie)
   (autosplit-flag-task-complete! res-training-door training-door)
@@ -277,6 +278,13 @@
         (if (task-closed? (game-task rolling-moles) (task-status need-reminder)) 1 0))
   (set! (-> *autosplit-info-jak1* com-rolling-race)
         (if (task-closed? (game-task rolling-race) (task-status need-reminder)) 1 0))
+  ;; warp gate switches
+  (set! (-> *autosplit-info-jak1* hin-village2-levitator)
+        (if (task-closed? (game-task village2-levitator) (task-status need-hint)) 1 0))
+  (set! (-> *autosplit-info-jak1* hin-village3-button)
+        (if (task-closed? (game-task village3-button) (task-status need-hint)) 1 0))
+  (set! (-> *autosplit-info-jak1* hin-village4-button)
+        (if (task-closed? (game-task village4-button) (task-status need-hint)) 1 0))
   ;; end
   (none))
 

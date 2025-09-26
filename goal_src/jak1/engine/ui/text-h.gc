@@ -794,11 +794,14 @@
   (progress-no-other-resolution-options #x1616)
   (input-opts-controller-led-reflect-heat #x1617)
   (input-opts-controller-pressure-sensitivity #x1618)
+  (input-opts-analog-sensitivity #x1619)
   ;; mod text mod-base-change
   (pad-triangle #x2000)
   (pad-circle #x2001)
   (pad-x #x2002)
   (pad-square #x2003)
+
+  (save-and-load-game #x3000)
   ;; GAME-TEXT-ID ENUM ENDS
   )
 
