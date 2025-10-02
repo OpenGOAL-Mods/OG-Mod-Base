@@ -14,8 +14,8 @@
   ((level-name    symbol) ;; level name
    (continue-name string) ;; name of the checkpoint Jak will be teleported to
    (text-id       text-id) ;; text ID that defines the name displayed for this destination in the menu 
-   (allow-when    string) ;; optional: the task node that must be completed for this entry to become available
-   (forbid-when   string) ;; optional: if the specified task node is completed, this entry will be hidden regardless of `allow-when`
+   (allow-when    (function symbol)) ;; optional: function that must return true for this entry to become available
+   (forbid-when   (function symbol)) ;; optional: function that hides this entry if it returns true, regardless of `allow-when`
    (on-activate   pair) ;; optional: actions executed when the destination is selected (e.g., play scenes, load levels, close tasks)
    )  
   )
@@ -46,7 +46,7 @@
                 :level-name 'caspad
                 :continue-name "caspad-warp"
                 :text-id (text-id caspad-name) ;"Landing Pad"
-                :allow-when "dig-knock-down-introduction"  ;; first dig mission required
+                :allow-when (lambda () (task-closed? "dig-knock-down-introduction"))  ;; first dig mission required
                 :forbid-when #f
                 :on-activate '(scene-play '("city-air-train-in-caspad" "caspad-air-train-out"))
                 )
@@ -54,7 +54,7 @@
                 :level-name 'nest
                 :continue-name "nest-warp"
                 :text-id (text-id nest-name) ;"Metal Head Nest"
-                :allow-when "nest-get-to-gun-introduction"  ;; first nest mission required
+                :allow-when (lambda () (task-closed? "nest-get-to-gun-introduction"))  ;; first nest mission required
                 :forbid-when #f
                 :on-activate '(scene-play '("city-air-train-in-nest" "nest-air-train-out"))
                 )
@@ -67,7 +67,7 @@
                 :level-name 'ctyport
                 :continue-name "ctyport-warp"
                 :text-id (text-id ctyport-name) ;"Haven City Port"
-                :allow-when "dig-knock-down-introduction"  ;; first dig mission required
+                :allow-when (lambda () (task-closed? "dig-knock-down-introduction"))  ;; first dig mission required
                 :forbid-when #f
                 :on-activate '(scene-play '("caspad-air-train-in" "city-air-train-out"))
                 )
@@ -75,7 +75,7 @@
                 :level-name 'nest
                 :continue-name "nest-warp"
                 :text-id (text-id nest-name) ;"Metal Head Nest"
-                :allow-when "nest-get-to-gun-introduction"  ;; first nest mission required
+                :allow-when (lambda () (task-closed? "nest-get-to-gun-introduction"))  ;; first nest mission required
                 :forbid-when #f
                 :on-activate '(scene-play '("caspad-air-train-in" "nest-air-train-out"))
                 )
@@ -88,7 +88,7 @@
                 :level-name 'ctyport
                 :continue-name "ctyport-warp"
                 :text-id (text-id ctyport-name) ;"Haven City Port"
-                :allow-when "nest-get-to-gun-introduction"  ;; first nest mission required
+                :allow-when (lambda () (task-closed? "nest-get-to-gun-introduction"))  ;; first nest mission required
                 :forbid-when #f
                 :on-activate '(scene-play '("nest-air-train-in" "city-air-train-out"))
                 )
@@ -96,7 +96,7 @@
                 :level-name 'caspad
                 :continue-name "caspad-warp"
                 :text-id (text-id caspad-name) ;"Landing Pad"
-                :allow-when "nest-get-to-gun-introduction"  ;; first nest mission required
+                :allow-when (lambda () (task-closed? "nest-get-to-gun-introduction"))  ;; first nest mission required
                 :forbid-when #f
                 :on-activate '(scene-play '("nest-air-train-in" "caspad-air-train-out"))
                 )

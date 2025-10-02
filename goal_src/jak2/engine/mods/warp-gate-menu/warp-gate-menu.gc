@@ -11,12 +11,12 @@
           (available-count 0) ;; stores the amount of options that are available for selection 
           )
     (dotimes (i list-length)
-      (let* ((allow-task (-> menu i allow-when))
-              (forbid-task (-> menu i forbid-when))
-              )
-        ;; include the option if the `allow-when` task is closed,
-        ;; and the `forbid-when` task is either not set or not closed yet.
-        (when (and (or (not allow-task) (task-closed? allow-task)) (or (not forbid-task) (not (task-closed? forbid-task))))
+      (let* ((allowed? (-> menu i allow-when))
+             (forbidden? (-> menu i forbid-when)))
+        ;; include the option if `allowed?` is set and returns true,
+        ;; and `forbidden?` is either not set (not forbidden?) or does not return true (not (forbidden?)).
+        (when (and (or (not allowed?) (allowed?)) 
+                   (or (not forbidden?) (not (forbidden?))))
           (set! (-> available-idxs available-count) i) ;; store the available option indexes in `available-idxs` array  
           (+! available-count 1)
           )
@@ -179,10 +179,12 @@
           (list-length (-> menu length))
           )
     (dotimes (i list-length)
-      (let* ((allow-task (-> menu i allow-when))
-              (forbid-task (-> menu i forbid-when))
-              )
-        (when (and (or (not allow-task) (task-closed? allow-task)) (or (not forbid-task) (not (task-closed? forbid-task))))
+      (let* ((allowed? (-> menu i allow-when))
+             (forbidden? (-> menu i forbid-when)))
+        ;; include the option if `allowed?` is set and returns true,
+        ;; and `forbidden?` is either not set (not forbidden?) or does not return true (not (forbidden?)).
+        (when (and (or (not allowed?) (allowed?)) 
+                   (or (not forbidden?) (not (forbidden?))))
           (return #t)
           )
         )

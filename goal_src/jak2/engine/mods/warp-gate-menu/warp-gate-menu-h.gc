@@ -14,8 +14,8 @@
   ((level-name    symbol) ;; level name
    (continue-name string) ;; name of the checkpoint Jak will be teleported to
    (text-id       text-id) ;; text ID that defines the name displayed for this destination in the menu 
-   (allow-when    string) ;; optional: the task node that must be completed for this entry to become available
-   (forbid-when   string) ;; optional: if the specified task node is completed, this entry will be hidden regardless of `allow-when`
+   (allow-when    (function symbol)) ;; optional: function that must return true for this entry to become available
+   (forbid-when   (function symbol)) ;; optional: function that hides this entry if it returns true, regardless of `allow-when`
    (on-activate   pair) ;; optional: actions executed when the destination is selected (e.g., play scenes, load levels, close tasks)
    (wait-for      pair)
    (on-close      pair)
@@ -53,22 +53,22 @@
                 :continue-name "strip-warp"
                 :text-id (text-id strip-name) ;"Strip Mine"
                 :allow-when #f
-                :forbid-when "city-power-introduction" ;; unavailable from the city guard turret mission
+                :forbid-when (lambda () (task-closed? "city-power-introduction")) ;; unavailable from the city guard turret mission
                 :on-activate #f
                 )
               (static-warp-gate-menu-entry
                 :level-name 'drillmid
                 :continue-name "drill1-warp"
                 :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
-                :allow-when "drill-eggs-introduction"  ;; first drill platform mission required
-                :forbid-when "city-power-introduction" ;; unavailable from the city guard turret mission
+                :allow-when (lambda () (task-closed? "drill-eggs-introduction"))  ;; first drill platform mission required
+                :forbid-when (lambda () (task-closed? "city-power-introduction")) ;; unavailable from the city guard turret mission
                 :on-activate #f
                 )
               (static-warp-gate-menu-entry 
                 :level-name 'strip
                 :continue-name "strip-warp"
                 :text-id (text-id strip-name) ;"Strip Mine"
-                :allow-when "strip-grenade-introduction" ;; second strip mine mission required
+                :allow-when (lambda () (task-closed? "strip-grenade-introduction")) ;; second strip mine mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -76,7 +76,7 @@
                 :level-name 'drillmid
                 :continue-name "drill3-warp"
                 :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
-                :allow-when "drill-mech-introduction"  ;; third drill platform mission required
+                :allow-when (lambda () (task-closed? "drill-mech-introduction"))  ;; third drill platform mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -84,7 +84,7 @@
                 :level-name 'drillmid
                 :continue-name "drill-warp-gunship"
                 :text-id (text-id drill-name-2) ;"Drill Platform (Warp 2)"
-                :allow-when "drill-ship-introduction"  ;; second drill platform mission required
+                :allow-when (lambda () (task-closed? "drill-ship-introduction"))  ;; second drill platform mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -105,15 +105,15 @@
                 :level-name 'drillmid
                 :continue-name "drill1-warp"
                 :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
-                :allow-when "drill-eggs-introduction" ;; first drill platform mission required
-                :forbid-when "city-power-introduction" ;; unavailable from the city guard turret mission
+                :allow-when (lambda () (task-closed? "drill-eggs-introduction")) ;; first drill platform mission required
+                :forbid-when (lambda () (task-closed? "city-power-introduction")) ;; unavailable from the city guard turret mission
                 :on-activate #f
                 )
               (static-warp-gate-menu-entry
                 :level-name 'drillmid
                 :continue-name "drill3-warp"
                 :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
-                :allow-when "drill-mech-introduction"  ;; third drill platform mission required
+                :allow-when (lambda () (task-closed? "drill-mech-introduction"))  ;; third drill platform mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -121,7 +121,7 @@
                 :level-name 'drillmid
                 :continue-name "drill-warp-gunship"
                 :text-id (text-id drill-name-2) ;"Drill Platform (Warp 2)"
-                :allow-when "drill-ship-introduction" ;; second drill platform mission required
+                :allow-when (lambda () (task-closed? "drill-ship-introduction")) ;; second drill platform mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -142,15 +142,15 @@
                 :level-name 'drillmid
                 :continue-name "drill1-warp"
                 :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
-                :allow-when "drill-eggs-introduction" ;; first drill platform mission required
-                :forbid-when "city-power-introduction" ;; unavailable from the city guard turret mission
+                :allow-when (lambda () (task-closed? "drill-eggs-introduction")) ;; first drill platform mission required
+                :forbid-when (lambda () (task-closed? "city-power-introduction")) ;; unavailable from the city guard turret mission
                 :on-activate #f
                 )
               (static-warp-gate-menu-entry
                 :level-name 'drillmid
                 :continue-name "drill3-warp"
                 :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
-                :allow-when "drill-mech-introduction"  ;; third drill platform mission required
+                :allow-when (lambda () (task-closed? "drill-mech-introduction"))  ;; third drill platform mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -158,7 +158,7 @@
                 :level-name 'drillmid
                 :continue-name "drill-warp-gunship"
                 :text-id (text-id drill-name-2) ;"Drill Platform (Warp 2)"
-                :allow-when "drill-ship-introduction" ;; second drill platform mission required
+                :allow-when (lambda () (task-closed? "drill-ship-introduction")) ;; second drill platform mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -192,7 +192,7 @@
                 :level-name 'vinroom
                 :continue-name "vinroom-warp"
                 :text-id (text-id vinroom-name) ;"Power Station"
-                :allow-when "drill-eggs-resolution"
+                :allow-when (lambda () (task-closed? "drill-eggs-resolution"))
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -200,7 +200,7 @@
                 :level-name 'strip
                 :continue-name "strip-warp"
                 :text-id (text-id strip-name) ;"Strip Mine"
-                :allow-when "drill-eggs-resolution"
+                :allow-when (lambda () (task-closed? "drill-eggs-resolution"))
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -247,7 +247,7 @@
                 :level-name 'mountain
                 :continue-name "mountain-warp-bottom"
                 :text-id (text-id mountain-bottom-name) ;"Mountain Temple (Bottom)"
-                :allow-when "mountain-lens-started"
+                :allow-when (lambda () (task-closed? "mountain-lens-started"))
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -276,7 +276,7 @@
                 :level-name 'drillmid
                 :continue-name "drill3-warp"
                 :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
-                :allow-when "drill-mech-introduction"  ;; third drill platform mission required
+                :allow-when (lambda () (task-closed? "drill-mech-introduction"))  ;; third drill platform mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -297,7 +297,7 @@
                 :level-name 'vinroom
                 :continue-name "vinroom-warp"
                 :text-id (text-id vinroom-name) ;"Power Station"
-                :allow-when "fortress-save-friends-resolution" ;; third completed fortress mission required
+                :allow-when (lambda () (task-closed? "fortress-save-friends-resolution")) ;; third completed fortress mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -305,7 +305,7 @@
                 :level-name 'strip
                 :continue-name "strip-warp"
                 :text-id (text-id strip-name) ;"Strip Mine"
-                :allow-when "fortress-save-friends-resolution" ;; third completed fortress mission required
+                :allow-when (lambda () (task-closed? "fortress-save-friends-resolution")) ;; third completed fortress mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -313,7 +313,7 @@
                 :level-name 'drillmid
                 :continue-name "drill3-warp"
                 :text-id (text-id drill-name-1) ;"Drill Platform (Warp 1)"
-                :allow-when "fortress-save-friends-resolution" ;; third completed fortress mission required
+                :allow-when (lambda () (task-closed? "fortress-save-friends-resolution")) ;; third completed fortress mission required
                 :forbid-when #f
                 :on-activate #f
                 )
@@ -321,7 +321,7 @@
                 :level-name 'drillmid
                 :continue-name "drill-warp-gunship"
                 :text-id (text-id drill-name-2) ;"Drill Platform (Warp 2)"
-                :allow-when "fortress-save-friends-resolution" ;; third completed fortress mission required
+                :allow-when (lambda () (task-closed? "fortress-save-friends-resolution")) ;; third completed fortress mission required
                 :forbid-when #f
                 :on-activate #f
                 )
