@@ -399,6 +399,28 @@
 (defmacro cpad-pressed? (pad-idx &rest buttons)
   `(logtest? (cpad-pressed ,pad-idx) (pad-buttons ,@buttons)))
 
+(defenum dpad-idx
+  (none)
+  (up)
+  (right)
+  (down)
+  (left)
+  )
+
+(defun cpad-dpad-pressed? ((idx int))
+  (cond
+    ((cpad-pressed? idx up)
+      (return (dpad-idx up)))
+    ((cpad-pressed? idx down)
+      (return (dpad-idx down)))
+    ((cpad-pressed? idx left)
+      (return (dpad-idx left)))
+    ((cpad-pressed? idx right)
+      (return (dpad-idx right)))
+  )
+  #f
+)
+
 (defmacro cpad-hold? (pad-idx &rest buttons)
   `(logtest? (cpad-hold ,pad-idx) (pad-buttons ,@buttons)))
 
