@@ -133,6 +133,7 @@
      (save-and-load-game)
      (memcard-saving-and-loading)
      (memcard-data-exists-save-and-load)
+     (shop-options)
      ;; the last one!
      (max))
    (defenum game-option-type

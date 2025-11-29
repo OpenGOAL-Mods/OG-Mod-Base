@@ -636,6 +636,7 @@
                         (= v1-2 (progress-screen speedrun-options))
                         (= v1-2 (progress-screen speedrun-il-options))
                         (= v1-2 (progress-screen speedrun-cat-ext-options))
+                        (= v1-2 (progress-screen shop-options))
                         (= v1-2 (progress-screen input-options))
                         (= v1-2 (progress-screen select-controller))
                         (= v1-2 (progress-screen controller-binds))

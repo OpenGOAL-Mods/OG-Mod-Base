@@ -125,6 +125,12 @@
        (new 'static
             'game-option
             :option-type (game-option-type menu)
+            :name (text-id shop-options)
+            :scale #t
+            :param3 (game-option-menu shop-options))
+       (new 'static
+            'game-option
+            :option-type (game-option-type menu)
             :name (text-id game-options)
             :scale #t
             :param3 (game-option-menu game-settings))
@@ -181,6 +187,12 @@
        (new 'static
             'game-option
             :option-type (game-option-type menu)
+            :name (text-id shop-options)
+            :scale #t
+            :param3 (game-option-menu shop-options))
+       (new 'static
+            'game-option
+            :option-type (game-option-type menu)
             :name (text-id game-options)
             :scale #t
             :param3 (game-option-menu game-settings))
@@ -226,6 +238,15 @@
             :name (text-id quit-game)
             :scale #t
             :param3 (game-option-menu quit))
+       (new 'static 'game-option :option-type (game-option-type button) :name (text-id back) :scale #t)))
+
+(define *shop-options*
+  (new 'static
+       'boxed-array
+       :type
+       game-option
+       (new 'static 'game-option :option-type (game-option-type button) :name (text-id shop-jump) :scale #t)
+       (new 'static 'game-option :option-type (game-option-type button) :name (text-id shop-punch) :scale #t)
        (new 'static 'game-option :option-type (game-option-type button) :name (text-id back) :scale #t)))
 
 (define *game-options-pc*
@@ -2126,6 +2147,7 @@
   (set! (-> *options-remap* (progress-screen speedrun-options)) *speedrun-options*)
   (set! (-> *options-remap* (progress-screen speedrun-il-options)) *speedrun-il-options*)
   (set! (-> *options-remap* (progress-screen speedrun-cat-ext-options)) *speedrun-cat-ext-options*)
+  (set! (-> *options-remap* (progress-screen shop-options)) *shop-options*)
   ;; set default params
   (set! (-> *progress-state* aspect-ratio-choice) (get-aspect-ratio))
   (set! (-> *progress-state* video-mode-choice) (get-video-mode))
@@ -2192,6 +2214,11 @@
   (set! (-> *progress-carousell* aspect-native-choice) (-> *pc-settings* use-vis?))
   ;; scroll stuff!
   (progress-scroll-reset)
+  (none))
+
+(defun shop-buy ((name text-id))
+  (sound-play "money-pickup")
+  (format 0 "Bought ~S (~S ~D) ~%" (lookup-text! *common-text* name #f) (enum->string text-id name) name)
   (none))
 
 (defmethod respond-common ((obj progress))
@@ -2574,7 +2601,12 @@
                  (((text-id speedrun-hub1-100)) (progress-fast-save-and-start-speedrun (speedrun-category hub1-100)))
                  (((text-id speedrun-hub2-100)) (progress-fast-save-and-start-speedrun (speedrun-category hub2-100)))
                  (((text-id speedrun-hub3-100)) (progress-fast-save-and-start-speedrun (speedrun-category hub3-100)))
-                 (((text-id speedrun-all-cutscenes)) (progress-fast-save-and-start-speedrun (speedrun-category all-cutscenes))))
+                 (((text-id speedrun-all-cutscenes)) (progress-fast-save-and-start-speedrun (speedrun-category all-cutscenes)))
+                 ;; shop options
+                 (((text-id shop-jump) (text-id shop-punch))
+                  (shop-buy (-> options (-> obj option-index) name)))
+                 )
+
                (commit-to-file *pc-settings*)
                ;; other behaviors are hardcoded elsewhere because screw you.
                )
@@ -3508,6 +3540,7 @@
             (((progress-screen speedrun-options)) (hide-progress-icons) (draw-notice-screen self) (draw-options self 155 25 0.65))
             (((progress-screen camera-options)
               (progress-screen checkpoint-select)
+              (progress-screen shop-options)
               (progress-screen speedrun-il-options)
               (progress-screen speedrun-cat-ext-options))
              ;; camera options lines are a bit too big

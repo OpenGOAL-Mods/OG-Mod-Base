@@ -236,5 +236,9 @@
   "2002": "<PAD_X>",
   "2003": "<PAD_SQUARE>",
   
-  "3000": "SAVE AND LOAD GAME"
+  "3000": "SAVE AND LOAD GAME",
+
+  "3100": "SHOP",
+  "3101": "JUMP",
+  "3102": "PUNCH"
 }

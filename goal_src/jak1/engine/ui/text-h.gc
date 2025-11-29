@@ -803,6 +803,10 @@
   (pad-square #x2003)
 
   (save-and-load-game #x3000)
+
+  (shop-options #x3100)
+  (shop-jump #x3101)
+  (shop-punch #x3102)
   ;; GAME-TEXT-ID ENUM ENDS
   )
 
