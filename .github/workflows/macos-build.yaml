@@ -17,14 +17,14 @@ on:
 jobs:
   build:
     name: Intel
-    runs-on: macos-13
+    runs-on: macos-15-intel
     timeout-minutes: 120
 
     steps:
       # minimal checkout if we're NOT uploading artifacts
       - name: Checkout Repository
         if: ${{ ! inputs.uploadArtifacts }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           fetch-tags: false
@@ -32,7 +32,7 @@ jobs:
       # full checkout with tags if we ARE uploading artifacts
       - name: Checkout Repository with Tags
         if: ${{ inputs.uploadArtifacts }}
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -48,11 +48,11 @@ jobs:
           fi
 
       - name: Setup sccache
-        uses: hendrikmuhs/ccache-action@v1.2.18
+        uses: hendrikmuhs/ccache-action@v1.2.20
         with:
           variant: sccache
-          key: macos-13-${{ inputs.cachePrefix }}-${{ inputs.cmakePreset }}-${{ github.sha }}
-          restore-keys: macos-13-${{ inputs.cachePrefix }}-${{ inputs.cmakePreset }}
+          key: macos-15-intel-${{ inputs.cachePrefix }}-${{ inputs.cmakePreset }}-${{ github.sha }}
+          restore-keys: macos-15-intel-${{ inputs.cachePrefix }}-${{ inputs.cmakePreset }}
           max-size: 1000M
 
       - name: CMake Generation
@@ -82,7 +82,7 @@ jobs:
           strip ./build/lsp/lsp
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: ${{ inputs.uploadArtifacts }}
         with:
           name: opengoal-macos-${{ inputs.cachePrefix }}
