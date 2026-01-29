@@ -1,0 +1,26 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *ctyinda-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "vin-door-ctyinda-1"
+                :on-notice '(when (task-closed? "strip-rescue-introduction") '(vinroom))
+                :on-activate '(want-load 'vinroom 'ctywide 'ctyinda)
+                :on-enter '(begin (want-display 'vinroom 'display) (want-sound 'ctywide1 'ctywide2 'vinroom1))
+                :on-exit #f
+                :on-cross '(want-vis 'vinroom)
+                :on-inside #f
+                :on-deactivate '(begin (want-display 'vinroom #f) (want-sound 'ctywide1 'ctywide2 'ctywide3))
+                )
+              (static-airlock-data 
+                :airlock-name "vin-door-ctyinda-2"
+                :on-notice '(when (task-closed? "consite-find-baron-introduction") '(consiteb))
+                :on-activate '(want-load 'ctyinda 'ctywide 'consiteb)
+                :on-enter '(begin (want-display 'consiteb 'display) (want-sound 'ctywide1 'ctywide2 #f))
+                :on-exit #f
+                :on-cross '(want-vis 'consiteb)
+                :on-inside #f
+                :on-deactivate '(begin (want-display 'consiteb #f) (want-sound 'ctywide1 'ctywide2 'ctywide3))
+                )
+              )
+  )

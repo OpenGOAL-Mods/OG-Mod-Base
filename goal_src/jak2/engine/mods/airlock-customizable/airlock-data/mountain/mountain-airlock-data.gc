@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *mountain-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-4"
+                :on-notice '(when #t '(ctyfarma))
+                :on-activate '(want-load 'mountain 'ctyfarma #f)
+                :on-enter '(want-display 'ctyfarma 'display)
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(want-display 'ctyfarma #f)
+                )
+              )
+  )

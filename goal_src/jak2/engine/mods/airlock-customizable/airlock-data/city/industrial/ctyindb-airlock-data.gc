@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *ctyindb-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-13"
+                :on-notice '(cond ((task-closed? "sewer-escort-introduction") '(sewescb)) ((task-closed? "sewer-enemy-introduction") '(sewerb)))
+                :on-activate '(cond ((task-closed? "sewer-escort-introduction") (want-load 'sewescb 'ctyindb 'ctywide)) ((task-closed? "sewer-enemy-introduction") (want-load 'sewerb 'ctyindb 'ctywide)))
+                :on-enter '(cond ((task-closed? "sewer-escort-introduction") (want-display 'sewescb 'display) (want-sound 'ctywide1 'ctywide2 'sewer4)) ((task-closed? "sewer-enemy-introduction") (want-display 'sewerb 'display) (want-sound 'ctywide1 'ctywide2 'sewer1)))
+                :on-exit #f
+                :on-cross '(cond ((task-closed? "sewer-escort-introduction") (want-sound 'ctywide1 'ctywide2 'sewer4) '(want-vis 'sewesc)) ((task-closed? "sewer-enemy-introduction") (want-sound 'ctywide1 'ctywide2 'sewer1) '(want-vis 'sewer)))
+                :on-inside #f
+                :on-deactivate '(cond ((task-closed? "sewer-escort-introduction") (want-display 'sewescb #f) (want-sound 'ctywide1 'ctywide2 'ctywide3)) ((task-closed? "sewer-enemy-introduction") (want-display 'sewerb #f) (want-sound 'ctywide1 'ctywide2 'ctywide3)))
+                )
+              )
+  )

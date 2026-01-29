@@ -1,0 +1,46 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *ctypal-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "palace-door-1"
+                :on-notice '(when (or (task-closed? "palace-sneak-in-introduction") (and (not (send-event self 'front)) (< (send-event self 'distance) 400))) '(palshaft))
+                :on-activate '(want-load 'ctypal 'ctywide 'palshaft)
+                :on-enter '(begin (want-display 'palshaft 'display) (want-sound 'ctywide1 'ctywide2 'palcab1) (talker-spawn "cityv021") (unless (send-event com-elevator-3 'query 'player-standing-on?) (send-event com-elevator-3 'jump-to 'bottom)))
+                :on-exit '(want-display 'palshaft #f)
+                :on-cross '(want-vis 'palshaft)
+                :on-inside #f
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-22"
+                :on-notice '(when (task-closed? "canyon-insert-items-resolution") '(ctypal))
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-27"
+                :on-notice '(when #t '(ctypal tombd))
+                :on-activate #f
+                :on-enter '(begin (want-display 'tombd 'display) (send-event self 'sound 'exit))
+                :on-exit '(want-display 'tombd #f)
+                :on-cross '(want-vis 'tombd)
+                :on-inside '(begin (want-load 'ctypal 'ctywide 'ctyport) (want-sound 'ctywide1 'ctywide2 'ctywide3))
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-28"
+                :on-notice '(when #t '(ctypal ctywide))
+                :on-activate #f
+                :on-enter '(begin (want-display 'ctywide 'display) (send-event self 'sound 'enter))
+                :on-exit '(want-display 'ctywide #f)
+                :on-cross '(want-vis 'ctypal)
+                :on-inside '(begin (want-load 'ctypal 'tombd 'tomba) (want-sound 'ctywide1 'tomb1 'tomb2))
+                :on-deactivate #f
+                )
+              )
+  )

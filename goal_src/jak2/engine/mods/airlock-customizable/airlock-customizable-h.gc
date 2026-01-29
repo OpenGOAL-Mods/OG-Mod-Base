@@ -1,0 +1,119 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+#| This file defines an `airlock-data` structure for easily creating
+   static entries to allow using airlocks in custom levels, as well as
+   editing and customizing the behavior of existing (vanilla) airlocks.
+  |#
+
+(deftype airlock-data (structure)
+  ((airlock-name   string) ;; airlock entity name (should match the entity name placed in the level)
+   (on-notice      pair)   ;; evaluated on initialization to determine which levels must be loaded to open the airlock (can include task conditions)
+   (on-activate    pair)   ;; actions executed when activating the airlock (e.g. load levels with 'want-load', load sound banks with 'want-sound')
+   (on-enter       pair)   ;; actions executed once the airlock finishes opening (e.g. display levels using 'want-display', load sound banks with `want-sound`)
+   (on-exit        pair)   ;; actions executed when exiting the airlock (e.g. hide levels, unload sound banks with 'want-sound')
+   (on-cross       pair)   ;; actions executed at the exact moment of crossing the airlock (e.g. close task nodes)
+   (on-inside      pair)   ;; actions executed while inside the airlock zone (e.g. load levels or sound banks)
+   (on-deactivate  pair)   ;; actions executed after the crossing ends and the airlock closes (e.g. hide levels or unload sound banks)
+   )
+  )
+
+(defmacro static-airlock-data (&key (airlock-name #f)
+                                 &key (on-notice #f)
+                                 &key (on-activate #f)
+                                 &key (on-enter #f)
+                                 &key (on-exit #f)
+                                 &key (on-cross #f)
+                                 &key (on-inside #f)
+                                 &key (on-deactivate #f))
+  `(new 'static 'airlock-data
+     :airlock-name ,airlock-name
+     :on-notice ,on-notice
+     :on-activate ,on-activate
+     :on-enter ,on-enter
+     :on-exit ,on-exit
+     :on-cross ,on-cross
+     :on-inside ,on-inside
+     :on-deactivate ,on-deactivate
+     )
+  )
+
+(deftype com-airlock (process-drawable)
+  ((root                   collide-shape :override)
+   (level-name             pair)
+   (open-test              pair)
+   (were-behind?           symbol)
+   (inner?                 symbol)
+   (sound-behind?          symbol)
+   (visible-move?          symbol)
+   (saw-pilot?             handle)
+   (last-distance          meters)
+   (y-height               vector)
+   (pre-open-speed         float)
+   (latch-closed-time      time-frame)
+   (latch-open-time        time-frame)
+   (gear                   joint-mod)
+   (gear-rot               degrees)
+   (gear-rotv              degrees)
+   (open-frame             float)
+   (pre-open-frame         float)
+   (lock-frame             float)
+   (open-distance          meters)
+   (active-distance        meters)
+   (sound-id               sound-id)
+   (gear-sound-id          sound-id)
+   (sound-gear             sound-spec)
+   (sound-pre-open         sound-spec)
+   (sound-pre-open-stop    sound-spec)
+   (sound-lock-loop        sound-spec)
+   (sound-lock-stop        sound-spec)
+   (sound-open             sound-spec)
+   (sound-open-loop        sound-spec)
+   (sound-open-stop        sound-spec)
+   (sound-close            sound-spec)
+   (sound-close-loop       sound-spec)
+   (sound-close-stop       sound-spec)
+   (sound-post-close       sound-spec)
+   (sound-post-close-stop  sound-spec)
+   (spool-sound-time       time-frame)
+   (door-radius            meters)
+   (on-notice              pair) ;; added
+   (on-activate            pair) ;; added
+   (on-enter               pair) ;; added
+   (on-exit                pair) ;; added
+   (on-cross               pair) ;; added
+   (on-inside              pair) ;; added
+   (on-deactivate          pair) ;; added
+   (data                   (array airlock-data)) ;; added
+   )
+  (:state-methods
+    (open symbol)
+    (close symbol)
+    )
+  (:methods
+    (init-airlock! (_type_) _type_)
+    (want-cross-airlock? (_type_) symbol :behavior com-airlock)
+    (destination-loaded? (_type_ symbol) symbol)
+    (check-crossing-distance (_type_ vector symbol) float :behavior com-airlock)
+    (rotate-gear! (_type_ float) degrees :behavior com-airlock)
+    (play-city-voice-sound (_type_ symbol) none :behavior com-airlock)
+    (init-airlock-data-array! (_type_) none) ;; sets the current com-airlock data array
+    (init-airlock-pair-data! (_type_) none) ;; init each `com-airlock` pair field from shared `airlock-data`
+    )
+  )
+
+;; just an empty array. leave it at is.
+;; used as a fallback when an entity doesn't have a defined data.
+(define *empty-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name #f
+                :on-notice #f
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate #f
+                )
+              )
+  )

@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *palcab-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-17"
+                :on-notice '(when #t '(palshaft))
+                :on-activate '(want-load 'palshaft 'palcab 'palroof)
+                :on-enter '(want-display 'palshaft 'display)
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(want-display 'palshaft #f)
+                )
+              )
+  )

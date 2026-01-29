@@ -1,0 +1,36 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *ctysluma-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "hide-door-a-3"
+                :on-notice '(when (and (task-closed? "ruins-tower-resolution") (not (task-open? "city-escort-kid-introduction")) (not (task-open? "city-escort-kid-resolution"))) '(hideout))
+                :on-activate #f
+                :on-enter '(want-display 'hideout 'display)
+                :on-exit #f
+                :on-cross '(want-vis 'hideout)
+                :on-inside #f
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "fort-entry-gate-17"
+                :on-notice '(cond ((task-closed? "nest-boss-resolution") '(forresca)) ((task-closed? "fortress-save-friends-resolution") #f) ((task-closed? "fortress-save-friends-introduction") '(forresca)) ((task-closed? "fortress-dump-resolution") #f) ((task-closed? "fortress-dump-introduction") '(fordumpa)))
+                :on-activate '(cond ((task-closed? "fortress-save-friends-introduction") (want-load 'ctysluma 'ctywide 'forresca)) ((task-closed? "fortress-dump-introduction") (want-load 'ctysluma 'ctywide 'fordumpa)))
+                :on-enter '(cond ((task-closed? "fortress-save-friends-introduction") (want-display 'forresca 'display) (want-sound 'ctywide1 'ctywide2 'forresc1)) ((task-closed? "fortress-dump-introduction") (want-display 'fordumpa 'display) (want-sound 'ctywide1 'ctywide2 'fordump1)))
+                :on-exit #f
+                :on-cross '(cond ((task-closed? "fortress-save-friends-introduction") (want-vis 'forresca)) ((task-closed? "fortress-dump-resolution") #f) ((task-closed? "fortress-dump-introduction") (want-vis 'fordumpa)))
+                :on-inside #f
+                :on-deactivate '(begin (want-display 'fordumpa #f) (want-display 'forresca #f) (want-sound 'ctywide1 'ctywide2 'ctywide3))
+                )
+              (static-airlock-data 
+                :airlock-name "fort-entry-gate-18"
+                :on-notice '(when #t '(fordumpc))
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(begin (want-display 'fordumpb #f) (want-load 'ctysluma 'ctywide #f))
+                )
+              )
+  )

@@ -1,0 +1,36 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *sewescb-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-15"
+                :on-notice '(when #t '(sewesc sewescb))
+                :on-activate #f
+                :on-enter '(begin (want-display 'sewesc 'display) (want-vis 'sewesc) (send-event self 'sound 'exit))
+                :on-exit '(want-display 'sewesc #f)
+                :on-cross #f
+                :on-inside '(begin (want-load 'ctyindb 'ctywide 'sewescb))
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-11"
+                :on-notice '(when #t '(sewescb sewesc))
+                :on-activate '(begin (when (send-event self 'front) (want-load 'sewesc 'sewescb #f) (send-event "sew-elevator-25" 'jump-to 'bottom)))
+                :on-enter '(want-display 'sewescb 'display)
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(want-display 'sewescb 'display)
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-16"
+                :on-notice '(when #t '(ctyindb ctywide))
+                :on-activate #f
+                :on-enter '(begin (want-display 'ctywide 'display) (want-display 'ctyindb 'display) (send-event self 'sound 'enter))
+                :on-exit '(begin (want-display 'ctywide #f) (want-display 'ctyindb #f))
+                :on-cross '(begin (want-vis 'ctyindb) (want-sound 'ctywide1 'ctywide2 'ctywide3))
+                :on-inside '(begin (want-load 'sewescb 'sewesc #f) (want-sound 'sewer4 'sewer5 'ctywide1))
+                :on-deactivate #f
+                )
+              )
+  )

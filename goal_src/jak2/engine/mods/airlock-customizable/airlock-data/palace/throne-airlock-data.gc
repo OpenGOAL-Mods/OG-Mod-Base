@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *throne-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "pal-throne-door-3"
+                :on-notice '(unless (task-closed? "palace-sneak-in-meeting") '(palent))
+                :on-activate '(want-load 'palent 'throne 'palout)
+                :on-enter #f
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate #f
+                )
+              )
+  )

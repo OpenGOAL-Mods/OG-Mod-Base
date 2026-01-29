@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *caspad-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "cas-front-door-1"
+                :on-notice '(when (task-closed? "castle-break-in-introduction") '(castle))
+                :on-activate '(want-load 'caspad 'castle #f)
+                :on-enter '(begin (want-display 'castle 'display) (talker-spawn "cityv021"))
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(want-display 'castle #f)
+                )
+              )
+  )

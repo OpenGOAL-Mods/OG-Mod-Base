@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *ctygenb-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-15"
+                :on-notice '(cond ((focus-test? *target* pilot) #f) ((task-closed? "nest-boss-resolution") '(palshaft)) ((task-closed? "palace-boss-resolution") #f) ((task-closed? "palace-cable-introduction") '(palshaft)))
+                :on-activate '(cond ((focus-test? *target* pilot) #f) ((task-closed? "nest-boss-resolution") (want-load 'ctygenb 'ctywide 'palshaft)) ((task-closed? "palace-boss-resolution") #f) ((task-closed? "palace-cable-introduction") (want-load 'ctygenb 'ctywide 'palshaft)))
+                :on-enter '(begin (want-display 'palshaft 'display) (want-sound 'ctywide1 'ctywide2 'palcab1))
+                :on-exit #f
+                :on-cross '(want-vis 'palshaft)
+                :on-inside #f
+                :on-deactivate '(begin (want-display 'palshaft #f) (want-sound 'ctywide1 'ctywide2 'ctywide3))
+                )
+              )
+  )
