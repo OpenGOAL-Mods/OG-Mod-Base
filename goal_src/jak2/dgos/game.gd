@@ -429,68 +429,7 @@
   "jak-swim+0-ag.go"
   "blocking-plane-ag.go"
   "los-control-h.o"
-  "airlock.o" ;; original airlock logic - be sure to comment this out if using the customizable airlock logic below
-  ;"airlock-customizable-h.o" ;; added - airlock customizable data definitions file (commented out by default)
-  #|
-  ;; atoll
-  "atoll-airlock-data.o"
-  ;; atollext
-  "atollext-airlock-data.o"
-  ;; city
-  "consite-airlock-data.o"
-  "consiteb-airlock-data.o"
-  "ctyfarma-airlock-data.o"
-  "ctygenb-airlock-data.o"
-  "ctyinda-airlock-data.o"
-  "ctyindb-airlock-data.o"
-  "ctypal-airlock-data.o"
-  "ctyport-airlock-data.o"
-  "ctysluma-airlock-data.o"
-  "ctyslumb-airlock-data.o"
-  "ctyslumc-airlock-data.o"
-  "gungame-airlock-data.o"
-  "hideout-airlock-data.o"
-  "hiphog-airlock-data.o"
-  "oracle-airlock-data.o"
-  "stadium-airlock-data.o"
-  "vinroom-airlock-data.o"
-  ;; fortress
-  "fordumpa-airlock-data.o"
-  "fordumpc-airlock-data.o"
-  "forexitb-airlock-data.o"
-  "forresca-airlock-data.o"
-  "forrescb-airlock-data.o"
-  "prison-airlock-data.o"
-  ;; ruins
-  "ruins-airlock-data.o"
-  ;; sewer
-  "sewerb-airlock-data.o"
-  "sewescb-airlock-data.o"
-  ;; palace
-  "palcab-airlock-data.o"
-  "palent-airlock-data.o"
-  "palroof-airlock-data.o"
-  "palshaft-airlock-data.o"
-  "throne-airlock-data.o"
-  ;; under
-  "under-airlock-data.o"
-  "underb-airlock-data.o"
-  ;; caspad
-  "caspad-airlock-data.o"
-  ;; castle
-  "castle-airlock-data.o"
-  "casboss-airlock-data.o"
-  ;; drill
-  "drillmtn-airlock-data.o"
-  ;; tomb
-  "tomba-airlock-data.o"
-  "tombboss-airlock-data.o"
-  "tombc-airlock-data.o"
-  "tombd-airlock-data.o"
-  ;; mountain
-  "mountain-airlock-data.o"
-  |#
-  ;"airlock-customizable.o" ;; added - airlock customizable data logic file (commented out by default)
+  "airlock.o" ;; comment this out when using the customizable airlock system — see the `airlock-customizable` README for details
   "water-anim.o"
   "blocking-plane.o"
   "idle-control.o"
