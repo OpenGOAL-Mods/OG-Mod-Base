@@ -3,9 +3,74 @@
 This branch implements an approach that allows the use of airlocks and every other door type from the game in custom levels.
 It also allows editing every vanilla door’s data through files organized by level inside a folder called `airlock-data`.
 
-**Note:** This system is **disabled by default**. To enable it, go to:
+**Note:** This system is disabled by default. To enable it, you must edit `game.gd`.
+
 `<ROOT FOLDER>\goal_src\jak2\dgos\game.gd`
-Scroll to the bottom of the file and **uncomment all the lines related to `airlock-customizable` and `airlock-data`**, and **comment out** the original `airlock.o` line.
+
+Scroll to the bottom of the file, **comment out** the original `airlock.o` line, and then add the following block below it:
+
+```lisp
+  "airlock-customizable-h.o" ;; added - airlock customizable data definitions file
+  ;; atoll
+  "atoll-airlock-data.o"
+  ;; atollext
+  "atollext-airlock-data.o"
+  ;; city
+  "consite-airlock-data.o"
+  "consiteb-airlock-data.o"
+  "ctyfarma-airlock-data.o"
+  "ctygenb-airlock-data.o"
+  "ctyinda-airlock-data.o"
+  "ctyindb-airlock-data.o"
+  "ctypal-airlock-data.o"
+  "ctyport-airlock-data.o"
+  "ctysluma-airlock-data.o"
+  "ctyslumb-airlock-data.o"
+  "ctyslumc-airlock-data.o"
+  "gungame-airlock-data.o"
+  "hideout-airlock-data.o"
+  "hiphog-airlock-data.o"
+  "oracle-airlock-data.o"
+  "stadium-airlock-data.o"
+  "vinroom-airlock-data.o"
+  ;; fortress
+  "fordumpa-airlock-data.o"
+  "fordumpc-airlock-data.o"
+  "forexitb-airlock-data.o"
+  "forresca-airlock-data.o"
+  "forrescb-airlock-data.o"
+  "prison-airlock-data.o"
+  ;; ruins
+  "ruins-airlock-data.o"
+  ;; sewer
+  "sewerb-airlock-data.o"
+  "sewescb-airlock-data.o"
+  ;; palace
+  "palcab-airlock-data.o"
+  "palent-airlock-data.o"
+  "palroof-airlock-data.o"
+  "palshaft-airlock-data.o"
+  "throne-airlock-data.o"
+  ;; under
+  "under-airlock-data.o"
+  "underb-airlock-data.o"
+  ;; caspad
+  "caspad-airlock-data.o"
+  ;; castle
+  "castle-airlock-data.o"
+  "casboss-airlock-data.o"
+  ;; drill
+  "drillmtn-airlock-data.o"
+  ;; tomb
+  "tomba-airlock-data.o"
+  "tombboss-airlock-data.o"
+  "tombc-airlock-data.o"
+  "tombd-airlock-data.o"
+  ;; mountain
+  "mountain-airlock-data.o"
+  "airlock-customizable.o" ;; added - airlock customizable data logic file
+```
+These are **all the required file entries** for this system.
 
 It is also recommended to check how vanilla airlock data are defined in these files, as this helps you understand how they work
 and serves as a reference when defining their behavior for your own custom levels.
