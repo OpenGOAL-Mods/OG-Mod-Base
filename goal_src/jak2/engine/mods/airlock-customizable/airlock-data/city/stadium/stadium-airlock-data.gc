@@ -1,0 +1,26 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *stadium-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "gar-door-3"
+                :on-notice '(when #t '(garage))
+                :on-activate #f
+                :on-enter '(begin (want-display 'garage 'display))
+                :on-exit #f
+                :on-cross '(want-vis 'garage)
+                :on-inside #f
+                :on-deactivate '(begin (want-display 'garage #f))
+                )
+              (static-airlock-data 
+                :airlock-name "gar-door-4"
+                :on-notice '(when #t '(garage))
+                :on-activate #f
+                :on-enter '(begin (want-display 'garage 'display))
+                :on-exit #f
+                :on-cross '(want-vis 'garage)
+                :on-inside #f
+                :on-deactivate '(begin (want-display 'garage #f))
+                )
+              )
+  )

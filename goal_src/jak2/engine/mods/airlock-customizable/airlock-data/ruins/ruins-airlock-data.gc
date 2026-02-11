@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *ruins-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-2"
+                :on-notice '(cond ((focus-test? *target* mech) (setting-pers airlock mode #f time (seconds 24)) #f) (else '(ctyslumb)))
+                :on-activate '(want-load 'ruins 'ctyslumb #f)
+                :on-enter '(want-display 'ctyslumb 'display)
+                :on-exit #f
+                :on-cross '(cond ((task-closed? "ruins-enemy-resolution") (task-close! "ruins-enemy-exit")) ((task-closed? "ruins-tower-resolution") (task-close! "ruins-tower-exit")))
+                :on-inside #f
+                :on-deactivate '(want-display 'ctyslumb #f)
+                )
+              )
+  )

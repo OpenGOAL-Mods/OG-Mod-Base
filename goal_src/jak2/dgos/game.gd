@@ -429,7 +429,7 @@
   "jak-swim+0-ag.go"
   "blocking-plane-ag.go"
   "los-control-h.o"
-  "airlock.o"
+  "airlock.o" ;; comment this out when using the customizable airlock system — see the `airlock-customizable` README for details
   "water-anim.o"
   "blocking-plane.o"
   "idle-control.o"

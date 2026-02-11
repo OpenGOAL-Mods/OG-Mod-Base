@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *atoll-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-1"
+                :on-notice '(unless (and (send-event self 'front) (demo?)) '(atollext))
+                :on-activate '(want-load 'atoll 'atollext #f)
+                :on-enter '(want-display 'atollext 'display)
+                :on-exit #f
+                :on-cross '(when (task-closed? "atoll-water-resolution") (task-close! "atoll-water-exit"))
+                :on-inside #f
+                :on-deactivate '(want-display 'atollext 'display)
+                )
+              )
+  )

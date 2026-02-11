@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *hideout-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "hide-door-b-2"
+                :on-notice '(when #t '(hideout))
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate #f
+                )
+              )
+  )

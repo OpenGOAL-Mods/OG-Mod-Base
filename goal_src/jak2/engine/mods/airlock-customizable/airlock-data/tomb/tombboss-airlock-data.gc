@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *tombboss-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "tomb-wing-door-6" ;; there's no data here
+                :on-notice #f
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate #f
+                )
+              )
+  )

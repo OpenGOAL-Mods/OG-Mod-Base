@@ -1,0 +1,26 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *consiteb-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "vin-door-ctyinda-5"
+                :on-notice '(when #t '(ctyinda ctywide))
+                :on-activate #f
+                :on-enter '(begin (want-display 'ctyinda 'display) (want-display 'ctywide 'display))
+                :on-exit #f
+                :on-cross '(begin (want-vis 'ctyinda) (want-sound 'ctywide1 'ctywide2 'ctywide3))
+                :on-inside '(begin (want-load 'consiteb 'consite) (want-sound 'ctywide1 'ctywide2 'ctywide3))
+                :on-deactivate '(begin (want-display 'ctyinda #f) (want-display 'ctywide #f))
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-40"
+                :on-notice '(when #t '(consite))
+                :on-activate #f
+                :on-enter '(begin (want-display 'consite 'display) (want-vis 'consite) (send-event self 'sound 'exit))
+                :on-exit '(want-display 'consite #f)
+                :on-cross '(want-sound 'ctywide1 'consite1 'consite2)
+                :on-inside '(begin (want-load 'ctyinda 'ctywide 'consiteb) (want-sound 'ctywide1 'ctywide2 'ctywide3))
+                :on-deactivate #f
+                )
+              )
+  )

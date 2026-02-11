@@ -1,0 +1,26 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *under-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-43"
+                :on-notice '(when (send-event "under-locking-1" 'test #t) '(under))
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-44"
+                :on-notice '(when (send-event "under-locking-1" 'test #f) '(under))
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate #f
+                )
+              )
+  )
