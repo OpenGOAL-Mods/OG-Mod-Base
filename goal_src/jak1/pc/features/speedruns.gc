@@ -103,46 +103,6 @@
        (game-task firecanyon-end)
        (game-task firecanyon-buzzer)))
 
-(define *hub2-cell-list*
-  (new 'static
-       'boxed-array
-       :type
-       game-task
-       (game-task village2-gambler-money)
-       (game-task village2-geologist-money)
-       (game-task village2-warrior-money)
-       (game-task village2-oracle-money1)
-       (game-task village2-oracle-money2)
-       (game-task village2-buzzer)
-       (game-task sunken-room)
-       (game-task sunken-pipe)
-       (game-task sunken-slide)
-       (game-task sunken-sharks)
-       (game-task sunken-platforms)
-       (game-task sunken-top-of-helix)
-       (game-task sunken-spinning-room)
-       (game-task sunken-buzzer)
-       (game-task swamp-flutflut)
-       (game-task swamp-billy)
-       (game-task swamp-battle)
-       (game-task swamp-tether-4)
-       (game-task swamp-tether-1)
-       (game-task swamp-tether-2)
-       (game-task swamp-tether-3)
-       (game-task swamp-buzzer)
-       (game-task rolling-moles)
-       (game-task rolling-robbers)
-       (game-task rolling-race)
-       (game-task rolling-lake)
-       (game-task rolling-plants)
-       (game-task rolling-ring-chase-1)
-       (game-task rolling-ring-chase-2)
-       (game-task rolling-buzzer)
-       (game-task ogre-boss)
-       (game-task ogre-end)
-       (game-task ogre-secret)
-       (game-task ogre-buzzer)))
-
 (define *hub2-buzzer-task-list*
   (new 'static 'boxed-array :type game-task
     (game-task village2-buzzer)
