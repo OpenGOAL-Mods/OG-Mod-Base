@@ -2470,6 +2470,7 @@
                                                                  (flag "Split Boxes" *display-split-boxes* dm-boolean-toggle-pick-func)
                                                                  (flag "Split Box Info" *display-split-box-info* dm-boolean-toggle-pick-func)
                                                                  (flag "Load boundaries" *display-load-boundaries* dm-boolean-toggle-pick-func)
+                                                                 (flag "Load boundary text" *display-load-boundary-text* dm-boolean-toggle-pick-func)
                                                                  (flag "Memcard Info" *display-memcard-info* dm-boolean-toggle-pick-func))))
     (debug-menu-append-item s5-0
                             (debug-menu-make-from-template arg0

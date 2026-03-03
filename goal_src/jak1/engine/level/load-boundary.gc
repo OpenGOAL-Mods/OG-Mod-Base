@@ -295,9 +295,49 @@
   0
   (none))
 
+(defun-debug print-lb-cmd (out (arg0 load-boundary) (arg1 load-boundary-crossing-command) (prefix string))
+  (case (-> arg1 cmd)
+    (((load-boundary-cmd load))
+      (format out "~1L~S ~S ~S ~A ~A ~%"
+        prefix
+        (if (logtest? (-> arg0 flags) (load-boundary-flags player)) "player" "camera")
+        (enum->string load-boundary-cmd (-> arg1 cmd))
+        (-> arg1 lev0) (-> arg1 lev1)))
+    (((load-boundary-cmd display)) 
+      (format out "~5L~S ~S ~S ~A ~A ~%"
+        prefix
+        (if (logtest? (-> arg0 flags) (load-boundary-flags player)) "player" "camera")
+        (enum->string load-boundary-cmd (-> arg1 cmd))
+        (-> arg1 displev) (-> arg1 dispcmd)))
+    (((load-boundary-cmd vis)) 
+      (format out "~3L~S ~S ~S ~A ~%"
+        prefix
+        (if (logtest? (-> arg0 flags) (load-boundary-flags player)) "player" "camera")
+        (enum->string load-boundary-cmd (-> arg1 cmd))
+        (-> arg1 nick)))
+    (((load-boundary-cmd checkpt))
+      (format out "~8L~S ~S ~S ~A ~%"
+        prefix
+        (if (logtest? (-> arg0 flags) (load-boundary-flags player)) "player" "camera")
+        (enum->string load-boundary-cmd (-> arg1 cmd))
+        (-> arg1 checkname)))
+    (else 
+      (format out "~22L~S N/A ~%" prefix))
+    )
+  )
+
+(define *lb-temp-string* (new 'global 'string 512 (the string #f)))
+
 (defun-debug render-boundary ((arg0 load-boundary))
   (let ((s3-0 (or (!= arg0 (-> *lb-editor-parms* boundary)) (logtest? (-> *display* real-actual-frame-counter) 4))))
     (with-dma-buffer-add-bucket ((s5-0 (-> (current-frame) global-buf)) (bucket-id debug))
+      (when *display-load-boundary-text*
+        (clear *lb-temp-string*)
+        (print-lb-cmd *lb-temp-string* arg0 (-> arg0 cmd-fwd) "fwd:")
+        (print-lb-cmd *lb-temp-string* arg0 (-> arg0 cmd-bwd) "bwd:")
+        ;; idk a good way to find the "center" of the load boundary, so just pick the middle vertex and hope its good enough
+        (add-debug-text-3d #t (bucket-id debug-no-zbuf) *lb-temp-string* (-> arg0 data (/ (-> arg0 num-points) 2) v) (font-color default) (the-as vector2h #f))
+        )
       (dma-buffer-add-gs-set-flusha s5-0
                                     (zbuf-1 (new 'static 'gs-zbuf :zbp #x1c0 :psm (gs-psm ct24)))
                                     (test-1 (new 'static 'gs-test :ate #x1 :atst (gs-atest greater-equal) :aref #x26 :zte #x1 :ztst (gs-ztest greater-equal)))
