@@ -300,6 +300,19 @@ build_third_party_lib(stb_image stb_image)
 # build draco library for tinygltf compression support
 include_directories(third-party/draco/src)
 add_subdirectory(third-party/draco)
+
+# mod-base-change
+# Copy draco_features.h to the appropriate output directory for each configuration
+foreach(config IN ITEMS Debug Release)
+    set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/draco")
+    file(MAKE_DIRECTORY "${OUTPUT_DIR}")
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/third-party/draco/src/draco/draco_features.h"
+        "${OUTPUT_DIR}/draco_features.h"
+        COPYONLY
+    )
+endforeach()
+
 add_compile_definitions(TINYGLTF_ENABLE_DRACO)
 build_third_party_lib(tiny_gltf tiny_gltf)
 build_third_party_lib(xdelta3 xdelta3)
