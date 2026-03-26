@@ -567,6 +567,10 @@
 
 (define-extern play-sound-file (function string int symbol))
 
+(define-extern pause-sound-files (function none))
+
+(define-extern resume-sound-files (function none))
+
 (define-extern stop-sound-file (function string none))
 
 (define-extern stop-all-sounds (function none))
