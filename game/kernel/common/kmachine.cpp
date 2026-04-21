@@ -50,6 +50,7 @@ namespace MiniAudioLib {
 #include "game/kernel/common/kprint.h"
 #include "game/kernel/common/kscheme.h"
 #include "game/mips2c/mips2c_table.h"
+#include "game/runtime.h"
 #include "game/sce/libcdvd_ee.h"
 #include "game/sce/libpad.h"
 #include "game/sce/libscf.h"
@@ -109,9 +110,54 @@ void InitCD() {
 
 /*!
  * Initialize the GS and display the splash screen.
- * Not yet implemented. TODO
  */
-void InitVideo() {}
+void InitVideo() {
+  if (!SplashScreen) {
+    lg::info("InitVideo: skipping splash!\n");
+    return;
+  }
+  std::map<int, std::string> lang_to_splash_map{
+      {SCE_JAPANESE_LANGUAGE, "JAP"},   {SCE_ENGLISH_LANGUAGE, "USA"},
+      {SCE_FRENCH_LANGUAGE, "FRE"},     {SCE_SPANISH_LANGUAGE, "SPA"},
+      {SCE_GERMAN_LANGUAGE, "GER"},     {SCE_ITALIAN_LANGUAGE, "ITA"},
+      {SCE_PORTUGUESE_LANGUAGE, "POR"}, {SCE_KOREAN_LANGUAGE, "KOR"},
+  };
+  auto lang = ee::sceScfGetLanguage();
+  auto filename = "SCREEN1." + lang_to_splash_map.at(lang);
+  auto path = file_util::get_jak_project_dir() / "out" / game_version_names[g_game_version] /
+              "iso" / filename;
+  if (lang != SCE_ENGLISH_LANGUAGE && !fs::exists(path)) {
+    lg::warn("InitVideo: file {} not found, falling back to english...\n", filename);
+    path = file_util::get_jak_project_dir() / "out" / game_version_names[g_game_version] / "iso" /
+           "SCREEN1.USA";
+  }
+  if (!fs::exists(path)) {
+    lg::warn("InitVideo: splash screen not found!\n");
+    return;
+  }
+  auto data = file_util::read_binary_file(path);
+  // width is always 512, height is sometimes different (e.g. demo screens), so we infer from file
+  // size
+  constexpr int kWidth = 512;
+  if (data.size() % (kWidth * 4) != 0) {
+    lg::error("InitVideo: splash size {} not divisible by stride {}", data.size(), kWidth * 4);
+    return;
+  }
+  int kHeight = data.size() / (kWidth * 4);
+  if ((int)data.size() != kWidth * kHeight * 4) {
+    lg::error("InitVideo: unexpected size {}, expected {} for splash screen", data.size(),
+              kWidth * kHeight * 4);
+    return;
+  }
+  Gfx::g_splash.data = std::move(data);
+  Gfx::g_splash.width = kWidth;
+  Gfx::g_splash.height = kHeight;
+  Gfx::g_splash.ready.store(true);
+  SplashTimer.start();
+  while (SplashTimer.getSeconds() < SPLASH_SCREEN_TIME) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  }
+}
 
 /*!
  * Flush caches.  Does all the memory, regardless of what you specify

@@ -114,7 +114,6 @@
    hud-normal
    hud-waiting))
 
-
 (define *fp-hud-stack* (malloc 'global #x3800))
 
 (defmethod deactivate ((this first-person-hud))
@@ -341,7 +340,6 @@
         (camera-change-to (the-as string 'base) 60 #f)))
   :trans
     (behavior ()
-      (local-vars (sv-48 vector))
       (rlet ((vf0 :class vf)
              (vf4 :class vf)
              (vf5 :class vf)
@@ -364,15 +362,20 @@
                 (let ((s3-0 run-function-in-process)
                       (s2-0 s4-0)
                       (s1-0 projectile-init-by-other)
-                      (s0-0 (-> self entity)))
-                  (set! sv-48 s5-1)
+                      (s0-0 (-> self entity))
+                      (sv-48 s5-1))
                   (let ((v0-3 (camera-pos))) (.mov.vf.w vf6 vf0) (.lvf vf4 (&-> v0-3 quad)))
                   (.lvf vf5 (&-> s5-1 quad))
                   (.add.vf.xyz vf6 vf4 vf5)
                   (.svf (&-> sv-48 quad) vf6)
-                  (let ((t1-0 (if (>= (-> self fact eco-level) (-> *FACT-bank* eco-level-max)) 56 40))
-                        (t2-0 #f))
-                    ((the-as (function object object object object object object object none) s3-0) s2-0 s1-0 s0-0 sv-48 gp-1 t1-0 t2-0)))
+                  ((the-as (function object object object object object object object none) s3-0)
+                   s2-0
+                   s1-0
+                   s0-0
+                   sv-48
+                   gp-1
+                   (if (>= (-> self fact eco-level) (-> *FACT-bank* eco-level-max)) 56 40)
+                   #f))
                 (-> s4-0 ppointer))))
           (set-time! (-> self control unknown-dword82)))
         (when (cpad-pressed? (-> self control unknown-cpad-info00 number) triangle)
@@ -420,7 +423,6 @@
       (target-exit))
   :trans
     (behavior ()
-      (local-vars (sv-48 vector))
       (rlet ((vf0 :class vf)
              (vf4 :class vf)
              (vf5 :class vf)
@@ -443,15 +445,20 @@
                 (let ((s3-0 run-function-in-process)
                       (s2-0 s4-0)
                       (s1-0 projectile-init-by-other)
-                      (s0-0 (-> self entity)))
-                  (set! sv-48 s5-1)
+                      (s0-0 (-> self entity))
+                      (sv-48 s5-1))
                   (let ((v0-4 (camera-pos))) (.mov.vf.w vf6 vf0) (.lvf vf4 (&-> v0-4 quad)))
                   (.lvf vf5 (&-> s5-1 quad))
                   (.add.vf.xyz vf6 vf4 vf5)
                   (.svf (&-> sv-48 quad) vf6)
-                  (let ((t1-0 (if (>= (-> self fact eco-level) (-> *FACT-bank* eco-level-max)) 120 104))
-                        (t2-0 #f))
-                    ((the-as (function object object object object object object object none) s3-0) s2-0 s1-0 s0-0 sv-48 gp-1 t1-0 t2-0)))
+                  ((the-as (function object object object object object object object none) s3-0)
+                   s2-0
+                   s1-0
+                   s0-0
+                   sv-48
+                   gp-1
+                   (if (>= (-> self fact eco-level) (-> *FACT-bank* eco-level-max)) 120 104)
+                   #f))
                 (-> s4-0 ppointer))))
           (set-time! (-> self control unknown-dword82)))))
   :code
@@ -1638,37 +1645,38 @@
       (if (nonzero? arg3)
         (process-spawn-function process
           (lambda :behavior process ((arg0 vector) (arg1 time-frame) (arg2 float))
-            (local-vars (sv-32 time-frame) (sv-40 vector) (sv-44 symbol))
-            (set! sv-32 (current-time))
-            (let ((v1-2 (new-stack-vector0))) (set! (-> v1-2 quad) (-> arg0 quad)) (set! sv-40 v1-2))
-            (set! sv-44 #t)
-            (until (time-elapsed? sv-32 arg1)
-              (let ((s4-0 (ppointer->process (-> self parent))))
-                (cond
-                  ((and sv-44 (< (- (-> (the-as target s4-0) control trans y) (-> (the-as target s4-0) control unknown-vector52 y)) arg2))
-                   (vector-xz-normalize! (-> (the-as target s4-0) control transv) (the-as float 0.0))
-                   ;; og:preserve-this PAL patch here
-                   (when (< (vector-vector-xz-distance (-> (the-as target s4-0) control trans) sv-40) 20480.0)
-                     (let ((v1-16 (vector-! (new-stack-vector0) (-> (the-as target s4-0) control trans) sv-40)))
-                       (set! (-> (the-as target s4-0) control trans x) (+ (-> sv-40 x) (fmax -2867.2 (fmin 2867.2 (-> v1-16 x)))))
-                       (set! (-> (the-as target s4-0) control trans z) (+ (-> sv-40 z) (fmax -2867.2 (fmin 2867.2 (-> v1-16 z))))))))
-                  (else
-                   (if sv-44 (set! sv-32 (current-time)))
-                   (set! sv-44 (the-as symbol #f))
-                   (when (or (= (-> (the-as target s4-0) next-state name) 'target-duck-high-jump-jump)
-                             (= (-> (the-as target s4-0) next-state name) 'target-falling))
-                     (let ((v1-30 (-> (the-as target s4-0) control trans))
-                           (s3-0 (-> (the-as target s4-0) control transv)))
-                       (set! (-> s3-0 x) (- (-> sv-40 x) (-> v1-30 x)))
-                       (set! (-> s3-0 z) (- (-> sv-40 z) (-> v1-30 z)))
-                       (let ((f30-0 (vector-xz-length s3-0)))
-                         (if (< 122880.0 f30-0) (vector-xz-normalize! s3-0 (the-as float 122880.0)))
-                         (if (< 4096.0 f30-0)
-                           (forward-up-nopitch->quaternion (-> (the-as target s4-0) control dir-targ)
-                                                           (vector-normalize-copy! (new 'stack-no-clear 'vector) s3-0 (the-as float 1.0))
-                                                           (vector-y-quaternion! (new 'stack-no-clear 'vector) (-> (the-as target s4-0) control quat))))))))))
-              (suspend)
-              0)
+            (let ((sv-32 (current-time))
+                  (v1-2 (new-stack-vector0)))
+              (set! (-> v1-2 quad) (-> arg0 quad))
+              (let ((sv-40 v1-2)
+                    (sv-44 #t))
+                (until (time-elapsed? sv-32 arg1)
+                  (let ((s4-0 (ppointer->process (-> self parent))))
+                    (cond
+                      ((and sv-44 (< (- (-> (the-as target s4-0) control trans y) (-> (the-as target s4-0) control unknown-vector52 y)) arg2))
+                       (vector-xz-normalize! (-> (the-as target s4-0) control transv) (the-as float 0.0))
+                       ;; og:preserve-this PAL patch here
+                       (when (< (vector-vector-xz-distance (-> (the-as target s4-0) control trans) sv-40) 20480.0)
+                         (let ((v1-16 (vector-! (new-stack-vector0) (-> (the-as target s4-0) control trans) sv-40)))
+                           (set! (-> (the-as target s4-0) control trans x) (+ (-> sv-40 x) (fmax -2867.2 (fmin 2867.2 (-> v1-16 x)))))
+                           (set! (-> (the-as target s4-0) control trans z) (+ (-> sv-40 z) (fmax -2867.2 (fmin 2867.2 (-> v1-16 z))))))))
+                      (else
+                       (if sv-44 (set! sv-32 (current-time)))
+                       (set! sv-44 (the-as symbol #f))
+                       (when (or (= (-> (the-as target s4-0) next-state name) 'target-duck-high-jump-jump)
+                                 (= (-> (the-as target s4-0) next-state name) 'target-falling))
+                         (let ((v1-30 (-> (the-as target s4-0) control trans))
+                               (s3-0 (-> (the-as target s4-0) control transv)))
+                           (set! (-> s3-0 x) (- (-> sv-40 x) (-> v1-30 x)))
+                           (set! (-> s3-0 z) (- (-> sv-40 z) (-> v1-30 z)))
+                           (let ((f30-0 (vector-xz-length s3-0)))
+                             (if (< 122880.0 f30-0) (vector-xz-normalize! s3-0 (the-as float 122880.0)))
+                             (if (< 4096.0 f30-0)
+                               (forward-up-nopitch->quaternion (-> (the-as target s4-0) control dir-targ)
+                                                               (vector-normalize-copy! (new 'stack-no-clear 'vector) s3-0 (the-as float 1.0))
+                                                               (vector-y-quaternion! (new 'stack-no-clear 'vector) (-> (the-as target s4-0) control quat))))))))))
+                  (suspend)
+                  0)))
             #f)
           arg2
           arg3

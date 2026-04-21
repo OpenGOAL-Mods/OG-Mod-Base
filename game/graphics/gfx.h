@@ -6,8 +6,10 @@
  */
 
 #include <array>
+#include <atomic>
 #include <functional>
 #include <memory>
+#include <vector>
 
 #include "common/common_types.h"
 #include "common/util/FileUtil.h"
@@ -129,5 +131,13 @@ bool CollisionRendererGetMask(GfxGlobalSettings::CollisionRendererMode mode, s64
 void CollisionRendererSetMask(GfxGlobalSettings::CollisionRendererMode mode, s64 mask_id);
 void CollisionRendererClearMask(GfxGlobalSettings::CollisionRendererMode mode, s64 mask_id);
 void CollisionRendererSetMode(GfxGlobalSettings::CollisionRendererMode mode);
+
+struct SplashScreen {
+  std::vector<u8> data;
+  int width = 0;
+  int height = 0;
+  std::atomic<bool> ready{false};
+};
+extern SplashScreen g_splash;
 
 }  // namespace Gfx

@@ -90,6 +90,7 @@
 (define *all-mus* '())
 (define *all-sbk* '())
 (define *all-vag* '())
+(define *all-screens* '())
 (define *all-gc* '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;
@@ -255,6 +256,9 @@
 (defmacro copy-vag-files (&rest files)
   `(begin ,@(apply (lambda (x) `(set! *all-vag* (cons (copy-iso-file "VAGWAD" "VAG/" (string-append "." ,x)) *all-vag*))) files)))
 
+(defmacro copy-screen-files (&rest files)
+  `(begin ,@(apply (lambda (x) `(set! *all-screens* (cons (copy-iso-file "SCREEN1" "DRIVERS/" (string-append "." ,x)) *all-screens*))) files)))
+
 (defmacro group (name &rest stuff)
   `(defstep :in ""
      :tool 'group
@@ -330,11 +334,6 @@
 (defstep :in "$ISO/DRIVERS/SAVEGAME.ICO"
   :tool 'copy
   :out '("$OUT/iso/SAVEGAME.ICO"))
-
-;; the loading screen file
-(defstep :in "$ISO/DRIVERS/SCREEN1.USA"
-  :tool 'copy
-  :out '("$OUT/iso/SCREEN1.USA"))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Textures (Common)
@@ -2056,6 +2055,8 @@
 
 (copy-vag-files "ENG" "FRE" "GER" "ITA" "SPA" "JAP")
 
+(copy-screen-files "EUR" "FRE" "GER" "ITA" "SPA" "JAP" "USA")
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; ISO Group
 ;;;;;;;;;;;;;;;;;;;;;
@@ -2071,6 +2072,7 @@
    ,@(reverse *all-sbk*)
    ,@(reverse *all-mus*)
    ,@(reverse *all-vag*)
+   ,@(reverse *all-screens*)
    ,@(reverse *all-cgos*))
  )
 

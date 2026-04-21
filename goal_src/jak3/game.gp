@@ -57,6 +57,7 @@
 (define *all-mus* '())
 (define *all-sbk* '())
 (define *all-vag* '())
+(define *all-screens* '())
 (define *all-gc* '())
 
 (define *file-entry-map* (make-string-hash-table))
@@ -501,6 +502,13 @@
 (defstep :in "$ISO/RES/TWEAKVAL.MUS"
   :tool 'copy
   :out '("$OUT/iso/TWEAKVAL.MUS"))
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Splash Screens
+;;;;;;;;;;;;;;;;;;;;;
+
+(copy-screen-files "DEE" "DEJ" "DEM" "EUR" "FRE" "GER" "ITA" "JAP" "KOR" "POR" "SPA" "USA")
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Text
 ;;;;;;;;;;;;;;;;;;;;;
@@ -543,6 +551,7 @@
    ,@(reverse *all-str*)
    ,@(reverse *all-sbk*)
    ,@(reverse *all-vag*)
+   ,@(reverse *all-screens*)
    ,@(reverse *all-cgos*))
  )
 

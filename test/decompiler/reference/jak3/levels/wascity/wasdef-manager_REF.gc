@@ -2612,10 +2612,8 @@
     (let ((s5-0 (new 'stack-no-clear 'vector)))
       0.0
       (set-vector! s5-0 6585594.5 263189.94 -1938929.1 1.0)
-      (let ((f0-5 (vector-vector-distance-squared s5-0 (target-pos 0)))
-            (f1-0 409600.0)
-            )
-        (if (and (< (* f1-0 f1-0) f0-5) (!= (-> this info index) 1))
+      (let ((f0-5 (vector-vector-distance-squared s5-0 (target-pos 0))))
+        (if (and (< (square 409600.0) f0-5) (!= (-> this info index) 1))
             (send-event this 'fail)
             )
         )
@@ -2796,7 +2794,3 @@
   0
   (none)
   )
-
-
-
-
