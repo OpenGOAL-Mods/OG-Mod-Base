@@ -96,7 +96,7 @@ For this example, we’ll use the following art group:
 
 `com-airlock-outer-ag`
 
-<img width="1919" height="921" alt="png1" src="https://github.com/user-attachments/assets/47885b06-0a9b-41a6-80a6-e06e9ae8e451" />
+![](img/img1.png)
 
 
 Next, add the entity to the custom level’s `.jsonc` file and do the following:
@@ -109,14 +109,14 @@ Next, add the entity to the custom level’s `.jsonc` file and do the following:
 
 Example:
 
-<img width="853" height="309" alt="img1" src="https://github.com/user-attachments/assets/7205ec48-7673-44c6-b75c-518280b65ffd" />
+![](img/img2.png)
 
 For the second level, let’s call it `level-b`, follow the same process as before.
 However, this time use a different airlock art group: 
 
 `com-airlock-inner-ag`
 
-<img width="1919" height="919" alt="png2" src="https://github.com/user-attachments/assets/9a8c5538-e1c7-47b8-ae6e-64c8df1a2de5" />
+![](img/img3.png)
 
 Now, set the `etype` in `level-b` `.jsonc` file to `com-airlock-inner`.
 
@@ -127,7 +127,7 @@ Now, open the file:
 
 Scroll down to the bottom and copy the following content:
 
-<img width="855" height="322" alt="img2" src="https://github.com/user-attachments/assets/8e976f6d-aba1-41f0-a8d9-57e6c59394fe" />
+![](img/img4.png)
 
 Inside the `airlock-data` folder, create a new folder called, for example, `my-level`.
 Inside it, create two `.gc` files. I recommend using the following naming convention:
@@ -141,11 +141,11 @@ Replace `empty` with the name of the level, matching the file name.
 
 `level-a-airlock-data.gc`
 
-<img width="806" height="305" alt="img3" src="https://github.com/user-attachments/assets/eed460fc-5aa0-4139-8091-7ca343cfaa77" />
+![](img/img5.png)
 
 `level-b-airlock-data.gc`
 
-<img width="830" height="308" alt="img4" src="https://github.com/user-attachments/assets/8ae0a4a2-b5c6-44e3-b61d-e7ab973576c9" />
+![](img/img6.png)
 
 These files are used to define the behavior of the airlock entities placed in `level-a` and `level-b`.
 You can add as many entries as needed for any airlocks or doors placed in your custom levels.
@@ -158,25 +158,42 @@ Next, you need to define the behavior for the `level-a` airlock to open and load
 Now do the following:
 
 - Set `:airlock-name` to the name of the airlock entity used in the level’s `.jsonc` file
+  
+    > **e.g.** `:airlock-name "lva-com-airlock-outer-1"`
+
 - Set `:on-notice` to a pair that specifies which level must be loaded for the airlock to open
   > This is not limited to a simple pair. You may use more complex GOAL logic such as `cond`, `when`, or other conditional expressions,
     as long as the block ultimately evaluates to a valid action like `want-load`, `want-sound`, etc.
     This allows airlocks or doors to be locked behind game events, flags,
-    inventory checks, or to conditionally load different levels behind the same entrance.
+    inventory checks, or to conditionally load different levels behind the same entrance. <br> <br>
+    Without task conditions: <br> <br>
+      **e.g.** `:on-notice '(when #t '(level-b))` <br> <br>
+    With task conditions: <br> <br>
+      **e.g.** `:on-notice '(when (task-closed? "nest-boss-resolution") '(level-b))` 
+  
 - Set `:on-activate` to a pair that loads the required levels using `want-load`
-- Set `:on-enter` to a pair that displays the required levels using `want-display`, accompanied by the `'display` symbol  
-  > You can also use `want-sound` here to load any required sound banks
+
+    > **e.g.** `:on-activate '(want-load 'level-a 'level-b #f)`
+  
+- Set `:on-enter` to a pair that displays the required levels using `want-display`, accompanied by the `'display` symbol
+  > You can also use `want-sound` here to load any required sound banks. <br> <br>
+    **e.g.** `:on-enter '(begin (want-display 'level-b 'display) (want-sound 'ctywide1 'ctywide2 'ctywide3))` <br> <br>
+    Or without `want-sound`: <br> <br>
+    **e.g.** `:on-enter '(want-display 'level-b 'display)`
+  
 - Set `:on-exit` to a pair that hides the levels using `want-display`, accompanied by the `#f` symbol
+
+  > **e.g.** `:on-exit '(want-display 'level-b #f)`
 
 Below is an example:
 
 `level-a-airlock-data.gc`
 
-<img width="881" height="302" alt="img5" src="https://github.com/user-attachments/assets/c6bca55d-6ef9-4765-addd-99d805684474" />
+![](img/img7.png)
 
 `level-b-airlock-data.gc`
 
-<img width="899" height="311" alt="img8" src="https://github.com/user-attachments/assets/da3f6589-3ed6-4cbc-9393-c42a8b325082" />
+![](img/img8.png)
 
 You can also optionally define `:on-cross`, `:on-inside`, or `:on-deactivate` for additional behaviors.
 
@@ -194,7 +211,7 @@ These new cases should be added before the `else` block, as shown below:
 
 `airlock-customizable.gc`
 
-<img width="1178" height="419" alt="img9" src="https://github.com/user-attachments/assets/0bd876bf-87e6-4a93-8fca-eb411bafd1a0" />
+![](img/img9.png)
 
 ### Registering the `airlock-data` Files
 After that, go to:
@@ -203,7 +220,7 @@ After that, go to:
 
 Scroll down and add an entry for both created files before `"airlock-customizable.o"`, as shown below:
 
-<img width="904" height="282" alt="img" src="https://github.com/user-attachments/assets/75a2ef24-be0c-4a55-8ac8-3ec595fb5dd8" />
+![](img/img10.png)
 
 ### Setting Up `next-actor` Lump
 
@@ -224,11 +241,11 @@ The result should look like this:
 
 `level-a.jsonc`
 
-<img width="788" height="301" alt="img6" src="https://github.com/user-attachments/assets/0677549e-bf85-4f79-b10c-755a10b8f9bd" />
+![](img/img11.png)
 
 `level-b.jsonc`
 
-<img width="812" height="268" alt="img7" src="https://github.com/user-attachments/assets/129ebfb3-f8dd-4fcd-8dfd-9a8c374ea4d1" />
+![](img/img12.png)
 
 After completing this process, rebuild the game and test whether the airlocks work correctly in your custom levels.
 
