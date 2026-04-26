@@ -167,9 +167,9 @@ Now do the following:
     This allows airlocks or doors to be locked behind game events, flags,
     inventory checks, or to conditionally load different levels behind the same entrance. <br> <br>
     Without task conditions: <br> <br>
-      **e.g.** `:on-notice '(when #t '(level-a))` <br> <br>
+      **e.g.** `:on-notice '(when #t '(level-b))` <br> <br>
     With task conditions: <br> <br>
-      **e.g.** `:on-notice '(when (task-closed? "nest-boss-resolution") '(level-a))` 
+      **e.g.** `:on-notice '(when (task-closed? "nest-boss-resolution") '(level-b))` 
   
 - Set `:on-activate` to a pair that loads the required levels using `want-load`
 
