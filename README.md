@@ -1,5 +1,6 @@
 > [!NOTE]
 > You can read the original README for the OpenGOAL project [here](https://github.com/open-goal/jak-project/blob/master/README.md).
+> In particular you may want to check out the Development Environment setup [here](https://github.com/open-goal/jak-project/blob/master/README.md#setting-up-a-development-environment)
 
 # OpenGoal-Mod-Base
 Serves as a base template for openGOAL mods that will be supported via [OG-ModLauncher](https://github.com/OpenGOAL-Mods/OG-ModLauncher).
