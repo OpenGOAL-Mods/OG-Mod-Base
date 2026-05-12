@@ -1612,7 +1612,11 @@
   (trick-board-lightjak-swoop #x136a)
   (trick-board-lightjak-freeze #x136b)
   (trick-board-lightjak-shield #x136c)
-
+  ;; mod text
+  (pad-triangle #x2000)
+  (pad-circle #x2001)
+  (pad-x #x2002)
+  (pad-square #x2003)
   )
 ;; ---text-id
 
