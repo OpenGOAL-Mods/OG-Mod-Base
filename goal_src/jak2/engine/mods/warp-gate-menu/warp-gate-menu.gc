@@ -320,7 +320,7 @@
   :trans (behavior ()
     ;(format *stdcon* "selected: ~D~%" *wm-selected*)
     ;(format *stdcon* "page: ~D~%" (-> self page))
-    (when (time-elapsed? (-> self state-time) (seconds 1.5))
+    (when (time-elapsed? (-> self state-time) (seconds 0.5))
       (warp-select-menu self)
       (when (cpad-pressed? 0 triangle)
         (when (and (not (process-grab? *target* #f)) (not (real-movie?)))
