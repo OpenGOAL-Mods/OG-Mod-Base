@@ -4024,6 +4024,7 @@
         arg0
         '(menu
            "Display"
+           (flag "Input Display" *show-input-display* dm-boolean-toggle-pick-func) ;; mod-base-change
            (flag "Profile" *display-profile* dm-boolean-toggle-pick-func)
            (flag "Ticks" *profile-ticks* dm-boolean-toggle-pick-func)
            (flag "File Info" *display-file-info* dm-boolean-toggle-pick-func)

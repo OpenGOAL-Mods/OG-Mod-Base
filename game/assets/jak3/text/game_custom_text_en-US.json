@@ -260,5 +260,23 @@
   "1369": "Light Regeneration",
   "136a": "Light Flight",
   "136b": "Flash Freeze",
-  "136c": "Light Shield"
+  "136c": "Light Shield",
+
+  "2000": "<PAD_TRIANGLE>",
+  "2001": "<PAD_CIRCLE>",
+  "2002": "<PAD_X>",
+  "2003": "<PAD_SQUARE>",
+
+  "10000": "Haven City Port",
+  "10001": "Desert Wasteland",
+  "10002": "Volcano",
+  "10003": "Temple (Entrance)",
+  "10004": "Temple (Oracle)",
+  "10005": "Temple (Ruins)",
+  "10006": "Power Station",
+
+  "100000": "Select Destination",
+  "100001": "No Menu Data",
+  "100002": "Next Page",
+  "100003": "Previous Page"
 }

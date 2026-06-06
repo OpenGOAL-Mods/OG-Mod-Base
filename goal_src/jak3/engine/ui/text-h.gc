@@ -1612,6 +1612,26 @@
   (trick-board-lightjak-swoop #x136a)
   (trick-board-lightjak-freeze #x136b)
   (trick-board-lightjak-shield #x136c)
+  ;; mod text
+  (pad-triangle #x2000)
+  (pad-circle #x2001)
+  (pad-x #x2002)
+  (pad-square #x2003)
+
+  ;; destination names text
+  (ctyport-name #x10000)
+  (desert-name #x10001)
+  (volcano-name #x10002)
+  (temple-name-entry #x10003)
+  (temple-name-oracle #x10004)
+  (temple-name-ruins #x10005)
+  (vinroom-name #x10006)
+
+  ;; menu stuff text
+  (select-destination #x100000)
+  (no-menu-data #x100001)
+  (next-page #x100002)
+  (previous-page #x100003)
 
   )
 ;; ---text-id
