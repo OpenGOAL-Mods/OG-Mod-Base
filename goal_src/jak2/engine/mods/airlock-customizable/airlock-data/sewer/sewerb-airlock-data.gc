@@ -1,0 +1,36 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *sewerb-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-1"
+                :on-notice '(when #t '(sewer))
+                :on-activate #f
+                :on-enter '(begin (want-display 'sewer 'display) (want-vis 'sewer) (send-event self 'sound 'exit))
+                :on-exit '(want-display 'sewer #f)
+                :on-cross #f
+                :on-inside '(begin (want-load 'ctyindb 'ctywide 'sewerb))
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-3"
+                :on-notice '(when #t '(sewerb))
+                :on-activate '(begin (when (send-event self 'front) (want-load 'sewer 'sewerb #f) (send-event "sew-elevator-15" 'jump-to 'bottom)))
+                :on-enter '(want-display 'sewerb 'display)
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(want-display 'sewerb 'display)
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-2"
+                :on-notice '(when #t '(ctyindb ctywide))
+                :on-activate #f
+                :on-enter '(begin (want-display 'ctywide 'display) (want-display 'ctyindb 'display) (send-event self 'sound 'enter))
+                :on-exit '(begin (want-display 'ctywide #f) (want-display 'ctyindb #f))
+                :on-cross '(begin (want-vis 'ctyindb) (want-sound 'ctywide1 'ctywide2 'ctywide3))
+                :on-inside '(begin (want-load 'sewerb 'sewer #f) (want-sound 'sewer1 'sewer2 'ctywide1))
+                :on-deactivate #f
+                )
+              )
+  )

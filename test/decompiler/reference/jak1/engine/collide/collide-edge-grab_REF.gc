@@ -128,7 +128,6 @@
 ;; definition for method 19 of type collide-edge-work
 ;; INFO: Used lq/sq
 (defmethod check-grab-for-collisions ((this collide-edge-work) (arg0 collide-edge-hold-item) (arg1 edge-grab-info))
-  (local-vars (sv-144 (function vector vector vector float vector)) (sv-160 vector) (sv-176 vector))
   (let* ((s3-0 (-> arg0 edge))
          (s1-0 (-> s3-0 etri ctri))
          (s4-0 (-> s1-0 prim-index))
@@ -140,13 +139,11 @@
             (return #f)
             )
         )
-      (set! sv-144 vector+*!)
-      (set! sv-160 s0-0)
-      (set! sv-176 (-> arg0 center-pt))
-      (let ((a2-3 (vector-negate! (new 'stack-no-clear 'vector) (-> s3-0 edge-vec-norm)))
-            (a3-2 1105.92)
-            )
-        (sv-144 sv-160 sv-176 a2-3 a3-2)
+      (vector+*!
+        s0-0
+        (-> arg0 center-pt)
+        (vector-negate! (new 'stack-no-clear 'vector) (-> s3-0 edge-vec-norm))
+        1105.92
         )
       (let ((f0-1 (collide-edge-work-method-14 this (-> arg1 left-hand-hold) s0-0 (the-as int s4-0))))
         (if (< 491.52 f0-1)

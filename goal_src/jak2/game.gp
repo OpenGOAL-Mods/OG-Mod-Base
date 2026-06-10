@@ -57,6 +57,7 @@
 (define *all-mus* '())
 (define *all-sbk* '())
 (define *all-vag* '())
+(define *all-screens* '())
 (define *all-gc* '())
 
 (define *file-entry-map* (make-string-hash-table))
@@ -383,6 +384,12 @@
   "RUINS" "SEWER" "STRIP" "TOMB" "TWEAKVAL")
 
 ;;;;;;;;;;;;;;;;;;;;;
+;; Splash Screens
+;;;;;;;;;;;;;;;;;;;;;
+
+(copy-screen-files "DEE" "DEJ" "DEM" "EUR" "FRE" "GER" "ITA" "JAP" "KOR" "SPA" "USA")
+
+;;;;;;;;;;;;;;;;;;;;;
 ;; Text
 ;;;;;;;;;;;;;;;;;;;;;
 
@@ -425,6 +432,7 @@
    ,@(reverse *all-sbk*)
    ,@(reverse *all-mus*)
    ,@(reverse *all-vag*)
+   ,@(reverse *all-screens*)
    ,@(reverse *all-cgos*))
  )
 

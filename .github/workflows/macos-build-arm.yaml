@@ -38,7 +38,7 @@ jobs:
           fi
 
       - name: Setup sccache
-        uses: hendrikmuhs/ccache-action@v1.2.20
+        uses: hendrikmuhs/ccache-action@v1.2.22
         with:
           variant: sccache
           key: macos-15-${{ inputs.cachePrefix }}-${{ inputs.cmakePreset }}-${{ github.sha }}
@@ -72,7 +72,7 @@ jobs:
           strip ./build/lsp/lsp
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: ${{ inputs.uploadArtifacts }}
         with:
           name: opengoal-macos-arm-${{ inputs.cachePrefix }}

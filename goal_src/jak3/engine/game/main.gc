@@ -7,6 +7,7 @@
 
 (define-extern menu-respond-to-pause (function symbol))
 (define-extern anim-tester-add-object (function string none))
+(defun-extern runs-every-frame (none)) ;; mod-base-change
 
 ;; DECOMP BEGINS
 
@@ -1493,6 +1494,7 @@
     (if (-> *level* loading-level)
         (load-continue (-> *level* loading-level))
         )
+    (runs-every-frame) ;; mod-base-change
 
     ;; run the drawing system!
     ;; (note that this does a significant amount of non-drawing stuff, like collision callbacks, actors-update,
@@ -1564,6 +1566,9 @@
 
     ;; wrap up this frame (drawing of stdcon, debugging, etc.)
     (end-display arg0)
+    ;; og:preserve-this push text below the imgui bar if it's currently open
+    (when (pc-is-imgui-visible?)
+      (format *stdcon* "~%~%"))
 
     ;; finalize the DMA chain. This does have some potentially complicated texture stuff.
     ;; Note that, in debug mode, this will do a sync-path, waiting for VU1 to finish.

@@ -45,7 +45,7 @@ jobs:
             libudev-dev libopenal-dev libflac-dev libogg-dev libvorbis-dev
 
       - name: Setup sccache
-        uses: hendrikmuhs/ccache-action@v1.2.20
+        uses: hendrikmuhs/ccache-action@v1.2.22
         with:
           variant: sccache
           key: linux-ubuntu-22.04-${{ inputs.cachePrefix }}-${{ inputs.cmakePreset }}-${{ github.sha }}
@@ -78,7 +78,7 @@ jobs:
           strip ./build/lsp/lsp
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: ${{ inputs.uploadArtifacts }}
         with:
           name: opengoal-linux-${{ inputs.cachePrefix }}

@@ -19,8 +19,10 @@ void add_jak2_expected_type_mismatches(Compiler& c) {
 
 void add_jak3_expected_type_mismatches(Compiler& /*c*/) {}
 
+void add_jakx_expected_type_mismatches(Compiler& /*c*/) {}
+
 TEST(Jak1TypeConsistency, MANUAL_TEST_TypeConsistencyWithBuildFirst) {
-  Compiler compiler(GameVersion::Jak1);
+  Compiler compiler(GameVersion::Jak1, emitter::InstructionSet::X86);
   compiler.enable_throw_on_redefines();
   add_common_expected_type_mismatches(compiler);
   add_jak1_expected_type_mismatches(compiler);
@@ -29,7 +31,7 @@ TEST(Jak1TypeConsistency, MANUAL_TEST_TypeConsistencyWithBuildFirst) {
 }
 
 TEST(Jak2TypeConsistency, MANUAL_TEST_TypeConsistencyWithBuildFirst) {
-  Compiler compiler(GameVersion::Jak2);
+  Compiler compiler(GameVersion::Jak2, emitter::InstructionSet::X86);
   compiler.enable_throw_on_redefines();
   add_common_expected_type_mismatches(compiler);
   add_jak2_expected_type_mismatches(compiler);
@@ -38,7 +40,7 @@ TEST(Jak2TypeConsistency, MANUAL_TEST_TypeConsistencyWithBuildFirst) {
 }
 
 TEST(Jak3TypeConsistency, TypeConsistencyWithBuildFirst) {
-  Compiler compiler(GameVersion::Jak3);
+  Compiler compiler(GameVersion::Jak3, emitter::InstructionSet::X86);
   compiler.enable_throw_on_redefines();
   add_common_expected_type_mismatches(compiler);
   add_jak3_expected_type_mismatches(compiler);
@@ -46,8 +48,17 @@ TEST(Jak3TypeConsistency, TypeConsistencyWithBuildFirst) {
   compiler.run_test_no_load("decompiler/config/jak3/all-types.gc");
 }
 
+// TEST(JakXTypeConsistency, TypeConsistencyWithBuildFirst) {
+//   Compiler compiler(GameVersion::JakX, emitter::InstructionSet::X86);
+//   compiler.enable_throw_on_redefines();
+//   add_common_expected_type_mismatches(compiler);
+//   add_jakx_expected_type_mismatches(compiler);
+//   compiler.run_test_no_load("test/goalc/source_templates/with_game/test-build-all-code.gc");
+//   compiler.run_test_no_load("decompiler/config/jakx/all-types.gc");
+// }
+
 TEST(Jak1TypeConsistency, TypeConsistency) {
-  Compiler compiler(GameVersion::Jak1);
+  Compiler compiler(GameVersion::Jak1, emitter::InstructionSet::X86);
   compiler.enable_throw_on_redefines();
   add_common_expected_type_mismatches(compiler);
   add_jak1_expected_type_mismatches(compiler);
@@ -56,7 +67,7 @@ TEST(Jak1TypeConsistency, TypeConsistency) {
 }
 
 TEST(Jak2TypeConsistency, TypeConsistency) {
-  Compiler compiler(GameVersion::Jak2);
+  Compiler compiler(GameVersion::Jak2, emitter::InstructionSet::X86);
   compiler.enable_throw_on_redefines();
   add_common_expected_type_mismatches(compiler);
   add_jak2_expected_type_mismatches(compiler);
@@ -65,10 +76,19 @@ TEST(Jak2TypeConsistency, TypeConsistency) {
 }
 
 TEST(Jak3TypeConsistency, TypeConsistency) {
-  Compiler compiler(GameVersion::Jak3);
+  Compiler compiler(GameVersion::Jak3, emitter::InstructionSet::X86);
   compiler.enable_throw_on_redefines();
   add_common_expected_type_mismatches(compiler);
   add_jak3_expected_type_mismatches(compiler);
   compiler.run_test_no_load("decompiler/config/jak3/all-types.gc");
   compiler.run_test_no_load("test/goalc/source_templates/with_game/test-build-all-code.gc");
 }
+
+// TEST(JakXTypeConsistency, TypeConsistency) {
+//   Compiler compiler(GameVersion::JakX, emitter::InstructionSet::X86);
+//   compiler.enable_throw_on_redefines();
+//   add_common_expected_type_mismatches(compiler);
+//   add_jakx_expected_type_mismatches(compiler);
+//   compiler.run_test_no_load("decompiler/config/jakx/all-types.gc");
+//   compiler.run_test_no_load("test/goalc/source_templates/with_game/test-build-all-code.gc");
+// }

@@ -27,7 +27,6 @@
 #include "common/global_profiler/GlobalProfiler.h"
 #include "common/goal_constants.h"
 #include "common/log/log.h"
-#include "common/util/FileUtil.h"
 #include "common/versions/versions.h"
 
 #include "game/external/discord.h"
@@ -54,6 +53,7 @@
 #include "game/kernel/jak3/kdgo.h"
 #include "game/kernel/jak3/klisten.h"
 #include "game/kernel/jak3/kscheme.h"
+#include "game/kernel/jakx/kboot.h"
 #include "game/overlord/common/fake_iso.h"
 #include "game/overlord/common/iso.h"
 #include "game/overlord/common/sbank.h"
@@ -66,7 +66,6 @@
 #include "game/overlord/jak1/overlord.h"
 #include "game/overlord/jak1/ramdisk.h"
 #include "game/overlord/jak1/srpc.h"
-#include "game/overlord/jak1/ssound.h"
 #include "game/overlord/jak1/stream.h"
 #include "game/overlord/jak2/dma.h"
 #include "game/overlord/jak2/iso_cd.h"
@@ -78,7 +77,6 @@
 #include "game/overlord/jak2/stream.h"
 #include "game/overlord/jak2/streamlist.h"
 #include "game/overlord/jak2/vag.h"
-#include "game/overlord/jak3/init.h"
 #include "game/overlord/jak3/overlord.h"
 #include "game/system/Deci2Server.h"
 #include "game/system/iop_thread.h"
@@ -151,6 +149,13 @@ void deci2_runner(SystemThreadInterface& iface) {
 void ee_runner(SystemThreadInterface& iface) {
   prof().root_event();
   // Allocate Main RAM. Must have execute enabled.
+  // TODO Apple Silicon - You cannot make a page be RWX,
+  // or more specifically it can't be both writable and executable at the same time
+  //
+  // https://github.com/zherczeg/sljit/issues/99
+  //
+  // The solution to this is to flip-flop between permissions, or perhaps have two threads
+  // one that has writing permission, and another with executable permission
   if (EE_MEM_LOW_MAP) {
     g_ee_main_mem =
         (u8*)mmap((void*)0x10000000, EE_MAIN_MEM_SIZE, PROT_EXEC | PROT_READ | PROT_WRITE,
@@ -232,6 +237,8 @@ void ee_runner(SystemThreadInterface& iface) {
     case GameVersion::Jak3:
       jak3::goal_main(g_argc, g_argv);
       break;
+    case GameVersion::JakX:
+      jakx::goal_main(g_argc, g_argv);
     default:
       ASSERT_MSG(false, "Unsupported game version");
   }
@@ -271,7 +278,7 @@ void iop_runner(SystemThreadInterface& iface, GameVersion version) {
   iop::LIBRARY_register(&iop);
   Gfx::register_vsync_callback([&iop]() { iop.kernel.signal_vblank(); });
 
-  if (version != GameVersion::Jak3) {
+  if (version != GameVersion::Jak3 && version != GameVersion::JakX) {
     jak1::dma_init_globals();
     jak2::dma_init_globals();
 
@@ -331,6 +338,7 @@ void iop_runner(SystemThreadInterface& iface, GameVersion version) {
         jak2::start_overlord_wrapper(iop.overlord_argc, iop.overlord_argv, &complete);
         break;
       case GameVersion::Jak3:
+      case GameVersion::JakX:
         jak3::start_overlord_wrapper(&complete);
         break;
       default:

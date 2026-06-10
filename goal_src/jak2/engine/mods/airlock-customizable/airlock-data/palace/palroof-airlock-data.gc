@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *palroof-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-18"
+                :on-notice '(when #t '(palshaft))
+                :on-activate '(begin (want-load 'palshaft 'palcab 'palroof) (want-sound 'ctywide1 'palcab1 'palcab2))
+                :on-enter '(want-display 'palshaft 'display)
+                :on-exit #f
+                :on-cross '(task-close! "palace-boss-resolution")
+                :on-inside #f
+                :on-deactivate '(want-display 'palshaft #f)
+                )
+              )
+  )

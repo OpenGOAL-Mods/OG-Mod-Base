@@ -1,0 +1,46 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *ctyport-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "hip-door-a-10"
+                :on-notice '(cond ((task-open? "city-port-run-resolution") #f) ((task-closed? "city-krew-delivery-resolution") '(gungame)))
+                :on-activate '(want-load 'ctyport 'ctywide 'gungame)
+                :on-enter '(begin (want-display 'gungame 'display) (want-sound 'ctywide1 'ctywide2 'gungame1))
+                :on-exit #f
+                :on-cross '(begin (want-vis 'gungame) (want-continue "gungame-start"))
+                :on-inside #f
+                :on-deactivate '(begin (want-display 'gungame #f) (want-sound 'ctywide1 'ctywide2 'ctywide3))
+                )
+              (static-airlock-data 
+                :airlock-name "hip-door-a-20"
+                :on-notice '(when (task-closed? "under-mech-introduction") '(underb))
+                :on-activate '(want-load 'ctyport 'ctywide 'underb)
+                :on-enter '(want-display 'underb 'display)
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(want-display 'underb #f)
+                )
+              (static-airlock-data 
+                :airlock-name "hip-door-a-21"
+                :on-notice '(when (and (task-closed? "under-sig-resolution") (not (send-event self 'front))) '(underb))
+                :on-activate '(want-load 'ctyport 'ctywide 'underb)
+                :on-enter '(want-display 'underb 'display)
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(want-display 'underb #f)
+                )
+              (static-airlock-data 
+                :airlock-name "hip-door-a-6"
+                :on-notice '(cond ((or (task-open? "city-port-run-resolution") (not (task-closed? "city-krew-delivery-delivery"))) #f) (else '(hiphog)))
+                :on-activate '(want-load 'ctyport 'ctywide 'hiphog)
+                :on-enter '(begin (want-display 'hiphog 'display) (want-sound 'ctywide1 'ctywide2 'hiphog1))
+                :on-exit #f
+                :on-cross '(want-vis 'hiphog)
+                :on-inside #f
+                :on-deactivate '(unless (movie?) (want-display 'hiphog #f) (want-sound 'ctywide1 'ctywide2 'ctywide3) (want-vis 'ctyport))
+                )
+              )
+  )

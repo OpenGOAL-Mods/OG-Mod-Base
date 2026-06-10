@@ -1,12 +1,111 @@
 #pragma once
 
-#ifndef JAK_INSTRUCTION_H
-#define JAK_INSTRUCTION_H
+#include <cstring>
+#include <variant>
 
 #include "common/common_types.h"
 #include "common/util/Assert.h"
 
 namespace emitter {
+
+/*!
+ * A high-level description of a opcode.  It can emit itself.
+ */
+template <typename InstructionType>
+struct InstructionImpl {
+  /*!
+   * Emit into a buffer and return how many bytes written (can be zero)
+   */
+  u8 emit(u8* buffer) const { return static_cast<const InstructionType*>(this)->emit(buffer); }
+
+  // TODO - the below might only be relevant for X86, in which case
+  // they can eventually leave this parent type
+  // and at that point, things can likely be simplified
+  //
+  // For now, just trying to make things compile / work
+  u8 length() const { return static_cast<const InstructionType*>(this)->length(); }
+
+  int get_imm_size() const { return static_cast<const InstructionType*>(this)->get_imm_size(); }
+
+  int get_disp_size() const { return static_cast<const InstructionType*>(this)->get_disp_size(); }
+
+  int offset_of_imm() const { return static_cast<const InstructionType*>(this)->offset_of_imm(); }
+
+  int offset_of_disp() const { return static_cast<const InstructionType*>(this)->offset_of_disp(); }
+};
+
+namespace ARM64 {
+struct Field {
+  u32 bits;
+  constexpr explicit Field(u32 v) : bits(v) {}
+};
+
+constexpr u32 Base(u32 value, u32 width) {
+  return value << (32 - width);
+}
+
+constexpr Field Rd(u32 x) {
+  return Field{(x & 31) << 0};
+}
+
+constexpr Field Rt(u32 x) {
+  return Field{(x & 31) << 0};
+}
+
+constexpr Field Rn(u32 x) {
+  return Field{(x & 31) << 5};
+}
+
+constexpr Field Rm(u32 x) {
+  return Field{(x & 31) << 16};
+}
+
+constexpr Field Imm6(u32 x) {
+  return Field{(x & 0b111111) << 10};
+}
+
+constexpr Field Imm9(s32 x) {
+  return Field{(static_cast<uint32_t>(x) & 0b111111111) << 12};
+}
+
+constexpr Field Imm12(u32 x) {
+  ASSERT(x >= 0 && x <= 4095);
+  return Field{(static_cast<uint32_t>(x) & 0b111111111111) << 10};
+}
+}  // namespace ARM64
+
+struct InstructionARM64 : InstructionImpl<InstructionARM64> {
+  // The ARM instruction stream is a sequence of word-aligned words. Each ARM instruction is a
+  // single 32-bit word in that stream.
+  // Info:
+  // - https://yurichev.com/mirrors/ARMv8-A_Architecture_Reference_Manual_(Issue_A.a).pdf
+  // - https://www.scs.stanford.edu/~zyedidia/arm64/
+  // - https://armconverter.com/?lock=arm64&code=STR+X0,+[SP,+%23-8]!
+  u32 encoding;
+
+  InstructionARM64() = delete;
+  template <typename... Fs>
+  constexpr InstructionARM64(uint32_t base, Fs... fields) : encoding((base | ... | fields.bits)) {
+    static_assert((std::is_same_v<Fs, emitter::ARM64::Field> && ...),
+                  "All operands must be Field types");
+  }
+
+  uint8_t emit(uint8_t* buffer) const {
+    memcpy(buffer, &encoding, 4);
+    return 4;
+  }
+
+  uint8_t length() const { return 4; }
+
+  int get_imm_size() const { return 0; }
+
+  int offset_of_imm() const { return 0; }
+
+  int offset_of_disp() const { return 0; }
+
+  int get_disp_size() const { return 0; }
+};
+
 /*!
  * The ModRM byte
  */
@@ -133,13 +232,7 @@ struct VEX2 {
       : R(r), reg_id(_reg_id), prefix(_prefix), L(l) {}
 };
 
-/*!
- * A high-level description of an x86-64 opcode.  It can emit itself.
- */
-struct Instruction {
-  Instruction(uint8_t opcode) : op(opcode) {}
-  uint8_t op;
-
+struct InstructionX86 : InstructionImpl<InstructionX86> {
   enum Flags {
     kOp2Set = (1 << 0),
     kOp3Set = (1 << 1),
@@ -151,23 +244,27 @@ struct Instruction {
     kSetImm = (1 << 7),
   };
 
+  InstructionX86(u8 opcode) : op(opcode) {}
+
+  u8 op;
+
   u8 m_flags = 0;
 
-  uint8_t op2;
+  u8 op2;
 
-  uint8_t op3;
+  u8 op3;
 
   u8 n_vex = 0;
-  uint8_t vex[3] = {0, 0, 0};
+  u8 vex[3] = {0, 0, 0};
 
   // the rex byte
-  uint8_t m_rex = 0;
+  u8 m_rex = 0;
 
   // the modrm byte
-  uint8_t m_modrm = 0;
+  u8 m_modrm = 0;
 
   // the sib byte
-  uint8_t m_sib = 0;
+  u8 m_sib = 0;
 
   // the displacement
   Imm disp;
@@ -924,9 +1021,6 @@ struct Instruction {
     return offset;
   }
 
-  /*!
-   * Emit into a buffer and return how many bytes written (can be zero)
-   */
   uint8_t emit(uint8_t* buffer) const {
     if (m_flags & kIsNull)
       return 0;
@@ -1015,6 +1109,41 @@ struct Instruction {
     return count;
   }
 };
-}  // namespace emitter
 
-#endif  // JAK_INSTRUCTION_H
+class Instruction {
+ public:
+  using Variant = std::variant<InstructionX86, InstructionARM64>;
+
+  Variant instr;
+
+  Instruction() = delete;
+
+  template <typename T>
+  Instruction(T v) : instr(std::move(v)) {}
+
+  u8 emit(u8* buffer) const {
+    return std::visit([&](auto const& i) { return i.emit(buffer); }, instr);
+  }
+
+  u8 length() const {
+    return std::visit([](auto const& i) { return i.length(); }, instr);
+  }
+
+  int get_imm_size() const {
+    return std::visit([](auto const& i) { return i.get_imm_size(); }, instr);
+  }
+
+  int get_disp_size() const {
+    return std::visit([](auto const& i) { return i.get_disp_size(); }, instr);
+  }
+
+  int offset_of_imm() const {
+    return std::visit([](auto const& i) { return i.offset_of_imm(); }, instr);
+  }
+
+  int offset_of_disp() const {
+    return std::visit([](auto const& i) { return i.offset_of_disp(); }, instr);
+  }
+};
+
+}  // namespace emitter

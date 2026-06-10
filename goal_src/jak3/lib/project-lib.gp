@@ -159,6 +159,9 @@
 (defmacro copy-vag-files (&rest files)
   `(begin ,@(apply (lambda (x) `(set! *all-vag* (cons (copy-iso-file "VAGWAD" "VAG/" (string-append "." ,x)) *all-vag*))) files)))
 
+(defmacro copy-screen-files (&rest files)
+  `(begin ,@(apply (lambda (x) `(set! *all-screens* (cons (copy-iso-file "SCREEN1" "RES/" (string-append "." ,x)) *all-screens*))) files)))
+
 (defun reverse-list (list)
   (let ((new-list '())
         (curr-elt list))

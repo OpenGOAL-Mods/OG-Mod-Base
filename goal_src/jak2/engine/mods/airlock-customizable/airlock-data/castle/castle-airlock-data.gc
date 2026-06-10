@@ -1,0 +1,26 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *castle-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "cas-front-door-2"
+                :on-notice '(when #t '(caspad))
+                :on-activate '(want-load 'caspad 'castle #f)
+                :on-enter '(want-display 'caspad 'display)
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(want-display 'caspad #f)
+                )
+              (static-airlock-data 
+                :airlock-name "cas-front-door-4"
+                :on-notice '(when (and (task-closed? "castle-break-in-resolution") (not (task-closed? "castle-boss-resolution"))) '(casboss))
+                :on-activate '(want-load 'castle 'casboss #f)
+                :on-enter '(want-display 'casboss 'display)
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(want-display 'casboss #f)
+                )
+              )
+  )

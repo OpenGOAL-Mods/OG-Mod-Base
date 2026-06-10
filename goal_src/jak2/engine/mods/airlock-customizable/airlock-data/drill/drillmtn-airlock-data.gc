@@ -1,0 +1,46 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *drillmtn-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "drill-elevator-doors-3"
+                :on-notice '(when #t '(drillb drillmid drillmtn))
+                :on-activate #f
+                :on-enter '(begin (want-display 'drillb 'display))
+                :on-exit '(begin (want-display 'drillb #f))
+                :on-cross #f
+                :on-inside '(begin (want-load 'drillmid 'drill 'drillmtn))
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "drill-elevator-doors-4"
+                :on-notice '(unless (task-closed? "drill-mech-resolution") '(drill drillmid drillmtn))
+                :on-activate #f
+                :on-enter '(begin (want-display 'drill 'display))
+                :on-exit '(begin (want-display 'drill #f))
+                :on-cross #f
+                :on-inside '(begin (want-load 'drillmid 'drillb 'drillmtn))
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "drill-elevator-doors-1"
+                :on-notice '(when #t '(drillb drillmid drillmtn))
+                :on-activate #f
+                :on-enter '(begin (want-display 'drillb 'display))
+                :on-exit '(begin (want-display 'drillb #f))
+                :on-cross #f
+                :on-inside '(begin (want-load 'drillmid 'drill 'drillmtn))
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "drill-elevator-doors-2"
+                :on-notice '(unless (and (task-closed? "drill-mech-started-smashing") (not (task-closed? "drill-mech-smash-consoles"))) '(drill drillmid drillmtn))
+                :on-activate #f
+                :on-enter '(begin (want-display 'drill 'display))
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate #f
+                )
+              )
+  )

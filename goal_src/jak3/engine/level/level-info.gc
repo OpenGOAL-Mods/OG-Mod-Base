@@ -17846,10 +17846,11 @@
                       :name "templed-warp"
                       :level 'templed
                       :flags (continue-flags no-auto warp-gate)
-                      :trans (new 'static 'vector :x 17512212.0 :y 389120.0 :z 18223136.0 :w 1.0)
-                      :camera-trans (new 'static 'vector :x 17555770.0 :y 409207.2 :z 18242222.0 :w 1.0)
-                      :quat (new 'static 'vector4h :data (new 'static 'array int16 4 0 -19542 0 -26298))
-                      :camera-rot (new 'static 'array int16 9 -13637 0 #x745f -4384 #x7e99 -2005 -29467 -4823 -13490)
+                      ;; mod-base-change changed jak and camera misaligned initial transforms for this checkpoint
+                      :trans (new 'static 'vector :x (meters 4279.29) :y (meters 95.18) :z (meters 4446.81) :w 1.0)
+                      :camera-trans (new 'static 'vector :x 17576318.0 :y 410942.1562 :z 18230798.0 :w 1.0)
+                      :quat (new 'static 'vector4h :data (new 'static 'array int16 4 0 -19005 0 -26542))
+                      :camera-rot (new 'static 'array int16 9 -10636 0 31001 -4712 32384 -1615 -30631 -4984 -10511)
                       :on-goto #f
                       :vis-nick 'templed
                       :vehicle-type #x1b
@@ -18166,7 +18167,7 @@
                        :camera-trans (new 'static 'vector :x -519551.78 :y 18144.46 :z -1833278.2 :w 1.0)
                        :quat (new 'static 'vector4h :data (new 'static 'array int16 4 -3 -24001 0 -22304))
                        :camera-rot (new 'static 'array int16 9 -4826 0 #x7e96 -6097 #x7db4 -907 -31829 -6166 -4741)
-                       :on-goto #f
+                       :on-goto '(begin (kill "vol-holo-eye-1" store #f)) ;;mod-base-change kill "vol-holo-eye-1" when entering volcano via warp-gate 
                        :vis-nick 'volcanox
                        :vehicle-type #x1b
                        :want-count 1

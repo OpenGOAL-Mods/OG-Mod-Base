@@ -128,6 +128,7 @@
                 gun-upgrade-dark-ammo-2
                 board-launch
                 board-zap
+                sidekick
                 darkjak
                 darkjak-bomb0
                 darkjak-bomb1
@@ -142,14 +143,18 @@
                 lighteco
                 darkeco))
 
+(define-extern reset-arena-trainer-globals (function none))
 (defmethod start-run! ((this speedrun-info))
-  ;; randomize game id so the autosplitter knows to restart
-  (reset! *autosplit-info-jak3*)
   ;; turn on speedrun verification display
   (true! (-> this display-run-info?))
+  ;; reset has-started? flag so we can flip it back to #t when jak touches ground/out of blackout
+  (false! (-> *speedrun-info* has-started?))
   (send-event (ppointer->process *speedrun-manager*) 'start-run)
   ;; ensure any required settings are enabled
   (enforce-settings! this)
+  ;; make sure silly arena-trainer globals are reset if we're resetting from arena
+  (when (process-by-name "arena-training-1-collect" *entity-pool*)
+    (reset-arena-trainer-globals))
   ;; finalize any category specific setup code
   (case (-> this category)
     (((speedrun-category newgame-normal))
@@ -168,8 +173,9 @@
          (logior! (-> *game-info* purchase-secrets) (game-secrets hero-mode))
          (start 'play (get-continue-by-name *game-info* "wasstada-jump-training"))
          (play-task (game-task arena-training-1) 'debug #f)
-         (until (and *target* (= (-> *target* next-state name) 'target-stance))
+         (until (and *target* (!= (-> *target* next-state name) 'target-continue))
            (suspend))
+         (send-event *target* 'get-pickup (pickup-type gem) 1000.0)
          (set! (-> *game-info* secrets) HERO_MODE_SECRETS)
          (set! (-> *game-info* purchase-secrets) HERO_MODE_SECRETS)
          (set! (-> *game-info* features) HERO_MODE_FEATURES))))
@@ -189,7 +195,7 @@
          (if (string= *temp-string* EMPTY_STRING)
            (initialize! *game-info* 'game (the game-save #f) "intro-start" (the resetter-spec #f))
            (initialize! *game-info* 'game (the game-save #f) *temp-string* (the resetter-spec #f)))
-         (until (and *target* (= (-> *target* next-state name) 'target-stance))
+         (until (and *target* (!= (-> *target* next-state name) 'target-continue))
            (suspend))
          (when (nonzero? (-> *speedrun-info* active-custom-category completed-task))
            (task-resolution-close! (-> *speedrun-info* active-custom-category completed-task)))))))
@@ -634,6 +640,10 @@
   (set! (-> *speedrun-info* waiting-to-record-practice-attempt?) #f)
   (go-virtual idle))
 
+(defun mark-speedrun-started ()
+  (true! (-> *speedrun-info* has-started?))
+  (none))
+
 (defmethod update! ((this speedrun-info))
   "A per frame update for speedrunning related stuff"
   ;; Ensure the speedrunner menu process is enabled or destroyed
@@ -643,10 +653,27 @@
     (deactivate (-> *speedrun-manager* 0)))
   ;; do speedrunner mode things
   (when (-> *pc-settings* speedrunner-mode?)
+    ;; Check if run/autosplitter should be started (out of blackout and player has control of jak)
+    (when (and (not (-> *speedrun-info* has-started?))
+               *target*
+               ;; not in blackout
+               (>= (-> *display* base-clock frame-counter) (-> *game-info* blackout-time))
+               (!= (-> *setting-control* user-current bg-a-force) 1.0)
+               ;; target has landed on ground/water, or we're about to enter target-hit-ground state
+               (or (logtest? (-> *target* control status) (collide-status on-ground on-surface on-water))
+                   (= (-> *target* next-state name) 'target-hit-ground)))
+      (mark-speedrun-started)
+      ;; spawn a process that resets autosplitter after suspending for 1 frame
+      (process-spawn-function process
+        (lambda ()
+          (suspend)
+          (reset! *autosplit-info-jak3*))))
     ;; Update auto-splitter struct
     (update! *autosplit-info-jak3*)
-    ;; see if we should stop drawing the run info (when you finish arena training)
-    (when (and (!= (-> this category) (speedrun-category custom)) (task-complete? *game-info* (game-task arena-training-1)))
+    ;; see if we should stop drawing the run info (when you finish arena training, but also make sure at least 10s have passed)
+    (when (and (!= (-> this category) (speedrun-category custom))
+               (task-complete? *game-info* (game-task arena-training-1))
+               (time-elapsed? (-> this run-started-at) (seconds 10)))
       (false! (-> this display-run-info?)))
     ;; Draw info to the screen
     (when (and (not (-> *speedrun-info* practicing?)) (-> this display-run-info?))
@@ -761,6 +788,6 @@
           (reset! (-> *speedrun-info* active-practice-objective)))
         (when (and (-> *speedrun-info* display-run-info?)
                    (= (-> *speedrun-info* category) (speedrun-category custom))
-                   (time-elapsed? (-> *speedrun-info* run-started-at) (seconds 15)))
+                   (time-elapsed? (-> *speedrun-info* run-started-at) (seconds 10)))
           (false! (-> *speedrun-info* display-run-info?)))
         (suspend))))

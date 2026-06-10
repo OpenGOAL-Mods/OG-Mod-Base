@@ -28,6 +28,7 @@ namespace Gfx {
 std::function<void()> vsync_callback;
 GfxGlobalSettings g_global_settings;
 game_settings::DebugSettings g_debug_settings;
+SplashScreen g_splash;
 
 const GfxRendererModule* GetRenderer(GfxPipeline pipeline) {
   switch (pipeline) {
@@ -75,7 +76,8 @@ u32 Init(GameVersion version) {
     {
       auto p = scoped_prof("startup::gfx::init_main_display");
       std::string title = "OpenGOAL";
-      if (g_game_version == GameVersion::Jak2 || g_game_version == GameVersion::Jak3) {
+      if (g_game_version == GameVersion::Jak2 || g_game_version == GameVersion::Jak3 ||
+          g_game_version == GameVersion::JakX) {
         title += " - Work in Progress";
       }
       title += fmt::format(" - {} - {}", version_to_game_name_external(g_game_version),

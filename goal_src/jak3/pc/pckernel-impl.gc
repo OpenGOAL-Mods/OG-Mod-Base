@@ -73,6 +73,9 @@
   (icelandic 19)
   (polish 20)
   (lithuanian 21)
+  (czech 22)
+  (croatian 23)
+  (galician 24)
 
   (custom 999) ;; temp
   )
@@ -139,6 +142,7 @@
    (focus-status uint64)
    (current-vehicle int32)
    (task string) ;; currenly active game-task used for mission specific images
+   (active-gun int32)
    )
   )
 
@@ -170,6 +174,22 @@
   (false! (-> obj minimap-force-north))
   (false! (-> obj hires-clouds?))
   (set! (-> obj speedrunner-mode-custom-bind) 0)
+
+  (cond
+    ((and (= *default-territory* GAME_TERRITORY_SCEE) (= (-> obj text-language) (pc-language english)))
+      (set! (-> obj text-language) (pc-language uk-english))
+      (set! (-> obj subtitle-language) (pc-language uk-english))
+      )
+    ;; ((= *default-territory* GAME_TERRITORY_SCEI)
+    ;;   (set! (-> obj text-language) (pc-language japanese))
+    ;;   (set! (-> obj subtitle-language) (pc-language japanese))
+    ;;   )
+    ((= *default-territory* GAME_TERRITORY_SCEK)
+      (set! (-> obj text-language) (pc-language korean))
+      (set! (-> obj subtitle-language) (pc-language korean))
+      )
+    (else
+      ))
 
   (set! (-> obj memcard-volume-sfx) 0.5)
   (set! (-> obj memcard-volume-music) 0.4)
@@ -204,6 +224,7 @@
 
   (when (or (= device 'all) (= device 'controller))
     (set! (-> obj controller-led-status?) #t)
+    (set! (-> obj controller-swap-r1-r2?) #f)
     )
   0)
 
@@ -355,5 +376,3 @@
     (logclear! (-> *pc-settings* cheats-revealed) (pc-cheats ,@cheats))
     )
   )
-
-

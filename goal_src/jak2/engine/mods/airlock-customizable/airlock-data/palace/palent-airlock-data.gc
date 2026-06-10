@@ -1,0 +1,56 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *palent-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-25"
+                :on-notice '(unless (task-closed? "palace-sneak-in-meeting") '(palshaft))
+                :on-activate '(unless (task-closed? "palace-sneak-in-meeting") (want-load 'palshaft 'palent 'throne) (want-sound 'ctywide1 'palent1 'palent2))
+                :on-enter '(want-display 'palshaft 'display)
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(want-display 'palshaft #f)
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-30"
+                :on-notice '(when #t '(palshaft))
+                :on-activate '(begin (want-load 'palshaft 'palent 'palout) (want-sound 'ctywide1 'palent1 'palent2))
+                :on-enter '(begin (want-display 'palshaft 'display) (unless (send-event "com-elevator-3" 'query 'player-standing-on?) (send-event "com-elevator-3" 'jump-to 'top)))
+                :on-exit #f
+                :on-cross '(begin (want-vis 'palshaft) (task-close! "palace-sneak-in-door"))
+                :on-inside #f
+                :on-deactivate '(want-display 'palshaft #f)
+                )
+              (static-airlock-data 
+                :airlock-name "pal-throne-door-2"
+                :on-notice '(unless (task-closed? "palace-sneak-in-meeting") '(throne palout))
+                :on-activate '(unless (task-closed? "palace-sneak-in-meeting") (want-load 'palent 'throne 'palout) (want-sound 'ctywide1 'palent1 'palent2))
+                :on-enter '(begin (want-display 'throne 'display) (want-display 'palout 'display))
+                :on-exit #f
+                :on-cross '(want-sound 'palent1 'palent2 'palent3)
+                :on-inside #f
+                :on-deactivate '(begin (want-display 'throne #f) (want-display 'palout #f))
+                )
+              (static-airlock-data 
+                :airlock-name "pal-ent-door-1"
+                :on-notice '(when (task-closed? "palace-sneak-in-meeting") '(palent))
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "pal-ent-door-2"
+                :on-notice '(when (task-closed? "palace-sneak-in-meeting") '(palent))
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate #f
+                )
+              )
+  )

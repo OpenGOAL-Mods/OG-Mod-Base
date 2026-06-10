@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *prison-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "fort-entry-gate-20"
+                :on-notice '(when (task-closed? "fortress-save-friends-introduction") '(forrescb))
+                :on-activate '(when (task-closed? "fortress-save-friends-introduction") (want-load 'prison 'forrescb))
+                :on-enter '(want-display 'forrescb 'display)
+                :on-exit #f
+                :on-cross '(want-sound 'forresc1 'forresc2 'forexit1)
+                :on-inside #f
+                :on-deactivate '(want-display 'forrescb #f)
+                )
+              )
+  )

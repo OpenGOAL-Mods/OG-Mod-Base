@@ -794,7 +794,10 @@
 (defstate ogreboss-idle (ogreboss)
   :enter
     (behavior ()
-      (when (zero? (-> self try-count))
+      (when (#if PC_PORT
+              ;; og:preserve-this skip intro cutscene (and breakable column spawning) for Mountain Pass IL speedruns
+              (and (zero? (-> self try-count)) (not (and PC_PORT (is-speedrun-category? 'il-ogre))))
+              (zero? (-> self try-count)))
         (let ((gp-0 (manipy-spawn (-> self root trans) (-> self entity) *ogreboss-column-sg* #f :to self)))
           (set! (-> self column) (ppointer->handle gp-0))
           (send-event (ppointer->process gp-0) 'anim-mode 'loop)
@@ -818,7 +821,10 @@
 (defstate ogreboss-intro (ogreboss)
   :code
     (behavior ()
-      (when (zero? (-> self try-count))
+      (when (#if PC_PORT
+              ;; og:preserve-this skip intro cutscene for Mountain Pass IL speedruns
+              (and (zero? (-> self try-count)) (not (and PC_PORT (is-speedrun-category? 'il-ogre))))
+              (zero? (-> self try-count)))
         (process-drawable-delay-player (seconds 1))
         (let ((gp-0 (get-process *default-dead-pool* pov-camera #x4000)))
           (ppointer->handle (when gp-0
@@ -1038,11 +1044,8 @@
          (until (ja-done? 0)
            (suspend)
            (ja :num! (seek!)))))
-      (let* ((gp-0 (the int (* (-> self difficulty) (+ 8.0 (* 4.0 (-> self level))))))
-             (f0-17 1.0)
-             (f1-2 0.15)
-             (f2-2 (-> self difficulty))
-             (f30-0 (+ f0-17 (* f1-2 (* f2-2 f2-2) (-> self level)))))
+      (let ((gp-0 (the int (* (-> self difficulty) (+ 8.0 (* 4.0 (-> self level))))))
+            (f30-0 (+ 1.0 (* 0.15 (square (-> self difficulty)) (-> self level)))))
         (ja-channel-push! 1 (seconds 0.1))
         (ja-no-eval :group! ogreboss-attack2-start-ja :num! (seek! max f30-0) :frame-num 0.0)
         (until (ja-done? 0)

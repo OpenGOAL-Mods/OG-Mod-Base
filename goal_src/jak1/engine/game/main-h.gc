@@ -148,6 +148,8 @@
 
 (define *display-load-boundaries* #f)
 
+(define *display-load-boundary-text* #f)
+
 (define *display-memcard-info* #f)
 
 (define *display-split-boxes* #f)

@@ -429,7 +429,7 @@
   "jak-swim+0-ag.go"
   "blocking-plane-ag.go"
   "los-control-h.o"
-  "airlock.o"
+  "airlock.o" ;; comment this out when using the customizable airlock system — see https://github.com/OpenGOAL-Mods/OG-Mod-Base/tree/main/goal_src/jak2/engine/mods/airlock-customizable/README.md for more details
   "water-anim.o"
   "blocking-plane.o"
   "idle-control.o"

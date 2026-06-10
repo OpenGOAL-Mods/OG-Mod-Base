@@ -1335,7 +1335,6 @@
 ;; INFO: Used lq/sq
 ;; INFO: Return type mismatch water-flags vs none.
 (defmethod init! ((this water-vol))
-  (local-vars (sv-16 res-tag))
   (set! (-> this attack-event) (the-as symbol ((method-of-type res-lump get-property-struct)
                                                (-> this entity)
                                                'attack-event
@@ -1353,19 +1352,19 @@
   (logior! (-> this vol flags) 3)
   (set! (-> this bottom-height) 32768.0)
   (set! (-> this target) (the-as handle #f))
-  (set! sv-16 (new 'static 'res-tag))
-  (let ((v1-8 (the-as (pointer float) ((method-of-type res-lump get-property-data)
-                                       (-> this entity)
-                                       'water-height
-                                       'exact
-                                       -1000000000.0
-                                       (the-as pointer #f)
-                                       (& sv-16)
-                                       *res-static-buf*
-                                       )
-                      )
-              )
-        )
+  (let* ((sv-16 (new 'static 'res-tag))
+         (v1-8 (the-as (pointer float) ((method-of-type res-lump get-property-data)
+                                        (-> this entity)
+                                        'water-height
+                                        'exact
+                                        -1000000000.0
+                                        (the-as pointer #f)
+                                        (& sv-16)
+                                        *res-static-buf*
+                                        )
+                       )
+               )
+         )
     (when v1-8
       (set! (-> this water-height) (-> v1-8 0))
       (set! (-> this wade-height) (-> v1-8 1))

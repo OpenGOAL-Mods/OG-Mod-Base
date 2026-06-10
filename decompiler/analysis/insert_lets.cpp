@@ -45,6 +45,8 @@ If the previous let variables appear in the definition of new one, make the let 
 
 namespace {
 FormElement* rewrite_let(LetElement* in, const Env& env, FormPool& pool, LetRewriteStats& stats);
+FormElement* rewrite_multi_let_as_vector_dot(LetElement* in, const Env& env, FormPool& pool);
+bool let_uses_stack_slot_access(const LetElement* in);
 
 std::vector<Form*> path_up_tree(Form* in, const Env&) {
   std::vector<Form*> path;
@@ -350,6 +352,7 @@ FormElement* rewrite_as_send_event(LetElement* in,
       break;
     case GameVersion::Jak2:
     case GameVersion::Jak3:
+    case GameVersion::JakX:
       // in jak 2, the event message block holds a ppointer instead.
       set_from_matcher = Matcher::set(
           Matcher::deref(Matcher::reg(block_var_reg), false, {DerefTokenMatcher::string("from")}),
@@ -370,6 +373,7 @@ FormElement* rewrite_as_send_event(LetElement* in,
         break;
       case GameVersion::Jak2:
       case GameVersion::Jak3:
+      case GameVersion::JakX:
         set_from_form_matcher = Matcher::set(
             Matcher::deref(Matcher::any_reg(0), false, {DerefTokenMatcher::string("from")}),
             Matcher::op_fixed(FixedOperatorKind::PROCESS_TO_PPOINTER, {Matcher::any(1)}));
@@ -1913,7 +1917,7 @@ FormElement* rewrite_proc_new(LetElement* in, const Env& env, FormPool& pool) {
   auto ra = in->entries().at(0).dest;
   std::vector<Matcher> get_process_args = {Matcher::any(0), Matcher::any_symbol(1),
                                            Matcher::any(2)};
-  if (env.version >= GameVersion::Jak3) {
+  if (env.version == GameVersion::Jak3 || env.version == GameVersion::JakX) {
     // this flag appears unused...
     get_process_args.push_back(Matcher::any_integer(3));
   }
@@ -1924,8 +1928,8 @@ FormElement* rewrite_proc_new(LetElement* in, const Env& env, FormPool& pool) {
 
   const auto& proc_type = mr_get_proc.maps.strings.at(1);
 
-  // part-tracker-spawn macro for jak 3
-  if (env.version >= GameVersion::Jak3 &&
+  // part-tracker-spawn macro for jak 3 / jak x
+  if ((env.version == GameVersion::Jak3 || env.version == GameVersion::JakX) &&
       (proc_type == "part-tracker" || proc_type == "part-tracker-subsampler")) {
     auto form = rewrite_part_tracker_new_jak3(proc_type, in, env, pool);
     if (form) {
@@ -2045,6 +2049,7 @@ FormElement* rewrite_proc_new(LetElement* in, const Env& env, FormPool& pool) {
             break;
           case GameVersion::Jak2:
           case GameVersion::Jak3:
+          case GameVersion::JakX:
             expected_name = fmt::format("(symbol->string (-> {} symbol))", proc_type);
             break;
           default:
@@ -2073,7 +2078,7 @@ FormElement* rewrite_proc_new(LetElement* in, const Env& env, FormPool& pool) {
         if (!mr_get_proc.maps.forms.at(2)->to_form(env).is_int(0x4000)) {
           ja_push_form_to_args(pool, args, mr_get_proc.maps.forms.at(2), "stack-size");
         }
-        if (env.version >= GameVersion::Jak3) {
+        if (env.version == GameVersion::Jak3 || env.version == GameVersion::JakX) {
           if (mr_get_proc.maps.ints.at(3) != 1) {
             // TODO better name
             args.push_back(pool.form<ConstantTokenElement>(":unk"));
@@ -2195,7 +2200,7 @@ FormElement* rewrite_attack_info(LetElement* in, const Env& env, FormPool& pool)
   if (env.version == GameVersion::Jak2) {
     possible_args = possible_args_jak2;
   }
-  if (env.version == GameVersion::Jak3) {
+  if (env.version == GameVersion::Jak3 || env.version == GameVersion::JakX) {
     possible_args = possible_args_jak3;
   }
 
@@ -2405,6 +2410,18 @@ FormElement* rewrite_set_font_single(LetElement* in,
  */
 FormElement* rewrite_let(LetElement* in, const Env& env, FormPool& pool, LetRewriteStats& stats) {
   // ordered based on frequency. for best performance, you check the most likely rewrites first!
+
+  if (in->entries().size() >= 6) {
+    auto as_vector_dot = rewrite_multi_let_as_vector_dot(in, env, pool);
+    if (as_vector_dot) {
+      stats.vector_dot++;
+      return as_vector_dot;
+    }
+  }
+
+  if (let_uses_stack_slot_access(in)) {
+    return nullptr;
+  }
 
   auto as_unused = rewrite_empty_let(in, env, pool);
   if (as_unused) {
@@ -2742,7 +2759,8 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
 
   // New for Jak 3: they check to see if nothing was added, and skip adding an empty DMA transfer
   // if so. This means the usual 2 ending let body forms are now wrapped in a `when`.
-  const int expected_last_let_body_size = env.version == GameVersion::Jak3 ? 1 : 2;
+  const int expected_last_let_body_size =
+      env.version == GameVersion::Jak3 || env.version == GameVersion::JakX ? 1 : 2;
   if (last_part->entries().size() != 1 ||
       last_part->body()->size() != expected_last_let_body_size) {
     return nullptr;
@@ -2752,7 +2770,7 @@ FormElement* rewrite_with_dma_buf_add_bucket(LetElement* in, const Env& env, For
   LetElement* dmatag_let;
   FormElement* insert_tag_call;
 
-  if (env.version == GameVersion::Jak3) {
+  if (env.version == GameVersion::Jak3 || env.version == GameVersion::JakX) {
     // check for the when:
     auto outer_when = dynamic_cast<CondNoElseElement*>(last_part->body()->at(0));
     if (!outer_when) {
@@ -3069,6 +3087,18 @@ FormElement* rewrite_multi_let(LetElement* in,
                                const Env& env,
                                FormPool& pool,
                                LetRewriteStats& stats) {
+  if (in->entries().size() >= 6) {
+    auto as_vector_dot = rewrite_multi_let_as_vector_dot(in, env, pool);
+    if (as_vector_dot) {
+      stats.vector_dot++;
+      return as_vector_dot;
+    }
+  }
+
+  if (let_uses_stack_slot_access(in)) {
+    return in;
+  }
+
   if (in->entries().size() >= 2) {
     auto as_with_dma_buf_add_bucket = rewrite_with_dma_buf_add_bucket(in, env, pool);
     if (as_with_dma_buf_add_bucket) {
@@ -3094,14 +3124,6 @@ FormElement* rewrite_multi_let(LetElement* in,
     if (as_launch_particles) {
       stats.launch_particles++;
       return as_launch_particles;
-    }
-  }
-
-  if (in->entries().size() >= 6) {
-    auto as_vector_dot = rewrite_multi_let_as_vector_dot(in, env, pool);
-    if (as_vector_dot) {
-      stats.vector_dot++;
-      return as_vector_dot;
     }
   }
 
@@ -3565,6 +3587,12 @@ FormElement* rewrite_let_sequence(const std::vector<LetElement*>& in,
                                   const Env& env,
                                   FormPool& pool,
                                   LetRewriteStats& stats) {
+  for (const auto* let : in) {
+    if (let_uses_stack_slot_access(let)) {
+      return nullptr;
+    }
+  }
+
   if (in.size() == 3) {
     auto as_dma_buffer_add_gs_set = rewrite_dma_buffer_add_gs_set(in, env, pool);
     if (as_dma_buffer_add_gs_set) {
@@ -3603,6 +3631,15 @@ Form* insert_cast_for_let(RegisterAccess dst,
   }
 
   return src;
+}
+
+bool let_uses_stack_slot_access(const LetElement* in) {
+  for (const auto& entry : in->entries()) {
+    if (is_stack_slot_access(entry.dest)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 bool register_can_hold_var(const Register& reg) {

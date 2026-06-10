@@ -1,0 +1,36 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *ctyfarma-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-20"
+                :on-notice '(when #t '(ctyfarma ctywide))
+                :on-activate #f
+                :on-enter '(begin (want-display 'ctywide 'display) (want-vis 'ctyfarma) (send-event self 'sound 'enter))
+                :on-exit '(begin (want-display 'ctywide #f))
+                :on-cross #f
+                :on-inside '(cond ((task-open? "forest-scouts-get-board")) (else (want-load 'ctyfarma 'mountain #f) (want-sound 'mount1 'mount2 'ctywide1)))
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-32"
+                :on-notice '(cond ((task-closed? "mountain-lens-introduction") '(ctyfarma)))
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross '(cond ((or (task-open? "forest-scouts-voicebox") (task-open? "forest-scouts-get-board")) (scene-play "city-get-hoverboard")))
+                :on-inside #f
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-38"
+                :on-notice '(when #t '(mountain))
+                :on-activate #f
+                :on-enter '(begin (want-display 'mountain 'display) (want-vis 'mountain) (send-event self 'sound 'exit))
+                :on-exit '(want-display 'mountain #f)
+                :on-cross #f
+                :on-inside '(begin (want-load 'ctyfarma 'ctywide #f) (want-sound 'ctywide1 'ctywide2 'ctyfarm1))
+                :on-deactivate #f
+                )
+              )
+  )
