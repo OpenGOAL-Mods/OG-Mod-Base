@@ -1,7 +1,5 @@
 ;; All Types
 
-;; TODO - some of these are likely not needed / copied from jak 2
-
 ;; type system setup
 (define-extern object type)
 (define-extern type type)
@@ -7784,7 +7782,6 @@
    (load-buffer-mode          level-memory-mode                               :offset-assert 4624) ;; guessed by decompiler
    (display-start-time        uint64                                         :offset-assert 4632) ;; time-frame
    (memory-mask uint32 :offset-assert 4640)
-   ; (UNKNOWN                   UNKNOWN                                        :offset-assert -1) ;; field could not be read.
    (task-mask                 task-mask                                      :offset-assert 4644)
    (tfrag-gs-test             gs-test                                         :offset-assert 4648)
    (texture-dirty-masks       texture-mask                           11  :inline    :offset-assert 4656) ;; guessed by decompiler
@@ -7810,9 +7807,7 @@
    (level-type                type                                           :offset-assert 5368) ;; guessed by decompiler
    (load-order                uint64                                         :offset-assert 5376) ;; int64
    (eye-slot-lowres           uint8                                11      :offset-assert 5384)
-   ; (UNKNOWN                   UNKNOWN                                        :offset-assert -1) ;; field could not be read.
    (eye-slot-highres          uint8                                11      :offset-assert 5395)
-   ; (UNKNOWN                   UNKNOWN                                        :offset-assert -1) ;; field could not be read.
    (unknown-pad uint8 14)
    )
   :method-count-assert 30
@@ -15266,26 +15261,6 @@
   :flag-assert         #x900000100
   )
 
-#|
-(deftype gsf-vertex-array (UNKNOWN)
-  ((vtx gsf-vertex :dynamic :offset-assert 0) ;; guessed by decompiler
-   )
-  :method-count-assert 0
-  :size-assert         #x0
-  :flag-assert         #x0
-  )
-|#
-
-#|
-(deftype gsf-fx-vertex-array (UNKNOWN)
-  ((data gsf-fx-vertex :dynamic :offset-assert 0) ;; guessed by decompiler
-   )
-  :method-count-assert 0
-  :size-assert         #x0
-  :flag-assert         #x0
-  )
-|#
-
 (deftype gsf-vertex-array (structure)
   ((vtx gsf-vertex :dynamic :offset-assert 0)
    )
@@ -20820,6 +20795,7 @@
 ;; joint-mod-h                    ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; +++joint-mod-h:joint-mod-mode
 (defenum joint-mod-mode
   :bitfield #t
   :type uint32
@@ -20837,6 +20813,7 @@
   (foot-rot)
   (joint-set-world)
   )
+;; ---joint-mod-h:joint-mod-mode
 
 ;; +++joint-mod-h:track-mode
 (defenum track-mode
@@ -20852,6 +20829,7 @@
   )
 ;; ---joint-mod-h:track-mode
 
+;; +++joint-mod-h:joint-mod-ik-flags
 (defenum joint-mod-ik-flags
   :bitfield #t
   :type uint32
@@ -20859,6 +20837,7 @@
   (elbow-trans-neg)
   (elbow-rot-neg)
   )
+;; ---joint-mod-h:joint-mod-ik-flags
 
 (deftype joint-mod (basic)
   "Utility to modify a joint transform from code, rather than just getting it from animation.
@@ -21047,7 +21026,6 @@
   )
 
 ;; added - I really have no idea what is going on here
-
 (deftype joint-mod-blend-world-work (structure)
   ((mat1 matrix :inline)
    (mat2 matrix :inline)
@@ -26198,7 +26176,7 @@
   )
 
 (deftype entity-camera (entity)
-  ((connect connectable :inline :offset-assert 64)
+  ((quat quaternion :inline :offset-assert 64)
    )
   :flag-assert #x1b00000050
   )

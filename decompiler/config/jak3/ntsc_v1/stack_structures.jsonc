@@ -195,8 +195,9 @@
   "(code target-hit)": [[16, "vector"]],
   "apply-pos-from-entity": [[208, "collide-query"]],
   "target-death-main": [
-    [16, "event-message-block"],
-    [96, ["array", "level", 1]]
+    [16, "event-message-block"]
+    // this wrong stack cast was the reason Daxter's death quotes scenes didn't work
+    //[96, ["array", "level", 1]]
   ],
   "find-nearest-focusable": [[48, "vector"]],
   "target-gun-joint-pre0": [
@@ -1942,7 +1943,7 @@
   "(code wait title-control)": [[16, "event-message-block"]],
   "(code startup title-control)": [
     [16, ["array", "symbol", 10]],
-    [64, "event-message-block"], // this memory is reused as both mc-slot-info and event-message-block
+    [64, "event-message-block"],
     [368, ["array", "symbol", 10]]
   ],
   "(method 9 nav-node)": [[48, ["inline-array", "vector", 2]]],
