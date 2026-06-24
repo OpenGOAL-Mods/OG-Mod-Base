@@ -612,11 +612,11 @@ void Merc2::handle_pc_model(const DmaTransfer& setup,
   u32 first_bone = alloc_bones(bone_count, skel_matrix_buffer);
 
   // allocate lights
-  if (current_lights.w1) {
-    if (render_state->version != GameVersion::Jak3) {
-      current_lights.w1 = 0;  // force off merc fade in jak2/1 - a bunch of stuff uses this
-    }
-  }
+  // if (current_lights.w1) {
+  //   if (render_state->version != GameVersion::Jak3) {
+  //     current_lights.w1 = 0;  // force off merc fade in jak2/1 - a bunch of stuff uses this
+  //   }
+  // }
   u32 lights = alloc_lights(current_lights);
   stats->num_lights++;
 

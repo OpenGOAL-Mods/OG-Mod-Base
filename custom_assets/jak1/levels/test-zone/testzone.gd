@@ -4,6 +4,7 @@
 ;; the actual file name still needs to be 8.3
 ("TSZ.DGO"
  ("test-zone-obs.o"
+  "on-off-block.o"
   "tpage-398.go"
   "tpage-400.go"
   "tpage-399.go"
@@ -11,6 +12,8 @@
   "tpage-1470.go"
   "plat-ag.go"
   "test-actor-ag.go"
+  "on-off-block-ag.go"
+  "generic-button-ag.go"
   "test-zone.go"
   )
  )

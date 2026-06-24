@@ -254,7 +254,8 @@
    (shadow-mask              uint8)
    (level-index              uint8)
    (origin-joint-index       uint8)
-   (shadow-joint-index       uint8))
+   (shadow-joint-index       uint8)
+   (force-fade-int           uint8)) ;; 0-127 considered unset; 128-255 considered as 0-128
   (:methods
    (new (symbol type process art-joint-geo) _type_)
    (get-skeleton-origin (_type_) vector)
