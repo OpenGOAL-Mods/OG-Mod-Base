@@ -5,6 +5,7 @@
 ("TSZ.DGO"
  ("test-zone-obs.o"
   "linear-plat.o"
+  "on-off-block.o"
   "tpage-398.go"
   "tpage-400.go"
   "tpage-399.go"
@@ -14,6 +15,8 @@
   "plat-eco-ag.go"
   "test-actor-ag.go"
   "babak-ag.go"
+  "on-off-block-ag.go"
+  "generic-button-ag.go"
   "test-zone.go"
   )
  )

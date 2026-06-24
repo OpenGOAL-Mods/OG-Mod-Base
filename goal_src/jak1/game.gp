@@ -1680,6 +1680,8 @@
 ;; more complicated actors like jak that make a lot of use of animation blending can have 24+ channels.
 (build-actor "test-actor" :gen-mesh #t)
 
+(build-actor "on-off-block" :gen-mesh #t)
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Game Engine Code
 ;;;;;;;;;;;;;;;;;;;;;
@@ -2138,6 +2140,7 @@
 )
 
 (goal-src "levels/test-zone/test-zone-obs.gc" "process-drawable")
+(goal-src "levels/common/on-off-block.gc" "process-drawable" "basebutton")
 
 
 (group-list "all-code"

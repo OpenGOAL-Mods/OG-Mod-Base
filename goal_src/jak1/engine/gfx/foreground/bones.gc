@@ -1318,6 +1318,9 @@
                                 (a0-36 (the-as object (-> *merc-bucket-info* effect effect-idx))))
                             (let ((a1-16 (-> *time-of-day-context* current-sun env-color))
                                   (f0-10 (* 0.0078125 f0-9)))
+                              ;; modbase - support merc fade
+                              (when (> (-> arg0 force-fade-int) 127)
+                                (set! f0-10 0.0)) ;; (- 256 (-> arg0 force-fade-int))))
                               (dotimes (a2-15 3)
                                 (set! (-> (the-as (pointer int8) a0-36) a2-15) (the int (* f0-10 (-> a1-16 data a2-15) (the float (-> v1-85 a2-15)))))))
                             (set! (-> (the-as (pointer uint8) a0-36) 3) (the-as uint 0)))
@@ -1350,6 +1353,12 @@
                    (set! (-> *merc-bucket-info* effect effect-idx ignore-alpha) (the-as uint 0))
                    (set! used-merc 1)
                    used-merc))
+                ;; modbase - support merc fade
+                (when (> (-> arg0 force-fade-int) 127)
+                  (set! (-> *merc-bucket-info* effect effect-idx ignore-alpha) (the-as uint 0))
+                  (set! (-> *merc-bucket-info* light fade-flags) (the-as uint 0.00000000000000000000000000000000000000000014))
+                  (set! (-> *merc-bucket-info* light fade-int) (- (-> arg0 force-fade-int) 128)) ;; 0 to 128
+                  )
                 ;; final force to mercneric for ps
                 (when pc-force-mercneric
                   (set! (-> *merc-bucket-info* effect effect-idx use-mercneric) (the-as uint 1))
