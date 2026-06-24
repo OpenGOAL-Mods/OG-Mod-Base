@@ -13,10 +13,12 @@
      (when (not (logtest? (-> self state-flags) (state-flags dying)))
        (let ((s4-0 (-> arg3 param 0))
              (f28-0 (the-as float (-> arg3 param 1))))
-         (if (!= (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) (the-as float 0.0) (the-as handle #f))
-                 (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) f28-0 (process->handle arg0)))
-           #t
-           'full))))
+         ;; modbase - fix crash when hitting both red eco vent + other vent at same time
+         (when (!= (-> self fact eco-source-time) (current-time))
+          (if (!= (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) (the-as float 0.0) (the-as handle #f))
+                  (pickup-collectable! (-> self fact) (the-as pickup-type s4-0) f28-0 (process->handle arg0)))
+            #t
+            'full)))))
     (('reset-pickup) (reset! (-> self fact) (the-as symbol (-> arg3 param 0))))
     (('reset-collide)
      (cond

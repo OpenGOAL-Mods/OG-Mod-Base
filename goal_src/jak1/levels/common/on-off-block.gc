@@ -24,6 +24,8 @@
 (dotimes (i (on-off-group max))
   (false! (-> *on-off-manager* group-states i)))
 
+;; ===== on/off single-colored button =====
+
 (deftype on-off-button (basebutton)
   ((group on-off-group))
   )
@@ -89,7 +91,117 @@
     )
 
   (go (method-of-object this basebutton-startup))
+  (none)
+)
+
+;; ===== on/off eco-based button =====
+
+(deftype eco-on-off-button (basebutton)
+  ())
+
+(defmethod basebutton-method-29 ((this eco-on-off-button) (arg0 symbol) (arg1 entity))
+  (when arg0
+    (when *target*
+      (let ((g (on-off-group max)))
+        ;; count 4HP as channeling green eco
+        (if (and *target* (= (-> *target* fact health) (-> *target* fact health-max)) (= (-> *target* fact eco-pill) (-> *target* fact eco-pill-max)))
+          (set! g (on-off-group green))
+          )
+        (when (< 0.0 (-> *target* fact eco-level))
+          (case (-> *target* fact eco-type)
+            (((pickup-type eco-red))
+              (set! g (on-off-group red))
+              )
+            (((pickup-type eco-blue))
+              (set! g (on-off-group blue))
+              )
+            (((pickup-type eco-green))
+              (set! g (on-off-group green))
+              )
+            (((pickup-type eco-yellow))
+              (set! g (on-off-group yellow))
+              )
+            )
+          )
+        (when (!= g (on-off-group max))
+          (toggle *on-off-manager* g (not (-> *on-off-manager* group-states g))))
+        )
+      )
+    )
   (none))
+
+(defstate basebutton-down-idle (eco-on-off-button)
+  :virtual #t
+  :code
+    (behavior ()
+      (set-time! (-> self state-time))
+      (until (and (time-elapsed? (-> self state-time) (seconds 1))
+                  (or (not (-> self root riders)) (zero? (-> self root riders num-riders))))
+        (detect-riders! (-> self root))
+        (suspend))
+      (basebutton-method-29 self (-> self event-going-up) (-> self notify-actor))
+      (sound-play "silo-button")
+      (go-virtual basebutton-going-up)
+      )
+  :post
+    (behavior ()
+      (when (-> self move-to?)
+        (set! (-> self move-to?) #f)
+        (set! (-> self root trans quad) (-> self move-to-pos quad))
+        (quaternion-copy! (-> self root quat) (-> self move-to-quat))
+        (rider-post))))
+
+(defstate basebutton-up-idle (eco-on-off-button)
+  :virtual #t
+  :event
+    (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
+      (case message
+        (('attack 'touch)
+        ;; push button just by touching, since you can't ground pound with yellow eco
+        ;;  (case (-> block param 1)
+        ;;    (('flop)
+            (basebutton-method-29 self (-> self event-going-down) (-> self notify-actor))
+            (sound-play "silo-button")
+            (go-virtual basebutton-going-down)) ;;))
+        (('trigger) (sound-play "silo-button") (go-virtual basebutton-going-down))
+        (('move-to) (move-to-vec-or-quat! self (the-as vector (-> block param 0)) (the-as quaternion (-> block param 1))))))
+  :enter
+    (behavior ()
+      (press! self #f))
+  :trans
+    (behavior ()
+      (set-vector! (-> self draw color-mult) 1.0 1.0 1.0 1.0)
+      ;; count 4HP as channeling green eco
+      (if (and *target* (= (-> *target* fact health) (-> *target* fact health-max)) (= (-> *target* fact eco-pill) (-> *target* fact eco-pill-max)))
+        (set-vector! (-> self draw color-mult) 1.0 5.0 1.0 1.0)
+        )
+      (when (and *target* (< 0.0 (-> *target* fact eco-level)))
+        (case (-> *target* fact eco-type)
+          (((pickup-type eco-red))
+            (set-vector! (-> self draw color-mult) 5.0 1.0 1.0 1.0)
+            )
+          (((pickup-type eco-blue))
+            (set-vector! (-> self draw color-mult) 1.0 1.0 5.0 1.0)
+            )
+          (((pickup-type eco-green))
+            (set-vector! (-> self draw color-mult) 1.0 5.0 1.0 1.0)
+            )
+          (((pickup-type eco-yellow))
+            (set-vector! (-> self draw color-mult) 5.0 5.0 1.0 1.0)
+            )
+          )
+        )
+      (if (-> self move-to?) (rider-trans)))
+  :code anim-loop
+  :post
+    (behavior ()
+      (when (-> self move-to?)
+        (set! (-> self move-to?) #f)
+        (set! (-> self root trans quad) (-> self move-to-pos quad))
+        (quaternion-copy! (-> self root quat) (-> self move-to-quat))
+        (rider-post))))
+
+;; ===== on/off colored blocks =====
 
 (deftype on-off-block (process-drawable)
   ((root       collide-shape-moving :override)

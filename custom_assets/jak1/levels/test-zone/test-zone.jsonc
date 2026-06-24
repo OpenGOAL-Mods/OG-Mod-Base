@@ -575,6 +575,57 @@
         "inverted?": ["uint32", 1],
         "scale": ["vector", [0.2, 0.2, 0.2, 1.0]]
       }
+    },
+    {
+      "trans": [-45.41, 53.5, 38.42], // translation
+      "etype": "eco-on-off-button", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 1], // quaternion
+      "bsphere": [-45.41, 53.5, 38.42, 10], // bounding sphere
+      "lump": {
+        "name": "eco-on-off-button"
+      }
+    },
+    {
+      "trans": [-55.41, 53.5, 28.42], // translation
+      "etype": "ventred", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 1], // quaternion
+      "bsphere": [-55.41, 53.5, 28.42, 10], // bounding sphere
+      "lump": {
+        "name": "red-vent"
+      }
+    },
+    {
+      "trans": [-55.41, 53.5, 33.42], // translation
+      "etype": "ventblue", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 1], // quaternion
+      "bsphere": [-55.41, 53.5, 33.42, 10], // bounding sphere
+      "lump": {
+        "name": "blue-vent"
+      }
+    },
+    {
+      "trans": [-55.41, 53.5, 38.42], // translation
+      "etype": "ventyellow", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 1], // quaternion
+      "bsphere": [-55.41, 53.5, 38.42, 10], // bounding sphere
+      "lump": {
+        "name": "yellow-vent"
+      }
+    },
+    {
+      "trans": [-55.41, 53.5, 43.42], // translation
+      "etype": "ecovent", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 1], // quaternion
+      "bsphere": [-55.41, 53.5, 43.42, 10], // bounding sphere
+      "lump": {
+        "name": "green-vent",
+        "eco-info": ["eco-info", "(pickup-type eco-green)", 1]
+      }
     }
   ]
 }
