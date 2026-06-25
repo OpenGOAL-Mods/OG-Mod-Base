@@ -474,7 +474,7 @@
       "etype": "on-off-block", // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat": [0, 0, 0, 1], // quaternion
-      "bsphere": [-15.41, 56.5, 38.42, 10], // bounding sphere
+      "bsphere": [-15.41, 56.5, 43.42, 10], // bounding sphere
       "lump": {
         "name": "on-off-block-blue-3",
         "on-off-group": ["uint32", 1],
@@ -521,7 +521,7 @@
       "etype": "on-off-block", // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat": [0, 0, 0, 1], // quaternion
-      "bsphere": [-25.41, 53.5, 38.42, 10], // bounding sphere
+      "bsphere": [-25.41, 53.5, 43.42, 10], // bounding sphere
       "lump": {
         "name": "on-off-block-green-3",
         "on-off-group": ["uint32", 2],
@@ -568,12 +568,33 @@
       "etype": "on-off-block", // actor type
       "game_task": 0, // associated game task (for powercells, etc)
       "quat": [0, 0, 0, 1], // quaternion
-      "bsphere": [-35.41, 53.5, 38.42, 10], // bounding sphere
+      "bsphere": [-35.41, 53.5, 43.42, 10], // bounding sphere
       "lump": {
         "name": "on-off-block-yellow-3",
         "on-off-group": ["uint32", 3],
         "inverted?": ["uint32", 1],
         "scale": ["vector", [0.2, 0.2, 0.2, 1.0]]
+      }
+    },
+    {
+      "trans": [-15.41, 53.5, 52.42], // translation
+      "etype": "cycling-on-off-button", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 1], // quaternion
+      "bsphere": [-15.41, 53.5, 52.42, 10], // bounding sphere
+      "lump": {
+        "name": "cycling-on-off-button-fast"
+      }
+    },
+    {
+      "trans": [-25.41, 53.5, 52.42], // translation
+      "etype": "cycling-on-off-button", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 1], // quaternion
+      "bsphere": [-25.41, 53.5, 52.42, 10], // bounding sphere
+      "lump": {
+        "name": "cycling-on-off-button-slow",
+        "period": ["float", 0.5]
       }
     },
     {
