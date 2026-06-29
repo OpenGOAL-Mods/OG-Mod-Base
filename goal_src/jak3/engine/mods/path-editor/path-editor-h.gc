@@ -1,0 +1,64 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; path-editor-h
+;; by Nick07
+
+(declare-file (debug))
+
+(defenum nick-path-mode
+  :type int32
+  (preview 0)
+  (edit 1)
+  (moving-node 2)
+  )
+
+(defenum nick-path-flags
+  :type int32
+  :bitfield #t
+  (display-spheres 0)
+  )
+
+(defenum nick-path-type
+  :type int32
+  (linear 0)
+  (curved 1)
+  )
+
+(deftype path-editor (process)
+  ((nodes           vector 100 :inline)
+   (knots           float 100)
+   (node-count      int32)
+   (mode            nick-path-mode)
+   (flags           nick-path-flags)
+   (selected-node   int32)
+   (path-type       nick-path-type)
+   (closest-node    int32)
+   )
+  (:state-methods
+    idle
+    )
+  (:methods
+    (start-editor! (_type_) none)
+    (update-editor! (_type_) none)
+    (draw-node-id (_type_) none)
+    (draw-node-sphere (_type_) none)
+    (add-path-node (_type_) none)
+    (remove-last-node (_type_) none)
+    (path-graph-clear-all (_type_) none)
+    (selected-node-navigation (_type_ int) none)
+    (move-selected-node (_type_) none)
+    (print-jsonc-path-data (_type_) none)
+    (draw-path-graph (_type_) none)
+    (draw-menu (_type_) none)
+    (draw-curved-path (_type_ vector vector int) none)
+    (get-closest-node (_type_ vector float) int)
+    )
+  )
+
+(define *path-editor* (the (pointer path-editor) #f))
+
+(define *path-toggle-preview-edge?* #t)
+(define *path-toggle-edge-visible?* #t)
+
+(define *nick-path-type* (nick-path-type linear))
