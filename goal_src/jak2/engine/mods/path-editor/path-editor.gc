@@ -49,17 +49,37 @@
   (let* ((idx (-> this node-count))
           (selected (-> this selected-node))
           (last-idx (- (-> this node-count) 1))
+          (vec (new 'stack-no-clear 'vector))
+          (camera-quat (new-stack-quaternion0))
+          (camera-z-vector (new-stack-vector0))
           )
     ;; only add a node when the array isn't full
     ;; and when the last node is selected
     ;; or when there's nothing selected
     (when (and (< idx 100) (or (= selected last-idx) (= selected -1)))
-      (vector-copy! (-> this nodes idx) (target-pos 0))
+      (cond
+        ;; target exists, copy his position
+        (*target*
+          (vector-copy! (-> this nodes idx) (target-pos 0))
+          )
+        ;; no target, use camera position with a 3m offset forward
+        (else
+          (vector-copy! vec (-> *math-camera* trans))
+          ;; convert the camera angle from a matrix to a quaternion
+          (matrix->quaternion camera-quat (-> *camera-combiner* inv-camera-rot))
+          ;; convert the quaternion to a vector representing rotation around z axis
+          (vector-z-quaternion! camera-z-vector camera-quat)
+          ;; shift node's position with camera angle, by 3m
+          (vector+! vec vec (vector-normalize! camera-z-vector (meters 3.0)))
+          (vector-copy! (-> this nodes idx) vec)
+          )
+        )
       (let ((pos (-> this nodes idx)))
         (+! (-> this node-count) 1)
         (set! (-> this selected-node) idx)
         (format 0 "[PATH EDITOR]: path node ~D added in: ~4,,2m ~4,,2m ~4,,2m~%" idx (-> pos x) (-> pos y) (-> pos z) (-> pos w))
         (sound-play "menu-pick")
+
         )
       )
     (when (and (!= selected last-idx) (!= selected -1))
@@ -207,10 +227,11 @@
         )
       )
 
-    ;; draw preview edge mode (draw it only in edit mode)
+    ;; draw preview edge mode (draw it only in edit mode and if target exists)
     (when (and *path-toggle-preview-edge?* (> count 0) (= (-> this mode) (nick-path-mode edit)) 
           (= (-> this selected-node) (- count 1))
           *path-toggle-edge-visible?*
+          *target*
           )
       (let* ((node1 (-> this nodes (- count 1)))
              (jak-pos (target-pos 0))
@@ -529,6 +550,143 @@
     )
   (none)
   )
+
+(defmethod handle-output-settings ((this path-editor) (file file-stream))
+  "Save the path-type and every nodes from the path in a file."
+
+  (format file "  (path-type ~D)~%" (-> this path-type))
+
+  (dotimes (idx (-> this node-count))
+    (let ((pos (-> this nodes idx)))
+      (format file "  (node ~D ~m ~m ~m)~%" idx (-> pos x) (-> pos y) (-> pos z))
+      )
+    )
+  (none)
+  )
+
+(defmethod write-path-to-file ((this path-editor) (filename string))
+  "Open a file and writes the structured path data."
+  (if (not filename)
+    (return #f)
+    )
+
+  (let ((file (new 'stack 'file-stream filename 'write)))
+    (if (not (file-stream-valid? file))
+      (return #f)
+      )
+
+    (format file "(settings #x~X~%" PC_KERNEL_VERSION)
+
+    (handle-output-settings this file)
+
+    (format file "  )~%")
+    (file-stream-close file)
+    )
+
+  (format 0 "[PATH EDITOR]: file write: ~A~%" filename)
+
+  #t
+  )
+
+(define *nick-path-filename* "PATH-DATA-")
+
+(defmethod save-path-to-file ((this path-editor) (filenum int))
+  "Save path data to a file."
+  (format (clear *pc-temp-string-1*) "~S/~S~D.gc" *pc-settings-folder* *nick-path-filename* filenum)
+  (pc-mkdir-file-path *pc-temp-string-1*)
+  (write-path-to-file this *pc-temp-string-1*)
+  (none)
+  )
+
+;; save slots functions
+(defun nick-path-save-to-file-1 () (if *path-editor* (save-path-to-file (the path-editor (ppointer->process *path-editor*)) 1)))
+(defun nick-path-save-to-file-2 () (if *path-editor* (save-path-to-file (the path-editor (ppointer->process *path-editor*)) 2)))
+(defun nick-path-save-to-file-3 () (if *path-editor* (save-path-to-file (the path-editor (ppointer->process *path-editor*)) 3)))
+(defun nick-path-save-to-file-4 () (if *path-editor* (save-path-to-file (the path-editor (ppointer->process *path-editor*)) 4)))
+
+(defmethod handle-input-settings ((this path-editor) (file file-stream))
+  "Parses each line of path data settings in the file."
+  (let ((word *pc-temp-string*))
+    (cond
+      ;; which path-type we should use
+      ((string= word "path-type")
+       (set! (-> this path-type) (the nick-path-type (file-stream-read-int file)))
+       (file-stream-read-word file)
+       )
+      ;; for the nodes...
+      ((string= word "node")
+       (let* ((idx (file-stream-read-int file))
+              (x (file-stream-read-float file))
+              (y (file-stream-read-float file))
+              (z (file-stream-read-float file))
+              )
+         (when (< idx 100)
+           (set-vector-meters! (-> this nodes idx) x y z)
+           (set! (-> this node-count) (max (-> this node-count) (+ idx 1)))
+           )
+         )
+        (file-stream-read-word file)
+       )
+      )
+    )
+  (none)
+  )
+
+(defmethod read-path-from-file ((this path-editor) (filename string))
+  "Open a file and reads the structured path data."
+  (if (not filename)
+    (return #f)
+    )
+
+  (let ((file (new 'stack 'file-stream filename 'read)))
+    (when (not (file-stream-valid? file))
+      (return #f)
+      )
+
+    (set! (-> this selected-node) 0)
+
+    (with-settings-scope (file)
+      (case-str (file-stream-read-word file)
+        (("settings")
+          (file-stream-read-int file) ;; burn thru version field
+          (dosettings (file)
+            (handle-input-settings this file)
+            )
+          )
+        )
+      )
+
+    (file-stream-close file)
+    )
+
+  (format 0 "[PATH EDITOR]: file read: ~A~%" filename)
+
+  #t
+  )
+
+(defmethod load-path-from-file ((this path-editor) (filenum int))
+  "Load path data from a file."
+  (format (clear *pc-temp-string-1*) "~S/~S~D.gc" *pc-settings-folder* *nick-path-filename* filenum)
+  (cond
+    ((pc-filepath-exists? *pc-temp-string-1*)
+      (format 0 "[PC] Path Editor Settings found at '~S'...loading!~%" *pc-temp-string-1*)
+      (path-graph-clear-all this)
+      (unless (read-path-from-file this *pc-temp-string-1*)
+        (format 0 "[PC] Path Editor Settings found at '~S' but could not be loaded!~%" *pc-temp-string-1*)
+        )
+      )
+    (else
+      (format 0 "[PC] Path Editor Settings not found at '~S'~%" *pc-temp-string-1*)
+      )
+    )
+  (none)
+  )
+
+;; load slots functions
+(defun nick-path-load-from-file-1 () (if *path-editor* (load-path-from-file (the path-editor (ppointer->process *path-editor*)) 1)))
+(defun nick-path-load-from-file-2 () (if *path-editor* (load-path-from-file (the path-editor (ppointer->process *path-editor*)) 2)))
+(defun nick-path-load-from-file-3 () (if *path-editor* (load-path-from-file (the path-editor (ppointer->process *path-editor*)) 3)))
+(defun nick-path-load-from-file-4 () (if *path-editor* (load-path-from-file (the path-editor (ppointer->process *path-editor*)) 4)))
 
 (defstate idle (path-editor)
   :virtual #t

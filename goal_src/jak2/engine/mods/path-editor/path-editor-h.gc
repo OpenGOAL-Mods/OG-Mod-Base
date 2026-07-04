@@ -53,6 +53,13 @@
     (draw-menu (_type_) none)
     (draw-curved-path (_type_ vector vector int) none)
     (get-closest-node (_type_ vector float) int)
+    ;; save/load methods
+    (handle-output-settings (_type_ file-stream) none)
+    (write-path-to-file (_type_ string) symbol)
+    (save-path-to-file (_type_ int) none)
+    (handle-input-settings (_type_ file-stream) none)
+    (read-path-from-file (_type_ string) symbol)
+    (load-path-from-file (_type_ int) none)
     )
   )
 
