@@ -25,6 +25,63 @@
 
       (debug-menu-append-item modding-tools-menu (new-dm-submenu "Orb Placer" orb-placer-menu))
       )
+
+    ;; path-editor menu
+    (let ((path-editor-menu (new 'debug 'debug-menu ctx "Path Editor")))
+      (debug-menu-append-item path-editor-menu (new-dm-func "Start Editor" #f start-path-editor)) ;; start the editor
+      (debug-menu-append-item path-editor-menu (new-dm-func "Stop Editor" #f stop-path-editor)) ;; stop the editor
+      (debug-menu-append-item path-editor-menu (new-dm-bool "Toggle Preview Path Line" *path-toggle-preview-edge?* dm-boolean-toggle-pick-func))
+      (debug-menu-append-item path-editor-menu (new-dm-bool "Toggle Path Line" *path-toggle-edge-visible?* dm-boolean-toggle-pick-func))
+
+      ;; save menu
+      (let ((path-editor-save-menu (new 'debug 'debug-menu ctx "Save to File")))
+        (debug-menu-append-item path-editor-save-menu (new-dm-func "Save to Slot 1" #f nick-path-save-to-file-1))
+        (debug-menu-append-item path-editor-save-menu (new-dm-func "Save to Slot 2" #f nick-path-save-to-file-2))
+        (debug-menu-append-item path-editor-save-menu (new-dm-func "Save to Slot 3" #f nick-path-save-to-file-3))
+        (debug-menu-append-item path-editor-save-menu (new-dm-func "Save to Slot 4" #f nick-path-save-to-file-4))
+
+        (debug-menu-append-item path-editor-menu (new-dm-submenu "Save to File" path-editor-save-menu))
+        )
+      
+      ;; load menu
+      (let ((path-editor-load-menu (new 'debug 'debug-menu ctx "Load from File")))
+        (debug-menu-append-item path-editor-load-menu (new-dm-func "Load from Slot 1" #f nick-path-load-from-file-1))
+        (debug-menu-append-item path-editor-load-menu (new-dm-func "Load from Slot 2" #f nick-path-load-from-file-2))
+        (debug-menu-append-item path-editor-load-menu (new-dm-func "Load from Slot 3" #f nick-path-load-from-file-3))
+        (debug-menu-append-item path-editor-load-menu (new-dm-func "Load from Slot 4" #f nick-path-load-from-file-4))
+
+        (debug-menu-append-item path-editor-menu (new-dm-submenu "Load from File" path-editor-load-menu))
+        )
+
+      (let ((select-path-type-menu (new 'debug 'debug-menu ctx "Path Type")))
+        (debug-menu-append-item select-path-type-menu 
+          (new-dm-bool "Linear" 
+            #f 
+            (lambda ((item debug-menu-item) (msg debug-menu-msg))
+              (if (= msg (debug-menu-msg press))
+                (nick-path-menu-set-path-type (nick-path-type linear))
+                )
+              (nick-path-menu-get-path-type (nick-path-type linear))
+              )
+            )
+          )
+        (debug-menu-append-item select-path-type-menu 
+          (new-dm-bool "Curved" 
+            #f 
+            (lambda ((item debug-menu-item) (msg debug-menu-msg))
+              (if (= msg (debug-menu-msg press))
+                (nick-path-menu-set-path-type (nick-path-type curved))
+                )
+              (nick-path-menu-get-path-type (nick-path-type curved))
+              )
+            )
+          )
+        (debug-menu-append-item path-editor-menu (new-dm-submenu "Path Type" select-path-type-menu))
+        )
+      (debug-menu-append-item path-editor-menu (new-dm-func "Clear All" #f nick-path-menu-check-clear-all)) ;; clear all the path
+      (debug-menu-append-item path-editor-menu (new-dm-func "Print Path Data" #f nick-path-menu-print-jsonc-path-data)) ;; print path data
+      (debug-menu-append-item modding-tools-menu (new-dm-submenu "Path Editor" path-editor-menu))
+      )
     (new-dm-submenu "Modding Tools" modding-tools-menu)
     )
   )

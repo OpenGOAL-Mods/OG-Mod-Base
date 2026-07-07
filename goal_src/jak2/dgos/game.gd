@@ -475,5 +475,7 @@
   "mod-common-functions.o" ;; added
   "orb-placer.o"  ;; added
   "mod-custom-code.o" ;; added
+  "path-editor-h.o" ;; added - path-editor-h
+  "path-editor.o" ;; added - path-editor
   "mod-debug.o" ;; added
  ))
