@@ -24,7 +24,7 @@ jobs:
       # minimal checkout if we're NOT uploading artifacts
       - name: Checkout Repository
         if: ${{ ! inputs.uploadArtifacts }}
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: false
@@ -32,7 +32,7 @@ jobs:
       # full checkout with tags if we ARE uploading artifacts
       - name: Checkout Repository with Tags
         if: ${{ inputs.uploadArtifacts }}
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: true
