@@ -151,6 +151,8 @@
 ;;   (game-task citadel-buzzer)
 ;;   ))
 
+(define-extern global-countdown-start (function none))
+
 (defun is-speedrun-category? ((category symbol))
   (and (-> *pc-settings* speedrunner-mode?)
        (name= category (enum->string speedrun-category (-> *speedrun-info* category)))))
@@ -174,6 +176,7 @@
   ;; reset has-started? flag so we can flip it back to #t when jak touches ground/out of blackout
   (false! (-> *speedrun-info* has-started?))
   ;; start new game with specified category, if any (otherwise we're resetting current category)
+  (global-countdown-start)
   (if category (set! (-> *speedrun-info* category) category))
   (case (-> *speedrun-info* category)
     (((speedrun-category full-game))

@@ -53,6 +53,80 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   ;; with the two macros defined above, this is equivalent to
   ;; (set! (-> *game-info* fuel) (+ (-> *game-info* fuel) 1))
   (none))
+(define *global-countdown-active?* #f)
+(define *global-countdown-started?* #f)
+(define *global-countdown-lost?* #f)
+(define *global-countdown-remaining-time* 0)
+(define *global-countdown-last-update-time* 0)
+
+(defun global-countdown-paused? ()
+  (or (movie?)
+      (and *setting-control* (-> *setting-control* current movie))
+      (and *target*
+           (logtest? (-> *target* state-flags) (state-flags grabbed)))))
+
+(defun global-countdown-draw ()
+  (cond
+    (*global-countdown-lost?*
+     (with-dma-buffer-add-bucket ((buf (-> (current-frame) debug-buf)) (bucket-id debug-no-zbuf))
+       (draw-string-xy "LOSE!"
+                       buf
+                       20
+                       20
+                       (font-color red)
+                       (font-flags shadow kerning large))))
+    (*global-countdown-active?*
+     (with-dma-buffer-add-bucket ((buf (-> (current-frame) debug-buf)) (bucket-id debug-no-zbuf))
+       (let ((seconds-left (max 0 (the int (/ *global-countdown-remaining-time* (seconds 1))))))
+         (draw-string-xy (string-format "TIME: ~D" seconds-left)
+                         buf
+                         20
+                         20
+                         (font-color red)
+                         (font-flags shadow kerning large)))))
+    (else
+     (none)))
+  (none))
+
+(defun global-countdown-add-seconds ((seconds-to-add time-frame))
+  (when *global-countdown-active?*
+    (set! *global-countdown-remaining-time* (+ *global-countdown-remaining-time* seconds-to-add)))
+  (none))
+
+(defbehavior global-countdown-proc process ()
+  (loop
+    (when (and *global-countdown-active?* (not *global-countdown-lost?*))
+      (cond
+        ((global-countdown-paused?)
+         (set! *global-countdown-last-update-time* (current-time)))
+        (else
+         (let ((elapsed (- (current-time) *global-countdown-last-update-time*)))
+           (when (> elapsed 0)
+             (set! *global-countdown-remaining-time* (max 0 (- *global-countdown-remaining-time* elapsed)))
+             (set! *global-countdown-last-update-time* (current-time)))
+           (when (<= *global-countdown-remaining-time* 0)
+             (set! *global-countdown-remaining-time* 0)
+             (set! *global-countdown-lost?* #t)
+             (set! *global-countdown-active?* #f)))))
+      (global-countdown-draw))
+    (suspend))
+  (none))
+
+(defun global-countdown-reset ()
+  (kill-by-name 'global-countdown *active-pool*)
+  (set! *global-countdown-started?* #f)
+  (set! *global-countdown-active?* #f)
+  (set! *global-countdown-lost?* #f)
+  (set! *global-countdown-remaining-time* (seconds 30))
+  (set! *global-countdown-last-update-time* (current-time))
+  (none))
+
+(defun global-countdown-start ()
+  (global-countdown-reset)
+  (set! *global-countdown-started?* #t)
+  (set! *global-countdown-active?* #t)
+  (process-spawn-function process global-countdown-proc :name 'global-countdown)
+  (none))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Approved Custom Functions/Macros to call in all mods
