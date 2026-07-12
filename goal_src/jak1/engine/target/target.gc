@@ -30,6 +30,8 @@
 (define-extern target-bonk-event-handler (function process int symbol event-message-block object :behavior target))
 (define-extern mod-rule-trigger-grounded (function none))
 (define-extern mod-rule-trigger-brittle-legs (function none))
+(define-extern mod-rule-trigger-no-jump-kicks (function none))
+(define-extern mod-rule-trigger-sizeable (function none))
 
 ;; DECOMP BEGINS
 
@@ -1401,6 +1403,7 @@
       (set-time! (-> self state-time))
       (logclear! (-> self control status) (cshape-moving-flags onsurf onground tsurf))
       (target-start-attack)
+      (mod-rule-trigger-no-jump-kicks)
       (target-danger-set! 'spin-air #f)
       (set! (-> self control mod-surface) *jump-attack-mods*)
       (let ((f0-1 (vector-dot (-> self control dynam gravity-normal) (-> self control transv))))
@@ -1834,7 +1837,7 @@
         (if (and (or (not (time-elapsed? (the-as time-frame gp-0) (-> *TARGET-bank* wheel-jump-pre-window)))
                      (cpad-pressed? (-> self control cpad number) x))
                  (can-jump? 'target-wheel-flip))
-          (go target-wheel-flip (-> *TARGET-bank* wheel-flip-height) (-> *TARGET-bank* wheel-flip-dist))))
+          (mod-rule-trigger-sizeable)))
       (set-time! (-> self state-hook-time))
       (set! (-> self state-hook)
             (lambda :behavior target ()
@@ -1844,7 +1847,7 @@
                 (else
                  ;; og:preserve-this - High FPS Fix
                  (if (and (recently-pressed? x) (can-jump? 'target-wheel-flip))
-                   (go target-wheel-flip (-> *TARGET-bank* wheel-flip-height) (-> *TARGET-bank* wheel-flip-dist)))))
+                   (mod-rule-trigger-sizeable))))
               (none)))
       (go target-duck-stance))
   :post target-post)

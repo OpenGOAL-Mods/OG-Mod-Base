@@ -1013,6 +1013,7 @@
            (move-to-ground (-> self root) (the-as float 40960.0) (the-as float 40960.0) #f (collide-kind background)))))
       (spool-push *art-control* (-> self victory-anim name) 0 self (the-as float -99.0))
       (send-event *target* 'get-pickup (-> self fact pickup-type) (-> self fact pickup-amount))
+      (runs-on-cell-pickup 'pickup)
       (set! (-> self draw bounds w) 32768.0)
       (logior! (-> self skel status) (janim-status inited))
       (send-event *target* 'blend-shape #t)
