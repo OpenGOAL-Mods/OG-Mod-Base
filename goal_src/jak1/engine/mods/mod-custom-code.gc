@@ -27,10 +27,11 @@
   (when (and *debug-segment*
              (cpad-pressed? 0 circle)
              (cpad-hold? 0 down))
-    (mod-rule-reroll-current))
+    (mod-rule-reroll-current #f))
   ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
   (when *debug-segment*
     (orb-placer-maintenance))
+  (mod-rule-trigger-ohko)
   (none))
 
 (defun runs-on-orb-pickup ((parent process-tree))
@@ -92,6 +93,7 @@
   ;; Code here runs every time jak spawns (loading a file new game or death)
   ;;uncomment this to use custom music for custom levels - the function is in mod-common-functions.gc
   ;;(process-spawn-function process music-manager-proc)
+  
   (none))
 
 (defun runs-on-jak-death ((death-event symbol))
