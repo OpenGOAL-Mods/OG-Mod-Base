@@ -3,6 +3,7 @@
 (bundles "ENGINE.CGO" "GAME.CGO")
 (require "engine/target/logic-target.gc")
 (define-extern target-powerup-effect (function symbol none :behavior target))
+(define-extern mod-rule-handle-trigger (function symbol none))
 
 ;; DECOMP BEGINS
 

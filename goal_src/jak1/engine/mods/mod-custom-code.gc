@@ -51,7 +51,7 @@
      )
     (('cutscene-end)
      ;; Code here runs at the end of any powercell cutscene
-     (global-countdown-add-seconds (seconds 30))
+      (global-countdown-add-seconds 30.0)
      ))
   (none))
 

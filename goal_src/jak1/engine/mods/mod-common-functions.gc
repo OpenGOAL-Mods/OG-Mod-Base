@@ -58,6 +58,229 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *global-countdown-lost?* #f)
 (define *global-countdown-remaining-time* 0)
 (define *global-countdown-last-update-time* 0)
+;; Rule / complication state. This is a lightweight base system that supports
+;; up to three active entries at once, while defaulting to a single active slot.
+(define *mod-rule-max-active-count* 1)
+(define *mod-rule-active-count* 0)
+(define *mod-rule-active-slots* (new 'global 'boxed-array symbol 3))
+(define *mod-rule-slot-end-times* (new 'global 'boxed-array time-frame 3))
+(define *mod-rule-slot-punishments* (new 'global 'boxed-array symbol 3))
+(define *mod-rule-current-slot* 0)
+
+(defun mod-rule-name ((id symbol))
+  (cond
+    ((eq? id 'rule-grounded) "Grounded")
+    ((eq? id 'complication-brittle-legs) "Brittle Legs")
+    (else "Unknown")))
+
+(defun mod-rule-description ((id symbol))
+  (cond
+    ((eq? id 'rule-grounded) "No jumping.")
+    ((eq? id 'complication-brittle-legs) "Each jump has a 20% chance to kill you.")
+    (else "No description available.")))
+
+(defun mod-rule-duration ((id symbol))
+  (cond
+    ((eq? id 'rule-grounded) (seconds 30))
+    ((eq? id 'complication-brittle-legs) (seconds 60))
+    (else (seconds 30))))
+
+(defun mod-rule-type ((id symbol))
+  (cond
+    ((or (eq? id 'rule-money-loss)
+         (eq? id 'rule-grounded))
+     'rule)
+    ((or
+         (eq? id 'complication-no-jumps)
+         (eq? id 'complication-brittle-legs))
+     'complication)
+    (else 'unknown)))
+
+(defun mod-rule-active? ((id symbol))
+  (let ((slot 0) (found #f))
+    (while (and (< slot 3) (not found))
+      (when (= (-> *mod-rule-active-slots* slot) id)
+        (set! found #t))
+      (+! slot 1))
+    found))
+
+(defun mod-rule-clear-slot ((slot int))
+  (when (and (>= slot 0) (< slot 3))
+    (when (-> *mod-rule-active-slots* slot)
+      (set! *mod-rule-active-count* (max 0 (- *mod-rule-active-count* 1))))
+    (set! (-> *mod-rule-active-slots* slot) #f)
+    (set! (-> *mod-rule-slot-punishments* slot) #f)
+    (set! (-> *mod-rule-slot-end-times* slot) 0))
+  (none))
+
+(defun mod-rule-current-active-id ()
+  (let ((slot 0) (found #f) (result #f))
+    (while (and (< slot 3) (not found))
+      (let ((candidate (-> *mod-rule-active-slots* slot)))
+        (when candidate
+          (set! result candidate)
+          (set! found #t)))
+      (+! slot 1))
+    result))
+
+(defun mod-rule-current-time-left ()
+  (let ((slot 0) (found #f) (result 0))
+    (while (and (< slot 3) (not found))
+      (let ((candidate (-> *mod-rule-active-slots* slot)))
+        (when candidate
+          (set! result (max 0 (- (-> *mod-rule-slot-end-times* slot) (current-time))))
+          (set! found #t)))
+      (+! slot 1))
+    result))
+
+(defun mod-rule-activate-slot ((slot int) (id symbol))
+  (when (and (>= slot 0) (< slot 3) id)
+    (mod-rule-clear-slot slot)
+    (set! (-> *mod-rule-active-slots* slot) id)
+    (if (eq? (mod-rule-type id) 'rule)
+      (let ((roll (rand-vu-int-range 0 2)))
+        (set! (-> *mod-rule-slot-punishments* slot)
+              (cond
+                ((= roll 0) 'punishment-money)
+                ((= roll 1) 'punishment-warp)
+                ((= roll 2) 'punishment-countdown)
+                (else 'punishment-money))))
+      (set! (-> *mod-rule-slot-punishments* slot) #f))
+    (set! (-> *mod-rule-slot-end-times* slot) (+ (current-time) (mod-rule-duration id)))
+    (+! *mod-rule-active-count* 1))
+  (none))
+
+(defun mod-rule-random-id ()
+  (let ((roll (rand-vu-int-range 0 1)))
+    (cond
+      ((= roll 0) 'rule-grounded)
+      ((= roll 1) 'complication-brittle-legs)
+      (else 'rule-money-loss))))
+
+(defun mod-rule-reroll-slot ((slot int))
+  (mod-rule-clear-slot slot)
+  (let ((attempts 0) (chosen #f))
+    (while (and (< attempts 6) (not chosen))
+      (let ((candidate (mod-rule-random-id)))
+        (if (and (or (> *mod-rule-max-active-count* 1)
+                     (not (mod-rule-active? candidate)))
+                 (or (> *mod-rule-max-active-count* 1)
+                     (<= *mod-rule-active-count* 0)))
+          (begin
+            (mod-rule-activate-slot slot candidate)
+            (set! chosen #t))
+          (none)))
+      (+! attempts 1))
+    (when (not chosen)
+      (mod-rule-activate-slot slot 'rule-money-loss)))
+  (none))
+
+(defun mod-rule-set-current ((id symbol))
+  (mod-rule-activate-slot *mod-rule-current-slot* id)
+  (none))
+
+(defun mod-rule-reroll-current ()
+  (mod-rule-reroll-slot *mod-rule-current-slot*)
+  (none))
+
+(defun mod-rule-random-punishment ()
+  (let ((roll (rand-vu-int-range 0 2)))
+    (cond
+      ((= roll 0) 'punishment-money)
+      ((= roll 1) 'punishment-warp)
+      ((= roll 2) 'punishment-countdown)
+      (else 'punishment-money))))
+
+(defun mod-rule-punishment-name ((punishment symbol))
+  (cond
+    ((eq? punishment 'punishment-money) "Lose 30 orbs")
+    ((eq? punishment 'punishment-warp) "Warp to Geyser Rock")
+    ((eq? punishment 'punishment-countdown) "Lose 20 seconds")
+    (else "None")))
+
+(defun mod-rule-apply-punishment ((punishment symbol))
+  (cond
+    ((eq? punishment 'punishment-money)
+     (set! (-> *game-info* money) (max 0.0 (- (-> *game-info* money) 30.0))))
+    ((eq? punishment 'punishment-warp)
+     (set-continue! *game-info* "training-start"))
+    ((eq? punishment 'punishment-countdown)
+     (when *global-countdown-active?*
+       (set! *global-countdown-remaining-time* (+ *global-countdown-remaining-time* (- (seconds 20))))))
+    (else
+     (none)))
+  (none))
+
+(defun mod-rule-punishment-for-id ((id symbol))
+  (let ((slot 0) (found #f) (result #f))
+    (while (and (< slot 3) (not found))
+      (when (= (-> *mod-rule-active-slots* slot) id)
+        (set! result (-> *mod-rule-slot-punishments* slot))
+        (set! found #t))
+      (+! slot 1))
+    result))
+
+(defun mod-rule-reroll-id ((id symbol))
+  (let ((slot 0) (found #f))
+    (while (and (< slot 3) (not found))
+      (when (= (-> *mod-rule-active-slots* slot) id)
+        (mod-rule-reroll-slot slot)
+        (set! found #t))
+      (+! slot 1)))
+  (none))
+
+(defun mod-rule-trigger-grounded ()
+  (when (mod-rule-active? 'rule-grounded)
+    (let ((punishment (mod-rule-punishment-for-id 'rule-grounded)))
+      (when punishment
+        (mod-rule-apply-punishment punishment)
+        (mod-rule-reroll-id 'rule-grounded))))
+  (none))
+
+(defun mod-rule-trigger-brittle-legs ()
+  (when (mod-rule-active? 'complication-brittle-legs)
+    (when (and *target* (= (rand-vu-int-range 0 4) 0))
+      (send-event *target* 'attack-invinc #f (static-attack-info ((mode 'melt))))
+      (mod-rule-reroll-id 'complication-brittle-legs)))
+  (none))
+
+(defun mod-rule-trigger-money-loss ((trigger symbol))
+  (when (and (eq? trigger 'jump) (mod-rule-active? 'rule-money-loss))
+    (let ((punishment (mod-rule-punishment-for-id 'rule-money-loss)))
+      (when punishment
+        (mod-rule-apply-punishment punishment)
+        (mod-rule-reroll-id 'rule-money-loss))))
+  (none))
+
+;; (defun mod-rule-handle-trigger ((trigger symbol))
+;;   (mod-rule-trigger-grounded trigger)
+;;   (mod-rule-trigger-brittle-legs trigger)
+;;   (mod-rule-trigger-money-loss trigger)
+
+;;   (none))
+
+(defun mod-rules-reset ()
+  (dotimes (slot 3)
+    (mod-rule-clear-slot slot))
+  (set! *mod-rule-current-slot* 0)
+  (set! *mod-rule-active-count* 0)
+  (none))
+
+(defbehavior mod-rule-manager-proc process ()
+  (loop
+    (dotimes (slot 3)
+      (when (and (-> *mod-rule-active-slots* slot)
+                 (>= (current-time) (-> *mod-rule-slot-end-times* slot)))
+        (mod-rule-reroll-slot slot)))
+    (suspend))
+  (none))
+
+(defun mod-rules-start ()
+  (mod-rules-reset)
+  (kill-by-name 'mod-rule-manager *active-pool*)
+  (mod-rule-reroll-current)
+  (process-spawn-function process mod-rule-manager-proc :name 'mod-rule-manager)
+  (none))
 
 (defun global-countdown-paused? ()
   (or (movie?)
@@ -74,23 +297,80 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                        20
                        20
                        (font-color red)
-                       (font-flags shadow kerning large))))
+                       (font-flags shadow kerning))))
     (*global-countdown-active?*
      (with-dma-buffer-add-bucket ((buf (-> (current-frame) debug-buf)) (bucket-id debug-no-zbuf))
-       (let ((seconds-left (max 0 (the int (/ *global-countdown-remaining-time* (seconds 1))))))
-         (draw-string-xy (string-format "TIME: ~D" seconds-left)
-                         buf
-                         20
-                         20
-                         (font-color red)
-                         (font-flags shadow kerning large)))))
+       (let* ((total-centis (max 0 (the int (/ (* *global-countdown-remaining-time* 100) (seconds 1)))))
+              (total-seconds (the int (/ total-centis 100)))
+              (hours (the int (/ total-seconds 3600)))
+              (minutes (the int (mod (the int (/ total-seconds 60)) 60)))
+              (seconds-part (the int (mod total-seconds 60)))
+              (centis (the int (mod total-centis 100))))
+         (draw-string-xy-scaled (string-format "~2,'0D:~2,'0D:~2,'0D.~2,'0D"
+                                               hours
+                                               minutes
+                                               seconds-part
+                                               centis)
+                                buf
+                                350
+                                50
+                                (font-color red)
+                                (font-flags shadow kerning large)
+                                0.8)
+         (let ((slot 0) (active-id #f) (active-punishment #f) (time-left 0))
+           (while (and (< slot 3) (not active-id))
+             (let ((candidate (-> *mod-rule-active-slots* slot)))
+               (when candidate
+                 (set! active-id candidate)
+                 (set! active-punishment (-> *mod-rule-slot-punishments* slot))
+                 (set! time-left (max 0 (- (-> *mod-rule-slot-end-times* slot) (current-time))))))
+             (+! slot 1))
+           (when active-id
+              ;; RULE NAME
+             (draw-string-xy-scaled "" buf 10 40 (font-color yellow) (font-flags shadow kerning) 1.0)
+             (draw-string-xy-scaled (mod-rule-name active-id)
+                                    buf
+                                    10
+                                    40
+                                    (font-color yellow)
+                                    (font-flags shadow kerning)
+                                    1.0)
+              ;; RULE DESCRIPTION
+             (draw-string-xy-scaled "" buf 10 50 (font-color yellow) (font-flags shadow kerning) 1.0)
+             (draw-string-xy-scaled (mod-rule-description active-id)
+                                    buf
+                                    10
+                                    50
+                                    (font-color yellow)
+                                    (font-flags shadow kerning)
+                                    1.0)
+              ;; SELECTED PUNISHMENT
+             (when active-punishment
+               (draw-string-xy-scaled "Punishment:" buf 10 60 (font-color yellow) (font-flags shadow kerning) 1.0)
+               (draw-string-xy-scaled (mod-rule-punishment-name active-punishment)
+                                      buf
+                                      85
+                                      60
+                                      (font-color yellow)
+                                      (font-flags shadow kerning)
+                                      1.0))
+              ;; TIME LEFT
+             (draw-string-xy-scaled "" buf 10 70 (font-color yellow) (font-flags shadow kerning) 1.0)
+             (draw-string-xy-scaled (string-format "~D" (max 0 (the int (/ time-left (seconds 1)))))
+                                    buf
+                                    10
+                                    70
+                                    (font-color yellow)
+                                    (font-flags shadow kerning)
+                                    1.0))))))
     (else
      (none)))
   (none))
 
-(defun global-countdown-add-seconds ((seconds-to-add time-frame))
+(defun global-countdown-add-seconds ((seconds-to-add float))
   (when *global-countdown-active?*
-    (set! *global-countdown-remaining-time* (+ *global-countdown-remaining-time* seconds-to-add)))
+    (set! *global-countdown-remaining-time*
+          (+ *global-countdown-remaining-time* (seconds seconds-to-add))))
   (none))
 
 (defbehavior global-countdown-proc process ()
@@ -114,10 +394,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun global-countdown-reset ()
   (kill-by-name 'global-countdown *active-pool*)
+  (mod-rules-reset)
   (set! *global-countdown-started?* #f)
   (set! *global-countdown-active?* #f)
   (set! *global-countdown-lost?* #f)
-  (set! *global-countdown-remaining-time* (seconds 30))
+  (set! *global-countdown-remaining-time* (seconds 9999))
   (set! *global-countdown-last-update-time* (current-time))
   (none))
 
@@ -125,9 +406,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (global-countdown-reset)
   (set! *global-countdown-started?* #t)
   (set! *global-countdown-active?* #t)
+  (mod-rules-start)
   (process-spawn-function process global-countdown-proc :name 'global-countdown)
   (none))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Approved Custom Functions/Macros to call in all mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -28,6 +28,8 @@
 (define-extern target-send-attack (function process uint touching-shapes-entry int int symbol :behavior target))
 
 (define-extern target-bonk-event-handler (function process int symbol event-message-block object :behavior target))
+(define-extern mod-rule-trigger-grounded (function none))
+(define-extern mod-rule-trigger-brittle-legs (function none))
 
 ;; DECOMP BEGINS
 
@@ -244,7 +246,9 @@
         (remove-exit)
         (go target-duck-stance))
       ;; og:preserve-this - High FPS Fix
-      (if (and (recently-pressed? x) (can-jump? #f))
+      (when (and (recently-pressed? x) (can-jump? #f))
+        (mod-rule-trigger-grounded)
+        (mod-rule-trigger-brittle-legs)
         (go target-jump (-> *TARGET-bank* jump-height-min) (-> *TARGET-bank* jump-height-max) (the-as surface #f)))
       ;; og:preserve-this - High FPS Fix
       (if (and (recently-pressed? circle) (can-feet?)) (go target-attack))
@@ -401,7 +405,9 @@
         (remove-exit)
         (go target-stance))
       ;; og:preserve-this - High FPS Fix
-      (if (and (recently-pressed? x) (can-jump? #f))
+      (when (and (recently-pressed? x) (can-jump? #f))
+        (mod-rule-trigger-grounded)
+        (mod-rule-trigger-brittle-legs)
         (go target-jump (-> *TARGET-bank* jump-height-min) (-> *TARGET-bank* jump-height-max) (the-as surface #f)))
       ;; og:preserve-this - High FPS Fix
       (if (and (recently-pressed? circle) (can-feet?)) (go target-attack))
