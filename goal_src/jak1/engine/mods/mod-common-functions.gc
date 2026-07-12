@@ -253,7 +253,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-grounded) "DO NOT JUMP.")
     ((eq? id 'rule-orb-pressure) "COLLECT 20 ORBS.")
     ((eq? id 'rule-cell-pressure) "COLLECT A POWER CELL.")
-    ((eq? id 'complication-brittle-bones) "EACH JUMP HAS A 20% CHANCE TO DAMAGE YOU.")
+    ((eq? id 'complication-brittle-bones) "20% OF JUMPS DAMAGE YOU.")
     ((eq? id 'complication-rotten-eggs) "ORBS KILL YOU.")
     ((eq? id 'complication-eco-allergy) "ECO DAMAGES YOU.")
     ((eq? id 'rule-keep-it-low) "DO NOT JUMP KICK.")
@@ -273,7 +273,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-keep-it-low) (seconds 90))
     ((eq? id 'complication-sizeable) (seconds 60))
     ((eq? id 'complication-ohko) (seconds 90))
-    ((eq? id 'complication-redead) (seconds 90))
+    ((eq? id 'complication-redead) (seconds 60))
     (else (seconds 30))))
 
 (defun mod-rule-counter-goal ((id symbol))
@@ -356,10 +356,16 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     result))
 
 (defun mod-rule-format-time-left ((time-left time-frame))
-  (let* ((total-seconds (max 0 (the int (/ time-left (seconds 1)))))
+  (let* ((ticks (max 0 (the int time-left)))
+         (total-seconds (the int (/ ticks (seconds 1))))
          (minutes (the int (/ total-seconds 60)))
-         (seconds-part (the int (mod total-seconds 60))))
-    (string-format "~D:~2,'0D" minutes seconds-part)))
+         (seconds-part (the int (mod total-seconds 60)))
+         (deciseconds (the int (/ (* (mod ticks (seconds 1)) 10)
+                                   (seconds 1)))))
+    (string-format "~D:~2,'0D.~1,'0D"
+                   minutes
+                   seconds-part
+                   deciseconds)))
 
 
 (defun mod-rule-task-has-fuel-cell-entity? ((task game-task))
@@ -533,12 +539,12 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (else 'punishment-countdown))))
 
 (defun mod-rule-on-activate ((id symbol))
-  (cond
-    ((eq? id 'complication-ohko)
-     (when (and *target* (-> *target* fact))
-       (set! (-> (the-as fact-info-target (-> *target* fact)) health) 1.0)))
-    (else
-     (none)))
+  ;; (cond
+  ;;   ((eq? id 'complication-ohko)
+  ;;    (when (and *target* (-> *target* fact))
+  ;;      (set! (-> (the-as fact-info-target (-> *target* fact)) health) 1.0)))
+  ;;   (else
+  ;;    (none)))
   (none))
 
 (defun mod-rule-activate-slot ((slot int) (id symbol))
@@ -649,10 +655,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
      (set! (-> *game-info* money) (max 0.0 (- (-> *game-info* money) 30.0))))
     ((eq? punishment 'punishment-warp)
     (mod-rule-reroll-current #t)
-     (let ((cont (get-continue-by-name *game-info* "training-warp")))
-       (when cont
-         (set! (-> *game-info* current-continue) cont)
-         (send-event *target* 'continue cont))))
+    (start 'play (get-continue-by-name *game-info* "training-warp")))
     ((eq? punishment 'punishment-countdown)
      (when *global-countdown-active?*
        (set! *global-countdown-remaining-time* (+ *global-countdown-remaining-time* (- (seconds 20))))))
@@ -823,7 +826,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
               (minutes (the int (mod (the int (/ total-seconds 60)) 60)))
               (seconds-part (the int (mod total-seconds 60)))
               (centis (the int (mod total-centis 100))))
-         (draw-string-xy-scaled (string-format "~2,'0D:~2,'0D.~2,'0D"
+         (draw-string-xy-scaled (string-format "~1,'0D:~2,'0D.~2,'0D"
                                                minutes
                                                seconds-part
                                                centis)
@@ -916,7 +919,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                               (font-flags shadow kerning)
                               1.0)))
            (when (and (not active-id) rolling-id)
-             (draw-string-xy-scaled "NEW RULE IN..."
+             (draw-string-xy-scaled "NEW RULE IN "
                                     buf
                                     10
                                     40
@@ -925,11 +928,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                                     0.4)
              (draw-string-xy-scaled (string-format "~D" (max 0 (the int (/ rolling-left (seconds 1)))))
                                     buf
-                                    10
-                                    50
+                                    96
+                                    37
                                     (font-color white)
                                     (font-flags shadow kerning large)
-                                    0.5))))))
+                                    0.6))))))
     (else
      (none)))
   (none))

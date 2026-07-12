@@ -56,7 +56,7 @@
   (case cell-event
     (('pickup)
      ;; Code here runs as soon as you pickup a powercell
-      (global-countdown-add-seconds 20.0)
+      (global-countdown-add-seconds 30.0)
       (mod-rule-on-cell-pickup 1)
      )
     (('cutscene-end)

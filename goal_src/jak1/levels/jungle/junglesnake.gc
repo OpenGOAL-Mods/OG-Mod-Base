@@ -223,7 +223,9 @@ junglesnake-default-event-handler
       (when *target*
         (let* ((a0-1 (target-pos 0))
                (f0-1 (- (-> a0-1 y) (-> self root trans y))))
-          (if (and (>= 40960.0 f0-1) (>= 143360.0 (vector-vector-xz-distance a0-1 (-> self root trans)))) (go junglesnake-wake)))))
+          (when (and (>= 40960.0 f0-1) (>= 143360.0 (vector-vector-xz-distance a0-1 (-> self root trans))))
+            (mod-rule-trigger-redead)
+            (go junglesnake-wake)))))
   :code
     (behavior ()
       (logior! (-> self mask) (process-mask sleep-code))

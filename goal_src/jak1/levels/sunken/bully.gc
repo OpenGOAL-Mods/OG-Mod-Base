@@ -366,6 +366,7 @@
                       (>= (-> self fact idle-distance) (vector-vector-distance (-> self root trans) (-> *target* control trans))))
                  (time-elapsed? (-> self state-time) (-> self reaction-delay)))
         (start-hint-timer (text-id sunken-bully-dive-hint))
+        (mod-rule-trigger-redead)
         (go bully-notice)))
   :code
     (behavior ((arg0 symbol))
