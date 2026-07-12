@@ -10,6 +10,8 @@
 
 ;; DECOMP BEGINS
 
+(define-extern mod-rule-trigger-redead (function none))
+
 (defun nav-enemy-rnd-float ()
   (rand-vu))
 
@@ -540,7 +542,7 @@ nav-enemy-default-event-handler
                                (vector-vector-distance (-> self collide-info trans) (-> *target* control trans))))
                       (let ((gp-0 'racer)) (= gp-0 (send-event *target* 'query 'mode)))))
           (go-virtual nav-enemy-flee))
-        (if (nav-enemy-notice-player?) (go-virtual nav-enemy-notice))))
+        (when (nav-enemy-notice-player?) (mod-rule-trigger-redead) (go-virtual nav-enemy-notice))))
   :code
     (behavior ()
       (let ((f30-0 (nav-enemy-rnd-float-range 0.9 1.1)))

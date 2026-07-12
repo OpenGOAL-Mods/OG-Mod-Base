@@ -37,7 +37,8 @@
 (defun runs-on-orb-pickup ((parent process-tree))
   (let* ((from-cache? (and parent (type-type? (-> parent type) orb-cache-top))))
     ;; Code here runs on ANY orb pickup
-    (mod-rule-trigger-poisoned-orbs)
+    (global-countdown-add-seconds 1.0)
+    (mod-rule-trigger-rotten-eggs)
     (mod-rule-on-orb-pickup 1)
     (when from-cache?
       ;; Code here runs only if the orb was from an orb cache
@@ -55,7 +56,7 @@
   (case cell-event
     (('pickup)
      ;; Code here runs as soon as you pickup a powercell
-      (global-countdown-add-seconds 30.0)
+      (global-countdown-add-seconds 20.0)
       (mod-rule-on-cell-pickup 1)
      )
     (('cutscene-end)
