@@ -772,6 +772,8 @@
              (set! (-> a1-2 solid-only) #t)
              (when (not (fill-and-probe-using-spheres *collide-cache* a1-2))
                (remove-exit)
+               (mod-rule-trigger-brittle-bones)
+               (mod-rule-trigger-grounded)
                (go target-edge-grab-jump (-> *TARGET-bank* edge-grab-jump-height-min) (-> *TARGET-bank* edge-grab-jump-height-max)))))
           (else (remove-exit) (go target-edge-grab-off)))))
   :code
@@ -1566,6 +1568,8 @@
       ((-> target-swim-stance exit))
       (die-on-next-update! (-> self water bob))
       (set! (-> self water align-offset) 0.0)
+      (mod-rule-trigger-brittle-bones)
+      (mod-rule-trigger-grounded)
       (logior! (-> self water flag) (water-flag jump-out)))
   :code
     (behavior ((arg0 float) (arg1 float))
