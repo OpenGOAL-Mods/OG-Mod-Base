@@ -256,7 +256,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-last-breath) "DIE.")
     ((eq? id 'rule-orb-pressure) "COLLECT 20 ORBS.")
     ((eq? id 'rule-cell-pressure) "COLLECT A POWER CELL.")
-    ((eq? id 'complication-brittle-bones) "JUMPING HAS A 20% CHANCE TO DAMAGE YOU.")
+    ((eq? id 'complication-brittle-bones) "20% OF ALL JUMPS DAMAGE YOU.")
     ((eq? id 'complication-rotten-eggs) "ORBS KILL YOU.")
     ((eq? id 'complication-eco-allergy) "ECO DAMAGES YOU.")
     ((eq? id 'rule-keep-it-low) "DO NOT JUMP KICK.")
@@ -371,12 +371,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rule-format-time-left ((time-left time-frame))
   (let* ((ticks (max 0 (the int time-left)))
          (total-seconds (the int (/ ticks (seconds 1))))
-         (minutes (the int (/ total-seconds 60)))
          (seconds-part (the int (mod total-seconds 60)))
          (deciseconds (the int (/ (* (mod ticks (seconds 1)) 10)
                                    (seconds 1)))))
-    (string-format "~D:~2,'0D.~1,'0D"
-                   minutes
+    (string-format "~D.~1,'0D"
                    seconds-part
                    deciseconds)))
 
@@ -625,32 +623,31 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     factor))
 
 (defun mod-rule-roll-priority ((id symbol))
-  ;; Return 0 to block a roll, 1 for normal odds, and larger values to make it more likely.
+  ;; Return 0 to block a roll, 5 for normal odds, and larger values to make it more likely.
   (let ((level-name (mod-rule-current-level-name)))
     (cond
-      ;; Normal odds for orb-pressure for now.
-      ((eq? id 'rule-orb-pressure) 1)
+      ((eq? id 'rule-orb-pressure) 2)
       ;; Keep redead out of levels without enemies.
       ((eq? id 'complication-redead)
        (if (or (eq? level-name 'training)
                (eq? level-name 'village2))
          0
-         1))
+         5))
       ;; Keep grounded out of training.
             ((eq? id 'rule-grounded)
        (if (eq? level-name 'training)
          0
-         1))
+         5))
       ;; These are normal-weight rules. Bump these numbers if you want them to appear more often.
-      ((eq? id 'rule-grounded) 1)
-      ((eq? id 'complication-brittle-bones) 1)
-      ((eq? id 'complication-rotten-eggs) 1)
-      ((eq? id 'rule-keep-it-low) 1)
-      ((eq? id 'rule-cell-pressure) 1)
-      ((eq? id 'complication-eco-allergy) 1)
-      ((eq? id 'complication-sizeable) 1)
-      ((eq? id 'complication-ohko) 1)
-      (else 1))))
+      ((eq? id 'rule-grounded) 5)
+      ((eq? id 'complication-brittle-bones) 5)
+      ((eq? id 'complication-rotten-eggs) 5)
+      ((eq? id 'rule-keep-it-low) 5)
+      ((eq? id 'rule-cell-pressure) 2)
+      ((eq? id 'complication-eco-allergy) 5)
+      ((eq? id 'complication-sizeable) 5)
+      ((eq? id 'complication-ohko) 5)
+      (else 5))))
 
 (defun mod-rule-can-roll-id? ((id symbol))
   (> (mod-rule-roll-priority id) 0))
@@ -669,8 +666,20 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
         (when (and candidate
                    (not (mod-rule-active? candidate))
                    (not (mod-rule-pending? candidate)))
-          (+! total (mod-rule-effective-roll-weight candidate))))
+          (let ((priority (mod-rule-roll-priority candidate))
+                (recent-factor (mod-rule-recent-roll-factor candidate))
+                (weight 0))
+            (set! weight (if (> priority 0) (* priority recent-factor) 0))
+            (when *debug-segment*
+              (format #t "Weighted roll candidate ~S: priority=~D recent-factor=~D effective=~D~%"
+                      candidate
+                      priority
+                      recent-factor
+                      weight))
+            (+! total weight))))
       (+! idx 1))
+    (when *debug-segment*
+      (format #t "Weighted roll total: ~D~%" total))
     (if (> total 0)
       (let ((roll (rand-vu-int-range 0 (- total 1)))
             (idx 0)
@@ -680,12 +689,17 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
             (when (and candidate
                        (not (mod-rule-active? candidate))
                        (not (mod-rule-pending? candidate)))
-              (let ((weight (mod-rule-effective-roll-weight candidate)))
+              (let ((priority (mod-rule-roll-priority candidate))
+                    (recent-factor (mod-rule-recent-roll-factor candidate))
+                    (weight 0))
+                (set! weight (if (> priority 0) (* priority recent-factor) 0))
                 (when (> weight 0)
                   (if (< roll weight)
                     (set! chosen candidate)
                     (set! roll (- roll weight)))))))
           (+! idx 1))
+        (when *debug-segment*
+          (format #t "Weighted roll chose ~S from total=~D~%" chosen total))
         chosen)
       #f)))
 
@@ -1037,7 +1051,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                                     (font-color yellow)
                                     (font-flags shadow kerning large)
                                     0.4)
-             (draw-string-xy-scaled (string-format "~D" (max 0 (the int (/ rolling-left (seconds 1)))))
+             (draw-string-xy-scaled (mod-rule-format-time-left rolling-left)
                                     global-buf
                                     96
                                     37
