@@ -1099,10 +1099,10 @@
                   (go target-flut-stance))
                  (else
                   (pickup-collectable! (-> self fact) (pickup-type eco-green) (the-as float -1000.0) (the-as handle #f))
-                  (go target-flut-death (-> gp-0 mode)))))
+                  (mod-rule-on-jak-death) (go target-flut-death (-> gp-0 mode)))))
               (('water-vol 'sharkey)
                (pickup-collectable! (-> self fact) (pickup-type eco-green) (the-as float -1000.0) (the-as handle #f))
-               (if (= (-> self game mode) 'play) (go target-flut-death (-> gp-0 mode))))
+               (when (= (-> self game mode) 'play) (mod-rule-on-jak-death) (go target-flut-death (-> gp-0 mode))))
               (('death) (pickup-collectable! (-> self fact) (pickup-type eco-green) (the-as float -1000.0) (the-as handle #f)))
               (else
                (pickup-collectable! (-> self fact) (pickup-type eco-green) (- (-> *FACT-bank* health-single-inc)) (the-as handle #f))))
@@ -1122,7 +1122,7 @@
                  (ja-channel-push! 1 (seconds 0.075))
                  (ja :group! eichar-flut-hit-back-ja :num! min))))
             (target-hit-move gp-0 (target-hit-orient gp-0 s5-0) target-flut-falling-anim-trans f30-0)))
-        (if (and (= (-> self game mode) 'play) (>= 0.0 (-> self fact health))) (go target-flut-death (-> gp-0 mode))))
+        (when (and (= (-> self game mode) 'play) (>= 0.0 (-> self fact health))) (mod-rule-on-jak-death) (go target-flut-death (-> gp-0 mode))))
       (go target-flut-hit-ground))
   :post target-flut-post)
 

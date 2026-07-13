@@ -571,7 +571,7 @@
       (set! (-> self racer boost-target) 0.0)
       (set! (-> self racer boost-output) 0.0)
       (set! (-> self racer boost-time) 0)
-      (if (and (= (-> self game mode) 'play) (>= 0.0 (-> self fact health))) (go target-racing-death (-> self attack-info mode)))
+      (when (and (= (-> self game mode) 'play) (>= 0.0 (-> self fact health))) (mod-rule-on-jak-death) (go target-racing-death (-> self attack-info mode)))
       (case (-> self attack-info mode)
         (('endlessfall))
         (('darkeco)

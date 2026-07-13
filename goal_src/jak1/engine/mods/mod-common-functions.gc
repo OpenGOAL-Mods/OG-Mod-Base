@@ -718,7 +718,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          5))
       ;; Keep grounded and die out of training.
       ((or (eq? id 'rule-grounded)
-           (eq? id 'complication-die))
+           (eq? id 'rule-die))
        (if (eq? level-name 'training)
          0
          5))
