@@ -248,6 +248,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'complication-sizeable) "SIZEABLE CONTRIBUTION")
     ((eq? id 'complication-ohko) "OHKO")
     ((eq? id 'complication-redead) "REDEAD")
+    ((eq? id 'complication-heating-balloons) "HEATING BALLOONS")
     (else "Unknown")))
 
 (defun mod-rule-description ((id symbol))
@@ -261,6 +262,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'complication-eco-allergy) "ECO DAMAGES YOU.")
     ((eq? id 'rule-keep-it-low) "DO NOT JUMP KICK.")
     ((eq? id 'complication-sizeable) "ROLLJUMPS COST 3 ORBS.")
+    ((eq? id 'complication-heating-balloons) "COOLING BALLOONS MELT YOU.")
     ((eq? id 'complication-ohko) "JAK HAS ONE HIT POINT.")
     ((eq? id 'complication-redead) "JAK FREEZES WHEN ENEMIES SEE HIM.")
     (else "No description available.")))
@@ -277,6 +279,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-keep-it-low) (seconds 90)) ;; 90
     ((eq? id 'complication-sizeable) (seconds 60)) ;; 60
     ((eq? id 'complication-ohko) (seconds 90)) ;; 90
+    ((eq? id 'complication-heating-balloons) (seconds 30)) ;; 30
     ((eq? id 'complication-redead) (seconds 60)) ;; 60
     (else (seconds 30))))
 
@@ -308,6 +311,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          (eq? id 'complication-eco-allergy)
          (eq? id 'complication-sizeable)
          (eq? id 'complication-ohko)
+         (eq? id 'complication-heating-balloons)
          (eq? id 'complication-redead))
          
      'complication)
@@ -612,10 +616,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((= idx 8) 'complication-sizeable)
     ((= idx 9) 'complication-ohko)
     ((= idx 10) 'complication-redead)
+    ((= idx 11) 'complication-heating-balloons)
     (else #f)))
 
 (defun mod-rule-random-id ()
-  (mod-rule-id-from-index (rand-vu-int-range 0 10)))
+  (mod-rule-id-from-index (rand-vu-int-range 0 12)))
 
 (defun mod-rule-current-level-name ()
   (and *target*
@@ -666,18 +671,38 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          0
          5))
       ;; Keep grounded out of training.
-            ((eq? id 'rule-grounded)
+      ((eq? id 'rule-grounded)
        (if (eq? level-name 'training)
          0
          5))
+      ;; Keep keep it low out of zoomer levels.
+      ((eq? id 'rule-keep-it-low)
+       (if (or (eq? level-name 'firecanyon)
+               (eq? level-name 'lavatube)
+               (eq? level-name 'ogre)
+               (eq? level-name 'rolling))
+         0
+         5))
+      ;; Keep sizeable contributions out of zoomer levels.
+      ((eq? id 'complication-sizeable)
+       (if (or (eq? level-name 'firecanyon)
+               (eq? level-name 'lavatube)
+               (eq? level-name 'ogre)
+               (eq? level-name 'rolling))
+         0
+         5))
+      ;; Keep heating balloons in firecanyon and lavatube.
+      ((eq? id 'complication-heating-balloons)
+       (if (or (eq? level-name 'firecanyon)
+               (eq? level-name 'lavatube))
+         5
+         0))
       ;; These are base weights.
       ((eq? id 'rule-grounded) 4)
       ((eq? id 'complication-brittle-bones) 5)
       ((eq? id 'complication-rotten-eggs) 5)
-      ((eq? id 'rule-keep-it-low) 5)
       ((eq? id 'rule-cell-pressure) 2)
       ((eq? id 'complication-eco-allergy) 5)
-      ((eq? id 'complication-sizeable) 5)
       ((eq? id 'complication-ohko) 5)
       ((eq? id 'complication-die) 2)
       (else 5))))
@@ -694,7 +719,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rule-pick-weighted-id ()
   (let ((idx 0)
         (total 0))
-    (while (< idx 11)
+    (while (< idx 12)
       (let ((candidate (mod-rule-id-from-index idx)))
         (when (and candidate
                    (not (mod-rule-active? candidate))
@@ -719,7 +744,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (let ((roll (rand-vu-int-range 0 (- total 1)))
             (idx 0)
             (chosen #f))
-        (while (and (< idx 11) (not chosen))
+        (while (and (< idx 12) (not chosen))
           (let ((candidate (mod-rule-id-from-index idx)))
             (when (and candidate
                        (not (mod-rule-active? candidate))
@@ -918,6 +943,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (when (mod-rule-active? 'complication-redead)
   (logior! (-> *target* mask) (process-mask sleep))
     (set! *redead-clear-time* (+ (current-time) (* 3 300))))
+  (none))
+
+(defun mod-rule-trigger-heating-balloons ()
+  (when (mod-rule-active? 'complication-heating-balloons)
+    (send-event *target* 'attack-invinc #f (static-attack-info ((mode 'melt)))))
   (none))
 
 (defun mod-rules-reset ()

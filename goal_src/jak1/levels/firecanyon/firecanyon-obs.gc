@@ -5,6 +5,8 @@
 
 ;; DECOMP BEGINS
 
+(define-extern mod-rule-trigger-heating-balloons (function none))
+
 (deftype balloon (process-drawable)
   ((root collide-shape :override))
   (:states
@@ -91,7 +93,7 @@
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
       (case message
-        (('attack) (send-event proc 'heat -10.0) (go balloon-popping))))
+        (('attack) (send-event proc 'heat -10.0) (mod-rule-trigger-heating-balloons)(go balloon-popping))))
   :code
     (behavior ()
       (transform-post)
