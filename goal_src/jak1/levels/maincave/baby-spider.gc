@@ -252,6 +252,7 @@ baby-spider-default-event-handler
         (if (nav-enemy-method-53 self) (go baby-spider-die-fast))
         (suspend)
         (ja :num! (seek!)))
+        (mod-rule-trigger-redead)
       (go baby-spider-resume))
   :post nav-enemy-simple-post)
 
@@ -521,7 +522,7 @@ baby-spider-default-event-handler
                       4096.0)
   (cond
     ((-> arg3 hatched?) (go baby-spider-hatching))
-    ((-> arg3 fast-start?) (go baby-spider-resume))
+    ((-> arg3 fast-start?) (mod-rule-trigger-redead) (go baby-spider-resume))
     (else (go-virtual nav-enemy-idle)))
   (none))
 

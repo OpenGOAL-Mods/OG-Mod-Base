@@ -746,7 +746,7 @@ nav-enemy-default-event-handler
                (time-elapsed? (-> self state-time) (seconds 1)))
         (go kermit-idle))
       (kermit-set-rotate-dir-to-nav-target)
-      (if (and (not (-> self airborne)) (nav-enemy-test-point-in-nav-mesh? (target-pos 0))) (go kermit-notice))
+      (when (and (not (-> self airborne)) (nav-enemy-test-point-in-nav-mesh? (target-pos 0))) (mod-rule-trigger-redead) (go kermit-notice))
       (if (logtest? (nav-control-flags navcf19) (-> self nav flags)) (kermit-get-new-patrol-point)))
   :code
     (behavior ()

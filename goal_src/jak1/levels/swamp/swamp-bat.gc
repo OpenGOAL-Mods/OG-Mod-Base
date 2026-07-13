@@ -213,7 +213,7 @@ swamp-bat-slave-event-handler
       (ja-channel-push! 1 (seconds 0.1))
       (ja :group! swamp-bat-swoop-ja)
       (loop
-        (if (>= (swamp-bat-slave-method-20 self) 2.0) (go swamp-bat-slave-strafe))
+        (when (>= (swamp-bat-slave-method-20 self) 2.0) (mod-rule-trigger-redead) (go swamp-bat-slave-strafe))
         (ja :num! (loop!))
         (suspend)))
   :post swamp-bat-slave-path-post)

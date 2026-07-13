@@ -238,7 +238,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rule-name ((id symbol))
   (cond
     ((eq? id 'rule-grounded) "GROUNDED")
-    ((eq? id 'rule-last-breath) "LAST BREATH")
+    ((eq? id 'rule-die) "DIE")
     ((eq? id 'rule-orb-pressure) "ORB PRESSURE")
     ((eq? id 'rule-cell-pressure) "CELL PRESSURE")
     ((eq? id 'complication-brittle-bones) "BRITTLE BONES")
@@ -253,7 +253,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rule-description ((id symbol))
   (cond
     ((eq? id 'rule-grounded) "DO NOT JUMP.")
-    ((eq? id 'rule-last-breath) "DIE.")
+    ((eq? id 'rule-die) "KILL HIM. KILL HIM NOW.")
     ((eq? id 'rule-orb-pressure) "COLLECT 20 ORBS.")
     ((eq? id 'rule-cell-pressure) "COLLECT A POWER CELL.")
     ((eq? id 'complication-brittle-bones) "20% OF ALL JUMPS DAMAGE YOU.")
@@ -268,7 +268,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rule-duration ((id symbol))
   (cond
     ((eq? id 'rule-grounded) (seconds 20)) ;; 20
-    ((eq? id 'rule-last-breath) (seconds 15)) ;; 15
+    ((eq? id 'rule-die) (seconds 15)) ;; 15
     ((eq? id 'rule-orb-pressure) (seconds 30)) ;; 30
     ((eq? id 'rule-cell-pressure) (seconds 30)) ;; 30
     ((eq? id 'complication-brittle-bones) (seconds 60)) ;; 60
@@ -282,7 +282,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun mod-rule-counter-goal ((id symbol))
   (cond
-    ((eq? id 'rule-last-breath) 1)
+    ((eq? id 'rule-die) 1)
     ((eq? id 'rule-orb-pressure) 20)
     ((eq? id 'rule-cell-pressure) 1)
     (else 0)))
@@ -291,13 +291,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (cond
     ((eq? id 'rule-orb-pressure) 'counter)
     ((eq? id 'rule-cell-pressure) 'counter)
-    ((eq? id 'rule-last-breath) 'event-once)
+    ((eq? id 'rule-die) 'event-once)
     (else 'none)))
 
 (defun mod-rule-type ((id symbol))
   (cond
     ((or (eq? id 'rule-keep-it-low)
-         (eq? id 'rule-last-breath)
+         (eq? id 'rule-die)
          (eq? id 'rule-orb-pressure)
          (eq? id 'rule-cell-pressure)
          (eq? id 'rule-grounded))
@@ -371,10 +371,12 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rule-format-time-left ((time-left time-frame))
   (let* ((ticks (max 0 (the int time-left)))
          (total-seconds (the int (/ ticks (seconds 1))))
+         (minutes (the int (/ total-seconds 60)))
          (seconds-part (the int (mod total-seconds 60)))
          (deciseconds (the int (/ (* (mod ticks (seconds 1)) 10)
-                                   (seconds 1)))))
-    (string-format "~D.~1,'0D"
+                                  (seconds 1)))))
+    (string-format "~D:~2,'0D.~1,'0D"
+                   minutes
                    seconds-part
                    deciseconds)))
 
@@ -576,7 +578,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rule-id-from-index ((idx int))
   (cond
     ((= idx 0) 'rule-grounded)
-    ((= idx 1) 'rule-last-breath)
+    ((= idx 1) 'rule-die)
     ((= idx 2) 'complication-brittle-bones)
     ((= idx 3) 'complication-rotten-eggs)
     ((= idx 4) 'rule-keep-it-low)
@@ -630,7 +632,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       ;; Keep redead out of levels without enemies.
       ((eq? id 'complication-redead)
        (if (or (eq? level-name 'training)
-               (eq? level-name 'village2))
+               (eq? level-name 'village2)
+               (eq? level-name 'village3)
+               (eq? level-name 'rolling))
          0
          5))
       ;; Keep grounded out of training.
@@ -638,8 +642,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
        (if (eq? level-name 'training)
          0
          5))
-      ;; These are normal-weight rules. Bump these numbers if you want them to appear more often.
-      ((eq? id 'rule-grounded) 5)
+      ;; These are base weights.
+      ((eq? id 'rule-grounded) 4)
       ((eq? id 'complication-brittle-bones) 5)
       ((eq? id 'complication-rotten-eggs) 5)
       ((eq? id 'rule-keep-it-low) 5)
@@ -647,6 +651,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       ((eq? id 'complication-eco-allergy) 5)
       ((eq? id 'complication-sizeable) 5)
       ((eq? id 'complication-ohko) 5)
+      ((eq? id 'complication-die) 2)
       (else 5))))
 
 (defun mod-rule-can-roll-id? ((id symbol))
@@ -761,7 +766,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none))
 
 (defun mod-rule-on-jak-death ()
-  (mod-rule-counter-add-progress 'rule-last-breath 1)
+  (mod-rule-counter-add-progress 'rule-die 1)
   (none))
 
 (defun mod-rule-punishment-name ((punishment symbol))
@@ -778,7 +783,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
      (set! (-> *game-info* money) (max 0.0 (- (-> *game-info* money) 30.0))))
     ((eq? punishment 'punishment-warp)
     (mod-rule-reroll-current #t)
-    (start 'play (get-continue-by-name *game-info* "training-start")))
+    (set! (-> *game-info* current-continue) (get-continue-by-name *game-info* "training-warp"))
+    (initialize! *game-info* 'die (the-as game-save #f) (the-as string #f)))
     ((eq? punishment 'punishment-countdown)
      (when *global-countdown-active?*
        (set! *global-countdown-remaining-time* (+ *global-countdown-remaining-time* (- (seconds 20))))))
