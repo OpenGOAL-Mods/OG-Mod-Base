@@ -235,7 +235,7 @@
         v0-0)
        ((= (-> arg0 type) target)
         (cond
-          ((= (-> arg3 param 1) 'flop) (go bully-die) (return #t) v0-0)
+          ((= (-> arg3 param 1) 'flop) (notify-enemy-death self) (go bully-die) (return #t) v0-0)
           ((or (= arg2 'touch) (= arg2 'attack))
            (cond
              ((>= (- (-> (target-pos 0) y) (-> self root trans y)) 6144.0)
@@ -366,7 +366,7 @@
                       (>= (-> self fact idle-distance) (vector-vector-distance (-> self root trans) (-> *target* control trans))))
                  (time-elapsed? (-> self state-time) (-> self reaction-delay)))
         (start-hint-timer (text-id sunken-bully-dive-hint))
-        (mod-rule-trigger-redead)
+        (mod-rule-trigger-mean-look)
         (go bully-notice)))
   :code
     (behavior ((arg0 symbol))

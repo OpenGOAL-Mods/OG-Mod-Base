@@ -533,7 +533,7 @@
   :enter
     (behavior ((arg0 symbol))
       (if arg0 (set-time! (-> self started-chasing-time)))
-      (mod-rule-trigger-redead)
+      (mod-rule-trigger-mean-look)
       (set! (-> self mode) (the-as uint 3))
       (set-time! (-> self state-time))
       (set! (-> self targ-path-speed) 23552.0))
@@ -618,6 +618,7 @@
   :event process-drawable-death-event-handler
   :code
     (behavior ()
+      (notify-enemy-death self)
       (shut-down! (-> self neck))
       (logclear! (-> self mask) (process-mask actor-pause))
       (ja-channel-push! 1 (seconds 0.2))

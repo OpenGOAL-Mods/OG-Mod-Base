@@ -217,7 +217,7 @@
 
 (defbehavior lurkerworm-default-event-handler lurkerworm ((arg0 process) (arg1 int) (arg2 symbol) (arg3 event-message-block))
   (case arg2
-    (('attack) (-> arg3 param 1) (go lurkerworm-die))
+    (('attack) (-> arg3 param 1) (notify-enemy-death self) (go lurkerworm-die))
     (('touch)
      (if ((method-of-type touching-shapes-entry prims-touching?)
           (the-as touching-shapes-entry (-> arg3 param 0))
@@ -247,7 +247,7 @@ lurkerworm-default-post-behavior
         (when (and (time-elapsed? (-> self state-time) (seconds 1))
                  *target*
                  (>= 81920.0 (vector-vector-distance (-> self root trans) (-> *target* control trans))))
-          (mod-rule-trigger-redead)
+          (mod-rule-trigger-mean-look)
           (go lurkerworm-spot))
         (suspend)))
   :post lurkerworm-default-post-behavior)

@@ -101,7 +101,7 @@
          (else
           (do-push-aways! (-> self root))
           (send-event arg0 'shove (-> arg3 param 0) (static-attack-info ((shove-back (meters 2)) (shove-up (meters 0.5)))))))))
-    (('attack) (go junglesnake-die))))
+    (('attack) (notify-enemy-death self) (go junglesnake-die))))
 
 junglesnake-default-event-handler
 
@@ -224,7 +224,7 @@ junglesnake-default-event-handler
         (let* ((a0-1 (target-pos 0))
                (f0-1 (- (-> a0-1 y) (-> self root trans y))))
           (when (and (>= 40960.0 f0-1) (>= 143360.0 (vector-vector-xz-distance a0-1 (-> self root trans))))
-            (mod-rule-trigger-redead)
+            (mod-rule-trigger-mean-look)
             (go junglesnake-wake)))))
   :code
     (behavior ()

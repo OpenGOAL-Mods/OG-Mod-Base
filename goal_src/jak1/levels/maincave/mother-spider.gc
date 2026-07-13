@@ -644,7 +644,7 @@
       (let ((v1-22 (-> self mode)))
         (cond
           ((zero? v1-22) (go mother-spider-idle))
-          ((= v1-22 1) (mod-rule-trigger-redead) (go mother-spider-tracking))
+          ((= v1-22 1) (go mother-spider-tracking))
           ((= v1-22 2)
            (set-time! (-> self started-birthing-time))
            (set! (-> self birthing-counter) (max 0 (- (-> self max-baby-count) (-> self baby-count))))
@@ -655,6 +655,7 @@
   :event mother-spider-default-event-handler
   :enter
     (behavior ()
+    (mod-rule-trigger-mean-look)
       (set! (-> self hit?) #f)
       (set-time! (-> self state-time))
       (set-time! (-> self last-player-in-air-time)))
@@ -713,7 +714,6 @@
     (behavior ()
       (if (-> self hit?) (go mother-spider-hit-while-tracking))
       (when (= (-> self spin-vel) 0.0)
-        (mod-rule-trigger-redead)
         (set! (-> self last-spit-time) 0)
         (go mother-spider-tracking))
       (mother-spider-method-29 self #t #t))
@@ -938,6 +938,7 @@
   :event mother-spider-death-event-handler
   :enter
     (behavior ()
+      (notify-enemy-death self)
       (shut-down! (-> self neck))
       (set! (-> self thread-speed) 122880.0)
       (set! (-> self targ-dist-from-anchor) (+ -24576.0 (-> self dist-from-anchor)))
@@ -984,6 +985,7 @@
       (mother-spider-method-29 self #f #f))
   :code
     (behavior ()
+      (notify-enemy-death self)
       (let ((v1-2 (-> self entity extra perm)))
         (logior! (-> v1-2 status) (entity-perm-status user-set-from-cstage))
         (set! (-> v1-2 user-int8 0) 1))
@@ -1002,6 +1004,7 @@
   :event mother-spider-death-event-handler
   :code
     (behavior ()
+      (notify-enemy-death self)
       (logclear! (-> self mask) (process-mask actor-pause))
       (clear-collide-with-as (-> self root))
       (set! (-> self skel postbind-function) #f)

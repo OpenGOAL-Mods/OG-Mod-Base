@@ -252,7 +252,6 @@ baby-spider-default-event-handler
         (if (nav-enemy-method-53 self) (go baby-spider-die-fast))
         (suspend)
         (ja :num! (seek!)))
-        (mod-rule-trigger-redead)
       (go baby-spider-resume))
   :post nav-enemy-simple-post)
 
@@ -260,6 +259,7 @@ baby-spider-default-event-handler
   :event baby-spider-default-event-handler
   :code
     (behavior ()
+    (mod-rule-trigger-mean-look)
       (cond
         ((not *target*) (go-virtual nav-enemy-idle))
         ((target-in-range? self (-> self nav-info notice-distance)) (go-virtual nav-enemy-chase))
@@ -456,6 +456,7 @@ baby-spider-default-event-handler
   :event baby-spider-default-event-handler
   :code
     (behavior ()
+      (notify-enemy-death self)
       (cleanup-for-death self)
       (let ((v1-2 (-> self event-death))) (if v1-2 (send-event (ppointer->process (-> self parent)) v1-2)))))
 
@@ -522,7 +523,7 @@ baby-spider-default-event-handler
                       4096.0)
   (cond
     ((-> arg3 hatched?) (go baby-spider-hatching))
-    ((-> arg3 fast-start?) (mod-rule-trigger-redead) (go baby-spider-resume))
+    ((-> arg3 fast-start?) (go baby-spider-resume))
     (else (go-virtual nav-enemy-idle)))
   (none))
 

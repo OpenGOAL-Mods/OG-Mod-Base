@@ -92,8 +92,6 @@
              (not (logtest? (-> self water flags) (water-flags wt09)))
              (not (time-elapsed? (-> self state-time) (seconds 3)))
              (not (logtest? (-> self state-flags) (state-flags prevent-jump))))
-                     (mod-rule-trigger-brittle-bones)
-        (mod-rule-trigger-grounded)
       (go target-jump (-> *TARGET-bank* jump-height-min) (-> *TARGET-bank* jump-height-max) (the-as surface #f))))
   (if (logtest? (-> self control status) (cshape-moving-flags onsurf)) (go target-hit-ground #f))
   (when (if (and (< (target-move-dist (-> *TARGET-bank* stuck-time)) (-> *TARGET-bank* stuck-distance))
@@ -142,8 +140,6 @@
                  (set! (-> self event-hook) target-jump-event-handler)
                  (when (and (cpad-hold? (-> self control cpad number) x) (can-jump? #f))
                    (ja-channel-set! 0)
-                   (mod-rule-trigger-brittle-bones)
-                   (mod-rule-trigger-grounded)
                    (go target-high-jump
                        (-> *TARGET-bank* flop-jump-height-min)
                        (-> *TARGET-bank* flop-jump-height-max)
@@ -253,8 +249,6 @@
         (go target-duck-stance))
       ;; og:preserve-this - High FPS Fix
       (when (and (recently-pressed? x) (can-jump? #f))
-        (mod-rule-trigger-grounded)
-        (mod-rule-trigger-brittle-bones)
         (go target-jump (-> *TARGET-bank* jump-height-min) (-> *TARGET-bank* jump-height-max) (the-as surface #f)))
       ;; og:preserve-this - High FPS Fix
       (if (and (recently-pressed? circle) (can-feet?)) (go target-attack))
@@ -412,8 +406,6 @@
         (go target-stance))
       ;; og:preserve-this - High FPS Fix
       (when (and (recently-pressed? x) (can-jump? #f))
-        (mod-rule-trigger-grounded)
-        (mod-rule-trigger-brittle-bones)
         (go target-jump (-> *TARGET-bank* jump-height-min) (-> *TARGET-bank* jump-height-max) (the-as surface #f)))
       ;; og:preserve-this - High FPS Fix
       (if (and (recently-pressed? circle) (can-feet?)) (go target-attack))
@@ -618,8 +610,6 @@
       ((-> self state-hook))
       ;; og:preserve-this - High FPS Fix
       (when(and (recently-pressed? x) (can-jump? #f))
-        (mod-rule-trigger-brittle-bones)
-        (mod-rule-trigger-grounded)
         (go target-jump (-> *TARGET-bank* jump-height-min) (-> *TARGET-bank* jump-height-max) (the-as surface #f)))
       (if (and (cpad-pressed? (-> self control cpad number) circle) (can-feet?)) (go target-attack))
       (if (can-hands? #t) (go target-running-attack))
@@ -771,16 +761,10 @@
       (when (and (recently-pressed? x) (can-jump? #f))
         (if (= (-> *cpad-list* cpads (-> self control unknown-cpad-info00 number) stick0-speed) 0.0)
           (begin
-            ;; (mod-rule-trigger-brittle-bones)
-            ;; (mod-rule-trigger-grounded)
             (go target-high-jump (-> *TARGET-bank* duck-jump-height-min) (-> *TARGET-bank* duck-jump-height-max) 'duck))
           (begin
-            (mod-rule-trigger-brittle-bones)
-            (mod-rule-trigger-grounded)
             (go target-jump (-> *TARGET-bank* jump-height-min) (-> *TARGET-bank* jump-height-max) (the-as surface #f)))))
       (when (and (can-hands? #t) (can-exit-duck?))
-        ;;       (mod-rule-trigger-brittle-bones)
-        ;; (mod-rule-trigger-grounded)
         (go target-attack-uppercut (-> *TARGET-bank* attack-jump-height-min) (-> *TARGET-bank* attack-jump-height-max)))
       (fall-test)
       (slide-down-test))
@@ -831,16 +815,10 @@
       (when (and (recently-pressed? x) (can-jump? #f))
         (if (= (-> *cpad-list* cpads (-> self control unknown-cpad-info00 number) stick0-speed) 0.0)
           (begin
-            ;; (mod-rule-trigger-brittle-bones)
-            ;; (mod-rule-trigger-grounded)
             (go target-high-jump (-> *TARGET-bank* duck-jump-height-min) (-> *TARGET-bank* duck-jump-height-max) 'duck))
           (begin
-            (mod-rule-trigger-brittle-bones)
-            (mod-rule-trigger-grounded)
             (go target-jump (-> *TARGET-bank* jump-height-min) (-> *TARGET-bank* jump-height-max) (the-as surface #f)))))
       (when (and (can-hands? #t) (can-exit-duck?))
-        ;; (mod-rule-trigger-brittle-bones)
-        ;; (mod-rule-trigger-grounded)
         (go target-attack-uppercut (-> *TARGET-bank* attack-jump-height-min) (-> *TARGET-bank* attack-jump-height-max)))
       (fall-test)
       (slide-down-test))
@@ -863,6 +841,8 @@
   :event target-jump-event-handler
   :enter
     (behavior ((arg0 float) (arg1 float) (arg2 surface))
+        (mod-rule-trigger-brittle-bones)
+        (mod-rule-trigger-grounded)
       (when (= (-> self control unknown-symbol40) 'launch)
         (level-hint-spawn (text-id sidekick-launcher1) "sksp009d" (the-as entity #f) *entity-pool* (game-task none))
         (level-hint-spawn (text-id sidekick-launcher2) "sksp009e" (the-as entity #f) *entity-pool* (game-task none))
@@ -903,8 +883,6 @@
                (and (< -61440.0 (vector-dot (-> self control dynam gravity-normal) (-> self control transv)))
                     (not (logtest? (-> self water flag) (water-flag touch-water)))
                     (not (logtest? (-> self state-flags) (state-flags prevent-jump)))))
-                            (mod-rule-trigger-brittle-bones)
-        (mod-rule-trigger-grounded)
         (go target-double-jump (-> *TARGET-bank* double-jump-height-min) (-> *TARGET-bank* double-jump-height-max))
         )
       (if (and (cpad-pressed? (-> self control cpad number) square)
@@ -974,6 +952,8 @@
   :event target-jump-event-handler
   :enter
     (behavior ((arg0 float) (arg1 float))
+            (mod-rule-trigger-brittle-bones)
+        (mod-rule-trigger-grounded)
       (when (= (-> self control unknown-symbol40) 'launch)
         enter-state
         (let ((a0-3 (-> self control unknown-dword60))
@@ -1023,6 +1003,8 @@
   :event target-jump-event-handler
   :enter
     (behavior ((arg0 float) (arg1 float) (arg2 basic))
+            (mod-rule-trigger-brittle-bones)
+        (mod-rule-trigger-grounded)
       (when (and (= (-> self control unknown-symbol40) 'launch) (!= arg2 'launch))
         enter-state
         (let ((a0-3 (-> self control unknown-dword60))
@@ -1034,8 +1016,6 @@
           (go target-launch (the-as float a0-3) (the-as symbol a1-1) a2-1 (-> self control unknown-dword63))))
       (set! (-> self control unknown-uint31) (the-as uint arg2))
       (when (or (= arg2 'duck) (= arg2 'launch))         
-      (mod-rule-trigger-brittle-bones)
-        (mod-rule-trigger-grounded)
         (go target-duck-high-jump arg0 arg1 (the-as symbol arg2)))
       (set-time! (-> self state-time))
       (logclear! (-> self control status) (cshape-moving-flags onsurf onground tsurf))
@@ -1109,8 +1089,6 @@
          (until (ja-done? 0)
            (suspend)
            (ja :num! (seek! (ja-aframe (the-as float 16.0) 0))))))
-      ;; (mod-rule-trigger-brittle-bones)
-      ;; (mod-rule-trigger-grounded)
       (go target-duck-high-jump-jump arg0 arg1 arg2))
   :post target-post)
 
@@ -1226,8 +1204,6 @@
     (behavior ()
       ;; og:preserve-this - High FPS Fix
       (when (and (recently-pressed? x) (can-jump? #f))
-              (mod-rule-trigger-brittle-bones)
-        (mod-rule-trigger-grounded)
         (go target-jump (-> *TARGET-bank* jump-height-min) (-> *TARGET-bank* jump-height-max) (the-as surface #f)))
       (if (and (not (can-exit-duck?)) (can-duck?)) (go target-duck-stance))
       (when (!= (-> *cpad-list* cpads (-> self control cpad number) stick0-speed) 0.0)
@@ -1272,8 +1248,6 @@
           (level-hint-spawn (text-id misty-eco-red-first-use) "sksp0072" (the-as entity #f) *entity-pool* (game-task none)))
         ;; og:preserve-this - High FPS Fix
         (when (and (recently-pressed? x) (can-jump? #f))
-          (mod-rule-trigger-brittle-bones)
-          (mod-rule-trigger-grounded)
           (go target-jump (-> *TARGET-bank* jump-height-min) (-> *TARGET-bank* jump-height-max) (the-as surface #f)))
         (suspend)
         (ja :num! (seek! max (-> self control current-surface align-speed))))
@@ -1367,8 +1341,6 @@
                           (not (logtest? (-> *cpad-list* cpads (-> self control cpad number) button0-abs 0) (pad-buttons square))))
                       (not (logtest? (-> self state-flags) (state-flags prevent-jump prevent-attack)))
                       (not (logtest? (-> self control current-surface flags) (surface-flags prevent-attacks-during-launch-jump)))))
-          ;; (mod-rule-trigger-brittle-bones)
-          ;; (mod-rule-trigger-grounded)
           (go target-attack-uppercut (-> *TARGET-bank* attack-jump-height-min) (-> *TARGET-bank* attack-jump-height-max)))
         (if (and (logtest? (-> self water flag) (water-flag touch-water)) (zero? (mod (- (current-time) (-> self state-time)) 21)))
           (create-splash (-> self water)
@@ -1442,6 +1414,8 @@
           (else (target-dangerous-event-handler proc argc message block)))))
   :enter
     (behavior ((arg0 symbol))
+            (mod-rule-trigger-brittle-bones)
+        (mod-rule-trigger-grounded)
       (set-time! (-> self state-time))
       (logclear! (-> self control status) (cshape-moving-flags onsurf onground tsurf))
       (target-start-attack)
@@ -1545,6 +1519,8 @@
   :event target-dangerous-event-handler
   :enter
     (behavior ((arg0 float) (arg1 float))
+            (mod-rule-trigger-brittle-bones)
+        (mod-rule-trigger-grounded)
       (set-time! (-> self state-time))
       (target-start-attack)
       (target-danger-set! 'uppercut #f)
@@ -1562,8 +1538,6 @@
       (until (ja-done? 0)
         (suspend)
         (ja :num! (seek! (ja-aframe (the-as float 7.0) 0))))
-                (mod-rule-trigger-brittle-bones)
-        (mod-rule-trigger-grounded)
       (go target-attack-uppercut-jump arg0 arg1))
   :post target-post)
 
@@ -1599,8 +1573,6 @@
                (can-feet?)
                (ja-group? eichar-attack-uppercut-ja)
                (>= (ja-aframe-num 0) 12.0))
-               (mod-rule-trigger-brittle-bones)
-        (mod-rule-trigger-grounded)
         (go target-attack-air 'uppercut))
       (mod-var-jump #t #t (cpad-hold? (-> self control cpad number) x) (-> self control transv))
       (when (and (= (-> self fact eco-type) (pickup-type eco-red)) (>= (-> self fact eco-level) 1.0))
@@ -1886,8 +1858,6 @@
                      (cpad-pressed? (-> self control cpad number) x))
                  (can-jump? 'target-wheel-flip)
                  (mod-rule-trigger-sizeable))
-          (mod-rule-trigger-grounded)
-          (mod-rule-trigger-brittle-bones)
           (go target-wheel-flip (-> *TARGET-bank* wheel-flip-height) (-> *TARGET-bank* wheel-flip-dist))))
       (set-time! (-> self state-hook-time))
       (set! (-> self state-hook)
@@ -1900,8 +1870,6 @@
                  (when (and (recently-pressed? x)
                             (can-jump? 'target-wheel-flip)
                             (mod-rule-trigger-sizeable))
-                   (mod-rule-trigger-grounded)
-                   (mod-rule-trigger-brittle-bones)
                    (go target-wheel-flip (-> *TARGET-bank* wheel-flip-height) (-> *TARGET-bank* wheel-flip-dist)))))
               (none)))
       (go target-duck-stance))
@@ -1911,6 +1879,8 @@
   :event target-standard-event-handler
   :enter
     (behavior ((arg0 float) (arg1 float))
+            (mod-rule-trigger-brittle-bones)
+        (mod-rule-trigger-grounded)
       (set! (-> self control mod-surface) *wheel-flip-mods*))
   :exit target-exit
   :trans
@@ -1982,8 +1952,6 @@
                 (else
                  ;; og:preserve-this - High FPS Fix
                  (when (and (recently-pressed? x) (can-jump? #f))
-                   (mod-rule-trigger-brittle-bones)
-                   (mod-rule-trigger-grounded)
                    (go target-high-jump (-> *TARGET-bank* flip-jump-height-min) (-> *TARGET-bank* flip-jump-height-max) 'flip))))
               (none)))
       (if (ja-group? eichar-jump-loop-ja) (go target-hit-ground #f) (go target-stance)))

@@ -677,6 +677,7 @@
       (logior! (-> self mask) (process-mask actor-pause)))
   :code
     (behavior ()
+    (mod-rule-trigger-mean-look)
       (logclear! (-> self mask) (process-mask actor-pause))
       (ja-channel-push! 1 (seconds 0.075))
       (ja-no-eval :group! gnawer-notice-ja :num! (seek!) :frame-num 0.0)
@@ -761,6 +762,7 @@
 (defstate gnawer-die (gnawer)
   :enter
     (behavior ()
+      (notify-enemy-death self)
       (let ((v1-0 (-> self segments)))
         (set! (-> self fall-trans quad) (-> v1-0 0 world-pos quad))
         (vector-! (-> self root transv) (-> v1-0 0 world-pos) (-> self post-trans)))

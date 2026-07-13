@@ -1035,6 +1035,7 @@
 (defstate ice-cube-shatter (ice-cube)
   :code
     (behavior ()
+      (notify-enemy-death self)
       (logclear! (-> self mask) (process-mask actor-pause))
       (let ((gp-0 (new 'stack-no-clear 'vector)))
         (vector<-cspace! gp-0 (joint-node ice-cube-lod0-jg main))

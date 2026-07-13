@@ -528,6 +528,8 @@
         (else (target-flut-standard-event-handler proc argc message block))))
   :enter
     (behavior ((arg0 float) (arg1 float))
+          (mod-rule-trigger-brittle-bones)
+      (mod-rule-trigger-grounded)
       (set-time! (-> self state-time))
       (sound-play "jump" :pitch -0.5)
       (init-var-jump arg0 arg1 (the-as vector #t) (the-as vector #t) (-> self control transv))
@@ -607,6 +609,8 @@
         event)
   :enter
     (behavior ((arg0 float) (arg1 float))
+          (mod-rule-trigger-brittle-bones)
+      (mod-rule-trigger-grounded)
       (set-time! (-> self state-time))
       (init-var-jump arg0 arg1 (the-as vector #t) (the-as vector #t) (-> self control transv))
       (set! (-> self control dynam gravity-max) 40960.0)

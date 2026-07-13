@@ -113,6 +113,19 @@
      ))
   (none))
 
+(defun runs-on-enemy-death ((enemy process-drawable))
+  ;; Count when notified from enemy death flow.
+  (when enemy
+    (when (logtest? (-> enemy mask) (process-mask enemy))
+      (mod-rule-on-enemy-kill (-> enemy type symbol))))
+  (none))
+
+(defun runs-on-crate-break ((crate process-drawable) (event symbol))
+  ;; Code here runs when a crate enters its break flow.
+  (when (and crate (eq? event 'break))
+    (mod-rule-on-crate-break))
+  (none))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; deprecated function defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -13,6 +13,12 @@
 
 ;; DECOMP BEGINS
 
+(define-extern runs-on-enemy-death (function process-drawable none))
+
+(defun notify-enemy-death ((enemy process-drawable))
+  (runs-on-enemy-death enemy)
+  (none))
+
 (defun cspace-by-name ((arg0 process-drawable) (arg1 string))
   (let* ((s4-0 (-> arg0 node-list length))
          (s3-0 0)
