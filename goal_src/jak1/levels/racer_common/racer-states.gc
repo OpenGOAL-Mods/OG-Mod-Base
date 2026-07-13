@@ -11,6 +11,8 @@
 
 ;; DECOMP BEGINS
 
+(define-extern mod-rule-on-jak-death (function none))
+
 (defstate target-racing-start (target)
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
