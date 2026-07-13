@@ -854,12 +854,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       #f)))
 
 (defun mod-rule-reroll-slot ((slot int) (apply-buffer symbol))
+  ;; Reserve the slot now, but choose the rule only when its roll timer ends.
   (mod-rule-clear-slot slot)
-  (let ((chosen (mod-rule-pick-weighted-id)))
-    (when chosen
-      (mod-rule-schedule-slot slot chosen apply-buffer)
-      (mod-rule-record-roll! chosen))
-  (none)))
+  (mod-rule-schedule-slot slot 'mod-rule-pending-roll apply-buffer)
+  (none))
 
 (defun mod-rule-finish-slot ((slot int) (apply-buffer symbol))
   ;; Extra Rule is temporary. Once either occupied slot ends, keep the other
@@ -1162,7 +1160,14 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
            (let ((pending-id (-> *mod-rule-pending-slots* slot)))
              (when (and pending-id
                         (>= (current-time) (-> *mod-rule-slot-roll-ready-times* slot)))
-               (mod-rule-activate-slot slot pending-id))))))
+               (if (eq? pending-id 'mod-rule-pending-roll)
+                 (let ((chosen (mod-rule-pick-weighted-id)))
+                   (if chosen
+                     (begin
+                       (mod-rule-activate-slot slot chosen)
+                       (mod-rule-record-roll! chosen))
+                     (mod-rule-clear-slot slot)))
+                 (mod-rule-activate-slot slot pending-id)))))))
       (set! *mod-rule-last-update-time* (current-time)))
     (suspend)))
   (none))
