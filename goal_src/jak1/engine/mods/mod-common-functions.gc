@@ -277,13 +277,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rule-duration ((id symbol))
   (cond
     ((eq? id 'rule-grounded) (seconds 20)) ;; 20
-    ((eq? id 'rule-die) (seconds 15)) ;; 15
+    ((eq? id 'rule-die) (seconds 20)) ;; 20
     ((eq? id 'rule-lurker-pressure) (seconds 30)) ;; 30
     ((eq? id 'rule-hitlist) (seconds 60)) ;; 60
     ((eq? id 'rule-crate-break) (seconds 60)) ;; 60
     ((eq? id 'rule-orb-pressure) (seconds 30)) ;; 30
     ((eq? id 'rule-cell-pressure) (seconds 30)) ;; 30
-    ((eq? id 'complication-brittle-bones) (seconds 60)) ;; 60
+    ((eq? id 'complication-brittle-bones) (seconds 45)) ;; 45
     ((eq? id 'complication-rotten-eggs) (seconds 60)) ;; 60
     ((eq? id 'complication-eco-allergy) (seconds 60)) ;; 60
     ((eq? id 'rule-keep-it-low) (seconds 90)) ;; 90
@@ -688,6 +688,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
            (eq? id 'rule-lurker-pressure))
        (if (or (eq? level-name 'training)
                (eq? level-name 'village1)
+               (eq? level-name 'jungleb)
                (eq? level-name 'firecanyon)
                (eq? level-name 'village2)
                (eq? level-name 'rolling)
@@ -699,6 +700,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       ;; Keep hitlist out of levels without many unique lurkers.
       ((eq? id 'rule-hitlist)
        (if (or (eq? level-name 'village3)
+               (eq? level-name 'jungleb)
                (eq? level-name 'village1)
                (eq? level-name 'village2)
                (eq? level-name 'training)
@@ -712,6 +714,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       ;; Keep crate break out of levels without many crates.
       ((eq? id 'rule-crate-break)
        (if (or (eq? level-name 'village3)
+               (eq? level-name 'jungleb)
                (eq? level-name 'lavatube)
                (eq? level-name 'citadel))
          0
@@ -722,7 +725,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
        (if (eq? level-name 'training)
          0
          5))
-      ;; Keep sizeable and keep it low out of zoomer levels.
+      ;; Keep sizeable and keep-it-low out of zoomer levels.
       ((or (eq? id 'rule-keep-it-low)
            (eq? id 'complication-sizeable))
        (if (or (eq? level-name 'firecanyon)
@@ -737,10 +740,14 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                (eq? level-name 'lavatube))
          10
          0))
+      ;; Keep cell pressure out of jungleb.
+      ((eq? id 'rule-cell-pressure)
+       (if (eq? level-name 'jungleb)
+         0
+         2))
       ;; These are base weights.
       ((eq? id 'complication-brittle-bones) 5)
       ((eq? id 'complication-rotten-eggs) 5)
-      ((eq? id 'rule-cell-pressure) 2)
       ((eq? id 'complication-eco-allergy) 5)
       ((eq? id 'complication-ohko) 5)
       (else 5))))
@@ -1252,7 +1259,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (set! *global-countdown-started?* #f)
   (set! *global-countdown-active?* #f)
   (set! *global-countdown-lost?* #f)
-  (set! *global-countdown-remaining-time* (seconds 9999)) ;; global timer start
+  (set! *global-countdown-remaining-time* (seconds 120)) ;; global timer start
   (set! *global-countdown-last-update-time* (current-time))
   (set! *mod-rule-last-update-time* (current-time))
   (set! *mod-rule-last-reverted-cell-task* 0)
