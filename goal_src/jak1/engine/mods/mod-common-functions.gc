@@ -528,28 +528,51 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (let ((has-money (>= (-> *game-info* money) 15.0))
         (has-warp (!= (-> (level-get-target-inside *level*) name) 'training))
         (has-revert (mod-rule-can-revert-collected-cell?))
-        (count 1)
+        (count 0)
         (roll 0))
+
+    ;; Count available punishments
+    (+! count 1) ;; Countdown
+    ;; (+! count 1) ;; Blind
+
     (when has-money
       (+! count 1))
+
     (when has-warp
       (+! count 1))
+
     (when has-revert
       (+! count 1))
+
     (set! roll (rand-vu-int-range 0 (- count 1)))
-    (cond
-      ((and has-money (= roll 0)) 'punishment-money)
-      ((and has-money has-warp (= roll 1)) 'punishment-warp)
-      ((and has-money (not has-warp) (= roll 1)) 'punishment-countdown)
-      ((and has-money has-revert has-warp (= roll 2)) 'punishment-countdown)
-      ((and has-money has-revert (not has-warp) (= roll 2)) 'punishment-revert-cell)
-      ((and has-money has-revert has-warp (= roll 3)) 'punishment-revert-cell)
-      ((and (not has-money) has-warp (= roll 0)) 'punishment-warp)
-      ((and (not has-money) (not has-warp) (= roll 0)) 'punishment-countdown)
-      ((and (not has-money) has-revert has-warp (= roll 1)) 'punishment-countdown)
-      ((and (not has-money) has-revert (not has-warp) (= roll 1)) 'punishment-revert-cell)
-      ((and (not has-money) has-revert has-warp (= roll 2)) 'punishment-revert-cell)
-      (else 'punishment-countdown))))
+
+    ;; Walk through the available punishments in order.
+    (set! count 0)
+
+    (when (= roll count)
+      (return 'punishment-countdown))
+    (+! count 1)
+
+    (when has-money
+      (when (= roll count)
+        (return 'punishment-money))
+      (+! count 1))
+
+    (when has-warp
+      (when (= roll count)
+        (return 'punishment-warp))
+      (+! count 1))
+
+    (when has-revert
+      (when (= roll count)
+        (return 'punishment-revert-cell))
+      (+! count 1))
+
+    ;; (when (= roll count)
+    ;;   (return 'punishment-blind))
+    ;; (+! count 1)
+      
+    'punishment-countdown))
 
 (defun mod-rule-on-activate ((id symbol))
   ;; (cond
@@ -564,6 +587,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (when (and (>= slot 0) (< slot 3) id)
     (mod-rule-clear-slot slot)
     (set! (-> *mod-rule-active-slots* slot) id)
+    (sound-play "warning")
     (set! (-> *mod-rule-slot-goals* slot) (mod-rule-counter-goal id))
     (set! (-> *mod-rule-slot-progress* slot) 0)
     (if (eq? (mod-rule-type id) 'rule)
@@ -629,12 +653,16 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (let ((level-name (mod-rule-current-level-name)))
     (cond
       ((eq? id 'rule-orb-pressure) 2)
-      ;; Keep redead out of levels without enemies.
+      ;; Keep redead out of levels without much enemy activity.
       ((eq? id 'complication-redead)
        (if (or (eq? level-name 'training)
+               (eq? level-name 'village1)
+               (eq? level-name 'firecanyon)
                (eq? level-name 'village2)
+               (eq? level-name 'rolling)
+               (eq? level-name 'mountainpass)
                (eq? level-name 'village3)
-               (eq? level-name 'rolling))
+               (eq? level-name 'lavatube))
          0
          5))
       ;; Keep grounded out of training.
@@ -731,6 +759,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                 (set! new-progress (min goal (+ (-> *mod-rule-slot-progress* slot) amount)))
                 (set! (-> *mod-rule-slot-progress* slot) new-progress)
                 (when (>= new-progress goal)
+                (sound-play "slider2001")
                   (mod-rule-reroll-slot slot #t)))
               (set! (-> *mod-rule-slot-progress* slot)
                     (+ (-> *mod-rule-slot-progress* slot) amount)))))
@@ -775,6 +804,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-warp) "WARP TO GEYSER ROCK")
     ((eq? punishment 'punishment-countdown) "LOSE 20 SECONDS")
     ((eq? punishment 'punishment-revert-cell) "REVERT A RANDOM CELL")
+    ((eq? punishment 'punishment-blind) "BLIND FOR 10 SECONDS")
     (else "NONE")))
 
 (defun mod-rule-apply-punishment ((punishment symbol))
@@ -790,8 +820,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
        (set! *global-countdown-remaining-time* (+ *global-countdown-remaining-time* (- (seconds 20))))))
     ((eq? punishment 'punishment-revert-cell)
      (mod-rule-revert-random-collected-cell))
+    ((eq? punishment 'punishment-blind)
+     (set-blackout-frames (seconds 10)))
     (else
      (none)))
+     (sound-play "caught-eel")
     ;;  (mod-rule-reroll-current #t)
   (none))
 
@@ -804,6 +837,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
               (punishment (-> *mod-rule-slot-punishments* slot)))
           (when (and (> goal 0) (< progress goal) punishment)
             (mod-rule-apply-punishment punishment))))
+            (sound-play "cursor-up-down")
       (mod-rule-reroll-slot slot #t)))
   (none))
 
