@@ -58,10 +58,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *global-countdown-lost?* #f)
 (define *global-countdown-remaining-time* 0)
 (define *global-countdown-last-update-time* 0)
-;; Rule / complication state. This is a lightweight base system that supports
-;; up to three active entries at once, while defaulting to a single active slot.
-(define *mod-rule-max-active-count* 1)
-(define *mod-rule-active-count* 0)
+;; Rule / complication state. Slots are the source of truth: a slot is occupied
+;; while it has either an active rule or a rule waiting to roll.
 (define *mod-rule-active-slots* (new 'global 'boxed-array symbol 3))
 (define *mod-rule-pending-slots* (new 'global 'boxed-array symbol 3))
 (define *mod-rule-slot-end-times* (new 'global 'boxed-array time-frame 3))
@@ -352,10 +350,48 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (+! slot 1))
     found))
 
+(defun mod-rule-active-slot-count ()
+  "Count active and pending slots. Do not cache this: pending rolls are state too."
+  (let ((slot 0)
+        (count 0))
+    (while (< slot 3)
+      (when (or (-> *mod-rule-active-slots* slot)
+                (-> *mod-rule-pending-slots* slot))
+        (+! count 1))
+      (+! slot 1))
+    count))
+
+(defun mod-rule-first-free-slot ()
+  (let ((slot 0)
+        (result -1))
+    (while (and (< slot 3) (< result 0))
+      (when (and (not (-> *mod-rule-active-slots* slot))
+                 (not (-> *mod-rule-pending-slots* slot)))
+        (set! result slot))
+      (+! slot 1))
+    result))
+
+(defun mod-rule-first-occupied-slot ()
+  (let ((slot 0)
+        (result -1))
+    (while (and (< slot 3) (< result 0))
+      (when (or (-> *mod-rule-active-slots* slot)
+                (-> *mod-rule-pending-slots* slot))
+        (set! result slot))
+      (+! slot 1))
+    result))
+
+(defun mod-rule-find-active-slot ((id symbol))
+  (let ((slot 0)
+        (result -1))
+    (while (and (< slot 3) (< result 0))
+      (when (= (-> *mod-rule-active-slots* slot) id)
+        (set! result slot))
+      (+! slot 1))
+    result))
+
 (defun mod-rule-clear-slot ((slot int))
   (when (and (>= slot 0) (< slot 3))
-    (when (-> *mod-rule-active-slots* slot)
-      (set! *mod-rule-active-count* (max 0 (- *mod-rule-active-count* 1))))
     (set! (-> *mod-rule-active-slots* slot) #f)
     (set! (-> *mod-rule-pending-slots* slot) #f)
     (set! (-> *mod-rule-slot-punishments* slot) #f)
@@ -551,6 +587,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (let ((has-money (>= (-> *game-info* money) 15.0))
         (has-warp (!= (-> (level-get-target-inside *level*) name) 'training))
         (has-revert (mod-rule-can-revert-collected-cell?))
+        (can-add-extra-rule (< (mod-rule-active-slot-count) 2))
         (count 0)
         (roll 0))
 
@@ -565,6 +602,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (+! count 1))
 
     (when has-revert
+      (+! count 1))
+
+    (when can-add-extra-rule
       (+! count 1))
 
     (set! roll (rand-vu-int-range 0 (- count 1)))
@@ -589,6 +629,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (when has-revert
       (when (= roll count)
         (return 'punishment-revert-cell))
+      (+! count 1))
+
+    (when can-add-extra-rule
+      (when (= roll count)
+        (return 'punishment-extra-rule))
       (+! count 1))
 
     ;; (when (= roll count)
@@ -621,8 +666,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
             (mod-rule-random-available-punishment))
       (set! (-> *mod-rule-slot-punishments* slot) #f))
     (set! (-> *mod-rule-slot-end-times* slot) (+ (current-time) (mod-rule-duration id)))
-    (mod-rule-on-activate id)
-    (+! *mod-rule-active-count* 1))
+    (mod-rule-on-activate id))
   (none))
 
 (defun mod-rule-id-from-index ((idx int))
@@ -817,6 +861,14 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (mod-rule-record-roll! chosen))
   (none)))
 
+(defun mod-rule-finish-slot ((slot int) (apply-buffer symbol))
+  ;; Extra Rule is temporary. Once either occupied slot ends, keep the other
+  ;; slot and clear this one instead of replacing it with a third rule.
+  (if (> (mod-rule-active-slot-count) 1)
+    (mod-rule-clear-slot slot)
+    (mod-rule-reroll-slot slot apply-buffer))
+  (none))
+
 (defun mod-rule-counter-add-progress ((id symbol) (amount int))
   (when (> amount 0)
     (let ((slot 0))
@@ -830,7 +882,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                 (set! (-> *mod-rule-slot-progress* slot) new-progress)
                 (when (>= new-progress goal)
                 (sound-play "slider2001")
-                  (mod-rule-reroll-slot slot #t)))
+                  (mod-rule-finish-slot slot #t)))
               (set! (-> *mod-rule-slot-progress* slot)
                     (+ (-> *mod-rule-slot-progress* slot) amount)))))
         (+! slot 1))))
@@ -845,7 +897,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none))
 
 (defun mod-rule-reroll-current ((apply-buffer symbol))
-  (mod-rule-reroll-slot *mod-rule-current-slot* apply-buffer)
+  ;; The surviving temporary rule may be in slot 1 or 2. Reroll that occupied
+  ;; slot instead of always creating a new rule in the default slot 0.
+  (let ((slot (mod-rule-first-occupied-slot)))
+    (mod-rule-reroll-slot (if (>= slot 0) slot *mod-rule-current-slot*) apply-buffer))
   (none))
 
 (defun mod-rule-random-punishment ()
@@ -920,17 +975,29 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-warp) "WARP TO GEYSER ROCK")
     ((eq? punishment 'punishment-countdown) "LOSE 20 SECONDS")
     ((eq? punishment 'punishment-revert-cell) "REVERT A RANDOM CELL")
+    ((eq? punishment 'punishment-extra-rule) "EXTRA RULE")
     ((eq? punishment 'punishment-blind) "BLIND FOR 10 SECONDS")
     (else "NONE")))
+
+(defun mod-rule-apply-extra-rule-punishment ((failed-slot int))
+  ;; Roll the failed slot first so it remains occupied, then use the first
+  ;; genuinely free slot for the temporary second rule.
+  (when (and (>= failed-slot 0)
+             (< failed-slot 3)
+             (< (mod-rule-active-slot-count) 2))
+    (mod-rule-reroll-slot failed-slot #t)
+    (let ((extra-slot (mod-rule-first-free-slot)))
+      (when (>= extra-slot 0)
+        (mod-rule-reroll-slot extra-slot #t))))
+  (none))
 
 (defun mod-rule-apply-punishment ((punishment symbol))
   (cond
     ((eq? punishment 'punishment-money)
      (set! (-> *game-info* money) (max 0.0 (- (-> *game-info* money) 30.0))))
     ((eq? punishment 'punishment-warp)
-    (mod-rule-reroll-current #t)
-    (set! (-> *game-info* current-continue) (get-continue-by-name *game-info* "training-warp"))
-    (initialize! *game-info* 'die (the-as game-save #f) (the-as string #f)))
+     (set! (-> *game-info* current-continue) (get-continue-by-name *game-info* "training-warp"))
+     (initialize! *game-info* 'die (the-as game-save #f) (the-as string #f)))
     ((eq? punishment 'punishment-countdown)
      (when *global-countdown-active?*
        (set! *global-countdown-remaining-time* (+ *global-countdown-remaining-time* (- (seconds 20))))))
@@ -940,8 +1007,17 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
      (set-blackout-frames (seconds 10)))
     (else
      (none)))
-     (sound-play "caught-eel")
-    ;;  (mod-rule-reroll-current #t)
+  (none))
+
+(defun mod-rule-handle-slot-failure ((slot int) (punishment symbol))
+  ;; Extra Rule owns both rerolls. Every other punishment rerolls only the
+  ;; failed slot after its effect has been applied.
+  (sound-play "caught-eel")
+  (if (eq? punishment 'punishment-extra-rule)
+    (mod-rule-apply-extra-rule-punishment slot)
+    (begin
+      (mod-rule-apply-punishment punishment)
+      (mod-rule-finish-slot slot #t)))
   (none))
 
 (defun mod-rule-handle-slot-expiry ((slot int))
@@ -952,9 +1028,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
               (progress (-> *mod-rule-slot-progress* slot))
               (punishment (-> *mod-rule-slot-punishments* slot)))
           (when (and (> goal 0) (< progress goal) punishment)
-            (mod-rule-apply-punishment punishment))))
-            (sound-play "cursor-up-down")
-      (mod-rule-reroll-slot slot #t)))
+            (mod-rule-handle-slot-failure slot punishment))
+          (sound-play "cursor-up-down")
+          (when (or (<= goal 0) (>= progress goal) (not punishment))
+            (mod-rule-finish-slot slot #t))))))
   (none))
 
 (defun mod-rule-punishment-for-id ((id symbol))
@@ -979,8 +1056,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (when (mod-rule-active? 'rule-grounded)
     (let ((punishment (mod-rule-punishment-for-id 'rule-grounded)))
       (when punishment
-        (mod-rule-apply-punishment punishment)
-        (mod-rule-reroll-id 'rule-grounded))))
+        (let ((slot (mod-rule-find-active-slot 'rule-grounded)))
+          (when (>= slot 0)
+            (mod-rule-handle-slot-failure slot punishment))))))
   (none))
 
 (defun mod-rule-trigger-brittle-bones ()
@@ -995,8 +1073,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (when (mod-rule-active? 'rule-keep-it-low)
     (let ((punishment (mod-rule-punishment-for-id 'rule-keep-it-low)))
       (when punishment
-        (mod-rule-apply-punishment punishment)
-        (mod-rule-reroll-id 'rule-keep-it-low))))
+        (let ((slot (mod-rule-find-active-slot 'rule-keep-it-low)))
+          (when (>= slot 0)
+            (mod-rule-handle-slot-failure slot punishment))))))
   (none))
 
 (defun mod-rule-trigger-rotten-eggs ()
@@ -1048,7 +1127,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> *mod-rule-unique-enemy-killed-types* slot) #f))
   (mod-rule-clear-recent-rolls)
   (set! *mod-rule-current-slot* 0)
-  (set! *mod-rule-active-count* 0)
   (none))
 
 (defun global-countdown-paused? ()
@@ -1132,6 +1210,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                (active-progress 0)
              (show-counter-progress #f)
                (time-left 0)
+               (secondary-id #f)
+               (secondary-punishment #f)
+               (secondary-time-left 0)
                (rolling-id #f)
                (rolling-left 0))
            (while (and (< slot 3) (not active-id))
@@ -1143,6 +1224,16 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                  (set! active-progress (-> *mod-rule-slot-progress* slot))
                  (set! show-counter-progress (eq? (mod-rule-goal-kind candidate) 'counter))
                  (set! time-left (max 0 (- (-> *mod-rule-slot-end-times* slot) (current-time))))))
+             (+! slot 1))
+           ;; The primary scan stops at the first active rule. Continue from
+           ;; there to show a temporary Extra Rule without changing its slot.
+           (while (and (< slot 3) (not secondary-id))
+             (let ((candidate (-> *mod-rule-active-slots* slot)))
+               (when candidate
+                 (set! secondary-id candidate)
+                 (set! secondary-punishment (-> *mod-rule-slot-punishments* slot))
+                 (set! secondary-time-left
+                       (max 0 (- (-> *mod-rule-slot-end-times* slot) (current-time))))))
              (+! slot 1))
            (when (not active-id)
              (set! slot 0)
@@ -1209,6 +1300,37 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                               (font-color red)
                               (font-flags shadow kerning)
                               1.0)))
+           (when secondary-id
+             (draw-string-xy-scaled (mod-rule-name secondary-id)
+                                    global-buf
+                                    10
+                                    94
+                                    (font-color green)
+                                    (font-flags shadow kerning large)
+                                    0.5)
+             (draw-string-xy-scaled (mod-rule-description secondary-id)
+                                    global-buf
+                                    10
+                                    104
+                                    (font-color white)
+                                    (font-flags shadow kerning large)
+                                    0.4)
+             (when secondary-punishment
+               (draw-string-xy-scaled "PUNISHMENT: " global-buf 10 113 (font-color red) (font-flags shadow kerning large) 0.3)
+               (draw-string-xy-scaled (mod-rule-punishment-name secondary-punishment)
+                                      global-buf
+                                      80
+                                      113
+                                      (font-color white)
+                                      (font-flags shadow kerning large)
+                                      0.3))
+             (draw-string-xy-scaled (mod-rule-format-time-left secondary-time-left)
+                                    global-buf
+                                    10
+                                    122
+                                    (font-color white)
+                                    (font-flags shadow kerning large)
+                                    0.5))
            (when (and (not active-id) rolling-id)
              (draw-string-xy-scaled "NEW RULE IN "
                                     global-buf
