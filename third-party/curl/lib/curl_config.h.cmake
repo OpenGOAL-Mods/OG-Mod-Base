@@ -317,7 +317,12 @@
 #cmakedefine HAVE_IOCTLSOCKET_CAMEL_FIONBIO 1
 
 /* Define to 1 if you have a working ioctlsocket FIONBIO function. */
+/* mod-base-change fails with clang + Win11 SDK */
+#ifdef _WIN32
+#define HAVE_IOCTLSOCKET_FIONBIO 1
+#else
 #cmakedefine HAVE_IOCTLSOCKET_FIONBIO 1
+#endif
 
 /* Define to 1 if you have a working ioctl FIONBIO function. */
 #cmakedefine HAVE_IOCTL_FIONBIO 1

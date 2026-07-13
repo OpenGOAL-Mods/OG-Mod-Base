@@ -47,19 +47,30 @@ tasks:
         msg: "Couldn't locate decompiler executable in '{{.DECOMP_BIN_RELEASE_DIR}}/decompiler'"
     cmds:
       - '{{.DECOMP_BIN_RELEASE_DIR}}/decompiler "./decompiler/config/{{.DECOMP_CONFIG}}" "./iso_data" "./decompiler_out" --version "{{.DECOMP_CONFIG_VERSION}}" --config-override ''{"decompile_code": false, "levels_extract": true, "allowed_objects": []}'''
+  compile-game-if-needed:
+    internal: true
+    cmds:
+      - |
+        if ! test -f out/{{.GAME}}/iso/KERNEL.CGO; then
+          echo "Game is not compiled yet ('out/{{.GAME}}/iso/KERNEL.CGO' is missing) - running (mi) in 1 seconds..."
+          {{.PYTHON}} -c "import time; time.sleep(1)"
+          {{.GOALC_BIN_RELEASE_DIR}}/goalc{{.EXE_FILE_EXTENSION}} --user-auto --game {{.GAME}} --cmd "(mi)"
+        fi
   boot-game:
-    desc: "Boots the game, it will fail if it's not already compiled!"
+    desc: "Boots the game, compiling it first if it's not compiled yet"
     preconditions:
       - sh: test -f {{.GK_BIN_RELEASE_DIR}}/gk{{.EXE_FILE_EXTENSION}}
         msg: "Couldn't locate runtime executable in '{{.GK_BIN_RELEASE_DIR}}/gk'"
     cmds:
+      - task: compile-game-if-needed
       - "{{.GK_BIN_RELEASE_DIR}}/gk -v --game {{.GAME}} -- -boot -fakeiso -debug"
   boot-game-retail:
-    desc: "Boots the game without debug mode, it will fail if it's not already compiled!"
+    desc: "Boots the game without debug mode, compiling it first if it's not compiled yet"
     preconditions:
       - sh: test -f {{.GK_BIN_RELEASE_DIR}}/gk{{.EXE_FILE_EXTENSION}}
         msg: "Couldn't locate runtime executable in '{{.GK_BIN_RELEASE_DIR}}/gk'"
     cmds:
+      - task: compile-game-if-needed
       - "{{.GK_BIN_RELEASE_DIR}}/gk -v --game {{.GAME}} -- -boot -fakeiso"
   run-game:
     desc: "Start the game's runtime, to start the game itself the REPL is required"

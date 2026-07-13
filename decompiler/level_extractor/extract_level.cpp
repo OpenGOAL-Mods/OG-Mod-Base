@@ -448,7 +448,8 @@ void extract_all_levels(const ObjectFileDB& db,
                       game_version_names[config.game_version] / "entities";
   file_util::create_dir_if_needed(entities_dir);
 
-  int num_workers = dgo_names.size();
+  // cap the number of workers - one thread per level holds the whole uncompressed level in memory 
+  int num_workers = std::min((int)dgo_names.size(), (int)std::thread::hardware_concurrency());
   if (tex_db.replace_texture_dir) {
     num_workers = 1;
   }
