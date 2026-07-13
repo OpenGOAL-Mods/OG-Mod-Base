@@ -671,15 +671,17 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                 (weight 0))
             (set! weight (if (> priority 0) (* priority recent-factor) 0))
             (when *debug-segment*
-              (format #t "Weighted roll candidate ~S: priority=~D recent-factor=~D effective=~D~%"
-                      candidate
-                      priority
-                      recent-factor
-                      weight))
+              ;; (format #t "Weighted roll candidate ~S: priority=~D recent-factor=~D effective=~D~%"
+              ;;         candidate
+              ;;         priority
+              ;;         recent-factor
+              ;;         weight)
+                      )
             (+! total weight))))
       (+! idx 1))
     (when *debug-segment*
-      (format #t "Weighted roll total: ~D~%" total))
+      ;; (format #t "Weighted roll total: ~D~%" total)
+      )
     (if (> total 0)
       (let ((roll (rand-vu-int-range 0 (- total 1)))
             (idx 0)
@@ -699,7 +701,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                     (set! roll (- roll weight)))))))
           (+! idx 1))
         (when *debug-segment*
-          (format #t "Weighted roll chose ~S from total=~D~%" chosen total))
+          (format #t "Weighted roll chose ~S from total=~D~%" chosen total)
+          )
         chosen)
       #f)))
 
