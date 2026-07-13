@@ -178,6 +178,20 @@
         "-debug"
       ]
     },
+        {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "gk.exe (bin\\gk.exe)",
+      "name": "Game - Jak 1 - Runtime (release)",
+      "args": [
+        "-v",
+        "--game",
+        "jak1",
+        "--",
+        "-boot",
+        "-fakeiso"
+      ]
+    },
     {
       "type": "default",
       "project": "CMakeLists.txt",

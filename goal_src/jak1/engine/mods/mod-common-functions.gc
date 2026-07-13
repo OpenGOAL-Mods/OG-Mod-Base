@@ -69,6 +69,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *mod-rule-slot-punishments* (new 'global 'boxed-array symbol 3))
 (define *mod-rule-slot-goals* (new 'global 'boxed-array int32 3))
 (define *mod-rule-slot-progress* (new 'global 'boxed-array int32 3))
+(define *mod-rule-recent-rolls* (new 'global 'boxed-array symbol 5))
 (define *mod-rule-roll-buffer-time* (seconds 5))
 (define *mod-rule-last-update-time* 0)
 (define *mod-rule-current-slot* 0)
@@ -237,6 +238,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rule-name ((id symbol))
   (cond
     ((eq? id 'rule-grounded) "GROUNDED")
+    ((eq? id 'rule-last-breath) "LAST BREATH")
     ((eq? id 'rule-orb-pressure) "ORB PRESSURE")
     ((eq? id 'rule-cell-pressure) "CELL PRESSURE")
     ((eq? id 'complication-brittle-bones) "BRITTLE BONES")
@@ -251,9 +253,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rule-description ((id symbol))
   (cond
     ((eq? id 'rule-grounded) "DO NOT JUMP.")
+    ((eq? id 'rule-last-breath) "DIE.")
     ((eq? id 'rule-orb-pressure) "COLLECT 20 ORBS.")
     ((eq? id 'rule-cell-pressure) "COLLECT A POWER CELL.")
-    ((eq? id 'complication-brittle-bones) "20% OF JUMPS DAMAGE YOU.")
+    ((eq? id 'complication-brittle-bones) "JUMPING HAS A 20% CHANCE TO DAMAGE YOU.")
     ((eq? id 'complication-rotten-eggs) "ORBS KILL YOU.")
     ((eq? id 'complication-eco-allergy) "ECO DAMAGES YOU.")
     ((eq? id 'rule-keep-it-low) "DO NOT JUMP KICK.")
@@ -264,27 +267,37 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun mod-rule-duration ((id symbol))
   (cond
-    ((eq? id 'rule-grounded) (seconds 20))
-    ((eq? id 'rule-orb-pressure) (seconds 30))
-    ((eq? id 'rule-cell-pressure) (seconds 30))
-    ((eq? id 'complication-brittle-bones) (seconds 60))
-    ((eq? id 'complication-rotten-eggs) (seconds 60))
-    ((eq? id 'complication-eco-allergy) (seconds 60))
-    ((eq? id 'rule-keep-it-low) (seconds 90))
-    ((eq? id 'complication-sizeable) (seconds 60))
-    ((eq? id 'complication-ohko) (seconds 90))
-    ((eq? id 'complication-redead) (seconds 60))
+    ((eq? id 'rule-grounded) (seconds 20)) ;; 20
+    ((eq? id 'rule-last-breath) (seconds 15)) ;; 15
+    ((eq? id 'rule-orb-pressure) (seconds 30)) ;; 30
+    ((eq? id 'rule-cell-pressure) (seconds 30)) ;; 30
+    ((eq? id 'complication-brittle-bones) (seconds 60)) ;; 60
+    ((eq? id 'complication-rotten-eggs) (seconds 60)) ;; 60
+    ((eq? id 'complication-eco-allergy) (seconds 60)) ;; 60
+    ((eq? id 'rule-keep-it-low) (seconds 90)) ;; 90
+    ((eq? id 'complication-sizeable) (seconds 60)) ;; 60
+    ((eq? id 'complication-ohko) (seconds 90)) ;; 90
+    ((eq? id 'complication-redead) (seconds 60)) ;; 60
     (else (seconds 30))))
 
 (defun mod-rule-counter-goal ((id symbol))
   (cond
+    ((eq? id 'rule-last-breath) 1)
     ((eq? id 'rule-orb-pressure) 20)
     ((eq? id 'rule-cell-pressure) 1)
     (else 0)))
 
+(defun mod-rule-goal-kind ((id symbol))
+  (cond
+    ((eq? id 'rule-orb-pressure) 'counter)
+    ((eq? id 'rule-cell-pressure) 'counter)
+    ((eq? id 'rule-last-breath) 'event-once)
+    (else 'none)))
+
 (defun mod-rule-type ((id symbol))
   (cond
     ((or (eq? id 'rule-keep-it-low)
+         (eq? id 'rule-last-breath)
          (eq? id 'rule-orb-pressure)
          (eq? id 'rule-cell-pressure)
          (eq? id 'rule-grounded))
@@ -562,38 +575,127 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (+! *mod-rule-active-count* 1))
   (none))
 
+(defun mod-rule-id-from-index ((idx int))
+  (cond
+    ((= idx 0) 'rule-grounded)
+    ((= idx 1) 'rule-last-breath)
+    ((= idx 2) 'complication-brittle-bones)
+    ((= idx 3) 'complication-rotten-eggs)
+    ((= idx 4) 'rule-keep-it-low)
+    ((= idx 5) 'rule-orb-pressure)
+    ((= idx 6) 'rule-cell-pressure)
+    ((= idx 7) 'complication-eco-allergy)
+    ((= idx 8) 'complication-sizeable)
+    ((= idx 9) 'complication-ohko)
+    ((= idx 10) 'complication-redead)
+    (else #f)))
+
 (defun mod-rule-random-id ()
-  (let ((roll (rand-vu-int-range 0 9))) ;; don't forget to update this if you add more rules
+  (mod-rule-id-from-index (rand-vu-int-range 0 10)))
+
+(defun mod-rule-current-level-name ()
+  (and *target*
+    (-> *target* current-level)
+    (-> *target* current-level name)))
+
+(defun mod-rule-clear-recent-rolls ()
+  (dotimes (slot 5)
+    (set! (-> *mod-rule-recent-rolls* slot) #f))
+  (none))
+
+(defun mod-rule-record-roll! ((id symbol))
+  (when id
+    (let ((slot 4))
+      (while (> slot 0)
+        (set! (-> *mod-rule-recent-rolls* slot)
+              (-> *mod-rule-recent-rolls* (- slot 1)))
+        (+! slot -1))
+      (set! (-> *mod-rule-recent-rolls* 0) id)))
+  (none))
+
+(defun mod-rule-recent-roll-factor ((id symbol))
+  (let ((slot 0)
+        (factor 5)
+        (found #f))
+    (while (and (< slot 5) (not found))
+      (when (= (-> *mod-rule-recent-rolls* slot) id)
+        (set! factor slot)
+        (set! found #t))
+      (+! slot 1))
+    factor))
+
+(defun mod-rule-roll-priority ((id symbol))
+  ;; Return 0 to block a roll, 1 for normal odds, and larger values to make it more likely.
+  (let ((level-name (mod-rule-current-level-name)))
     (cond
-      ((= roll 0) 'rule-grounded)
-      ((= roll 1) 'complication-brittle-bones)
-      ((= roll 2) 'complication-rotten-eggs)
-      ((= roll 3) 'rule-keep-it-low)
-      ((= roll 4) 'rule-orb-pressure)
-      ((= roll 5) 'rule-cell-pressure)
-      ((= roll 6) 'complication-eco-allergy)
-      ((= roll 7) 'complication-sizeable)
-      ((= roll 8) 'complication-ohko)
-      ((= roll 9) 'complication-redead)
-      ;; (else 'rule-grounded)
-      )))
+      ;; Normal odds for orb-pressure for now.
+      ((eq? id 'rule-orb-pressure) 1)
+      ;; Keep redead out of levels without enemies.
+      ((eq? id 'complication-redead)
+       (if (or (eq? level-name 'training)
+               (eq? level-name 'village2))
+         0
+         1))
+      ;; Keep grounded out of training.
+            ((eq? id 'rule-grounded)
+       (if (eq? level-name 'training)
+         0
+         1))
+      ;; These are normal-weight rules. Bump these numbers if you want them to appear more often.
+      ((eq? id 'rule-grounded) 1)
+      ((eq? id 'complication-brittle-bones) 1)
+      ((eq? id 'complication-rotten-eggs) 1)
+      ((eq? id 'rule-keep-it-low) 1)
+      ((eq? id 'rule-cell-pressure) 1)
+      ((eq? id 'complication-eco-allergy) 1)
+      ((eq? id 'complication-sizeable) 1)
+      ((eq? id 'complication-ohko) 1)
+      (else 1))))
+
+(defun mod-rule-can-roll-id? ((id symbol))
+  (> (mod-rule-roll-priority id) 0))
+
+(defun mod-rule-effective-roll-weight ((id symbol))
+  (let ((weight (mod-rule-roll-priority id)))
+    (if (> weight 0)
+      (* weight (mod-rule-recent-roll-factor id))
+      0)))
+
+(defun mod-rule-pick-weighted-id ()
+  (let ((idx 0)
+        (total 0))
+    (while (< idx 11)
+      (let ((candidate (mod-rule-id-from-index idx)))
+        (when (and candidate
+                   (not (mod-rule-active? candidate))
+                   (not (mod-rule-pending? candidate)))
+          (+! total (mod-rule-effective-roll-weight candidate))))
+      (+! idx 1))
+    (if (> total 0)
+      (let ((roll (rand-vu-int-range 0 (- total 1)))
+            (idx 0)
+            (chosen #f))
+        (while (and (< idx 11) (not chosen))
+          (let ((candidate (mod-rule-id-from-index idx)))
+            (when (and candidate
+                       (not (mod-rule-active? candidate))
+                       (not (mod-rule-pending? candidate)))
+              (let ((weight (mod-rule-effective-roll-weight candidate)))
+                (when (> weight 0)
+                  (if (< roll weight)
+                    (set! chosen candidate)
+                    (set! roll (- roll weight)))))))
+          (+! idx 1))
+        chosen)
+      #f)))
 
 (defun mod-rule-reroll-slot ((slot int) (apply-buffer symbol))
   (mod-rule-clear-slot slot)
-  (let ((attempts 0) (chosen #f))
-    (while (and (< attempts 6) (not chosen))
-      (let ((candidate (mod-rule-random-id)))
-        (if (and (not (mod-rule-active? candidate))
-                 (not (mod-rule-pending? candidate)))
-          (begin
-            (mod-rule-schedule-slot slot candidate apply-buffer)
-            (set! chosen #t))
-          (none)))
-      (+! attempts 1))
-    ;; (when (not chosen)
-    ;;   (mod-rule-activate-slot slot 'rule-money-loss))
-      )
-  (none))
+  (let ((chosen (mod-rule-pick-weighted-id)))
+    (when chosen
+      (mod-rule-schedule-slot slot chosen apply-buffer)
+      (mod-rule-record-roll! chosen))
+  (none)))
 
 (defun mod-rule-counter-add-progress ((id symbol) (amount int))
   (when (> amount 0)
@@ -641,6 +743,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   ;; (mod-rule-refresh-active-rule-punishments)
   (none))
 
+(defun mod-rule-on-jak-death ()
+  (mod-rule-counter-add-progress 'rule-last-breath 1)
+  (none))
+
 (defun mod-rule-punishment-name ((punishment symbol))
   (cond
     ((eq? punishment 'punishment-money) "LOSE 30 ORBS")
@@ -655,7 +761,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
      (set! (-> *game-info* money) (max 0.0 (- (-> *game-info* money) 30.0))))
     ((eq? punishment 'punishment-warp)
     (mod-rule-reroll-current #t)
-    (start 'play (get-continue-by-name *game-info* "training-warp")))
+    (start 'play (get-continue-by-name *game-info* "training-start")))
     ((eq? punishment 'punishment-countdown)
      (when *global-countdown-active?*
        (set! *global-countdown-remaining-time* (+ *global-countdown-remaining-time* (- (seconds 20))))))
@@ -760,6 +866,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rules-reset ()
   (dotimes (slot 3)
     (mod-rule-clear-slot slot))
+  (mod-rule-clear-recent-rolls)
   (set! *mod-rule-current-slot* 0)
   (set! *mod-rule-active-count* 0)
   (none))
@@ -771,7 +878,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
            (logtest? (-> *target* state-flags) (state-flags grabbed)))))
 
 (defbehavior mod-rule-manager-proc process ()
-  (loop
+  (when (not *global-countdown-lost?*)
+    (loop
     (let ((elapsed (- (current-time) *mod-rule-last-update-time*)))
       (cond
         ((global-countdown-paused?)
@@ -798,7 +906,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                         (>= (current-time) (-> *mod-rule-slot-roll-ready-times* slot)))
                (mod-rule-activate-slot slot pending-id))))))
       (set! *mod-rule-last-update-time* (current-time)))
-    (suspend))
+    (suspend)))
   (none))
 
 (defun mod-rules-start ()
@@ -809,6 +917,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none))
 
 (defun global-countdown-draw ()
+;; (return #f)
   (cond
     (*global-countdown-lost?*
      (with-dma-buffer-add-bucket ((buf (-> (current-frame) debug-buf)) (bucket-id debug-no-zbuf))
@@ -819,7 +928,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                        (font-color red)
                        (font-flags shadow kerning))))
     (*global-countdown-active?*
-     (with-dma-buffer-add-bucket ((buf (-> (current-frame) debug-buf)) (bucket-id debug-no-zbuf))
+     (with-dma-buffer-add-bucket ((global-buf (-> (current-frame) global-buf)) (bucket-id debug-no-zbuf))
        (let* ((total-centis (max 0 (the int (/ (* *global-countdown-remaining-time* 100) (seconds 1)))))
               (total-seconds (the int (/ total-centis 100)))
               (hours (the int (/ total-seconds 3600)))
@@ -830,7 +939,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                                                minutes
                                                seconds-part
                                                centis)
-                                buf
+                                global-buf
                                 400
                                 50
                                 (font-color red)
@@ -841,6 +950,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                (active-punishment #f)
                (active-goal 0)
                (active-progress 0)
+             (show-counter-progress #f)
                (time-left 0)
                (rolling-id #f)
                (rolling-left 0))
@@ -851,6 +961,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                  (set! active-punishment (-> *mod-rule-slot-punishments* slot))
                  (set! active-goal (-> *mod-rule-slot-goals* slot))
                  (set! active-progress (-> *mod-rule-slot-progress* slot))
+                 (set! show-counter-progress (eq? (mod-rule-goal-kind candidate) 'counter))
                  (set! time-left (max 0 (- (-> *mod-rule-slot-end-times* slot) (current-time))))))
              (+! slot 1))
            (when (not active-id)
@@ -863,18 +974,18 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                (+! slot 1)))
            (when active-id
               ;; RULE NAME
-             (draw-string-xy-scaled "" buf 10 40 (font-color yellow) (font-flags shadow kerning large) 0.5)
+                 (draw-string-xy-scaled "" global-buf 10 40 (font-color yellow) (font-flags shadow kerning large) 0.5)
              (draw-string-xy-scaled (mod-rule-name active-id)
-                                    buf
+                          global-buf
                                     10
                                     40
                                     (font-color green)
                                     (font-flags shadow kerning large)
                                     0.5)
               ;; RULE DESCRIPTION
-             (draw-string-xy-scaled "" buf 10 50 (font-color yellow) (font-flags shadow kerning large) 0.4)
+                 (draw-string-xy-scaled "" global-buf 10 50 (font-color yellow) (font-flags shadow kerning large) 0.4)
              (draw-string-xy-scaled (mod-rule-description active-id)
-                                    buf
+                          global-buf
                                     10
                                     50
                                     (font-color white)
@@ -882,52 +993,52 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                                     0.4)
               ;; SELECTED PUNISHMENT
              (when active-punishment
-               (draw-string-xy-scaled "PUNISHMENT: " buf 10 59 (font-color red) (font-flags shadow kerning large) 0.3)
+                 (draw-string-xy-scaled "PUNISHMENT: " global-buf 10 59 (font-color red) (font-flags shadow kerning large) 0.3)
                (draw-string-xy-scaled (mod-rule-punishment-name active-punishment)
-                                      buf
+                                      global-buf
                                       80
                                       59
                                       (font-color white)
                                       (font-flags shadow kerning large)
                                       0.3))
               ;; COUNTER RULE PROGRESS
-             (when (> active-goal 0)
-               (draw-string-xy-scaled "PROGRESS: " buf 10 67 (font-color yellow) (font-flags shadow kerning large) 0.3)
+               (when (and (> active-goal 0) show-counter-progress)
+                 (draw-string-xy-scaled "PROGRESS: " global-buf 10 67 (font-color yellow) (font-flags shadow kerning large) 0.3)
                (draw-string-xy-scaled (string-format "~D/~D" active-progress active-goal)
-                                      buf
+                                      global-buf
                                       80
                                       67
                                       (font-color white)
                                       (font-flags shadow kerning large)
                                       0.5))
               ;; TIME LEFT
-             (draw-string-xy-scaled "" buf 10 (if (> active-goal 0) 80 70) (font-color white) (font-flags shadow kerning large) 0.4)
+                 (draw-string-xy-scaled "" global-buf 10 (if (and (> active-goal 0) show-counter-progress) 80 70) (font-color white) (font-flags shadow kerning large) 0.4)
              (draw-string-xy-scaled (mod-rule-format-time-left time-left)
-                                    buf
+                          global-buf
                                     10
-                                    (if (> active-goal 0) 74 66)
+                          (if (and (> active-goal 0) show-counter-progress) 74 66)
                                     (font-color white)
                                     (font-flags shadow kerning large)
                             0.5)
              (when (and *debug-segment*
                     (> *mod-rule-last-reverted-cell-until* (current-time)))
               (draw-string-xy-scaled (string-format "Reverted Cell Task: ~D" *mod-rule-last-reverted-cell-task*)
-                              buf
+                              global-buf
                               10
-                              (if (> active-goal 0) 92 82)
+                        (if (and (> active-goal 0) show-counter-progress) 92 82)
                               (font-color red)
                               (font-flags shadow kerning)
                               1.0)))
            (when (and (not active-id) rolling-id)
              (draw-string-xy-scaled "NEW RULE IN "
-                                    buf
+                                    global-buf
                                     10
                                     40
                                     (font-color yellow)
                                     (font-flags shadow kerning large)
                                     0.4)
              (draw-string-xy-scaled (string-format "~D" (max 0 (the int (/ rolling-left (seconds 1)))))
-                                    buf
+                                    global-buf
                                     96
                                     37
                                     (font-color white)
@@ -968,7 +1079,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (set! *global-countdown-started?* #f)
   (set! *global-countdown-active?* #f)
   (set! *global-countdown-lost?* #f)
-  (set! *global-countdown-remaining-time* (seconds 60))
+  (set! *global-countdown-remaining-time* (seconds 9999)) ;; global timer start
   (set! *global-countdown-last-update-time* (current-time))
   (set! *mod-rule-last-update-time* (current-time))
   (set! *mod-rule-last-reverted-cell-task* 0)
