@@ -77,6 +77,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *mod-rule-player-hit-handles* (new 'global 'boxed-array handle 64))
 (define *mod-rule-player-hit-modes* (new 'global 'boxed-array symbol 64))
 (define *mod-rule-player-hit-write-idx* 0)
+(define *mod-rule-timed-punishments* (new 'global 'boxed-array symbol 4))
+(define *mod-rule-timed-punishment-end-times* (new 'global 'boxed-array time-frame 4))
 (define *mod-rule-id-count* 17) ;; ***DON'T FORGET TO UPDATE THIS WITH NEW RULES***
 (define *mean-look-clear-time* 0)
 (define *mod-rule-all-cell-tasks*
@@ -413,6 +415,61 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> *mod-rule-slot-roll-ready-times* slot) 0))
   (none))
 
+(defun mod-rule-punishment-duration ((punishment symbol))
+  (cond
+    ((eq? punishment 'punishment-blind) (seconds 10))
+    ((eq? punishment 'punishment-fall-damage) (seconds 120))
+    (else 0)))
+
+(defun mod-rule-find-timed-punishment-slot ((punishment symbol))
+  (let ((slot 0)
+        (result -1))
+    (while (and (< slot 4) (< result 0))
+      (when (= (-> *mod-rule-timed-punishments* slot) punishment)
+        (set! result slot))
+      (+! slot 1))
+    result))
+
+(defun mod-rule-first-free-timed-punishment-slot ()
+  (let ((slot 0)
+        (result -1))
+    (while (and (< slot 4) (< result 0))
+      (when (not (-> *mod-rule-timed-punishments* slot))
+        (set! result slot))
+      (+! slot 1))
+    result))
+
+(defun mod-rule-start-timed-punishment ((punishment symbol))
+  (let ((duration (mod-rule-punishment-duration punishment)))
+    (when (> duration 0)
+      (let ((slot (mod-rule-find-timed-punishment-slot punishment)))
+        (when (< slot 0)
+          (set! slot (mod-rule-first-free-timed-punishment-slot)))
+        (when (>= slot 0)
+          (set! (-> *mod-rule-timed-punishments* slot) punishment)
+          (set! (-> *mod-rule-timed-punishment-end-times* slot)
+                (+ (current-time) duration))))))
+  (none))
+
+(defun mod-rule-timed-punishment-active? ((punishment symbol))
+  (let ((slot (mod-rule-find-timed-punishment-slot punishment)))
+    (and (>= slot 0)
+         (> (-> *mod-rule-timed-punishment-end-times* slot) (current-time)))))
+
+(defun mod-rule-update-timed-punishments ()
+  (dotimes (slot 4)
+    (let ((punishment (-> *mod-rule-timed-punishments* slot)))
+      (when punishment
+        (if (>= (current-time) (-> *mod-rule-timed-punishment-end-times* slot))
+          (begin
+            (when (eq? punishment 'punishment-fall-damage)
+              (set! (-> *TARGET-bank* fall-far) (meters 30))
+              (set! (-> *TARGET-bank* fall-far-inc) (meters 20)))
+            (set! (-> *mod-rule-timed-punishments* slot) #f)
+            (set! (-> *mod-rule-timed-punishment-end-times* slot) 0))
+          (none)))))
+  (none))
+
 (defun mod-rule-schedule-slot ((slot int) (id symbol) (apply-buffer symbol))
   (when (and (>= slot 0) (< slot 3) id)
     (set! (-> *mod-rule-pending-slots* slot) id)
@@ -600,59 +657,80 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
         (has-warp (!= (-> (level-get-target-inside *level*) name) 'training))
         (has-revert (mod-rule-can-revert-collected-cell?))
         (can-add-extra-rule (< (mod-rule-active-slot-count) 2))
+        (can-countdown (not (mod-rule-timed-punishment-active? 'punishment-countdown)))
+        (can-fall-damage (not (mod-rule-timed-punishment-active? 'punishment-fall-damage)))
+        (can-money (not (mod-rule-timed-punishment-active? 'punishment-money)))
+        (can-warp (not (mod-rule-timed-punishment-active? 'punishment-warp)))
+        (can-revert (not (mod-rule-timed-punishment-active? 'punishment-revert-cell)))
+        (can-extra-rule (not (mod-rule-timed-punishment-active? 'punishment-extra-rule)))
+        (can-blind (not (mod-rule-timed-punishment-active? 'punishment-blind)))
         (count 0)
         (roll 0))
 
     ;; Count available punishments
-    (+! count 1) ;; Countdown
-    ;; (+! count 1) ;; Blind
+    (when can-countdown
+      (+! count 1)) ;; Countdown
+    (when can-fall-damage
+      (+! count 1)) ;; Fall Damage
+    ;; (when can-blind
+    ;;   (+! count 1)) ;; Blind
 
-    (when has-money
+    (when (and has-money can-money)
       (+! count 1))
 
-    (when has-warp
+    (when (and has-warp can-warp)
       (+! count 1))
 
-    (when has-revert
+    (when (and has-revert can-revert)
       (+! count 1))
 
-    (when can-add-extra-rule
+    (when (and can-add-extra-rule can-extra-rule)
       (+! count 1))
+
+    (when (<= count 0)
+      (return #f))
 
     (set! roll (rand-vu-int-range 0 (- count 1)))
 
     ;; Walk through the available punishments in order.
     (set! count 0)
 
-    (when (= roll count)
-      (return 'punishment-countdown))
-    (+! count 1)
+    (when can-countdown
+      (when (= roll count)
+        (return 'punishment-countdown))
+      (+! count 1))
 
-    (when has-money
+    (when can-fall-damage
+      (when (= roll count)
+        (return 'punishment-fall-damage))
+      (+! count 1))
+
+    (when (and has-money can-money)
       (when (= roll count)
         (return 'punishment-money))
       (+! count 1))
 
-    (when has-warp
+    (when (and has-warp can-warp)
       (when (= roll count)
         (return 'punishment-warp))
       (+! count 1))
 
-    (when has-revert
+    (when (and has-revert can-revert)
       (when (= roll count)
         (return 'punishment-revert-cell))
       (+! count 1))
 
-    (when can-add-extra-rule
+    (when (and can-add-extra-rule can-extra-rule)
       (when (= roll count)
         (return 'punishment-extra-rule))
       (+! count 1))
 
-    ;; (when (= roll count)
-    ;;   (return 'punishment-blind))
-    ;; (+! count 1)
+    ;; (when can-blind
+    ;;   (when (= roll count)
+    ;;     (return 'punishment-blind))
+    ;;   (+! count 1))
       
-    'punishment-countdown))
+    #f))
 
 (defun mod-rule-on-activate ((id symbol))
   (when (eq? id 'rule-hitlist)
@@ -885,7 +963,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                (eq? level-name 'village2)
                (eq? level-name 'village1)
                (eq? level-name 'rolling)
-               (eq? level-name 'ogre)
+               (and (eq? level-name 'ogre) (target-on-racer?))
                (eq? level-name 'finalboss))
          0
          5))
@@ -1097,7 +1175,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-revert-cell) "REVERT A RANDOM CELL")
     ((eq? punishment 'punishment-extra-rule) "EXTRA RULE")
     ((eq? punishment 'punishment-blind) "BLIND FOR 10 SECONDS")
+    ((eq? punishment 'punishment-fall-damage) "MORE FALL DAMAGE FOR 2 MINUTES")
     (else "NONE")))
+
+(defun mod-rule-timed-punishment-name ((punishment symbol))
+  (cond
+    ((eq? punishment 'punishment-fall-damage) "FALL DAMAGE")
+    (else (mod-rule-punishment-name punishment))))
 
 (defun mod-rule-apply-extra-rule-punishment ((failed-slot int))
   ;; Roll the failed slot first so it remains occupied, then use the first
@@ -1124,7 +1208,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? punishment 'punishment-revert-cell)
      (mod-rule-revert-random-collected-cell))
     ((eq? punishment 'punishment-blind)
-     (set-blackout-frames (seconds 10)))
+      (set-blackout-frames (seconds 10)))
+    ((eq? punishment 'punishment-fall-damage)
+    (set! (-> *TARGET-bank* fall-far) (meters 5.5)) (set! (-> *TARGET-bank* fall-far-inc) (meters 8.0))
+      (mod-rule-start-timed-punishment punishment))
     (else
      (none)))
   (none))
@@ -1264,6 +1351,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rules-reset ()
   (dotimes (slot 3)
     (mod-rule-clear-slot slot))
+  (dotimes (slot 4)
+    (set! (-> *mod-rule-timed-punishments* slot) #f)
+    (set! (-> *mod-rule-timed-punishment-end-times* slot) 0))
   (dotimes (slot 3)
     (set! (-> *mod-rule-unique-enemy-killed-types* slot) #f))
   (mod-rule-clear-player-hit-cache)
@@ -1290,12 +1380,17 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                      (+ (-> *mod-rule-slot-end-times* slot) elapsed)))
              (when (-> *mod-rule-pending-slots* slot)
                (set! (-> *mod-rule-slot-roll-ready-times* slot)
-                     (+ (-> *mod-rule-slot-roll-ready-times* slot) elapsed))))))
+                     (+ (-> *mod-rule-slot-roll-ready-times* slot) elapsed))))
+           (dotimes (slot 4)
+             (when (-> *mod-rule-timed-punishments* slot)
+               (set! (-> *mod-rule-timed-punishment-end-times* slot)
+                     (+ (-> *mod-rule-timed-punishment-end-times* slot) elapsed))))))
         (else
         (when (and (> *mean-look-clear-time* 0)
            (>= (current-time) *mean-look-clear-time*))
   (set! *mean-look-clear-time* 0)
   (logclear! (-> *target* mask) (process-mask sleep)))
+         (mod-rule-update-timed-punishments)
          (dotimes (slot 3)
            (when (and (-> *mod-rule-active-slots* slot)
                       (>= (current-time) (-> *mod-rule-slot-end-times* slot)))
@@ -1352,6 +1447,31 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                                 (font-color red)
                                 (font-flags shadow kerning large)
                                 0.8)
+         (let ((timed-draw-count 0)
+               (timed-slot 0))
+           ;; Show all active background timed punishments (up to 4 slots).
+           (while (< timed-slot 4)
+             (let ((timed-punishment (-> *mod-rule-timed-punishments* timed-slot)))
+               (when timed-punishment
+                 (let ((timed-left (max 0 (- (-> *mod-rule-timed-punishment-end-times* timed-slot)
+                                             (current-time))))
+                       (row-y (+ 68 (* timed-draw-count 14))))
+                     (draw-string-xy-scaled (mod-rule-timed-punishment-name timed-punishment)
+                                          global-buf
+                                          395
+                                          row-y
+                                          (font-color white)
+                                          (font-flags shadow kerning large)
+                                          0.3)
+                   (draw-string-xy-scaled (mod-rule-format-time-left timed-left)
+                                          global-buf
+                                          465
+                                          row-y
+                                          (font-color white)
+                                          (font-flags shadow kerning large)
+                                          0.4)
+                   (+! timed-draw-count 1))))
+             (+! timed-slot 1)))
          (let ((slot 0)
                (active-id #f)
                (active-punishment #f)
