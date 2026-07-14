@@ -3,6 +3,7 @@
 (bundles "ENGINE.CGO" "GAME.CGO")
 (require "engine/target/logic-target.gc")
 (define-extern target-powerup-effect (function symbol none :behavior target))
+(define-extern mod-rule-record-player-hit (function process symbol none))
 
 ;; DECOMP BEGINS
 
@@ -248,6 +249,7 @@
     (set! (-> v1-0 param 3) (the-as uint arg4))
     (let ((gp-0 (send-event-function arg0 v1-0)))
       (when (and gp-0 (!= gp-0 'push))
+        (mod-rule-record-player-hit arg0 (the-as symbol arg1))
         (let ((v1-5 (-> self control danger-mode)))
           (cond
             ((or (= v1-5 'spin) (= v1-5 'spin-air))

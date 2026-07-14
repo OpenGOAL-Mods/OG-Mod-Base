@@ -1332,6 +1332,7 @@
 (defstate ogreboss-die (ogreboss)
   :code
     (behavior ()
+    (notify-enemy-death self)
       (ogreboss-reset-camera)
       (send-event (handle->process (-> self boulder)) 'go-die)
       (ja-channel-push! 1 (seconds 0.2))

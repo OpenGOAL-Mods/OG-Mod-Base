@@ -366,7 +366,6 @@
                       (>= (-> self fact idle-distance) (vector-vector-distance (-> self root trans) (-> *target* control trans))))
                  (time-elapsed? (-> self state-time) (-> self reaction-delay)))
         (start-hint-timer (text-id sunken-bully-dive-hint))
-        (mod-rule-trigger-mean-look)
         (go bully-notice)))
   :code
     (behavior ((arg0 symbol))
@@ -392,6 +391,7 @@
         (set-target! (-> self neck) (target-pos 5))))
   :code
     (behavior ()
+      (mod-rule-trigger-mean-look)
       (set! (-> self travel-speed) 0.0)
       (ja-channel-push! 1 (seconds 0.075))
       (set-vector! (-> self root transv) 0.0 (rand-vu-float-range 61440.0 90112.0) 0.0 1.0)

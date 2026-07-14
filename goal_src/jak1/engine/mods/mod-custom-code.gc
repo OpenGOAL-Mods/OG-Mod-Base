@@ -117,7 +117,8 @@
   ;; Count when notified from enemy death flow.
   (when enemy
     ;; (when (logtest? (-> enemy mask) (process-mask enemy))
-      (mod-rule-on-enemy-kill (-> enemy type symbol))
+    (mod-rule-trigger-disassociate)
+      (mod-rule-on-enemy-kill (-> enemy type symbol) (mod-rule-enemy-killed-by-flop? enemy))
       ;; )
       )
   (none))
