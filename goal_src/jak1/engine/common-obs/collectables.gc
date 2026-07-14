@@ -22,6 +22,10 @@
 
 (define-extern orb-placer-list-maintenace (function symbol none))
 
+(define-extern target-on-flut? (function symbol))
+
+(define-extern mod-rule-active? (function symbol symbol))
+
 (declare-type vent process-drawable)
 
 (declare-type eco eco-collectable)
@@ -905,7 +909,7 @@
         (add-setting! 'allow-progress #f 0.0 0)
         (apply-settings *setting-control*)
         (logclear! (-> self mask) (process-mask actor-pause))
-        (go-virtual pickup #f (process->handle proc)))
+        (if (not (and (target-on-flut?) (mod-rule-active? 'complication-fuel-shortage))) (go-virtual pickup #f (process->handle proc))))
       (cond
         ((= message 'trans)
          (set! (-> self root trans quad) (-> (the-as vector (-> block param 0)) quad))
@@ -915,7 +919,7 @@
          (when (!= (-> self next-state name) 'pickup)
            (if (and (> argc 0) (-> block param 0)) (move-to-point! (-> self root) (the-as vector (-> block param 0))))
            (logclear! (-> self mask) (process-mask actor-pause))
-           (go-virtual pickup #f (process->handle *target*))))
+           (if #f (go-virtual pickup #f (process->handle *target*)))))
         ((= message 'collide-shape)
          (if (-> block param 0) (restore-collide-with-as (-> self root)) (clear-collide-with-as (-> self root))))
         ((= message 'movie-pos) (set! v0-3 (-> block param 0)) (set! (-> self movie-pos-index) (the-as int v0-3)) v0-3)

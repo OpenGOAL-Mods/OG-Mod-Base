@@ -55,6 +55,7 @@
 
 (defun runs-on-fly-pickup ()
   ;; Code here runs on any scout fly pickup
+  (mod-rule-on-buzzer-pickup 1)
   (none))
 
 (defun runs-on-cell-pickup ((cell-event symbol))
