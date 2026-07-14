@@ -710,6 +710,47 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (-> *target* current-level)
     (-> *target* current-level name)))
 
+(defun collected-money-for-level ((lvl-idx int))
+  (-> *game-info* money-per-level lvl-idx))
+
+(defun collected-money-current-level ()
+  (if (and *target* (-> *target* current-level))
+    (let ((lvl-idx (-> *level-task-data-remap* (+ (-> *target* current-level info index) -1))))
+      (collected-money-for-level lvl-idx))
+    0))
+
+(defun max-money-for-level ((lvl-idx int))
+  (-> *game-counts* data lvl-idx money-count))
+
+(defun max-money-current-level ()
+  (if (and *target* (-> *target* current-level))
+    (let ((lvl-idx (-> *level-task-data-remap* (+ (-> *target* current-level info index) -1))))
+      (max-money-for-level lvl-idx))
+    0))
+
+(defun collected-fuel-for-level ((lvl-idx int))
+  (let ((completed-task-count 0))
+    (dotimes (task-idx (-> *level-task-data* lvl-idx nb-of-tasks))
+      (if (= (get-task-status (-> *level-task-data* lvl-idx task-info task-idx task-id))
+             (task-status invalid))
+        (+! completed-task-count 1)))
+    completed-task-count))
+
+(defun collected-fuel-current-level ()
+  (if (and *target* (-> *target* current-level))
+    (let ((lvl-idx (-> *level-task-data-remap* (+ (-> *target* current-level info index) -1))))
+      (collected-fuel-for-level lvl-idx))
+    0))
+
+(defun max-fuel-for-level ((lvl-idx int))
+  (-> *level-task-data* lvl-idx nb-of-tasks))
+
+(defun max-fuel-current-level ()
+  (if (and *target* (-> *target* current-level))
+    (let ((lvl-idx (-> *level-task-data-remap* (+ (-> *target* current-level info index) -1))))
+      (max-fuel-for-level lvl-idx))
+    0))
+
 (defun target-on-racer? ()
   (if (not *target*)
     #f
@@ -754,10 +795,24 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun mod-rule-roll-priority ((id symbol))
   ;; Return 0 to block a roll, 5 for normal odds, and larger values to make it more likely.
-  (let ((level-name (current-level-name)))
+  (let ((level-name (current-level-name))
+        (fuel-left (- (max-fuel-current-level) (collected-fuel-current-level)))
+        (money-left (- (max-money-current-level) (collected-money-current-level))))
     (cond
-      ((eq? id 'rule-orb-pressure) 2)
-      ;; Keep mean look and lurker pressure out of levels without many lurkers.
+    ;; Prevent cell-pressure rolls when fuel is low, or in jungleb or finalboss.
+      ((eq? id 'rule-cell-pressure) 
+      (if (or (< fuel-left 1)
+              (eq? level-name 'jungleb)
+              (eq? level-name 'finalboss))
+          0
+          2))
+    ;; Prevent orb-pressure rolls when money is low, or in finalboss.
+      ((eq? id 'rule-orb-pressure) 
+      (if (or (< money-left 30)
+              (eq? level-name 'finalboss))
+          0
+          2))
+      ;; Keep mean-look and lurker-pressure out of levels without many lurkers.
       ((or (eq? id 'complication-mean-look)
            (eq? id 'rule-lurker-pressure))
        (if (or (eq? level-name 'training)
@@ -782,21 +837,24 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                (eq? level-name 'ogre)
                (eq? level-name 'rolling)
                (eq? level-name 'firecanyon)
-               (eq? level-name 'citadel))
+               (eq? level-name 'citadel)
+               (eq? level-name 'finalboss))
          0
          5))
-      ;; Keep crate break out of levels without many crates.
+      ;; Keep crate-break out of levels without many crates.
       ((eq? id 'rule-crate-break)
        (if (or (eq? level-name 'village3)
                (eq? level-name 'jungleb)
                (eq? level-name 'lavatube)
-               (eq? level-name 'citadel))
+               (eq? level-name 'citadel)
+               (eq? level-name 'finalboss))
          0
          5))
-      ;; Keep grounded and die out of training.
+      ;; Keep grounded and die out of training and finalboss.
       ((or (eq? id 'rule-grounded)
            (eq? id 'rule-die))
-       (if (eq? level-name 'training)
+       (if (or (eq? level-name 'training)
+               (eq? level-name 'finalboss))
          0
          5))
       ;; Keep sizeable and keep-it-low out of zoomer levels, or if on flut.
@@ -808,13 +866,18 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                (eq? level-name 'rolling))
          0
          5))
-      ;; Keep heating balloons in firecanyon and lavatube.
+      ;; Keep heating-balloons in firecanyon and lavatube.
       ((eq? id 'complication-heating-balloons)
        (if (or (eq? level-name 'firecanyon)
                (and (eq? level-name 'lavatube) (target-on-racer?)))
          10
          0))
-      ;; Keep flop only out of levels without many lurkers.
+      ;; Keep rotten-eggs out of finalboss.
+      ((eq? id 'complication-rotten-eggs)
+       (if (eq? level-name 'finalboss)
+         0
+         5))
+      ;; Keep flop-only out of levels without many lurkers.
       ((eq? id 'rule-flop-only)
        (if (or (eq? level-name 'training)
                (eq? level-name 'lavatube)
@@ -822,14 +885,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                (eq? level-name 'village2)
                (eq? level-name 'village1)
                (eq? level-name 'rolling)
-               (eq? level-name 'ogre))
+               (eq? level-name 'ogre)
+               (eq? level-name 'finalboss))
          0
          5))
-      ;; Keep cell pressure out of jungleb.
-      ((eq? id 'rule-cell-pressure)
-       (if (eq? level-name 'jungleb)
-         0
-         2))
       ;; Keep disassociate on flut.
       ((eq? id 'complication-disassociate)
        (if (target-on-flut?)
