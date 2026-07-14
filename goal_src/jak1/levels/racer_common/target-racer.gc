@@ -9,6 +9,9 @@
 
 ;; DECOMP BEGINS
 
+(define-extern mod-rule-trigger-bus-driver (function (none)))
+(define *racer-start-time* 0)
+
 (define *racer-mods*
   (new 'static
        'surface
@@ -500,12 +503,17 @@
     (send-event self 'attack #f (static-attack-info ((mode 'heat)))))
   ;; og:preserve-this allow boost with debug segment enabled
   (if (and *cheat-mode* (or *debug-segment* PC_PORT) (cpad-pressed? 0 l2)) (send-event self 'boost 1.0))
+
   (let ((v1-218 (- (current-time) (-> self racer boost-time))))
     (if (< v1-218 (-> self racer boost-duration))
       (set! (-> self racer boost-curve)
             (* (-> *RACER-bank* boost-curve-max)
                (sin (* 32768.0 (/ (the float v1-218) (the float (-> self racer boost-duration)))))))
       (set! (-> self racer boost-curve) 0.0)))
+      (when (and (or (not (cpad-hold? (-> self control cpad number) x))
+                     (< (-> self control ctrl-xz-vel) 82000.0))
+                 (>= (- (current-time) *racer-start-time*) (seconds 3)))
+        (mod-rule-trigger-bus-driver))
   (when (or (not (cpad-hold? (-> self control cpad number) x))
             (< (-> self control ctrl-xz-vel) 4096.0)
             (= (-> self racer boost-level) 0.0))
@@ -520,6 +528,7 @@
         (-> v1-241 id))
       (set! (-> self racer boost-sound-id) (new 'static 'sound-id))
       0)
+      
     (set! (-> self racer boost-level) 0.0))
   (set! (-> self racer boost-target) (+ (-> self racer boost-curve) (-> self racer boost-level)))
   (seek! (-> self racer boost-output) (-> self racer boost-target) (* 40960.0 (seconds-per-frame)))

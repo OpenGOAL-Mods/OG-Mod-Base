@@ -771,6 +771,8 @@
         exit)
   :code
     (behavior ((arg0 handle))
+    (set! *racer-start-time* (current-time))
+    ;; (format #t "get on~%")
       (set! (-> self control transv quad) (the-as uint128 0))
       (set! (-> self alt-cam-pos quad) (-> self control camera-pos quad))
       (logior! (-> self state-flags) (state-flags use-alt-cam-pos))
@@ -862,6 +864,8 @@
         exit)
   :code
     (behavior ((arg0 handle))
+    ;; (set! *racer-start-time* 0)
+    ;; (format #t "get off~%")
       (set-time! (-> self state-time))
       (set! (-> self control mod-surface) *racer-mods*)
       (let ((a0-2 (-> *hud-parts* bike-speed))) (if a0-2 (set! (-> a0-2 0 deactivate-when-hidden) #t)))
