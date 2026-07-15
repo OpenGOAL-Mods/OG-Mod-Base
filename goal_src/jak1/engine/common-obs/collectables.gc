@@ -898,18 +898,19 @@
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
       (local-vars (v0-3 object))
-      (when (and (or (= message 'touch) (= message 'attack))
-                 (and (logtest? (-> self flags) (collectable-flags can-collect))
-                      (time-elapsed? (-> self birth-time) (-> self collect-timeout))
-                      (and (not (handle->process (-> *game-info* other-camera-handle)))
-                           (not *progress-process*)
-                           (!= (-> self next-state name) 'pickup)
-                           *target*
-                           (not (logtest? (-> *target* state-flags) (state-flags grabbed dying))))))
+(when (and (not (mod-rule-active? 'complication-fuel-shortage))
+           (or (= message 'touch) (= message 'attack))
+           (and (logtest? (-> self flags) (collectable-flags can-collect))
+                (time-elapsed? (-> self birth-time) (-> self collect-timeout))
+                (and (not (handle->process (-> *game-info* other-camera-handle)))
+                     (not *progress-process*)
+                     (!= (-> self next-state name) 'pickup)
+                     *target*
+                     (not (logtest? (-> *target* state-flags) (state-flags grabbed dying))))))
         (add-setting! 'allow-progress #f 0.0 0)
         (apply-settings *setting-control*)
         (logclear! (-> self mask) (process-mask actor-pause))
-        (if (not (and (target-on-flut?) (mod-rule-active? 'complication-fuel-shortage))) (go-virtual pickup #f (process->handle proc))))
+        (if (not (and (target-on-flut?) (mod-rule-active? 'complication-wings-tied))) (go-virtual pickup #f (process->handle proc))))
       (cond
         ((= message 'trans)
          (set! (-> self root trans quad) (-> (the-as vector (-> block param 0)) quad))
@@ -938,6 +939,13 @@
       (let ((f28-0 0.0))
         (ja :group! fuel-cell-idle-ja)
         (loop
+        (if (not (mod-rule-active? 'complication-fuel-shortage))
+            (begin
+              (logclear! (-> self draw status) (draw-status hidden))
+              (restore-collide-with-as (-> self root)))
+            (begin
+              (logior! (-> self draw status) (draw-status hidden))
+              (clear-collide-with-as (-> self root))))
           (let ((f30-0 (vector-vector-distance (-> self base) (target-pos 0))))
             (set! f28-0
                   (if (and (< f30-0 (-> *FACT-bank* suck-suck-dist)) (not (logtest? (-> self flags) (collectable-flags anim))))

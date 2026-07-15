@@ -24,15 +24,29 @@
 (defun runs-every-frame ()
   ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
   (if *show-input-display* (input-display-on) (input-display-off))
-  (when (and *debug-segment*
-             (cpad-pressed? 0 circle)
-             (cpad-hold? 0 down))
-    (mod-rule-reroll-current #f))
 
-      (when (and 
-             (cpad-pressed? 0 triangle)
-             (cpad-hold? 0 down))
-    (global-countdown-start))
+  (when *debug-segment*
+    (when (and (cpad-pressed? 0 circle)
+              (cpad-hold? 0 right))
+      (mod-rule-reroll-current #f))
+
+    (when (and (cpad-pressed? 0 circle)
+              (cpad-hold? 0 l1))
+      (global-countdown-start))
+
+    (when (and (cpad-pressed? 0 triangle)
+              (cpad-hold? 0 l1))
+      (global-countdown-reset)
+      (kill-by-name 'mod-rule-manager *active-pool*))
+
+    (when (and (cpad-pressed? 0 circle)
+              (cpad-hold? 0 up))
+      (global-countdown-add-seconds 20.0))
+
+    (when (and (cpad-pressed? 0 circle)
+              (cpad-hold? 0 down))
+      (global-countdown-add-seconds -20.0)))
+
   ;; ensure orb-placer is spawned/killed as requested, debug menu is updated
   (when *debug-segment*
     (orb-placer-maintenance))

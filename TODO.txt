@@ -8,5 +8,4 @@
 60, 59, 57, 56
 30, 28
 
-rename: stay alive, money pressure, fuel pressure, fuel shortage, flop only
-
+probably rename: endure, hoard rush, battery bound

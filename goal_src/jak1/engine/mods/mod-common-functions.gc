@@ -41,6 +41,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 ;; add your own unique custom functions here!
 
+;; COMMAND/FUNCTION REFERENCE
+;; Start game: (global-countdown-start)
+;; Stop game: (global-countdown-reset)
+;; Force specific rule: (mod-rule-activate-slot 0 'rule-grounded)
+;; Deactivate specific slot: (mod-rule-deactivate-slot 0)
+;; Check if a specific slot is active: (mod-rule-slot-active? 0)
+
 ;; Macros can be used more-or-less just like functions
 (defmacro current-cell-count ()
   `(-> *game-info* fuel))
@@ -80,7 +87,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *mod-rule-timed-punishments* (new 'global 'boxed-array symbol 4))
 (define *mod-rule-timed-punishment-end-times* (new 'global 'boxed-array time-frame 4))
 (define *mod-rule-timed-punishment-next-ticks* (new 'global 'boxed-array time-frame 4))
-(define *mod-rule-id-count* 21) ;; ***DON'T FORGET TO UPDATE THIS WITH NEW RULES***
+(define *mod-rule-id-count* 22) ;; ***DON'T FORGET TO UPDATE THIS WITH NEW RULES***
 (define *mean-look-clear-time* 0)
 (define *mod-rule-all-cell-tasks*
   (new 'static
@@ -248,10 +255,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-lurker-pressure) "LURKER PRESSURE")
     ((eq? id 'rule-hitlist) "HITLIST")
     ((eq? id 'rule-crate-break) "CRATE BREAK")
-    ((eq? id 'rule-money-pressure) "MONEY PRESSURE")
-    ((eq? id 'rule-fuel-pressure) "FUEL PRESSURE")
+    ((eq? id 'rule-money-pressure) "HOARD RUSH")
+    ((eq? id 'rule-fuel-pressure) "BATTERY BOUND")
     ((eq? id 'rule-buzzer-pressure) "BUZZER BEATER")
-    ((eq? id 'rule-flop-only) "FLOP ONLY")
+    ((eq? id 'rule-flop-this) "FLOP THIS")
     ((eq? id 'complication-brittle-bones) "BRITTLE BONES")
     ((eq? id 'complication-rotten-eggs) "ROTTEN EGGS")
     ((eq? id 'complication-eco-allergy) "ECO ALLERGY")
@@ -262,8 +269,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'complication-heating-balloons) "HEATING BALLOONS")
     ((eq? id 'complication-disassociate) "DISASSOCIATE")
     ((eq? id 'complication-bus-driver) "BUS DRIVER")
+    ((eq? id 'complication-wings-tied) "WINGS TIED")
     ((eq? id 'complication-fuel-shortage) "FUEL SHORTAGE")
-    ((eq? id 'rule-stay-alive) "STAY ALIVE")
+    ((eq? id 'rule-endure) "ENDURE")
     (else "UNKNOWN")))
 
 (defun mod-rule-description ((id symbol))
@@ -276,10 +284,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-money-pressure) "COLLECT 20 ORBS.")
     ((eq? id 'rule-fuel-pressure) "COLLECT A POWER CELL.")
     ((eq? id 'rule-buzzer-pressure) "COLLECT A SCOUT FLY.")
-    ((eq? id 'rule-flop-only) "YOU MAY ONLY KILL LURKERS WITH GROUND POUNDS.")
+    ((eq? id 'rule-flop-this) "YOU MAY ONLY KILL LURKERS WITH GROUND POUNDS.")
     ((eq? id 'complication-brittle-bones) "20% OF JUMPS DAMAGE YOU.")
     ((eq? id 'complication-rotten-eggs) "ORBS KILL YOU.")
-    ((eq? id 'complication-eco-allergy) "ECO DAMAGES YOU.")
+    ((eq? id 'complication-eco-allergy) "COLLECTING ECO DAMAGES YOU.")
     ((eq? id 'rule-keep-it-low) "DO NOT JUMP KICK.")
     ((eq? id 'complication-sizeable) "ROLLJUMPS COST 3 ORBS.")
     ((eq? id 'complication-heating-balloons) "COOLING BALLOONS MELT YOU.")
@@ -287,8 +295,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'complication-mean-look) "JAK FREEZES WHEN LURKERS SEE HIM.")
     ((eq? id 'complication-disassociate) "KILLING LURKERS DISMOUNTS FLUT FLUT.")
     ((eq? id 'complication-bus-driver) "ZOOMER EXPLODES IF TOO SLOW.")
-    ((eq? id 'complication-fuel-shortage) "FLUT FLUT CANNOT COLLECT CELLS.")
-    ((eq? id 'rule-stay-alive) "STAY ALIVE.")
+    ((eq? id 'complication-fuel-shortage) "ALL POWER CELLS ARE GONE.")
+    ((eq? id 'complication-wings-tied) "YOU CANNOT COLLECT CELLS ON FLUT FLUT.")
+    ((eq? id 'rule-endure) "STAY ALIVE.")
     (else "NO DESCRIPTION AVAILABLE.")))
 
 (defun mod-rule-duration ((id symbol))
@@ -301,7 +310,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-money-pressure) (seconds 30)) ;; 30
     ((eq? id 'rule-fuel-pressure) (seconds 30)) ;; 30
     ((eq? id 'rule-buzzer-pressure) (seconds 20)) ;; 20
-    ((eq? id 'rule-flop-only) (seconds 90)) ;; 90
+    ((eq? id 'rule-flop-this) (seconds 90)) ;; 90
     ((eq? id 'complication-brittle-bones) (seconds 45)) ;; 45
     ((eq? id 'complication-rotten-eggs) (seconds 60)) ;; 60
     ((eq? id 'complication-eco-allergy) (seconds 60)) ;; 60
@@ -312,8 +321,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'complication-mean-look) (seconds 60)) ;; 60
     ((eq? id 'complication-disassociate) (seconds 60)) ;; 60
     ((eq? id 'complication-bus-driver) (seconds 45)) ;; 45
-    ((eq? id 'complication-fuel-shortage) (seconds 60)) ;; 60
-    ((eq? id 'rule-stay-alive) (seconds 90)) ;; 90
+    ((eq? id 'complication-wings-tied) (seconds 60)) ;; 60
+    ((eq? id 'rule-endure) (seconds 90)) ;; 90
+    ((eq? id 'complication-fuel-shortage) (seconds 30)) ;; 30
     (else (seconds 30))))
 
 (defun mod-rule-counter-goal ((id symbol))
@@ -348,9 +358,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          (eq? id 'rule-money-pressure)
          (eq? id 'rule-fuel-pressure)
          (eq? id 'rule-buzzer-pressure)
-         (eq? id 'rule-flop-only)
+         (eq? id 'rule-flop-this)
          (eq? id 'rule-grounded)
-         (eq? id 'rule-stay-alive)
+         (eq? id 'rule-endure)
          )
      'rule)
     ((or
@@ -363,6 +373,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          (eq? id 'complication-mean-look)
          (eq? id 'complication-disassociate)
          (eq? id 'complication-bus-driver)
+         (eq? id 'complication-wings-tied)
          (eq? id 'complication-fuel-shortage)
          )
          
@@ -845,12 +856,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((= idx 12) 'complication-ohko)
     ((= idx 13) 'complication-mean-look)
     ((= idx 14) 'complication-heating-balloons)
-    ((= idx 15) 'rule-flop-only)
+    ((= idx 15) 'rule-flop-this)
     ((= idx 16) 'complication-disassociate)
     ((= idx 17) 'complication-bus-driver)
     ((= idx 18) 'rule-buzzer-pressure)
-    ((= idx 19) 'complication-fuel-shortage)
-    ((= idx 20) 'rule-stay-alive)
+    ((= idx 19) 'complication-wings-tied)
+    ((= idx 20) 'rule-endure)
+    ((= idx 21) 'complication-fuel-shortage)
     (else #f)))
 
 (defun mod-rule-random-id ()
@@ -1011,7 +1023,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                (target-fishing?)
                (target-billy-game?)
                (eq? level-name 'jungleb)
-               (eq? level-name 'finalboss))
+               (eq? level-name 'finalboss)
+               (mod-rule-active? 'complication-fuel-shortage))
          0
          2))
 
@@ -1042,7 +1055,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          0
          5))
 
-      ((eq? id 'rule-flop-only)
+      ((eq? id 'rule-flop-this)
        (if (or (eq? level-name 'training)
                (eq? level-name 'lavatube)
                (eq? level-name 'village3)
@@ -1078,7 +1091,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
         ((or (target-fishing?)
              (target-billy-game?)
-             (mod-rule-active? 'rule-stay-alive))
+             (mod-rule-active? 'rule-endure))
           0)
 
         (else
@@ -1094,7 +1107,12 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
       ;; Special complications
 
-      ((eq? id 'rule-stay-alive)
+      ((eq? id 'complication-eco-allergy)
+       (if (eq? level-name 'village3)
+         0
+         5))
+
+      ((eq? id 'rule-endure)
        (if (or (eq? level-name 'training)
                (eq? level-name 'village1))
          0
@@ -1116,11 +1134,18 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          0
          5))
 
-      ((or (eq? id 'complication-disassociate)
-           (eq? id 'complication-fuel-shortage))
-       (if on-flut
-         8
-         0))
+      ((eq? id 'complication-disassociate)
+      (if on-flut 8 0))
+      ((eq? id 'complication-wings-tied)
+      (if (and on-flut (not (mod-rule-active? 'complication-fuel-shortage)))
+        8
+        0))
+
+      ((eq? id 'complication-fuel-shortage)
+       (if (or (eq? level-name 'training)
+               (mod-rule-active? 'complication-fuel-pressure))
+         0
+         3))
 
       (else
        5))))
@@ -1282,7 +1307,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (let ((player-state (-> *target* state name)))
       (if (or (= player-state 'target-flut-air-attack)
               (= player-state 'target-flut-air-attack-hit-ground)
-              ;; could not find a reliable way to detect flop so just excluding the situations where flut kills with dash or stomp
+              ;; could not find a reliable way to detect flop so just excluding the situations where flut kills with dash, stomp, or eco
               (and (target-on-flut?) (not (or (= player-state 'target-flut-running-attack)
                                               (= player-state 'target-flut-double-jump)
                                               (= player-state 'target-flut-falling)))))
@@ -1421,11 +1446,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
              enemy-type
              (mod-rule-record-unique-enemy-type enemy-type))
     (mod-rule-counter-add-progress 'rule-hitlist 1))
-  (when (mod-rule-active? 'rule-flop-only)
+  (when (mod-rule-active? 'rule-flop-this)
     (when (not flop-kill?)
-      (let ((punishment (mod-rule-punishment-for-id 'rule-flop-only)))
+      (let ((punishment (mod-rule-punishment-for-id 'rule-flop-this)))
         (when punishment
-          (let ((slot (mod-rule-find-active-slot 'rule-flop-only)))
+          (let ((slot (mod-rule-find-active-slot 'rule-flop-this)))
             (when (>= slot 0)
               (mod-rule-handle-slot-failure slot punishment)))))))
   (none))
@@ -1465,11 +1490,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
             (mod-rule-handle-slot-failure slot punishment))))))
   (none))
 
-(defun mod-rule-trigger-stay-alive ()
-  (when (mod-rule-active? 'rule-stay-alive)
-    (let ((punishment (mod-rule-punishment-for-id 'rule-stay-alive)))
+(defun mod-rule-trigger-endure ()
+  (when (mod-rule-active? 'rule-endure)
+    (let ((punishment (mod-rule-punishment-for-id 'rule-endure)))
       (when punishment
-        (let ((slot (mod-rule-find-active-slot 'rule-stay-alive)))
+        (let ((slot (mod-rule-find-active-slot 'rule-endure)))
           (when (>= slot 0)
             (mod-rule-handle-slot-failure slot punishment))))))
   (none))
@@ -1535,13 +1560,18 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none))
 
 ;; (defun mod-rule-trigger-flut-flut ()
+;;   (when (mod-rule-active? 'complication-wings-tied)
+;;     (send-event *target* 'attack #t (new 'static 'attack-info)))
+;;   (none))
+
+;; (defun mod-rule-trigger-fuel-shortage ()
 ;;   (when (mod-rule-active? 'complication-fuel-shortage)
 ;;     (send-event *target* 'attack #t (new 'static 'attack-info)))
 ;;   (none))
 
 (defun mod-rule-on-jak-death ()
   (mod-rule-counter-add-progress 'rule-die 1)
-  (mod-rule-trigger-stay-alive)
+  (mod-rule-trigger-endure)
   (none))
 
 (defun mod-rules-reset ()
@@ -1853,8 +1883,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
            (when (<= *global-countdown-remaining-time* 0)
              (set! *global-countdown-remaining-time* 0)
              (set! *global-countdown-lost?* #t)
-             (set! *global-countdown-active?* #f)))))
-      (global-countdown-draw))
+             (set! *global-countdown-active?* #f)
+             ;; deactivate any currently-active rule effects right away
+             (kill-by-name 'mod-rule-manager *active-pool*)
+             (mod-rules-reset)
+             (logclear! (-> *target* mask) (process-mask sleep))
+             (set! *mean-look-clear-time* 0))))))
+    (global-countdown-draw)
     (suspend))
   (none))
 
@@ -1864,7 +1899,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (set! *global-countdown-started?* #f)
   (set! *global-countdown-active?* #f)
   (set! *global-countdown-lost?* #f)
-  (set! *global-countdown-remaining-time* (seconds 9999)) ;; global timer start
+  (set! *global-countdown-remaining-time* (seconds 120)) ;; global timer start
   (set! *global-countdown-last-update-time* (current-time))
   (set! *mod-rule-last-update-time* (current-time))
   (set! *mod-rule-last-reverted-cell-task* 0)
