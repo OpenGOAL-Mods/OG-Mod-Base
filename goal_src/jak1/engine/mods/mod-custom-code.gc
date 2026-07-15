@@ -115,13 +115,20 @@
   (none))
 
 (defun runs-on-enemy-death ((enemy process-drawable))
-  ;; Count when notified from enemy death flow.
-  (when enemy
-    ;; (when (logtest? (-> enemy mask) (process-mask enemy))
-    (mod-rule-trigger-disassociate)
-      (mod-rule-on-enemy-kill (-> enemy type symbol) (mod-rule-enemy-killed-by-flop? enemy))
-      ;; )
-      )
+
+  ;; (format #t "DEBUG: Enemy '~A' entered death state.~%" (-> enemy type))
+  ;; (if *target*
+  ;;     (format #t "DEBUG: *target* state at time of death: '~A'~%" (-> *target* state name))
+  ;;     (format #t "DEBUG: *target* is currently #f (does not exist).~%")
+  ;;     )
+
+  (let ((was-flop-kill? (mod-rule-enemy-killed-by-flop? enemy)))
+    
+    ;; (if was-flop-kill?
+    ;;     (format #t "Valid flop kill!~%~%")
+    ;;     (format #t "Not a flop kill.~%~%"))
+
+    (mod-rule-on-enemy-kill (the-as symbol (-> enemy type)) was-flop-kill?)) 
   (none))
 
 (defun runs-on-crate-break ((crate process-drawable) (event symbol))

@@ -1,2 +1,12 @@
+55, 53, 54
+40, 42
+46, 1, 49
+12, 51, 11, 50
+15
+52, 24, 26
+45
+60, 59, 57, 56
+30, 28
 
+rename: stay alive, money pressure, fuel pressure, fuel shortage, flop only
 
