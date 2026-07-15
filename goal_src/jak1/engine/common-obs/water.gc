@@ -9,6 +9,8 @@
 
 ;; DECOMP BEGINS
 
+(define-extern mod-rule-active? (function symbol symbol))
+
 (defpart 108
   :init-specs
   ((:texture (water-ring effects))
@@ -988,13 +990,18 @@
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
       (case message
-        (('update) (update! self))))
+        (('update)
+         (if (not (mod-rule-active? 'complication-drought))
+           (update! self)
+           (on-exit-water self)))))
   :exit
     (behavior ()
       (on-exit-water self))
   :trans
     (behavior ()
-      (update! self))
+      (if (not (mod-rule-active? 'complication-drought))
+        (update! self)
+        (on-exit-water self)))
   :code anim-loop)
 
 (defmethod set-stack-size! ((this water-vol))

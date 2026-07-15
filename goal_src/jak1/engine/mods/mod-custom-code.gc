@@ -21,9 +21,14 @@
 ;; Begin function defintions.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; (define-extern *water-enable?* (function (none)))
+
 (defun runs-every-frame ()
   ;;(increase-power-cell-by-one) This is a call to increase-power-cell-by-one defined in mod-common-functions.gc
   (if *show-input-display* (input-display-on) (input-display-off))
+
+  ;; (if (mod-rule-active? 'complication-drought)
+  ;;     (set! *ocean-off* #t)) ;; restore if merc and generic water is figured out
 
   (when *debug-segment*
     (when (and (cpad-pressed? 0 circle)

@@ -1,11 +1,6 @@
-55, 53, 54
-40, 42
-46, 1, 49
-12, 51, 11, 50
-15
-52, 24, 26
-45
-60, 59, 57, 56
-30, 28
-
 probably rename: endure, hoard rush, battery bound
+finish drought
+
+(mod-rules-reset) on game exit
+
+improve game over state

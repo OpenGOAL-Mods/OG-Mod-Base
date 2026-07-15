@@ -32,6 +32,7 @@
 (define-extern mod-rule-trigger-brittle-bones (function none))
 (define-extern mod-rule-trigger-keep-it-low (function none))
 (define-extern mod-rule-trigger-sizeable (function symbol))
+(define-extern mod-rule-trigger-hands-off (function none))
 
 ;; DECOMP BEGINS
 
@@ -1299,6 +1300,7 @@
       (set! (-> *run-attack-mods* turnvv) 655360.0)
       (target-start-attack)
       (target-danger-set! 'punch #f)
+      (mod-rule-trigger-hands-off)
       (if (or (< (fabs (-> self control local-slope-x)) 0.3) (< 0.3 (fabs (-> self control local-slope-z))))
         (set! (-> self control bend-target) 1.0)))
   :exit
