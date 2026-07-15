@@ -45,7 +45,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 ;; Start game: (global-countdown-start)
 ;; Stop game: (global-countdown-reset)
 ;; Force specific rule: (mod-rule-activate-slot 0 'rule-grounded)
-;; Deactivate specific slot: (mod-rule-deactivate-slot 0)
 ;; Check if a specific slot is active: (mod-rule-slot-active? 0)
 
 ;; Macros can be used more-or-less just like functions
@@ -87,7 +86,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *mod-rule-timed-punishments* (new 'global 'boxed-array symbol 4))
 (define *mod-rule-timed-punishment-end-times* (new 'global 'boxed-array time-frame 4))
 (define *mod-rule-timed-punishment-next-ticks* (new 'global 'boxed-array time-frame 4))
-(define *mod-rule-id-count* 24) ;; ***DON'T FORGET TO UPDATE THIS WITH NEW RULES***
+(define *mod-rule-id-count* 26) ;; ***DON'T FORGET TO UPDATE THIS WITH NEW RULES***
 (define *mean-look-clear-time* 0)
 (define *mod-rule-all-cell-tasks*
   (new 'static
@@ -256,7 +255,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-lurker-pressure) "LURKER PRESSURE")
     ((eq? id 'rule-hitlist) "HITLIST")
     ((eq? id 'rule-crate-break) "CRATE BREAK")
-    ((eq? id 'rule-money-pressure) "HOARD RUSH")
+    ((eq? id 'rule-money-pressure) "CASH GRAB")
     ((eq? id 'rule-fuel-pressure) "BATTERY BOUND")
     ((eq? id 'rule-buzzer-pressure) "BUZZER BEATER")
     ((eq? id 'rule-flop-this) "FLOP THIS")
@@ -272,8 +271,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'complication-bus-driver) "BUS DRIVER")
     ((eq? id 'complication-wings-tied) "WINGS TIED")
     ((eq? id 'complication-fuel-shortage) "FUEL SHORTAGE")
+    ((eq? id 'complication-hidden-treasure) "HIDDEN TREASURE")
     ((eq? id 'complication-drought) "LIKE A STONE")
-    ((eq? id 'rule-endure) "ENDURE")
+    ((eq? id 'complication-jak-rabbit) "JAK RABBIT")
+    ((eq? id 'rule-survivor) "SURVIVOR")
     (else "UNKNOWN")))
 
 (defun mod-rule-description ((id symbol))
@@ -300,8 +301,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'complication-disassociate) "KILLING LURKERS DISMOUNTS FLUT FLUT.")
     ((eq? id 'complication-bus-driver) "ZOOMER EXPLODES IF TOO SLOW.")
     ((eq? id 'complication-fuel-shortage) "ALL POWER CELLS ARE GONE.")
+    ((eq? id 'complication-hidden-treasure) "ORBS ARE INVISIBLE.")
     ((eq? id 'complication-wings-tied) "YOU CANNOT COLLECT CELLS ON FLUT FLUT.")
-    ((eq? id 'rule-endure) "STAY ALIVE.")
+    ((eq? id 'complication-jak-rabbit) "JUMP HEIGHTS ARE DOUBLED.")
+    ((eq? id 'rule-survivor) "STAY ALIVE.")
     (else "NO DESCRIPTION AVAILABLE.")))
 
 (defun mod-rule-duration ((id symbol))
@@ -327,9 +330,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'complication-disassociate) (seconds 60)) ;; 60
     ((eq? id 'complication-bus-driver) (seconds 30)) ;; 30
     ((eq? id 'complication-wings-tied) (seconds 60)) ;; 60
-    ((eq? id 'rule-endure) (seconds 90)) ;; 90
+    ((eq? id 'rule-survivor) (seconds 90)) ;; 90
     ((eq? id 'complication-fuel-shortage) (seconds 30)) ;; 30
+    ((eq? id 'complication-hidden-treasure) (seconds 60)) ;; 60
     ((eq? id 'complication-drought) (seconds 60)) ;; 60
+    ((eq? id 'complication-jak-rabbit) (seconds 90)) ;; 90
     (else (seconds 30))))
 
 (defun mod-rule-counter-goal ((id symbol))
@@ -366,7 +371,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          (eq? id 'rule-buzzer-pressure)
          (eq? id 'rule-flop-this)
          (eq? id 'rule-grounded)
-         (eq? id 'rule-endure)
+         (eq? id 'rule-survivor)
          (eq? id 'rule-hands-off)
          )
      'rule)
@@ -382,6 +387,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          (eq? id 'complication-bus-driver)
          (eq? id 'complication-wings-tied)
          (eq? id 'complication-fuel-shortage)
+         (eq? id 'complication-jak-rabbit)
+         (eq? id 'complication-hidden-treasure)
          (eq? id 'complication-drought)
          )
          
@@ -830,14 +837,59 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     #f))
 
 (defun mod-rule-on-activate ((id symbol))
-  (when (eq? id 'rule-hitlist)
-    (dotimes (slot 3)
-      (set! (-> *mod-rule-unique-enemy-killed-types* slot) #f)))
+  (cond
+    ((eq? id 'rule-hitlist)
+     (dotimes (slot 3)
+       (set! (-> *mod-rule-unique-enemy-killed-types* slot) #f)))
+    
+    ((eq? id 'complication-jak-rabbit)
+     (set! (-> *TARGET-bank* jump-height-min) (meters 2.02))
+     (set! (-> *TARGET-bank* jump-height-max) (meters 7))
+     (set! (-> *TARGET-bank* double-jump-height-min) (meters 2))
+     (set! (-> *TARGET-bank* double-jump-height-max) (meters 5))
+     (set! (-> *TARGET-bank* flip-jump-height-min) (meters 10))
+     (set! (-> *TARGET-bank* flip-jump-height-max) (meters 14))
+     (set! (-> *TARGET-bank* duck-jump-height-min) (meters 10))
+     (set! (-> *TARGET-bank* duck-jump-height-max) (meters 14))
+     (set! (-> *TARGET-bank* flop-jump-height-min) (meters 10))
+     (set! (-> *TARGET-bank* flop-jump-height-max) (meters 14))
+     (set! (-> *TARGET-bank* swim-jump-height-min) (meters 10))
+     (set! (-> *TARGET-bank* swim-jump-height-max) (meters 10))
+     (set! (-> *TARGET-bank* tube-jump-height-min) (meters 3.5))
+     (set! (-> *TARGET-bank* tube-jump-height-max) (meters 5)))
+    
+    (else
+     (none)))
+  (none))
+
+(defun mod-rule-deactivate-slot ((slot int))
+  (when (and (>= slot 0) (< slot 3))
+    (let ((id (-> *mod-rule-active-slots* slot)))
+      (when id
+        (cond
+          ((eq? id 'complication-ohko)
+           (set! (-> (the-as fact-info-target (-> *target* fact)) health) 3.0))
+          ((eq? id 'complication-jak-rabbit)
+           (set! (-> *TARGET-bank* jump-height-min) (meters 1.01))
+           (set! (-> *TARGET-bank* jump-height-max) (meters 3.5))
+           (set! (-> *TARGET-bank* double-jump-height-min) (meters 1))
+           (set! (-> *TARGET-bank* double-jump-height-max) (meters 2.5))
+           (set! (-> *TARGET-bank* flip-jump-height-min) (meters 5))
+           (set! (-> *TARGET-bank* flip-jump-height-max) (meters 7))
+           (set! (-> *TARGET-bank* duck-jump-height-min) (meters 5))
+           (set! (-> *TARGET-bank* duck-jump-height-max) (meters 7))
+           (set! (-> *TARGET-bank* flop-jump-height-min) (meters 5))
+           (set! (-> *TARGET-bank* flop-jump-height-max) (meters 7))
+           (set! (-> *TARGET-bank* swim-jump-height-min) (meters 5))
+           (set! (-> *TARGET-bank* swim-jump-height-max) (meters 5))
+           (set! (-> *TARGET-bank* tube-jump-height-min) (meters 1.75))
+           (set! (-> *TARGET-bank* tube-jump-height-max) (meters 2.5))))))
+    (mod-rule-clear-slot slot))
   (none))
 
 (defun mod-rule-activate-slot ((slot int) (id symbol))
   (when (and (>= slot 0) (< slot 3) id)
-    (mod-rule-clear-slot slot)
+    (mod-rule-deactivate-slot slot)
     (set! (-> *mod-rule-active-slots* slot) id)
     (sound-play "warning")
     (set! (-> *mod-rule-slot-goals* slot) (mod-rule-counter-goal id))
@@ -848,6 +900,37 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (set! (-> *mod-rule-slot-punishments* slot) #f))
     (set! (-> *mod-rule-slot-end-times* slot) (+ (current-time) (mod-rule-duration id)))
     (mod-rule-on-activate id))
+  (none))
+
+(defun mod-rule-clear-all-timed-punishments ()
+  (dotimes (slot 4)
+    (let ((punishment (-> *mod-rule-timed-punishments* slot)))
+      (when punishment
+        (mod-rule-end-timed-punishment punishment))
+      (mod-rule-clear-timed-punishment-slot slot)))
+  (none))
+
+(defun mod-rule-clear-player-hit-cache ()
+  (dotimes (idx 64)
+    (set! (-> *mod-rule-player-hit-handles* idx) (the-as handle #f))
+    (set! (-> *mod-rule-player-hit-modes* idx) #f))
+  (set! *mod-rule-player-hit-write-idx* 0)
+  (none))
+
+(defun mod-rule-clear-recent-rolls ()
+  (dotimes (slot 5)
+    (set! (-> *mod-rule-recent-rolls* slot) #f))
+  (none))
+
+(defun mod-rules-reset ()
+  (dotimes (slot 3)
+    (mod-rule-deactivate-slot slot))
+  (mod-rule-clear-all-timed-punishments)
+  (dotimes (slot 3)
+    (set! (-> *mod-rule-unique-enemy-killed-types* slot) #f))
+  (mod-rule-clear-player-hit-cache)
+  (mod-rule-clear-recent-rolls)
+  (set! *mod-rule-current-slot* 0)
   (none))
 
 (defun mod-rule-id-from-index ((idx int))
@@ -872,10 +955,12 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((= idx 17) 'complication-bus-driver)
     ((= idx 18) 'rule-buzzer-pressure)
     ((= idx 19) 'complication-wings-tied)
-    ((= idx 20) 'rule-endure)
+    ((= idx 20) 'rule-survivor)
     ((= idx 21) 'complication-fuel-shortage)
     ((= idx 22) 'complication-drought)
     ((= idx 23) 'rule-hands-off)
+    ((= idx 24) 'complication-jak-rabbit)
+    ((= idx 25) 'complication-hidden-treasure)
     (else #f)))
 
 (defun mod-rule-random-id ()
@@ -947,11 +1032,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     #f
     (let ((mode (send-event *target* 'query 'mode)))
           (= mode 'target-billy-game))))
-
-(defun mod-rule-clear-recent-rolls ()
-  (dotimes (slot 5)
-    (set! (-> *mod-rule-recent-rolls* slot) #f))
-  (none))
 
 (defun mod-rule-record-roll! ((id symbol))
   (when id
@@ -1062,12 +1142,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
               (mod-rule-active? 'complication-fuel-shortage))
           1)
         (else 2)))
-
+        
       ((eq? id 'rule-money-pressure)
        (if (or (< money-left 30)
                (target-fishing?)
                (target-billy-game?)
-               (eq? level-name 'finalboss))
+               (eq? level-name 'finalboss)
+               (mod-rule-active? 'complication-hidden-treasure))
          0
          2))
 
@@ -1126,7 +1207,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
         ((or (target-fishing?)
              (target-billy-game?)
-             (mod-rule-active? 'rule-endure))
+             (mod-rule-active? 'rule-survivor))
           0)
 
         (else
@@ -1148,7 +1229,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          0
          5))
 
-      ((eq? id 'rule-endure)
+      ((eq? id 'rule-survivor)
        (if (or (eq? level-name 'training)
                (eq? level-name 'village1))
          0
@@ -1179,7 +1260,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
       ((eq? id 'complication-fuel-shortage)
        (if (or (eq? level-name 'training)
-               (mod-rule-active? 'complication-fuel-pressure))
+              ;;  (mod-rule-active? 'complication-fuel-pressure)
+               )
          0
          3))
 
@@ -1245,7 +1327,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun mod-rule-reroll-slot ((slot int) (apply-buffer symbol))
   ;; Reserve the slot now, but choose the rule only when its roll timer ends.
-  (mod-rule-clear-slot slot)
+  (mod-rule-deactivate-slot slot)
   (mod-rule-schedule-slot slot 'mod-rule-pending-roll apply-buffer)
   (none))
 
@@ -1253,7 +1335,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   ;; Extra Rule is temporary. Once either occupied slot ends, keep the other
   ;; slot and clear this one instead of replacing it with a third rule.
   (if (> (mod-rule-active-slot-count) 1)
-    (mod-rule-clear-slot slot)
+    (mod-rule-deactivate-slot slot)
     (mod-rule-reroll-slot slot apply-buffer))
   (none))
 
@@ -1311,13 +1393,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (mod-rule-counter-add-progress 'rule-buzzer-pressure amount)
   (none))
 
-(defun mod-rule-clear-player-hit-cache ()
-  (dotimes (idx 64)
-    (set! (-> *mod-rule-player-hit-handles* idx) (the-as handle #f))
-    (set! (-> *mod-rule-player-hit-modes* idx) #f))
-  (set! *mod-rule-player-hit-write-idx* 0)
-  (none))
-
 (defun mod-rule-record-player-hit ((enemy process) (attack-mode symbol))
   (when (and enemy attack-mode)
     (let ((idx *mod-rule-player-hit-write-idx*))
@@ -1341,26 +1416,25 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rule-enemy-killed-by-flop? ((enemy process-drawable))
   (when *target*
     (let ((player-state (-> *target* state name)))
-      (if (or (= player-state 'target-flut-air-attack)
-              (= player-state 'target-flut-air-attack-hit-ground)
+      (if (or (= player-state 'target-flop)
               ;; could not find a reliable way to detect flop so just excluding the situations where flut kills with dash, stomp, or eco
               (and (target-on-flut?) (not (or (= player-state 'target-flut-running-attack)
                                               (= player-state 'target-flut-double-jump)
                                               (= player-state 'target-flut-falling)))))
           #t #f))))
 
-(defun mod-rule-string-contains? ((haystack string) (needle string))
-  (let ((hay-len (length haystack))
-        (needle-len (length needle))
-        (idx 0))
-    (if (or (<= needle-len 0) (< hay-len needle-len))
-      #f
-      (begin
-        (while (<= idx (- hay-len needle-len))
-          (when (string= (substring! *temp-string* haystack idx (+ idx needle-len)) needle)
-            (return #t))
-          (+! idx 1))
-        #f))))
+;; (defun mod-rule-string-contains? ((haystack string) (needle string))
+;;   (let ((hay-len (length haystack))
+;;         (needle-len (length needle))
+;;         (idx 0))
+;;     (if (or (<= needle-len 0) (< hay-len needle-len))
+;;       #f
+;;       (begin
+;;         (while (<= idx (- hay-len needle-len))
+;;           (when (string= (substring! *temp-string* haystack idx (+ idx needle-len)) needle)
+;;             (return #t))
+;;           (+! idx 1))
+;;         #f))))
 
 (defun mod-rule-unique-enemy-type-seen? ((type-name symbol))
   (let ((slot 0)
@@ -1440,14 +1514,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
      (none)))
   (none))
 
-(defun mod-rule-clear-all-timed-punishments ()
-  (dotimes (slot 4)
-    (let ((punishment (-> *mod-rule-timed-punishments* slot)))
-      (when punishment
-        (mod-rule-end-timed-punishment punishment))
-      (mod-rule-clear-timed-punishment-slot slot)))
-  (none))
-
 (defun mod-rule-handle-slot-failure ((slot int) (punishment symbol))
   ;; Extra Rule owns both rerolls. Every other punishment rerolls only the
   ;; failed slot after its effect has been applied.
@@ -1466,11 +1532,16 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
         (let ((goal (-> *mod-rule-slot-goals* slot))
               (progress (-> *mod-rule-slot-progress* slot))
               (punishment (-> *mod-rule-slot-punishments* slot)))
+          
+          ;; Logic for handling failures
           (when (and (> goal 0) (< progress goal) punishment)
             (mod-rule-handle-slot-failure slot punishment))
+          
           (sound-play "cursor-up-down")
-          (cond ((eq? id 'complication-ohko) (set! (-> (the-as fact-info-target (-> *target* fact)) health) 3.0)))
-          (when (or (<= goal 0) (>= progress goal) (not punishment))
+          
+          ;; State resets were moved to mod-rule-deactivate-slot
+          (when (and (= id (-> *mod-rule-active-slots* slot))
+                     (or (<= goal 0) (>= progress goal) (not punishment)))
             (mod-rule-finish-slot slot #t))))))
   (none))
 
@@ -1543,11 +1614,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
             (mod-rule-handle-slot-failure slot punishment))))))
   (none))
 
-(defun mod-rule-trigger-endure ()
-  (when (mod-rule-active? 'rule-endure)
-    (let ((punishment (mod-rule-punishment-for-id 'rule-endure)))
+(defun mod-rule-trigger-survivor ()
+  (when (mod-rule-active? 'rule-survivor)
+    (let ((punishment (mod-rule-punishment-for-id 'rule-survivor)))
       (when punishment
-        (let ((slot (mod-rule-find-active-slot 'rule-endure)))
+        (let ((slot (mod-rule-find-active-slot 'rule-survivor)))
           (when (>= slot 0)
             (mod-rule-handle-slot-failure slot punishment))))))
   (none))
@@ -1607,12 +1678,17 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 ;; (defun mod-rule-trigger-flut-flut ()
 ;;   (when (mod-rule-active? 'complication-wings-tied)
-;;     (send-event *target* 'attack #t (new 'static 'attack-info)))
+;;     (none))
 ;;   (none))
 
 ;; (defun mod-rule-trigger-fuel-shortage ()
 ;;   (when (mod-rule-active? 'complication-fuel-shortage)
-;;     (send-event *target* 'attack #t (new 'static 'attack-info)))
+;;     (none))
+;;   (none))
+
+;; (defun mod-rule-trigger-hidden-treasure ()
+;;   (when (mod-rule-active? 'complication-hidden-treasure)
+;;     (none))
 ;;   (none))
 
 ;; (defun mod-rule-trigger-drought ()
@@ -1622,18 +1698,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun mod-rule-on-jak-death ()
   (mod-rule-counter-add-progress 'rule-die 1)
-  (mod-rule-trigger-endure)
-  (none))
-
-(defun mod-rules-reset ()
-  (dotimes (slot 3)
-    (mod-rule-clear-slot slot))
-  (mod-rule-clear-all-timed-punishments)
-  (dotimes (slot 3)
-    (set! (-> *mod-rule-unique-enemy-killed-types* slot) #f))
-  (mod-rule-clear-player-hit-cache)
-  (mod-rule-clear-recent-rolls)
-  (set! *mod-rule-current-slot* 0)
+  (mod-rule-trigger-survivor)
   (none))
 
 (defun global-countdown-paused? ()

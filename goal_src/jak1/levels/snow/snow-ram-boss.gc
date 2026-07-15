@@ -1000,7 +1000,7 @@
   :event
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
       (case message
-        (('jump) (go ram-boss-jump-down proc))
+        (('jump) (mod-rule-trigger-mean-look) (go ram-boss-jump-down proc))
         (('touch 'attack) (nav-enemy-send-attack proc (the-as touching-shapes-entry (-> block param 0)) 'generic))))
   :enter
     (behavior ()
@@ -1143,7 +1143,7 @@
     (behavior ()
       (when *target*
         (let ((f0-0 (vector-vector-distance (target-pos 0) (-> self collide-info trans))))
-          (if (>= 18432.0 f0-0) (go ram-boss-tracking))))
+          (when (>= 18432.0 f0-0) (mod-rule-trigger-mean-look) (go ram-boss-tracking))))
       ((-> (method-of-type nav-enemy nav-enemy-patrol) trans))))
 
 (defstate nav-enemy-chase (ram-boss)

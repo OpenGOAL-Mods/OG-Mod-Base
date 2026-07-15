@@ -656,6 +656,7 @@
   :trans quicksandlurker-check-hide-transition
   :code
     (behavior ()
+    (mod-rule-trigger-mean-look)
       (process-spawn part-tracker
                      :init
                      part-tracker-init
@@ -679,6 +680,7 @@
   :event process-drawable-death-event-handler
   :code
     (behavior ()
+    (notify-enemy-death self)
       (logclear! (-> self mask) (process-mask actor-pause))
       (ja-channel-push! 1 (seconds 0.2))
       (ja-no-eval :group! quicksandlurker-die-ja :num! (seek!) :frame-num 0.0)

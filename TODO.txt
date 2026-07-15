@@ -1,4 +1,4 @@
-probably rename: endure, hoard rush, battery bound
+probably rename: battery bound
 finish drought
 
 (mod-rules-reset) on game exit
