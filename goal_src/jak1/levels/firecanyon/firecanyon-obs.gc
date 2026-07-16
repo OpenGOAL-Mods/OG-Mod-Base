@@ -458,6 +458,7 @@
       (ja-channel-set! 0)
       (clear-collide-with-as (-> self root))
       (ja-post)
+      (runs-on-crate-break self 'break 8)
       (sound-play "dcrate-break")
       (process-spawn part-tracker
                      :init

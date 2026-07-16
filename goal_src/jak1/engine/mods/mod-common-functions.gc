@@ -64,8 +64,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *global-countdown-lost?* #f)
 (define *global-countdown-remaining-time* 0)
 (define *global-countdown-last-update-time* 0)
-;; Rule / complication state. Slots are the source of truth: a slot is occupied
-;; while it has either an active rule or a rule waiting to roll.
 (define *mod-rule-active-slots* (new 'global 'boxed-array symbol 3))
 (define *mod-rule-pending-slots* (new 'global 'boxed-array symbol 3))
 (define *mod-rule-slot-end-times* (new 'global 'boxed-array time-frame 3))
@@ -195,8 +193,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (game-task citadel-sage-green)
       (game-task citadel-buzzer)))
 
-;; Tasks listed here will never be selected by punishment-revert-cell.
-;; Add (game-task your-task-id) entries as needed.
 (define *mod-rule-revert-cell-task-blacklist*
   (new 'static
        'boxed-array
@@ -276,7 +272,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'complication-jak-rabbit) "JAK RABBIT")
     ((eq? id 'rule-survivor) "SURVIVOR")
     ((eq? id 'rule-red-kill) "RED ECO KILL")
-    ((eq? id 'rule-blue-crate) "ECO CRATE")
+    ((eq? id 'rule-blue-crate) "BULL AND CHINA")
     ((eq? id 'complication-yellow-pilled) "YELLOW-PILLED")
     ((eq? id 'rule-one-frame) "ONE FRAME")
     ((eq? id 'rule-distancing) "SOCIAL DISTANCING")
@@ -314,7 +310,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-survivor) "STAY ALIVE.")
     ((eq? id 'complication-yellow-pilled) "YELLOW ECO PAUSES TIMER.")
     ((eq? id 'rule-one-frame) "DO A ONE-FRAME.")
-    ((eq? id 'rule-distancing) "DO NOT GET WITHIN 8 METERS OF A FLY CRATE.")
+    ((eq? id 'rule-distancing) "DO NOT GET WITHIN 6 METERS OF A FLY CRATE.")
     (else "NO DESCRIPTION AVAILABLE.")))
 
 (defun mod-rule-duration ((id symbol))
@@ -324,7 +320,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-die) (seconds 20)) ;; 20
     ((eq? id 'rule-lurker-pressure) (seconds 60)) ;; 60
     ((eq? id 'rule-hitlist) (seconds 60)) ;; 60
-    ((eq? id 'rule-crate-break) (seconds 60)) ;; 60
+    ((eq? id 'rule-crate-break) (seconds 45)) ;; 45
     ((eq? id 'rule-money-pressure) (seconds 30)) ;; 30
     ((eq? id 'rule-fuel-pressure) (seconds 30)) ;; 30
     ((eq? id 'rule-buzzer-pressure) (seconds 45)) ;; 45
@@ -333,7 +329,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'complication-rotten-eggs) (seconds 60)) ;; 60
     ((eq? id 'complication-eco-allergy) (seconds 60)) ;; 60
     ((eq? id 'rule-keep-it-low) (seconds 90)) ;; 90
-    ((eq? id 'complication-sizeable) (seconds 60)) ;; 60
+    ((eq? id 'complication-sizeable) (seconds 90)) ;; 90
     ((eq? id 'complication-ohko) (seconds 90)) ;; 90
     ((eq? id 'complication-heating-balloons) (seconds 30)) ;; 30
     ((eq? id 'complication-mean-look) (seconds 60)) ;; 60
@@ -695,7 +691,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                 (+! remaining -1))))
           (+! idx 1))
         (when (!= chosen-task (game-task none))
-          ;; Mirror reset semantics at task/perm level so unloaded cells also revert.
           (update-perm! (-> *game-info* task-perm-list data chosen-task)
                         'game
                         (the-as entity-perm-status 1919))
@@ -703,8 +698,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                      (entity-perm-status real-complete))
           (mod-rule-reopen-task-stage chosen-task)
           (mod-rule-force-open-task-stage chosen-task)
-
-          ;; Clear global saved perm status for all entities tied to this task.
           (let ((perm-list (-> *game-info* perm-list))
                 (idx2 0))
             (while (< idx2 (-> perm-list length))
@@ -712,9 +705,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                 (when (= (-> perm2 task) chosen-task)
                   (update-perm! perm2 'game (the-as entity-perm-status 1919))))
               (+! idx2 1)))
-
-          ;; Match reset-actors behavior: touch bsp entity lists only for active levels.
-          ;; Unloaded levels are handled through perm-list/task-perm-list updates above.
           (let ((level-idx 0)
                 (spawned #f))
             (while (< level-idx (-> *level* length))
@@ -865,6 +855,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-hitlist)
      (dotimes (slot 3)
        (set! (-> *mod-rule-unique-enemy-killed-types* slot) #f)))
+
+    ((eq? id 'rule-distancing)
+    (set! *closest-buzzer-dist* 1000000000.0))
     
     ((eq? id 'complication-jak-rabbit)
      (set! (-> *TARGET-bank* jump-height-min) (meters 2.02))
@@ -886,6 +879,14 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
      (none)))
   (none))
 
+(defun refresh-money-actors ()
+  (iterate-process-tree *active-pool*
+    (lambda ((p process))
+      (when (type-type? (-> p type) money)
+        (logclear! (-> (the-as money p) draw status) (draw-status hidden))
+        (restore-collide-with-as (-> (the-as money p) root))))
+    *null-kernel-context*))
+
 (defun mod-rule-deactivate-slot ((slot int))
   (when (and (>= slot 0) (< slot 3))
     (let ((id (-> *mod-rule-active-slots* slot)))
@@ -893,6 +894,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
         (cond
           ((eq? id 'complication-ohko)
            (set! (-> (the-as fact-info-target (-> *target* fact)) health) 3.0))
+          ((eq? id 'complication-hidden-treasure)
+                    (refresh-money-actors))
           ((eq? id 'complication-jak-rabbit)
            (set! (-> *TARGET-bank* jump-height-min) (meters 1.01))
            (set! (-> *TARGET-bank* jump-height-max) (meters 3.5))
@@ -1432,14 +1435,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       #f)))
 
 (defun mod-rule-reroll-slot ((slot int) (apply-buffer symbol))
-  ;; Reserve the slot now, but choose the rule only when its roll timer ends.
   (mod-rule-deactivate-slot slot)
   (mod-rule-schedule-slot slot 'mod-rule-pending-roll apply-buffer)
   (none))
 
 (defun mod-rule-finish-slot ((slot int) (apply-buffer symbol))
-  ;; Extra Rule is temporary. Once either occupied slot ends, keep the other
-  ;; slot and clear this one instead of replacing it with a third rule.
   (if (> (mod-rule-active-slot-count) 1)
     (mod-rule-deactivate-slot slot)
     (mod-rule-reroll-slot slot apply-buffer))
@@ -1473,8 +1473,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none))
 
 (defun mod-rule-reroll-current ((apply-buffer symbol))
-  ;; The surviving temporary rule may be in slot 1 or 2. Reroll that occupied
-  ;; slot instead of always creating a new rule in the default slot 0.
   (let ((slot (mod-rule-first-occupied-slot)))
     (mod-rule-reroll-slot (if (>= slot 0) slot *mod-rule-current-slot*) apply-buffer))
   (none))
@@ -1565,8 +1563,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
         (+! slot 1)))
     recorded))
 
-(defun mod-rule-on-crate-break ()
-  (mod-rule-counter-add-progress 'rule-crate-break 1)
+(defun mod-rule-on-crate-break ((amount int))
+  (mod-rule-counter-add-progress 'rule-crate-break amount)
   (none))
 
 (defun mod-rule-punishment-name ((punishment symbol))
@@ -1588,8 +1586,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (else (mod-rule-punishment-name punishment))))
 
 (defun mod-rule-apply-extra-rule-punishment ((failed-slot int))
-  ;; Roll the failed slot first so it remains occupied, then use the first
-  ;; genuinely free slot for the temporary second rule.
   (when (and (>= failed-slot 0)
              (< failed-slot 3)
              (< (mod-rule-active-slot-count) 2))
@@ -1624,8 +1620,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none))
 
 (defun mod-rule-handle-slot-failure ((slot int) (punishment symbol))
-  ;; Extra Rule owns both rerolls. Every other punishment rerolls only the
-  ;; failed slot after its effect has been applied.
   (sound-play "caught-eel")
   (if (eq? punishment 'punishment-extra-rule)
     (mod-rule-apply-extra-rule-punishment slot)
@@ -1691,7 +1685,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none))
 
 (defun mod-rule-trigger-distancing ()
-  (when (and (<= *closest-buzzer-dist* (meters 8)) (mod-rule-active? 'rule-distancing))
+  (when (and (<= *closest-buzzer-dist* (meters 6)) (mod-rule-active? 'rule-distancing))
     (let ((punishment (mod-rule-punishment-for-id 'rule-distancing)))
       (when punishment
         (let ((slot (mod-rule-find-active-slot 'rule-distancing)))
@@ -1912,220 +1906,105 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (process-spawn-function process mod-rule-manager-proc :name 'mod-rule-manager)
   (none))
 
+(defun mod-rule-draw-panel ((buf dma-buffer)
+                            (x int)
+                            (y int)
+                            (id symbol)
+                            (punishment symbol)
+                            (goal int)
+                            (progress int)
+                            (time-left time-frame)))
+
+(defun mod-rule-nth-active-slot ((start-slot int))
+  (let ((slot (max 0 start-slot)))
+    (while (and (< slot 3) (not (-> *mod-rule-active-slots* slot)))
+      (+! slot 1))
+    (if (< slot 3) slot -1)))
+
+(defun mod-rule-draw-slot ((buf dma-buffer) (slot int) (y int))
+  (let* ((id (-> *mod-rule-active-slots* slot))
+         (punishment (-> *mod-rule-slot-punishments* slot))
+         (goal (-> *mod-rule-slot-goals* slot))
+         (progress (-> *mod-rule-slot-progress* slot))
+         (show-progress? (and (> goal 0) (eq? (mod-rule-goal-kind id) 'counter)))
+         (time-left (max 0 (- (-> *mod-rule-slot-end-times* slot) (current-time))))
+         (row y))
+    (draw-string-xy-scaled (mod-rule-name id) buf 10 row (font-color green) (font-flags shadow kerning large) 0.5)
+    (+! row 10)
+    (draw-string-xy-scaled (mod-rule-description id) buf 10 row (font-color white) (font-flags shadow kerning large) 0.4)
+    (+! row 9)
+    (when punishment
+      (draw-string-xy-scaled "PUNISHMENT: " buf 10 row (font-color red) (font-flags shadow kerning large) 0.3)
+      (draw-string-xy-scaled (mod-rule-punishment-name punishment) buf 80 row (font-color white) (font-flags shadow kerning large) 0.3)
+      (+! row 8))
+    (when show-progress?
+      (draw-string-xy-scaled "PROGRESS: " buf 10 row (font-color yellow) (font-flags shadow kerning large) 0.3)
+      (draw-string-xy-scaled (string-format "~D/~D" progress goal) buf 80 row (font-color white) (font-flags shadow kerning large) 0.5)
+      (+! row 7))
+    (draw-string-xy-scaled (mod-rule-format-time-left time-left) buf 10 row (font-color white) (font-flags shadow kerning large) 0.5)
+    (+! row 12)
+    (when (eq? id 'rule-distancing)
+      (draw-string-xy-scaled "DISTANCE: " buf 10 row (font-color progress-percent) (font-flags shadow kerning large) 0.3)
+      (-! row 2)
+      (if (> *closest-buzzer-dist* 20000000)
+        (draw-string-xy-scaled "NONE" buf 66 row (font-color white) (font-flags shadow kerning large) 0.4)
+        (let* ((dist-meters (/ *closest-buzzer-dist* 4096.0))
+               (tenths (the int (* dist-meters 10))))
+          (draw-string-xy-scaled (string-format "~D.~D" (/ tenths 10) (mod tenths 10)) buf 66 row (font-color white) (font-flags shadow kerning large) 0.4)))
+      (+! row 8))
+    row))
+
+(defun mod-rule-draw-timed-punishments ((buf dma-buffer))
+  (let ((row-count 0))
+    (dotimes (slot 4)
+      (let ((punishment (-> *mod-rule-timed-punishments* slot)))
+        (when punishment
+          (let ((time-left (max 0 (- (-> *mod-rule-timed-punishment-end-times* slot) (current-time))))
+                (row-y (+ 68 (* row-count 10))))
+            (draw-string-xy-scaled (mod-rule-timed-punishment-name punishment) buf 395 row-y (font-color white) (font-flags shadow kerning large) 0.3)
+            (draw-string-xy-scaled (mod-rule-format-time-left time-left) buf 465 (- row-y 2) (font-color white) (font-flags shadow kerning large) 0.4)
+            (+! row-count 1))))))
+  (none))
+
+(defun mod-rule-draw-rolling-slot ((buf dma-buffer))
+  (let ((slot 0) (rolling-id #f) (rolling-left 0))
+    (while (and (< slot 3) (not rolling-id))
+      (let ((pending (-> *mod-rule-pending-slots* slot)))
+        (when pending
+          (set! rolling-id pending)
+          (set! rolling-left (max 0 (- (-> *mod-rule-slot-roll-ready-times* slot) (current-time))))))
+      (+! slot 1))
+    (when rolling-id
+      (draw-string-xy-scaled "NEW RULE IN " buf 10 40 (font-color yellow) (font-flags shadow kerning large) 0.4)
+      (draw-string-xy-scaled (mod-rule-format-time-left rolling-left) buf 96 37 (font-color white) (font-flags shadow kerning large) 0.6)))
+  (none))
+
 (defun global-countdown-draw ()
-;; (return #f)
   (cond
     (*global-countdown-lost?*
      (with-dma-buffer-add-bucket ((buf (-> (current-frame) debug-buf)) (bucket-id debug-no-zbuf))
-       (draw-string-xy "LOSE!"
-                       buf
-                       20
-                       20
-                       (font-color red)
-                       (font-flags shadow kerning))))
+       (draw-string-xy "LOSE!" buf 20 20 (font-color red) (font-flags shadow kerning))))
     (*global-countdown-active?*
      (with-dma-buffer-add-bucket ((global-buf (-> (current-frame) global-buf)) (bucket-id debug-no-zbuf))
        (let* ((total-centis (max 0 (the int (/ (* *global-countdown-remaining-time* 100) (seconds 1)))))
               (total-seconds (the int (/ total-centis 100)))
-              (hours (the int (/ total-seconds 3600)))
-              (minutes (the int (mod (the int (/ total-seconds 60)) 60)))
+              (minutes (the int (/ total-seconds 60)))
               (seconds-part (the int (mod total-seconds 60)))
               (centis (the int (mod total-centis 100))))
-         (draw-string-xy-scaled (string-format "~1,'0D:~2,'0D.~2,'0D"
-                                               minutes
-                                               seconds-part
-                                               centis)
-                                global-buf
-                                400
-                                50
-                                (font-color red)
-                                (font-flags shadow kerning large)
-                                0.8)
-         (let ((timed-draw-count 0)
-               (timed-slot 0))
-           ;; Show all active background timed punishments (up to 4 slots).
-           (while (< timed-slot 4)
-             (let ((timed-punishment (-> *mod-rule-timed-punishments* timed-slot)))
-               (when timed-punishment
-                 (let ((timed-left (max 0 (- (-> *mod-rule-timed-punishment-end-times* timed-slot)
-                                             (current-time))))
-                       (row-y (+ 68 (* timed-draw-count 10))))
-                     (draw-string-xy-scaled (mod-rule-timed-punishment-name timed-punishment)
-                                          global-buf
-                                          395
-                                          row-y
-                                          (font-color white)
-                                          (font-flags shadow kerning large)
-                                          0.3)
-                   (draw-string-xy-scaled (mod-rule-format-time-left timed-left)
-                                          global-buf
-                                          465
-                                          (- row-y 2)
-                                          (font-color white)
-                                          (font-flags shadow kerning large)
-                                          0.4)
-                   (+! timed-draw-count 1))))
-             (+! timed-slot 1)))
-         (let ((slot 0)
-               (active-id #f)
-               (active-punishment #f)
-               (active-goal 0)
-               (active-progress 0)
-             (show-counter-progress #f)
-               (time-left 0)
-               (secondary-id #f)
-               (secondary-punishment #f)
-               (secondary-goal 0)
-               (secondary-progress 0)
-               (secondary-show-counter-progress #f)
-               (secondary-time-left 0)
-               (rolling-id #f)
-               (rolling-left 0))
-           (while (and (< slot 3) (not active-id))
-             (let ((candidate (-> *mod-rule-active-slots* slot)))
-               (when candidate
-                 (set! active-id candidate)
-                 (set! active-punishment (-> *mod-rule-slot-punishments* slot))
-                 (set! active-goal (-> *mod-rule-slot-goals* slot))
-                 (set! active-progress (-> *mod-rule-slot-progress* slot))
-                 (set! show-counter-progress (eq? (mod-rule-goal-kind candidate) 'counter))
-                 (set! time-left (max 0 (- (-> *mod-rule-slot-end-times* slot) (current-time))))))
-             (+! slot 1))
-           ;; The primary scan stops at the first active rule. Continue from
-           ;; there to show a temporary Extra Rule without changing its slot.
-           (while (and (< slot 3) (not secondary-id))
-             (let ((candidate (-> *mod-rule-active-slots* slot)))
-               (when candidate
-                 (set! secondary-id candidate)
-                 (set! secondary-punishment (-> *mod-rule-slot-punishments* slot))
-                 (set! secondary-goal (-> *mod-rule-slot-goals* slot))
-                 (set! secondary-progress (-> *mod-rule-slot-progress* slot))
-                 (set! secondary-show-counter-progress (eq? (mod-rule-goal-kind candidate) 'counter))
-                 (set! secondary-time-left
-                       (max 0 (- (-> *mod-rule-slot-end-times* slot) (current-time))))))
-             (+! slot 1))
-           (when (not active-id)
-             (set! slot 0)
-             (while (and (< slot 3) (not rolling-id))
-               (let ((pending (-> *mod-rule-pending-slots* slot)))
-                 (when pending
-                   (set! rolling-id pending)
-                   (set! rolling-left (max 0 (- (-> *mod-rule-slot-roll-ready-times* slot) (current-time))))))
-               (+! slot 1)))
-           (when active-id
-              ;; RULE NAME
-                 (draw-string-xy-scaled "" global-buf 10 40 (font-color yellow) (font-flags shadow kerning large) 0.5)
-             (draw-string-xy-scaled (mod-rule-name active-id)
-                          global-buf
-                                    10
-                                    40
-                                    (font-color green)
-                                    (font-flags shadow kerning large)
-                                    0.5)
-              ;; RULE DESCRIPTION
-                 (draw-string-xy-scaled "" global-buf 10 50 (font-color yellow) (font-flags shadow kerning large) 0.4)
-             (draw-string-xy-scaled (mod-rule-description active-id)
-                          global-buf
-                                    10
-                                    50
-                                    (font-color white)
-                                    (font-flags shadow kerning large)
-                                    0.4)
-              ;; SELECTED PUNISHMENT
-             (when active-punishment
-                 (draw-string-xy-scaled "PUNISHMENT: " global-buf 10 59 (font-color red) (font-flags shadow kerning large) 0.3)
-               (draw-string-xy-scaled (mod-rule-punishment-name active-punishment)
-                                      global-buf
-                                      80
-                                      59
-                                      (font-color white)
-                                      (font-flags shadow kerning large)
-                                      0.3))
-              ;; COUNTER RULE PROGRESS
-               (when (and (> active-goal 0) show-counter-progress)
-                 (draw-string-xy-scaled "PROGRESS: " global-buf 10 67 (font-color yellow) (font-flags shadow kerning large) 0.3)
-               (draw-string-xy-scaled (string-format "~D/~D" active-progress active-goal)
-                                      global-buf
-                                      80
-                                      67
-                                      (font-color white)
-                                      (font-flags shadow kerning large)
-                                      0.5))
-              ;; TIME LEFT
-                 (draw-string-xy-scaled "" global-buf 10 (if (and (> active-goal 0) show-counter-progress) 80 70) (font-color white) (font-flags shadow kerning large) 0.4)
-             (draw-string-xy-scaled (mod-rule-format-time-left time-left)
-                          global-buf
-                                    10
-                          (if (and (> active-goal 0) show-counter-progress) 74 66)
-                                    (font-color white)
-                                    (font-flags shadow kerning large)
-                            0.5)
-             (when (and *debug-segment*
-                    (> *mod-rule-last-reverted-cell-until* (current-time)))
-              (draw-string-xy-scaled (string-format "Reverted Cell Task: ~D" *mod-rule-last-reverted-cell-task*)
-                              global-buf
-                              10
-                        (if (and (> active-goal 0) show-counter-progress) 92 82)
-                              (font-color red)
-                              (font-flags shadow kerning)
-                              1.0)))
-           (when secondary-id
-             (draw-string-xy-scaled (mod-rule-name secondary-id)
-                                    global-buf
-                                    10
-                                    94
-                                    (font-color green)
-                                    (font-flags shadow kerning large)
-                                    0.5)
-             (draw-string-xy-scaled (mod-rule-description secondary-id)
-                                    global-buf
-                                    10
-                                    104
-                                    (font-color white)
-                                    (font-flags shadow kerning large)
-                                    0.4)
-             (when secondary-punishment
-               (draw-string-xy-scaled "PUNISHMENT: " global-buf 10 113 (font-color red) (font-flags shadow kerning large) 0.3)
-               (draw-string-xy-scaled (mod-rule-punishment-name secondary-punishment)
-                                      global-buf
-                                      80
-                                      113
-                                      (font-color white)
-                                      (font-flags shadow kerning large)
-                                      0.3))
-             (when (and (> secondary-goal 0) secondary-show-counter-progress)
-               (draw-string-xy-scaled "PROGRESS: " global-buf 10 121 (font-color yellow) (font-flags shadow kerning large) 0.3)
-               (draw-string-xy-scaled (string-format "~D/~D" secondary-progress secondary-goal)
-                                      global-buf
-                                      80
-                                      121
-                                      (font-color white)
-                                      (font-flags shadow kerning large)
-                                      0.5))
-             (draw-string-xy-scaled (mod-rule-format-time-left secondary-time-left)
-                                    global-buf
-                                    10
-                                    (if (and (> secondary-goal 0) secondary-show-counter-progress) 129 122)
-                                    (font-color white)
-                                    (font-flags shadow kerning large)
-                                    0.5))
-           (when (and (not active-id) rolling-id)
-             (draw-string-xy-scaled "NEW RULE IN "
-                                    global-buf
-                                    10
-                                    40
-                                    (font-color yellow)
-                                    (font-flags shadow kerning large)
-                                    0.4)
-             (draw-string-xy-scaled (mod-rule-format-time-left rolling-left)
-                                    global-buf
-                                    96
-                                    37
-                                    (font-color white)
-                                    (font-flags shadow kerning large)
-                                    0.6))))))
-    (else
-     (none)))
+         (draw-string-xy-scaled (string-format "~1,'0D:~2,'0D.~2,'0D" minutes seconds-part centis)
+                                global-buf 400 50 (font-color red) (font-flags shadow kerning large) 0.8)
+         (mod-rule-draw-timed-punishments global-buf)
+         (let ((primary (mod-rule-nth-active-slot 0)))
+           (cond
+             ((>= primary 0)
+              (let ((end-row (mod-rule-draw-slot global-buf primary 40)))
+                (when (and *debug-segment* (> *mod-rule-last-reverted-cell-until* (current-time)))
+                  (draw-string-xy-scaled (string-format "Reverted Cell Task: ~D" *mod-rule-last-reverted-cell-task*)
+                                         global-buf 10 (+ end-row 8) (font-color red) (font-flags shadow kerning) 1.0)))
+              (let ((secondary (mod-rule-nth-active-slot (+ primary 1))))
+                (if (>= secondary 0) (mod-rule-draw-slot global-buf secondary 94))))
+             (else (mod-rule-draw-rolling-slot global-buf)))))))
+    (else (none)))
   (none))
 
 (defun global-countdown-add-seconds ((seconds-to-add float))

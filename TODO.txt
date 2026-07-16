@@ -1,10 +1,10 @@
 (mod-rules-reset) on game exit
 improve game over state
-fix loaded orbs not re-appearing after hidden treasure
 finish drought
 
-rename: blu-crate, one-frame
+rename: blue-crate, one-frame
 maybe rename: crate break, keep it low
 maybe add checks for green eco lurkers
 maybe accept dark eco crates for crate break
+maybe add settings for timer placement
 consider replacement for jak rabbit

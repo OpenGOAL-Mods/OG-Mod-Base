@@ -3,7 +3,7 @@
 (bundles "ENGINE.CGO" "GAME.CGO")
 (require "engine/common-obs/collectables.gc")
 
-(define-extern runs-on-crate-break (function process-drawable symbol none))
+(define-extern runs-on-crate-break (function process-drawable symbol int none))
 
 (declare-type crate process-drawable)
 
@@ -646,7 +646,7 @@
         (logior! (-> self fact options) (fact-options instant-collect)))
       (when (not arg0)
         (suspend-for (seconds 0.04))
-        (runs-on-crate-break self 'break)
+        (runs-on-crate-break self 'break 1)
         (logior! (-> self draw status) (draw-status hidden))
         (case (-> self look)
           (('iron) (sound-play "icrate-break"))

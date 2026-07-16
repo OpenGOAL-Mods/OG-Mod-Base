@@ -144,10 +144,10 @@
     (mod-rule-on-enemy-kill (the-as symbol (-> enemy type)) was-flop-kill? was-red-eco-kill?))
   (none))
 
-(defun runs-on-crate-break ((crate process-drawable) (event symbol))
+(defun runs-on-crate-break ((crate process-drawable) (event symbol) (amount int))
   ;; Code here runs when a crate enters its break flow.
   (when (and crate (eq? event 'break))
-    (mod-rule-on-crate-break))
+    (mod-rule-on-crate-break amount))
   (none))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
