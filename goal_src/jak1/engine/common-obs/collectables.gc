@@ -926,7 +926,7 @@
          (when (!= (-> self next-state name) 'pickup)
            (if (and (> argc 0) (-> block param 0)) (move-to-point! (-> self root) (the-as vector (-> block param 0))))
            (logclear! (-> self mask) (process-mask actor-pause))
-           (if #f (go-virtual pickup #f (process->handle *target*)))))
+           (go-virtual pickup #f (process->handle *target*))))
         ((= message 'collide-shape)
          (if (-> block param 0) (restore-collide-with-as (-> self root)) (clear-collide-with-as (-> self root))))
         ((= message 'movie-pos) (set! v0-3 (-> block param 0)) (set! (-> self movie-pos-index) (the-as int v0-3)) v0-3)

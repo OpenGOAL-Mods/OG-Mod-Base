@@ -78,6 +78,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *mod-rule-current-slot* 0)
 (define *mod-rule-last-reverted-cell-task* 0)
 (define *mod-rule-last-reverted-cell-until* 0)
+(define *mod-rule-last-outcome* 'none)
 (define *mod-rule-player-hit-handles* (new 'global 'boxed-array handle 64))
 (define *mod-rule-player-hit-modes* (new 'global 'boxed-array symbol 64))
 (define *mod-rule-player-hit-write-idx* 0)
@@ -86,6 +87,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *mod-rule-timed-punishment-next-ticks* (new 'global 'boxed-array time-frame 4))
 (define *mod-rule-id-count* 31) ;; ***DON'T FORGET TO UPDATE THIS WITH NEW RULES***
 (define *mean-look-clear-time* 0)
+(define *mod-rule-slot-grace-periods* (new 'global 'boxed-array time-frame 3))
 (define *mod-rule-all-cell-tasks*
   (new 'static
        'boxed-array
@@ -292,7 +294,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-flop-this) "LURKERS MAY ONLY BE KILLED WITH GROUND POUNDS.")
     ((eq? id 'complication-brittle-bones) "JUMPS HAVE A 10% CHANCE TO DAMAGE YOU.")
     ((eq? id 'complication-rotten-eggs) "ORBS KILL YOU.")
-    ((eq? id 'complication-eco-allergy) "COLLECTING ECO DAMAGES YOU.")
+    ((eq? id 'complication-eco-allergy) "ECO DAMAGES YOU.")
     ((eq? id 'rule-keep-it-low) "DO NOT JUMP KICK.")
     ((eq? id 'complication-sizeable) "ROLLJUMPS COST 3 ORBS.")
     ((eq? id 'complication-heating-balloons) "COOLING BALLOONS MELT YOU.")
@@ -319,33 +321,32 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-hands-off) (seconds 90)) ;; 90
     ((eq? id 'rule-die) (seconds 20)) ;; 20
     ((eq? id 'rule-lurker-pressure) (seconds 60)) ;; 60
-    ((eq? id 'rule-hitlist) (seconds 60)) ;; 60
-    ((eq? id 'rule-crate-break) (seconds 45)) ;; 45
+    ((eq? id 'rule-hitlist) (seconds 45)) ;; 45
     ((eq? id 'rule-money-pressure) (seconds 30)) ;; 30
     ((eq? id 'rule-fuel-pressure) (seconds 30)) ;; 30
     ((eq? id 'rule-buzzer-pressure) (seconds 45)) ;; 45
     ((eq? id 'rule-flop-this) (seconds 90)) ;; 90
-    ((eq? id 'complication-brittle-bones) (seconds 60)) ;; 60
+    ((eq? id 'complication-brittle-bones) (seconds 75)) ;; 75
     ((eq? id 'complication-rotten-eggs) (seconds 60)) ;; 60
     ((eq? id 'complication-eco-allergy) (seconds 60)) ;; 60
     ((eq? id 'rule-keep-it-low) (seconds 90)) ;; 90
-    ((eq? id 'complication-sizeable) (seconds 90)) ;; 90
-    ((eq? id 'complication-ohko) (seconds 90)) ;; 90
+    ((eq? id 'complication-sizeable) (seconds 60)) ;; 60
+    ((eq? id 'complication-ohko) (seconds 60)) ;; 60
     ((eq? id 'complication-heating-balloons) (seconds 30)) ;; 30
     ((eq? id 'complication-mean-look) (seconds 60)) ;; 60
     ((eq? id 'complication-disassociate) (seconds 60)) ;; 60
     ((eq? id 'complication-bus-driver) (seconds 30)) ;; 30
     ((eq? id 'complication-wings-tied) (seconds 60)) ;; 60
-    ((eq? id 'rule-survivor) (seconds 90)) ;; 90
-    ((eq? id 'complication-fuel-shortage) (seconds 30)) ;; 30
-    ((eq? id 'complication-hidden-treasure) (seconds 90)) ;; 90
-    ((eq? id 'complication-drought) (seconds 60)) ;; 60
-    ((eq? id 'complication-jak-rabbit) (seconds 90)) ;; 90
+    ((eq? id 'rule-survivor) (seconds 75)) ;; 75
+    ((eq? id 'complication-fuel-shortage) (seconds 45)) ;; 45
+    ((eq? id 'complication-hidden-treasure) (seconds 60)) ;; 60
+    ((eq? id 'complication-drought) (seconds 45)) ;; 45
+    ((eq? id 'complication-jak-rabbit) (seconds 60)) ;; 60
     ((eq? id 'rule-red-kill) (seconds 45)) ;; 45
     ((eq? id 'rule-blue-crate) (seconds 60)) ;; 60
     ((eq? id 'complication-yellow-pilled) (seconds 60)) ;; 60
     ((eq? id 'rule-one-frame) (seconds 45)) ;; 45
-    ((eq? id 'rule-distancing) (seconds 60)) ;; 60
+    ((eq? id 'rule-distancing) (seconds 75)) ;; 75
     (else (seconds 30))))
 
 (defun mod-rule-counter-goal ((id symbol))
@@ -479,7 +480,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (set! (-> *mod-rule-slot-goals* slot) 0)
     (set! (-> *mod-rule-slot-progress* slot) 0)
     (set! (-> *mod-rule-slot-end-times* slot) 0)
-    (set! (-> *mod-rule-slot-roll-ready-times* slot) 0))
+    (set! (-> *mod-rule-slot-roll-ready-times* slot) 0)
+    (set! (-> *mod-rule-slot-grace-periods* slot) 0))
   (none))
 
 (defun mod-rule-punishment-duration ((punishment symbol))
@@ -780,13 +782,16 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
     ;; Count available punishments
     (when can-countdown
-      (+! count 1)) ;; Countdown
+      (+! count 1))
+    
     (when can-fall-damage
-      (+! count 1)) ;; Fall Damage
+      (+! count 1))
+    
     (when can-trip
-      (+! count 1)) ;; Trip
+      (+! count 1))
+    
     ;; (when can-blind
-    ;;   (+! count 1)) ;; Blind
+    ;;   (+! count 1))
 
     (when (and has-money can-money)
       (+! count 1))
@@ -873,7 +878,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
      (set! (-> *TARGET-bank* swim-jump-height-min) (meters 10))
      (set! (-> *TARGET-bank* swim-jump-height-max) (meters 10))
      (set! (-> *TARGET-bank* tube-jump-height-min) (meters 3.5))
-     (set! (-> *TARGET-bank* tube-jump-height-max) (meters 5)))
+     (set! (-> *TARGET-bank* tube-jump-height-max) (meters 5))
+     (set! (-> *FLUT-bank* jump-height-min) (meters 10))
+     (set! (-> *FLUT-bank* jump-height-max) (meters 14))
+     (set! (-> *FLUT-bank* double-jump-height-min) (meters 2))
+     (set! (-> *FLUT-bank* double-jump-height-max) (meters 4)))
     
     (else
      (none)))
@@ -910,7 +919,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
            (set! (-> *TARGET-bank* swim-jump-height-min) (meters 5))
            (set! (-> *TARGET-bank* swim-jump-height-max) (meters 5))
            (set! (-> *TARGET-bank* tube-jump-height-min) (meters 1.75))
-           (set! (-> *TARGET-bank* tube-jump-height-max) (meters 2.5))))))
+           (set! (-> *TARGET-bank* tube-jump-height-max) (meters 2.5))
+           (set! (-> *FLUT-bank* jump-height-min) (meters 5))
+           (set! (-> *FLUT-bank* jump-height-max) (meters 7))
+           (set! (-> *FLUT-bank* double-jump-height-min) (meters 1))
+           (set! (-> *FLUT-bank* double-jump-height-max) (meters 2))))))
     (mod-rule-clear-slot slot))
   (none))
 
@@ -918,6 +931,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (when (and (>= slot 0) (< slot 3) id)
     (mod-rule-deactivate-slot slot)
     (set! (-> *mod-rule-active-slots* slot) id)
+    (set! *mod-rule-last-outcome* 'none)
     (sound-play "warning")
     (set! (-> *mod-rule-slot-goals* slot) (mod-rule-counter-goal id))
     (set! (-> *mod-rule-slot-progress* slot) 0)
@@ -926,6 +940,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
             (mod-rule-random-available-punishment))
       (set! (-> *mod-rule-slot-punishments* slot) #f))
     (set! (-> *mod-rule-slot-end-times* slot) (+ (current-time) (mod-rule-duration id)))
+    (set! (-> *mod-rule-slot-grace-periods* slot) (+ (current-time) (seconds 1))) ;; NEW: start 1 second grace period
     (mod-rule-on-activate id))
   (none))
 
@@ -1128,6 +1143,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (eq? level 'citadel)
       (eq? level 'ogre)
       (eq? level 'finalboss)
+      (eq? level 'lavatube)
       (eq? level 'maincave)
       (eq? level 'robocave)
       (eq? level 'darkcave)))
@@ -1155,227 +1171,132 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       (eq? level 'citadel)))
 
 (defun mod-rule-roll-priority ((id symbol))
-  ;; Return 0 to block a roll, 5 for normal odds, and larger values to make it more likely.
-(let ((level-name (the symbol (current-level-name)))
-      (on-racer (target-on-racer?))
-      (on-flut (target-on-flut?))
+  (let ((level-name (the symbol (current-level-name)))
+        (on-racer (target-on-racer?))
+        (on-flut (target-on-flut?))
         (fuel-left (- (max-fuel-current-level) (collected-fuel-current-level)))
         (money-left (- (max-money-current-level) (collected-money-current-level)))
-        (buzzer-left (- 7 (collected-buzzer-current-level))))
+        (buzzer-left (- 7 (collected-buzzer-current-level)))
+        (is-minigame (or (target-fishing?) (target-billy-game?)))
+        (is-klaww (and (not (target-on-racer?)) (eq? (the symbol (current-level-name)) 'ogre))))
 
     (cond
-      ;; Resource rules
+      ;; Resources
       ((eq? id 'rule-buzzer-pressure)
-       (if (or (< buzzer-left 1)
-               (mod-rule-active? 'rule-distancing)
-               (target-fishing?)
-               (target-billy-game?)
-               (eq? level-name 'jungleb)
-               (eq? level-name 'finalboss)
-               (eq? level-name 'sunkenb))
-         0
-         2))
+       (if (or (< buzzer-left 1) (mod-rule-active? 'rule-distancing) is-minigame is-klaww
+               (eq? level-name 'jungleb) (eq? level-name 'finalboss) (eq? level-name 'sunkenb))
+           0 5))
 
       ((eq? id 'rule-distancing)
-       (if (or (< buzzer-left 1)
-               (mod-rule-active? 'rule-buzzer-pressure)
-               (eq? level-name 'jungleb)
-               (eq? level-name 'finalboss))
-         0
-         5))
+       (if (or (< buzzer-left 1) (mod-rule-active? 'rule-buzzer-pressure)
+               (eq? level-name 'jungleb) (eq? level-name 'finalboss))
+           0 10))
 
       ((eq? id 'rule-blue-crate)
-        (if (no-blue-eco-level? level-name)
-          0
-          5))
+       (if (no-blue-eco-level? level-name) 0 10))
 
       ((eq? id 'rule-fuel-pressure)
-      (cond
-        ((or (< fuel-left 1)
-              (target-fishing?)
-              (target-billy-game?)
-              (eq? level-name 'jungleb)
-              (eq? level-name 'finalboss))
-          0)
-        ((or (eq? level-name 'village1)
-              (eq? level-name 'village2)
-              (eq? level-name 'village3)
-              (mod-rule-active? 'complication-fuel-shortage))
-          1)
-        (else 2)))
-        
+       (cond
+         ((or (< fuel-left 1) is-minigame is-klaww (eq? level-name 'jungleb) (eq? level-name 'finalboss)) 0)
+         ((or (eq? level-name 'village1) (eq? level-name 'village2) (eq? level-name 'village3)
+              (mod-rule-active? 'complication-fuel-shortage)) 3)
+         (else 5)))
+
       ((eq? id 'rule-money-pressure)
-       (if (or (< money-left 30)
-               (target-fishing?)
-               (target-billy-game?)
-               (eq? level-name 'finalboss)
+       (if (or (< money-left 30) is-minigame is-klaww (eq? level-name 'finalboss)
                (mod-rule-active? 'complication-hidden-treasure))
-         0
-         2))
+           0 6))
 
       ((eq? id 'complication-hidden-treasure)
-      (if (or (and (not on-racer) (eq? level-name 'ogre))
-              (eq? level-name 'finalboss))
-          0
-          5))
+       (if (or is-klaww (eq? level-name 'finalboss))
+           0 10))
 
-      ;; Enemy rules
-      ((or (eq? id 'complication-mean-look)
-           (eq? id 'rule-lurker-pressure))
+      ;; Enemies
+      ((or (eq? id 'complication-mean-look) (eq? id 'rule-lurker-pressure))
        (cond
-         ((sparse-lurker-level? level-name)
-          0)
-         ((eq? id 'complication-mean-look)
-          5)
-         ((target-fishing?)
-          0)
-         (else
-          2)))
+         ((sparse-lurker-level? level-name) 0)
+         ((eq? id 'complication-mean-look) 10)
+         ((or (target-fishing?) (eq? level-name 'finalboss)) 0)
+         (else 6)))
 
       ((eq? id 'rule-hitlist)
-       (if (or (sparse-hitlist-level? level-name)
-               (target-billy-game?))
-         0
-         5))
+       (if (or (sparse-hitlist-level? level-name) is-minigame) 0 10))
 
       ((eq? id 'rule-flop-this)
-       (if (or (eq? level-name 'training)
-               (eq? level-name 'lavatube)
-               (eq? level-name 'village3)
-               (eq? level-name 'village2)
-               (eq? level-name 'village1)
-               (eq? level-name 'rolling)
-               (and (eq? level-name 'ogre) on-racer)
-               (eq? level-name 'finalboss)
-               (target-billy-game?))
-         0
-         5))
+       (if (or (eq? level-name 'training) (eq? level-name 'lavatube)
+               (eq? level-name 'village3) (eq? level-name 'village2) (eq? level-name 'village1)
+               (eq? level-name 'rolling) is-klaww
+               (eq? level-name 'finalboss) (target-billy-game?))
+           0 10))
 
       ((eq? id 'rule-red-kill)
-              (if (or (sparse-lurker-level? level-name)
-                      (not (red-eco-level? level-name))
-                      (target-fishing?)
-                      (target-billy-game?))
-                0
-                0))
-                
+       (if (or (sparse-lurker-level? level-name) (not (red-eco-level? level-name))
+               is-minigame)
+           0 0))
+
       ((eq? id 'complication-yellow-pilled)
-        (if (yellow-eco-level? level-name)
-          2
-          0))
+       (cond
+         (is-klaww 20)
+         ((yellow-eco-level? level-name) 5)
+         (else 0)))
 
       ;; Crates
       ((eq? id 'rule-crate-break)
-       (if (sparse-crate-level? level-name)
-         0
-         5))
+       (if (or is-klaww is-minigame (sparse-crate-level? level-name)) 0 10))
 
-      ;; Movement rules
-      ((or (eq? id 'rule-grounded)
-           (eq? id 'rule-die))
-      (cond
-        ((or (eq? level-name 'training)
-              (eq? level-name 'finalboss))
-          0)
+      ;; Movement
+      ((eq? id 'complication-jak-rabbit)
+       (if on-racer 0 8))
 
-        ((eq? id 'rule-grounded)
-          5)
-
-        ((or (eq? level-name 'beach)
-              (eq? level-name 'rolling))
-          1)
-
-        ;; don't roll die
-        ((or (target-fishing?)
-             (target-billy-game?)
-             (mod-rule-active? 'rule-survivor)
-             )
-          0)
-
-        (else
-          2)))
+      ((or (eq? id 'rule-grounded) (eq? id 'rule-die))
+       (cond
+         ((or (eq? level-name 'training) (eq? level-name 'finalboss)) 0)
+         ((eq? id 'rule-grounded) 10)
+         ((or (eq? level-name 'beach) (eq? level-name 'rolling) is-klaww) 2)
+         ((or is-minigame (mod-rule-active? 'rule-survivor)) 0)
+         (else 4)))
 
       ((eq? id 'rule-survivor)
-       (if (mod-rule-active? 'rule-die)
-         0
-         5))
+       (if (or (mod-rule-active? 'rule-die) (eq? level-name 'training) (eq? level-name 'village1))
+           0 8))
 
-      ((or (eq? id 'rule-keep-it-low)
-           (eq? id 'complication-sizeable)
-           (eq? id 'rule-hands-off))
-       (if (or on-racer
-               on-flut
-               (sole-zoomer-level? level-name))
-         0
-         5))
+      ((or (eq? id 'rule-keep-it-low) (eq? id 'complication-sizeable) (eq? id 'rule-hands-off))
+       (if (or on-racer on-flut (sole-zoomer-level? level-name)) 0 10))
 
-      ;; Special complications
-
+      ;; Special
       ((eq? id 'rule-one-frame)
-       (if (or (not (launcher-level? level-name))
-               (target-billy-game?)
-               (target-fishing?))
-        0
-        2))
+       (if (or (not (launcher-level? level-name)) is-minigame) 0 5))
 
       ((eq? id 'complication-drought)
-      (cond
-        ((or (eq? level-name 'jungleb)
-              (eq? level-name 'firecanyon)
-              (eq? level-name 'lavatube)
-              (eq? level-name 'citadel)
-              (eq? level-name 'ogre)
-              (eq? level-name 'finalboss)
-              (eq? level-name 'village3)
-              (eq? level-name 'snow)
-              (eq? level-name 'robocave))
-          0)
-        ((or (eq? level-name 'maincave)
-              (eq? level-name 'swamp)
-              (eq? level-name 'rolling))
-          2)
-        (else 4)))
+       (cond
+         ((or (eq? level-name 'jungleb) (eq? level-name 'firecanyon) (eq? level-name 'lavatube)
+              (eq? level-name 'citadel) (eq? level-name 'ogre) (eq? level-name 'finalboss)
+              (eq? level-name 'village3) (eq? level-name 'snow) (eq? level-name 'robocave)) 0)
+         ((or (eq? level-name 'maincave) (eq? level-name 'swamp) (eq? level-name 'rolling)) 3)
+         (else 8)))
 
       ((eq? id 'complication-eco-allergy)
-       (if (eq? level-name 'village3)
-         0
-         5))
+       (cond
+         ((eq? level-name 'village3) 0)
+         ((eq? level-name 'finalboss) 2)
+         (else 8)))
 
-      ((eq? id 'rule-survivor)
-       (if (or (eq? level-name 'training)
-               (eq? level-name 'village1))
-         0
-         5))
       ((eq? id 'complication-heating-balloons)
-       (if (or (eq? level-name 'firecanyon)
-               (and (eq? level-name 'lavatube) on-racer))
-         10
-         0))
+       (if (or (eq? level-name 'firecanyon) (and (eq? level-name 'lavatube) on-racer)) 25 0))
 
       ((eq? id 'complication-bus-driver)
-       (if (or (eq? level-name 'firecanyon)
-               on-racer)
-         10
-         0))
+       (if (or (eq? level-name 'firecanyon) on-racer) 25 0))
 
       ((eq? id 'complication-rotten-eggs)
-       (if (eq? level-name 'finalboss)
-         0
-         5))
+       (if (eq? level-name 'finalboss) 0 10))
 
-      ((or (eq? id 'complication-disassociate)
-           (eq? id 'complication-wings-tied))
-       (if on-flut 8 0))
+      ((or (eq? id 'complication-disassociate) (eq? id 'complication-wings-tied))
+       (if on-flut 20 0))
 
       ((eq? id 'complication-fuel-shortage)
-       (if (or (eq? level-name 'training)
-              ;;  (mod-rule-active? 'complication-fuel-pressure)
-               )
-         0
-         3))
+       (if (or (eq? level-name 'training) (eq? level-name 'finalboss)) 0 5))
 
-      (else
-       5))))
+      (else 10))))
 
 ;; (defun mod-rule-can-roll-id? ((id symbol))
 ;;   (> (mod-rule-roll-priority id) 0))
@@ -1389,6 +1310,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rule-pick-weighted-id ()
   (let ((idx 0)
         (total 0))
+    ;; Calculate total weight
     (while (< idx *mod-rule-id-count*)
       (let ((candidate (mod-rule-id-from-index idx)))
         (when (and candidate
@@ -1398,41 +1320,49 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                 (recent-factor (mod-rule-recent-roll-factor candidate))
                 (weight 0))
             (set! weight (if (> priority 0) (* priority recent-factor) 0))
-            (when *debug-segment*
-              (format #t "Weighted roll candidate ~S: priority=~D recent-factor=~D effective=~D~%"
-                      candidate
-                      priority
-                      recent-factor
-                      weight)
-                      )
             (+! total weight))))
       (+! idx 1))
-    (when *debug-segment*
-      ;; (format #t "Weighted roll total: ~D~%" total)
-      )
-    (if (> total 0)
-      (let ((roll (knuth-rand-int-range 0 total))
-            (idx 0)
-            (chosen #f))
-        (while (and (< idx *mod-rule-id-count*) (not chosen))
-          (let ((candidate (mod-rule-id-from-index idx)))
+
+    ;; Debug Print
+    (when (and *debug-segment* (> total 0))
+      (format #t "--- Weighted Roll Debug (Total: ~D) ---~%" total)
+      (let ((debug-idx 0))
+        (while (< debug-idx *mod-rule-id-count*)
+          (let ((candidate (mod-rule-id-from-index debug-idx)))
             (when (and candidate
                        (not (mod-rule-active? candidate))
                        (not (mod-rule-pending? candidate)))
-              (let ((priority (mod-rule-roll-priority candidate))
-                    (recent-factor (mod-rule-recent-roll-factor candidate))
-                    (weight 0))
-                (set! weight (if (> priority 0) (* priority recent-factor) 0))
-                (when (> weight 0)
-                  (if (< roll weight)
-                    (set! chosen candidate)
-                    (set! roll (- roll weight)))))))
-          (+! idx 1))
-        (when *debug-segment*
-          (format #t "Weighted roll chose ~S from total=~D~%" chosen total)
-          )
-        chosen)
-      #f)))
+              (let* ((priority (mod-rule-roll-priority candidate))
+                     (recent-factor (mod-rule-recent-roll-factor candidate))
+                     (weight (if (> priority 0) (* priority recent-factor) 0)))
+                (let ((percent (* 100.0 (/ (the float weight) (the float total)))))
+                  (format #t "  ~S: Weight=~D (Prio: ~D, Rec: ~D) | ~2,1f%~%"
+                          candidate weight priority recent-factor percent)))))
+          (+! debug-idx 1))))
+
+    ;; Selection
+    (if (> total 0)
+        (let ((roll (knuth-rand-int-range 0 total))
+              (idx 0)
+              (chosen #f))
+          (while (and (< idx *mod-rule-id-count*) (not chosen))
+            (let ((candidate (mod-rule-id-from-index idx)))
+              (when (and candidate
+                         (not (mod-rule-active? candidate))
+                         (not (mod-rule-pending? candidate)))
+                (let ((priority (mod-rule-roll-priority candidate))
+                      (recent-factor (mod-rule-recent-roll-factor candidate))
+                      (weight 0))
+                  (set! weight (if (> priority 0) (* priority recent-factor) 0))
+                  (when (> weight 0)
+                    (if (< roll weight)
+                        (set! chosen candidate)
+                        (set! roll (- roll weight)))))))
+            (+! idx 1))
+          (when *debug-segment*
+            (format #t "Weighted roll chose ~S~%" chosen))
+          chosen)
+        #f)))
 
 (defun mod-rule-reroll-slot ((slot int) (apply-buffer symbol))
   (mod-rule-deactivate-slot slot)
@@ -1458,6 +1388,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
                 (set! (-> *mod-rule-slot-progress* slot) new-progress)
                 (when (>= new-progress goal)
                 (sound-play "slider2001")
+                (set! *mod-rule-last-outcome* 'success)
                   (mod-rule-finish-slot slot #t)))
               (set! (-> *mod-rule-slot-progress* slot)
                     (+ (-> *mod-rule-slot-progress* slot) amount)))))
@@ -1571,7 +1502,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (cond
     ((eq? punishment 'punishment-money) "LOSE 30 ORBS")
     ((eq? punishment 'punishment-warp) "WARP TO GEYSER ROCK")
-    ((eq? punishment 'punishment-countdown) "LOSE 20 SECONDS")
+    ((eq? punishment 'punishment-countdown) "LOSE 30 SECONDS")
     ((eq? punishment 'punishment-revert-cell) "REVERT A RANDOM CELL")
     ((eq? punishment 'punishment-extra-rule) "EXTRA RULE")
     ((eq? punishment 'punishment-blind) "BLIND FOR 10 SECONDS")
@@ -1604,7 +1535,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
      (initialize! *game-info* 'die (the-as game-save #f) (the-as string #f)))
     ((eq? punishment 'punishment-countdown)
      (when *global-countdown-active?*
-       (set! *global-countdown-remaining-time* (+ *global-countdown-remaining-time* (- (seconds 20))))))
+       (set! *global-countdown-remaining-time* (+ *global-countdown-remaining-time* (- (seconds 30))))))
     ((eq? punishment 'punishment-revert-cell)
      (mod-rule-revert-random-collected-cell))
     ((eq? punishment 'punishment-blind)
@@ -1619,13 +1550,18 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
      (none)))
   (none))
 
+(defun mod-rule-slot-in-grace-period? ((slot int))
+  (and (>= slot 0) (< slot 3) (< (current-time) (-> *mod-rule-slot-grace-periods* slot))))
+
 (defun mod-rule-handle-slot-failure ((slot int) (punishment symbol))
-  (sound-play "caught-eel")
-  (if (eq? punishment 'punishment-extra-rule)
-    (mod-rule-apply-extra-rule-punishment slot)
-    (begin
-      (mod-rule-apply-punishment punishment)
-      (mod-rule-finish-slot slot #t)))
+  (when (not (mod-rule-slot-in-grace-period? slot))
+    (sound-play "caught-eel")
+    (set! *mod-rule-last-outcome* 'failed)
+    (if (eq? punishment 'punishment-extra-rule)
+      (mod-rule-apply-extra-rule-punishment slot)
+      (begin
+        (mod-rule-apply-punishment punishment)
+        (mod-rule-finish-slot slot #t))))
   (none))
 
 (defun mod-rule-handle-slot-expiry ((slot int))
@@ -1645,6 +1581,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           ;; State resets were moved to mod-rule-deactivate-slot
           (when (and (= id (-> *mod-rule-active-slots* slot))
                      (or (<= goal 0) (>= progress goal) (not punishment)))
+            (set! *mod-rule-last-outcome* 'success)
             (mod-rule-finish-slot slot #t))))))
   (none))
 
@@ -1945,7 +1882,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          (row y))
     (draw-string-xy-scaled (mod-rule-name id) buf 10 row (font-color green) (font-flags shadow kerning large) 0.5)
     (+! row 10)
-    (draw-string-xy-scaled (mod-rule-description id) buf 10 row (font-color white) (font-flags shadow kerning large) 0.4)
+    (draw-string-xy-scaled (mod-rule-description id) buf 10 row (font-color white) (font-flags shadow kerning large) 0.35)
     (+! row 9)
     (when punishment
       (draw-string-xy-scaled "PUNISHMENT: " buf 10 row (font-color red) (font-flags shadow kerning large) 0.3)
@@ -1989,8 +1926,13 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           (set! rolling-left (max 0 (- (-> *mod-rule-slot-roll-ready-times* slot) (current-time))))))
       (+! slot 1))
     (when rolling-id
-      (draw-string-xy-scaled "NEW RULE IN " buf 10 40 (font-color yellow) (font-flags shadow kerning large) 0.4)
-      (draw-string-xy-scaled (mod-rule-format-time-left rolling-left) buf 96 37 (font-color white) (font-flags shadow kerning large) 0.6)))
+      (cond
+        ((eq? *mod-rule-last-outcome* 'success)
+         (draw-string-xy-scaled "GOOD JOB!" buf 10 50 (font-color green) (font-flags shadow kerning large) 0.4))
+        ((eq? *mod-rule-last-outcome* 'failed)
+         (draw-string-xy-scaled "RULE BROKEN!" buf 10 50 (font-color red) (font-flags shadow kerning large) 0.4)))
+      (draw-string-xy-scaled "NEW RULE IN " buf 10 60 (font-color yellow) (font-flags shadow kerning large) 0.4)
+      (draw-string-xy-scaled (mod-rule-format-time-left rolling-left) buf 96 57 (font-color white) (font-flags shadow kerning large) 0.6)))
   (none))
 
 (defun global-countdown-draw ()
@@ -2068,11 +2010,12 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (set! *global-countdown-started?* #f)
   (set! *global-countdown-active?* #f)
   (set! *global-countdown-lost?* #f)
-  (set! *global-countdown-remaining-time* (seconds 120)) ;; global timer start
+  (set! *global-countdown-remaining-time* (seconds 60)) ;; global timer start
   (set! *global-countdown-last-update-time* (current-time))
   (set! *mod-rule-last-update-time* (current-time))
   (set! *mod-rule-last-reverted-cell-task* 0)
   (set! *mod-rule-last-reverted-cell-until* 0)
+  (set! *mod-rule-last-outcome* 'none)
   (none))
 
 (defun global-countdown-start ()

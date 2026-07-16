@@ -510,7 +510,7 @@
             (* (-> *RACER-bank* boost-curve-max)
                (sin (* 32768.0 (/ (the float v1-218) (the float (-> self racer boost-duration)))))))
       (set! (-> self racer boost-curve) 0.0)))
-      (format #t "Speed: ~F~%" (-> self control ctrl-xz-vel))
+      ;; (format #t "Speed: ~F~%" (-> self control ctrl-xz-vel))
       (when (and (or (not (cpad-hold? (-> self control cpad number) x))
                      (< (-> self control ctrl-xz-vel) 81500.0))
                  (>= (- (current-time) *racer-start-time*) (seconds 3)))

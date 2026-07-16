@@ -1,18 +1,14 @@
 **why the hell do enemies randomly despawn**
 
-vent clip????
-loading does weird stuff to timer?
-
 (mod-rules-reset) on game exit
 improve game over state
 finish drought
-remove stay alive in geyser
-brittle to 10%, maybe make longer
-disable jak rabbit on racer and double flut jumps
+alert sound on last 10 seconds, find a replacement for new rule
+use continue points in filters
 
-rename: blue-crate, one-frame
-maybe rename: crate break, keep it low
+flut can still grab fly cells during wings tied
+
+maybe rename: crate break, keep it low, one frame
 maybe add checks for green eco lurkers
-maybe accept dark eco crates for crate break
 maybe add settings for timer placement
 consider replacement for jak rabbit
