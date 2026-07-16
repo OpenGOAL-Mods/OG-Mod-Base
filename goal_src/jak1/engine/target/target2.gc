@@ -7,6 +7,7 @@
 (declare-type first-person-hud process)
 
 ;; DECOMP BEGINS
+(define *last-launch-time* 0)
 
 (defstate target-load-wait (target)
   :event
@@ -1639,6 +1640,7 @@
         (target-standard-event-handler proc argc message block)))
   :code
     (behavior ((arg0 float) (arg1 symbol) (arg2 vector) (arg3 int))
+    (set! *last-launch-time* (current-time))
       (set-time! (-> self state-time))
       (set! (-> self control mod-surface) *turn-around-mods*)
       (ja-channel-push! 1 (seconds 0.15))

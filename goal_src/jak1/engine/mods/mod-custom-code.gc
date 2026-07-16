@@ -33,7 +33,11 @@
   (when *debug-segment*
     (when (and (cpad-pressed? 0 circle)
               (cpad-hold? 0 right))
-      (mod-rule-reroll-current #f))
+      (mod-rule-reroll-slot 0 #f))
+
+    (when (and (cpad-pressed? 0 circle)
+              (cpad-hold? 0 left))
+      (mod-rule-reroll-slot 1 #f))
 
     (when (and (cpad-pressed? 0 circle)
               (cpad-hold? 0 l1))
@@ -56,6 +60,7 @@
   (when *debug-segment*
     (orb-placer-maintenance))
   (mod-rule-trigger-ohko)
+  (mod-rule-trigger-distancing)
   (none))
 
 (defun runs-on-orb-pickup ((parent process-tree))
@@ -134,20 +139,9 @@
   (none))
 
 (defun runs-on-enemy-death ((enemy process-drawable))
-
-  ;; (format #t "DEBUG: Enemy '~A' entered death state.~%" (-> enemy type))
-  ;; (if *target*
-  ;;     (format #t "DEBUG: *target* state at time of death: '~A'~%" (-> *target* state name))
-  ;;     (format #t "DEBUG: *target* is currently #f (does not exist).~%")
-  ;;     )
-
-  (let ((was-flop-kill? (mod-rule-enemy-killed-by-flop? enemy)))
-    
-    ;; (if was-flop-kill?
-    ;;     (format #t "Valid flop kill!~%~%")
-    ;;     (format #t "Not a flop kill.~%~%"))
-
-    (mod-rule-on-enemy-kill (the-as symbol (-> enemy type)) was-flop-kill?)) 
+  (let ((was-flop-kill? (mod-rule-enemy-killed-by-flop? enemy))
+        (was-red-eco-kill? (mod-rule-enemy-killed-by-red-eco? enemy)))
+    (mod-rule-on-enemy-kill (the-as symbol (-> enemy type)) was-flop-kill? was-red-eco-kill?))
   (none))
 
 (defun runs-on-crate-break ((crate process-drawable) (event symbol))

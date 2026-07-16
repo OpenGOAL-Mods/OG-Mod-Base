@@ -1,6 +1,10 @@
-probably rename: battery bound
+(mod-rules-reset) on game exit
+improve game over state
+fix loaded orbs not re-appearing after hidden treasure
 finish drought
 
-(mod-rules-reset) on game exit
-
-improve game over state
+rename: blu-crate, one-frame
+maybe rename: crate break, keep it low
+maybe add checks for green eco lurkers
+maybe accept dark eco crates for crate break
+consider replacement for jak rabbit

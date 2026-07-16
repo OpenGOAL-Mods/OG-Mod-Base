@@ -11,6 +11,10 @@
 
 ;; DECOMP BEGINS
 
+(define-extern *buzzer-dist-tracker* (float))
+(define-extern *closest-buzzer-dist* (float))
+(define-extern mod-rule-trigger-blue-crate (function none))
+
 (defskelgroup *crate-barrel-sg*
   crate
   crate-barrel-lod0-jg
@@ -585,6 +589,7 @@
                        (f30-0 (vector-vector-distance (-> gp-2 world-sphere) (-> a1-3 world-sphere))))
                   (when (and (< f30-0 (-> *FACT-bank* suck-suck-dist)) (!= (-> self defense) 'steel))
                     (logior! (-> self fact options) (fact-options can-collect))
+                    (mod-rule-trigger-blue-crate)
                     (go-virtual die #f 0))
                   (when (rand-vu-percent? 0.5)
                     (let ((s5-0 (new 'stack-no-clear 'vector)))
@@ -933,12 +938,20 @@
   :virtual #t
   :trans
     (behavior ()
-      (when (and (and *target* (>= 327680.0 (vector-vector-distance (-> self root trans) (-> *target* control trans))))
-                 (time-elapsed? (-> self state-time) (seconds 1.5))
-                 (rand-vu-percent? 0.03))
-        (spawn (-> self part) (-> self root trans))
-        (activate! (-> self smush) 0.2 90 150 1.0 1.0)
-        (logclear! (-> self mask) (process-mask sleep-code)))
+      (when *target*
+        (let ((current-frame (-> *display* base-frame-counter)))
+          (when (!= *closest-buzzer-frame* current-frame)
+            (set! *closest-buzzer-frame* current-frame)
+            (set! *closest-buzzer-dist* 1000000000.0))
+          (let ((current-dist (vector-vector-distance (-> self root trans) (-> *target* control trans))))
+            (when (< current-dist *closest-buzzer-dist*)
+              (set! *closest-buzzer-dist* current-dist))
+            (when (and (>= 327680.0 current-dist)
+                       (time-elapsed? (-> self state-time) (seconds 1.5))
+                       (rand-vu-percent? 0.03))
+              (spawn (-> self part) (-> self root trans))
+              (activate! (-> self smush) 0.2 90 150 1.0 1.0)
+              (logclear! (-> self mask) (process-mask sleep-code))))))
       (if (nonzero? (-> self sound)) (update! (-> self sound)))
       (if (and *target* (>= (-> *target* fact buzzer) 6.0)) (spool-push *art-control* (-> self victory-anim name) 0 self -99.0)))
   :code

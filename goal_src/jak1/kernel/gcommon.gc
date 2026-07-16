@@ -48,6 +48,12 @@
 
 (defconstant BASIC_OFFSET 4)
 
+;; The distance tracker
+(define *closest-buzzer-dist* 1000000000.0)
+
+;; Tracks the last frame a crate updated the distance (using int instead of time-frame)
+(define *closest-buzzer-frame* (the-as int 0))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

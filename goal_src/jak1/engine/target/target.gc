@@ -33,6 +33,9 @@
 (define-extern mod-rule-trigger-keep-it-low (function none))
 (define-extern mod-rule-trigger-sizeable (function symbol))
 (define-extern mod-rule-trigger-hands-off (function none))
+(define-extern mod-trigger-rule-one-frame (function none))
+(define-extern mod-rule-counter-add-progress (function symbol int none))
+(define-extern *last-launch-time* (int))
 
 ;; DECOMP BEGINS
 
@@ -1416,8 +1419,8 @@
           (else (target-dangerous-event-handler proc argc message block)))))
   :enter
     (behavior ((arg0 symbol))
-            (mod-rule-trigger-brittle-bones)
-        (mod-rule-trigger-grounded)
+    (if (< (- (current-time) *last-launch-time*) (seconds 1.0))
+        (mod-rule-counter-add-progress 'rule-one-frame 1))
       (set-time! (-> self state-time))
       (logclear! (-> self control status) (cshape-moving-flags onsurf onground tsurf))
       (target-start-attack)

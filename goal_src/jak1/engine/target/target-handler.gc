@@ -248,8 +248,12 @@
     (set! (-> v1-0 param 2) (the-as uint arg3))
     (set! (-> v1-0 param 3) (the-as uint arg4))
     (let ((gp-0 (send-event-function arg0 v1-0)))
-      (when (and gp-0 (!= gp-0 'push))
-        (mod-rule-record-player-hit arg0 (the-as symbol arg1))
+          (when (and gp-0 (!= gp-0 'push))
+            (mod-rule-record-player-hit arg0
+                                        (if (and (= (-> self fact eco-type) (pickup-type eco-red))
+                                                (>= (-> self fact eco-level) 1.0))
+                                          'eco-red
+                                          (the-as symbol arg1)))
         (let ((v1-5 (-> self control danger-mode)))
           (cond
             ((or (= v1-5 'spin) (= v1-5 'spin-air))
