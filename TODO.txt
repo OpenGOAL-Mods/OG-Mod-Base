@@ -1,6 +1,14 @@
+**why the hell do enemies randomly despawn**
+
+vent clip????
+loading does weird stuff to timer?
+
 (mod-rules-reset) on game exit
 improve game over state
 finish drought
+remove stay alive in geyser
+brittle to 10%, maybe make longer
+disable jak rabbit on racer and double flut jumps
 
 rename: blue-crate, one-frame
 maybe rename: crate break, keep it low

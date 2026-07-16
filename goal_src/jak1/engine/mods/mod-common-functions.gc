@@ -289,8 +289,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-money-pressure) "COLLECT 20 ORBS.")
     ((eq? id 'rule-fuel-pressure) "COLLECT A POWER CELL.")
     ((eq? id 'rule-buzzer-pressure) "COLLECT 2 SCOUT FLIES.")
-    ((eq? id 'rule-flop-this) "YOU MAY ONLY KILL LURKERS WITH GROUND POUNDS.")
-    ((eq? id 'complication-brittle-bones) "JUMPS HAVE A 15% CHANCE TO DAMAGE YOU.")
+    ((eq? id 'rule-flop-this) "LURKERS MAY ONLY BE KILLED WITH GROUND POUNDS.")
+    ((eq? id 'complication-brittle-bones) "JUMPS HAVE A 10% CHANCE TO DAMAGE YOU.")
     ((eq? id 'complication-rotten-eggs) "ORBS KILL YOU.")
     ((eq? id 'complication-eco-allergy) "COLLECTING ECO DAMAGES YOU.")
     ((eq? id 'rule-keep-it-low) "DO NOT JUMP KICK.")
@@ -1706,7 +1706,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (when (mod-rule-active? 'complication-brittle-bones)
     (let ((roll (knuth-rand-int-range 0 100)))
       (format #t "Brittle Bones roll: ~D~%" roll)
-      (when (and *target* (<= roll 15))
+      (when (and *target* (< roll 10))
         (send-event *target* 'attack #t (new 'static 'attack-info)))))
   (none))
 
@@ -1857,6 +1857,20 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (when (not *global-countdown-lost?*)
     (loop
     (let ((elapsed (- (current-time) *mod-rule-last-update-time*)))
+    
+      ;; Safely intercept time-warps to adjust all absolute timers up or down
+      (when (or (< elapsed 0) (> elapsed (seconds 10)))
+        (dotimes (slot 3)
+          (when (-> *mod-rule-active-slots* slot)
+            (set! (-> *mod-rule-slot-end-times* slot) (+ (-> *mod-rule-slot-end-times* slot) elapsed)))
+          (when (-> *mod-rule-pending-slots* slot)
+            (set! (-> *mod-rule-slot-roll-ready-times* slot) (+ (-> *mod-rule-slot-roll-ready-times* slot) elapsed))))
+        (dotimes (slot 4)
+          (when (-> *mod-rule-timed-punishments* slot)
+            (set! (-> *mod-rule-timed-punishment-end-times* slot) (+ (-> *mod-rule-timed-punishment-end-times* slot) elapsed))
+            (set! (-> *mod-rule-timed-punishment-next-ticks* slot) (+ (-> *mod-rule-timed-punishment-next-ticks* slot) elapsed))))
+        (set! elapsed 0))
+
       (cond
         ((global-countdown-paused?)
          (when (> elapsed 0)
@@ -2018,15 +2032,23 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (when (and *global-countdown-active?* (not *global-countdown-lost?*))
       (cond
         ((or (global-countdown-paused?)
-             (and (mod-rule-active? 'complication-yellow-pilled) 
-                  (= (-> *target* fact eco-type) (pickup-type eco-yellow)) 
+             (and (mod-rule-active? 'complication-yellow-pilled)
+                  (= (-> *target* fact eco-type) (pickup-type eco-yellow))
                   (>= (-> *target* fact eco-level) 1.0)))
          (set! *global-countdown-last-update-time* (current-time)))
         (else
          (let ((elapsed (- (current-time) *global-countdown-last-update-time*)))
+           
+           ;; Detect save/load time-warp (backwards or massive skip)
+           (when (or (< elapsed 0) (> elapsed (seconds 10)))
+             (set! elapsed 0))
+             
            (when (> elapsed 0)
-             (set! *global-countdown-remaining-time* (max 0 (- *global-countdown-remaining-time* elapsed)))
-             (set! *global-countdown-last-update-time* (current-time)))
+             (set! *global-countdown-remaining-time* (max 0 (- *global-countdown-remaining-time* elapsed))))
+             
+           ;; Unconditionally update so the timer doesn't freeze  
+           (set! *global-countdown-last-update-time* (current-time))
+           
            (when (<= *global-countdown-remaining-time* 0)
              (set! *global-countdown-remaining-time* 0)
              (set! *global-countdown-lost?* #t)
