@@ -54,6 +54,27 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defmacro set-current-cell-count (count)
   `(set! (-> *game-info* fuel) ,count))
 
+(defmacro current-checkpoint-name ()
+  `(-> *game-info* current-continue name))
+
+(defun set-current-checkpoint-by-name ((name string))
+  (set-continue! *game-info* name))
+
+(defmacro current-level-name ()
+  `(-> (level-get-target-inside *level*) name))
+
+(defmacro current-orb-count ()
+  `(-> *game-info* money))
+
+(defmacro current-cutscene ()
+  `(-> *art-control* active-stream))
+
+(defmacro set-cpad-pressed! (pad-idx &rest buttons)
+  `(logior! (cpad-pressed ,pad-idx) (pad-buttons ,@buttons)))
+
+(defmacro set-cpad-hold! (pad-idx &rest buttons)
+  `(logior! (cpad-hold ,pad-idx) (pad-buttons ,@buttons)))
+
 (defun increase-power-cell-by-one ()
   (set-current-cell-count (+ (current-cell-count) 1))
   ;; with the two macros defined above, this is equivalent to
@@ -312,7 +333,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-survivor) "STAY ALIVE.")
     ((eq? id 'complication-yellow-pilled) "YELLOW ECO PAUSES TIMER.")
     ((eq? id 'rule-one-frame) "DO A ONE-FRAME.")
-    ((eq? id 'rule-distancing) "DO NOT GET WITHIN 6 METERS OF A FLY CRATE.")
+    ((eq? id 'rule-distancing) "DO NOT GET WITHIN 8 METERS OF A FLY CRATE.")
     (else "NO DESCRIPTION AVAILABLE.")))
 
 (defun mod-rule-duration ((id symbol))
@@ -334,7 +355,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'complication-ohko) (seconds 60)) ;; 60
     ((eq? id 'complication-heating-balloons) (seconds 30)) ;; 30
     ((eq? id 'complication-mean-look) (seconds 60)) ;; 60
-    ((eq? id 'complication-disassociate) (seconds 60)) ;; 60
+    ((eq? id 'complication-disassociate) (seconds 45)) ;; 45
     ((eq? id 'complication-bus-driver) (seconds 30)) ;; 30
     ((eq? id 'complication-wings-tied) (seconds 60)) ;; 60
     ((eq? id 'rule-survivor) (seconds 75)) ;; 75
@@ -940,7 +961,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
             (mod-rule-random-available-punishment))
       (set! (-> *mod-rule-slot-punishments* slot) #f))
     (set! (-> *mod-rule-slot-end-times* slot) (+ (current-time) (mod-rule-duration id)))
-    (set! (-> *mod-rule-slot-grace-periods* slot) (+ (current-time) (seconds 1))) ;; NEW: start 1 second grace period
+    (set! (-> *mod-rule-slot-grace-periods* slot) (+ (current-time) (seconds 1.25)))
     (mod-rule-on-activate id))
   (none))
 
@@ -1160,7 +1181,8 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun sole-zoomer-level? ((level symbol))
   (or (eq? level 'firecanyon)
-      (eq? level 'rolling)))
+      (eq? level 'rolling)
+      (string= (current-checkpoint-name) "ogre-race")))
 
 (defun launcher-level? ((level symbol))
   (or (eq? level 'beach)
@@ -1178,18 +1200,21 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
         (money-left (- (max-money-current-level) (collected-money-current-level)))
         (buzzer-left (- 7 (collected-buzzer-current-level)))
         (is-minigame (or (target-fishing?) (target-billy-game?)))
-        (is-klaww (and (not (target-on-racer?)) (eq? (the symbol (current-level-name)) 'ogre))))
+        (is-klaww (string= (current-checkpoint-name) "ogre-start"))
+        (racer-lavatube (or (and (target-on-racer?) (string= (current-checkpoint-name) "lavatube-start"))
+                            (string= (current-checkpoint-name) "lavatube-middle")
+                            (string= (current-checkpoint-name) "lavatube-after-ribbon"))))
 
     (cond
       ;; Resources
       ((eq? id 'rule-buzzer-pressure)
-       (if (or (< buzzer-left 1) (mod-rule-active? 'rule-distancing) is-minigame is-klaww
+       (if (or (< buzzer-left 2) (mod-rule-active? 'rule-distancing) is-minigame is-klaww
                (eq? level-name 'jungleb) (eq? level-name 'finalboss) (eq? level-name 'sunkenb))
-           0 5))
+           0 7))
 
       ((eq? id 'rule-distancing)
-       (if (or (< buzzer-left 1) (mod-rule-active? 'rule-buzzer-pressure)
-               (eq? level-name 'jungleb) (eq? level-name 'finalboss))
+       (if (or (< buzzer-left 1) (mod-rule-active? 'rule-buzzer-pressure) is-klaww
+               (eq? level-name 'training) (eq? level-name 'jungleb) (eq? level-name 'finalboss))
            0 10))
 
       ((eq? id 'rule-blue-crate)
@@ -1197,10 +1222,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
       ((eq? id 'rule-fuel-pressure)
        (cond
-         ((or (< fuel-left 1) is-minigame is-klaww (eq? level-name 'jungleb) (eq? level-name 'finalboss)) 0)
+         ((or (< fuel-left 1) is-minigame is-klaww (eq? level-name 'jungleb) racer-lavatube (eq? level-name 'finalboss)) 0)
          ((or (eq? level-name 'village1) (eq? level-name 'village2) (eq? level-name 'village3)
               (mod-rule-active? 'complication-fuel-shortage)) 3)
-         (else 5)))
+         (else 7)))
 
       ((eq? id 'rule-money-pressure)
        (if (or (< money-left 30) is-minigame is-klaww (eq? level-name 'finalboss)
@@ -1217,7 +1242,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          ((sparse-lurker-level? level-name) 0)
          ((eq? id 'complication-mean-look) 10)
          ((or (target-fishing?) (eq? level-name 'finalboss)) 0)
-         (else 6)))
+         (else 7)))
 
       ((eq? id 'rule-hitlist)
        (if (or (sparse-hitlist-level? level-name) is-minigame) 0 10))
@@ -1232,12 +1257,12 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       ((eq? id 'rule-red-kill)
        (if (or (sparse-lurker-level? level-name) (not (red-eco-level? level-name))
                is-minigame)
-           0 0))
+           0 3))
 
       ((eq? id 'complication-yellow-pilled)
        (cond
          (is-klaww 20)
-         ((yellow-eco-level? level-name) 5)
+         ((yellow-eco-level? level-name) 6)
          (else 0)))
 
       ;; Crates
@@ -1249,16 +1274,20 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
        (if on-racer 0 8))
 
       ((or (eq? id 'rule-grounded) (eq? id 'rule-die))
-       (cond
-         ((or (eq? level-name 'training) (eq? level-name 'finalboss)) 0)
-         ((eq? id 'rule-grounded) 10)
-         ((or (eq? level-name 'beach) (eq? level-name 'rolling) is-klaww) 2)
-         ((or is-minigame (mod-rule-active? 'rule-survivor)) 0)
-         (else 4)))
+            (cond
+              ((or (eq? level-name 'training) (eq? level-name 'finalboss)) 0)
+              ((and (eq? id 'rule-grounded) is-klaww) 2)
+              ((eq? id 'rule-grounded) 10)
+              ((or (eq? level-name 'beach) (eq? level-name 'rolling)) 2)
+              (is-klaww 1)
+              ((or is-minigame (mod-rule-active? 'rule-survivor)) 0)
+              (else 4)))
 
       ((eq? id 'rule-survivor)
-       (if (or (mod-rule-active? 'rule-die) (eq? level-name 'training) (eq? level-name 'village1))
-           0 8))
+            (cond
+              ((or (mod-rule-active? 'rule-die) (eq? level-name 'training) (eq? level-name 'village1)) 0)
+              ((or (eq? level-name 'village1) (eq? level-name 'village2)) 3)
+              (else 8)))
 
       ((or (eq? id 'rule-keep-it-low) (eq? id 'complication-sizeable) (eq? id 'rule-hands-off))
        (if (or on-racer on-flut (sole-zoomer-level? level-name)) 0 10))
@@ -1278,23 +1307,26 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
       ((eq? id 'complication-eco-allergy)
        (cond
          ((eq? level-name 'village3) 0)
-         ((eq? level-name 'finalboss) 2)
+         ((or (eq? level-name 'finalboss) is-klaww) 2)
          (else 8)))
 
       ((eq? id 'complication-heating-balloons)
-       (if (or (eq? level-name 'firecanyon) (and (eq? level-name 'lavatube) on-racer)) 25 0))
+       (if (or (eq? level-name 'firecanyon) (and (eq? level-name 'lavatube) on-racer)) 50 0))
 
       ((eq? id 'complication-bus-driver)
-       (if (or (eq? level-name 'firecanyon) on-racer) 25 0))
+       (if (or (eq? level-name 'firecanyon) on-racer) 35 0))
 
       ((eq? id 'complication-rotten-eggs)
-       (if (eq? level-name 'finalboss) 0 10))
+       (if (or is-klaww (eq? level-name 'finalboss)) 0 10))
 
       ((or (eq? id 'complication-disassociate) (eq? id 'complication-wings-tied))
-       (if on-flut 20 0))
+       (if on-flut 40 0))
 
       ((eq? id 'complication-fuel-shortage)
        (if (or (eq? level-name 'training) (eq? level-name 'finalboss)) 0 5))
+
+      ((or (eq? id 'complication-brittle-bones))
+       (if (or (eq? level-name 'finalboss) is-klaww) 5 10))
 
       (else 10))))
 
@@ -1500,7 +1532,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun mod-rule-punishment-name ((punishment symbol))
   (cond
-    ((eq? punishment 'punishment-money) "LOSE 30 ORBS")
+    ((eq? punishment 'punishment-money) "LOSE 50 ORBS")
     ((eq? punishment 'punishment-warp) "WARP TO GEYSER ROCK")
     ((eq? punishment 'punishment-countdown) "LOSE 30 SECONDS")
     ((eq? punishment 'punishment-revert-cell) "REVERT A RANDOM CELL")
@@ -1529,7 +1561,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun mod-rule-apply-punishment ((punishment symbol))
   (cond
     ((eq? punishment 'punishment-money)
-     (set! (-> *game-info* money) (max 0.0 (- (-> *game-info* money) 30.0))))
+     (set! (-> *game-info* money) (max 0.0 (- (-> *game-info* money) 50.0))))
     ((eq? punishment 'punishment-warp)
      (set! (-> *game-info* current-continue) (get-continue-by-name *game-info* "training-warp"))
      (initialize! *game-info* 'die (the-as game-save #f) (the-as string #f)))
@@ -1622,7 +1654,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none))
 
 (defun mod-rule-trigger-distancing ()
-  (when (and (<= *closest-buzzer-dist* (meters 6)) (mod-rule-active? 'rule-distancing))
+  (when (and (<= *closest-buzzer-dist* (meters 8)) (mod-rule-active? 'rule-distancing))
     (let ((punishment (mod-rule-punishment-for-id 'rule-distancing)))
       (when punishment
         (let ((slot (mod-rule-find-active-slot 'rule-distancing)))
@@ -1666,7 +1698,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none))
 
 (defun mod-rule-trigger-rotten-eggs ()
-  (when (mod-rule-active? 'complication-rotten-eggs)
+  (when (and (not (movie?)) (mod-rule-active? 'complication-rotten-eggs))
     (send-event
       *target*
       'attack-invinc
@@ -2030,27 +2062,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; These are included with the mod base and you are welcome to use them in your mods!
-
-(defmacro current-checkpoint-name ()
-  `(-> *game-info* current-continue name))
-
-(defun set-current-checkpoint-by-name ((name string))
-  (set-continue! *game-info* name))
-
-(defmacro current-level-name ()
-  `(-> (level-get-target-inside *level*) name))
-
-(defmacro current-orb-count ()
-  `(-> *game-info* money))
-
-(defmacro current-cutscene ()
-  `(-> *art-control* active-stream))
-
-(defmacro set-cpad-pressed! (pad-idx &rest buttons)
-  `(logior! (cpad-pressed ,pad-idx) (pad-buttons ,@buttons)))
-
-(defmacro set-cpad-hold! (pad-idx &rest buttons)
-  `(logior! (cpad-hold ,pad-idx) (pad-buttons ,@buttons)))
 
 ;;This function moves an actor to the given coordinates
 ;;example: (move-actor "farmer-3" 3.0 74.0 -120.0)

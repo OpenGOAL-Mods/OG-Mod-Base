@@ -5,6 +5,9 @@ improve game over state
 finish drought
 alert sound on last 10 seconds, find a replacement for new rule
 use continue points in filters
+look at orb refresh on hidden treasure again
+pole jumps
+test collectable counts for priorities
 
 flut can still grab fly cells during wings tied
 

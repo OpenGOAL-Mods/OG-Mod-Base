@@ -40,11 +40,11 @@
       (mod-rule-reroll-slot 1 #f))
 
     (when (and (cpad-pressed? 0 circle)
-              (cpad-hold? 0 l1))
+              (cpad-hold? 0 l1) (cpad-hold? 0 r1))
       (global-countdown-start))
 
     (when (and (cpad-pressed? 0 triangle)
-              (cpad-hold? 0 l1))
+              (cpad-hold? 0 l1) (cpad-hold? 0 r1))
       (global-countdown-reset)
       (kill-by-name 'mod-rule-manager *active-pool*))
 
@@ -80,14 +80,14 @@
 (defun runs-on-fly-pickup ()
   ;; Code here runs on any scout fly pickup
   (mod-rule-on-buzzer-pickup 1)
-  (global-countdown-add-seconds 5.0)
+  (global-countdown-add-seconds 7.0)
   (none))
 
 (defun runs-on-cell-pickup ((cell-event symbol))
   (case cell-event
     (('pickup)
      ;; Code here runs as soon as you pickup a powercell
-      (global-countdown-add-seconds 30.0)
+      (global-countdown-add-seconds 20.0)
       (mod-rule-on-cell-pickup 1)
      )
     (('cutscene-end)
