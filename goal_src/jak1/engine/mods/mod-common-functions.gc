@@ -81,7 +81,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   ;; (set! (-> *game-info* fuel) (+ (-> *game-info* fuel) 1))
   (none))
 (define *global-countdown-active?* #f)
-(define *global-countdown-started?* #f)
 (define *global-countdown-lost?* #f)
 (define *global-countdown-remaining-time* 0)
 (define *global-countdown-last-update-time* 0)
@@ -969,7 +968,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
             (mod-rule-random-available-punishment))
       (set! (-> *mod-rule-slot-punishments* slot) #f))
     (set! (-> *mod-rule-slot-end-times* slot) (+ (current-time) (mod-rule-duration id)))
-    (set! (-> *mod-rule-slot-grace-periods* slot) (+ (current-time) (seconds 1.25)))
+    (set! (-> *mod-rule-slot-grace-periods* slot) (+ (current-time) (seconds 1)))
     (mod-rule-on-activate id))
   (none))
 
@@ -1903,6 +1902,14 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (process-spawn-function process mod-rule-manager-proc :name 'mod-rule-manager)
   (none))
 
+(defun mod-rules-resume ()
+  (kill-by-name 'mod-rule-manager *active-pool*)
+  (when (= (mod-rule-active-slot-count) 0)
+    (mod-rule-reroll-current #t))
+    
+  (process-spawn-function process mod-rule-manager-proc :name 'mod-rule-manager)
+  (none))
+
 (defun mod-rule-draw-panel ((buf dma-buffer)
                             (x int)
                             (y int)
@@ -2118,7 +2125,6 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun global-countdown-reset ()
   (kill-by-name 'global-countdown *active-pool*)
   (mod-rules-reset)
-  (set! *global-countdown-started?* #f)
   (set! *global-countdown-active?* #f)
   (set! *global-countdown-lost?* #f)
   (set! *global-countdown-remaining-time* (seconds 60)) ;; global timer start
@@ -2131,32 +2137,42 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun global-countdown-start ()
   (global-countdown-reset)
-  (set! *global-countdown-started?* #t)
   (set! *global-countdown-active?* #t)
   (mod-rules-start)
   (process-spawn-function process global-countdown-proc :name 'global-countdown)
   (none))
 
-;; Called from game-save.gc while building the save-file tags.
-;; Returns 0 if there is no active countdown to persist.
 (defun global-countdown-save-value ()
   (if *global-countdown-active?*
       (the int *global-countdown-remaining-time*)
       0))
 
-;; Called from game-save.gc while reading tags back out of a loaded save.
-;; saved-time is whatever global-countdown-save-value wrote out (0 = none).
-;; Only the timer itself is restored - rolled rule, punishments, and ruler
-;; timers are intentionally NOT persisted and always come back fresh.
 (defun global-countdown-resume-from-save ((saved-time int))
-  (global-countdown-reset)
-  (when (> saved-time 0)
-    (set! *global-countdown-remaining-time* saved-time)
-    (set! *global-countdown-started?* #t)
-    (set! *global-countdown-active?* #t)
-    (mod-rules-start)
-    (process-spawn-function process global-countdown-proc :name 'global-countdown))
+  (cond
+    ((> saved-time 0)
+     ;; Saved file HAS a countdown.
+     (set! *global-countdown-remaining-time* saved-time)
+     (set! *global-countdown-last-update-time* (current-time))
+     (cond
+       ((not *global-countdown-active?*)
+        ;; SCENARIO A: system was dormant (fresh boot / post-crash reload).
+        (set! *global-countdown-active?* #t)
+        (set! *global-countdown-lost?* #f)
+        (set! *mod-rule-last-update-time* (current-time))
+        (kill-by-name 'global-countdown *active-pool*)
+        (mod-rules-start)
+        (process-spawn-function process global-countdown-proc :name 'global-countdown))
+       (else
+        ;; SCENARIO B: system was already active (normal in-game save/load).
+        (mod-rules-resume)
+        (kill-by-name 'global-countdown *active-pool*)
+        (process-spawn-function process global-countdown-proc :name 'global-countdown))))
+    (else
+     ;; SCENARIO C: no countdown saved in this file at all.
+     (when (or *global-countdown-active?* *global-countdown-lost?*)
+       (global-countdown-reset))))
   (none))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Approved Custom Functions/Macros to call in all mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
