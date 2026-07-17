@@ -92,7 +92,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *mod-rule-slot-punishments* (new 'global 'boxed-array symbol 3))
 (define *mod-rule-slot-goals* (new 'global 'boxed-array int32 3))
 (define *mod-rule-slot-progress* (new 'global 'boxed-array int32 3))
-(define *mod-rule-recent-rolls* (new 'global 'boxed-array symbol 5))
+(define *mod-rule-recent-rolls* (new 'global 'boxed-array symbol 8))
 (define *mod-rule-unique-enemy-killed-types* (new 'global 'boxed-array symbol 3))
 (define *mod-rule-roll-buffer-time* (seconds 5))
 (define *mod-rule-last-update-time* 0)
@@ -106,7 +106,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (define *mod-rule-timed-punishments* (new 'global 'boxed-array symbol 4))
 (define *mod-rule-timed-punishment-end-times* (new 'global 'boxed-array time-frame 4))
 (define *mod-rule-timed-punishment-next-ticks* (new 'global 'boxed-array time-frame 4))
-(define *mod-rule-id-count* 31) ;; ***DON'T FORGET TO UPDATE THIS WITH NEW RULES***
+(define *mod-rule-id-count* 32) ;; ***DON'T FORGET TO UPDATE THIS WITH NEW RULES***
 (define *mean-look-clear-time* 0)
 (define *mod-rule-slot-grace-periods* (new 'global 'boxed-array time-frame 3))
 (define *mod-rule-all-cell-tasks*
@@ -273,7 +273,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-die) "DIE")
     ((eq? id 'rule-lurker-pressure) "BLOODLUST")
     ((eq? id 'rule-hitlist) "HITLIST")
-    ((eq? id 'rule-crate-break) "CRATE BREAK")
+    ((eq? id 'rule-crate-break) "BULL AND CHINA")
     ((eq? id 'rule-money-pressure) "CASH GRAB")
     ((eq? id 'rule-fuel-pressure) "CELL PRESSURE")
     ((eq? id 'rule-buzzer-pressure) "BUZZER BEATER")
@@ -295,8 +295,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'complication-jak-rabbit) "JAK RABBIT")
     ((eq? id 'rule-survivor) "SURVIVOR")
     ((eq? id 'rule-red-kill) "RED ECO KILL")
-    ((eq? id 'rule-blue-crate) "BULL AND CHINA")
+    ((eq? id 'rule-blue-crate) "HANDS ON")
     ((eq? id 'complication-yellow-pilled) "YELLOW-PILLED")
+    ((eq? id 'complication-red-light) "RED LIGHT")
     ((eq? id 'rule-one-frame) "ONE FRAME")
     ((eq? id 'rule-distancing) "SOCIAL DISTANCING")
     (else "UNKNOWN")))
@@ -332,6 +333,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-blue-crate) "DO NOT BREAK ANY CRATES WITH BLUE ECO.")
     ((eq? id 'rule-survivor) "STAY ALIVE.")
     ((eq? id 'complication-yellow-pilled) "YELLOW ECO PAUSES TIMER.")
+    ((eq? id 'complication-red-light) "RED ECO PAUSES TIMER.")
     ((eq? id 'rule-one-frame) "DO A ONE-FRAME.")
     ((eq? id 'rule-distancing) "DO NOT GET WITHIN 8 METERS OF A FLY CRATE.")
     (else "NO DESCRIPTION AVAILABLE.")))
@@ -366,6 +368,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((eq? id 'rule-red-kill) (seconds 45)) ;; 45
     ((eq? id 'rule-blue-crate) (seconds 60)) ;; 60
     ((eq? id 'complication-yellow-pilled) (seconds 60)) ;; 60
+    ((eq? id 'complication-red-light) (seconds 60)) ;; 60
     ((eq? id 'rule-one-frame) (seconds 45)) ;; 45
     ((eq? id 'rule-distancing) (seconds 75)) ;; 75
     (else (seconds 30))))
@@ -432,6 +435,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          (eq? id 'complication-hidden-treasure)
          (eq? id 'complication-drought)
          (eq? id 'complication-yellow-pilled)
+         (eq? id 'complication-red-light)
          )
          
      'complication)
@@ -786,7 +790,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
        (not (mod-rule-punishment-used-by-active-slot? punishment))))
 
 (defun mod-rule-random-available-punishment ()
-  (let ((has-money (>= (-> *game-info* money) 20.0))
+  (let ((has-money (>= (-> *game-info* money) 30.0))
         (has-warp (!= (-> (level-get-target-inside *level*) name) 'training))
         (has-revert (mod-rule-can-revert-collected-cell?))
         (can-add-extra-rule (< (mod-rule-active-slot-count) 2))
@@ -826,8 +830,12 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (when (and can-add-extra-rule can-extra-rule)
       (+! count 1))
 
+    ;; If every option got excluded (e.g. the other active rule already has
+    ;; countdown, we're on flut/racer, low on orbs, in training, nothing to
+    ;; revert, and a second rule is already active), fall back to countdown
+    ;; unconditionally rather than leaving the rule with no punishment.
     (when (<= count 0)
-      (return #f))
+      (return 'punishment-countdown))
 
     (set! roll (knuth-rand-int-range 0 count))
 
@@ -981,7 +989,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (none))
 
 (defun mod-rule-clear-recent-rolls ()
-  (dotimes (slot 5)
+  (dotimes (slot 8)
     (set! (-> *mod-rule-recent-rolls* slot) #f))
   (none))
 
@@ -1029,6 +1037,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     ((= idx 28) 'complication-yellow-pilled)
     ((= idx 29) 'rule-one-frame)
     ((= idx 30) 'rule-distancing)
+    ((= idx 31) 'complication-red-light)
     (else #f)))
 
 (defun mod-rule-random-id ()
@@ -1103,7 +1112,7 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun mod-rule-record-roll! ((id symbol))
   (when id
-    (let ((slot 4))
+    (let ((slot 7))
       (while (> slot 0)
         (set! (-> *mod-rule-recent-rolls* slot)
               (-> *mod-rule-recent-rolls* (- slot 1)))
@@ -1113,9 +1122,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 
 (defun mod-rule-recent-roll-factor ((id symbol))
   (let ((slot 0)
-        (factor 5)
+        (factor 8)
         (found #f))
-    (while (and (< slot 5) (not found))
+    (while (and (< slot 8) (not found))
       (when (= (-> *mod-rule-recent-rolls* slot) id)
         (set! factor slot)
         (set! found #t))
@@ -1264,6 +1273,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
          (is-klaww 20)
          ((yellow-eco-level? level-name) 6)
          (else 0)))
+
+      ((eq? id 'complication-red-light)
+       (if (red-eco-level? level-name) 6 0))
 
       ;; Crates
       ((eq? id 'rule-crate-break)
@@ -1590,7 +1602,9 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (sound-play "caught-eel")
     (set! *mod-rule-last-outcome* 'failed)
     (if (eq? punishment 'punishment-extra-rule)
-      (mod-rule-apply-extra-rule-punishment slot)
+      (begin
+        (mod-rule-apply-extra-rule-punishment slot)
+        (mod-rule-finish-slot slot #t))
       (begin
         (mod-rule-apply-punishment punishment)
         (mod-rule-finish-slot slot #t))))
@@ -1949,6 +1963,28 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
             (+! row-count 1))))))
   (none))
 
+(defun mod-rule-draw-last-outcome ((buf dma-buffer) (y int))
+  (cond
+    ((eq? *mod-rule-last-outcome* 'success)
+      (draw-string-xy-scaled
+        "GOOD JOB!"
+        buf
+        10
+        y
+        (font-color green)
+        (font-flags shadow kerning large)
+        0.4))
+    ((eq? *mod-rule-last-outcome* 'failed)
+      (draw-string-xy-scaled
+        "RULE BROKEN!"
+        buf
+        10
+        y
+        (font-color red)
+        (font-flags shadow kerning large)
+        0.4)))
+  (none))
+
 (defun mod-rule-draw-rolling-slot ((buf dma-buffer))
   (let ((slot 0) (rolling-id #f) (rolling-left 0))
     (while (and (< slot 3) (not rolling-id))
@@ -1958,11 +1994,11 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
           (set! rolling-left (max 0 (- (-> *mod-rule-slot-roll-ready-times* slot) (current-time))))))
       (+! slot 1))
     (when rolling-id
-      (cond
-        ((eq? *mod-rule-last-outcome* 'success)
-         (draw-string-xy-scaled "GOOD JOB!" buf 10 50 (font-color green) (font-flags shadow kerning large) 0.4))
-        ((eq? *mod-rule-last-outcome* 'failed)
-         (draw-string-xy-scaled "RULE BROKEN!" buf 10 50 (font-color red) (font-flags shadow kerning large) 0.4)))
+      ;; (cond
+      ;;   ((eq? *mod-rule-last-outcome* 'success)
+      ;;    (draw-string-xy-scaled "GOOD JOB!" buf 10 50 (font-color green) (font-flags shadow kerning large) 0.4))
+      ;;   ((eq? *mod-rule-last-outcome* 'failed)
+      ;;    (draw-string-xy-scaled "RULE BROKEN!" buf 10 50 (font-color red) (font-flags shadow kerning large) 0.4)))
       (draw-string-xy-scaled "NEW RULE IN " buf 10 60 (font-color yellow) (font-flags shadow kerning large) 0.4)
       (draw-string-xy-scaled (mod-rule-format-time-left rolling-left) buf 96 57 (font-color white) (font-flags shadow kerning large) 0.6)))
   (none))
@@ -1970,29 +2006,70 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
 (defun global-countdown-draw ()
   (cond
     (*global-countdown-lost?*
-     (with-dma-buffer-add-bucket ((buf (-> (current-frame) debug-buf)) (bucket-id debug-no-zbuf))
-       (draw-string-xy "LOSE!" buf 20 20 (font-color red) (font-flags shadow kerning))))
+     (with-dma-buffer-add-bucket ((buf (-> (current-frame) debug-buf))
+                                 (bucket-id debug-no-zbuf))
+       (draw-string-xy "LOSE!"
+                       buf
+                       20
+                       20
+                       (font-color red)
+                       (font-flags shadow kerning))))
     (*global-countdown-active?*
-     (with-dma-buffer-add-bucket ((global-buf (-> (current-frame) global-buf)) (bucket-id debug-no-zbuf))
-       (let* ((total-centis (max 0 (the int (/ (* *global-countdown-remaining-time* 100) (seconds 1)))))
+     (with-dma-buffer-add-bucket ((global-buf (-> (current-frame) global-buf))
+                                 (bucket-id debug-no-zbuf))
+       (let* ((total-centis (max 0 (the int (/ (* *global-countdown-remaining-time* 100)
+                                               (seconds 1)))))
               (total-seconds (the int (/ total-centis 100)))
               (minutes (the int (/ total-seconds 60)))
               (seconds-part (the int (mod total-seconds 60)))
               (centis (the int (mod total-centis 100))))
-         (draw-string-xy-scaled (string-format "~1,'0D:~2,'0D.~2,'0D" minutes seconds-part centis)
-                                global-buf 400 50 (font-color red) (font-flags shadow kerning large) 0.8)
+         (draw-string-xy-scaled
+           (string-format "~1,'0D:~2,'0D.~2,'0D"
+                          minutes
+                          seconds-part
+                          centis)
+           global-buf
+           400
+           50
+           (font-color red)
+           (font-flags shadow kerning large)
+           0.8)
          (mod-rule-draw-timed-punishments global-buf)
          (let ((primary (mod-rule-nth-active-slot 0)))
            (cond
              ((>= primary 0)
               (let ((end-row (mod-rule-draw-slot global-buf primary 40)))
-                (when (and *debug-segment* (> *mod-rule-last-reverted-cell-until* (current-time)))
-                  (draw-string-xy-scaled (string-format "Reverted Cell Task: ~D" *mod-rule-last-reverted-cell-task*)
-                                         global-buf 10 (+ end-row 8) (font-color red) (font-flags shadow kerning) 1.0)))
-              (let ((secondary (mod-rule-nth-active-slot (+ primary 1))))
-                (if (>= secondary 0) (mod-rule-draw-slot global-buf secondary 94))))
-             (else (mod-rule-draw-rolling-slot global-buf)))))))
-    (else (none)))
+                (when (and *debug-segment*
+                           (> *mod-rule-last-reverted-cell-until* (current-time)))
+                  (draw-string-xy-scaled
+                    (string-format
+                      "Reverted Cell Task: ~D"
+                      *mod-rule-last-reverted-cell-task*)
+                    global-buf
+                    10
+                    (+ end-row 8)
+                    (font-color red)
+                    (font-flags shadow kerning)
+                    1.0))
+                (let ((secondary (mod-rule-nth-active-slot (+ primary 1))))
+                  (cond
+                    ((>= secondary 0)
+                     (mod-rule-draw-last-outcome
+                       global-buf
+                       (+ end-row 8))
+                     (mod-rule-draw-slot
+                       global-buf
+                       secondary
+                       94))
+                    (else
+                     (mod-rule-draw-last-outcome
+                       global-buf
+                       (+ end-row 8)))))))
+             (else
+              (mod-rule-draw-rolling-slot global-buf)
+              (mod-rule-draw-last-outcome global-buf 52)))))))
+    (else
+     (none)))
   (none))
 
 (defun global-countdown-add-seconds ((seconds-to-add float))
@@ -2006,8 +2083,10 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
     (when (and *global-countdown-active?* (not *global-countdown-lost?*))
       (cond
         ((or (global-countdown-paused?)
-             (and (mod-rule-active? 'complication-yellow-pilled)
-                  (= (-> *target* fact eco-type) (pickup-type eco-yellow))
+             (and (or (and (mod-rule-active? 'complication-yellow-pilled)
+                  (= (-> *target* fact eco-type) (pickup-type eco-yellow)))
+                  (and (mod-rule-active? 'complication-red-light)
+                  (= (-> *target* fact eco-type) (pickup-type eco-red))))
                   (>= (-> *target* fact eco-level) 1.0)))
          (set! *global-countdown-last-update-time* (current-time)))
         (else

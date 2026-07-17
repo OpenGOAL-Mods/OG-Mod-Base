@@ -679,6 +679,8 @@
       (vector-flatten! (-> self control transv) (-> self control transv) (-> self control edge-grab-edge-dir)))
   :code
     (behavior ((arg0 float) (arg1 float))
+    (mod-rule-trigger-brittle-bones)
+    (mod-rule-trigger-grounded)
       (sound-play "jump")
       (send-event *camera* 'damp-up)
       (ja :group! eichar-pole-jump-loop-ja :num! min)

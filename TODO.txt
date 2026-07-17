@@ -2,12 +2,9 @@
 
 (mod-rules-reset) on game exit
 improve game over state
-finish drought
+finish drought (disable water draw)
 alert sound on last 10 seconds, find a replacement for new rule
-use continue points in filters
 look at orb refresh on hidden treasure again
-pole jumps
-test collectable counts for priorities
 
 flut can still grab fly cells during wings tied
 
@@ -15,3 +12,4 @@ maybe rename: crate break, keep it low, one frame
 maybe add checks for green eco lurkers
 maybe add settings for timer placement
 consider replacement for jak rabbit
+maybe improve all other sounds

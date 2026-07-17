@@ -577,6 +577,7 @@
       (set! (-> self dead) #t))
   :code
     (behavior ()
+    (notify-enemy-death self)
       (local-vars (v1-27 symbol))
       (process-entity-status! self (entity-perm-status bit-4) #t)
       (process-entity-status! self (entity-perm-status dead) #t)
