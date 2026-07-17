@@ -18,6 +18,11 @@
 
 (define-extern mark-speedrun-started (function none))
 
+;; mod: hooks for persisting the global countdown timer in the save file.
+;; implemented in mod-common-functions.gc
+(define-extern global-countdown-save-value (function int))
+(define-extern global-countdown-resume-from-save (function int none))
+
 ;; version identifier
 (defconstant SAVE_VERSION 1)
 
@@ -92,7 +97,8 @@
   (vibration 506)
   (play-hints 507)
   (video-mode 508)
-  (aspect-ratio 509))
+  (aspect-ratio 509)
+  (mod-global-timer 510))
 
 ;; DECOMP BEGINS
 
@@ -578,7 +584,14 @@
                                                                                                                     ((= a1-125 'aspect4x3) 1)
                                                                                                                     ((= a1-125 'aspect16x9) 2)
                                                                                                                     (else 0)))))
-                                                                                                        (set! (-> arg0 length) (&- (&+ v1-112 16) (the-as uint (the-as pointer (-> arg0 tag))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+                                                                                                        ;; mod: persist the global countdown timer as one more tag
+                                                                                                        (let ((v1-113 (&+ v1-112 16)))
+                                                                                                          (let ((a0-89 (the-as game-save-tag (&+ v1-113 0))))
+                                                                                                            (set! (-> a0-89 elt-type) (game-save-elt mod-global-timer))
+                                                                                                            (set! (-> a0-89 elt-count) 0)
+                                                                                                            (set! (-> a0-89 user-uint64)
+                                                                                                                  (the-as uint (global-countdown-save-value))))
+                                                                                                          (set! (-> arg0 length) (&- (&+ v1-113 16) (the-as uint (the-as pointer (-> arg0 tag)))))))))))))))))))))))))))))))))))))))))))))))))))))))))
   (if (< (-> arg0 allocated-length) (-> arg0 length))
     (format 0 "ERROR: SAVEGAME: fatal error, save is using ~D of ~D bytes." (-> arg0 length) (-> arg0 allocated-length)))
   (none))
@@ -709,7 +722,9 @@
          (let ((v1-92 (min 32 (-> data elt-count))))
            (dotimes (a0-133 v1-92)
              (set! (-> this fuel-cell-time a0-133)
-                   (the-as time-frame (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer data) 16) (* a0-133 8))))))))))
+                   (the-as time-frame (-> (the-as (pointer uint64) (&+ (&+ (the-as pointer data) 16) (* a0-133 8)))))))))
+        (((game-save-elt mod-global-timer))
+         (global-countdown-resume-from-save (the-as int (-> data user-uint64)))))
       (set! data
             (the-as game-save-tag
                     (&+ (the-as pointer data) (logand -16 (+ (* (the-as int (-> data elt-size)) (-> data elt-count)) 31)))))))

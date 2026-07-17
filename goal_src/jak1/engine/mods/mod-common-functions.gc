@@ -2136,6 +2136,27 @@ if the result of rand-vu-int-range is 1, then DANCE! if it is not 1, then Don't 
   (mod-rules-start)
   (process-spawn-function process global-countdown-proc :name 'global-countdown)
   (none))
+
+;; Called from game-save.gc while building the save-file tags.
+;; Returns 0 if there is no active countdown to persist.
+(defun global-countdown-save-value ()
+  (if *global-countdown-active?*
+      (the int *global-countdown-remaining-time*)
+      0))
+
+;; Called from game-save.gc while reading tags back out of a loaded save.
+;; saved-time is whatever global-countdown-save-value wrote out (0 = none).
+;; Only the timer itself is restored - rolled rule, punishments, and ruler
+;; timers are intentionally NOT persisted and always come back fresh.
+(defun global-countdown-resume-from-save ((saved-time int))
+  (global-countdown-reset)
+  (when (> saved-time 0)
+    (set! *global-countdown-remaining-time* saved-time)
+    (set! *global-countdown-started?* #t)
+    (set! *global-countdown-active?* #t)
+    (mod-rules-start)
+    (process-spawn-function process global-countdown-proc :name 'global-countdown))
+  (none))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define Approved Custom Functions/Macros to call in all mods
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
