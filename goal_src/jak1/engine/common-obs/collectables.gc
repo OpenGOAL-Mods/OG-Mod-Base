@@ -907,6 +907,26 @@
         (logclear! (-> self mask) (process-mask actor-pause))
         (go-virtual pickup #f (process->handle proc)))
       (cond
+        ;; magnetic powercells
+        ((= message 'eco-blue)
+        (when (and
+        (not
+          (logtest?
+            (-> self flags)
+            (collectable-flags fading ignore-blue)))
+        (!= (-> self next-state name) 'pickup)
+        (begin
+          (check-blue-suck (the-as process-drawable proc))
+          #t)
+        (logtest?
+          (-> self flags)
+          (collectable-flags can-collect))
+        (time-elapsed?
+          (-> self birth-time)
+          (-> self collect-timeout)))
+        (logclear! (-> self mask) (process-mask actor-pause))
+        (go-virtual notice-blue (process->handle proc))))
+
         ((= message 'trans)
          (set! (-> self root trans quad) (-> (the-as vector (-> block param 0)) quad))
          (set! (-> self base quad) (-> self root trans quad))
@@ -1120,7 +1140,7 @@
     (set! (-> s5-0 reaction) default-collision-reaction)
     (set! (-> s5-0 no-reaction) (the-as (function collide-shape-moving collide-shape-intersect vector vector none) nothing))
     (let ((s4-0 (new 'process 'collide-shape-prim-sphere s5-0 (the-as uint 0))))
-      (set! (-> s4-0 prim-core collide-as) (collide-kind powerup))
+      (set! (-> s4-0 prim-core collide-as) (collide-kind powerup blue-eco-suck))
       (set! (-> s4-0 collide-with) (collide-kind target))
       (set! (-> s4-0 transform-index) 3)
       (set-vector! (-> s4-0 local-sphere) 0.0 0.0 0.0 4915.2)
@@ -1144,6 +1164,10 @@
   (initialize this)
   (process-drawable-from-entity! this (-> this entity))
   (initialize-params this 0 (the-as float 1024.0))
+
+  ;; Allow blue eco suction.
+  (logclear! (-> this flags) (collectable-flags ignore-blue))
+
   (logclear! (-> this fact options) (fact-options can-collect))
   (update-transforms! (-> this root))
   (go (method-of-object this wait))
@@ -1165,6 +1189,10 @@
   (vector-identity! (-> self root scale))
   (set! (-> self root transv quad) (-> arg1 quad))
   (initialize-params self 0 (the-as float 1024.0))
+
+  ;; Allow blue eco suction.
+  (logclear! (-> self flags) (collectable-flags ignore-blue))
+
   (logclear! (-> self fact options) (fact-options can-collect))
   (update-transforms! (-> self root))
   (let ((gp-1 (res-lump-struct (-> self entity) 'movie-pos structure :time (the-as float -1000000000.0))))

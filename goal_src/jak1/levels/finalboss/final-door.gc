@@ -204,7 +204,7 @@
     (set! (-> s3-0 reaction) default-collision-reaction)
     (set! (-> s3-0 no-reaction) (the-as (function collide-shape-moving collide-shape-intersect vector vector none) nothing))
     (let ((s2-0 (new 'process 'collide-shape-prim-sphere s3-0 (the-as uint 0))))
-      (set! (-> s2-0 prim-core collide-as) (collide-kind powerup))
+      (set! (-> s2-0 prim-core collide-as) (collide-kind powerup blue-eco-suck))
       (set! (-> s2-0 collide-with) (collide-kind target))
       (set-vector! (-> s2-0 local-sphere) 0.0 0.0 0.0 4915.2)
       (set-root-prim! s3-0 s2-0))
