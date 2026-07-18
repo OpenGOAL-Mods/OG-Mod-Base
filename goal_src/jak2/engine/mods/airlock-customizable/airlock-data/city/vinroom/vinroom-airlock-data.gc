@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *vinroom-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "vin-door-5"
+                :on-notice '(when #t '(ctyinda ctywide))
+                :on-activate '(want-load 'vinroom 'ctyinda 'ctywide)
+                :on-enter '(begin (want-display 'ctyinda 'display) (want-display 'ctywide 'display))
+                :on-exit #f
+                :on-cross '(want-vis 'ctyinda)
+                :on-inside #f
+                :on-deactivate '(begin (want-display 'ctyinda #f) (want-display 'ctywide #f))
+                )
+              )
+  )

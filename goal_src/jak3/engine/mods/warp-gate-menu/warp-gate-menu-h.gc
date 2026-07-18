@@ -1,0 +1,240 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+#| This file defines the warp-gate destination menu structure and its related lists.
+   Each menu list corresponds to a specific warp-gate entity and contains
+   destinations Jak can warp to, based on mission/task progress.
+
+   Also, check the method `init-defaults!` of the `warp-gate` type in `warp-gate-menu-data.gc`, 
+   which is responsible for assigning a menu entry list to a specific entity. Do this if you
+   want to add custom warp-gate menus in your own custom levels.  
+ |#
+
+(deftype warp-gate-menu-entry (structure)
+  ((level-name    symbol) ;; level name
+   (continue-name string) ;; name of the checkpoint Jak will be teleported to
+   (text-id       text-id) ;; text ID that defines the name displayed for this destination in the menu 
+   (allow-when    (function symbol)) ;; optional: function that must return true for this entry to become available
+   (forbid-when   (function symbol)) ;; optional: function that hides this entry if it returns true, regardless of `allow-when`
+   (on-activate   pair) ;; optional: actions executed when the destination is selected (e.g., play scenes, load levels, close tasks)
+   (wait-for      pair)
+   (on-close      pair)
+   )  
+  )
+
+(defmacro static-warp-gate-menu-entry (&key level-name
+                                 &key continue-name
+                                 &key text-id
+                                 &key (allow-when #f)
+                                 &key (forbid-when #f)
+                                 &key (on-activate #f)
+                                 &key (wait-for #f)
+                                 &key (on-close #f))
+  `(new 'static 'warp-gate-menu-entry
+     :level-name ,level-name
+     :continue-name ,continue-name
+     :text-id ,text-id
+     :allow-when ,allow-when
+     :forbid-when ,forbid-when
+     :on-activate ,on-activate
+     :wait-for ,wait-for
+     :on-close ,on-close
+     )
+  )
+
+;; just an empty array. leave it at is.
+;; used as a fallback when an entity doesn't have a defined menu.
+(define *empty-warp-gate-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry))
+
+;; vinroom warp-gate
+(define *warp-gate-21-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry 
+                :level-name 'volcanox
+                :continue-name "volcanox-warp"
+                :text-id (text-id volcano-name) ;"Volcano"
+                :allow-when (lambda () (task-closed? "volcano-darkeco-resolution")) ;; volcano mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'templex
+                :continue-name "templex-warp"
+                :text-id (text-id temple-name-entry) ;"Temple (Entrance)"
+                :allow-when (lambda () (task-closed? "city-power-game-resolution"))  ;; power game mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry 
+                :level-name 'templeb
+                :continue-name "templeb-warp"
+                :text-id (text-id temple-name-oracle) ;"Temple (Oracle)"
+                :allow-when (lambda () (task-closed? "temple-defend-resolution")) ;; third temple mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'templed
+                :continue-name "templed-warp"
+                :text-id (text-id temple-name-ruins) ;"Temple (Ruins)"
+                :allow-when (lambda () (task-closed? "temple-defend-resolution")) ;; third temple mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
+
+;; templex warp-gate
+(define *warp-gate-31-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry 
+                :level-name 'volcanox
+                :continue-name "volcanox-warp"
+                :text-id (text-id volcano-name) ;"Volcano"
+                :allow-when (lambda () (task-closed? "volcano-darkeco-resolution")) ;; volcano mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'vinroom
+                :continue-name "vinroom-warp"
+                :text-id (text-id vinroom-name) ;"Power Station"
+                :allow-when (lambda () (task-closed? "city-power-game-resolution"))  ;; power game mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry 
+                :level-name 'templeb
+                :continue-name "templeb-warp"
+                :text-id (text-id temple-name-oracle) ;"Temple (Oracle)"
+                :allow-when (lambda () (task-closed? "temple-defend-resolution")) ;; third temple mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'templed
+                :continue-name "templed-warp"
+                :text-id (text-id temple-name-ruins) ;"Temple (Ruins)"
+                :allow-when (lambda () (task-closed? "temple-defend-resolution")) ;; third temple mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
+
+;; templeb warp-gate
+(define *warp-gate-33-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry
+                :level-name 'templex
+                :continue-name "templex-warp"
+                :text-id (text-id temple-name-entry) ;"Temple (Entrance)"
+                :allow-when (lambda () (task-closed? "temple-oracle-resolution"))  ;; first temple mission required
+                :forbid-when (lambda () (task-closed? "temple-tests-introduction"))  ;; unavailable from the second temple mission
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry 
+                :level-name 'volcanox
+                :continue-name "volcanox-warp"
+                :text-id (text-id volcano-name) ;"Volcano"
+                :allow-when (lambda () (task-closed? "temple-defend-resolution")) ;; third temple mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'vinroom
+                :continue-name "vinroom-warp"
+                :text-id (text-id vinroom-name) ;"Power Station"
+                :allow-when (lambda () (task-closed? "temple-defend-resolution"))  ;; third temple mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'templex
+                :continue-name "templex-warp"
+                :text-id (text-id temple-name-entry) ;"Temple (Entrance)"
+                :allow-when (lambda () (task-closed? "temple-defend-resolution"))  ;; third temple mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'templed
+                :continue-name "templed-warp"
+                :text-id (text-id temple-name-ruins) ;"Temple (Ruins)"
+                :allow-when (lambda () (task-closed? "temple-defend-resolution")) ;; third temple mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
+
+;; templed warp-gate
+(define *warp-gate-34-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry
+                :level-name 'templex
+                :continue-name "templex-warp"
+                :text-id (text-id temple-name-entry) ;"Temple (Entrance)"
+                :allow-when (lambda () (task-closed? "temple-defend-resolution"))  ;; third temple mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry 
+                :level-name 'volcanox
+                :continue-name "volcanox-warp"
+                :text-id (text-id volcano-name) ;"Volcano"
+                :allow-when (lambda () (task-closed? "wascity-defend-resolution"))  ;; spargus defend mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'vinroom
+                :continue-name "vinroom-warp"
+                :text-id (text-id vinroom-name) ;"Power Station"
+                :allow-when (lambda () (task-closed? "wascity-defend-resolution"))  ;; spargus defend mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry 
+                :level-name 'templeb
+                :continue-name "templeb-warp"
+                :text-id (text-id temple-name-oracle) ;"Temple (Oracle)"
+                :allow-when (lambda () (task-closed? "wascity-defend-resolution"))  ;; spargus defend mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )
+
+;; volcanox warp-gate
+(define *warp-gate-30-menu-list* (new 'static 'boxed-array :type warp-gate-menu-entry
+              (static-warp-gate-menu-entry
+                :level-name 'vinroom
+                :continue-name "vinroom-warp"
+                :text-id (text-id vinroom-name) ;"Power Station"
+                :allow-when (lambda () (task-closed? "city-power-game-resolution"))  ;; power game mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'templex
+                :continue-name "templex-warp"
+                :text-id (text-id temple-name-entry) ;"Temple (Entrance)"
+                :allow-when (lambda () (task-closed? "volcano-darkeco-resolution"))  ;; volcano mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry 
+                :level-name 'templeb
+                :continue-name "templeb-warp"
+                :text-id (text-id temple-name-oracle) ;"Temple (Oracle)"
+                :allow-when (lambda () (task-closed? "temple-defend-resolution")) ;; third temple mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              (static-warp-gate-menu-entry
+                :level-name 'templed
+                :continue-name "templed-warp"
+                :text-id (text-id temple-name-ruins) ;"Temple (Ruins)"
+                :allow-when (lambda () (task-closed? "temple-defend-resolution")) ;; third temple mission required
+                :forbid-when #f
+                :on-activate #f
+                )
+              )
+  )

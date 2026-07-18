@@ -1,0 +1,126 @@
+;;-*-Lisp-*-
+(in-package goal)
+(bundles "GAME.CGO")
+(require "engine/common-obs/generic-obs.gc")
+(require "engine/geometry/path.gc")
+(require "engine/util/sync-info.gc")
+(require "engine/common-obs/plat.gc")
+
+#| custom platform for complex animations
+  
+  define path array of vector4m as usual, probably you want first and last positions to be the same
+    "path": ["vector4m",
+        [0.0, 50.0, 10.0, 1.0],
+        [0.0, 50.0, 10.0, 1.0],
+        [0.0, 60.0, 10.0, 1.0],
+        [0.0, 50.0, 10.0, 1.0],
+        [0.0, 50.0, 10.0, 1.0],
+        [0.0, 60.0, 10.0, 1.0],
+        [0.0, 50.0, 10.0, 1.0]
+      ],
+ 
+  define timings array, which says how long in seconds it should take to transition between path positions
+    "timings": ["float",
+        0.0, // offset before starting
+        2.0, // down to up (out)
+        2.0, // up to down (out)
+        6.0, // stay down
+        2.0, // down to up (back)
+        2.0, // up to down (back)
+        0.0 // immediately start back up
+      ],
+
+  define sync with proper period (duration of the whole path). offset is ignored
+    "sync": ["float", 14, 0.0]
+|#
+(deftype linear-plat (plat)
+  ((timings     float 64))) ;; inline array of floats
+  
+(defun get-current-phase-linear-plat ((this linear-plat))
+  (let* ((cur-time (mod (the-as uint (current-time)) (-> this sync period)))
+         (pos 0))
+    (while (< pos (-> this path curve num-cverts))
+      (let ((timing (fsec (-> this timings pos))))
+        (when (< cur-time timing)
+          ;; we should be between pos and pos+1
+          (return (+ (the float pos) (/ (the float cur-time) (the float timing)))))
+
+        ;; we are at least at next position
+        (+! pos 1)
+        (-! cur-time timing))))
+  0.0 ;; default
+  )
+
+(defun eval-linear-path! ((path path-control) (basetrans vector) (path-pos float))
+  (let* ((pos0 (the int path-pos))
+         (pos1 (if (>= (+ pos0 1) (-> path curve num-cverts)) 0 (+ pos0 1)))
+         (partial (- path-pos pos0))
+         (dir (new-stack-vector0)))
+    ;; vector from pos0 to pos1
+    (vector-! dir (-> path curve cverts pos1) (-> path curve cverts pos0))
+    ;; partial vector based on path-pos decimal
+    (vector-float*! dir dir partial)
+    ;; update basetrans
+    (vector+! basetrans (-> path curve cverts pos0) dir)
+    )
+  )
+
+(defstate plat-path-active (linear-plat)
+  :virtual #t
+  :event plat-event
+  :exit
+    (behavior ()
+      (sound-stop (-> self sound-id)))
+  :trans
+    (behavior ()
+      (set! (-> self path-pos)
+            (get-current-phase-linear-plat self))
+      (eval-linear-path! (-> self path) (-> self basetrans) (-> self path-pos))
+      (if (< (vector-vector-distance (-> self root trans) (ear-trans)) 81920.0)
+        (sound-play "eco-plat-hover" :id (-> self sound-id) :position (the-as symbol (-> self root trans))))
+      (plat-trans))
+  :code
+    (the-as (function plat object)
+            anim-loop)
+  :post plat-post)
+
+(defmethod init-from-entity! ((this linear-plat) (arg0 entity-actor))
+  (logior! (-> this mask) (process-mask platform))
+  (baseplat-method-24 this)
+  (process-drawable-from-entity! this arg0)
+  (initialize-skeleton this (get-unlit-skel this) '())
+  (logior! (-> this skel status) (janim-status inited))
+  (update-transforms! (-> this root))
+  (baseplat-method-21 this)
+  (baseplat-method-25 this)
+  (load-params! (-> this sync) this (the-as uint 0) 0.0 0.15 0.15)
+  (set! (-> this fact) (new 'process 'fact-info this (pickup-type eco-pill-random) (-> *FACT-bank* default-pill-inc)))
+  (set! (-> this path) (new 'process 'curve-control this 'path -1000000000.0))
+
+  ;; read path timing data from res-lump
+  ;; look up the curve data
+  (let* ((tag (new 'static 'res-tag))
+         (data (res-lump-data arg0 'timings pointer :tag-ptr (& tag) :time -1000000000.0)))
+    (when data
+      ;; success, we got some data
+      (dotimes (idx (-> this path curve num-cverts))
+        (set! (-> this timings idx) (-> (the-as (pointer float) data) idx)))))
+
+  (logior! (-> this path flags) (path-control-flag display draw-line draw-point draw-text))
+  (set! (-> this sound-id) (new-sound-id))
+  (cond
+    ((logtest? (-> this path flags) (path-control-flag not-found))
+     (set! (-> this path-pos) 0.0)
+     (let ((a0-14 this)) (baseplat-method-26 a0-14) (go (method-of-object this plat-startup) a0-14)))
+    ((> (-> this sync period) 0)
+     (set! (-> this path-pos)
+           (if (logtest? (-> this fact options) (fact-options wrap-phase))
+             (get-current-phase (-> this sync))
+             (get-current-phase-with-mirror (-> this sync))))
+     (eval-path-curve! (-> this path) (-> this root trans) (-> this path-pos) 'interp)
+     (let ((a0-18 this)) (baseplat-method-26 a0-18) (go (method-of-object this plat-startup) a0-18)))
+    (else
+     (set! (-> this path-pos) 0.0)
+     (eval-path-curve! (-> this path) (-> this root trans) (-> this path-pos) 'interp)
+     (let ((a0-20 this)) (baseplat-method-26 a0-20) (go (method-of-object this plat-startup) a0-20))))
+  (none))

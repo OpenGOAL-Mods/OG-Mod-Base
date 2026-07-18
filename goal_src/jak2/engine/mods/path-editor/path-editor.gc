@@ -1,0 +1,730 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; path-editor
+;; by Nick07
+
+(declare-file (debug))
+
+(defmethod draw-node-id ((this path-editor))
+  "Draw every node id."
+  (dotimes (i (-> this node-count))
+    (let ((pos (-> this nodes i)))
+      (format (clear *temp-string*) "~D" i)
+      (add-debug-text-3d #t (the-as bucket-id 318) *temp-string* pos (font-color orange) (the-as vector2h #f))
+      )
+    )
+  (none)
+  )
+
+(defmethod draw-node-sphere ((this path-editor))
+  (let* ((count (-> this node-count))
+         (selected (-> this selected-node))
+         (last-idx (- count 1))
+         )
+    (dotimes (i count)
+      (let* ((pos (-> this nodes i))
+             (is-selected? (= selected i))
+             (is-closest? (= (-> this closest-node) i))
+             (is-last? (= last-idx i))
+             )
+        (when (logtest? (-> this flags) (nick-path-flags display-spheres)) ;; display spheres only in edit mode
+          (cond
+            (is-selected? (add-debug-sphere #t (bucket-id debug2) pos 4096.0 *color-orange*))
+            (is-last?     (add-debug-sphere #t (bucket-id debug2) pos 4096.0 *color-green*))
+            (is-closest?  (add-debug-sphere #t (bucket-id debug2) pos 4600.0 *color-yellow*))
+            (else         (add-debug-sphere #t (bucket-id debug2) pos 4096.0 *color-red*))
+            )
+          )
+        ;; draw the X
+        (add-debug-x #t (bucket-id debug-no-zbuf1) pos (new 'static 'rgba :r #xff :a #x80))
+        )
+      )
+    )
+  (none)
+  )
+
+(defmethod add-path-node ((this path-editor))
+  "Add a new node at jak's current position."
+  (let* ((idx (-> this node-count))
+          (selected (-> this selected-node))
+          (last-idx (- (-> this node-count) 1))
+          (vec (new 'stack-no-clear 'vector))
+          (camera-quat (new-stack-quaternion0))
+          (camera-z-vector (new-stack-vector0))
+          )
+    ;; only add a node when the array isn't full
+    ;; and when the last node is selected
+    ;; or when there's nothing selected
+    (when (and (< idx 100) (or (= selected last-idx) (= selected -1)))
+      (cond
+        ;; target exists, copy his position
+        (*target*
+          (vector-copy! (-> this nodes idx) (target-pos 0))
+          )
+        ;; no target, use camera position with a 3m offset forward
+        (else
+          (vector-copy! vec (-> *math-camera* trans))
+          ;; convert the camera angle from a matrix to a quaternion
+          (matrix->quaternion camera-quat (-> *camera-combiner* inv-camera-rot))
+          ;; convert the quaternion to a vector representing rotation around z axis
+          (vector-z-quaternion! camera-z-vector camera-quat)
+          ;; shift node's position with camera angle, by 3m
+          (vector+! vec vec (vector-normalize! camera-z-vector (meters 3.0)))
+          (vector-copy! (-> this nodes idx) vec)
+          )
+        )
+      (let ((pos (-> this nodes idx)))
+        (+! (-> this node-count) 1)
+        (set! (-> this selected-node) idx)
+        (format 0 "[PATH EDITOR]: path node ~D added in: ~4,,2m ~4,,2m ~4,,2m~%" idx (-> pos x) (-> pos y) (-> pos z) (-> pos w))
+        (sound-play "menu-pick")
+
+        )
+      )
+    (when (and (!= selected last-idx) (!= selected -1))
+      (format 0 "[PATH EDITOR]: ERROR - select the last node (~D) to add more nodes!~%" last-idx)
+      )
+    )
+  (none)
+  )
+
+(defmethod remove-last-node ((this path-editor))
+  "Remove the last node of the path."
+  (let* ((selected (-> this selected-node))
+         (last-idx (- (-> this node-count) 1))
+         )
+    (when (and (> (-> this node-count) 0) (or (= selected last-idx) (= selected -1)))
+      (+! (-> this node-count) -1)
+      (+! (-> this selected-node) -1)
+      (sound-play "menu-back")
+      (format 0 "[PATH EDITOR]: last node removed. total node count now: ~D~%" (-> this node-count))
+      )
+    (when (and (!= selected last-idx) (!= selected -1))
+      (format 0 "[PATH EDITOR]: ERROR - select the last node (~D) to delete it!~%" last-idx)
+      )
+    )
+  (none)
+  )
+
+(defmethod get-closest-node ((this path-editor) (pos vector) (max-dist float))
+  "Returns the index of the node closest to the 'pos' position within the 'max-dist' radius."
+  (let* ((closest-idx -1)
+        (min-dist max-dist)
+        (count (-> this node-count))
+        )
+    (dotimes (i count)
+      (let* ((node-pos (-> this nodes i))
+             (dist (vector-vector-distance pos node-pos))
+             )
+        (when (< dist max-dist)
+          (set! min-dist dist)
+          (set! closest-idx i)
+          )
+        )
+      )
+    closest-idx
+    )
+  )
+
+(defmethod selected-node-navigation ((this path-editor) (direction int))
+  "Navigate through the existing nodes."
+  (let ((count (-> this node-count)))
+    (when (> count 0)
+      (+! (-> this selected-node) direction)
+      (if (>= (-> this selected-node) count)
+        (set! (-> this selected-node) 0)
+        )
+      (if (< (-> this selected-node) 0)
+        (set! (-> this selected-node) (- count 1))
+        )
+      ;(format 0 "[PATH EDITOR]: selected node: ~D~%" (-> this selected-node))
+      )
+    )
+  (none)
+  )
+
+(defmethod move-selected-node ((this path-editor))
+  "Move the selected node to jak's current position."
+  (let ((idx (-> this selected-node)))
+    (when (and (>= idx 0) (< idx (-> this node-count)))
+      (vector-copy! (-> this nodes idx) (target-pos 0))
+      )
+    )
+  (none)
+  )
+
+(defmethod draw-curved-path ((this path-editor) (node1 vector) (node2 vector) (idx int))
+  "Draw a curved path. 
+  I know the game uses NURB curves for curved paths representation, but I couldn't figure out how to do it :("
+  (let* ((count (-> this node-count))
+         (prev-pos (new 'stack-no-clear 'vector)))
+    (vector-copy! prev-pos node1)
+                    
+    (let* ((p0 (-> this nodes (max 0 (- idx 1))))
+           (p1 node1)
+           (p2 node2)
+           (p3 (-> this nodes (min (- count 1) (+ idx 2)))))
+                      
+      (dotimes (j 10)
+        (let* ((t-val (/ (the float (+ j 1)) 10.0))
+               (curr-pos (new 'stack-no-clear 'vector))
+               ;; Catmull-Rom formulas for each axis
+               (tt (* t-val t-val))
+               (ttt (* tt t-val))
+               )
+          (dotimes (axis 3) ;; x, y, z
+            (let* ((v0 (-> p0 data axis))
+                  (v1 (-> p1 data axis))
+                  (v2 (-> p2 data axis))
+                  (v3 (-> p3 data axis))
+                  )
+              ;; standard Catmull-Rom Spline equation
+              (set! (-> curr-pos data axis) (* 0.5 (+ (* 2.0 v1)
+                                            (* t-val (- v2 v0))
+                                            (* tt (+ (* 2.0 v0) (* -5.0 v1) (* 4.0 v2) (- v3)))
+                                            (* ttt (+ (- v0) (* 3.0 v1) (* -3.0 v2) v3)))))
+              )
+            )
+          (set! (-> curr-pos w) 1.0)
+          (add-debug-line #t (bucket-id debug-no-zbuf1) prev-pos curr-pos (new 'static 'rgba :r #xff :g #x80 :a #x80) #f (the-as rgba -1))
+          (vector-copy! prev-pos curr-pos)
+          )
+        )
+      )
+    )
+  (none)
+  )
+
+(defmethod draw-path-graph ((this path-editor))
+  "Draw the full path graph (nodes spheres and edges)"
+
+  ;; draw the graph nodes (spheres, points and ids)
+  (draw-node-sphere this)
+
+  (let ((count (-> this node-count)))
+    
+    ;; draw node ID's
+    (draw-node-id this)
+
+    ;; draw the edge if there are at least 2 nodes
+    (when (>= count 2)
+      (dotimes (i (- count 1))
+        (let* ((node1 (-> this nodes i))
+               (node2 (-> this nodes (+ i 1)))
+               )
+          (when *path-toggle-edge-visible?*
+            (cond
+              ((= (-> this path-type) (nick-path-type linear)) ;; linear path type mode
+                (add-debug-line #t (bucket-id debug-no-zbuf1) node1 node2 (new 'static 'rgba :r #xff :g #x80 :a #x80) #f (the-as rgba -1))
+                )
+              (else ;; curved path type mode
+                (draw-curved-path this node1 node2 i)
+                )
+              )
+            )
+          )
+        )
+      )
+
+    ;; draw preview edge mode (draw it only in edit mode and if target exists)
+    (when (and *path-toggle-preview-edge?* (> count 0) (= (-> this mode) (nick-path-mode edit)) 
+          (= (-> this selected-node) (- count 1))
+          *path-toggle-edge-visible?*
+          *target*
+          )
+      (let* ((node1 (-> this nodes (- count 1)))
+             (jak-pos (target-pos 0))
+             )
+        (add-debug-line #t (bucket-id debug-no-zbuf1) node1 jak-pos (new 'static 'rgba :r #xff :g #xff :b #xc0 :a #x80) #f (the-as rgba -1))
+        )
+      )
+    )
+  (none)
+  )
+
+(defmethod path-graph-clear-all ((this path-editor))
+  "Clear all the path graph."
+  (when (> (-> this node-count) 0)
+    (set! (-> this node-count) 0)
+    (set! (-> this selected-node) -1)
+    (format 0 "[PATH EDITOR]: path graph cleared!~%")
+    )
+  (none)
+  )
+
+(defun nick-path-menu-check-clear-all ()
+  "Function for the debug menu to clear all the path graph."
+  (if *path-editor*
+    (path-graph-clear-all (the path-editor (ppointer->process *path-editor*)))
+    )
+  (none)
+  )
+
+(defun nick-path-menu-get-path-type ((type nick-path-type))
+  "Function for the debug menu to get the path type mode (linear or curved)."
+  (if *path-editor*
+    (= (-> (the path-editor (ppointer->process *path-editor*)) path-type) type)
+    #f
+    )
+  )
+
+(defun nick-path-menu-set-path-type ((type nick-path-type))
+  "Function for the debug menu to set the path type mode (linear or curved)."
+  (when *path-editor*
+    (set! (-> (the path-editor (ppointer->process *path-editor*)) path-type) type)
+    )
+  type
+  )
+
+(defun nick-path-check-path-type ((editor path-editor) (caps-mode symbol))
+  "Return the string from the editor's current path type mode name."
+  (let ((type (the string #f)))
+    (cond
+      ((= (-> editor path-type) (nick-path-type linear))
+        (if caps-mode
+          (set! type "LINEAR")
+          (set! type "linear")
+          )
+        )
+      ((= (-> editor path-type) (nick-path-type curved))
+        (if caps-mode
+          (set! type "CURVED")
+          (set! type "curved")
+          )
+        )
+      (else
+        (set! type "unknown")
+        )
+      )
+    type
+    )
+  )
+
+(defun nick-path-check-mode ((editor path-editor))
+  "Return the string from the editor's current mode name."
+  (let ((mode (the string #f)))
+    (cond
+      ((= (-> editor mode) (nick-path-mode edit))
+        (set! mode "edit")
+        )
+      ((= (-> editor mode) (nick-path-mode preview))
+        (set! mode "preview")
+        )
+      ((= (-> editor mode) (nick-path-mode moving-node))
+        (set! mode "moving node")
+        )
+      (else
+        (set! mode "unknown")
+        )
+      )
+    mode
+    )
+  )
+
+(defmethod draw-menu ((this path-editor))
+  "Draw a menu displaying the editor controls, info and status (preview or edit mode)."
+  (with-dma-buffer-add-bucket ((buf (-> *display* frames (-> *display* on-screen) debug-buf))
+                               (bucket-id debug2)
+                               )
+    (let* ((x 10)
+          (y 40)
+          (line-height 16) 
+          (last-idx (- (-> this node-count) 1))
+          (selected (-> this selected-node))
+          (closest (-> this closest-node))
+          )
+      (draw-string-xy "--- PATH EDITOR ---" buf x y (font-color white) (font-flags shadow))
+
+      (draw-string-xy (string-format "nodes: ~d / 100" (-> this node-count)) buf x (+ y (* line-height 2)) (font-color white) (font-flags shadow))
+      
+      (draw-string-xy (string-format "selected node: ~d" selected) buf x (+ y (* line-height 3)) (font-color orange) (font-flags shadow))
+      
+      (draw-string-xy (string-format "path type: ~s" (nick-path-check-path-type this #f)) buf x (+ y (* line-height 4)) (font-color white) (font-flags shadow))
+
+      (draw-string-xy (string-format "mode: ~s" (nick-path-check-mode this)) buf x (+ y (* line-height 5)) (font-color white) (font-flags shadow))
+      
+      (draw-string-xy "-----------------------------" buf x (+ y (* line-height 6)) (font-color white) (font-flags shadow))
+
+      (cond
+        ((= (-> this mode) (nick-path-mode edit)) ;; edit mode
+
+          (if (= selected last-idx)
+            (draw-string-xy "[R3]: add node" buf x (+ y (* line-height 7)) (font-color white) (font-flags shadow))
+            (begin
+              (draw-string-xy (string-format "[R3]: (locked - select node ~d to extend the path)" last-idx) buf x (+ y (* line-height 7)) (font-color red) (font-flags shadow))
+              (draw-string-xy "      walk to green sphere and press [L3 + triangle]" buf x (+ y (* line-height 8)) (font-color red) (font-flags shadow))
+              )
+            )
+
+          (if (= (-> this selected-node) (- (-> this node-count) 1))
+            (draw-string-xy "[R1 + R3]: delete last node" buf x (+ y (* line-height 9)) (font-color white) (font-flags shadow))
+            (draw-string-xy (string-format "[R1 + R3]: (locked - select node ~d to delete it)" last-idx) buf x (+ y (* line-height 9)) (font-color red) (font-flags shadow))
+            )
+
+          (cond
+            ((and (!= closest -1) (= closest selected))
+             (draw-string-xy "[L3 + triangle]: move selected node" buf x (+ y (* line-height 10)) (font-color orange) (font-flags shadow))
+             )
+            ((!= closest -1)
+             (draw-string-xy "[L3 + triangle]: select node" buf x (+ y (* line-height 10)) (font-color white) (font-flags shadow))
+             )
+            (else
+             (draw-string-xy "[L3 + triangle]: move near a node to select" buf x (+ y (* line-height 10)) (font-color white) (font-flags shadow))
+             )
+            )
+
+          (draw-string-xy "[R1 + up]: switch to preview mode" buf x (+ y (* line-height 11)) (font-color white) (font-flags shadow))
+          
+          (draw-string-xy "-----------------------------" buf x (+ y (* line-height 12)) (font-color white) (font-flags shadow))
+          )
+        
+        ((= (-> this mode) (nick-path-mode moving-node)) ;; moving node mode
+          (draw-string-xy "[L3 + triangle]: confirm position" buf x (+ y (* line-height 7)) (font-color white) (font-flags shadow))
+
+          (draw-string-xy "-----------------------------" buf x (+ y (* line-height 8)) (font-color white) (font-flags shadow))
+          )
+        
+        (else ;; preview mode
+          (draw-string-xy "[R1 + down]: switch to edit mode" buf x (+ y (* line-height 7)) (font-color white) (font-flags shadow))
+
+          (draw-string-xy "-----------------------------" buf x (+ y (* line-height 8)) (font-color white) (font-flags shadow))
+          )
+        )
+      )
+    )
+  (none)
+  )
+
+(defmethod start-editor! ((this path-editor))
+  (format 0 "----- starting path-editor... -----~%")
+  (none)
+  )
+
+(defmethod update-editor! ((this path-editor))
+
+  ;; always draw the path graph logic (must be always running)
+  (draw-path-graph this)
+
+  ;; draw a menu displaying the editor controls and status (preview or edit mode) 
+  (draw-menu this)
+
+  ;; always update the closest node from jak's current position
+  (set! (-> this closest-node) (get-closest-node this (target-pos 0) (meters 3.0)))
+
+  (cond
+    ((= (-> this mode) (nick-path-mode edit)) ;; edit mode
+      (set-setting! 'allow-look-around #f 0.0 0) ;; disable jak look around setting
+      (set-setting! 'gun #f 0.0 0) ;; jak can't use guns
+      (hide-hud-quick #f)
+
+      ;; add node (R3)
+      (when (cpad-pressed? 0 r3)
+        (when (not (cpad-hold? 0 r1))
+          (add-path-node this)
+          )
+        )
+
+      ;; remove last node (R1 + R3)
+      (when (cpad-hold? 0 r1)
+        (when (cpad-pressed? 0 r3)
+          (remove-last-node this)
+          )
+        )
+
+      ;; navigate (dpad left/right) through the existing nodes
+      ;(when (cpad-pressed? 0 left)
+        ;(selected-node-navigation this -1)
+        ;)
+
+      ;(when (cpad-pressed? 0 right)
+        ;(selected-node-navigation this 1)
+        ;)
+
+      ;; activate moving-node mode (L3 + triangle)
+      (when (cpad-hold? 0 l3)
+        (when (cpad-pressed? 0 triangle)
+          (cond
+            ;; only select the node first
+            ((and (!= (-> this closest-node) -1) (!= (-> this closest-node) (-> this selected-node)))
+              (sound-play "menu-pick")
+              (set! (-> this selected-node) (-> this closest-node))
+              )
+            ;; start moving the selected node
+            ((and (!= (-> this closest-node) -1) (= (-> this closest-node) (-> this selected-node)))
+              (sound-play "menu-pick")
+              (set! (-> this mode) (nick-path-mode moving-node))
+              )
+            )
+          )
+        )
+
+      ;; enable spheres display
+      (when (not (logtest? (-> this flags) (nick-path-flags display-spheres)))
+        (logior! (-> this flags) (nick-path-flags display-spheres))
+        )
+      )
+    ((= (-> this mode) (nick-path-mode moving-node)) ;; moving node mode
+      (move-selected-node this)
+
+      ;; return to edit mode and confirm node's new position (L3 + triangle)
+      (when (cpad-hold? 0 l3)
+        (when (cpad-pressed? 0 triangle)
+          (sound-play "menu-back")
+          (set! (-> this mode) (nick-path-mode edit))
+          )
+        )
+      )
+    (else ;; preview mode
+      (remove-setting! 'allow-look-around) ;; enable jak look around setting
+      (remove-setting! 'gun) ;; jak can use guns
+          
+      ;; disable spheres display
+      (when (logtest? (-> this flags) (nick-path-flags display-spheres))
+        (logclear! (-> this flags) (nick-path-flags display-spheres))
+        )
+      )
+    )
+  
+  ;; switch between edit/preview modes (L1 + up/down)
+  (when (not (logtest? (-> this mode) (nick-path-mode moving-node)))
+    (when (cpad-hold? 0 r1)
+      (when (cpad-pressed? 0 up) ;; switch to preview mode
+        (set! (-> this mode) (nick-path-mode preview))
+        )
+      (when (cpad-pressed? 0 down) ;; switch to edit mode
+        (set! (-> this mode) (nick-path-mode edit))
+        )
+      )
+    )
+  (none)
+  )
+
+(defmethod print-jsonc-path-data ((this path-editor))
+  "Print the path data in console."
+  (let ((count (-> this node-count)))
+    (when (> count 0)
+      (format 0 "~%----- PATH OUTPUT START -----~%")
+
+      ;; print the path (cverts)
+      (format 0 "~%   \"path\": [\"vector4m\",~%")
+      (dotimes (i count)
+        (let ((node (-> this nodes i)))
+          (format 0 "     [~,,2m, ~,,2m, ~,,2m, 1.0]~S~%" (-> node x) (-> node y) (-> node z) (if (= (- count 1) i) "" ","))
+          )
+        )
+      (format 0 "    ],~%")
+      
+      ;; print the path-k (knots)
+      (format 0 "~%   \"path-k\": [\"float\",~%")
+      (let* ((num-knots (+ count 4))
+              ;(last-val (the float (max 0 (- count 3))))
+              (num-segments (- count 1))
+              (step (/ 1.0 (the float num-segments)))
+              )
+        (dotimes (i num-knots)
+          (cond
+            ((< i 4) ;; start clamp (first 4 are 0.0)
+              (format 0 "     0.0,~%")
+              )
+            ((>= i (- num-knots 4)) ;; end clamp
+              (format 0 "     1.0~S~%" (if (= (- num-knots 1) i) "" ","))
+              )
+            (else ;; intermediate steps
+              (format 0 "     ~f,~%" (* (the float (- i 3)) step))
+              )
+            )
+          )
+        )
+      (format 0 "    ]~%")
+      (format 0 "~%----- PATH OUTPUT END -----~%~%")
+      )
+    )
+  (none)
+  )
+
+(defun nick-path-menu-print-jsonc-path-data ()
+  "Function for the debug menu to print the path data in console."
+  (if *path-editor*
+    (print-jsonc-path-data (the path-editor (ppointer->process *path-editor*)))
+    )
+  (none)
+  )
+
+(defmethod handle-output-settings ((this path-editor) (file file-stream))
+  "Save the path-type and every nodes from the path in a file."
+
+  (format file "  (path-type ~D)~%" (-> this path-type))
+
+  (dotimes (idx (-> this node-count))
+    (let ((pos (-> this nodes idx)))
+      (format file "  (node ~D ~m ~m ~m)~%" idx (-> pos x) (-> pos y) (-> pos z))
+      )
+    )
+  (none)
+  )
+
+(defmethod write-path-to-file ((this path-editor) (filename string))
+  "Open a file and writes the structured path data."
+  (if (not filename)
+    (return #f)
+    )
+
+  (let ((file (new 'stack 'file-stream filename 'write)))
+    (if (not (file-stream-valid? file))
+      (return #f)
+      )
+
+    (format file "(settings #x~X~%" PC_KERNEL_VERSION)
+
+    (handle-output-settings this file)
+
+    (format file "  )~%")
+    (file-stream-close file)
+    )
+
+  (format 0 "[PATH EDITOR]: file write: ~A~%" filename)
+
+  #t
+  )
+
+(define *nick-path-filename* "PATH-DATA-")
+
+(defmethod save-path-to-file ((this path-editor) (filenum int))
+  "Save path data to a file."
+  (format (clear *pc-temp-string-1*) "~S/~S~D.gc" *pc-settings-folder* *nick-path-filename* filenum)
+  (pc-mkdir-file-path *pc-temp-string-1*)
+  (write-path-to-file this *pc-temp-string-1*)
+  (none)
+  )
+
+;; save slots functions
+(defun nick-path-save-to-file-1 () (if *path-editor* (save-path-to-file (the path-editor (ppointer->process *path-editor*)) 1)))
+(defun nick-path-save-to-file-2 () (if *path-editor* (save-path-to-file (the path-editor (ppointer->process *path-editor*)) 2)))
+(defun nick-path-save-to-file-3 () (if *path-editor* (save-path-to-file (the path-editor (ppointer->process *path-editor*)) 3)))
+(defun nick-path-save-to-file-4 () (if *path-editor* (save-path-to-file (the path-editor (ppointer->process *path-editor*)) 4)))
+
+(defmethod handle-input-settings ((this path-editor) (file file-stream))
+  "Parses each line of path data settings in the file."
+  (let ((word *pc-temp-string*))
+    (cond
+      ;; which path-type we should use
+      ((string= word "path-type")
+       (set! (-> this path-type) (the nick-path-type (file-stream-read-int file)))
+       (file-stream-read-word file)
+       )
+      ;; for the nodes...
+      ((string= word "node")
+       (let* ((idx (file-stream-read-int file))
+              (x (file-stream-read-float file))
+              (y (file-stream-read-float file))
+              (z (file-stream-read-float file))
+              )
+         (when (< idx 100)
+           (set-vector-meters! (-> this nodes idx) x y z)
+           (set! (-> this node-count) (max (-> this node-count) (+ idx 1)))
+           )
+         )
+        (file-stream-read-word file)
+       )
+      )
+    )
+  (none)
+  )
+
+(defmethod read-path-from-file ((this path-editor) (filename string))
+  "Open a file and reads the structured path data."
+  (if (not filename)
+    (return #f)
+    )
+
+  (let ((file (new 'stack 'file-stream filename 'read)))
+    (when (not (file-stream-valid? file))
+      (return #f)
+      )
+
+    (set! (-> this selected-node) 0)
+
+    (with-settings-scope (file)
+      (case-str (file-stream-read-word file)
+        (("settings")
+          (file-stream-read-int file) ;; burn thru version field
+          (dosettings (file)
+            (handle-input-settings this file)
+            )
+          )
+        )
+      )
+
+    (file-stream-close file)
+    )
+
+  (format 0 "[PATH EDITOR]: file read: ~A~%" filename)
+
+  #t
+  )
+
+(defmethod load-path-from-file ((this path-editor) (filenum int))
+  "Load path data from a file."
+  (format (clear *pc-temp-string-1*) "~S/~S~D.gc" *pc-settings-folder* *nick-path-filename* filenum)
+  (cond
+    ((pc-filepath-exists? *pc-temp-string-1*)
+      (format 0 "[PC] Path Editor Settings found at '~S'...loading!~%" *pc-temp-string-1*)
+      (path-graph-clear-all this)
+      (unless (read-path-from-file this *pc-temp-string-1*)
+        (format 0 "[PC] Path Editor Settings found at '~S' but could not be loaded!~%" *pc-temp-string-1*)
+        )
+      )
+    (else
+      (format 0 "[PC] Path Editor Settings not found at '~S'~%" *pc-temp-string-1*)
+      )
+    )
+  (none)
+  )
+
+;; load slots functions
+(defun nick-path-load-from-file-1 () (if *path-editor* (load-path-from-file (the path-editor (ppointer->process *path-editor*)) 1)))
+(defun nick-path-load-from-file-2 () (if *path-editor* (load-path-from-file (the path-editor (ppointer->process *path-editor*)) 2)))
+(defun nick-path-load-from-file-3 () (if *path-editor* (load-path-from-file (the path-editor (ppointer->process *path-editor*)) 3)))
+(defun nick-path-load-from-file-4 () (if *path-editor* (load-path-from-file (the path-editor (ppointer->process *path-editor*)) 4)))
+
+(defstate idle (path-editor)
+  :virtual #t
+  :enter (behavior ()
+    (start-editor! self)
+    )
+  :trans (behavior ()
+    (update-editor! self)
+    )
+  :code sleep-code
+  )
+
+(defbehavior path-editor-init-by-other path-editor ()
+  (set! *path-editor* (the (pointer path-editor) (process->ppointer self)))
+  (set! (-> self node-count) 0)
+  (set! (-> self selected-node) -1)
+  (set! (-> self closest-node) -1)
+  (set! (-> self mode) (nick-path-mode edit))
+  (set! (-> self path-type) (nick-path-type linear))
+  (go-virtual idle)
+  (none)
+  )
+
+(defun stop-path-editor ()
+  "Kill the path-editor process."
+  (remove-setting! 'allow-look-around)
+  (remove-setting! 'gun)
+  (kill-by-type path-editor *default-pool*)
+  (set! *path-editor* (the (pointer path-editor) #f))
+  (none)
+  )
+
+(defun start-path-editor ()
+  "Start the path-editor process."
+  (if *path-editor*
+    (stop-path-editor)
+    )
+
+  (set! *path-editor* (process-spawn path-editor :from *pc-dead-pool*))
+  (none)
+  )

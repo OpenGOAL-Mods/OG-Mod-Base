@@ -1,0 +1,46 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *underb-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-41"
+                :on-notice '(when (send-event "under-locking-2" 'test #t) '(under underb))
+                :on-activate #f
+                :on-enter '(want-display 'under 'display)
+                :on-exit #f
+                :on-cross '(want-sound 'under1 'under2 'mechwat)
+                :on-inside #f
+                :on-deactivate '(want-display 'under #f)
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-42"
+                :on-notice '(when (send-event "under-locking-2" 'test #f) '(under))
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "under-door-2"
+                :on-notice '(when #t '(ctyport ctywide))
+                :on-activate #f
+                :on-enter '(begin (want-display 'ctyport 'display) (want-display 'ctywide 'display))
+                :on-exit #f
+                :on-cross '(begin (want-vis 'ctyport) (want-sound 'ctywide1 'ctywide2 'ctywide3))
+                :on-inside '(want-load 'underb 'under)
+                :on-deactivate '(begin (want-display 'ctyport #f) (want-display 'ctywide #f))
+                )
+              (static-airlock-data 
+                :airlock-name "under-door-4"
+                :on-notice '(when #t '(ctyport ctywide))
+                :on-activate #f
+                :on-enter '(begin (want-display 'ctyport 'display) (want-display 'ctywide 'display))
+                :on-exit #f
+                :on-cross '(begin (want-vis 'ctyport) (want-sound 'ctywide1 'ctywide2 'ctywide3))
+                :on-inside #f
+                :on-deactivate '(begin (want-display 'ctyport #f) (want-display 'ctywide #f))
+                )
+              )
+  )

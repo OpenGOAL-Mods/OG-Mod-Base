@@ -1,0 +1,17 @@
+{
+  "[opengoal]": {
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": true,
+      "strings": true
+    },
+    "editor.wordBasedSuggestions": "matchingDocuments",
+    "editor.snippetSuggestions": "top"
+  },
+  "cmake.configureOnOpen": false,
+  "files.associations": {
+    "optional": "cpp",
+    "xhash": "cpp",
+    "vector": "cpp"
+  }
+}

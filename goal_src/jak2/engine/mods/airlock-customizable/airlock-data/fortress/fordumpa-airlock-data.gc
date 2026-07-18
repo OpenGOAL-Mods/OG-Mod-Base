@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *fordumpa-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "fort-entry-gate-4"
+                :on-notice '(when #t '(ctysluma ctywide))
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross '(want-vis 'ctysluma)
+                :on-inside #f
+                :on-deactivate '(begin (want-display 'ctysluma #f) (want-display 'ctywide #f) (want-load 'fordumpa 'fordumpb #f) (want-sound 'fordump1 'fordump2 'fordump3))
+                )
+              )
+  )

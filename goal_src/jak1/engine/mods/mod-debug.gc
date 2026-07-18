@@ -1,0 +1,27 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; For debug-only additions to the mod-base. Anything defined in this file will be unavailable in retail mode.
+(declare-file (debug))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Additional debug menu(s)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun-debug debug-menu-make-modding-tools-menu ((ctx debug-menu-context))
+  (let ((modding-tools-menu (new 'debug 'debug-menu ctx "Modding Tools")))
+    ;; orb-placer menu
+    (let ((orb-placer-menu (new 'debug 'debug-menu ctx "Orb Placer")))
+      (debug-menu-append-item orb-placer-menu (new-dm-bool "Edit Mode?" *orb-placer-enabled?* dm-boolean-toggle-pick-func))
+      (debug-menu-append-item orb-placer-menu (new-dm-func "Add Orb" #f orb-placer-add))
+      (let ((select-orb-menu (new 'debug 'debug-menu ctx "Select Orb")))
+        (set! *orb-placer-select-menu* select-orb-menu)
+        ;; populated on orb add
+        (debug-menu-append-item orb-placer-menu (new-dm-submenu "Select Orb" select-orb-menu)))
+      (debug-menu-append-item orb-placer-menu (new-dm-func "Print Selected Orb Position" #f orb-placer-print-selected))
+      (debug-menu-append-item orb-placer-menu (new-dm-func "Print All Orb Positions" #f orb-placer-print-all))
+      (debug-menu-append-item modding-tools-menu (new-dm-submenu "Orb Placer" orb-placer-menu)))
+    (new-dm-submenu "Modding Tools" modding-tools-menu)))
+
+(when (-> *debug-menu-context* root-menu)
+  (debug-menu-append-item (-> *debug-menu-context* root-menu) (debug-menu-make-modding-tools-menu *debug-menu-context*)))

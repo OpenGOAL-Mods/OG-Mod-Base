@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *forexitb-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "fort-entry-gate-5"
+                :on-notice '(when #t '(ctyslumb ctywide))
+                :on-activate '(want-load 'ctyslumb 'ctywide 'forexitb)
+                :on-enter '(begin (want-display 'ctyslumb 'display) (want-display 'ctywide 'display) (want-sound 'ctywide1 'ctywide2 'forexit1) (task-close! "fortress-escape-resolution"))
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(begin (want-display 'ctyslumb #f) (want-display 'ctywide #f) (want-sound 'forexit1 'forexit2 'ctywide1))
+                )
+              )
+  )

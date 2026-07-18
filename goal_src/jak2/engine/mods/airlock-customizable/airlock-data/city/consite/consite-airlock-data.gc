@@ -1,0 +1,16 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *consite-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-34"
+                :on-notice '(when #t '(consiteb))
+                :on-activate '(want-load 'consite 'consiteb #f)
+                :on-enter '(want-display 'consiteb 'display) 
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(want-display 'consiteb 'display)
+                )
+              )
+  )

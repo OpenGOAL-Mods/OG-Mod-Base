@@ -1,0 +1,76 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *palshaft-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-26"
+                :on-notice '(when #t '(ctypal ctywide))
+                :on-activate #f
+                :on-enter '(begin (want-display 'ctywide 'display) (want-display 'ctypal 'display))
+                :on-exit '(begin (want-display 'ctywide #f) (want-display 'ctypal #f))
+                :on-cross '(begin (want-vis 'ctypal) (when (task-open? "palace-sneak-in-resolution") (task-close! "palace-sneak-in-resolution")))
+                :on-inside '(cond ((task-closed? "palace-sneak-in-resolution") #f) ((task-closed? "palace-sneak-in-introduction") (want-load 'palshaft 'palent 'throne) (want-sound 'ctywide1 'ctywide2 'palent1)) ((task-closed? "palace-boss-resolution") #f) (else (want-load 'palshaft 'palcab 'palroof) (want-sound 'ctywide1 'ctywide2 'palcab1)))
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-outer-20" ;; UNUSED
+                :on-notice #f
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-25"
+                :on-notice '(when #t '(palcab palroof))
+                :on-activate #f
+                :on-enter '(begin (want-display 'palroof 'display) (want-display 'palcab 'display) (want-sound 'ctywide1 'palcab1 'palcab2))
+                :on-exit '(begin (want-display 'palroof #f) (want-display 'palcab #f) (want-sound 'ctywide1 'palcab1 'palcab2))
+                :on-cross '(want-vis 'palroof)
+                :on-inside '(begin (want-load 'ctypal 'ctywide 'palshaft) (want-sound 'ctywide1 'palcab1 'palcab2))
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-23"
+                :on-notice '(when #t '(palcab palroof))
+                :on-activate #f
+                :on-enter '(begin (want-display 'palcab 'display) (want-display 'palroof 'display))
+                :on-exit '(begin (want-display 'palcab #f) (want-display 'palroof #f))
+                :on-cross '(want-vis 'palcab)
+                :on-inside '(begin (want-load 'ctygenb 'ctywide 'palshaft) (want-sound 'ctywide1 'ctywide1 'palcab2))
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-36"
+                :on-notice '(unless (task-closed? "palace-sneak-in-meeting") '(palent))
+                :on-activate #f
+                :on-enter '(begin (want-display 'palent 'display))
+                :on-exit '(begin (want-display 'palent #f))
+                :on-cross '(want-vis 'palent)
+                :on-inside '(begin (want-load 'ctypal 'ctywide 'palshaft) (want-sound 'ctywide1 'palent1 'palent2))
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-37"
+                :on-notice '(when (or (not (send-event self 'front)) (< (send-event self 'distance) 8192)) '(palent palout))
+                :on-activate #f
+                :on-enter '(begin (want-display 'palent 'display))
+                :on-exit '(begin (want-display 'palent #f))
+                :on-cross '(want-vis 'palent)
+                :on-inside '(begin (want-load 'ctypal 'ctywide 'palshaft) (want-sound 'ctywide1 'ctywide2 'palent1))
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "com-airlock-inner-22"
+                :on-notice '(when #t '(ctygenb ctywide))
+                :on-activate #f
+                :on-enter '(begin (want-display 'ctywide 'display) (want-display 'ctygenb 'display))
+                :on-exit '(begin (want-display 'ctywide #f) (want-display 'ctygenb #f))
+                :on-cross '(want-vis 'ctygenb)
+                :on-inside '(begin (want-load 'palshaft 'palcab 'palroof) (want-sound 'ctywide1 'palcab1 'palcab2))
+                :on-deactivate #f
+                )
+              )
+  )

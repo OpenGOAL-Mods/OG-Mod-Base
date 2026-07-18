@@ -1,0 +1,36 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(define *forrescb-airlock-data* (new 'static 'boxed-array :type airlock-data
+              (static-airlock-data 
+                :airlock-name "fort-entry-gate-8"
+                :on-notice '(when #t '(forrescb))
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross '(want-continue "forrescb-mid")
+                :on-inside #f
+                :on-deactivate #f
+                )
+              (static-airlock-data 
+                :airlock-name "fort-entry-gate-9"
+                :on-notice '(when #t '(forrescb forresca))
+                :on-activate #f
+                :on-enter #f
+                :on-exit #f
+                :on-cross #f
+                :on-inside #f
+                :on-deactivate '(when (send-event self 'front) (want-load 'prison 'forrescb))
+                )
+              (static-airlock-data 
+                :airlock-name "fort-entry-gate-11"
+                :on-notice '(when #t '(prison))
+                :on-activate '(want-load 'prison 'forrescb)
+                :on-enter '(want-display 'prison 'display)
+                :on-exit #f
+                :on-cross '(want-sound 'forresc1 'forresc2 'forexit1)
+                :on-inside #f
+                :on-deactivate '(want-display 'prison #f)
+                )
+              )
+  )

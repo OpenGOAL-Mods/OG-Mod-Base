@@ -1,0 +1,436 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(defenum on-off-group
+  :type uint32
+  (red 0)
+  (blue 1)
+  (green 2)
+  (yellow 3)
+  (max 4)
+  )
+
+(deftype on-off-manager (structure)
+  ((group-states symbol 4) ;; length should be (on-off-group max)
+    )
+  (:methods
+   (toggle (_type_ on-off-group symbol) none)))
+
+(defmethod toggle ((this on-off-manager) (group on-off-group) (on? symbol))
+  (set! (-> this group-states group) on?)
+  (none))
+
+(define *on-off-manager* (new 'global 'on-off-manager))
+(dotimes (i (on-off-group max))
+  (false! (-> *on-off-manager* group-states i)))
+
+;; ===== on/off single-colored button =====
+
+(deftype on-off-button (basebutton)
+  ((group on-off-group))
+  )
+
+(defmethod basebutton-method-29 ((this on-off-button) (arg0 symbol) (arg1 entity))
+  (when arg0
+    (toggle *on-off-manager* (-> this group) (not (-> *on-off-manager* group-states (-> this group))))
+    )
+  (none))
+
+(defstate basebutton-down-idle (on-off-button)
+  :virtual #t
+  :code
+    (behavior ()
+      (set-time! (-> self state-time))
+      (basebutton-method-29 self (-> self event-going-up) (-> self notify-actor))
+      (sound-play "silo-button")
+      (go-virtual basebutton-going-up))
+  :post
+    (behavior ()
+      (when (-> self move-to?)
+        (set! (-> self move-to?) #f)
+        (set! (-> self root trans quad) (-> self move-to-pos quad))
+        (quaternion-copy! (-> self root quat) (-> self move-to-quat))
+        (rider-post))))
+
+(defmethod init-from-entity! ((this on-off-button) (arg0 entity-actor))
+  (reset! this)
+  (set! (-> this spawned-by-other?) #f)
+  (set! (-> this button-id) -1)
+  (let ((v1-4 (res-lump-value (-> this entity) 'extra-id uint128 :default (the-as uint128 -1))))
+    (if (>= (the-as int v1-4) 0) (set! (-> this button-id) (the-as int v1-4))))
+  (when (or (res-lump-struct arg0 'next-actor structure) (res-lump-struct arg0 'prev-actor structure))
+    (set! (-> this link) (new 'process 'actor-link-info this))
+    (if (< (-> this button-id) 0) (set! (-> this button-id) (actor-count-before (-> this link)))))
+  (basebutton-method-27 this)
+  (process-drawable-from-entity! this arg0)
+  (let ((v1-16 #f))
+    (if (and (-> this entity) (logtest? (-> this entity extra perm status) (entity-perm-status complete))) (set! v1-16 #t))
+    (set! (-> this down?) v1-16))
+  (set! (-> this notify-actor) (entity-actor-lookup arg0 'alt-actor 0))
+  (set! (-> this timeout) (res-lump-float arg0 'timeout))
+  (if (not (-> this spawned-by-other?)) (nav-mesh-connect this (-> this root) (the-as nav-control #f)))
+  (arm-trigger-event! this)
+  (basebutton-method-26 this)
+
+  (let ((g (res-lump-value (-> this entity) 'on-off-group uint128 :default (the-as uint128 0))))
+    (when (>= g 0) 
+      (set! (-> this group) (the-as on-off-group g))))
+  (case (-> this group)
+    (((on-off-group red))
+      (set-vector! (-> this draw color-mult) 5.0 1.0 1.0 1.0)
+      )
+    (((on-off-group blue))
+      (set-vector! (-> this draw color-mult) 1.0 1.0 5.0 1.0)
+      )
+    (((on-off-group green))
+      (set-vector! (-> this draw color-mult) 1.0 5.0 1.0 1.0)
+      )
+    (((on-off-group yellow))
+      (set-vector! (-> this draw color-mult) 5.0 5.0 1.0 1.0)
+      )
+    )
+
+  (go (method-of-object this basebutton-startup))
+  (none)
+)
+
+;; ===== on/off eco-based button =====
+
+(deftype eco-on-off-button (basebutton)
+  ())
+
+(defmethod basebutton-method-29 ((this eco-on-off-button) (arg0 symbol) (arg1 entity))
+  (when arg0
+    (when *target*
+      (let ((g (on-off-group max)))
+        ;; count 4HP as channeling green eco
+        (if (and *target* (= (-> *target* fact health) (-> *target* fact health-max)) (= (-> *target* fact eco-pill) (-> *target* fact eco-pill-max)))
+          (set! g (on-off-group green))
+          )
+        (when (< 0.0 (-> *target* fact eco-level))
+          (case (-> *target* fact eco-type)
+            (((pickup-type eco-red))
+              (set! g (on-off-group red))
+              )
+            (((pickup-type eco-blue))
+              (set! g (on-off-group blue))
+              )
+            (((pickup-type eco-green))
+              (set! g (on-off-group green))
+              )
+            (((pickup-type eco-yellow))
+              (set! g (on-off-group yellow))
+              )
+            )
+          )
+        (when (!= g (on-off-group max))
+          (toggle *on-off-manager* g (not (-> *on-off-manager* group-states g))))
+        )
+      )
+    )
+  (none))
+
+(defstate basebutton-down-idle (eco-on-off-button)
+  :virtual #t
+  :code
+    (behavior ()
+      (set-time! (-> self state-time))
+      (until (and (time-elapsed? (-> self state-time) (seconds 0.5))
+                  (or (not (-> self root riders)) (zero? (-> self root riders num-riders))))
+        (detect-riders! (-> self root))
+        (suspend))
+      (basebutton-method-29 self (-> self event-going-up) (-> self notify-actor))
+      (sound-play "silo-button")
+      (go-virtual basebutton-going-up)
+      )
+  :post
+    (behavior ()
+      (when (-> self move-to?)
+        (set! (-> self move-to?) #f)
+        (set! (-> self root trans quad) (-> self move-to-pos quad))
+        (quaternion-copy! (-> self root quat) (-> self move-to-quat))
+        (rider-post))))
+
+(defstate basebutton-up-idle (eco-on-off-button)
+  :virtual #t
+  :event
+    (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
+      ;; only respond when player has eco / full HP
+      (when (and *target* (or (and (= (-> *target* fact health) (-> *target* fact health-max)) 
+                                   (= (-> *target* fact eco-pill) (-> *target* fact eco-pill-max)))
+                              (< 0.0 (-> *target* fact eco-level))))
+        (case message
+          (('touch)
+            ;; push button just by touching, since you can't ground pound with yellow eco
+            (basebutton-method-29 self (-> self event-going-down) (-> self notify-actor))
+            (sound-play "silo-button")
+            (go-virtual basebutton-going-down)
+            )
+          (('attack)
+          (case (-> block param 1)
+            (('flop)
+              (basebutton-method-29 self (-> self event-going-down) (-> self notify-actor))
+              (sound-play "silo-button")
+              (go-virtual basebutton-going-down))))
+          (('trigger) (sound-play "silo-button") (go-virtual basebutton-going-down))
+          (('move-to) (move-to-vec-or-quat! self (the-as vector (-> block param 0)) (the-as quaternion (-> block param 1)))))))
+  :enter
+    (behavior ()
+      (press! self #f))
+  :trans
+    (behavior ()
+      ;; darker button when no eco match
+      (set-vector! (-> self draw color-mult) 0.25 0.25 0.25 1.0)
+      ;; count 4HP as channeling green eco
+      (if (and *target* (= (-> *target* fact health) (-> *target* fact health-max)) (= (-> *target* fact eco-pill) (-> *target* fact eco-pill-max)))
+        (set-vector! (-> self draw color-mult) 1.0 5.0 1.0 1.0)
+        )
+      (when (and *target* (< 0.0 (-> *target* fact eco-level)))
+        (case (-> *target* fact eco-type)
+          (((pickup-type eco-red))
+            (set-vector! (-> self draw color-mult) 5.0 1.0 1.0 1.0)
+            )
+          (((pickup-type eco-blue))
+            (set-vector! (-> self draw color-mult) 1.0 1.0 5.0 1.0)
+            )
+          (((pickup-type eco-green))
+            (set-vector! (-> self draw color-mult) 1.0 5.0 1.0 1.0)
+            )
+          (((pickup-type eco-yellow))
+            (set-vector! (-> self draw color-mult) 5.0 5.0 1.0 1.0)
+            )
+          )
+        )
+      (if (-> self move-to?) (rider-trans)))
+  :code anim-loop
+  :post
+    (behavior ()
+      (when (-> self move-to?)
+        (set! (-> self move-to?) #f)
+        (set! (-> self root trans quad) (-> self move-to-pos quad))
+        (quaternion-copy! (-> self root quat) (-> self move-to-quat))
+        (rider-post))))
+
+;; ==== cycling color on/off button ====
+
+(deftype cycling-on-off-button (basebutton)
+  ((period uint32) ;; cycles between the 4 colors once per period
+    ))
+
+(defstate basebutton-up-idle (cycling-on-off-button)
+  :virtual #t
+  :event
+    (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
+      (case message
+        (('touch)
+          ;; push button just by touching, since you can't ground pound with yellow eco
+          (basebutton-method-29 self (-> self event-going-down) (-> self notify-actor))
+          (sound-play "silo-button")
+          (go-virtual basebutton-going-down)
+          )
+        (('attack)
+         (case (-> block param 1)
+           (('flop)
+            (basebutton-method-29 self (-> self event-going-down) (-> self notify-actor))
+            (sound-play "silo-button")
+            (go-virtual basebutton-going-down))))
+        (('trigger) (sound-play "silo-button") (go-virtual basebutton-going-down))
+        (('move-to) (move-to-vec-or-quat! self (the-as vector (-> block param 0)) (the-as quaternion (-> block param 1))))))
+  :enter
+    (behavior ()
+      (press! self #f))
+  :trans
+    (behavior ()
+      ;; "flashing" button whenever button is up
+      (let ((i (the int (mod (/ (current-time) (-> self period)) 4))))
+        (case i
+          ((0) (set-vector! (-> self draw color-mult) 5.0 1.0 1.0 1.0)) ;; red
+          ((1) (set-vector! (-> self draw color-mult) 1.0 1.0 5.0 1.0)) ;; blue
+          ((2) (set-vector! (-> self draw color-mult) 1.0 5.0 1.0 1.0)) ;; green
+          ((3) (set-vector! (-> self draw color-mult) 5.0 5.0 1.0 1.0)) ;; yellow
+          )
+        ) 
+      (if (-> self move-to?) (rider-trans)))
+  :code anim-loop
+  :post
+    (behavior ()
+      (when (-> self move-to?)
+        (set! (-> self move-to?) #f)
+        (set! (-> self root trans quad) (-> self move-to-pos quad))
+        (quaternion-copy! (-> self root quat) (-> self move-to-quat))
+        (rider-post))))
+
+
+(defmethod basebutton-method-29 ((this cycling-on-off-button) (arg0 symbol) (arg1 entity))
+  (when arg0
+    (let ((i (the int (mod (/ (current-time) (-> this period)) 4))))
+      (toggle *on-off-manager* (the on-off-group i) (not (-> *on-off-manager* group-states i))))
+    )
+  (none))
+
+(defstate basebutton-down-idle (cycling-on-off-button)
+  :virtual #t
+  :code
+    (behavior ()
+      (set-time! (-> self state-time))
+      (until (and (time-elapsed? (-> self state-time) (seconds 0.5))
+                  (or (not (-> self root riders)) (zero? (-> self root riders num-riders))))
+        (detect-riders! (-> self root))
+        (suspend))
+      (basebutton-method-29 self (-> self event-going-up) (-> self notify-actor))
+      (sound-play "silo-button")
+      (go-virtual basebutton-going-up))
+  :post
+    (behavior ()
+      (when (-> self move-to?)
+        (set! (-> self move-to?) #f)
+        (set! (-> self root trans quad) (-> self move-to-pos quad))
+        (quaternion-copy! (-> self root quat) (-> self move-to-quat))
+        (rider-post))))
+
+(defmethod init-from-entity! ((this cycling-on-off-button) (arg0 entity-actor))
+  (reset! this)
+  (set! (-> this spawned-by-other?) #f)
+  (set! (-> this button-id) -1)
+  (let ((v1-4 (res-lump-value (-> this entity) 'extra-id uint128 :default (the-as uint128 -1))))
+    (if (>= (the-as int v1-4) 0) (set! (-> this button-id) (the-as int v1-4))))
+  (when (or (res-lump-struct arg0 'next-actor structure) (res-lump-struct arg0 'prev-actor structure))
+    (set! (-> this link) (new 'process 'actor-link-info this))
+    (if (< (-> this button-id) 0) (set! (-> this button-id) (actor-count-before (-> this link)))))
+  (basebutton-method-27 this)
+  (process-drawable-from-entity! this arg0)
+  (let ((v1-16 #f))
+    (if (and (-> this entity) (logtest? (-> this entity extra perm status) (entity-perm-status complete))) (set! v1-16 #t))
+    (set! (-> this down?) v1-16))
+  (set! (-> this notify-actor) (entity-actor-lookup arg0 'alt-actor 0))
+  (set! (-> this timeout) (res-lump-float arg0 'timeout))
+  (if (not (-> this spawned-by-other?)) (nav-mesh-connect this (-> this root) (the-as nav-control #f)))
+  (arm-trigger-event! this)
+  (basebutton-method-26 this)
+
+  (let ((s (res-lump-float (-> this entity) 'period :default (the-as float 1.0))))
+    (set! (-> this period) (the int (fsec s))))
+
+  (go (method-of-object this basebutton-startup))
+  (none)
+)
+
+;; ===== on/off colored blocks =====
+
+(deftype on-off-block (process-drawable)
+  ((root       collide-shape-moving :override)
+   (birth-time time-frame)
+   (group      on-off-group)
+   (inverted?  symbol))
+  (:methods
+   (init-collision! (_type_) object))
+  (:state-methods
+   idle))
+
+(def-actor on-off-block
+  :bounds (0 0 0 5))
+
+(defmethod init-collision! ((this on-off-block))
+  (let ((cshape (new 'process 'collide-shape-moving this (collide-list-enum hit-by-player))))
+    (set! (-> cshape dynam) (copy *standard-dynamics* 'process))
+    (set! (-> cshape reaction) default-collision-reaction)
+    (set! (-> cshape no-reaction) (the (function collide-shape-moving collide-shape-intersect vector vector none) nothing))
+    (let ((cgroup (new 'process 'collide-shape-prim-group cshape (the uint 1) 0)))
+      (set! (-> cgroup prim-core collide-as) (collide-kind ground-object))
+      (set! (-> cgroup collide-with) (collide-kind target))
+      (set! (-> cgroup prim-core action) (collide-action solid rider-plat-sticky))
+      (set! (-> cgroup transform-index) 0)
+      (set-vector! (-> cgroup local-sphere) 0.0 0.0 0.0 (meters 5))
+      (set-root-prim! cshape cgroup)
+      (let ((mesh (new 'process 'collide-shape-prim-mesh cshape (the uint 0) (the uint 0))))
+        (set! (-> mesh prim-core collide-as) (collide-kind ground-object))
+        (set! (-> mesh collide-with) (collide-kind target))
+        (set! (-> mesh prim-core action) (collide-action solid rider-plat-sticky))
+        (set! (-> mesh prim-core offense) (collide-offense indestructible))
+        (set! (-> mesh transform-index) 0)
+        (set-vector! (-> mesh local-sphere) 0.0 (meters 0) 0.0 (meters 5))
+        (append-prim cgroup mesh))
+      ; (let ((sphere (new 'process 'collide-shape-prim-sphere cshape (the uint 0))))
+      ;   (set! (-> sphere prim-core collide-as) (collide-kind enemy))
+      ;   (set! (-> sphere collide-with) (collide-kind target))
+      ;   (set! (-> sphere prim-core action) (collide-action solid))
+      ;   (set! (-> sphere prim-core offense) (collide-offense normal-attack))
+      ;   (set-vector! (-> sphere local-sphere) 0.0 0.0 0.0 (meters 2))
+      ;   (set-root-prim! cshape sphere)
+      ;   )
+      )
+    (set! (-> cshape nav-radius) (* 0.75 (-> cshape root-prim local-sphere w)))
+    (backup-collide-with-as cshape)
+    (set! (-> this root) cshape)))
+
+(defmethod init-from-entity! ((this on-off-block) (e entity-actor))
+  (logior! (-> this mask) (process-mask enemy))
+  (init-collision! this)
+  (process-drawable-from-entity! this e)
+  (let ((g (res-lump-value (-> this entity) 'on-off-group uint128 :default (the-as uint128 0))))
+    (if (and (>= g 0) (< g (on-off-group max))) (set! (-> this group) (the-as on-off-group g))))
+  (false! (-> this inverted?))
+  (let ((i (res-lump-value (-> this entity) 'inverted? uint128 :default (the-as uint128 0))))
+    (when (> i 0) 
+      (true! (-> this inverted?))))
+  (set-time! (-> this birth-time))
+  (initialize-skeleton this *on-off-block-sg* '())
+  (logclear! (-> this mask) (process-mask actor-pause))
+  (transform-post)
+  (case (-> this group)
+    (((on-off-group red))
+      (set-vector! (-> this draw color-mult) 5.0 1.0 1.0 1.0)
+      )
+    (((on-off-group blue))
+      (set-vector! (-> this draw color-mult) 1.0 1.0 5.0 1.0)
+      )
+    (((on-off-group green))
+      (set-vector! (-> this draw color-mult) 1.0 5.0 1.0 1.0)
+      )
+    (((on-off-group yellow))
+      (set-vector! (-> this draw color-mult) 5.0 5.0 1.0 1.0)
+      )
+    )
+  (go-virtual idle :proc this)
+  (none))
+
+(defbehavior on-off-block-init-by-other on-off-block ((pos vector) (group on-off-group))
+  (logior! (-> self mask) (process-mask enemy))
+  (init-collision! self)
+  (initialize-skeleton self *on-off-block-sg* '())
+  (vector-copy! (-> self root trans) pos)
+  (quaternion-identity! (-> self root quat))
+  (vector-identity! (-> self root scale))
+  (set-time! (-> self birth-time))
+  (set! (-> self group) group)
+  (logclear! (-> self mask) (process-mask actor-pause))
+  (transform-post)
+  (go-virtual idle))
+
+(defstate idle (on-off-block)
+  :virtual #t
+  :event
+    (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
+      (case message
+        (('attack 'touch)
+         ; (if (= (-> proc type) target)
+         ;   (send-event proc 'attack #f (static-attack-info ((shove-up (meters 2.5)) (shove-back (meters 7.5)))))
+         ;   )
+         #f)))
+  :code
+    (behavior ()
+      (loop
+        (case (= (-> *on-off-manager* group-states (-> self group)) (-> self inverted?))
+          ((#f)
+            ;; block on
+            (restore-collide-with-as (-> self root))
+            (set! (-> self draw force-fade-int) 255) ;; 127 after -128
+            )
+          (else
+            ;; block off
+            (clear-collide-with-as (-> self root))
+            (set! (-> self draw force-fade-int) 160) ;; 64 after -128
+            )
+          )
+        (suspend)))
+  :post transform-post)

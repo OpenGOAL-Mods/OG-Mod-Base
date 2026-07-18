@@ -1,0 +1,13 @@
+{
+  "numConnectToTargetAttempts": 1,
+  "jak1": {
+    "asmFileSearchDirs": [
+      "goal_src/jak1"
+    ]
+  },
+  "jak2": {
+    "asmFileSearchDirs": [
+      "goal_src/jak2"
+    ]
+  }
+}
