@@ -1374,6 +1374,8 @@
   (set! (-> this fact) (new 'process 'fact-info this (pickup-type buzzer) (the-as float 0.0)))
   (initialize-skeleton this *buzzer-sg* '())
   (set! (-> this part) (create-launch-control group-buzzer-effect this))
+  ;; Allow blue eco suction.
+  (logclear! (-> this flags) (collectable-flags ignore-blue))
   (set! (-> this sound) (new 'process 'ambient-sound (static-sound-spec "buzzer" :fo-max 40) (-> this root trans)))
   (set! (-> this victory-anim) (fuel-cell-pick-anim this))
   this)
@@ -1382,6 +1384,8 @@
   (initialize this)
   (process-drawable-from-entity! this (-> this entity))
   (initialize-params this 0 (the-as float 1024.0))
+  ;; Allow blue eco suction.
+  (logclear! (-> this flags) (collectable-flags ignore-blue))
   (set! (-> this collect-timeout) (seconds 2))
   (update-transforms! (-> this root))
   (update-trans! (-> this sound) (-> this root trans))
@@ -1406,6 +1410,8 @@
   (vector-identity! (-> self root scale))
   (set! (-> self root transv quad) (-> arg1 quad))
   (initialize-params self 0 (the-as float 1024.0))
+  ;; Allow blue eco suction.
+  (logclear! (-> self flags) (collectable-flags ignore-blue))
   (update-transforms! (-> self root))
   (update-trans! (-> self sound) (-> self root trans))
   (set! (-> self event-hook) (-> (method-of-object self wait) event))
