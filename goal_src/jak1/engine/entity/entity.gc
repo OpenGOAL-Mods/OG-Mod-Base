@@ -1040,7 +1040,7 @@
   (set! (-> arg0 root trans quad) (-> arg1 extra trans quad))
   (quaternion-copy! (-> arg0 root quat) (-> arg1 quat))
   (vector-identity! (-> arg0 root scale))
-  (let ((scale (res-lump-struct arg1 'scale vector)))
+  (let ((scale (res-lump-struct arg1 'scale-override vector)))
     (when scale
       (set-vector! (-> arg0 root scale) (-> scale x) (-> scale y) (-> scale z) 1.0)))
   (none))
