@@ -2026,6 +2026,9 @@
           (lambda ((arg0 vent))
             (not (logtest? (-> arg0 blocker extra perm status) (entity-perm-status complete))))))
   (set! (-> this show-particles) #t)
+  ;; Hack to keep the eggtop-room Blue Eco vent permanently open.
+  (when (name= (-> this name) 'ecovent-171) (logclear! (-> this fact options) (fact-options vent-valve vent-blocked)))
+  ;; End Hack
   (when (logtest? (-> this fact options) (fact-options vent-blocked))
     (when (logtest? (-> this fact options) (fact-options vent-valve))
       (case (-> this fact pickup-type)
