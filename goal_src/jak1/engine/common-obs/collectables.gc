@@ -696,6 +696,122 @@
 
 (defstate wait (money)
   :virtual #t
+  :event
+    (behavior ((proc process)
+               (argc int)
+               (message symbol)
+               (block event-message-block))
+      (local-vars (v0-3 object))
+
+      (when (and
+              (or (= message 'touch)
+                  (= message 'attack))
+
+              ;; Only collect money while Jak has blue eco.
+              (send-event
+                *target*
+                'query
+                'powerup
+                (pickup-type eco-blue))
+
+              (logtest?
+                (-> self flags)
+                (collectable-flags can-collect))
+
+              (time-elapsed?
+                (-> self birth-time)
+                (-> self collect-timeout))
+
+              (!= (-> self next-state name) 'pickup)
+
+              (send-event
+                proc
+                'get-pickup
+                (-> self fact pickup-type)
+                (-> self fact pickup-amount)))
+
+        (logclear!
+          (-> self mask)
+          (process-mask actor-pause))
+
+        (go-virtual pickup
+                    #f
+                    (process->handle proc)))
+
+      ;; Preserve blue-eco attraction and normal inherited events.
+      (cond
+        ((= message 'eco-blue)
+         (when (and
+                 (not
+                   (logtest?
+                     (-> self flags)
+                     (collectable-flags fading ignore-blue)))
+                 (!= (-> self next-state name) 'pickup)
+                 (begin
+                   (check-blue-suck
+                     (the-as process-drawable proc))
+                   #t)
+                 (logtest?
+                   (-> self flags)
+                   (collectable-flags can-collect))
+                 (time-elapsed?
+                   (-> self birth-time)
+                   (-> self collect-timeout)))
+
+           (logclear!
+             (-> self mask)
+             (process-mask actor-pause))
+
+           (go-virtual notice-blue
+                       (process->handle proc))))
+
+        ((= message 'trans)
+         (set! (-> self root trans quad)
+               (-> (the-as vector
+                            (-> block param 0))
+                   quad))
+         (update-transforms! (-> self root))
+         (ja-post))
+
+        ((= message 'jump)
+         (logclear!
+           (-> self mask)
+           (process-mask actor-pause))
+         (set! (-> self jump-pos quad)
+               (-> (the-as vector
+                            (-> block param 0))
+                   quad))
+         (go-virtual jump))
+
+        ((= message 'pickup)
+         (when (!= (-> self next-state name) 'pickup)
+           (if (and (> argc 0)
+                    (-> block param 0))
+             (move-to-point!
+               (-> self root)
+               (the-as vector
+                       (-> block param 0))))
+
+           (logclear!
+             (-> self mask)
+             (process-mask actor-pause))
+
+           (go-virtual pickup
+                       #f
+                       (the-as handle #f))))
+
+        ((= message 'die)
+         (logclear!
+           (-> self mask)
+           (process-mask actor-pause))
+         (go-virtual die))
+
+        ((= message 'movie-pos)
+         (set! v0-3 (-> block param 0))
+         (set! (-> self movie-pos-index)
+               (the-as int v0-3))
+         v0-3)))
+
   :code
     (behavior ()
       (loop
@@ -715,6 +831,46 @@
 
 (defstate notice-blue (money)
   :virtual #t
+  :event
+    (behavior ((proc process)
+               (argc int)
+               (message symbol)
+               (block event-message-block))
+
+      (when (and
+              (or (= message 'touch)
+                  (= message 'attack))
+
+              ;; Require blue eco at the exact moment of pickup.
+              (send-event
+                *target*
+                'query
+                'powerup
+                (pickup-type eco-blue))
+
+              (logtest?
+                (-> self flags)
+                (collectable-flags can-collect))
+
+              (time-elapsed?
+                (-> self birth-time)
+                (-> self collect-timeout))
+
+              (!= (-> self next-state name) 'pickup)
+
+              (send-event
+                proc
+                'get-pickup
+                (-> self fact pickup-type)
+                (-> self fact pickup-amount)))
+
+        (logclear!
+          (-> self mask)
+          (process-mask actor-pause))
+
+        (go-virtual pickup
+                    #f
+                    (process->handle proc))))
   :code
     (behavior ((arg0 handle))
       (loop
