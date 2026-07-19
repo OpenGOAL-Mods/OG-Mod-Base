@@ -1445,10 +1445,155 @@
 
 (defstate wait (buzzer)
   :virtual #t
+  :event
+    (behavior ((proc process)
+               (argc int)
+               (message symbol)
+               (block event-message-block))
+      (local-vars (v0-3 object))
+
+      ;; Require blue eco for direct pickup.
+      (when (and
+              (or (= message 'touch)
+                  (= message 'attack))
+
+              (send-event
+                proc
+                'query
+                'powerup
+                3)
+
+              (logtest?
+                (-> self flags)
+                (collectable-flags can-collect))
+
+              (time-elapsed?
+                (-> self birth-time)
+                (-> self collect-timeout))
+
+              (!= (-> self next-state name) 'pickup)
+
+              (send-event
+                proc
+                'get-pickup
+                (-> self fact pickup-type)
+                (-> self fact pickup-amount)))
+
+        (logclear!
+          (-> self mask)
+          (process-mask actor-pause))
+
+        (go-virtual
+          pickup
+          #f
+          (process->handle proc)))
+
+      (cond
+        ;; Preserve blue eco magnetic behavior.
+        ((= message 'eco-blue)
+         (when (and
+                 (not
+                   (logtest?
+                     (-> self flags)
+                     (collectable-flags fading ignore-blue)))
+
+                 (!= (-> self next-state name) 'pickup)
+
+                 (begin
+                   (check-blue-suck
+                     (the-as process-drawable proc))
+                   #t)
+
+                 (logtest?
+                   (-> self flags)
+                   (collectable-flags can-collect))
+
+                 (time-elapsed?
+                   (-> self birth-time)
+                   (-> self collect-timeout)))
+
+           (logclear!
+             (-> self mask)
+             (process-mask actor-pause))
+
+           (go-virtual
+             notice-blue
+             (process->handle proc))))
+
+        ((= message 'trans)
+         (set!
+           (-> self root trans quad)
+           (-> (the-as vector
+                        (-> block param 0))
+               quad))
+         (update-transforms! (-> self root))
+         (ja-post))
+
+        ((= message 'jump)
+         (logclear!
+           (-> self mask)
+           (process-mask actor-pause))
+
+         (set!
+           (-> self jump-pos quad)
+           (-> (the-as vector
+                        (-> block param 0))
+               quad))
+
+         (go-virtual jump))
+
+        ((= message 'pickup)
+         (when (!= (-> self next-state name) 'pickup)
+           (if (and (> argc 0)
+                    (-> block param 0))
+             (move-to-point!
+               (-> self root)
+               (the-as vector
+                       (-> block param 0))))
+
+           (logclear!
+             (-> self mask)
+             (process-mask actor-pause))
+
+           (go-virtual
+             pickup
+             #f
+             (the-as handle #f))))
+
+        ((= message 'die)
+         (logclear!
+           (-> self mask)
+           (process-mask actor-pause))
+
+         (go-virtual die))
+
+        ((= message 'movie-pos)
+         (set! v0-3
+               (-> block param 0))
+
+         (set!
+           (-> self movie-pos-index)
+           (the-as int v0-3))
+
+         v0-3)))
   :code
     (behavior ()
-      (case (get-reminder (get-task-control (the-as game-task (logand (the int (-> self fact pickup-amount)) #xffff))) 0)
-        ((127) (go-virtual pickup #t (the-as handle #f))))
+      (case
+        (get-reminder
+          (get-task-control
+            (the-as game-task
+                    (logand
+                      (the int
+                           (-> self fact pickup-amount))
+                      #xffff)))
+          0)
+
+        ((127)
+         (go-virtual
+           pickup
+           #t
+           (the-as handle #f))))
+
       (loop
         (transform-post)
         (animate self)
