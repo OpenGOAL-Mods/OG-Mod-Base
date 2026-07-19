@@ -895,13 +895,15 @@
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
       (local-vars (v0-3 object))
       (when (and (or (= message 'touch) (= message 'attack))
-                 (and (logtest? (-> self flags) (collectable-flags can-collect))
-                      (time-elapsed? (-> self birth-time) (-> self collect-timeout))
-                      (and (not (handle->process (-> *game-info* other-camera-handle)))
-                           (not *progress-process*)
-                           (!= (-> self next-state name) 'pickup)
-                           *target*
-                           (not (logtest? (-> *target* state-flags) (state-flags grabbed dying))))))
+              ;; Only allow pickup while the jak has blue eco.
+              (send-event *target* 'query 'powerup (pickup-type eco-blue))
+              (and (logtest? (-> self flags) (collectable-flags can-collect))
+                (time-elapsed? (-> self birth-time) (-> self collect-timeout))
+                (and (not (handle->process (-> *game-info* other-camera-handle)))
+                  (not *progress-process*)
+                  (!= (-> self next-state name) 'pickup)
+                  *target*
+                  (not (logtest? (-> *target* state-flags) (state-flags grabbed dying))))))
         (add-setting! 'allow-progress #f 0.0 0)
         (apply-settings *setting-control*)
         (logclear! (-> self mask) (process-mask actor-pause))
