@@ -708,11 +708,16 @@
                   (= message 'attack))
 
               ;; Only collect money while Jak has blue eco.
-              (send-event
-                *target*
-                'query
-                'powerup
-                (pickup-type eco-blue))
+              (or (send-event
+                    *target*
+                    'query
+                    'powerup
+                    (pickup-type eco-blue))
+                  ;; zoomer blue eco boost
+                  (and (= (send-event *target* 'query 'mode) 'racer)
+                       (-> *target* racer)
+                       (> (send-event *target* 'query 'boost) 0.0))
+                  )
 
               (logtest?
                 (-> self flags)
@@ -842,11 +847,16 @@
                   (= message 'attack))
 
               ;; Require blue eco at the exact moment of pickup.
-              (send-event
-                *target*
-                'query
-                'powerup
-                (pickup-type eco-blue))
+              (or (send-event
+                    *target*
+                    'query
+                    'powerup
+                    (pickup-type eco-blue))
+                  ;; zoomer blue eco boost
+                  (and (= (send-event *target* 'query 'mode) 'racer)
+                       (-> *target* racer)
+                       (> (send-event *target* 'query 'boost) 0.0))
+                  )
 
               (logtest?
                 (-> self flags)
@@ -1052,7 +1062,16 @@
       (local-vars (v0-3 object))
       (when (and (or (= message 'touch) (= message 'attack))
               ;; Only allow pickup while the jak has blue eco.
-              (send-event *target* 'query 'powerup (pickup-type eco-blue))
+              (or (send-event
+                    *target*
+                    'query
+                    'powerup
+                    (pickup-type eco-blue))
+                  ;; zoomer blue eco boost
+                  (and (= (send-event *target* 'query 'mode) 'racer)
+                       (-> *target* racer)
+                       (> (send-event *target* 'query 'boost) 0.0))
+                  )
               (and (logtest? (-> self flags) (collectable-flags can-collect))
                 (time-elapsed? (-> self birth-time) (-> self collect-timeout))
                 (and (not (handle->process (-> *game-info* other-camera-handle)))
@@ -1457,11 +1476,16 @@
               (or (= message 'touch)
                   (= message 'attack))
 
-              (send-event
-                proc
-                'query
-                'powerup
-                3)
+              (or (send-event
+                    *target*
+                    'query
+                    'powerup
+                    (pickup-type eco-blue))
+                  ;; zoomer blue eco boost
+                  (and (= (send-event *target* 'query 'mode) 'racer)
+                       (-> *target* racer)
+                       (> (send-event *target* 'query 'boost) 0.0))
+                  )
 
               (logtest?
                 (-> self flags)

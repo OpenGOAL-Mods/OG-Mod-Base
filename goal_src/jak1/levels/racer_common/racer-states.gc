@@ -16,6 +16,7 @@
     (behavior ((proc process) (argc int) (message symbol) (block event-message-block))
       (cond
         ((and (= message 'query) (= (-> block param 0) 'mode)) 'racer)
+        ((and (= message 'query) (= (-> block param 0) 'boost)) (-> self racer boost-level))
         ((and (= message 'get-pickup) (= (-> block param 0) 3))
          (if (time-elapsed? (-> self racer boost-time) (seconds 1))
            (send-event self 'boost (fmax 1.0 (fmin 2.0 (the-as float (-> block param 1)))))))
