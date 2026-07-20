@@ -634,7 +634,19 @@
       (if (and *target*
                (and (logtest? (-> *target* control root-prim prim-core action) (collide-action racer snowball tube flut))
                     (!= (-> self fact pickup-type) 6)
-                    (not arg0)))
+                    (not arg0))
+               ;; Only collect money while Jak has blue eco.
+               (or (send-event
+                    *target*
+                    'query
+                    'powerup
+                    (pickup-type eco-blue))
+                   ;; zoomer blue eco boost
+                   (and (= (send-event *target* 'query 'mode) 'racer)
+                        (-> *target* racer)
+                        (> (send-event *target* 'query 'boost) 0.0))
+                  )
+                )
         (logior! (-> self fact options) (fact-options instant-collect)))
       (when (not arg0)
         (suspend-for (seconds 0.04))
@@ -765,7 +777,7 @@
   (none))
 
 (defmethod params-init ((this crate) (arg0 entity))
-  (stack-size-set! (-> this main-thread) 128)
+  (stack-size-set! (-> this main-thread) 256)
   (logior! (-> this mask) (process-mask crate))
   (let ((s4-0 (new 'process 'collide-shape-moving this (collide-list-enum usually-hit-by-player))))
     (set! (-> s4-0 dynam) (copy *standard-dynamics* 'process))
