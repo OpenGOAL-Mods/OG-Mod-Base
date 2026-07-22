@@ -5,6 +5,8 @@
 #include "common/util/FileUtil.h"
 #include "common/util/Timer.h"
 #include "common/util/string_util.h"
+#include "common/util/unicode_util.h"
+#include "common/versions/versions.h"
 
 #include "goalc/make/CompilerReport.h"
 #include "goalc/make/Tools.h"
@@ -96,8 +98,30 @@ MakeSystem::MakeSystem(const std::optional<REPL::Config> repl_config, const std:
                  file_util::get_iso_dir_for_game(m_repl_config->game_version).string());
     set_constant("*use-iso-data-path*", true);
   } else {
-    set_constant("*iso-data*", file_util::get_file_path({"iso_data"}));
-    set_constant("*use-iso-data-path*", false);
+    bool use_env_iso_data = false;
+    if (m_repl_config) {
+      // no DGO folder means no game data was never extracted
+      // fall back to the JAK_ISO_DATA_DIR environment variable if it is set
+      const auto game_name = version_to_game_name(m_repl_config->game_version);
+      if (!fs::exists(file_util::get_jak_project_dir() / "iso_data" / game_name / "DGO")) {
+        const auto env_iso_data = get_env("JAK_ISO_DATA_DIR");
+        if (!env_iso_data.empty()) {
+          fs::path env_path = env_iso_data;
+          if (fs::exists(env_path / game_name)) {
+            env_path /= game_name;
+          }
+          lg::info("iso_data/{} has no extracted game data, using JAK_ISO_DATA_DIR instead: {}",
+                   game_name, env_path.string());
+          set_constant("*iso-data*", env_path.string());
+          set_constant("*use-iso-data-path*", true);
+          use_env_iso_data = true;
+        }
+      }
+    }
+    if (!use_env_iso_data) {
+      set_constant("*iso-data*", file_util::get_file_path({"iso_data"}));
+      set_constant("*use-iso-data-path*", false);
+    }
   }
 
   add_tool<DgoTool>();

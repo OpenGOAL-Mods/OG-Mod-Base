@@ -83,6 +83,19 @@ int main(int argc, char** argv) {
   }
 
   in_folder = in_folder / config.game_name;
+  // no DGO folder means no game data was ever extracted here - fall back to JAK_ISO_DATA_DIR if it is set
+  if (!fs::exists(in_folder / "DGO")) {
+    const auto env_iso_data = get_env("JAK_ISO_DATA_DIR");
+    if (!env_iso_data.empty()) {
+      fs::path env_path = env_iso_data;
+      if (fs::exists(env_path / config.game_name)) {
+        env_path /= config.game_name;
+      }
+      lg::info("'{}' has no extracted game data, using JAK_ISO_DATA_DIR instead: {}",
+               in_folder.string(), env_path.string());
+      in_folder = env_path;
+    }
+  }
   // Verify the in_folder is correct
   if (!exists(in_folder)) {
     lg::error("Aborting - 'in_folder' does not exist '{}'", in_folder.string());
