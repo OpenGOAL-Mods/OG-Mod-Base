@@ -137,6 +137,10 @@
   (:states
    sage-finalboss-credits))
 
+(defun go-sage-finalboss-credits ()
+  (when (process-by-ename "sage-finalboss-1")
+    (go-process (the sage-finalboss (process-by-ename "sage-finalboss-1")) sage-finalboss-credits))
+  (none))
 
 (defmethod relocate ((this sage-finalboss) (offset int))
   (dotimes (v1-0 9)
