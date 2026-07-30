@@ -375,6 +375,20 @@ int main(int argc, char** argv) {
       iso_data_path = input_file_path;
     } else {
       iso_data_path = file_util::get_jak_project_dir() / "iso_data" / data_subfolder;
+      // no DGO folder means no game data was ever extracted here
+      if (!fs::exists(iso_data_path / "DGO")) {
+        const auto env_iso_data = get_env("JAK_ISO_DATA_DIR");
+        // see if we can use JAK_ISO_DATA_DIR
+        if (!env_iso_data.empty()) {
+          fs::path env_path = env_iso_data;
+          if (fs::exists(env_path / data_subfolder)) {
+            env_path /= data_subfolder;
+          }
+          lg::info("'{}' has no extracted game data, using JAK_ISO_DATA_DIR instead: {}",
+                   iso_data_path.string(), env_path.string());
+          iso_data_path = env_path;
+        }
+      }
     }
   }
 
