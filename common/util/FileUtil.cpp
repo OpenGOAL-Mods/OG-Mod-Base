@@ -278,7 +278,24 @@ fs::path get_iso_dir_for_game(GameVersion game_version) {
     expected_subdir = "jak3";
   }
   const auto temp_dir = get_jak_project_dir() / "iso_data" / expected_subdir;
-  if (fs::exists(temp_dir)) {
+  if (fs::exists(temp_dir / "DGO")) {
+    g_iso_data_directory = temp_dir;
+    return g_iso_data_directory;
+  }
+  // no DGO folder means no game data was ever extracted to the default iso_data folder -
+  // fall back to the JAK_ISO_DATA_DIR environment variable if it is set
+  const auto env_iso_data = get_env("JAK_ISO_DATA_DIR");
+  if (!env_iso_data.empty()) {
+    fs::path env_path = env_iso_data;
+    // the env var may point at the iso_data root (containing jak1/ etc.) or directly at the
+    // extracted game data
+    if (fs::exists(env_path / expected_subdir)) {
+      env_path /= expected_subdir;
+    }
+    lg::info("'{}' has no extracted game data, using JAK_ISO_DATA_DIR instead: {}",
+             temp_dir.string(), env_path.string());
+    g_iso_data_directory = env_path;
+  } else if (fs::exists(temp_dir)) {
     g_iso_data_directory = temp_dir;
   }
   return g_iso_data_directory;

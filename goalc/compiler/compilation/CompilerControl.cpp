@@ -3,14 +3,18 @@
  * Compiler implementation for forms which actually control the compiler.
  */
 
+#include <chrono>
 #include <regex>
 #include <stack>
+#include <thread>
 
 #include "common/repl/repl_wrapper.h"
 #include "common/util/DgoWriter.h"
 #include "common/util/FileUtil.h"
 #include "common/util/Timer.h"
 #include "common/util/string_util.h"
+
+#include "decompiler/extractor/extractor_util.h"
 
 #include "goalc/compiler/Compiler.h"
 #include "goalc/compiler/IR.h"
@@ -834,7 +838,65 @@ Val* Compiler::compile_make(const goos::Object& form, const goos::Object& rest, 
     report = get_true_or_false(form, args.get_named("report"));
   }
 
-  m_make.make(args.unnamed.at(0).as_string()->data, force, verbose, report);
+  const auto& target = args.unnamed.at(0).as_string()->data;
+
+  // if we're building the iso group but the game was never extracted, automatically run the
+  // extraction (the equivalent of `task extract`) once before building
+  if (target == "GROUP:iso") {
+    const auto game_name = version_to_game_name(m_version);
+    const auto decomp_out = file_util::get_jak_project_dir() / "decompiler_out" / game_name;
+    if (!fs::exists(decomp_out / "textures" / "tpage-dir.txt")) {
+      const auto iso_dir = file_util::get_iso_dir_for_game(m_version);
+      if (iso_dir.empty() || !fs::exists(iso_dir / "DGO")) {
+        lg::warn(
+            "The game has not been extracted yet and no ISO data was found - the build will "
+            "likely fail. Place the game data in iso_data/{} or set JAK_ISO_DATA_DIR.",
+            game_name);
+      } else {
+        lg::warn("The game has not been extracted yet ('{}' is missing).", decomp_out.string());
+        lg::warn("Automatically extracting from '{}' .", iso_dir.string());
+        // run the extraction in a separate decompiler process (the same thing `task extract`
+        // does) - it is memory heavy and can't be allowed to take down the compiler process
+        try {
+          const auto version_info = get_version_info_or_default(iso_dir);
+#ifdef _WIN32
+          const std::string decomp_exe_name = "decompiler.exe";
+#else
+          const std::string decomp_exe_name = "decompiler";
+#endif
+          const auto decompiler_path =
+              fs::path(file_util::get_current_executable_path()).parent_path() / decomp_exe_name;
+          if (!fs::exists(decompiler_path)) {
+            lg::error("Could not find the decompiler at '{}', attempting the build anyway...",
+                      decompiler_path.string());
+          } else {
+            const auto config_path = file_util::get_jak_project_dir() / "decompiler" / "config" /
+                                     game_name / fmt::format("{}_config.jsonc", game_name);
+            auto cmd = fmt::format(
+                "\"{}\" \"{}\" \"{}\" \"{}\" --version \"{}\" --config-override "
+                "\"{{\\\"decompile_code\\\": false, \\\"levels_extract\\\": true, "
+                "\\\"allowed_objects\\\": []}}\"",
+                decompiler_path.string(), config_path.string(),
+                (file_util::get_jak_project_dir() / "iso_data").string(),
+                (file_util::get_jak_project_dir() / "decompiler_out").string(),
+                version_info.decomp_config_version);
+#ifdef _WIN32
+            // cmd.exe strips the outer quotes of the whole command string, wrap it in an extra
+            // pair so the quoted executable path survives
+            cmd = fmt::format("\"{}\"", cmd);
+#endif
+            if (system(cmd.c_str()) != 0) {
+              lg::error("Extraction failed, attempting the build anyway...");
+            }
+          }
+        } catch (const std::exception& e) {
+          lg::error("Extraction failed ({}), attempting the build anyway...", e.what());
+        }
+      }
+    }
+  }
+
+  m_make.make(target, force, verbose, report);
   return get_none();
 }
 
