@@ -6054,6 +6054,10 @@
         (debug-menu-context-send-msg *popup-menu-context* (debug-menu-msg activate) (debug-menu-dest activation))
         (debug-menu-context-send-msg *debug-menu-context* (debug-menu-msg deactivate) (debug-menu-dest activation))
         (debug-menu-context-send-msg *editable-menu-context* (debug-menu-msg deactivate) (debug-menu-dest activation))
+        ;; mod-base-change - if there are custom audios playing, then, pause them
+        (if (is-any-sound-playing?)
+          (pause-all-sounds)
+          )
         )
        ((and (cpad-hold? 1 start) *editable*)
         (debug-menu-context-send-msg *editable-menu-context* (debug-menu-msg activate) (debug-menu-dest activation))
@@ -6064,6 +6068,10 @@
         (debug-menu-context-send-msg *debug-menu-context* (debug-menu-msg activate) (debug-menu-dest activation))
         (debug-menu-context-send-msg *popup-menu-context* (debug-menu-msg deactivate) (debug-menu-dest activation))
         (debug-menu-context-send-msg *editable-menu-context* (debug-menu-msg deactivate) (debug-menu-dest activation))
+        ;; mod-base-change - if there are custom audios playing, then, pause them
+        (if (is-any-sound-playing?)
+          (pause-all-sounds)
+          )
         )
        )
      )
