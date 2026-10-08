@@ -12,6 +12,10 @@ on:
           - patch
           - minor
           - major
+      release_version:
+        description: 'Explicit release version (e.g. 0.3.8). If set, skips automatic version bump.'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -31,17 +35,42 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tag_prefix: v
-          default_bump: ${{ github.event.inputs.bump }}
+          default_bump: ${{ inputs.bump }}
+
+      - name: Create Explicit Tag
+        if: inputs.release_version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api \
+            --method POST \
+            "/repos/${{ github.repository }}/git/refs" \
+            -f "ref=refs/tags/v${{ inputs.release_version }}" \
+            -f "sha=${{ github.sha }}"
 
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create ${{ steps.tag_version.outputs.new_tag }} --generate-notes --draft --repo ${{ github.repository }}
+        run: |
+          if [ -n "${{ inputs.release_version }}" ]; then
+            TAG="v${{ inputs.release_version }}"
+          else
+            TAG="${{ steps.tag_version.outputs.new_tag }}"
+          fi
+
+          gh release create "$TAG" \
+            --generate-notes \
+            --draft \
+            --repo "${{ github.repository }}"
 
       - name: Output new tag
         id: set_tag
         run: |
-          echo "new_tag=${{ steps.tag_version.outputs.new_tag }}" >> $GITHUB_OUTPUT
+          if [ -n "${{ inputs.release_version }}" ]; then
+            echo "new_tag=v${{ inputs.release_version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "new_tag=${{ steps.tag_version.outputs.new_tag }}" >> "$GITHUB_OUTPUT"
+          fi
 
   # Windows
   build_windows_clang:
@@ -79,13 +108,13 @@ jobs:
       uploadArtifacts: true
     secrets: inherit
 
-  build_macos_arm_rosetta:
+  build_macos_arm:
     needs:
       - cut_release
     name: "🍎 MacOS"
-    uses: ./.github/workflows/macos-build.yaml
+    uses: ./.github/workflows/macos-build-arm.yaml
     with:
-      cmakePreset: "Release-macos-x86_64-clang-static"
+      cmakePreset: "Release-macos-arm64-clang-static"
       cachePrefix: "static-arm"
       uploadArtifacts: true
     secrets: inherit
@@ -97,7 +126,7 @@ jobs:
       - build_windows_clang
       - build_linux_clang
       - build_macos_intel
-      - build_macos_arm_rosetta
+      - build_macos_arm
     name: "Upload Artifacts"
     runs-on: ubuntu-latest
     steps:
