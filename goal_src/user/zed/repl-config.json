@@ -9,5 +9,10 @@
     "asmFileSearchDirs": [
       "goal_src/jak2"
     ]
+  },
+  "jak3": {
+    "asmFileSearchDirs": [
+      "goal_src/jak3"
+    ]
   }
 }
